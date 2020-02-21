@@ -114,8 +114,7 @@ namespace System.Management.Automation
         {
             lock (_syncObject)
             {
-                T result;
-                _repository.TryGetValue(instanceId, out result);
+                _repository.TryGetValue(instanceId, out T result);
                 return result;
             }
         }

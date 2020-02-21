@@ -58,9 +58,8 @@ namespace System.Management.Automation
             }
 
             VariablePath variablePath = new VariablePath(name, VariablePathFlags.Variable | VariablePathFlags.Unqualified);
-            SessionStateScope scope = null;
 
-            PSVariable resultItem = GetVariableItem(variablePath, out scope, origin);
+            PSVariable resultItem = GetVariableItem(variablePath, out SessionStateScope scope, origin);
 
             return resultItem;
         }
@@ -118,10 +117,8 @@ namespace System.Management.Automation
             }
 
             VariablePath variablePath = new VariablePath(name);
-            CmdletProviderContext context = null;
-            SessionStateScope scope = null;
 
-            object resultItem = GetVariableValue(variablePath, out context, out scope);
+            object resultItem = GetVariableValue(variablePath, out CmdletProviderContext context, out SessionStateScope scope);
 
             return resultItem;
         }
@@ -351,9 +348,8 @@ namespace System.Management.Automation
                 {
                     // First get the provider for the path.
 
-                    ProviderInfo providerInfo = null;
                     string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -367,9 +363,8 @@ namespace System.Management.Automation
                 {
                     // First get the provider for the path.
 
-                    ProviderInfo providerInfo = null;
                     string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -406,9 +401,8 @@ namespace System.Management.Automation
 
                     // First get the provider for the path.
 
-                    ProviderInfo providerInfo = null;
                     string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderVariableSyntaxInvalid",
@@ -444,9 +438,8 @@ namespace System.Management.Automation
                 catch (Exception e) // Third-party callout, catch-all OK
                 {
                     // First get the provider for the path.
-                    ProviderInfo providerInfo = null;
                     string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(
@@ -740,9 +733,8 @@ namespace System.Management.Automation
                     {
                         // First get the provider for the path.
 
-                        ProviderInfo providerInfo = null;
                         string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                            this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderCannotBeUsedAsVariable",
@@ -756,9 +748,8 @@ namespace System.Management.Automation
                     {
                         // First get the provider for the path.
 
-                        ProviderInfo providerInfo = null;
                         string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                            this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderCannotBeUsedAsVariable",
@@ -795,9 +786,8 @@ namespace System.Management.Automation
 
                         // First get the provider for the path.
 
-                        ProviderInfo providerInfo = null;
                         string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                            this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                         throw NewProviderInvocationException(
                             "ProviderVariableSyntaxInvalid",
@@ -834,9 +824,8 @@ namespace System.Management.Automation
                     {
                         // First get the provider for the path.
 
-                        ProviderInfo providerInfo = null;
                         string unused =
-                            this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                            this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                         ProviderInvocationException providerException =
                             new ProviderInvocationException(
@@ -1244,9 +1233,8 @@ namespace System.Management.Automation
                 {
                     // First get the provider for the path.
 
-                    ProviderInfo providerInfo = null;
                     string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -1260,9 +1248,8 @@ namespace System.Management.Automation
                 {
                     // First get the provider for the path.
 
-                    ProviderInfo providerInfo = null;
                     string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderCannotBeUsedAsVariable",
@@ -1300,9 +1287,8 @@ namespace System.Management.Automation
 
                     // First get the provider for the path.
 
-                    ProviderInfo providerInfo = null;
                     string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                     throw NewProviderInvocationException(
                         "ProviderVariableSyntaxInvalid",
@@ -1324,9 +1310,8 @@ namespace System.Management.Automation
                 {
                     // First get the provider for the path.
 
-                    ProviderInfo providerInfo = null;
                     string unused =
-                        this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
+                        this.Globber.GetProviderPath(variablePath.QualifiedName, out ProviderInfo providerInfo);
 
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(
@@ -1628,9 +1613,8 @@ namespace System.Management.Automation
 
             VariablePath variablePath = new VariablePath(variable.Name);
 
-            SessionStateScope scope = null;
 
-            if (GetVariableItem(variablePath, out scope) != null)
+            if (GetVariableItem(variablePath, out SessionStateScope scope) != null)
             {
                 scope.RemoveVariable(variablePath.QualifiedName, force);
             }

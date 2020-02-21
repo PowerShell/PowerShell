@@ -694,8 +694,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             lock (syncObject)
             {
-                OutOfProcessClientCommandTransportManager result = null;
-                _cmdTransportManagers.TryGetValue(key, out result);
+                _cmdTransportManagers.TryGetValue(key, out OutOfProcessClientCommandTransportManager result);
                 return result;
             }
         }
@@ -847,10 +846,9 @@ namespace System.Management.Automation.Remoting.Client
 
         protected void SendOneItem()
         {
-            DataPriorityType priorityType;
             // This will either return data or register callback but doesn't do both.
             byte[] data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback,
-                out priorityType);
+                out DataPriorityType priorityType);
             if (data != null)
             {
                 SendData(data, priorityType);
@@ -2451,8 +2449,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             lock (_syncObject)
             {
-                OutOfProcessServerTransportManager result = null;
-                _cmdTransportManagers.TryGetValue(powerShellCmdId, out result);
+                _cmdTransportManagers.TryGetValue(powerShellCmdId, out OutOfProcessServerTransportManager result);
                 return result;
             }
         }

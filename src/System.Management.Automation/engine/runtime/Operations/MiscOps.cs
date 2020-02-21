@@ -187,9 +187,7 @@ namespace System.Management.Automation
                 }
             }
 
-            string helpTarget;
-            HelpCategory helpCategory;
-            if (commandProcessor.IsHelpRequested(out helpTarget, out helpCategory))
+            if (commandProcessor.IsHelpRequested(out string helpTarget, out HelpCategory helpCategory))
             {
                 commandProcessor = CommandProcessorBase.CreateGetHelpCommandProcessor(context, helpTarget, helpCategory);
             }
@@ -2101,8 +2099,7 @@ namespace System.Management.Automation
     {
         internal static Type ResolveTypeName(ITypeName typeName, IScriptExtent errorPos)
         {
-            Exception exception;
-            var result = TypeResolver.ResolveITypeName(typeName, out exception);
+            var result = TypeResolver.ResolveITypeName(typeName, out Exception exception);
 
             if (result == null)
             {
@@ -2203,10 +2200,9 @@ namespace System.Management.Automation
 
             // We figure out the exception instead of just executing a conversion because we can avoid an exception which is quite expensive,
             // and people using -as don't expect it to be expensive.
-            bool debase;
 
             // ConstrainedLanguage note - Calls to this conversion are done at runtime, so conversions are not cached.
-            var conversion = LanguagePrimitives.FigureConversion(left, type, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(left, type, out bool debase);
             if (conversion.Rank == ConversionRank.None)
             {
                 return null;
@@ -2406,9 +2402,8 @@ namespace System.Management.Automation
                             Group g = groups[groupName];
                             if (g.Success)
                             {
-                                int keyInt;
 
-                                if (Int32.TryParse(groupName, out keyInt))
+                                if (Int32.TryParse(groupName, out int keyInt))
                                     h.Add(keyInt, g.ToString());
                                 else
                                     h.Add(groupName, g.ToString());
@@ -2443,11 +2438,10 @@ namespace System.Management.Automation
                         typeof(RuntimeException), errorExtent, "InvalidFilenameOption", ParserStrings.InvalidFilenameOption);
                 }
 
-                ProviderInfo provider;
                 SessionState sessionState = new SessionState(context.EngineSessionState);
 
                 Collection<string> filePaths =
-                    sessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out provider);
+                    sessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out ProviderInfo provider);
 
                 // Make sure that the path is in the file system - that's all we can handle currently...
                 if (!provider.NameEquals(context.ProviderNames.FileSystem))

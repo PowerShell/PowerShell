@@ -662,8 +662,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "consoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            UInt32 m = 0;
-            bool result = NativeMethods.GetConsoleMode(consoleHandle.DangerousGetHandle(), out m);
+            bool result = NativeMethods.GetConsoleMode(consoleHandle.DangerousGetHandle(), out uint m);
 
             if (result == false)
             {
@@ -766,14 +765,13 @@ namespace Microsoft.PowerShell
                 control.dwCtrlWakeupMask = (1 << TAB);
             }
 
-            DWORD charsReaded = 0;
 
             bool result =
                 NativeMethods.ReadConsole(
                     consoleHandle.DangerousGetHandle(),
                     editBuffer,
                     (DWORD)charactersToRead,
-                    out charsReaded,
+                    out uint charsReaded,
                     ref control);
             keyState = control.dwControlKeyState;
             if (result == false)
@@ -818,13 +816,12 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            DWORD recordsRead = 0;
             bool result =
                 NativeMethods.ReadConsoleInput(
                     consoleHandle.DangerousGetHandle(),
                     buffer,
                     (DWORD)buffer.Length,
-                    out recordsRead);
+                    out uint recordsRead);
             if (result == false)
             {
                 int err = Marshal.GetLastWin32Error();
@@ -862,13 +859,12 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            DWORD recordsRead;
             bool result =
                 NativeMethods.PeekConsoleInput(
                     consoleHandle.DangerousGetHandle(),
                     buffer,
                     (DWORD)buffer.Length,
-                    out recordsRead);
+                    out uint recordsRead);
 
             if (result == false)
             {
@@ -900,8 +896,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            DWORD numEvents;
-            bool result = NativeMethods.GetNumberOfConsoleInputEvents(consoleHandle.DangerousGetHandle(), out numEvents);
+            bool result = NativeMethods.GetNumberOfConsoleInputEvents(consoleHandle.DangerousGetHandle(), out uint numEvents);
 
             if (result == false)
             {
@@ -965,8 +960,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-            bool result = NativeMethods.GetConsoleScreenBufferInfo(consoleHandle.DangerousGetHandle(), out bufferInfo);
+            bool result = NativeMethods.GetConsoleScreenBufferInfo(consoleHandle.DangerousGetHandle(), out CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
             if (result == false)
             {
@@ -1087,8 +1081,7 @@ namespace Microsoft.PowerShell
                 throw PSTraceSource.NewArgumentNullException("contents");
             }
 
-            uint codePage;
-            if (IsCJKOutputCodePage(out codePage))
+            if (IsCJKOutputCodePage(out uint codePage))
             {
                 // contentsRegion indicates the area in contents (declared below) in which
                 // the data read from ReadConsoleOutput is stored.
@@ -1715,8 +1708,7 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
-            uint codePage;
-            if (IsCJKOutputCodePage(out codePage))
+            if (IsCJKOutputCodePage(out uint codePage))
             {
                 ReadConsoleOutputCJK(consoleHandle, codePage, origin, contentsRegion, ref contents);
                 // check left edge
@@ -1832,12 +1824,11 @@ namespace Microsoft.PowerShell
             {
                 for (int c = contentsRegion.Left; c <= contentsRegion.Right; c++, characterBufferIndex++)
                 {
-                    ConsoleColor fgColor, bgColor;
 
                     contents[r, c].Character = (char)characterBuffer[characterBufferIndex].UnicodeChar;
                     WORDToColor(characterBuffer[characterBufferIndex].Attributes,
-                                out fgColor,
-                                out bgColor);
+                                out ConsoleColor fgColor,
+                                out ConsoleColor bgColor);
                     contents[r, c].ForegroundColor = fgColor;
                     contents[r, c].BackgroundColor = bgColor;
 
@@ -2031,13 +2022,11 @@ namespace Microsoft.PowerShell
             int colEnd = contents.GetUpperBound(1);
             CONSOLE_SCREEN_BUFFER_INFO bufferInfo =
                         GetConsoleScreenBufferInfo(consoleHandle);
-            ConsoleColor foreground = 0;
-            ConsoleColor background = 0;
 
             WORDToColor(
                             bufferInfo.Attributes,
-                            out foreground,
-                            out background
+                            out ConsoleColor foreground,
+                            out ConsoleColor background
                         );
 
             while (rowIndex <= rowEnd)
@@ -2185,10 +2174,9 @@ namespace Microsoft.PowerShell
                         {
                             contents[r, c].Character = (char)
                                 characterBuffer[characterBufferIndex].UnicodeChar;
-                            ConsoleColor fgColor, bgColor;
                             WORDToColor(characterBuffer[characterBufferIndex].Attributes,
-                                out fgColor,
-                                out bgColor);
+                                out ConsoleColor fgColor,
+                                out ConsoleColor bgColor);
                             contents[r, c].ForegroundColor = fgColor;
                             contents[r, c].BackgroundColor = bgColor;
                         }
@@ -2213,13 +2201,11 @@ namespace Microsoft.PowerShell
             int colEnd = contents.GetUpperBound(1);
             CONSOLE_SCREEN_BUFFER_INFO bufferInfo =
                         GetConsoleScreenBufferInfo(consoleHandle);
-            ConsoleColor foreground = 0;
-            ConsoleColor background = 0;
 
             WORDToColor(
                             bufferInfo.Attributes,
-                            out foreground,
-                            out background
+                            out ConsoleColor foreground,
+                            out ConsoleColor background
                        );
 
             while (rowIndex <= rowEnd)
@@ -2284,14 +2270,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputCharacter(
                     consoleHandle.DangerousGetHandle(),
                     character,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out uint unused);
             if (result == false)
             {
                 int err = Marshal.GetLastWin32Error();
@@ -2338,14 +2323,13 @@ namespace Microsoft.PowerShell
             c.X = (short)origin.X;
             c.Y = (short)origin.Y;
 
-            DWORD unused = 0;
             bool result =
                 NativeMethods.FillConsoleOutputAttribute(
                     consoleHandle.DangerousGetHandle(),
                     attribute,
                     (DWORD)numberToWrite,
                     c,
-                    out unused);
+                    out uint unused);
 
             if (result == false)
             {
@@ -2608,13 +2592,12 @@ namespace Microsoft.PowerShell
 
         private static void WriteConsole(ConsoleHandle consoleHandle, ReadOnlySpan<char> buffer)
         {
-            DWORD charsWritten;
             bool result =
                 NativeMethods.WriteConsole(
                     consoleHandle.DangerousGetHandle(),
                     buffer,
                     (DWORD)buffer.Length,
-                    out charsWritten,
+                    out uint charsWritten,
                     IntPtr.Zero);
 
             if (result == false)
@@ -2889,9 +2872,8 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsInvalid, "ConsoleHandle is not valid");
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
 
-            CONSOLE_CURSOR_INFO cursorInfo;
 
-            bool result = NativeMethods.GetConsoleCursorInfo(consoleHandle.DangerousGetHandle(), out cursorInfo);
+            bool result = NativeMethods.GetConsoleCursorInfo(consoleHandle.DangerousGetHandle(), out CONSOLE_CURSOR_INFO cursorInfo);
 
             if (result == false)
             {

@@ -295,8 +295,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 return ErrorCategory.NotSpecified;
             }
 
-            ErrorCategory errorCategoryValue;
-            if (!LanguagePrimitives.TryConvertTo<ErrorCategory>(errorCategoryProperty.Value, CultureInfo.InvariantCulture, out errorCategoryValue))
+            if (!LanguagePrimitives.TryConvertTo<ErrorCategory>(errorCategoryProperty.Value, CultureInfo.InvariantCulture, out ErrorCategory errorCategoryValue))
             {
                 return ErrorCategory.NotSpecified;
             }

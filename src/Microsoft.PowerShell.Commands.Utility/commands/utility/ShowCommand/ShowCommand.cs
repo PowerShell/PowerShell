@@ -371,8 +371,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if there was no exception processing this record.</returns>
         private bool CanProcessRecordForOneCommand()
         {
-            CommandInfo commandInfo;
-            this.GetCommandInfoAndModules(out commandInfo, out _importedModules);
+            this.GetCommandInfoAndModules(out CommandInfo commandInfo, out _importedModules);
             Diagnostics.Assert(commandInfo != null, "GetCommandInfoAndModules would throw a terminating error/exception");
 
             try
@@ -525,8 +524,7 @@ namespace Microsoft.PowerShell.Commands
                     ConsoleInputWithNativeMethods.INPUT_RECORD.SetInputRecord(ref records[i], str[i]);
                 }
 
-                uint written;
-                if (!ConsoleInputWithNativeMethods.WriteConsoleInput(handle, records, strLen, out written) || written != strLen)
+                if (!ConsoleInputWithNativeMethods.WriteConsoleInput(handle, records, strLen, out uint written) || written != strLen)
                 {
                     // I do not know of a case where written is not going to be strlen. Maybe for some character that
                     // is not supported in the console. The API suggests this can happen,

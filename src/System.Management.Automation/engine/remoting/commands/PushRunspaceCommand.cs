@@ -575,8 +575,7 @@ namespace Microsoft.PowerShell.Commands
         private RemoteRunspace CreateTemporaryRemoteRunspace(PSHost host, WSManConnectionInfo connectionInfo)
         {
             // Create and open the runspace.
-            int rsId;
-            string rsName = PSSession.GenerateRunspaceName(out rsId);
+            string rsName = PSSession.GenerateRunspaceName(out int rsId);
             RemoteRunspace remoteRunspace = new RemoteRunspace(
                 Utils.GetTypeTableFromExecutionContextTLS(),
                 connectionInfo,

@@ -224,8 +224,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (ex == null)
                 return true;
 
-            PSPropertyExpressionResult expressionResult;
-            bool retVal = DisplayCondition.Evaluate(currentObject, ex, out expressionResult);
+            bool retVal = DisplayCondition.Evaluate(currentObject, ex, out PSPropertyExpressionResult expressionResult);
 
             return retVal;
         }

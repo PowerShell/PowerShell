@@ -262,8 +262,7 @@ namespace Microsoft.PowerShell.Commands
             CommandSearcher searcher = new CommandSearcher(aliasName, SearchResolutionOptions.None, CommandTypes.All ^ CommandTypes.Alias, this.Context);
             foreach (string expandedCommandName in searcher.ConstructSearchPatternsFromName(aliasName))
             {
-                CommandTypes commandTypeOfExistingCommand;
-                if (this.ExistingCommands.TryGetValue(expandedCommandName, out commandTypeOfExistingCommand))
+                if (this.ExistingCommands.TryGetValue(expandedCommandName, out CommandTypes commandTypeOfExistingCommand))
                 {
                     // Since the alias already exists, write an error.
                     SessionStateException aliasExists =
@@ -394,8 +393,7 @@ namespace Microsoft.PowerShell.Commands
             if (isLiteralPath)
             {
                 paths = new Collection<string>();
-                PSDriveInfo drive;
-                paths.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(this.Path, out provider, out drive));
+                paths.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(this.Path, out provider, out PSDriveInfo drive));
             }
             else
             {

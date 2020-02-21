@@ -926,9 +926,7 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(er);
             }
 
-            ProviderInfo provider = null;
-            PSDriveInfo drive;
-            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_path, out provider, out drive);
+            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_path, out ProviderInfo provider, out PSDriveInfo drive);
 
             if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
             {
@@ -992,9 +990,6 @@ namespace Microsoft.PowerShell.Commands
                     _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, _author);
                 }
 
-                FileStream fileStream;
-                StreamWriter streamWriter;
-                FileInfo readOnlyFileInfo;
 
                 // Now open the output file...
                 PathUtils.MasterStreamOpen(
@@ -1005,9 +1000,9 @@ namespace Microsoft.PowerShell.Commands
                     Append: false,
                     Force: false,
                     NoClobber: false,
-                    fileStream: out fileStream,
-                    streamWriter: out streamWriter,
-                    readOnlyFileInfo: out readOnlyFileInfo,
+                    fileStream: out FileStream fileStream,
+                    streamWriter: out StreamWriter streamWriter,
+                    readOnlyFileInfo: out FileInfo readOnlyFileInfo,
                     isLiteralPath: false
                 );
 

@@ -1205,9 +1205,8 @@ namespace System.Management.Automation
                             Group g = groups[groupName];
                             if (g.Success)
                             {
-                                int keyInt;
 
-                                if (Int32.TryParse(groupName, out keyInt))
+                                if (Int32.TryParse(groupName, out int keyInt))
                                     h.Add(keyInt, g.ToString());
                                 else
                                     h.Add(groupName, g.ToString());

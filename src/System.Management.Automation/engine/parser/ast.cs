@@ -1486,9 +1486,7 @@ namespace System.Management.Automation.Language
         private string GetWithInputHandlingForInvokeCommandImpl(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple)
         {
             // do not add "$input |" to complex pipelines
-            string unused1;
-            string unused2;
-            var pipelineAst = GetSimplePipeline(false, out unused1, out unused2);
+            var pipelineAst = GetSimplePipeline(false, out string unused1, out string unused2);
             if (pipelineAst == null)
             {
                 return (usingVariablesTuple == null)
@@ -6665,22 +6663,19 @@ namespace System.Management.Automation.Language
 
             if (resourceNames != null)
             {
-                object resourceNameEvaluated;
-                IsConstantValueVisitor.IsConstant(resourceNames.Value, out resourceNameEvaluated, true, true);
+                IsConstantValueVisitor.IsConstant(resourceNames.Value, out object resourceNameEvaluated, true, true);
                 resourceNamesTyped = LanguagePrimitives.ConvertTo<string[]>(resourceNameEvaluated);
             }
 
             if (moduleNames != null)
             {
-                object moduleNameEvaluated;
-                IsConstantValueVisitor.IsConstant(moduleNames.Value, out moduleNameEvaluated, true, true);
+                IsConstantValueVisitor.IsConstant(moduleNames.Value, out object moduleNameEvaluated, true, true);
                 moduleNamesTyped = LanguagePrimitives.ConvertTo<ModuleSpecification[]>(moduleNameEvaluated);
             }
 
             if (moduleVersion != null)
             {
-                object moduleVersionEvaluated;
-                IsConstantValueVisitor.IsConstant(moduleVersion.Value, out moduleVersionEvaluated, true, true);
+                IsConstantValueVisitor.IsConstant(moduleVersion.Value, out object moduleVersionEvaluated, true, true);
                 if (moduleVersionEvaluated is double)
                 {
                     // this happens in case -ModuleVersion 1.0, then use extent text for that.
@@ -6734,9 +6729,7 @@ namespace System.Management.Automation.Language
                 {
                     s_configurationBuildInParameters = new List<ParameterAst>();
 
-                    Token[] tokens;
-                    ParseError[] errors;
-                    var sba = Parser.ParseInput(ConfigurationBuildInParametersStr, out tokens, out errors);
+                    var sba = Parser.ParseInput(ConfigurationBuildInParametersStr, out Token[] tokens, out ParseError[] errors);
                     if (sba != null)
                     {
                         foreach (var parameterAst in sba.ParamBlock.Parameters)
@@ -6759,9 +6752,7 @@ namespace System.Management.Automation.Language
                 {
                     s_configurationBuildInParameterAttrAsts = new List<AttributeAst>();
 
-                    Token[] tokens;
-                    ParseError[] errors;
-                    var sba = Parser.ParseInput(ConfigurationBuildInParametersStr, out tokens, out errors);
+                    var sba = Parser.ParseInput(ConfigurationBuildInParametersStr, out Token[] tokens, out ParseError[] errors);
                     if (sba != null)
                     {
                         if (s_configurationBuildInParameters == null)
@@ -6794,8 +6785,6 @@ namespace System.Management.Automation.Language
                 if (s_configurationExtraParameterStatements == null)
                 {
                     s_configurationExtraParameterStatements = new List<StatementAst>();
-                    Token[] tokens;
-                    ParseError[] errors;
                     var sba = Parser.ParseInput(@"
                         Import-Module Microsoft.PowerShell.Management -Verbose:$false
                         Import-Module PSDesiredStateConfiguration -Verbose:$false
@@ -6803,7 +6792,7 @@ namespace System.Management.Automation.Language
                         $toBody.Remove(""OutputPath"")
                         $toBody.Remove(""ConfigurationData"")
                         $ConfigurationData = $psboundparameters[""ConfigurationData""]
-                        $Outputpath = $psboundparameters[""Outputpath""]", out tokens, out errors);
+                        $Outputpath = $psboundparameters[""Outputpath""]", out Token[] tokens, out ParseError[] errors);
                     if (sba != null)
                     {
                         foreach (var statementAst in sba.EndBlock.Statements)
@@ -8292,8 +8281,7 @@ namespace System.Management.Automation.Language
         {
             if (_type == null)
             {
-                Exception e;
-                Type type = _typeDefinitionAst != null ? _typeDefinitionAst.Type : TypeResolver.ResolveTypeName(this, out e);
+                Type type = _typeDefinitionAst != null ? _typeDefinitionAst.Type : TypeResolver.ResolveTypeName(this, out Exception e);
                 if (type != null)
                 {
                     try
@@ -9244,9 +9232,7 @@ namespace System.Management.Automation.Language
                 return rhs;
             }
 
-            IEnumerable<PropertyInfo> tupleAccessPath;
-            bool localInTuple;
-            Type targetType = GetVariableType(compiler, out tupleAccessPath, out localInTuple);
+            Type targetType = GetVariableType(compiler, out IEnumerable<PropertyInfo> tupleAccessPath, out bool localInTuple);
 
             // Value types must be copied on assignment (if they are mutable), boxed or not.  This preserves language
             // semantics from V1/V2, and might be slightly more natural for a dynamic language.

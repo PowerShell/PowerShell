@@ -1180,9 +1180,8 @@ namespace System.Management.Automation.Runspaces
                 _computerName = computerName.Trim();
 
                 // According to RFC3513, an Ipv6 address in URI needs to be bracketed.
-                IPAddress ipAddress = null;
 
-                bool isIPAddress = IPAddress.TryParse(_computerName, out ipAddress);
+                bool isIPAddress = IPAddress.TryParse(_computerName, out IPAddress ipAddress);
                 if (isIPAddress && ipAddress.AddressFamily == AddressFamily.InterNetworkV6)
                 {
                     if ((_computerName.Length == 0) || (_computerName[0] != '['))
@@ -3407,10 +3406,8 @@ namespace System.Management.Automation.Runspaces
 
                 if (HcsOpenComputeSystem(ContainerId, ref ComputeSystem, ref resultString) == 0)
                 {
-                    Type computeSystemPropertiesType;
-                    Type hostComputeInteropType;
 
-                    GetHostComputeInteropTypes(out computeSystemPropertiesType, out hostComputeInteropType);
+                    GetHostComputeInteropTypes(out Type computeSystemPropertiesType, out Type hostComputeInteropType);
 
                     MethodInfo getComputeSystemPropertiesInfo = hostComputeInteropType.GetMethod("HcsGetComputeSystemProperties");
 

@@ -737,8 +737,7 @@ namespace System.Management.Automation.Remoting.Client
 
                     // Start a thread pool thread to process callbacks.
 #if !UNIX
-                    WindowsIdentity identityToImpersonate;
-                    Utils.TryGetWindowsImpersonatedIdentity(out identityToImpersonate);
+                    Utils.TryGetWindowsImpersonatedIdentity(out WindowsIdentity identityToImpersonate);
 
                     Utils.QueueWorkItemWithImpersonation(
                         identityToImpersonate,

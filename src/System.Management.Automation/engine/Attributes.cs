@@ -1096,10 +1096,9 @@ namespace System.Management.Automation
                     typeof(int).Name);
             }
 
-            object resultValue;
             IComparable dynamicZero = 0;
 
-            if (LanguagePrimitives.TryConvertTo(element, commonType, out resultValue))
+            if (LanguagePrimitives.TryConvertTo(element, commonType, out object resultValue))
             {
                 element = resultValue;
 

@@ -36,8 +36,7 @@ namespace System.Management.Automation
                 variablePath = variablePath.CloneAndSetLocal();
             }
 
-            SessionStateScope scope;
-            PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
+            PSVariable var = sessionState.GetVariableItem(variablePath, out SessionStateScope scope, origin);
 
             if (var == null)
             {
@@ -175,17 +174,14 @@ namespace System.Management.Automation
         {
             if (!variablePath.IsVariable)
             {
-                CmdletProviderContext contextOut;
-                SessionStateScope scopeOut;
                 SessionStateInternal ss = executionContext.EngineSessionState;
-                return ss.GetVariableValueFromProvider(variablePath, out contextOut, out scopeOut, ss.CurrentScope.ScopeOrigin);
+                return ss.GetVariableValueFromProvider(variablePath, out CmdletProviderContext contextOut, out SessionStateScope scopeOut, ss.CurrentScope.ScopeOrigin);
             }
 
             SessionStateInternal sessionState = executionContext.EngineSessionState;
             CommandOrigin origin = sessionState.CurrentScope.ScopeOrigin;
 
-            SessionStateScope scope;
-            PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
+            PSVariable var = sessionState.GetVariableItem(variablePath, out SessionStateScope scope, origin);
 
             if (var != null)
             {
@@ -213,8 +209,7 @@ namespace System.Management.Automation
             SessionStateInternal sessionState = executionContext.EngineSessionState;
             CommandOrigin origin = sessionState.CurrentScope.ScopeOrigin;
 
-            SessionStateScope scope;
-            PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
+            PSVariable var = sessionState.GetVariableItem(variablePath, out SessionStateScope scope, origin);
 
             if (var == null)
             {

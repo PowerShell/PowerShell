@@ -179,10 +179,9 @@ namespace System.Management.Automation
         {
             try
             {
-                object[] newarguments;
                 var getterCollection = new Collection<int> { _getterIndex };
                 var methods = ComUtil.GetMethodInformationArray(_typeInfo, getterCollection, false);
-                var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out newarguments);
+                var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out object[] newarguments);
 
                 object returnValue = ComInvoker.Invoke(target as IDispatch,
                                                        bestMethod.DispId,
@@ -253,10 +252,9 @@ namespace System.Management.Automation
         /// <param name="arguments">Parameters to set this property.</param>
         internal void SetValue(object target, object setValue, object[] arguments)
         {
-            object[] newarguments;
             var setterCollection = new Collection<int> { _hasSetterByRef ? _setterByRefIndex : _setterIndex };
             var methods = ComUtil.GetMethodInformationArray(_typeInfo, setterCollection, true);
-            var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out newarguments);
+            var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out object[] newarguments);
 
             var finalArguments = new object[newarguments.Length + 1];
             for (int i = 0; i < newarguments.Length; i++)

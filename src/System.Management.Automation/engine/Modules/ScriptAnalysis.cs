@@ -43,8 +43,7 @@ namespace System.Management.Automation
 
             string scriptContent = ReadScript(path);
 
-            ParseError[] errors;
-            var moduleAst = (new Parser()).Parse(path, scriptContent, null, out errors, ParseMode.ModuleAnalysis);
+            var moduleAst = (new Parser()).Parse(path, scriptContent, null, out ParseError[] errors, ParseMode.ModuleAnalysis);
 
             // Don't bother analyzing if there are syntax errors (we don't do semantic analysis which would
             // detect other errors that we also might choose to ignore, but it's slower.)

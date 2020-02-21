@@ -31,8 +31,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 propertyNames[count] = column.StaleObjectPropertyName();
                 displayNames[count] = column.DisplayName();
-                object columnValue = null;
-                types[count] = column.GetValueType(liveObject, out columnValue);
+                types[count] = column.GetValueType(liveObject, out object columnValue);
 
                 // Add a property to the stale object since a column value has been evaluated to get column's type.
                 staleObject.Properties.Add(new PSNoteProperty(propertyNames[count], columnValue));

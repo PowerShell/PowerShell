@@ -400,8 +400,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             CimSessionWrapper wrapper = new CimSessionWrapper(
                 sessionId, instanceId, name, computerName, session, protocol);
 
-            HashSet<CimSessionWrapper> objects;
-            if (!this.curCimSessionsByComputerName.TryGetValue(computerName, out objects))
+            if (!this.curCimSessionsByComputerName.TryGetValue(computerName, out HashSet<CimSessionWrapper> objects))
             {
                 objects = new HashSet<CimSessionWrapper>();
                 this.curCimSessionsByComputerName.Add(computerName, objects);
@@ -501,8 +500,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             DebugHelper.WriteLog("name {0}, computername {1}, id {2}, instanceId {3}", 1, name, computerName, wrapper.SessionId, wrapper.InstanceId);
 
-            HashSet<CimSessionWrapper> objects;
-            if (this.curCimSessionsByComputerName.TryGetValue(computerName, out objects))
+            if (this.curCimSessionsByComputerName.TryGetValue(computerName, out HashSet<CimSessionWrapper> objects))
             {
                 objects.Remove(wrapper);
             }
@@ -741,8 +739,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns>Session wrapper.</returns>
         internal CimSessionWrapper QuerySession(CimSession cimsession)
         {
-            CimSessionWrapper wrapper;
-            this.curCimSessionWrapper.TryGetValue(cimsession, out wrapper);
+            this.curCimSessionWrapper.TryGetValue(cimsession, out CimSessionWrapper wrapper);
             return wrapper;
         }
 
@@ -848,8 +845,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         public static CimSessionState GetCimSessionState()
         {
-            CimSessionState state = null;
-            cimSessions.TryGetValue(CurrentRunspaceId, out state);
+            cimSessions.TryGetValue(CurrentRunspaceId, out CimSessionState state);
             return state;
         }
 

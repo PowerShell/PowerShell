@@ -560,8 +560,7 @@ namespace Microsoft.PowerShell.Commands
             // we need to compute the properties
             foreach (MshParameter p in mshParameterList)
             {
-                string propertyNotFoundMsg = null;
-                EvaluateSortingExpression(p, inputObject, entry.orderValues, errors, out propertyNotFoundMsg, ref entry.comparable);
+                EvaluateSortingExpression(p, inputObject, entry.orderValues, errors, out string propertyNotFoundMsg, ref entry.comparable);
                 if (!string.IsNullOrEmpty(propertyNotFoundMsg))
                 {
                     propertyNotFoundMsgs.Add(propertyNotFoundMsg);

@@ -82,8 +82,7 @@ namespace System.Management.Automation.Language
 
         internal void AddType(Parser parser, TypeDefinitionAst typeDefinitionAst)
         {
-            TypeLookupResult result;
-            if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
+            if (_typeTable.TryGetValue(typeDefinitionAst.Name, out TypeLookupResult result))
             {
                 if (result.ExternalNamespaces != null)
                 {
@@ -107,8 +106,7 @@ namespace System.Management.Automation.Language
 
         internal void AddTypeFromUsingModule(Parser parser, TypeDefinitionAst typeDefinitionAst, PSModuleInfo moduleInfo)
         {
-            TypeLookupResult result;
-            if (_typeTable.TryGetValue(typeDefinitionAst.Name, out result))
+            if (_typeTable.TryGetValue(typeDefinitionAst.Name, out TypeLookupResult result))
             {
                 if (result.ExternalNamespaces != null)
                 {
@@ -147,15 +145,13 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            TypeLookupResult typeLookupResult;
-            _typeTable.TryGetValue(typeName.Name, out typeLookupResult);
+            _typeTable.TryGetValue(typeName.Name, out TypeLookupResult typeLookupResult);
             return typeLookupResult;
         }
 
         public Ast LookupVariable(VariablePath variablePath)
         {
-            Ast variabledefinition;
-            _variableTable.TryGetValue(variablePath.UserPath, out variabledefinition);
+            _variableTable.TryGetValue(variablePath.UserPath, out Ast variabledefinition);
             return variabledefinition;
         }
     }
@@ -465,8 +461,7 @@ namespace System.Management.Automation.Language
             object fullyQualifiedName;
             if (usingStatementAst.ModuleSpecification != null)
             {
-                object resultObject;
-                if (!IsConstantValueVisitor.IsConstant(usingStatementAst.ModuleSpecification, out resultObject, forAttribute: false, forRequires: true))
+                if (!IsConstantValueVisitor.IsConstant(usingStatementAst.ModuleSpecification, out object resultObject, forAttribute: false, forRequires: true))
                 {
                     isConstant = false;
                     return null;
@@ -537,10 +532,7 @@ namespace System.Management.Automation.Language
         {
             if (usingStatementAst.UsingStatementKind == UsingStatementKind.Module)
             {
-                Exception exception;
-                bool wildcardCharactersUsed;
-                bool isConstant;
-                var moduleInfo = GetModulesFromUsingModule(usingStatementAst, out exception, out wildcardCharactersUsed, out isConstant);
+                var moduleInfo = GetModulesFromUsingModule(usingStatementAst, out Exception exception, out bool wildcardCharactersUsed, out bool isConstant);
                 if (!isConstant)
                 {
                     _parser.ReportError(usingStatementAst.Extent,
@@ -653,12 +645,11 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                Exception e;
                 TypeResolutionState trs = genericArgumentCount > 0 || isAttribute
                     ? new TypeResolutionState(_typeResolutionState, genericArgumentCount, isAttribute)
                     : _typeResolutionState;
 
-                var type = TypeResolver.ResolveTypeNameWithContext(typeName, out e, null, trs);
+                var type = TypeResolver.ResolveTypeNameWithContext(typeName, out Exception e, null, trs);
                 if (type == null)
                 {
                     if (_symbolTable.GetCurrentTypeDefinitionAst() != null)

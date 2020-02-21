@@ -872,7 +872,6 @@ namespace System.Management.Automation
             {
                 // See if the value needs to be encoded in a collection
 
-                bool coercionRequired;
                 object encodedValue =
                     EncodeCollection(
                         parameter,
@@ -881,7 +880,7 @@ namespace System.Management.Automation
                         parameterType,
                         parameterValue,
                         false,
-                        out coercionRequired);
+                        out bool coercionRequired);
 
                 if (encodedValue == null || coercionRequired)
                 {
@@ -1203,7 +1202,6 @@ namespace System.Management.Automation
                             bindingTracer.WriteLine(
                                 "ENCODING arg into collection");
 
-                            bool ignored = false;
                             result =
                                 EncodeCollection(
                                     argument,
@@ -1212,7 +1210,7 @@ namespace System.Management.Automation
                                     toType,
                                     currentValue,
                                     (collectionTypeInfo.ElementType != null),
-                                    out ignored);
+                                    out bool ignored);
 
                             break;
                         }

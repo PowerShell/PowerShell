@@ -159,8 +159,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             var expectedPropertyValueAsString = (string)LanguagePrimitives.ConvertTo(propertyValue, typeof(string), CultureInfo.InvariantCulture);
             var expectedPropertyValueAsPowerShellWildcard = WildcardPattern.Get(expectedPropertyValueAsString, WildcardOptions.IgnoreCase);
 
-            bool needsClientSideFiltering; // not used because for simplicity all results go through post-filtering
-            var expectedPropertyValueAsWqlWildcard = CimQuery.WildcardToWqlLikeOperand(expectedPropertyValueAsPowerShellWildcard, out needsClientSideFiltering);
+            // not used because for simplicity all results go through post-filtering
+            var expectedPropertyValueAsWqlWildcard = CimQuery.WildcardToWqlLikeOperand(expectedPropertyValueAsPowerShellWildcard, out bool needsClientSideFiltering);
 
             string condition = string.Format(
                 CultureInfo.InvariantCulture,

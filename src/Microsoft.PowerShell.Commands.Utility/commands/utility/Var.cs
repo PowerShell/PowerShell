@@ -333,9 +333,8 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (string varName in _name)
             {
-                bool wasFiltered = false;
                 List<PSVariable> matchingVariables =
-                    GetMatchingVariables(varName, Scope, out wasFiltered, /*quiet*/ false);
+                    GetMatchingVariables(varName, Scope, out bool wasFiltered, /*quiet*/ false);
 
                 matchingVariables.Sort(
                     delegate (PSVariable left, PSVariable right)
@@ -1115,10 +1114,9 @@ namespace Microsoft.PowerShell.Commands
             foreach (string varName in Name)
             {
                 // First look for existing variables to set.
-                bool wasFiltered = false;
 
                 List<PSVariable> matchingVariables =
-                    GetMatchingVariables(varName, Scope, out wasFiltered, /* quiet */ false);
+                    GetMatchingVariables(varName, Scope, out bool wasFiltered, /* quiet */ false);
 
                 if (matchingVariables.Count == 0 && !wasFiltered)
                 {
@@ -1277,10 +1275,9 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (string varName in Name)
             {
-                bool wasFiltered = false;
 
                 List<PSVariable> matchingVariables =
-                    GetMatchingVariables(varName, Scope, out wasFiltered, /* quiet */ false);
+                    GetMatchingVariables(varName, Scope, out bool wasFiltered, /* quiet */ false);
 
                 if (matchingVariables.Count == 0 && !wasFiltered)
                 {

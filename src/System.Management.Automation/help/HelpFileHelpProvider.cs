@@ -121,16 +121,13 @@ namespace System.Management.Automation
 
                     foreach (string psModulePath in allPSModulePaths)
                     {
-                        Version moduleVersionFromPath = null;
-                        string moduleName = null;
-                        GetModuleNameAndVersion(psModulePath, fileFullName, out moduleName, out moduleVersionFromPath);
+                        GetModuleNameAndVersion(psModulePath, fileFullName, out string moduleName, out Version moduleVersionFromPath);
 
                         // Skip modules whose root we cannot determine or which do not have versions.
                         if (moduleVersionFromPath != null && moduleName != null)
                         {
-                            Tuple<string, Version> moduleVersion = null;
                             Tuple<string, string> key = new Tuple<string, string>(moduleName, fileName);
-                            if (modulesAndVersion.TryGetValue(key, out moduleVersion))
+                            if (modulesAndVersion.TryGetValue(key, out Tuple<string, Version> moduleVersion))
                             {
                                 // Consider for further processing only if the help file name is same.
                                 if (filesProcessed.Contains(fileName))
@@ -280,8 +277,7 @@ namespace System.Management.Automation
 
                 moduleName = pathParts[0];
                 var potentialVersion = pathParts[1];
-                Version result;
-                if (Version.TryParse(potentialVersion, out result))
+                if (Version.TryParse(potentialVersion, out Version result))
                 {
                     moduleVersion = result;
                 }

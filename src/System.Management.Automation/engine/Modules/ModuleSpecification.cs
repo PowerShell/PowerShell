@@ -237,8 +237,7 @@ namespace Microsoft.PowerShell.Commands
             result = null;
             try
             {
-                Hashtable hashtable;
-                if (Parser.TryParseAsConstantHashtable(input, out hashtable))
+                if (Parser.TryParseAsConstantHashtable(input, out Hashtable hashtable))
                 {
                     result = new ModuleSpecification(hashtable);
                     return true;

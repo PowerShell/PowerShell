@@ -49,8 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
 
                         autosizeNodeFound = true;
-                        bool tempVal;
-                        if (!this.ReadBooleanNode(n, out tempVal))
+                        if (!this.ReadBooleanNode(n, out bool tempVal))
                         {
                             return null; // fatal error
                         }
@@ -212,8 +211,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
 
                         widthNodeFound = true;
-                        int wVal;
-                        if (ReadPositiveIntegerValue(n, out wVal))
+                        if (ReadPositiveIntegerValue(n, out int wVal))
                         {
                             chd.width = wVal;
                         }

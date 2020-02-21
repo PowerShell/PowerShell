@@ -46,11 +46,10 @@ namespace System.Management.Automation
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
             if (etwEnabled) CommandDiscoveryEventSource.Log.GetModuleExportedCommandsStart(modulePath);
 
-            DateTime lastWriteTime;
-            ModuleCacheEntry moduleCacheEntry;
-            if (GetModuleEntryFromCache(modulePath, out lastWriteTime, out moduleCacheEntry))
+            if (GetModuleEntryFromCache(modulePath, out DateTime lastWriteTime, out ModuleCacheEntry moduleCacheEntry))
             {
-                if (etwEnabled) CommandDiscoveryEventSource.Log.GetModuleExportedCommandsStop(modulePath);
+                if (etwEnabled)
+                    CommandDiscoveryEventSource.Log.GetModuleExportedCommandsStop(modulePath);
                 return moduleCacheEntry.Commands;
             }
 
@@ -109,8 +108,7 @@ namespace System.Management.Automation
                         return null;
                     }
 
-                    Version version;
-                    if (ModuleUtils.IsModuleInVersionSubdirectory(modulePath, out version))
+                    if (ModuleUtils.IsModuleInVersionSubdirectory(modulePath, out Version version))
                     {
                         var versionInManifest = LanguagePrimitives.ConvertTo<Version>(moduleManifestProperties["ModuleVersion"]);
                         if (version != versionInManifest)
@@ -282,8 +280,7 @@ namespace System.Management.Automation
             // An empty string is one way of saying "no exported commands".
             if (command.Length != 0)
             {
-                CommandTypes commandTypes;
-                if (result.TryGetValue(command, out commandTypes))
+                if (result.TryGetValue(command, out CommandTypes commandTypes))
                 {
                     commandTypes |= commandTypeToAdd;
                 }
@@ -431,8 +428,7 @@ namespace System.Management.Automation
                 ModuleIntrinsics.Tracer.WriteLine("Started analysis: {0}", modulePath);
                 CallGetModuleDashList(context, modulePath);
 
-                ModuleCacheEntry moduleCacheEntry;
-                if (GetModuleEntryFromCache(modulePath, out lastWriteTime, out moduleCacheEntry))
+                if (GetModuleEntryFromCache(modulePath, out lastWriteTime, out ModuleCacheEntry moduleCacheEntry))
                 {
                     return moduleCacheEntry.Commands;
                 }
@@ -462,9 +458,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static ConcurrentDictionary<string, TypeAttributes> GetExportedClasses(string modulePath, ExecutionContext context)
         {
-            DateTime lastWriteTime;
-            ModuleCacheEntry moduleCacheEntry;
-            if (GetModuleEntryFromCache(modulePath, out lastWriteTime, out moduleCacheEntry) && moduleCacheEntry.TypesAnalyzed)
+            if (GetModuleEntryFromCache(modulePath, out DateTime lastWriteTime, out ModuleCacheEntry moduleCacheEntry) && moduleCacheEntry.TypesAnalyzed)
             {
                 return moduleCacheEntry.Types;
             }
@@ -499,9 +493,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            DateTime lastWriteTime;
-            ModuleCacheEntry moduleCacheEntry;
-            GetModuleEntryFromCache(module.Path, out lastWriteTime, out moduleCacheEntry);
+            GetModuleEntryFromCache(module.Path, out DateTime lastWriteTime, out ModuleCacheEntry moduleCacheEntry);
 
             var realExportedCommands = module.ExportedCommands;
             var realExportedClasses = module.GetExportedTypeDefinitions();
@@ -520,8 +512,7 @@ namespace System.Management.Automation
                 {
                     var commandName = pair.Key;
                     var realCommandType = pair.Value.CommandType;
-                    CommandTypes commandType;
-                    if (!exportedCommands.TryGetValue(commandName, out commandType) || commandType != realCommandType)
+                    if (!exportedCommands.TryGetValue(commandName, out CommandTypes commandType) || commandType != realCommandType)
                     {
                         needToUpdate = true;
                         break;
@@ -533,8 +524,7 @@ namespace System.Management.Automation
                 {
                     var className = pair.Key;
                     var realTypeAttributes = pair.Value.TypeAttributes;
-                    TypeAttributes typeAttributes;
-                    if (!exportedClasses.TryGetValue(className, out typeAttributes) ||
+                    if (!exportedClasses.TryGetValue(className, out TypeAttributes typeAttributes) ||
                         typeAttributes != realTypeAttributes)
                     {
                         needToUpdate = true;
@@ -781,8 +771,7 @@ namespace System.Management.Automation
                 {
                     var otherModuleName = otherEntryPair.Key;
                     var otherEntry = otherEntryPair.Value;
-                    ModuleCacheEntry thisEntry;
-                    if (Entries.TryGetValue(otherModuleName, out thisEntry))
+                    if (Entries.TryGetValue(otherModuleName, out ModuleCacheEntry thisEntry))
                     {
                         if (otherEntry.LastWriteTime > thisEntry.LastWriteTime)
                         {

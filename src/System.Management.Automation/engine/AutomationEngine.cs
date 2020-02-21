@@ -88,8 +88,7 @@ namespace System.Management.Automation
 
         internal ScriptBlock ParseScriptBlock(string script, string fileName, bool addToHistory)
         {
-            ParseError[] errors;
-            var ast = EngineParser.Parse(fileName, script, null, out errors, ParseMode.Default);
+            var ast = EngineParser.Parse(fileName, script, null, out ParseError[] errors, ParseMode.Default);
 
             if (addToHistory)
             {

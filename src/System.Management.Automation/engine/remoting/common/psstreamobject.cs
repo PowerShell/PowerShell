@@ -292,10 +292,8 @@ namespace System.Management.Automation.Remoting.Internal
                             // populated in the RecommendedAction field
                             if (errorRecord.ErrorDetails != null && !string.IsNullOrEmpty(errorRecord.ErrorDetails.RecommendedAction))
                             {
-                                string computerName;
-                                Guid jobInstanceId;
                                 GetIdentifierInfo(errorRecord.ErrorDetails.RecommendedAction,
-                                                  out jobInstanceId, out computerName);
+                                                  out Guid jobInstanceId, out string computerName);
 
                                 errorRecord = new RemotingErrorRecord(errorRecord,
                                                                       new OriginInfo(computerName, Guid.Empty,
@@ -350,10 +348,8 @@ namespace System.Management.Automation.Remoting.Internal
                         RemotingProgressRecord remotingProgressRecord = progressRecord as RemotingProgressRecord;
                         if (remotingProgressRecord == null)
                         {
-                            Guid jobInstanceId;
-                            string computerName;
-                            GetIdentifierInfo(progressRecord.CurrentOperation, out jobInstanceId,
-                                              out computerName);
+                            GetIdentifierInfo(progressRecord.CurrentOperation, out Guid jobInstanceId,
+                                              out string computerName);
                             OriginInfo info = new OriginInfo(computerName, Guid.Empty, jobInstanceId);
                             progressRecord = new RemotingProgressRecord(progressRecord, info);
                         }
@@ -395,9 +391,7 @@ namespace System.Management.Automation.Remoting.Internal
                             // populated in the Source field
                             if (!string.IsNullOrEmpty(informationRecord.Source))
                             {
-                                string computerName;
-                                Guid jobInstanceId;
-                                GetIdentifierInfo(informationRecord.Source, out jobInstanceId, out computerName);
+                                GetIdentifierInfo(informationRecord.Source, out Guid jobInstanceId, out string computerName);
                                 informationRecord = new RemotingInformationRecord(informationRecord,
                                                                       new OriginInfo(computerName, Guid.Empty,
                                                                                      jobInstanceId));

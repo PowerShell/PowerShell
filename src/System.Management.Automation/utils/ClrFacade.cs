@@ -266,8 +266,7 @@ namespace System.Management.Automation
                         if (!match.Success) { return SecurityZone.NoZone; }
 
                         string zoneId = match.Groups[0].Value;
-                        SecurityZone result;
-                        return LanguagePrimitives.TryConvertTo(zoneId, out result) ? result : SecurityZone.NoZone;
+                        return LanguagePrimitives.TryConvertTo(zoneId, out SecurityZone result) ? result : SecurityZone.NoZone;
                     }
                 }
             }

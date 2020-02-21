@@ -451,8 +451,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(SessionDataStructureHandler.StateMachine.State == RemoteSessionState.EstablishedAndKeyReceived,
                 "Sever must be in EstablishedAndKeyReceived state before you can attempt to send encrypted session key");
 
-            string encryptedSessionKey = null;
-            bool ret = _cryptoHelper.ExportEncryptedSessionKey(out encryptedSessionKey);
+            bool ret = _cryptoHelper.ExportEncryptedSessionKey(out string encryptedSessionKey);
 
             RemoteSessionStateMachineEventArgs args = null;
             if (!ret)

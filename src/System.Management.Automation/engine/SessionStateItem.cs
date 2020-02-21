@@ -248,8 +248,6 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                 new CmdletProviderContext(context);
@@ -263,8 +261,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {
@@ -461,16 +459,14 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException("paths");
                 }
 
-                ProviderInfo provider = null;
-                CmdletProvider providerInstance = null;
 
                 Collection<string> providerPaths =
                     Globber.GetGlobbedProviderPathsFromMonadPath(
                         path,
                         true,
                         context,
-                        out provider,
-                        out providerInstance);
+                        out ProviderInfo provider,
+                        out CmdletProvider providerInstance);
 
                 if (providerPaths != null)
                 {
@@ -595,8 +591,6 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                new CmdletProviderContext(context);
@@ -610,8 +604,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {
@@ -937,8 +931,6 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                new CmdletProviderContext(context);
@@ -952,8 +944,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {
@@ -1264,8 +1256,6 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                new CmdletProviderContext(context);
@@ -1279,8 +1269,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {

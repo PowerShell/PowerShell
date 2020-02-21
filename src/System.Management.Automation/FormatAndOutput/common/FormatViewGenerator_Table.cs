@@ -154,8 +154,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             TableHeaderInfo thi = new TableHeaderInfo();
 
-            bool dummy;
-            List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(_tableBody, so, out dummy);
+            List<TableRowItemDefinition> activeRowItemDefinitionList = GetActiveTableRowDefinition(_tableBody, so, out bool dummy);
             thi.hideHeader = this.HideHeaders;
             thi.repeatHeader = this.RepeatHeader;
 

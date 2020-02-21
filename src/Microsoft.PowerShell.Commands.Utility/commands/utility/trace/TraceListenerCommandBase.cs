@@ -116,8 +116,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Find the matching and unmatched trace sources.
 
-            Collection<string> notMatched = null;
-            Collection<PSTraceSource> matchingSources = GetMatchingTraceSource(sourceNames, false, out notMatched);
+            Collection<PSTraceSource> matchingSources = GetMatchingTraceSource(sourceNames, false, out Collection<string> notMatched);
 
             if (preConfigure)
             {
@@ -235,8 +234,7 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             // Resolve the file path
-                            ProviderInfo provider = null;
-                            resolvedPaths = this.SessionState.Path.GetResolvedProviderPathFromPSPath(FileListener, out provider);
+                            resolvedPaths = this.SessionState.Path.GetResolvedProviderPathFromPSPath(FileListener, out ProviderInfo provider);
 
                             // We can only export aliases to the file system
                             if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
@@ -253,14 +251,12 @@ namespace Microsoft.PowerShell.Commands
                             // Since the file wasn't found, just make a provider-qualified path out if it
                             // and use that.
 
-                            PSDriveInfo driveInfo = null;
-                            ProviderInfo provider = null;
                             string path =
                                 this.SessionState.Path.GetUnresolvedProviderPathFromPSPath(
                                     FileListener,
                                     new CmdletProviderContext(this.Context),
-                                    out provider,
-                                    out driveInfo);
+                                    out ProviderInfo provider,
+                                    out PSDriveInfo driveInfo);
 
                             // We can only export aliases to the file system
                             if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))

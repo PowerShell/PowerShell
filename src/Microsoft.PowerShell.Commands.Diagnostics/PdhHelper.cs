@@ -995,8 +995,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             // Now, call retrieve the localized names of the object and the counter by index:
-            string objNameLocalized;
-            res = LookupPerfNameByIndex(pathElts.MachineName, (uint)objIndex, out objNameLocalized);
+            res = LookupPerfNameByIndex(pathElts.MachineName, (uint)objIndex, out string objNameLocalized);
             if (res != 0)
             {
                 return res;
@@ -1004,8 +1003,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             pathElts.ObjectName = objNameLocalized;
 
-            string ctrNameLocalized;
-            res = LookupPerfNameByIndex(pathElts.MachineName, (uint)counterIndex, out ctrNameLocalized);
+            res = LookupPerfNameByIndex(pathElts.MachineName, (uint)counterIndex, out string ctrNameLocalized);
             if (res != 0)
             {
                 return res;
@@ -1073,8 +1071,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                 if (instances.Count == 0)
                 {
-                    string pathCandidate;
-                    if (IsPathValid(ref pathElts, out pathCandidate))
+                    if (IsPathValid(ref pathElts, out string pathCandidate))
                     {
                         validPaths.Add(pathCandidate);
                     }
@@ -1086,8 +1083,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                         pathElts.InstanceName = instanceName;
                         pathElts.InstanceIndex = 0;
 
-                        string pathCandidate;
-                        if (IsPathValid(ref pathElts, out pathCandidate))
+                        if (IsPathValid(ref pathElts, out string pathCandidate))
                         {
                             validPaths.Add(pathCandidate);
                         }
@@ -1112,8 +1108,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             foreach (string counterPath in validPaths)
             {
-                IntPtr counterHandle;
-                res = PdhAddCounter(_hQuery, counterPath, IntPtr.Zero, out counterHandle);
+                res = PdhAddCounter(_hQuery, counterPath, IntPtr.Zero, out IntPtr counterHandle);
                 if (res == 0)
                 {
                     CounterHandleNInstance chi = new CounterHandleNInstance();
@@ -1186,20 +1181,17 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             {
                 IntPtr counterTypePtr = new IntPtr(0);
                 UInt32 counterType = (UInt32)PerformanceCounterType.RawBase;
-                UInt32 defaultScale = 0;
-                UInt64 timeBase = 0;
 
                 IntPtr hCounter = _consumerPathToHandleAndInstanceMap[path].hCounter;
                 Debug.Assert(hCounter != null);
 
-                res = GetCounterInfoPlus(hCounter, out counterType, out defaultScale, out timeBase);
+                res = GetCounterInfoPlus(hCounter, out counterType, out uint defaultScale, out ulong timeBase);
                 if (res != 0)
                 {
                     // Console.WriteLine ("GetCounterInfoPlus for " + path + " failed with " + res);
                 }
 
-                PDH_RAW_COUNTER rawValue;
-                res = PdhGetRawCounterValue(hCounter, out counterTypePtr, out rawValue);
+                res = PdhGetRawCounterValue(hCounter, out counterTypePtr, out PDH_RAW_COUNTER rawValue);
                 if (res != 0)
                 {
                     samplesArr[sampleIndex++] = new PerformanceCounterSample(path,
@@ -1225,11 +1217,10 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                 DateTime dt = new DateTime(DateTime.FromFileTimeUtc(dtFT).Ticks, DateTimeKind.Local);
 
-                PDH_FMT_COUNTERVALUE_DOUBLE fmtValueDouble;
                 res = PdhGetFormattedCounterValue(hCounter,
                                                   PdhFormat.PDH_FMT_DOUBLE | PdhFormat.PDH_FMT_NOCAP100,
                                                   out counterTypePtr,
-                                                  out fmtValueDouble);
+                                                  out PDH_FMT_COUNTERVALUE_DOUBLE fmtValueDouble);
                 if (res != 0)
                 {
                     samplesArr[sampleIndex++] = new PerformanceCounterSample(path,

@@ -530,9 +530,8 @@ namespace Microsoft.PowerShell
 
         internal bool? ExecuteCommandAndGetResultAsBool(string command)
         {
-            Exception unused = null;
 
-            bool? result = ExecuteCommandAndGetResultAsBool(command, out unused);
+            bool? result = ExecuteCommandAndGetResultAsBool(command, out Exception unused);
 
             return result;
         }

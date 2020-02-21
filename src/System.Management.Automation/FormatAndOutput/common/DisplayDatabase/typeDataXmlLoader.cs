@@ -217,9 +217,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             // load file into XML document
             XmlDocument newDocument = null;
-            bool isFullyTrusted = false;
 
-            newDocument = LoadXmlDocumentFromFileLoadingInfo(authorizationManager, host, out isFullyTrusted);
+            newDocument = LoadXmlDocumentFromFileLoadingInfo(authorizationManager, host, out bool isFullyTrusted);
 
             // If we're not in a locked-down environment, types and formatting are allowed based just on the authorization
             // manager. If we are in a locked-down environment, additionally check the system policy.
@@ -1187,8 +1186,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
 
                         propertyCountForTableFound = true;
-                        int val;
-                        if (ReadPositiveIntegerValue(n, out val))
+                        if (ReadPositiveIntegerValue(n, out int val))
                         {
                             db.defaultSettingsSection.shapeSelectionDirectives.PropertyCountForTable = val;
                         }
@@ -1840,9 +1838,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // optional pre-load and binding verification
             if (this.VerifyStringResources)
             {
-                DisplayResourceManagerCache.LoadingResult result;
-                DisplayResourceManagerCache.AssemblyBindingStatus bindingStatus;
-                this.displayResourceManagerCache.VerifyResource(resource, out result, out bindingStatus);
+                this.displayResourceManagerCache.VerifyResource(resource, out DisplayResourceManagerCache.LoadingResult result, out DisplayResourceManagerCache.AssemblyBindingStatus bindingStatus);
                 if (result != DisplayResourceManagerCache.LoadingResult.NoError)
                 {
                     ReportStringResourceFailure(resource, result, bindingStatus);

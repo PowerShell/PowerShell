@@ -477,8 +477,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 return null;
             }
 
-            TObjectInstance inputInstance;
-            if (!LanguagePrimitives.TryConvertTo(inputCollection[0], CultureInfo.InvariantCulture, out inputInstance))
+            if (!LanguagePrimitives.TryConvertTo(inputCollection[0], CultureInfo.InvariantCulture, out TObjectInstance inputInstance))
             {
                 return null;
             }
@@ -555,14 +554,13 @@ namespace Microsoft.PowerShell.Cmdletization
 
         private TSession GetImpliedSession()
         {
-            TSession sessionFromImportModule;
             // When being called from a CIM activity, this will be invoked as
             // a function so there will be no module info
             if (this.PSModuleInfo != null)
             {
                 if (PSPrimitiveDictionary.TryPathGet(
                         this.PSModuleInfo.PrivateData as IDictionary,
-                        out sessionFromImportModule,
+                        out TSession sessionFromImportModule,
                         ScriptWriter.PrivateDataKey_CmdletsOverObjects,
                         ScriptWriter.PrivateDataKey_DefaultSession))
                 {

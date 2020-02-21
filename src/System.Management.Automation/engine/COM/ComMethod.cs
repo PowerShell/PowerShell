@@ -66,9 +66,8 @@ namespace System.Management.Automation
 
             foreach (int index in _methods)
             {
-                IntPtr pFuncDesc;
 
-                _typeInfo.GetFuncDesc(index, out pFuncDesc);
+                _typeInfo.GetFuncDesc(index, out IntPtr pFuncDesc);
                 COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
                 string signature = ComUtil.GetMethodSignatureFromFuncDesc(_typeInfo, funcdesc, false);
@@ -90,9 +89,8 @@ namespace System.Management.Automation
         {
             try
             {
-                object[] newarguments;
                 var methods = ComUtil.GetMethodInformationArray(_typeInfo, _methods, false);
-                var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out newarguments);
+                var bestMethod = (ComMethodInformation)Adapter.GetBestMethodAndArguments(Name, methods, arguments, out object[] newarguments);
 
                 object returnValue = ComInvoker.Invoke(method.baseObject as IDispatch,
                                                        bestMethod.DispId, newarguments,

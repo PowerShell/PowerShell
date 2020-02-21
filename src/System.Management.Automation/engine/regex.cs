@@ -410,8 +410,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public string ToWql()
         {
-            bool needsClientSideFiltering;
-            string likeOperand = Microsoft.PowerShell.Cmdletization.Cim.WildcardPatternToCimQueryParser.Parse(this, out needsClientSideFiltering);
+            string likeOperand = Microsoft.PowerShell.Cmdletization.Cim.WildcardPatternToCimQueryParser.Parse(this, out bool needsClientSideFiltering);
             if (!needsClientSideFiltering)
             {
                 return likeOperand;
@@ -966,8 +965,7 @@ namespace System.Management.Automation
                     patternPositionsForCurrentStringPosition.StringPosition = currentStringPosition;
                     patternPositionsForNextStringPosition.StringPosition = currentStringPosition + 1;
 
-                    int patternPosition;
-                    while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition))
+                    while (patternPositionsForCurrentStringPosition.MoveNext(out int patternPosition))
                     {
                         _patternElements[patternPosition].ProcessStringCharacter(
                             currentStringCharacter,
@@ -983,8 +981,7 @@ namespace System.Management.Automation
                     patternPositionsForNextStringPosition = tmp;
                 }
 
-                int patternPosition2;
-                while (patternPositionsForCurrentStringPosition.MoveNext(out patternPosition2))
+                while (patternPositionsForCurrentStringPosition.MoveNext(out int patternPosition2))
                 {
                     _patternElements[patternPosition2].ProcessEndOfString(
                         patternPosition2,

@@ -2436,10 +2436,9 @@ namespace System.Management.Automation.Remoting.Client
             const int ERROR_INSUFFICIENT_BUFFER = 122;
 
             string returnval = string.Empty;
-            int bufferSize = 0;
             // calculate buffer size required
             if (ERROR_INSUFFICIENT_BUFFER != WSManGetSessionOptionAsString(wsManAPIHandle,
-                option, 0, null, out bufferSize))
+                option, 0, null, out int bufferSize))
             {
                 return returnval;
             }
@@ -2451,9 +2450,8 @@ namespace System.Management.Automation.Remoting.Client
             byte[] msgBufferPtr = new byte[bufferSizeInBytes];
 
             // Now get the actual value
-            int messageLength;
             if (0 != WSManGetSessionOptionAsString(wsManAPIHandle,
-                    option, bufferSizeInBytes, msgBufferPtr, out messageLength))
+                    option, bufferSizeInBytes, msgBufferPtr, out int messageLength))
             {
                 return returnval;
             }
@@ -2786,10 +2784,9 @@ namespace System.Management.Automation.Remoting.Client
             string langCode = CultureInfo.CurrentUICulture.Name;
 
             string returnval = string.Empty;
-            int bufferSize = 0;
             // calculate buffer size required
             if (ERROR_INSUFFICIENT_BUFFER != WSManGetErrorMessage(wsManAPIHandle,
-                    0, langCode, errorCode, 0, null, out bufferSize))
+                    0, langCode, errorCode, 0, null, out int bufferSize))
             {
                 return returnval;
             }
@@ -2801,9 +2798,8 @@ namespace System.Management.Automation.Remoting.Client
             byte[] msgBufferPtr = new byte[bufferSizeInBytes];
 
             // Now get the actual value
-            int messageLength;
             if (0 != WSManGetErrorMessage(wsManAPIHandle,
-                    0, langCode, errorCode, bufferSizeInBytes, msgBufferPtr, out messageLength))
+                    0, langCode, errorCode, bufferSizeInBytes, msgBufferPtr, out int messageLength))
             {
                 return returnval;
             }

@@ -158,8 +158,7 @@ namespace System.Management.Automation
 
                             if (resource.ImplementedAs != null)
                             {
-                                ImplementedAsType impType;
-                                if (Enum.TryParse<ImplementedAsType>(resource.ImplementedAs.ToString(), out impType))
+                                if (Enum.TryParse<ImplementedAsType>(resource.ImplementedAs.ToString(), out ImplementedAsType impType))
                                     resourceInfo.ImplementedAs = impType;
                             }
 

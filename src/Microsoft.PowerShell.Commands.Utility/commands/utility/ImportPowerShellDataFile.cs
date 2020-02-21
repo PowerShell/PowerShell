@@ -49,9 +49,7 @@ namespace Microsoft.PowerShell.Commands
                 var resolved = PathUtils.ResolveFilePath(path, this, _isLiteralPath);
                 if (!string.IsNullOrEmpty(resolved) && System.IO.File.Exists(resolved))
                 {
-                    Token[] tokens;
-                    ParseError[] errors;
-                    var ast = Parser.ParseFile(resolved, out tokens, out errors);
+                    var ast = Parser.ParseFile(resolved, out Token[] tokens, out ParseError[] errors);
                     if (errors.Length > 0)
                     {
                         WriteInvalidDataFileError(resolved, "CouldNotParseAsPowerShellDataFile");

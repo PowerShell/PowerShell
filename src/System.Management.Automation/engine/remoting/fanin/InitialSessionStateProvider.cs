@@ -1608,10 +1608,9 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            string driveName;
             foreach (string path in paths)
             {
-                if (!state.Path.IsPSAbsolute(path, out driveName))
+                if (!state.Path.IsPSAbsolute(path, out string driveName))
                 {
                     throw new InvalidOperationException(StringUtil.Format(RemotingErrorIdStrings.DISCPathsMustBeAbsolute, key, path, filePath));
                 }
@@ -1719,9 +1718,8 @@ namespace System.Management.Automation.Remoting
                 Runspace.DefaultRunspace = RunspaceFactory.CreateRunspace();
                 Runspace.DefaultRunspace.Open();
 
-                string scriptName;
                 ExternalScriptInfo script = DISCUtils.GetScriptInfoForFile(Runspace.DefaultRunspace.ExecutionContext,
-                    configFile, out scriptName);
+                    configFile, out string scriptName);
 
                 _configHash = DISCUtils.LoadConfigFile(Runspace.DefaultRunspace.ExecutionContext, script);
                 MergeRoleRulesIntoConfigHash(roleVerifier);
@@ -2532,8 +2530,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Ensure we have the hashtable representing the current command being modified
-            Hashtable parameterModifications;
-            if (!commandModifications.TryGetValue(commandName, out parameterModifications))
+            if (!commandModifications.TryGetValue(commandName, out Hashtable parameterModifications))
             {
                 parameterModifications = new Hashtable(StringComparer.OrdinalIgnoreCase);
                 commandModifications[commandName] = parameterModifications;
@@ -2599,8 +2596,7 @@ namespace System.Management.Automation.Remoting
             else
             {
                 // Extract the module name and ensure it is part of the ISS modules to process list.
-                string moduleName;
-                Utils.ParseCommandName(command, out moduleName);
+                Utils.ParseCommandName(command, out string moduleName);
                 if (!string.IsNullOrEmpty(moduleName) && !moduleNames.Contains(moduleName))
                 {
                     moduleNames.Add(moduleName);

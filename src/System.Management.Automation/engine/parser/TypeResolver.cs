@@ -454,8 +454,7 @@ namespace System.Management.Automation.Language
 
         internal static bool TryResolveType(string typeName, out Type type)
         {
-            Exception exception;
-            type = ResolveType(typeName, out exception);
+            type = ResolveType(typeName, out Exception exception);
             return (type != null);
         }
 
@@ -693,8 +692,7 @@ namespace System.Management.Automation.Language
 
         internal static Type Lookup(ITypeName typeName, TypeResolutionState typeResolutionState)
         {
-            Type result;
-            s_cache.TryGetValue(Tuple.Create(typeName, typeResolutionState), out result);
+            s_cache.TryGetValue(Tuple.Create(typeName, typeResolutionState), out Type result);
             return result;
         }
 
@@ -903,8 +901,7 @@ namespace System.Management.Automation
             }
             else
             {
-                Type resultType = null;
-                builtinTypeAccelerators.TryGetValue(expectedKey, out resultType);
+                builtinTypeAccelerators.TryGetValue(expectedKey, out Type resultType);
                 if (resultType != null && resultType == type)
                 {
                     return expectedKey;

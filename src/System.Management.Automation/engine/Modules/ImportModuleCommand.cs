@@ -439,8 +439,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                PSModuleInfo alreadyLoadedModule = null;
-                TryGetFromModuleTable(module.Path, out alreadyLoadedModule);
+                TryGetFromModuleTable(module.Path, out PSModuleInfo alreadyLoadedModule);
                 if (!BaseForce && DoesAlreadyLoadedModuleSatisfyConstraints(alreadyLoadedModule))
                 {
                     AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, alreadyLoadedModule);
@@ -470,8 +469,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    PSModuleInfo moduleToRemove;
-                    if (TryGetFromModuleTable(module.Path, out moduleToRemove, toRemove: true))
+                    if (TryGetFromModuleTable(module.Path, out PSModuleInfo moduleToRemove, toRemove: true))
                     {
                         Dbg.Assert(BaseForce, "We should only remove and reload if -Force was specified");
                         RemoveModule(moduleToRemove);
@@ -487,11 +485,10 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (File.Exists(module.Path))
                             {
-                                bool found;
                                 moduleToProcess = LoadModule(module.Path, null, this.BasePrefix, /*SessionState*/ null,
                                                              ref importModuleOptions,
                                                              ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.NullOnFirstError,
-                                                             out found);
+                                                             out bool found);
                                 Dbg.Assert(found, "Module should be found when referenced by its absolute path");
                             }
                         }
@@ -573,11 +570,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (!moduleLoaded)
             {
-                bool found;
                 PSModuleInfo module = LoadBinaryModule(false, null, null, suppliedAssembly, null, null,
                     importModuleOptions,
                     ManifestProcessingFlags.LoadElements | ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.NullOnFirstError,
-                    this.BasePrefix, false /* loadTypes */ , false /* loadFormats */, out found);
+                    this.BasePrefix, false /* loadTypes */ , false /* loadFormats */, out bool found);
 
                 if (found && module != null)
                 {
@@ -676,8 +672,7 @@ namespace Microsoft.PowerShell.Commands
                         // If the path names a file, load that file...
                         if (File.Exists(rootedPath))
                         {
-                            PSModuleInfo moduleToRemove;
-                            if (TryGetFromModuleTable(rootedPath, out moduleToRemove, toRemove: true))
+                            if (TryGetFromModuleTable(rootedPath, out PSModuleInfo moduleToRemove, toRemove: true))
                             {
                                 RemoveModule(moduleToRemove);
                             }
@@ -955,8 +950,7 @@ namespace Microsoft.PowerShell.Commands
                     Version remoteModuleVersion = null;
                     if (versionProperty != null)
                     {
-                        Version tmp;
-                        if (LanguagePrimitives.TryConvertTo<Version>(versionProperty.Value, CultureInfo.InvariantCulture, out tmp))
+                        if (LanguagePrimitives.TryConvertTo<Version>(versionProperty.Value, CultureInfo.InvariantCulture, out Version tmp))
                         {
                             remoteModuleVersion = tmp;
                         }
@@ -1140,8 +1134,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            object[] array;
-            if (LanguagePrimitives.TryConvertTo(value, CultureInfo.InvariantCulture, out array))
+            if (LanguagePrimitives.TryConvertTo(value, CultureInfo.InvariantCulture, out object[] array))
             {
                 return array.Length != 0;
             }
@@ -1180,8 +1173,7 @@ namespace Microsoft.PowerShell.Commands
 
             int numberOfSubmodules = 0;
 
-            string[] nestedModules = null;
-            if (LanguagePrimitives.TryConvertTo(manifestData["NestedModules"], CultureInfo.InvariantCulture, out nestedModules))
+            if (LanguagePrimitives.TryConvertTo(manifestData["NestedModules"], CultureInfo.InvariantCulture, out string[] nestedModules))
             {
                 if (nestedModules != null)
                 {
@@ -1192,8 +1184,7 @@ namespace Microsoft.PowerShell.Commands
             object rootModuleValue = manifestData["RootModule"];
             if (rootModuleValue != null)
             {
-                string rootModule;
-                if (LanguagePrimitives.TryConvertTo(rootModuleValue, CultureInfo.InvariantCulture, out rootModule))
+                if (LanguagePrimitives.TryConvertTo(rootModuleValue, CultureInfo.InvariantCulture, out string rootModule))
                 {
                     if (!string.IsNullOrEmpty(rootModule))
                     {
@@ -1204,8 +1195,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 object moduleToProcessValue = manifestData["ModuleToProcess"];
-                string moduleToProcess;
-                if (moduleToProcessValue != null && LanguagePrimitives.TryConvertTo(moduleToProcessValue, CultureInfo.InvariantCulture, out moduleToProcess))
+                if (moduleToProcessValue != null && LanguagePrimitives.TryConvertTo(moduleToProcessValue, CultureInfo.InvariantCulture, out string moduleToProcess))
                 {
                     if (!string.IsNullOrEmpty(moduleToProcess))
                     {
@@ -1310,8 +1300,7 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            List<string> goodEntries;
-            if (!this.GetListOfStringsFromData(manifestData, null, goodKey, 0, out goodEntries))
+            if (!this.GetListOfStringsFromData(manifestData, null, goodKey, 0, out List<string> goodEntries))
             {
                 goodEntries = new List<string>();
             }
@@ -1321,8 +1310,7 @@ namespace Microsoft.PowerShell.Commands
                 goodEntries = new List<string>();
             }
 
-            List<string> badEntries;
-            if (!this.GetListOfStringsFromData(manifestData, null, badKey, 0, out badEntries))
+            if (!this.GetListOfStringsFromData(manifestData, null, badKey, 0, out List<string> badEntries))
             {
                 badEntries = new List<string>();
             }
@@ -1440,13 +1428,11 @@ namespace Microsoft.PowerShell.Commands
                 Hashtable localizedData = null;
                 {
                     ScriptBlockAst scriptBlockAst = null;
-                    Token[] throwAwayTokens;
-                    ParseError[] parseErrors;
                     scriptBlockAst = Parser.ParseInput(
                         remoteCimModule.MainManifest.FileData,
                         temporaryModuleManifestPath,
-                        out throwAwayTokens,
-                        out parseErrors);
+                        out Token[] throwAwayTokens,
+                        out ParseError[] parseErrors);
                     if ((scriptBlockAst == null) ||
                         (parseErrors != null && parseErrors.Length > 0))
                     {
@@ -1474,8 +1460,7 @@ namespace Microsoft.PowerShell.Commands
                 //
 
                 // recalculate module path, taking into account the module version fetched above
-                Version moduleVersion;
-                if (!GetScalarFromData<Version>(data, null, "ModuleVersion", 0, out moduleVersion))
+                if (!GetScalarFromData<Version>(data, null, "ModuleVersion", 0, out Version moduleVersion))
                 {
                     moduleVersion = null;
                 }
@@ -1546,10 +1531,9 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (PSModuleInfo nestedModule in moduleInfo.NestedModules)
                     {
-                        Type cmdletAdapter;
                         bool gotCmdletAdapter = PSPrimitiveDictionary.TryPathGet(
                             nestedModule.PrivateData as IDictionary,
-                            out cmdletAdapter,
+                            out Type cmdletAdapter,
                             "CmdletsOverObjects",
                             "CmdletAdapter");
                         Dbg.Assert(gotCmdletAdapter, "PrivateData from cdxml should always include cmdlet adapter");
@@ -1586,10 +1570,9 @@ namespace Microsoft.PowerShell.Commands
                     Dbg.Assert(moduleInfo.NestedModules.Count > 0, "Remote discovery should always produce a 'manifest' module with some nested modules");
                     foreach (PSModuleInfo nestedModule in moduleInfo.NestedModules)
                     {
-                        IDictionary cmdletsOverObjectsPrivateData;
                         bool cmdletsOverObjectsPrivateDataWasFound = PSPrimitiveDictionary.TryPathGet<IDictionary>(
                             nestedModule.PrivateData as IDictionary,
-                            out cmdletsOverObjectsPrivateData,
+                            out IDictionary cmdletsOverObjectsPrivateData,
                             ScriptWriter.PrivateDataKey_CmdletsOverObjects);
                         Dbg.Assert(cmdletsOverObjectsPrivateDataWasFound, "Cmdletization should always set the PrivateData properly");
                         cmdletsOverObjectsPrivateData[ScriptWriter.PrivateDataKey_DefaultSession] = cimSession;

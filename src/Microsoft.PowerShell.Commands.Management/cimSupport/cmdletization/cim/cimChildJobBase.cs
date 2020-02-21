@@ -930,9 +930,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 (this.JobContext.ShouldProcessOptimization != MshCommandRuntime.ShouldProcessPossibleOptimization.AutoYes_CanSkipShouldProcessCall) ||
                 (this.JobContext.CmdletInvocationContext.CmdletDefinitionContext.ClientSideShouldProcess),
                 "MI layer should not call us when AutoYes_CanSkipShouldProcessCall optimization is in effect");
-            Exception exceptionThrownOnCmdletThread;
-            ShouldProcessReason shouldProcessReason;
-            bool shouldProcessResponse = this.ShouldProcess(verboseDescription, verboseWarning, caption, out shouldProcessReason, out exceptionThrownOnCmdletThread);
+            bool shouldProcessResponse = this.ShouldProcess(verboseDescription, verboseWarning, caption, out ShouldProcessReason shouldProcessReason, out Exception exceptionThrownOnCmdletThread);
             if (exceptionThrownOnCmdletThread != null)
             {
                 return CimResponseType.NoToAll;

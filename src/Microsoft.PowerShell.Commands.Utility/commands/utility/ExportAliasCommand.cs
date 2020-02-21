@@ -381,8 +381,6 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private StreamWriter OpenFile(out FileInfo readOnlyFileInfo)
         {
-            StreamWriter result = null;
-            FileStream file = null;
             readOnlyFileInfo = null;
 
             PathUtils.MasterStreamOpen(
@@ -393,8 +391,8 @@ namespace Microsoft.PowerShell.Commands
                 Append,
                 Force,
                 NoClobber,
-                out file,
-                out result,
+                out FileStream file,
+                out StreamWriter result,
                 out readOnlyFileInfo,
                 _isLiteralPath
                 );

@@ -113,8 +113,7 @@ namespace Microsoft.PowerShell.Commands
             if (ext.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 // Create a script info for loading the file...
-                string scriptName;
-                scriptInfo = GetScriptInfoForFile(filePath, out scriptName, false);
+                scriptInfo = GetScriptInfoForFile(filePath, out string scriptName, false);
 
                 // we should reserve the Context.ModuleBeingProcessed unchanged after loadModuleManifest(), otherwise the module won't be importable next time.
                 PSModuleInfo module;
@@ -154,12 +153,9 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(errorRecord);
                         }
 
-                        Hashtable data = null;
-                        Hashtable localizedData = null;
                         bool containerErrors = false;
-                        LoadModuleManifestData(scriptInfo, ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out data, out localizedData, ref containerErrors);
-                        ModuleSpecification[] nestedModules;
-                        GetScalarFromData(data, scriptInfo.Path, "NestedModules", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out nestedModules);
+                        LoadModuleManifestData(scriptInfo, ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out Hashtable data, out Hashtable localizedData, ref containerErrors);
+                        GetScalarFromData(data, scriptInfo.Path, "NestedModules", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out ModuleSpecification[] nestedModules);
                         if (nestedModules != null)
                         {
                             foreach (ModuleSpecification nestedModule in nestedModules)
@@ -183,8 +179,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        ModuleSpecification[] requiredModules;
-                        GetScalarFromData(data, scriptInfo.Path, "RequiredModules", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out requiredModules);
+                        GetScalarFromData(data, scriptInfo.Path, "RequiredModules", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out ModuleSpecification[] requiredModules);
                         if (requiredModules != null)
                         {
                             foreach (ModuleSpecification requiredModule in requiredModules)
@@ -200,8 +195,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        string[] fileListPaths;
-                        GetScalarFromData(data, scriptInfo.Path, "FileList", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out fileListPaths);
+                        GetScalarFromData(data, scriptInfo.Path, "FileList", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out string[] fileListPaths);
                         if (fileListPaths != null)
                         {
                             foreach (string fileListPath in fileListPaths)
@@ -216,8 +210,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        ModuleSpecification[] moduleListModules;
-                        GetScalarFromData(data, scriptInfo.Path, "ModuleList", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out moduleListModules);
+                        GetScalarFromData(data, scriptInfo.Path, "ModuleList", ManifestProcessingFlags.WriteErrors | ManifestProcessingFlags.WriteWarnings, out ModuleSpecification[] moduleListModules);
                         if (moduleListModules != null)
                         {
                             foreach (ModuleSpecification moduleListModule in moduleListModules)
@@ -262,8 +255,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (UnauthorizedAccessException) { }
                 catch (ArgumentException) { }
 
-                Version version;
-                if (parent != null && Version.TryParse(parent.Name, out version))
+                if (parent != null && Version.TryParse(parent.Name, out Version version))
                 {
                     if (!version.Equals(module.Version))
                     {

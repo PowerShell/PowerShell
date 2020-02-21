@@ -88,13 +88,12 @@ namespace System.Management.Automation
             // To support named parameters you just have un-comment the following line
             UnboundArguments = BindParameters(UnboundArguments);
 
-            ParameterBindingException parameterBindingError;
             UnboundArguments =
                 BindPositionalParameters(
                     UnboundArguments,
                     uint.MaxValue,
                     uint.MaxValue,
-                    out parameterBindingError);
+                    out ParameterBindingException parameterBindingError);
 
             try
             {

@@ -1096,8 +1096,7 @@ namespace System.Management.Automation
             string verboseDescription = StringUtil.Format(CommandBaseStrings.ShouldProcessMessage,
                 MyInvocation.MyCommand.Name,
                 target);
-            ShouldProcessReason shouldProcessReason;
-            return DoShouldProcess(verboseDescription, null, null, out shouldProcessReason);
+            return DoShouldProcess(verboseDescription, null, null, out ShouldProcessReason shouldProcessReason);
         }
 
         /// <summary>
@@ -1191,8 +1190,7 @@ namespace System.Management.Automation
                 action,
                 target,
                 null);
-            ShouldProcessReason shouldProcessReason;
-            return DoShouldProcess(verboseDescription, null, null, out shouldProcessReason);
+            return DoShouldProcess(verboseDescription, null, null, out ShouldProcessReason shouldProcessReason);
         }
 
         /// <summary>
@@ -1296,12 +1294,11 @@ namespace System.Management.Automation
             string verboseWarning,
             string caption)
         {
-            ShouldProcessReason shouldProcessReason;
             return DoShouldProcess(
                 verboseDescription,
                 verboseWarning,
                 caption,
-                out shouldProcessReason);
+                out ShouldProcessReason shouldProcessReason);
         }
 
         /// <summary>
@@ -2957,8 +2954,7 @@ namespace System.Management.Automation
 
                 if (!_isConfirmPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out defaultUsed);
+                    _confirmPreference = Context.GetEnumPreference(SpecialVariables.ConfirmPreferenceVarPath, _confirmPreference, out bool defaultUsed);
                     _isConfirmPreferenceCached = true;
                 }
 
@@ -2991,9 +2987,8 @@ namespace System.Management.Automation
 
                 if (!_isDebugPreferenceCached)
                 {
-                    bool defaultUsed = false;
 
-                    _debugPreference = Context.GetEnumPreference(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out defaultUsed);
+                    _debugPreference = Context.GetEnumPreference(SpecialVariables.DebugPreferenceVarPath, _debugPreference, out bool defaultUsed);
 
                     // If the host couldn't prompt for the debug action anyways, change it to 'Continue'.
                     // This lets hosts still see debug output without having to implement the prompting logic.
@@ -3056,11 +3051,10 @@ namespace System.Management.Automation
 
                 if (!_isVerbosePreferenceCached)
                 {
-                    bool defaultUsed = false;
                     _verbosePreference = Context.GetEnumPreference(
                         SpecialVariables.VerbosePreferenceVarPath,
                         _verbosePreference,
-                        out defaultUsed);
+                        out bool defaultUsed);
                 }
 
                 return _verbosePreference;
@@ -3093,8 +3087,7 @@ namespace System.Management.Automation
 
                 if (!_isWarningPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _warningPreference = Context.GetEnumPreference(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out defaultUsed);
+                    _warningPreference = Context.GetEnumPreference(SpecialVariables.WarningPreferenceVarPath, _warningPreference, out bool defaultUsed);
                 }
 
                 return _warningPreference;
@@ -3224,8 +3217,7 @@ namespace System.Management.Automation
             {
                 if (!IsWhatIfFlagSet && !_isWhatIfPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out defaultUsed);
+                    _whatIfFlag = Context.GetBooleanPreference(SpecialVariables.WhatIfPreferenceVarPath, _whatIfFlag, out bool defaultUsed);
                     _isWhatIfPreferenceCached = true;
                 }
 
@@ -3262,8 +3254,7 @@ namespace System.Management.Automation
 
                 if (!_isErrorActionPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _errorAction = Context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out defaultUsed);
+                    _errorAction = Context.GetEnumPreference(SpecialVariables.ErrorActionPreferenceVarPath, _errorAction, out bool defaultUsed);
                     _isErrorActionPreferenceCached = true;
                 }
 
@@ -3297,8 +3288,7 @@ namespace System.Management.Automation
 
                 if (!_isProgressPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _progressPreference = Context.GetEnumPreference(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out defaultUsed);
+                    _progressPreference = Context.GetEnumPreference(SpecialVariables.ProgressPreferenceVarPath, _progressPreference, out bool defaultUsed);
                     _isProgressPreferenceCached = true;
                 }
 
@@ -3334,8 +3324,7 @@ namespace System.Management.Automation
 
                 if (!_isInformationPreferenceCached)
                 {
-                    bool defaultUsed = false;
-                    _informationPreference = Context.GetEnumPreference(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out defaultUsed);
+                    _informationPreference = Context.GetEnumPreference(SpecialVariables.InformationPreferenceVarPath, _informationPreference, out bool defaultUsed);
                     _isInformationPreferenceCached = true;
                 }
 

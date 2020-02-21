@@ -2838,12 +2838,12 @@ namespace Microsoft.PowerShell.Commands
         {
             IntPtr lpBuffer = IntPtr.Zero;
             configStructure = default(NativeMethods.QUERY_SERVICE_CONFIG);
-            DWORD bufferSize, bufferSizeNeeded = 0;
+            DWORD bufferSize;
             bool status = NativeMethods.QueryServiceConfigW(
                 hSCManager: hService,
                 lpServiceConfig: lpBuffer,
                 cbBufSize: 0,
-                pcbBytesNeeded: out bufferSizeNeeded);
+                pcbBytesNeeded: out uint bufferSizeNeeded);
 
             if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
             {
@@ -2874,14 +2874,14 @@ namespace Microsoft.PowerShell.Commands
         {
             IntPtr lpBuffer = IntPtr.Zero;
             configStructure = default(T);
-            DWORD bufferSize, bufferSizeNeeded = 0;
+            DWORD bufferSize;
 
             bool status = NativeMethods.QueryServiceConfig2W(
                 hService: hService,
                 dwInfoLevel: infolevel,
                 lpBuffer: lpBuffer,
                 cbBufSize: 0,
-                pcbBytesNeeded: out bufferSizeNeeded);
+                pcbBytesNeeded: out uint bufferSizeNeeded);
 
             if (status != true && Marshal.GetLastWin32Error() != ERROR_INSUFFICIENT_BUFFER)
             {

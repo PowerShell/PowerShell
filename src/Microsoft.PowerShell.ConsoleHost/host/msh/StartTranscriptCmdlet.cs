@@ -285,9 +285,8 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    ProviderInfo provider = null;
                     Collection<string> filePaths =
-                        SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out provider);
+                        SessionState.Path.GetResolvedProviderPathFromPSPath(filePath, out ProviderInfo provider);
 
                     if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
                     {
@@ -310,11 +309,9 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(path))
             {
                 CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(this);
-                ProviderInfo provider = null;
-                PSDriveInfo drive = null;
                 path =
                     SessionState.Path.GetUnresolvedProviderPathFromPSPath(
-                        filePath, cmdletProviderContext, out provider, out drive);
+                        filePath, cmdletProviderContext, out ProviderInfo provider, out PSDriveInfo drive);
                 cmdletProviderContext.ThrowFirstErrorOrDoNothing();
                 if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
                 {

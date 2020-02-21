@@ -78,9 +78,8 @@ namespace System.Management.Automation
 
         internal bool TryGetLocalVariable(string name, bool fromNewOrSet, out PSVariable result)
         {
-            int index;
             name = VariableAnalysis.GetUnaliasedVariableName(name);
-            if (_nameToIndexMap.TryGetValue(name, out index) && (fromNewOrSet || IsValueSet(index)))
+            if (_nameToIndexMap.TryGetValue(name, out int index) && (fromNewOrSet || IsValueSet(index)))
             {
                 result = new LocalVariable(name, this, index);
                 return true;
@@ -92,9 +91,8 @@ namespace System.Management.Automation
 
         internal bool TrySetParameter(string name, object value)
         {
-            int index;
             name = VariableAnalysis.GetUnaliasedVariableName(name);
-            if (_nameToIndexMap.TryGetValue(name, out index))
+            if (_nameToIndexMap.TryGetValue(name, out int index))
             {
                 SetValue(index, value);
                 return true;
@@ -105,9 +103,8 @@ namespace System.Management.Automation
 
         internal PSVariable TrySetVariable(string name, object value)
         {
-            int index;
             name = VariableAnalysis.GetUnaliasedVariableName(name);
-            if (_nameToIndexMap.TryGetValue(name, out index))
+            if (_nameToIndexMap.TryGetValue(name, out int index))
             {
                 SetValue(index, value);
                 return new LocalVariable(name, this, index);

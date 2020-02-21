@@ -33,11 +33,8 @@ namespace Microsoft.PowerShell.Commands
         internal static void WriteToPs1Xml(PSCmdlet cmdlet, List<ExtendedTypeDefinition> typeDefinitions,
             string filepath, bool force, bool noclobber, bool writeScriptBlock, bool isLiteralPath)
         {
-            StreamWriter streamWriter;
-            FileStream fileStream;
-            FileInfo fileInfo;
             PathUtils.MasterStreamOpen(cmdlet, filepath, "ascii", true, false, force, noclobber,
-                out fileStream, out streamWriter, out fileInfo, isLiteralPath);
+                out FileStream fileStream, out StreamWriter streamWriter, out FileInfo fileInfo, isLiteralPath);
 
             try
             {
@@ -78,8 +75,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (FormatViewDefinition viewdefinition in typedefinition.FormatViewDefinition)
                 {
-                    List<ExtendedTypeDefinition> viewList;
-                    if (!views.TryGetValue(viewdefinition.InstanceId, out viewList))
+                    if (!views.TryGetValue(viewdefinition.InstanceId, out List<ExtendedTypeDefinition> viewList))
                     {
                         viewList = new List<ExtendedTypeDefinition>();
                         views.Add(viewdefinition.InstanceId, viewList);

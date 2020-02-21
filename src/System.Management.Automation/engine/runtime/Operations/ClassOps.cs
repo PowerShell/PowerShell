@@ -42,13 +42,12 @@ namespace System.Management.Automation.Internal
 
         internal void RegisterRunspace()
         {
-            SessionStateInternal sessionStateInMap = null;
             Runspace runspaceToUse = Runspace.DefaultRunspace;
             SessionStateInternal sessionStateToUse = runspaceToUse.ExecutionContext.EngineSessionState;
 
             // Different threads will operate on different key/value pairs (default-runspace/session-state pairs),
             // and a ConditionalWeakTable itself is thread safe, so there won't be race condition here.
-            if (!_stateMap.TryGetValue(runspaceToUse, out sessionStateInMap))
+            if (!_stateMap.TryGetValue(runspaceToUse, out SessionStateInternal sessionStateInMap))
             {
                 // If the key doesn't exist yet, add it
                 _stateMap.Add(runspaceToUse, sessionStateToUse);

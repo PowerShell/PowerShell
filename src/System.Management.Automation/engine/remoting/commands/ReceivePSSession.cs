@@ -424,9 +424,8 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (System.Management.Automation.RuntimeException e)
             {
-                int errorCode;
                 string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName,
-                    QueryRunspaces.ExtractMessage(e.InnerException, out errorCode));
+                    QueryRunspaces.ExtractMessage(e.InnerException, out int errorCode));
                 string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "ReceivePSSessionQueryForSessionFailed");
                 Exception reason = new RuntimeException(msg, e.InnerException);
                 ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
@@ -486,8 +485,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Connect the session here.  If it fails (connectedSession == null) revert to the
                     // reconstruct method.
-                    Exception ex;
-                    PSSession connectedSession = ConnectSession(locSession, out ex);
+                    PSSession connectedSession = ConnectSession(locSession, out Exception ex);
 
                     if (connectedSession != null)
                     {
@@ -691,8 +689,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(session.Name, VerbsCommunications.Receive))
             {
-                Exception ex;
-                if (ConnectSession(session, out ex) == null)
+                if (ConnectSession(session, out Exception ex) == null)
                 {
                     // Unable to connect runspace.  If this was a *reconnect* runspace then try
                     // obtaining a connectable runspace directly from the server and do a

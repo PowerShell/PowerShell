@@ -746,13 +746,12 @@ namespace System.Management.Automation
             // Perform pre-processing of command for over the wire debugging commands.
             if (_serverRemoteDebugger != null)
             {
-                DebuggerCommandArgument commandArgument;
                 bool terminateImmediate = false;
                 Collection<object> preProcessOutput = new Collection<object>();
 
                 try
                 {
-                    var result = PreProcessDebuggerCommand(powershell.Commands, _serverRemoteDebugger, preProcessOutput, out commandArgument);
+                    var result = PreProcessDebuggerCommand(powershell.Commands, _serverRemoteDebugger, preProcessOutput, out DebuggerCommandArgument commandArgument);
 
                     switch (result)
                     {
@@ -1633,8 +1632,7 @@ namespace System.Management.Automation
             {
                 get
                 {
-                    InvokePump pump;
-                    if (!_invokePumpStack.TryPeek(out pump))
+                    if (!_invokePumpStack.TryPeek(out InvokePump pump))
                     {
                         pump = null;
                     }
@@ -1653,8 +1651,7 @@ namespace System.Management.Automation
             /// <param name="driver">ServerPowerShellDriver.</param>
             public void InvokeDriverAsync(ServerPowerShellDriver driver)
             {
-                InvokePump currentPump;
-                if (!_invokePumpStack.TryPeek(out currentPump))
+                if (!_invokePumpStack.TryPeek(out InvokePump currentPump))
                 {
                     throw new PSInvalidOperationException(RemotingErrorIdStrings.PowerShellInvokerInvalidState);
                 }
@@ -1682,8 +1679,7 @@ namespace System.Management.Automation
             /// </summary>
             public void PopInvoker()
             {
-                InvokePump oldPump;
-                if (_invokePumpStack.TryPop(out oldPump))
+                if (_invokePumpStack.TryPop(out InvokePump oldPump))
                 {
                     oldPump.Stop();
                 }

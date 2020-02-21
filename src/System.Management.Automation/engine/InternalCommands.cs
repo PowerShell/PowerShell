@@ -941,8 +941,7 @@ namespace Microsoft.PowerShell.Commands
                 SwitchParameter whatIf = false;
                 SwitchParameter confirm = false;
 
-                object argument;
-                if (psBoundParameters.TryGetValue("whatif", out argument))
+                if (psBoundParameters.TryGetValue("whatif", out object argument))
                 {
                     whatIf = (SwitchParameter)argument;
                 }
@@ -2663,8 +2662,7 @@ namespace Microsoft.PowerShell.Commands
                     return inputData;
                 }
 
-                int majorVersion;
-                if (LanguagePrimitives.TryConvertTo<int>(version, out majorVersion))
+                if (LanguagePrimitives.TryConvertTo<int>(version, out int majorVersion))
                 {
                     return new Version(majorVersion, 0);
                 }

@@ -943,13 +943,8 @@ namespace System.Management.Automation
         /// </returns>
         internal static PSSnapInInfo ReadCoreEngineSnapIn()
         {
-            Version assemblyVersion, psVersion;
-            string publicKeyToken = null;
-            string culture = null;
-            string architecture = null;
-            string applicationBase = null;
 
-            ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
+            ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion);
 
             // System.Management.Automation formats & types files
             Collection<string> types = new Collection<string>(new string[] { "types.ps1xml", "typesv3.ps1xml" });
@@ -997,13 +992,8 @@ namespace System.Management.Automation
         /// </returns>
         internal static Collection<PSSnapInInfo> ReadEnginePSSnapIns()
         {
-            Version assemblyVersion, psVersion;
-            string publicKeyToken = null;
-            string culture = null;
-            string architecture = null;
-            string applicationBase = null;
 
-            ReadRegistryInfo(out assemblyVersion, out publicKeyToken, out culture, out architecture, out applicationBase, out psVersion);
+            ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion);
 
             // System.Management.Automation formats & types files
             Collection<string> smaFormats = new Collection<string>(new string[]
@@ -1078,8 +1068,7 @@ namespace System.Management.Automation
         /// </summary>
         private static void SetSnapInLoggingInformation(PSSnapInInfo psSnapInInfo)
         {
-            IEnumerable<string> names;
-            ModuleCmdletBase.ModuleLoggingGroupPolicyStatus status = ModuleCmdletBase.GetModuleLoggingInformation(out names);
+            ModuleCmdletBase.ModuleLoggingGroupPolicyStatus status = ModuleCmdletBase.GetModuleLoggingInformation(out IEnumerable<string> names);
             if (status != ModuleCmdletBase.ModuleLoggingGroupPolicyStatus.Undefined)
             {
                 SetSnapInLoggingInformation(psSnapInInfo, status, names);

@@ -862,9 +862,8 @@ namespace System.Management.Automation
 
             // Get the provider from the providers container
 
-            List<ProviderInfo> matchingProviders = null;
 
-            if (!Providers.TryGetValue(providerName.ShortName, out matchingProviders))
+            if (!Providers.TryGetValue(providerName.ShortName, out List<ProviderInfo> matchingProviders))
             {
                 // If the provider was not found, we may need to auto-mount it.
                 SessionStateInternal.MountDefaultDrive(providerName.ShortName, ExecutionContext);
@@ -1282,9 +1281,8 @@ namespace System.Management.Automation
 
         private ProviderInfo ProviderExists(ProviderInfo provider)
         {
-            List<ProviderInfo> matchingProviders = null;
 
-            if (Providers.TryGetValue(provider.Name, out matchingProviders))
+            if (Providers.TryGetValue(provider.Name, out List<ProviderInfo> matchingProviders))
             {
                 foreach (ProviderInfo possibleMatch in matchingProviders)
                 {
@@ -1551,8 +1549,7 @@ namespace System.Management.Automation
         /// </remarks>
         private void RemoveProviderFromCollection(ProviderInfo provider)
         {
-            List<ProviderInfo> matchingProviders;
-            if (Providers.TryGetValue(provider.Name, out matchingProviders))
+            if (Providers.TryGetValue(provider.Name, out List<ProviderInfo> matchingProviders))
             {
                 if (matchingProviders.Count == 1 &&
                     matchingProviders[0].NameEquals(provider.FullName))

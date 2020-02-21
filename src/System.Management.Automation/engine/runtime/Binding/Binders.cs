@@ -318,12 +318,11 @@ namespace System.Management.Automation.Language
                 return target.Expression.Cast(type);
             }
 
-            bool debase;
 
             // ConstrainedLanguage note - calls to this conversion are done by:
             // Switch statements (always to Object), method invocation (protected by InvokeMember binder),
             // and hard-coded casts to integral types.
-            var conversion = LanguagePrimitives.FigureConversion(target.Value, type, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(target.Value, type, out bool debase);
             return PSConvertBinder.InvokeConverter(conversion, target.Expression, type, debase, ExpressionCache.InvariantCulture);
         }
 
@@ -1612,8 +1611,7 @@ namespace System.Management.Automation.Language
         {
             lock (s_binderCache)
             {
-                PSAttributeGenerator binder;
-                if (!s_binderCache.TryGetValue(callInfo, out binder))
+                if (!s_binderCache.TryGetValue(callInfo, out PSAttributeGenerator binder))
                 {
                     binder = new PSAttributeGenerator(callInfo);
                     s_binderCache.Add(callInfo, binder);
@@ -1640,8 +1638,6 @@ namespace System.Management.Automation.Language
 
             string errorId = null;
             string errorMsg = null;
-            bool expandParamsOnBest;
-            bool callNonVirtually;
             var positionalArgCount = CallInfo.ArgumentCount - CallInfo.ArgumentNames.Count;
 
             var bestMethod = Adapter.FindBestMethod(
@@ -1651,8 +1647,8 @@ namespace System.Management.Automation.Language
                 args.Take(positionalArgCount).Select(arg => arg.Value).ToArray(),
                 ref errorId,
                 ref errorMsg,
-                out expandParamsOnBest,
-                out callNonVirtually);
+                out bool expandParamsOnBest,
+                out bool callNonVirtually);
 
             if (bestMethod == null)
             {
@@ -1690,12 +1686,11 @@ namespace System.Management.Automation.Language
                     int ctorArgIndex = argIndex;
                     for (int i = argIndex; i < positionalArgCount; ++i, ++argIndex)
                     {
-                        bool debase;
 
                         // ConstrainedLanguage note - calls to this conversion are done by constructors with params arguments.
                         // Protection against conversions are covered by the method resolution algorithm
                         // (which ignores method arguments with disallowed types)
-                        var conversion = LanguagePrimitives.FigureConversion(args[argIndex].Value, elementType, out debase);
+                        var conversion = LanguagePrimitives.FigureConversion(args[argIndex].Value, elementType, out bool debase);
                         Diagnostics.Assert(conversion.Rank != ConversionRank.None, "FindBestMethod should have failed if there is no conversion");
 
                         paramsArray.Add(
@@ -1749,11 +1744,10 @@ namespace System.Management.Automation.Language
                         lhs = Expression.Field(tmp.Cast(member.DeclaringType), (FieldInfo)member);
                     }
 
-                    bool debase;
 
                     // ConstrainedLanguage note - calls to these property assignment conversions are enforced by the
                     // property assignment binding rules (which disallow property conversions to disallowed types)
-                    var conversion = LanguagePrimitives.FigureConversion(args[argIndex].Value, propertyType, out debase);
+                    var conversion = LanguagePrimitives.FigureConversion(args[argIndex].Value, propertyType, out bool debase);
                     if (conversion.Rank == ConversionRank.None)
                     {
                         return PSConvertBinder.ThrowNoConversion(args[argIndex], propertyType, this, -1,
@@ -1810,8 +1804,7 @@ namespace System.Management.Automation.Language
 
             // ConstrainedLanguage note - calls to this conversion only target PSCustomObject / PSObject,
             // which is safe.
-            bool debase;
-            var conversion = LanguagePrimitives.FigureConversion(target.Value, toType, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(target.Value, toType, out bool debase);
 
             return new DynamicMetaObject(
                 PSConvertBinder.InvokeConverter(conversion, target.Expression, toType, debase, ExpressionCache.InvariantCulture),
@@ -2080,9 +2073,7 @@ namespace System.Management.Automation.Language
 
         internal static object CopyInstanceMembersOfValueType<T>(T t, object boxedT) where T : struct
         {
-            PSMemberInfoInternalCollection<PSMemberInfo> unused1;
-            ConsolidatedString unused2;
-            if (PSObject.HasInstanceMembers(boxedT, out unused1) || PSObject.HasInstanceTypeName(boxedT, out unused2))
+            if (PSObject.HasInstanceMembers(boxedT, out PSMemberInfoInternalCollection<PSMemberInfo> unused1) || PSObject.HasInstanceTypeName(boxedT, out ConsolidatedString unused2))
             {
                 var psobj = PSObject.AsPSObject(boxedT);
                 return PSObject.Base(psobj.Copy());
@@ -2613,10 +2604,9 @@ namespace System.Management.Automation.Language
                 boolToDecimal = true;
             }
 
-            bool debase;
 
             // ConstrainedLanguage note - calls to this conversion only target numeric types.
-            var conversion = LanguagePrimitives.FigureConversion(arg.Value, targetType, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(arg.Value, targetType, out bool debase);
             if (conversion.Rank == ConversionRank.ImplicitCast || boolToDecimal || arg.LimitType.IsEnum)
             {
                 return new DynamicMetaObject(
@@ -2865,11 +2855,10 @@ namespace System.Management.Automation.Language
                 return CallImplicitOp(userOp, target, arg, GetOperatorText(), errorSuggestion);
             }
 
-            bool debase;
             var resultType = typeof(int);
 
             // ConstrainedLanguage note - calls to this conversion only target numeric types.
-            var conversion = LanguagePrimitives.FigureConversion(arg.Value, resultType, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(arg.Value, resultType, out bool debase);
             if (conversion.Rank == ConversionRank.None)
             {
                 return PSConvertBinder.ThrowNoConversion(arg, typeof(int), this, _version);
@@ -3110,11 +3099,10 @@ namespace System.Management.Automation.Language
             Expression objectEqualsCall = Expression.Call(target.Expression.Cast(typeof(object)),
                                                           CachedReflectionInfo.Object_Equals,
                                                           arg.Expression.Cast(typeof(object)));
-            bool debase;
             var targetType = target.LimitType;
 
             // ConstrainedLanguage note - calls to this conversion are protected by the binding rules below.
-            var conversion = LanguagePrimitives.FigureConversion(arg.Value, targetType, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(arg.Value, targetType, out bool debase);
             if (conversion.Rank == ConversionRank.Identity || conversion.Rank == ConversionRank.Assignable
                 || (conversion.Rank == ConversionRank.NullToRef && targetType != typeof(PSReference)))
             {
@@ -3267,11 +3255,10 @@ namespace System.Management.Automation.Language
                     target.CombineRestrictions(arg));
             }
 
-            bool debase;
             var targetType = target.LimitType;
 
             // ConstrainedLanguage note - calls to this conversion are protected by the binding rules below.
-            var conversion = LanguagePrimitives.FigureConversion(arg.Value, targetType, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(arg.Value, targetType, out bool debase);
 
             BindingRestrictions bindingRestrictions = target.CombineRestrictions(arg);
             bindingRestrictions = bindingRestrictions.Merge(BinderUtils.GetOptionalVersionAndLanguageCheckForType(this, targetType, _version));
@@ -3546,10 +3533,9 @@ namespace System.Management.Automation.Language
             if (!target.LimitType.IsNumeric())
             {
                 var resultType = typeof(int);
-                bool debase;
 
                 // ConstrainedLanguage note - calls to this conversion only target numeric types.
-                var conversion = LanguagePrimitives.FigureConversion(target.Value, resultType, out debase);
+                var conversion = LanguagePrimitives.FigureConversion(target.Value, resultType, out bool debase);
                 if (conversion.Rank != ConversionRank.None)
                 {
                     targetExpr = PSConvertBinder.InvokeConverter(conversion, target.Expression, resultType, debase,
@@ -3761,12 +3747,11 @@ namespace System.Management.Automation.Language
                 return new DynamicMetaObject(Expression.Default(this.Type), target.PSGetTypeRestriction()).WriteToDebugLog(this);
             }
 
-            bool debase;
             var resultType = this.Type;
 
             // ConstrainedLanguage note - this is the main conversion mechanism. If the runspace has ever used
             // ConstrainedLanguage, then start baking in the language mode to the binding rules.
-            var conversion = LanguagePrimitives.FigureConversion(target.Value, resultType, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(target.Value, resultType, out bool debase);
 
             if (errorSuggestion != null && target.Value is DynamicObject)
             {
@@ -3930,9 +3915,8 @@ namespace System.Management.Automation.Language
         {
             lock (s_binderCache)
             {
-                PSGetIndexBinder binder;
                 var tuple = Tuple.Create(new CallInfo(argCount), constraints, allowSlicing);
-                if (!s_binderCache.TryGetValue(tuple, out binder))
+                if (!s_binderCache.TryGetValue(tuple, out PSGetIndexBinder binder))
                 {
                     binder = new PSGetIndexBinder(tuple);
                     s_binderCache.Add(tuple, binder);
@@ -3986,8 +3970,7 @@ namespace System.Management.Automation.Language
             }
 
             // Check if this is a COM Object
-            DynamicMetaObject comResult;
-            if (ComInterop.ComBinder.TryBindGetIndex(this, target, indexes, out comResult))
+            if (ComInterop.ComBinder.TryBindGetIndex(this, target, indexes, out DynamicMetaObject comResult))
             {
                 return comResult.UpdateComRestrictionsForPsObject(indexes).WriteToDebugLog(this);
             }
@@ -4095,11 +4078,10 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(tryGetValue != null, "IDictionary<K,V> has TryGetValue");
 
             var parameters = tryGetValue.GetParameters();
-            bool debase;
             var keyType = parameters[0].ParameterType;
 
             // ConstrainedLanguage note - Calls to this conversion are protected by the binding rules below
-            var conversion = LanguagePrimitives.FigureConversion(indexes[0].Value, keyType, out debase);
+            var conversion = LanguagePrimitives.FigureConversion(indexes[0].Value, keyType, out bool debase);
             if (conversion.Rank == ConversionRank.None)
             {
                 // No conversion allows us to call TryGetValue, let InvokeIndexer make the decision (possibly
@@ -4520,9 +4502,8 @@ namespace System.Management.Automation.Language
         {
             lock (s_binderCache)
             {
-                PSSetIndexBinder binder;
                 var tuple = Tuple.Create(new CallInfo(argCount), constraints);
-                if (!s_binderCache.TryGetValue(tuple, out binder))
+                if (!s_binderCache.TryGetValue(tuple, out PSSetIndexBinder binder))
                 {
                     binder = new PSSetIndexBinder(tuple);
                     s_binderCache.Add(tuple, binder);
@@ -4575,8 +4556,7 @@ namespace System.Management.Automation.Language
             }
 
             // Check if this is a COM Object
-            DynamicMetaObject result;
-            if (ComInterop.ComBinder.TryBindSetIndex(this, target, indexes, value, out result))
+            if (ComInterop.ComBinder.TryBindSetIndex(this, target, indexes, value, out DynamicMetaObject result))
             {
                 return result.UpdateComRestrictionsForPsObject(indexes).WriteToDebugLog(this);
             }
@@ -5159,8 +5139,7 @@ namespace System.Management.Automation.Language
             }
 
             // Check if this is a COM Object
-            DynamicMetaObject result;
-            if (ComInterop.ComBinder.TryBindGetMember(this, target, out result))
+            if (ComInterop.ComBinder.TryBindGetMember(this, target, out DynamicMetaObject result))
             {
                 result = new DynamicMetaObject(WrapGetMemberInTry(result.Expression), result.Restrictions);
                 return result.WriteToDebugLog(this);
@@ -5174,10 +5153,8 @@ namespace System.Management.Automation.Language
                 return PropertyDoesntExist(target, target.PSGetTypeRestriction()).WriteToDebugLog(this);
             }
 
-            BindingRestrictions restrictions;
-            PSMemberInfo memberInfo;
             Expression expr = null;
-            if (_hasInstanceMember && TryGetInstanceMember(target.Value, Name, out memberInfo))
+            if (_hasInstanceMember && TryGetInstanceMember(target.Value, Name, out PSMemberInfo memberInfo))
             {
                 // If there is an instance member, we generate (roughly) the following:
                 //     PSMemberInfo memberInfo;
@@ -5210,9 +5187,7 @@ namespace System.Management.Automation.Language
                 return (new DynamicMetaObject(Expression.Block(new[] { memberInfoVar }, expr), BinderUtils.GetVersionCheck(this, _version))).WriteToDebugLog(this);
             }
 
-            bool canOptimize;
-            Type aliasConversionType;
-            memberInfo = GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Property);
+            memberInfo = GetPSMemberInfo(target, out BindingRestrictions restrictions, out bool canOptimize, out Type aliasConversionType, MemberTypes.Property);
 
             if (!canOptimize)
             {
@@ -5566,9 +5541,6 @@ namespace System.Management.Automation.Language
                 aliases.Add(alias.Name);
             }
 
-            bool canOptimize;
-            Type aliasConversionType;
-            BindingRestrictions restrictions;
             PSGetMemberBinder binder = PSGetMemberBinder.Get(alias.ReferencedMemberName, _classScope, false);
             // if binder has instance member, then GetPSMemberInfo will not be able to resolve that..only FallbackGetMember
             // can resolve that. In that case we simply return without further evaluation.
@@ -5577,7 +5549,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            PSMemberInfo result = binder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType,
+            PSMemberInfo result = binder.GetPSMemberInfo(target, out BindingRestrictions restrictions, out bool canOptimize, out Type aliasConversionType,
                                                          MemberTypes.Property, aliases, aliasRestrictions);
             return result;
         }
@@ -5612,8 +5584,7 @@ namespace System.Management.Automation.Language
 
             canOptimize = false;
 
-            PSMemberInfo unused;
-            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out unused),
+            Diagnostics.Assert(!TryGetInstanceMember(target.Value, Name, out PSMemberInfo unused),
                                 "shouldn't get here if there is an instance member");
 
             PSMemberInfo memberInfo = null;
@@ -5876,8 +5847,7 @@ namespace System.Management.Automation.Language
 
         internal static bool TryGetInstanceMember(object value, string memberName, out PSMemberInfo memberInfo)
         {
-            PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers;
-            memberInfo = PSObject.HasInstanceMembers(value, out instanceMembers) ? instanceMembers[memberName] : null;
+            memberInfo = PSObject.HasInstanceMembers(value, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers) ? instanceMembers[memberName] : null;
 
             return (memberInfo != null);
         }
@@ -5904,8 +5874,7 @@ namespace System.Management.Automation.Language
 
         internal static bool TryGetGenericDictionaryValue<T>(IDictionary<string, T> hash, string memberName, out object value)
         {
-            T result;
-            if (hash.TryGetValue(memberName, out result))
+            if (hash.TryGetValue(memberName, out T result))
             {
                 value = result;
                 return true;
@@ -6043,8 +6012,7 @@ namespace System.Management.Automation.Language
             }
 
             // Check if this is a COM Object
-            DynamicMetaObject result;
-            if (ComInterop.ComBinder.TryBindSetMember(this, target, value, out result))
+            if (ComInterop.ComBinder.TryBindSetMember(this, target, value, out DynamicMetaObject result))
             {
                 return result.UpdateComRestrictionsForPsObject(new DynamicMetaObject[] { value }).WriteToDebugLog(this);
             }
@@ -6064,8 +6032,7 @@ namespace System.Management.Automation.Language
                 value = new DynamicMetaObject(ExpressionCache.NullConstant, value.PSGetTypeRestriction(), null);
             }
 
-            PSMemberInfo memberInfo;
-            if (_getMemberBinder.HasInstanceMember && PSGetMemberBinder.TryGetInstanceMember(target.Value, Name, out memberInfo))
+            if (_getMemberBinder.HasInstanceMember && PSGetMemberBinder.TryGetInstanceMember(target.Value, Name, out PSMemberInfo memberInfo))
             {
                 // If there is an instance member, we generate (roughly) the following:
                 //     PSMemberInfo memberInfo;
@@ -6118,11 +6085,10 @@ namespace System.Management.Automation.Language
 
                     var temp = Expression.Variable(genericTypeArg ?? typeof(object));
 
-                    bool debase;
                     Type elementType = temp.Type;
 
                     // ConstrainedLanguage note - Calls to this conversion are protected by the binding rules below
-                    var conversion = LanguagePrimitives.FigureConversion(value.Value, elementType, out debase);
+                    var conversion = LanguagePrimitives.FigureConversion(value.Value, elementType, out bool debase);
                     if (conversion.Rank != ConversionRank.None)
                     {
                         var valueExpr = PSConvertBinder.InvokeConverter(conversion, value.Expression, elementType,
@@ -6138,10 +6104,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            BindingRestrictions restrictions;
-            bool canOptimize;
-            Type aliasConversionType;
-            memberInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Property);
+            memberInfo = _getMemberBinder.GetPSMemberInfo(target, out BindingRestrictions restrictions, out bool canOptimize, out Type aliasConversionType, MemberTypes.Property);
 
             restrictions = restrictions.Merge(value.PSGetTypeRestriction());
 
@@ -6620,8 +6583,7 @@ namespace System.Management.Automation.Language
             }
 
             // Check if this is a COM Object
-            DynamicMetaObject result;
-            if (ComInterop.ComBinder.TryBindInvokeMember(this, _propertySetter, target, args, out result))
+            if (ComInterop.ComBinder.TryBindInvokeMember(this, _propertySetter, target, args, out DynamicMetaObject result))
             {
                 return result.UpdateComRestrictionsForPsObject(args).WriteToDebugLog(this);
             }
@@ -6653,8 +6615,7 @@ namespace System.Management.Automation.Language
                 return target.ThrowRuntimeError(args, BindingRestrictions.Empty, "InvokeMethodOnNull", ParserStrings.InvokeMethodOnNull).WriteToDebugLog(this);
             }
 
-            PSMemberInfo memberInfo;
-            if (_getMemberBinder.HasInstanceMember && PSGetMemberBinder.TryGetInstanceMember(target.Value, Name, out memberInfo))
+            if (_getMemberBinder.HasInstanceMember && PSGetMemberBinder.TryGetInstanceMember(target.Value, Name, out PSMemberInfo memberInfo))
             {
                 // If there is an instance member, we generate (roughly) the following:
                 //     PSMethodInfo methodInfo;
@@ -6689,10 +6650,7 @@ namespace System.Management.Automation.Language
                     BinderUtils.GetVersionCheck(_getMemberBinder, _getMemberBinder._version))).WriteToDebugLog(this);
             }
 
-            BindingRestrictions restrictions;
-            bool canOptimize;
-            Type aliasConversionType;
-            var methodInfo = _getMemberBinder.GetPSMemberInfo(target, out restrictions, out canOptimize, out aliasConversionType, MemberTypes.Method) as PSMethodInfo;
+            var methodInfo = _getMemberBinder.GetPSMemberInfo(target, out BindingRestrictions restrictions, out bool canOptimize, out Type aliasConversionType, MemberTypes.Method) as PSMethodInfo;
             restrictions = args.Aggregate(restrictions, (current, arg) => current.Merge(arg.PSGetMethodArgumentRestriction()));
 
             // If the process has ever used ConstrainedLanguage, then we need to add the language mode
@@ -6861,8 +6819,6 @@ namespace System.Management.Automation.Language
             MethodInformation[] mi,
             Type errorExceptionType)
         {
-            bool expandParamsOnBest;
-            bool callNonVirtually;
             string errorId = null;
             string errorMsg = null;
             int numArgs = args.Length;
@@ -6885,8 +6841,8 @@ namespace System.Management.Automation.Language
                 argValues,
                 ref errorId,
                 ref errorMsg,
-                out expandParamsOnBest,
-                out callNonVirtually);
+                out bool expandParamsOnBest,
+                out bool callNonVirtually);
 
             if (callNonVirtually && methodInvocationType != MethodInvocationType.BaseCtor)
             {
@@ -6975,8 +6931,6 @@ namespace System.Management.Automation.Language
 
                 string errorId = null;
                 string errorMsg = null;
-                bool expandParameters;
-                bool callNonVirtually;
 
                 var mi = Adapter.FindBestMethod(
                     data._methodInformationStructures,
@@ -6985,8 +6939,8 @@ namespace System.Management.Automation.Language
                     args.Select(arg => arg.Value == AutomationNull.Value ? null : arg.Value).ToArray(),
                     ref errorId,
                     ref errorMsg,
-                    out expandParameters,
-                    out callNonVirtually);
+                    out bool expandParameters,
+                    out bool callNonVirtually);
 
                 if (mi != null)
                 {
@@ -7455,8 +7409,7 @@ namespace System.Management.Automation.Language
 
         internal static bool TryGetInstanceMethod(object value, string memberName, out PSMethodInfo methodInfo)
         {
-            PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers;
-            var memberInfo = PSObject.HasInstanceMembers(value, out instanceMembers) ? instanceMembers[memberName] : null;
+            var memberInfo = PSObject.HasInstanceMembers(value, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers) ? instanceMembers[memberName] : null;
             methodInfo = memberInfo as PSMethodInfo;
             if (memberInfo == null)
             {

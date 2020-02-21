@@ -149,8 +149,7 @@ namespace System.Management.Automation
             IDispatch disp = comObject as IDispatch;
             if (disp != null)
             {
-                COM.ITypeInfo typeinfo = null;
-                disp.GetTypeInfo(0, 0, out typeinfo);
+                disp.GetTypeInfo(0, 0, out COM.ITypeInfo typeinfo);
                 if (typeinfo != null)
                 {
                     COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
@@ -176,8 +175,7 @@ namespace System.Management.Automation
 
         private void AddProperty(string strName, COM.FUNCDESC funcdesc, int index)
         {
-            ComProperty prop;
-            if (!_properties.TryGetValue(strName, out prop))
+            if (!_properties.TryGetValue(strName, out ComProperty prop))
             {
                 prop = new ComProperty(_typeinfo, strName);
                 _properties[strName] = prop;
@@ -191,8 +189,7 @@ namespace System.Management.Automation
 
         private void AddMethod(string strName, int index)
         {
-            ComMethod method;
-            if (!_methods.TryGetValue(strName, out method))
+            if (!_methods.TryGetValue(strName, out ComMethod method))
             {
                 method = new ComMethod(_typeinfo, strName);
                 _methods[strName] = method;
@@ -212,8 +209,7 @@ namespace System.Management.Automation
         [ArchitectureSensitive]
         internal static COM.TYPEATTR GetTypeAttr(COM.ITypeInfo typeinfo)
         {
-            IntPtr pTypeAttr;
-            typeinfo.GetTypeAttr(out pTypeAttr);
+            typeinfo.GetTypeAttr(out IntPtr pTypeAttr);
             COM.TYPEATTR typeattr = Marshal.PtrToStructure<COM.TYPEATTR>(pTypeAttr);
             typeinfo.ReleaseTypeAttr(pTypeAttr);
             return typeattr;
@@ -227,8 +223,7 @@ namespace System.Management.Automation
         [ArchitectureSensitive]
         internal static COM.FUNCDESC GetFuncDesc(COM.ITypeInfo typeinfo, int index)
         {
-            IntPtr pFuncDesc;
-            typeinfo.GetFuncDesc(index, out pFuncDesc);
+            typeinfo.GetFuncDesc(index, out IntPtr pFuncDesc);
             COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
             typeinfo.ReleaseFuncDesc(pFuncDesc);
             return funcdesc;
@@ -240,13 +235,12 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static COM.ITypeInfo GetDispatchTypeInfoFromCustomInterfaceTypeInfo(COM.ITypeInfo typeinfo)
         {
-            int href;
             COM.ITypeInfo dispinfo = null;
 
             try
             {
                 // We need the typeinfo for Dispatch Interface
-                typeinfo.GetRefTypeOfImplType(-1, out href);
+                typeinfo.GetRefTypeOfImplType(-1, out int href);
                 typeinfo.GetRefTypeInfo(href, out dispinfo);
             }
             catch (COMException ce)
@@ -273,14 +267,13 @@ namespace System.Management.Automation
             // Get the number of interfaces implemented by this CoClass.
             COM.TYPEATTR typeattr = GetTypeAttr(typeinfo);
             int count = typeattr.cImplTypes;
-            int href;
             COM.ITypeInfo interfaceinfo = null;
 
             // For each interface implemented by this coclass
             for (int i = 0; i < count; i++)
             {
                 // Get the type information?
-                typeinfo.GetRefTypeOfImplType(i, out href);
+                typeinfo.GetRefTypeOfImplType(i, out int href);
                 typeinfo.GetRefTypeInfo(href, out interfaceinfo);
                 typeattr = GetTypeAttr(interfaceinfo);
 

@@ -1168,8 +1168,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("type");
             }
 
-            InternalParameterMetadata result;
-            if (context == null || !s_parameterMetadataCache.TryGetValue(type.AssemblyQualifiedName, out result))
+            if (context == null || !s_parameterMetadataCache.TryGetValue(type.AssemblyQualifiedName, out InternalParameterMetadata result))
             {
                 result = new InternalParameterMetadata(type, processingDynamicParameters);
 
@@ -1395,8 +1394,7 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                CompiledCommandParameter existingParameter;
-                if (!BindableParameters.TryGetValue(member.Name, out existingParameter))
+                if (!BindableParameters.TryGetValue(member.Name, out CompiledCommandParameter existingParameter))
                 {
                     break;
                 }

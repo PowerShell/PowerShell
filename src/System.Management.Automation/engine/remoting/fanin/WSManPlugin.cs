@@ -541,8 +541,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (_syncObject)
             {
-                WSManPluginShellSession result;
-                _activeShellSessions.TryGetValue(key, out result);
+                _activeShellSessions.TryGetValue(key, out WSManPluginShellSession result);
                 return result;
             }
         }
@@ -1011,8 +1010,7 @@ namespace System.Management.Automation.Remoting
                 // Remove the token value from the environment variable
                 System.Environment.SetEnvironmentVariable(WSManRunAsClientTokenName, null);
 
-                int clientTokenInt;
-                if (int.TryParse(clientTokenStr, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out clientTokenInt))
+                if (int.TryParse(clientTokenStr, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int clientTokenInt))
                 {
                     return new IntPtr(clientTokenInt);
                 }
@@ -1368,8 +1366,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (s_activePlugins)
             {
-                WSManPluginInstance result = null;
-                s_activePlugins.TryGetValue(pluginContext, out result);
+                s_activePlugins.TryGetValue(pluginContext, out WSManPluginInstance result);
                 return result;
             }
         }

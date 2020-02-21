@@ -409,8 +409,7 @@ namespace System.Management.Automation
             var baseValue = PSObject.Base(value);
             if (baseValue != null && baseValue != NullString.Value)
             {
-                object unused;
-                result = UntrustedObjects.TryGetValue(baseValue, out unused);
+                result = UntrustedObjects.TryGetValue(baseValue, out object unused);
             }
 
             return result;
@@ -544,9 +543,7 @@ namespace System.Management.Automation
         /// </summary>
         internal object GetVariableValue(VariablePath path)
         {
-            CmdletProviderContext context;
-            SessionStateScope scope;
-            return EngineSessionState.GetVariableValue(path, out context, out scope);
+            return EngineSessionState.GetVariableValue(path, out CmdletProviderContext context, out SessionStateScope scope);
         }
 
         /// <summary>
@@ -555,9 +552,7 @@ namespace System.Management.Automation
         /// </summary>
         internal object GetVariableValue(VariablePath path, object defaultValue)
         {
-            CmdletProviderContext context;
-            SessionStateScope scope;
-            return EngineSessionState.GetVariableValue(path, out context, out scope) ?? defaultValue;
+            return EngineSessionState.GetVariableValue(path, out CmdletProviderContext context, out SessionStateScope scope) ?? defaultValue;
         }
 
         /// <summary>
@@ -642,9 +637,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal bool GetBooleanPreference(VariablePath preferenceVariablePath, bool defaultPref, out bool defaultUsed)
         {
-            CmdletProviderContext context = null;
-            SessionStateScope scope = null;
-            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out context, out scope);
+            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out CmdletProviderContext context, out SessionStateScope scope);
             if (val == null)
             {
                 defaultUsed = true;
@@ -1053,11 +1046,10 @@ namespace System.Management.Automation
         {
             get
             {
-                bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.DebugPreferenceVarPath,
                     InitialSessionState.DefaultDebugPreference,
-                    out defaultUsed);
+                    out bool defaultUsed);
             }
 
             set
@@ -1074,11 +1066,10 @@ namespace System.Management.Automation
         {
             get
             {
-                bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.VerbosePreferenceVarPath,
                     InitialSessionState.DefaultVerbosePreference,
-                    out defaultUsed);
+                    out bool defaultUsed);
             }
 
             set
@@ -1095,11 +1086,10 @@ namespace System.Management.Automation
         {
             get
             {
-                bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
                     InitialSessionState.DefaultErrorActionPreference,
-                    out defaultUsed);
+                    out bool defaultUsed);
             }
 
             set
@@ -1116,11 +1106,10 @@ namespace System.Management.Automation
         {
             get
             {
-                bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.WarningPreferenceVarPath,
                     InitialSessionState.DefaultWarningPreference,
-                    out defaultUsed);
+                    out bool defaultUsed);
             }
 
             set
@@ -1137,11 +1126,10 @@ namespace System.Management.Automation
         {
             get
             {
-                bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.InformationPreferenceVarPath,
                     InitialSessionState.DefaultInformationPreference,
-                    out defaultUsed);
+                    out bool defaultUsed);
             }
 
             set
@@ -1158,13 +1146,11 @@ namespace System.Management.Automation
         {
             get
             {
-                CmdletProviderContext context = null;
-                SessionStateScope scope = null;
 
                 object resultItem = this.EngineSessionState.GetVariableValue(
                     SpecialVariables.WhatIfPreferenceVarPath,
-                    out context,
-                    out scope);
+                    out CmdletProviderContext context,
+                    out SessionStateScope scope);
 
                 return resultItem;
             }
@@ -1183,11 +1169,10 @@ namespace System.Management.Automation
         {
             get
             {
-                bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.ConfirmPreferenceVarPath,
                     InitialSessionState.DefaultConfirmPreference,
-                    out defaultUsed);
+                    out bool defaultUsed);
             }
 
             set
@@ -1339,8 +1324,7 @@ namespace System.Management.Automation
 
         internal void RemoveAssembly(string name)
         {
-            Assembly loadedAssembly;
-            if (AssemblyCache.TryGetValue(name, out loadedAssembly) && loadedAssembly != null)
+            if (AssemblyCache.TryGetValue(name, out Assembly loadedAssembly) && loadedAssembly != null)
             {
                 AssemblyCache.Remove(name);
 
@@ -1436,9 +1420,7 @@ namespace System.Management.Automation
         {
             try
             {
-                Cmdlet currentRunningModuleCommand;
-                string errorId;
-                if (IsModuleCommandCurrentlyRunning(out currentRunningModuleCommand, out errorId))
+                if (IsModuleCommandCurrentlyRunning(out Cmdlet currentRunningModuleCommand, out string errorId))
                 {
                     RuntimeException rte = InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null, errorId, resourceString, arguments);
                     currentRunningModuleCommand.WriteError(new ErrorRecord(rte.ErrorRecord, rte));
@@ -1446,9 +1428,11 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host == null) return;
+                    if (host == null)
+                        return;
                     PSHostUserInterface ui = host.UI;
-                    if (ui == null) return;
+                    if (ui == null)
+                        return;
                     ui.WriteErrorLine(
                         StringUtil.Format(resourceString, arguments));
                 }
@@ -1466,9 +1450,7 @@ namespace System.Management.Automation
         {
             try
             {
-                Cmdlet currentRunningModuleCommand;
-                string errorId;
-                if (IsModuleCommandCurrentlyRunning(out currentRunningModuleCommand, out errorId))
+                if (IsModuleCommandCurrentlyRunning(out Cmdlet currentRunningModuleCommand, out string errorId))
                 {
                     RuntimeException rte = InterpreterError.NewInterpreterException(null, typeof(RuntimeException), null, errorId, "{0}", error);
                     currentRunningModuleCommand.WriteError(new ErrorRecord(rte.ErrorRecord, rte));
@@ -1476,9 +1458,11 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host == null) return;
+                    if (host == null)
+                        return;
                     PSHostUserInterface ui = host.UI;
-                    if (ui == null) return;
+                    if (ui == null)
+                        return;
                     ui.WriteErrorLine(error);
                 }
             }
@@ -1495,9 +1479,7 @@ namespace System.Management.Automation
         {
             try
             {
-                Cmdlet currentRunningModuleCommand;
-                string errorId;
-                if (IsModuleCommandCurrentlyRunning(out currentRunningModuleCommand, out errorId))
+                if (IsModuleCommandCurrentlyRunning(out Cmdlet currentRunningModuleCommand, out string errorId))
                 {
                     ErrorRecord error = null;
                     var rte = e as RuntimeException;
@@ -1511,9 +1493,11 @@ namespace System.Management.Automation
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host == null) return;
+                    if (host == null)
+                        return;
                     PSHostUserInterface ui = host.UI;
-                    if (ui == null) return;
+                    if (ui == null)
+                        return;
                     ui.WriteErrorLine(e.Message);
                 }
             }
@@ -1530,18 +1514,18 @@ namespace System.Management.Automation
         {
             try
             {
-                Cmdlet currentRunningModuleCommand;
-                string unused;
-                if (IsModuleCommandCurrentlyRunning(out currentRunningModuleCommand, out unused))
+                if (IsModuleCommandCurrentlyRunning(out Cmdlet currentRunningModuleCommand, out string unused))
                 {
                     currentRunningModuleCommand.WriteError(errorRecord);
                 }
                 else
                 {
                     PSHost host = EngineHostInterface;
-                    if (host == null) return;
+                    if (host == null)
+                        return;
                     PSHostUserInterface ui = host.UI;
-                    if (ui == null) return;
+                    if (ui == null)
+                        return;
                     ui.WriteErrorLine(errorRecord.ToString());
                 }
             }

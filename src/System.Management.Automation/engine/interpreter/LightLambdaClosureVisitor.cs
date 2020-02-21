@@ -228,8 +228,7 @@ namespace System.Management.Automation.Interpreter
                 }
             }
 
-            LocalVariable loc;
-            if (!_closureVars.TryGetValue(variable, out loc))
+            if (!_closureVars.TryGetValue(variable, out LocalVariable loc))
             {
                 throw new InvalidOperationException("unbound variable: " + variable.Name);
             }

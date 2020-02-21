@@ -515,14 +515,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
             private static bool WildcardEqual(string propertyName, object actualPropertyValue, object expectedPropertyValue)
             {
-                string actualPropertyValueAsString;
-                string expectedPropertyValueAsString;
-                if (!LanguagePrimitives.TryConvertTo(actualPropertyValue, out actualPropertyValueAsString))
+                if (!LanguagePrimitives.TryConvertTo(actualPropertyValue, out string actualPropertyValueAsString))
                 {
                     return false;
                 }
 
-                if (!LanguagePrimitives.TryConvertTo(expectedPropertyValue, out expectedPropertyValueAsString))
+                if (!LanguagePrimitives.TryConvertTo(expectedPropertyValue, out string expectedPropertyValueAsString))
                 {
                     return false;
                 }

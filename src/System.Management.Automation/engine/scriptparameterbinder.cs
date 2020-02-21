@@ -72,8 +72,7 @@ namespace System.Management.Automation
         /// <exception cref="Exception">See SessionStateInternal.GetVariableValue.</exception>
         internal override object GetDefaultParameterValue(string name)
         {
-            RuntimeDefinedParameter runtimeDefinedParameter;
-            if (Script.RuntimeDefinedParameters.TryGetValue(name, out runtimeDefinedParameter))
+            if (Script.RuntimeDefinedParameters.TryGetValue(name, out RuntimeDefinedParameter runtimeDefinedParameter))
             {
                 return GetDefaultScriptParameterValue(runtimeDefinedParameter);
             }
@@ -126,8 +125,7 @@ namespace System.Management.Automation
             PSVariable variable = new PSVariable(varPath.UnqualifiedPath, value,
                                                  varPath.IsPrivate ? ScopedItemOptions.Private : ScopedItemOptions.None);
             Context.EngineSessionState.SetVariable(varPath, variable, false, CommandOrigin.Internal);
-            RuntimeDefinedParameter runtimeDefinedParameter;
-            if (Script.RuntimeDefinedParameters.TryGetValue(name, out runtimeDefinedParameter))
+            if (Script.RuntimeDefinedParameters.TryGetValue(name, out RuntimeDefinedParameter runtimeDefinedParameter))
             {
                 // The attributes have already been checked and conversions run, so it is wrong
                 // to do so again.

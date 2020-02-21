@@ -100,8 +100,7 @@ namespace Microsoft.PowerShell.Commands
             if (ext.Equals(StringLiterals.PowerShellDISCFileExtension, StringComparison.OrdinalIgnoreCase))
             {
                 // Create a script info for loading the file...
-                string scriptName;
-                scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, filePath, out scriptName);
+                scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, filePath, out string scriptName);
 
                 Hashtable configTable = null;
 

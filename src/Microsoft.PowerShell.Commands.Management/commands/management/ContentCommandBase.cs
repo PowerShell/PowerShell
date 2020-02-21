@@ -646,14 +646,12 @@ namespace Microsoft.PowerShell.Commands
                         (currentCommandContext.SuppressWildcardExpansion ||
                         (!WildcardPattern.ContainsWildcardCharacters(path))))
                     {
-                        ProviderInfo provider = null;
-                        PSDriveInfo drive = null;
                         string unresolvedPath =
                             SessionState.Path.GetUnresolvedProviderPathFromPSPath(
                                 path,
                                 currentCommandContext,
-                                out provider,
-                                out drive);
+                                out ProviderInfo provider,
+                                out PSDriveInfo drive);
 
                         PathInfo pathInfo =
                             new PathInfo(

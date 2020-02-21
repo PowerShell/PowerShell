@@ -211,8 +211,7 @@ namespace System.Management.Automation
                 {
                     // 'puArgErr' is set when IDispatch.Invoke fails with error code 'DISP_E_PARAMNOTFOUND' and 'DISP_E_TYPEMISMATCH'.
                     // Appropriate exceptions will be thrown in such cases, but FullCLR doesn't use 'puArgErr' in the exception handling, so we also ignore it.
-                    uint puArgErrNotUsed = 0;
-                    target.Invoke(dispId, s_IID_NULL, LCID_DEFAULT, invokeKind, paramArray, out result, out info, out puArgErrNotUsed);
+                    target.Invoke(dispId, s_IID_NULL, LCID_DEFAULT, invokeKind, paramArray, out result, out info, out uint puArgErrNotUsed);
                 }
                 catch (Exception innerException)
                 {

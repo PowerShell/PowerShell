@@ -733,8 +733,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // Determine if the command name is module-qualified, and search
                     // available modules for the command.
-                    string moduleName;
-                    string plainCommandName = Utils.ParseCommandName(commandName, out moduleName);
+                    string plainCommandName = Utils.ParseCommandName(commandName, out string moduleName);
                     bool isModuleQualified = (moduleName != null);
 
                     // If they've specified a module name, we can do some smarter filtering.
@@ -752,8 +751,7 @@ namespace Microsoft.PowerShell.Commands
 
                     // Try to initially find the command in the available commands
                     int count = 0;
-                    bool isDuplicate;
-                    bool resultFound = FindCommandForName(options, commandName, isPattern, true, ref count, out isDuplicate);
+                    bool resultFound = FindCommandForName(options, commandName, isPattern, true, ref count, out bool isDuplicate);
 
                     // If we didn't find the command, or if it had a wildcard, also see if it
                     // is in an available module
@@ -1342,9 +1340,8 @@ namespace Microsoft.PowerShell.Commands
             // Use ModuleTableKeys list in reverse order
             for (int i = Context.EngineSessionState.ModuleTableKeys.Count - 1; i >= 0; i--)
             {
-                PSModuleInfo module = null;
 
-                if (Context.EngineSessionState.ModuleTable.TryGetValue(Context.EngineSessionState.ModuleTableKeys[i], out module) == false)
+                if (Context.EngineSessionState.ModuleTable.TryGetValue(Context.EngineSessionState.ModuleTableKeys[i], out PSModuleInfo module) == false)
                 {
                     Dbg.Assert(false, "ModuleTableKeys should be in sync with ModuleTable");
                 }

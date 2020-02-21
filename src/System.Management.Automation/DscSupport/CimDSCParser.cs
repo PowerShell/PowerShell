@@ -895,8 +895,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 object versionValue = dataFileSetting["ModuleVersion"];
                 if (versionValue != null)
                 {
-                    Version moduleVersion;
-                    if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
+                    if (LanguagePrimitives.TryConvertTo(versionValue, out Version moduleVersion))
                     {
                         return new Tuple<string, Version>(moduleName, moduleVersion);
                     }
@@ -982,9 +981,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     string alias = GetFriendlyName(c);
                     var friendlyName = string.IsNullOrEmpty(alias) ? className : alias;
                     string moduleQualifiedResourceName = GetModuleQualifiedResourceName(moduleInfo.Item1, moduleInfo.Item2.ToString(), className, friendlyName);
-                    DscClassCacheEntry cimClassInfo;
 
-                    if (ClassCache.TryGetValue(moduleQualifiedResourceName, out cimClassInfo))
+                    if (ClassCache.TryGetValue(moduleQualifiedResourceName, out DscClassCacheEntry cimClassInfo))
                     {
                         CimClass cimClass = cimClassInfo.CimClassInstance;
 
@@ -1182,8 +1180,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 throw PSTraceSource.NewArgumentNullException("fileName");
             }
 
-            List<CimClass> listCimClass;
-            ByFileClassCache.TryGetValue(fileName, out listCimClass);
+            ByFileClassCache.TryGetValue(fileName, out List<CimClass> listCimClass);
             return listCimClass;
         }
 
@@ -1771,8 +1768,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             string[] resourceNames = null;
             if (resourceNameBindingResult != null)
             {
-                object resourceName = null;
-                if (!IsConstantValueVisitor.IsConstant(resourceNameBindingResult.Value, out resourceName, true, true) ||
+                if (!IsConstantValueVisitor.IsConstant(resourceNameBindingResult.Value, out object resourceName, true, true) ||
                     !LanguagePrimitives.TryConvertTo(resourceName, out resourceNames))
                 {
                     errorList.Add(new ParseError(resourceNameBindingResult.Value.Extent,
@@ -1784,8 +1780,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             System.Version moduleVersion = null;
             if (moduleVersionBindingResult != null)
             {
-                object moduleVer = null;
-                if (!IsConstantValueVisitor.IsConstant(moduleVersionBindingResult.Value, out moduleVer, true, true))
+                if (!IsConstantValueVisitor.IsConstant(moduleVersionBindingResult.Value, out object moduleVer, true, true))
                 {
                     errorList.Add(new ParseError(moduleVersionBindingResult.Value.Extent,
                                                  "RequiresArgumentMustBeConstant",
@@ -1811,8 +1806,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             ModuleSpecification[] moduleSpecifications = null;
             if (moduleNameBindingResult != null)
             {
-                object moduleName = null;
-                if (!IsConstantValueVisitor.IsConstant(moduleNameBindingResult.Value, out moduleName, true, true))
+                if (!IsConstantValueVisitor.IsConstant(moduleNameBindingResult.Value, out object moduleName, true, true))
                 {
                     errorList.Add(new ParseError(moduleNameBindingResult.Value.Extent,
                                                  "RequiresArgumentMustBeConstant",
@@ -1936,8 +1930,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             foreach (var pair in hashtableAst.KeyValuePairs)
             {
-                object evalResultObject;
-                if (IsConstantValueVisitor.IsConstant(pair.Item1, out evalResultObject, forAttribute: false, forRequires: false))
+                if (IsConstantValueVisitor.IsConstant(pair.Item1, out object evalResultObject, forAttribute: false, forRequires: false))
                 {
                     var presentName = evalResultObject as string;
                     if (presentName != null)
@@ -2134,8 +2127,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         {
                             try
                             {
-                                string unused;
-                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out unused);
+                                foundResources = ImportCimKeywordsFromModule(moduleInfo, resourceToImport, out string unused);
                             }
                             catch (Exception)
                             {
@@ -2455,7 +2447,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 return false;
             }
 
-            IEnumerable<Ast> resourceDefinitions;
             List<string> moduleFiles = new List<string>();
             if (moduleInfo.RootModule != null)
             {
@@ -2472,7 +2463,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             foreach (string moduleFile in moduleFiles)
             {
-                if (GetResourceDefinitionsFromModule(moduleFile, out resourceDefinitions, null, null))
+                if (GetResourceDefinitionsFromModule(moduleFile, out IEnumerable<Ast> resourceDefinitions, null, null))
                 {
                     foreach (var r in resourceDefinitions)
                     {
@@ -2582,9 +2573,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
 
             // BUGBUG - need to fix up how the module gets set.
-            Token[] tokens;
-            ParseError[] errors;
-            var ast = Parser.ParseFile(fileName, out tokens, out errors);
+            var ast = Parser.ParseFile(fileName, out Token[] tokens, out ParseError[] errors);
 
             if (errors != null && errors.Length > 0)
             {
@@ -2633,8 +2622,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// <returns></returns>
         private static bool ImportKeywordsFromScriptFile(string fileName, PSModuleInfo module, ICollection<string> resourcesToImport, ICollection<string> resourcesFound, Dictionary<string, ScriptBlock> functionsToDefine, List<ParseError> errorList, IScriptExtent extent)
         {
-            IEnumerable<Ast> resourceDefinitions;
-            if (!GetResourceDefinitionsFromModule(fileName, out resourceDefinitions, errorList, extent))
+            if (!GetResourceDefinitionsFromModule(fileName, out IEnumerable<Ast> resourceDefinitions, errorList, extent))
             {
                 return false;
             }
@@ -2837,15 +2825,13 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             if (type.IsArray)
             {
                 isArrayType = true;
-                bool temp;
                 var elementType = type.GetElementType();
                 if (!elementType.IsArray)
-                    return MapTypeToMofType(type.GetElementType(), memberName, className, out temp, out embeddedInstanceType, embeddedInstanceTypes);
+                    return MapTypeToMofType(type.GetElementType(), memberName, className, out bool temp, out embeddedInstanceType, embeddedInstanceTypes);
             }
             else
             {
-                string cimType;
-                if (s_mapPrimitiveDotNetTypeToMof.TryGetValue(type, out cimType))
+                if (s_mapPrimitiveDotNetTypeToMof.TryGetValue(type, out string cimType))
                 {
                     embeddedInstanceType = null;
                     return cimType;
@@ -3095,9 +3081,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 // TODO - validate type and name
-                bool isArrayType;
-                string embeddedInstanceType;
-                string mofType = MapTypeToMofType(memberType, member.Name, className, out isArrayType, out embeddedInstanceType,
+                string mofType = MapTypeToMofType(memberType, member.Name, className, out bool isArrayType, out string embeddedInstanceType,
                     embeddedInstanceTypes);
                 string arrayAffix = isArrayType ? "[]" : string.Empty;
 
@@ -3353,9 +3337,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     // Parsing the file is all that needs to be done to add the keywords
                     // BUGBUG - need to fix up how the module gets set.
                     // BUGBUG - should fail somehow if errors is not empty
-                    Token[] tokens; ParseError[] errors;
                     s_currentImportingScriptFiles.Add(schemaFilePath);
-                    Parser.ParseFile(schemaFilePath, out tokens, out errors);
+                    Parser.ParseFile(schemaFilePath, out Token[] tokens, out ParseError[] errors);
                     s_currentImportingScriptFiles.Remove(schemaFilePath);
                     ScriptKeywordFileCache.Add(schemaFilePath);
                 }

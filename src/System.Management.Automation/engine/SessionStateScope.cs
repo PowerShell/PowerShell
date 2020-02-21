@@ -182,8 +182,7 @@ namespace System.Management.Automation
             {
                 // Check to see if it is in the automounted drive collection.
                 var automountedDrives = GetAutomountedDrives();
-                PSDriveInfo automountedDrive;
-                if (automountedDrives.TryGetValue(drive.Name, out automountedDrive))
+                if (automountedDrives.TryGetValue(drive.Name, out PSDriveInfo automountedDrive))
                 {
                     automountedDrive.IsAutoMountedManuallyRemoved = true;
 
@@ -225,10 +224,9 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("name");
             }
 
-            PSDriveInfo result = null;
 
             var driveInfos = GetDrives();
-            if (!driveInfos.TryGetValue(name, out result))
+            if (!driveInfos.TryGetValue(name, out PSDriveInfo result))
             {
                 // The caller needs to determine what to do with
                 // manually removed drives.
@@ -288,8 +286,7 @@ namespace System.Management.Automation
         /// </returns>
         internal PSVariable GetVariable(string name, CommandOrigin origin)
         {
-            PSVariable result;
-            TryGetVariable(name, origin, false, out result);
+            TryGetVariable(name, origin, false, out PSVariable result);
             return result;
         }
 
@@ -540,8 +537,7 @@ namespace System.Management.Automation
         /// </exception>
         internal PSVariable NewVariable(PSVariable newVariable, bool force, SessionStateInternal sessionState)
         {
-            PSVariable variable;
-            bool varExists = TryGetVariable(newVariable.Name, ScopeOrigin, true, out variable);
+            bool varExists = TryGetVariable(newVariable.Name, ScopeOrigin, true, out PSVariable variable);
 
             if (varExists)
             {
@@ -714,8 +710,7 @@ namespace System.Management.Automation
                 name != null,
                 "The caller should verify the name");
 
-            AliasInfo result;
-            GetAliases().TryGetValue(name, out result);
+            GetAliases().TryGetValue(name, out AliasInfo result);
 
             return result;
         }
@@ -751,8 +746,7 @@ namespace System.Management.Automation
                 "The caller should verify the name");
 
             var aliasInfos = GetAliases();
-            AliasInfo aliasInfo;
-            if (!aliasInfos.TryGetValue(name, out aliasInfo))
+            if (!aliasInfos.TryGetValue(name, out AliasInfo aliasInfo))
             {
                 aliasInfos[name] = new AliasInfo(name, value, context);
             }
@@ -832,9 +826,8 @@ namespace System.Management.Automation
                 "The caller should verify the name");
 
             var aliasInfos = GetAliases();
-            AliasInfo aliasInfo;
             AliasInfo result;
-            if (!aliasInfos.TryGetValue(name, out aliasInfo))
+            if (!aliasInfos.TryGetValue(name, out AliasInfo aliasInfo))
             {
                 result = new AliasInfo(name, value, context, options);
                 aliasInfos[name] = result;
@@ -934,8 +927,7 @@ namespace System.Management.Automation
                 "The caller should verify the aliasToSet");
 
             var aliasInfos = GetAliases();
-            AliasInfo aliasInfo;
-            if (aliasInfos.TryGetValue(aliasToSet.Name, out aliasInfo))
+            if (aliasInfos.TryGetValue(aliasToSet.Name, out AliasInfo aliasInfo))
             {
                 // An existing alias cannot be set if it is ReadOnly or Constant unless
                 // force is specified, in which case an existing ReadOnly alias can
@@ -1002,8 +994,7 @@ namespace System.Management.Automation
             // Make sure the alias isn't constant or readonly
 
             var aliasInfos = GetAliases();
-            AliasInfo aliasInfo;
-            if (aliasInfos.TryGetValue(name, out aliasInfo))
+            if (aliasInfos.TryGetValue(name, out AliasInfo aliasInfo))
             {
                 if ((aliasInfo.Options & ScopedItemOptions.Constant) != 0 ||
                     (!force && (aliasInfo.Options & ScopedItemOptions.ReadOnly) != 0))
@@ -1055,8 +1046,7 @@ namespace System.Management.Automation
                 name != null,
                 "The caller should verify the name");
 
-            FunctionInfo result;
-            GetFunctions().TryGetValue(name, out result);
+            GetFunctions().TryGetValue(name, out FunctionInfo result);
 
             return result;
         }
@@ -1243,9 +1233,8 @@ namespace System.Management.Automation
                 "The caller should verify the name");
 
             var functionInfos = GetFunctions();
-            FunctionInfo existingValue;
             FunctionInfo result;
-            if (!functionInfos.TryGetValue(name, out existingValue))
+            if (!functionInfos.TryGetValue(name, out FunctionInfo existingValue))
             {
                 result = functionFactory(name, function, originalFunction, options, context, helpFile);
                 functionInfos[name] = result;
@@ -1353,8 +1342,7 @@ namespace System.Management.Automation
                 "The caller should verify the name");
 
             var functionInfos = GetFunctions();
-            FunctionInfo function;
-            if (functionInfos.TryGetValue(name, out function))
+            if (functionInfos.TryGetValue(name, out FunctionInfo function))
             {
                 if (IsFunctionOptionSet(function, ScopedItemOptions.Constant) ||
                     (!force && IsFunctionOptionSet(function, ScopedItemOptions.ReadOnly)))
@@ -1410,9 +1398,8 @@ namespace System.Management.Automation
 
             CmdletInfo result = null;
 
-            List<CmdletInfo> cmdlets;
 
-            if (_cmdlets.TryGetValue(name, out cmdlets))
+            if (_cmdlets.TryGetValue(name, out List<CmdletInfo> cmdlets))
             {
                 if (cmdlets != null && cmdlets.Count > 0)
                 {
@@ -1458,8 +1445,7 @@ namespace System.Management.Automation
                     name != null,
                     "The caller should verify the name");
 
-                List<CmdletInfo> cmdlets;
-                if (!_cmdlets.TryGetValue(name, out cmdlets))
+                if (!_cmdlets.TryGetValue(name, out List<CmdletInfo> cmdlets))
                 {
                     cmdlets = new List<CmdletInfo>();
                     cmdlets.Add(cmdlet);
@@ -1554,8 +1540,7 @@ namespace System.Management.Automation
                 name != null,
                 "The caller should verify the name");
 
-            List<CmdletInfo> cmdlets;
-            if (_cmdlets.TryGetValue(name, out cmdlets))
+            if (_cmdlets.TryGetValue(name, out List<CmdletInfo> cmdlets))
             {
                 CmdletInfo tempCmdlet = cmdlets[index];
 
@@ -1633,8 +1618,7 @@ namespace System.Management.Automation
         internal Type LookupType(string name)
         {
             if (TypeTable == null) return null;
-            Type result;
-            TypeTable.TryGetValue(name, out result);
+            TypeTable.TryGetValue(name, out Type result);
             return result;
         }
 
@@ -1899,8 +1883,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal IEnumerable<string> GetAliasesByCommandName(string command)
         {
-            List<string> commandsToAliases;
-            if (_commandsToAliasesCache.TryGetValue(command, out commandsToAliases))
+            if (_commandsToAliasesCache.TryGetValue(command, out List<string> commandsToAliases))
             {
                 foreach (string str in commandsToAliases)
                 {
@@ -1917,8 +1900,7 @@ namespace System.Management.Automation
         /// <param name="value"></param>
         private void AddAliasToCache(string alias, string value)
         {
-            List<string> existingAliases;
-            if (!_commandsToAliasesCache.TryGetValue(value, out existingAliases))
+            if (!_commandsToAliasesCache.TryGetValue(value, out List<string> existingAliases))
             {
                 List<string> list = new List<string>();
                 list.Add(alias);
@@ -1939,8 +1921,7 @@ namespace System.Management.Automation
         /// <param name="value"></param>
         private void RemoveAliasFromCache(string alias, string value)
         {
-            List<string> list;
-            if (!_commandsToAliasesCache.TryGetValue(value, out list))
+            if (!_commandsToAliasesCache.TryGetValue(value, out List<string> list))
             {
                 return;
             }

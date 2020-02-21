@@ -252,8 +252,7 @@ namespace System.Management.Automation
         private Assembly Resolve(AssemblyLoadContext loadContext, AssemblyName assemblyName)
         {
             // Probe the assembly cache
-            Assembly asmLoaded;
-            if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
+            if (TryGetAssemblyFromCache(assemblyName, out Assembly asmLoaded))
                 return asmLoaded;
 
             // Prepare to load the assembly

@@ -356,8 +356,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
                     FieldFormattingDirective directive)
         {
-            PSPropertyExpressionResult resolvedExpression;
-            return GetExpressionDisplayValue(so, enumerationLimit, ex, directive, out resolvedExpression);
+            return GetExpressionDisplayValue(so, enumerationLimit, ex, directive, out PSPropertyExpressionResult resolvedExpression);
         }
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,
@@ -406,8 +405,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return true;
 
             PSPropertyExpression ex = this.expressionFactory.CreateFromExpressionToken(conditionToken, this.dataBaseInfo.view.loadingInfo);
-            PSPropertyExpressionResult expressionResult;
-            bool retVal = DisplayCondition.Evaluate(so, ex, out expressionResult);
+            bool retVal = DisplayCondition.Evaluate(so, ex, out PSPropertyExpressionResult expressionResult);
 
             if (expressionResult != null && expressionResult.Exception != null)
             {
@@ -428,8 +426,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         protected FormatPropertyField GenerateFormatPropertyField(List<FormatToken> formatTokenList, PSObject so, int enumerationLimit)
         {
-            PSPropertyExpressionResult result;
-            return GenerateFormatPropertyField(formatTokenList, so, enumerationLimit, out result);
+            return GenerateFormatPropertyField(formatTokenList, so, enumerationLimit, out PSPropertyExpressionResult result);
         }
 
         protected FormatPropertyField GenerateFormatPropertyField(List<FormatToken> formatTokenList, PSObject so, int enumerationLimit, out PSPropertyExpressionResult result)

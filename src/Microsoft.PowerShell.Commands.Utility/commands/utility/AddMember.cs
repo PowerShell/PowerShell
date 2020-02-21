@@ -521,9 +521,8 @@ namespace Microsoft.PowerShell.Commands
         private void UpdateTypeNames()
         {
             // Respect the type shortcut
-            Type type;
             string typeNameInUse = _typeName;
-            if (LanguagePrimitives.TryConvertTo(_typeName, out type)) { typeNameInUse = type.FullName; }
+            if (LanguagePrimitives.TryConvertTo(_typeName, out Type type)) { typeNameInUse = type.FullName; }
 
             _inputObject.TypeNames.Insert(0, typeNameInUse);
         }
@@ -557,8 +556,7 @@ namespace Microsoft.PowerShell.Commands
             protected override void Validate(object arguments, EngineIntrinsics engineIntrinsics)
             {
                 string notePropertyName = arguments as string;
-                PSMemberTypes memberType;
-                if (notePropertyName != null && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out memberType))
+                if (notePropertyName != null && LanguagePrimitives.TryConvertTo<PSMemberTypes>(notePropertyName, out PSMemberTypes memberType))
                 {
                     switch (memberType)
                     {

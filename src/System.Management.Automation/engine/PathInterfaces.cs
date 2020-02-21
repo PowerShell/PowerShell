@@ -410,8 +410,7 @@ namespace System.Management.Automation
         public Collection<PathInfo> GetResolvedPSPathFromPSPath(string path)
         {
             // The parameters will be verified by the path resolver
-            Provider.CmdletProvider providerInstance = null;
-            return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, out providerInstance);
+            return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, out Provider.CmdletProvider providerInstance);
         }
 
         /// <summary>
@@ -455,8 +454,7 @@ namespace System.Management.Automation
             CmdletProviderContext context)
         {
             // The parameters will be verified by the path resolver
-            Provider.CmdletProvider providerInstance = null;
-            return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, context, out providerInstance);
+            return PathResolver.GetGlobbedMonadPathsFromMonadPath(path, false, context, out Provider.CmdletProvider providerInstance);
         }
 
         /// <summary>
@@ -507,8 +505,7 @@ namespace System.Management.Automation
             out ProviderInfo provider)
         {
             // The parameters will be verified by the path resolver
-            Provider.CmdletProvider providerInstance = null;
-            return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, out provider, out providerInstance);
+            return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, out provider, out Provider.CmdletProvider providerInstance);
         }
 
         internal Collection<string> GetResolvedProviderPathFromPSPath(
@@ -517,8 +514,7 @@ namespace System.Management.Automation
             out ProviderInfo provider)
         {
             // The parameters will be verified by the path resolver
-            Provider.CmdletProvider providerInstance = null;
-            return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, allowNonexistingPaths, out provider, out providerInstance);
+            return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, allowNonexistingPaths, out provider, out Provider.CmdletProvider providerInstance);
         }
 
         /// <summary>
@@ -575,8 +571,7 @@ namespace System.Management.Automation
         {
             // The parameters will be verified by the path resolver
 
-            Provider.CmdletProvider providerInstance = null;
-            return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, context, out provider, out providerInstance);
+            return PathResolver.GetGlobbedProviderPathsFromMonadPath(path, false, context, out provider, out Provider.CmdletProvider providerInstance);
         }
 
         /// <summary>
@@ -619,8 +614,7 @@ namespace System.Management.Automation
             string providerId)
         {
             // The parameters will be verified by the path resolver
-            Provider.CmdletProvider providerInstance = null;
-            return PathResolver.GetGlobbedProviderPathsFromProviderPath(path, false, providerId, out providerInstance);
+            return PathResolver.GetGlobbedProviderPathsFromProviderPath(path, false, providerId, out Provider.CmdletProvider providerInstance);
         }
 
         /// <summary>
@@ -669,8 +663,7 @@ namespace System.Management.Automation
         {
             // The parameters will be verified by the path resolver
 
-            Provider.CmdletProvider providerInstance = null;
-            return PathResolver.GetGlobbedProviderPathsFromProviderPath(path, false, providerId, context, out providerInstance);
+            return PathResolver.GetGlobbedProviderPathsFromProviderPath(path, false, providerId, context, out Provider.CmdletProvider providerInstance);
         }
 
         /// <summary>

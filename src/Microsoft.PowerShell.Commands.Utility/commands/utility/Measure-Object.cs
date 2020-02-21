@@ -182,8 +182,7 @@ namespace Microsoft.PowerShell.Commands
             /// </returns>
             public V EnsureEntry(string key)
             {
-                V val;
-                if (!TryGetValue(key, out val))
+                if (!TryGetValue(key, out V val))
                 {
                     val = new V();
                     this[key] = val;
@@ -576,8 +575,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_measureAverage || _measureSum || _measureStandardDeviation)
             {
-                double numValue = 0.0;
-                if (!LanguagePrimitives.TryConvertTo(objValue, out numValue))
+                if (!LanguagePrimitives.TryConvertTo(objValue, out double numValue))
                 {
                     _nonNumericError = true;
                     ErrorRecord errorRecord = new ErrorRecord(
@@ -624,8 +622,7 @@ namespace Microsoft.PowerShell.Commands
             object statValue = statMinOrMaxValue;
             int factor = isMin ? 1 : -1;
 
-            double temp;
-            currentValue = ((objValue != null) && LanguagePrimitives.TryConvertTo<double>(objValue, out temp)) ? temp : currentValue;
+            currentValue = ((objValue != null) && LanguagePrimitives.TryConvertTo<double>(objValue, out double temp)) ? temp : currentValue;
             statValue = ((statValue != null) && LanguagePrimitives.TryConvertTo<double>(statValue, out temp)) ? temp : statValue;
 
             if (currentValue != null && statValue != null && !currentValue.GetType().Equals(statValue.GetType()))
@@ -827,8 +824,7 @@ namespace Microsoft.PowerShell.Commands
                 MeasureInfo mi = null;
                 if (IsMeasuringGeneric)
                 {
-                    double temp;
-                    if ((stat.min == null || LanguagePrimitives.TryConvertTo<double>(stat.min, out temp)) &&
+                    if ((stat.min == null || LanguagePrimitives.TryConvertTo<double>(stat.min, out double temp)) &&
                         (stat.max == null || LanguagePrimitives.TryConvertTo<double>(stat.max, out temp)))
                     {
                         mi = CreateGenericMeasureInfo(stat, true);
@@ -881,8 +877,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (shouldUseGenericMeasureInfo && (stat.max != null))
                 {
-                    double temp;
-                    LanguagePrimitives.TryConvertTo<double>(stat.max, out temp);
+                    LanguagePrimitives.TryConvertTo<double>(stat.max, out double temp);
                     max = temp;
                 }
                 else
@@ -895,8 +890,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (shouldUseGenericMeasureInfo && (stat.min != null))
                 {
-                    double temp;
-                    LanguagePrimitives.TryConvertTo<double>(stat.min, out temp);
+                    LanguagePrimitives.TryConvertTo<double>(stat.min, out double temp);
                     min = temp;
                 }
                 else

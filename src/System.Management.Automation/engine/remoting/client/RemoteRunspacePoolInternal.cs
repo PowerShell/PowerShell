@@ -794,8 +794,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <returns>PowerShell.</returns>
         internal PowerShell PopRunningPowerShell()
         {
-            PowerShell powershell;
-            if (_runningPowerShells.TryPop(out powershell))
+            if (_runningPowerShells.TryPop(out PowerShell powershell))
             {
                 return powershell;
             }
@@ -809,8 +808,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <returns>PowerShell.</returns>
         internal PowerShell GetCurrentRunningPowerShell()
         {
-            PowerShell powershell;
-            if (_runningPowerShells.TryPeek(out powershell))
+            if (_runningPowerShells.TryPeek(out PowerShell powershell))
             {
                 return powershell;
             }
@@ -1296,9 +1294,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // Compute runspace DisconnectedOn and ExpiresOn fields.
                 if (isDisconnected)
                 {
-                    DateTime? disconnectedOn;
-                    DateTime? expiresOn;
-                    ComputeDisconnectedOnExpiresOn(rsObject, out disconnectedOn, out expiresOn);
+                    ComputeDisconnectedOnExpiresOn(rsObject, out DateTime? disconnectedOn, out DateTime? expiresOn);
                     wsmanConnectionInfo.DisconnectedOn = disconnectedOn;
                     wsmanConnectionInfo.ExpiresOn = expiresOn;
                 }
@@ -1378,8 +1374,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspIdleTimeOut != null)
             {
-                int idleTimeout;
-                if (GetTimeIntValue(pspIdleTimeOut.Value as string, out idleTimeout))
+                if (GetTimeIntValue(pspIdleTimeOut.Value as string, out int idleTimeout))
                 {
                     wsmanConnectionInfo.IdleTimeout = idleTimeout;
                 }
@@ -1390,8 +1385,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 string bufferingMode = pspBufferMode.Value as string;
                 if (bufferingMode != null)
                 {
-                    OutputBufferingMode outputBufferingMode;
-                    if (Enum.TryParse<OutputBufferingMode>(bufferingMode, out outputBufferingMode))
+                    if (Enum.TryParse<OutputBufferingMode>(bufferingMode, out OutputBufferingMode outputBufferingMode))
                     {
                         // Update connection info.
                         wsmanConnectionInfo.OutputBufferingMode = outputBufferingMode;
@@ -1468,8 +1462,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if (pspMaxIdleTimeout != null)
             {
-                int maxIdleTimeout;
-                if (GetTimeIntValue(pspMaxIdleTimeout.Value as string, out maxIdleTimeout))
+                if (GetTimeIntValue(pspMaxIdleTimeout.Value as string, out int maxIdleTimeout))
                 {
                     wsmanConnectionInfo.MaxIdleTimeout = maxIdleTimeout;
                 }
@@ -1487,9 +1480,8 @@ namespace System.Management.Automation.Runspaces.Internal
             if (pspIdleTimeOut != null && pspShellInactivity != null)
             {
                 string shellInactivityString = pspShellInactivity.Value as string;
-                int idleTimeout;
                 if ((shellInactivityString != null) &&
-                    GetTimeIntValue(pspIdleTimeOut.Value as string, out idleTimeout))
+                    GetTimeIntValue(pspIdleTimeOut.Value as string, out int idleTimeout))
                 {
                     try
                     {

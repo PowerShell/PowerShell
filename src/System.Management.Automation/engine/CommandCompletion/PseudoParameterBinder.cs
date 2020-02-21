@@ -1359,10 +1359,9 @@ namespace System.Management.Automation.Language
             resolvedCommandName = _commandAst.GetCommandName();
             if (resolvedCommandName != null)
             {
-                string alias;
                 int resolvedAliasCount = 0;
 
-                while (exportVisitor.DiscoveredAliases.TryGetValue(resolvedCommandName, out alias))
+                while (exportVisitor.DiscoveredAliases.TryGetValue(resolvedCommandName, out string alias))
                 {
                     resolvedAliasCount += 1;
                     if (resolvedAliasCount > 5)
@@ -1370,8 +1369,7 @@ namespace System.Management.Automation.Language
                     resolvedCommandName = alias;
                 }
 
-                FunctionDefinitionAst functionDefinitionAst;
-                if (exportVisitor.DiscoveredFunctions.TryGetValue(resolvedCommandName, out functionDefinitionAst))
+                if (exportVisitor.DiscoveredFunctions.TryGetValue(resolvedCommandName, out FunctionDefinitionAst functionDefinitionAst))
                 {
                     var scriptBlock = new ScriptBlock(functionDefinitionAst, functionDefinitionAst.IsFilter);
                     commandProcessor = CommandDiscovery.CreateCommandProcessorForScript(scriptBlock, context, true, context.EngineSessionState);

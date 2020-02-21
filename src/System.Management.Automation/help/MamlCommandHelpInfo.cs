@@ -223,8 +223,7 @@ namespace System.Management.Automation
             if (userDefinedData == null)
                 return;
 
-            string propertyValue;
-            if (userDefinedData.Properties.TryGetValue("component", out propertyValue))
+            if (userDefinedData.Properties.TryGetValue("component", out string propertyValue))
             {
                 _component = propertyValue;
             }

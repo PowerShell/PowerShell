@@ -32,8 +32,7 @@ namespace Microsoft.PowerShell.Commands
             string[] patternsToMatch,
             bool writeErrorIfMatchNotFound)
         {
-            Collection<string> ignored = null;
-            return GetMatchingTraceSource(patternsToMatch, writeErrorIfMatchNotFound, out ignored);
+            return GetMatchingTraceSource(patternsToMatch, writeErrorIfMatchNotFound, out Collection<string> ignored);
         }
 
         /// <summary>

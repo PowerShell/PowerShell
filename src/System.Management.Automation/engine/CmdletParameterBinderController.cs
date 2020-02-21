@@ -159,11 +159,10 @@ namespace System.Management.Automation
                     // The missingMandatoryParameters out parameter is used for error reporting when binding from the pipeline.
                     // We're not binding from the pipeline here, and if a mandatory non-pipeline parameter is missing, it will
                     // be prompted for, or an exception will be raised, so we can ignore the missingMandatoryParameters out parameter.
-                    Collection<MergedCompiledCommandParameter> missingMandatoryParameters;
 
                     // We shouldn't prompt for mandatory parameters if this command is private.
                     bool promptForMandatoryParameters = (Command.CommandInfo.Visibility == SessionStateEntryVisibility.Public);
-                    HandleUnboundMandatoryParameters(validParameterSetCount, true, promptForMandatoryParameters, isPipelineInputExpected, out missingMandatoryParameters);
+                    HandleUnboundMandatoryParameters(validParameterSetCount, true, promptForMandatoryParameters, isPipelineInputExpected, out Collection<MergedCompiledCommandParameter> missingMandatoryParameters);
 
                     if (DefaultParameterBinder is ScriptParameterBinder)
                     {
@@ -814,9 +813,8 @@ namespace System.Management.Automation
             // because the 'paramName' could be a dynamic parameter name, and this dynamic parameter
             // hasn't been introduced at the current stage.
             bool writeWarning = false;
-            MergedCompiledCommandParameter matchParameter;
             object resultObject;
-            if (bindableParameters.TryGetValue(paramName, out matchParameter))
+            if (bindableParameters.TryGetValue(paramName, out MergedCompiledCommandParameter matchParameter))
             {
                 if (!result.TryGetValue(matchParameter, out resultObject))
                 {
@@ -2063,8 +2061,7 @@ namespace System.Management.Automation
                         }
 
                         // See if we should pick the default set if it can bind strongly to the incoming objects
-                        ParameterSetPromptingData defaultSetPromptingData;
-                        if (promptingData.TryGetValue(defaultParameterSet, out defaultSetPromptingData))
+                        if (promptingData.TryGetValue(defaultParameterSet, out ParameterSetPromptingData defaultSetPromptingData))
                         {
                             bool defaultSetTakesPipelineInput = defaultSetPromptingData.PipelineableMandatoryParameters.Count > 0;
                             bool defaultSetTakesPipelineInputByPropertyName = defaultSetPromptingData.PipelineableMandatoryByPropertyNameParameters.Count > 0;
@@ -2095,8 +2092,7 @@ namespace System.Management.Automation
                             // Need to see if there are nonpipelineable mandatory parameters in the
                             // all set.
 
-                            ParameterSetPromptingData allSetPromptingData;
-                            if (promptingData.TryGetValue(uint.MaxValue, out allSetPromptingData))
+                            if (promptingData.TryGetValue(uint.MaxValue, out ParameterSetPromptingData allSetPromptingData))
                             {
                                 if (allSetPromptingData.NonpipelineableMandatoryParameters.Count > 0)
                                 {
@@ -2580,8 +2576,7 @@ namespace System.Management.Automation
 
             if (isMandatory)
             {
-                ParameterSetPromptingData promptingDataForSet;
-                if (!promptingData.TryGetValue(parameterSetFlag, out promptingDataForSet))
+                if (!promptingData.TryGetValue(parameterSetFlag, out ParameterSetPromptingData promptingDataForSet))
                 {
                     promptingDataForSet = new ParameterSetPromptingData(parameterSetFlag, isDefaultSet);
                     promptingData.Add(parameterSetFlag, promptingDataForSet);
@@ -3258,8 +3253,7 @@ namespace System.Management.Automation
                     // First run any of the delay bind ScriptBlocks and bind the
                     // result to the appropriate parameter.
 
-                    bool thereWasSomethingToBind;
-                    bool invokeScriptResult = InvokeAndBindDelayBindScriptBlock(inputToOperateOn, out thereWasSomethingToBind);
+                    bool invokeScriptResult = InvokeAndBindDelayBindScriptBlock(inputToOperateOn, out bool thereWasSomethingToBind);
 
                     bool continueBindingAfterScriptBlockProcessing = !thereWasSomethingToBind || invokeScriptResult;
 
@@ -4288,12 +4282,11 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                CommandParameterInternal argumentToBind = null;
 
                 // If the argument was found then bind it to the parameter
                 // and manage the bound and unbound parameter list
 
-                if (_defaultParameterValues.TryGetValue(parameter.Parameter.Name, out argumentToBind))
+                if (_defaultParameterValues.TryGetValue(parameter.Parameter.Name, out CommandParameterInternal argumentToBind))
                 {
                     // Don't go through the normal binding routine to run data generation,
                     // type coercion, validation, or prerequisites since we know the

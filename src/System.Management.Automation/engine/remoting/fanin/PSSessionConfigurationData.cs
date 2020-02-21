@@ -197,8 +197,7 @@ namespace System.Management.Automation.Remoting
                             {
                                 _modulesToImport.Add(s.Trim());
 
-                                ModuleSpecification moduleSpec = null;
-                                if (ModuleSpecification.TryParse(s, out moduleSpec))
+                                if (ModuleSpecification.TryParse(s, out ModuleSpecification moduleSpec))
                                 {
                                     _modulesToImportInternal.Add(moduleSpec);
                                 }

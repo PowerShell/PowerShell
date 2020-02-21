@@ -89,10 +89,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             PSPropertyExpressionFactory expressionFactory = new PSPropertyExpressionFactory();
-            List<XmlLoaderLoggerEntry> logEntries = null;
 
             // load the files
-            LoadFromFile(filesToLoad, expressionFactory, true, authorizationManager, host, false, out logEntries);
+            LoadFromFile(filesToLoad, expressionFactory, true, authorizationManager, host, false, out List<XmlLoaderLoggerEntry> logEntries);
             this.isShared = isShared;
 
             // check to see if there are any errors loading the format files
@@ -209,10 +208,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             PSPropertyExpressionFactory expressionFactory = new PSPropertyExpressionFactory();
-            List<XmlLoaderLoggerEntry> logEntries = null;
 
             // load the formatting data
-            LoadFromFile(filesToLoad, expressionFactory, false, null, null, false, out logEntries);
+            LoadFromFile(filesToLoad, expressionFactory, false, null, null, false, out List<XmlLoaderLoggerEntry> logEntries);
 
             // check to see if there are any errors loading the format files
             if (errors.Count > 0)
@@ -292,8 +290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             PSPropertyExpressionFactory expressionFactory = new PSPropertyExpressionFactory();
-            List<XmlLoaderLoggerEntry> logEntries = null;
-            LoadFromFile(mshsnapins, expressionFactory, false, authorizationManager, host, preValidated, out logEntries);
+            LoadFromFile(mshsnapins, expressionFactory, false, authorizationManager, host, preValidated, out List<XmlLoaderLoggerEntry> logEntries);
         }
 
         /// <summary>
@@ -508,8 +505,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 Interlocked.CompareExchange(ref s_builtinGenerators, builtInGenerators, null);
             }
 
-            Tuple<bool, TypeGenerator> generator;
-            if (!s_builtinGenerators.TryGetValue(file.FullPath, out generator))
+            if (!s_builtinGenerators.TryGetValue(file.FullPath, out Tuple<bool, TypeGenerator> generator))
                 return false;
 
             ProcessBuiltinFormatViewDefinitions(generator.Item2(), db, expressionFactory, file, logEntries, generator.Item1, ref success);

@@ -82,8 +82,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal static CimCustomOptionsDictionary MergeOptions(CimCustomOptionsDictionary optionsFromCommandLine, CimInstance instanceRelatedToThisOperation)
         {
-            CimCustomOptionsDictionary instanceRelatedOptions;
-            if (s_cimInstanceToCustomOptions.TryGetValue(instanceRelatedToThisOperation, out instanceRelatedOptions) && instanceRelatedOptions != null)
+            if (s_cimInstanceToCustomOptions.TryGetValue(instanceRelatedToThisOperation, out CimCustomOptionsDictionary instanceRelatedOptions) && instanceRelatedOptions != null)
             {
                 IEnumerable<KeyValuePair<string, object>> instanceRelatedOptionsSnapshot = instanceRelatedOptions.GetSnapshot();
                 IEnumerable<KeyValuePair<string, object>> optionsFromCommandLineSnapshot = optionsFromCommandLine.GetSnapshot();

@@ -87,8 +87,7 @@ namespace Microsoft.PowerShell.Commands
             // Validate Path
             if (!string.IsNullOrEmpty(Path))
             {
-                ProviderInfo provider = null;
-                Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out provider);
+                Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out ProviderInfo provider);
 
                 // Ensure the path is a single path from the file system provider
                 if ((resolvedPaths.Count > 1) ||
@@ -165,8 +164,7 @@ namespace Microsoft.PowerShell.Commands
                 contentBytes = System.IO.File.ReadAllBytes(_resolvedPath);
             }
 
-            ErrorRecord terminatingError = null;
-            string encodedContent = CmsUtils.Encrypt(contentBytes, To, this.SessionState, out terminatingError);
+            string encodedContent = CmsUtils.Encrypt(contentBytes, To, this.SessionState, out ErrorRecord terminatingError);
 
             if (terminatingError != null)
             {
@@ -238,8 +236,7 @@ namespace Microsoft.PowerShell.Commands
             // Validate Path
             if (!string.IsNullOrEmpty(Path))
             {
-                ProviderInfo provider = null;
-                Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out provider);
+                Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out ProviderInfo provider);
 
                 // Ensure the path is a single path from the file system provider
                 if ((resolvedPaths.Count > 1) ||
@@ -300,8 +297,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Extract out the bytes and Base64 decode them
-            int startIndex, endIndex;
-            byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
+            byte[] contentBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out int startIndex, out int endIndex);
             if (contentBytes == null)
             {
                 ErrorRecord error = new ErrorRecord(
@@ -415,8 +411,7 @@ namespace Microsoft.PowerShell.Commands
             // Validate Path
             if (!string.IsNullOrEmpty(Path))
             {
-                ProviderInfo provider = null;
-                Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out provider);
+                Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(Path, out ProviderInfo provider);
 
                 // Ensure the path is a single path from the file system provider
                 if ((resolvedPaths.Count > 1) ||
@@ -508,8 +503,7 @@ namespace Microsoft.PowerShell.Commands
         private string Decrypt(string actualContent)
         {
             // Extract out the bytes and Base64 decode them
-            int startIndex, endIndex;
-            byte[] messageBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out startIndex, out endIndex);
+            byte[] messageBytes = CmsUtils.RemoveAsciiArmor(actualContent, CmsUtils.BEGIN_CMS_SIGIL, CmsUtils.END_CMS_SIGIL, out int startIndex, out int endIndex);
             if ((messageBytes == null) && (!IncludeContext))
             {
                 ErrorRecord error = new ErrorRecord(

@@ -389,9 +389,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    int policy = 0;
 
-                    if (Native.SLGetWindowsInformationDWORD(propertyName, out policy) == Native.S_OK
+                    if (Native.SLGetWindowsInformationDWORD(propertyName, out int policy) == Native.S_OK
                         && policy == 1)
                     {
                         return true;
@@ -579,9 +578,8 @@ namespace Microsoft.PowerShell.Commands
             rv.hyperV = GetHyperVisorInfo(session);
 
             var serverLevels = RegistryInfo.GetServerLevels();
-            uint value;
 
-            if (serverLevels.TryGetValue("NanoServer", out value) && value == 1)
+            if (serverLevels.TryGetValue("NanoServer", out uint value) && value == 1)
             {
                 rv.serverLevel = ServerLevel.NanoServer;
             }
@@ -614,9 +612,8 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                FirmwareType firmwareType;
 
-                if (Native.GetFirmwareType(out firmwareType))
+                if (Native.GetFirmwareType(out FirmwareType firmwareType))
                     return firmwareType;
             }
             catch (Exception)
@@ -638,8 +635,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                ulong memory;
-                if (Native.GetPhysicallyInstalledSystemMemory(out memory))
+                if (Native.GetPhysicallyInstalledSystemMemory(out ulong memory))
                     return memory;
             }
             catch (Exception)

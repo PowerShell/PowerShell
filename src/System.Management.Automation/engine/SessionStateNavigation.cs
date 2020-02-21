@@ -170,10 +170,7 @@ namespace System.Management.Automation
                     context.Drive = drive;
                 }
 
-                bool isProviderQualified = false;
-                bool isDriveQualified = false;
-                string qualifier = null;
-                string pathNoQualifier = RemoveQualifier(path, provider, out qualifier, out isProviderQualified, out isDriveQualified);
+                string pathNoQualifier = RemoveQualifier(path, provider, out string qualifier, out bool isProviderQualified, out bool isDriveQualified);
 
                 string result = GetParentPath(provider, pathNoQualifier, root, context);
 
@@ -525,14 +522,12 @@ namespace System.Management.Automation
 
             try
             {
-                PSDriveInfo drive = null;
-                ProviderInfo provider = null;
 
                 string workingPath = Globber.GetProviderPath(
                      path,
                      getProviderPathContext,
-                     out provider,
-                     out drive);
+                     out ProviderInfo provider,
+                     out PSDriveInfo drive);
 
                 if (getProviderPathContext.HasErrors())
                 {
@@ -553,14 +548,12 @@ namespace System.Management.Automation
 
                 if (basePath != null)
                 {
-                    PSDriveInfo baseDrive = null;
-                    ProviderInfo baseProvider = null;
 
                     Globber.GetProviderPath(
                          basePath,
                          getProviderPathContext,
-                         out baseProvider,
-                         out baseDrive);
+                         out ProviderInfo baseProvider,
+                         out PSDriveInfo baseDrive);
 
                     if (drive != null && baseDrive != null)
                     {
@@ -839,10 +832,9 @@ namespace System.Management.Automation
                 bool isAbsolute = LocationGlobber.IsAbsolutePath(parent);
                 if (isProviderQualified || isAbsolute)
                 {
-                    PSDriveInfo drive = null;
 
                     // Ignore the result. Just using this to get the providerId and drive
-                    Globber.GetProviderPath(parent, context, out provider, out drive);
+                    Globber.GetProviderPath(parent, context, out provider, out PSDriveInfo drive);
 
                     if (drive == null && isProviderQualified)
                     {
@@ -1407,14 +1399,13 @@ namespace System.Management.Automation
             }
 
             ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             Collection<PathInfo> providerDestinationPaths =
                 Globber.GetGlobbedMonadPathsFromMonadPath(
                     destination,
                     true,
                     context,
-                    out providerInstance);
+                    out CmdletProvider providerInstance);
 
             if (providerDestinationPaths.Count > 1)
             {
@@ -1629,8 +1620,6 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                 new CmdletProviderContext(context);
@@ -1644,8 +1633,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {

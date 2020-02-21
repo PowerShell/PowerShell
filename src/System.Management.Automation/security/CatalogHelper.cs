@@ -738,8 +738,7 @@ namespace System.Management.Automation
         internal static CatalogInformation ValidateCatalog(PSCmdlet cmdlet, Collection<string> catalogFolders, string catalogFilePath, WildcardPattern[] excludedPatterns)
         {
             _cmdlet = cmdlet;
-            int catalogVersion = 0;
-            Dictionary<string, string> catalogHashes = GetHashesFromCatalog(catalogFilePath, excludedPatterns, out catalogVersion);
+            Dictionary<string, string> catalogHashes = GetHashesFromCatalog(catalogFilePath, excludedPatterns, out int catalogVersion);
             string hashAlgorithm = GetCatalogHashAlgorithm(catalogVersion);
 
             if (!string.IsNullOrEmpty(hashAlgorithm))

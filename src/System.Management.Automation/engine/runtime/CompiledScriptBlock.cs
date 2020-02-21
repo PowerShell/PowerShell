@@ -296,8 +296,7 @@ namespace System.Management.Automation
                     return _ast;
                 }
 
-                ParseError[] errors;
-                _ast = (new Parser()).Parse(null, _scriptText, null, out errors, ParseMode.Default);
+                _ast = (new Parser()).Parse(null, _scriptText, null, out ParseError[] errors, ParseMode.Default);
                 if (errors.Length != 0)
                 {
                     throw new ParseException(errors);
@@ -562,9 +561,8 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ScriptBlock scriptBlock;
             var key = Tuple.Create(fileName, fileContents);
-            if (s_cachedScripts.TryGetValue(key, out scriptBlock))
+            if (s_cachedScripts.TryGetValue(key, out ScriptBlock scriptBlock))
             {
                 Diagnostics.Assert(
                     scriptBlock.SessionStateInternal == null,
@@ -1477,13 +1475,12 @@ namespace System.Management.Automation
                         // Encrypt the raw text from the scriptblock.
                         // The user may have to deal with any control characters in the data.
                         ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
-                        ErrorRecord error = null;
                         byte[] contentBytes = System.Text.Encoding.UTF8.GetBytes(textToLog);
                         string encodedContent = CmsUtils.Encrypt(
                             contentBytes,
                             s_encryptionRecipients,
                             executionContext.SessionState,
-                            out error);
+                            out ErrorRecord error);
 
                         // Can't cache the reporting of encryption errors, as they are likely content-based.
                         if (error != null)
@@ -1607,7 +1604,6 @@ namespace System.Management.Automation
                 // Get the encryption certificate
                 if (logSetting.EncryptionCertificate != null)
                 {
-                    ErrorRecord error = null;
                     ExecutionContext executionContext = LocalPipeline.GetExecutionContextFromTLS();
                     SessionState sessionState = null;
 
@@ -1645,7 +1641,7 @@ namespace System.Management.Automation
 
                     // Resolve the certificate to a recipient
                     CmsMessageRecipient recipient = new CmsMessageRecipient(fullCertificateContent);
-                    recipient.Resolve(sessionState, ResolutionPurpose.Encryption, out error);
+                    recipient.Resolve(sessionState, ResolutionPurpose.Encryption, out ErrorRecord error);
                     s_hasProcessedCertificate = true;
 
                     // If there's an error that we haven't already reported, report it in the event log.

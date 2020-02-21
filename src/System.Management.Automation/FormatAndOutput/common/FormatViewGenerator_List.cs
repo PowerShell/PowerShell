@@ -94,8 +94,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     continue;
 
                 ListViewField lvf = new ListViewField();
-                PSPropertyExpressionResult result;
-                lvf.formatPropertyField = GenerateFormatPropertyField(listItem.formatTokenList, so, enumerationLimit, out result);
+                lvf.formatPropertyField = GenerateFormatPropertyField(listItem.formatTokenList, so, enumerationLimit, out PSPropertyExpressionResult result);
 
                 // we need now to provide a label
                 if (listItem.label != null)

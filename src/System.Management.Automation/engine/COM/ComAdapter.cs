@@ -58,8 +58,7 @@ namespace System.Management.Automation
         /// <returns>The PSMemberInfo corresponding to memberName from obj.</returns>
         protected override T GetMember<T>(object obj, string memberName)
         {
-            ComProperty prop;
-            if (_comTypeInfo.Properties.TryGetValue(memberName, out prop))
+            if (_comTypeInfo.Properties.TryGetValue(memberName, out ComProperty prop))
             {
                 if (prop.IsParameterized)
                 {
@@ -74,9 +73,8 @@ namespace System.Management.Automation
                 }
             }
 
-            ComMethod method;
             if (typeof(T).IsAssignableFrom(typeof(PSMethod)) &&
-                (_comTypeInfo != null) && (_comTypeInfo.Methods.TryGetValue(memberName, out method)))
+                (_comTypeInfo != null) && (_comTypeInfo.Methods.TryGetValue(memberName, out ComMethod method)))
             {
                 PSMethod mshMethod = new PSMethod(method.Name, this, obj, method);
                 return mshMethod as T;

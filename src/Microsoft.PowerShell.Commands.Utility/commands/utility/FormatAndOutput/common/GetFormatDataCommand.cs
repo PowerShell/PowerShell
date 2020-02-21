@@ -162,8 +162,7 @@ namespace Microsoft.PowerShell.Commands
 
                 var formatdef = new FormatViewDefinition(definition.name, control, definition.InstanceId);
 
-                List<FormatViewDefinition> viewList;
-                if (!typedefs.TryGetValue(consolidatedTypeName, out viewList))
+                if (!typedefs.TryGetValue(consolidatedTypeName, out List<FormatViewDefinition> viewList))
                 {
                     viewList = new List<FormatViewDefinition>();
                     typedefs.Add(consolidatedTypeName, viewList);
@@ -209,8 +208,7 @@ namespace Microsoft.PowerShell.Commands
                 // If it's a TypeGroup, we need to look that up and add it's members
                 if (item is TypeGroupReference)
                 {
-                    List<string> typesInGroup;
-                    if (typeGroupMap.TryGetValue(item.name, out typesInGroup))
+                    if (typeGroupMap.TryGetValue(item.name, out List<string> typesInGroup))
                     {
                         foreach (string typeName in typesInGroup)
                         {

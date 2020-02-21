@@ -289,8 +289,7 @@ namespace System.Management.Automation
 
         private static void CopyParameterFromCmdletToPowerShell(Cmdlet cmdlet, PowerShell powerShell, string parameterName)
         {
-            object parameterValue;
-            if (!cmdlet.MyInvocation.BoundParameters.TryGetValue(parameterName, out parameterValue))
+            if (!cmdlet.MyInvocation.BoundParameters.TryGetValue(parameterName, out object parameterValue))
             {
                 return;
             }
@@ -1005,9 +1004,7 @@ namespace System.Management.Automation
             ScriptBlockAst scriptBlockAst = null;
             if (!containedErrors)
             {
-                System.Management.Automation.Language.Token[] throwAwayTokens;
-                ParseError[] parseErrors;
-                scriptBlockAst = System.Management.Automation.Language.Parser.ParseInput(cimModuleFile.FileData, temporaryModuleManifestPath, out throwAwayTokens, out parseErrors);
+                scriptBlockAst = System.Management.Automation.Language.Parser.ParseInput(cimModuleFile.FileData, temporaryModuleManifestPath, out Token[] throwAwayTokens, out ParseError[] parseErrors);
                 if ((scriptBlockAst == null) || (parseErrors != null && parseErrors.Length > 0))
                 {
                     containedErrors = true;
@@ -1073,8 +1070,7 @@ namespace System.Management.Automation
             Action<CimSession, Uri, string> cimSessionAction,
             Action<PSSession> psSessionAction)
         {
-            object weaklyTypeSession;
-            if (!s_moduleInfoToSession.TryGetValue(moduleInfo, out weaklyTypeSession))
+            if (!s_moduleInfoToSession.TryGetValue(moduleInfo, out object weaklyTypeSession))
             {
                 localAction();
                 return;

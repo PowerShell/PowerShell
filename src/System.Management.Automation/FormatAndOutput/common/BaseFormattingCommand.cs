@@ -298,9 +298,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
             }
 
-            List<ErrorRecord> errors;
             var fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
-                _typeInfoDataBase, so, _enumerationLimit, false, out errors);
+                _typeInfoDataBase, so, _enumerationLimit, false, out List<ErrorRecord> errors);
             WriteErrorRecords(errors);
 
             if (fed != null)
@@ -330,9 +329,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private bool ProcessOutOfBand(PSObject so, bool isProcessingError)
         {
-            List<ErrorRecord> errors;
             FormatEntryData fed = OutOfBandFormatViewManager.GenerateOutOfBandData(this.TerminatingErrorContext, _expressionFactory,
-                                    _typeInfoDataBase, so, _enumerationLimit, true, out errors);
+                                    _typeInfoDataBase, so, _enumerationLimit, true, out List<ErrorRecord> errors);
             if (!isProcessingError)
                 WriteErrorRecords(errors);
 
@@ -614,8 +612,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
             }
 
-            EnumerableExpansion temp;
-            bool success = EnumerableExpansionConversion.Convert(Expand, out temp);
+            bool success = EnumerableExpansionConversion.Convert(Expand, out EnumerableExpansion temp);
             if (!success)
             {
                 // this should never happen, since we use the [ValidateSet] attribute

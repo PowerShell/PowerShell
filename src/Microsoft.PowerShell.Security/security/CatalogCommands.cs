@@ -106,10 +106,9 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            string drive = null;
 
             // resolve catalog destination Path
-            if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
+            if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out string drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
             {
                 catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
             }

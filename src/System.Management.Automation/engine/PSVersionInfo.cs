@@ -249,8 +249,7 @@ namespace System.Management.Automation
 
         internal static string GetRegistryVersionKeyForSnapinDiscovery(string majorVersion)
         {
-            int tempMajorVersion = 0;
-            LanguagePrimitives.TryConvertTo<int>(majorVersion, out tempMajorVersion);
+            LanguagePrimitives.TryConvertTo<int>(majorVersion, out int tempMajorVersion);
 
             if ((tempMajorVersion >= 1) && (tempMajorVersion <= PSVersionInfo.PSVersion.Major))
             {
@@ -691,7 +690,6 @@ namespace System.Management.Automation
             }
 
             string versionSansLabel = null;
-            var major = 0;
             var minor = 0;
             var patch = 0;
             string preLabel = null;
@@ -757,7 +755,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            if (!int.TryParse(match.Groups["major"].Value, out major))
+            if (!int.TryParse(match.Groups["major"].Value, out int major))
             {
                 result.SetFailure(ParseFailureKind.FormatException);
                 return false;
@@ -976,9 +974,8 @@ namespace System.Management.Automation
             {
                 var ac = units1[i];
                 var bc = units2[i];
-                int number1, number2;
-                var isNumber1 = Int32.TryParse(ac, out number1);
-                var isNumber2 = Int32.TryParse(bc, out number2);
+                var isNumber1 = Int32.TryParse(ac, out int number1);
+                var isNumber2 = Int32.TryParse(bc, out int number2);
 
                 if (isNumber1 && isNumber2)
                 {

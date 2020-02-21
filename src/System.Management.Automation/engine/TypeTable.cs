@@ -201,8 +201,7 @@ namespace System.Management.Automation.Runspaces
 
         private Type ResolveType(string typeName, int line)
         {
-            Exception exception;
-            var type = TypeResolver.ResolveType(typeName, out exception);
+            var type = TypeResolver.ResolveType(typeName, out Exception exception);
             if (exception != null)
             {
                 _context.AddError(line, exception.Message);
@@ -234,9 +233,8 @@ namespace System.Management.Automation.Runspaces
 
         private T Converter<T>(object value, string name)
         {
-            T result;
 
-            if (!LanguagePrimitives.TryConvertTo(value, out result))
+            if (!LanguagePrimitives.TryConvertTo(value, out T result))
             {
                 _context.AddError(TypesXmlStrings.ErrorConvertingNote, name, typeof(T));
             }
@@ -740,8 +738,7 @@ namespace System.Management.Automation.Runspaces
                                 NotMoreThanOnce(_idMembers, _idMemberSet);
                             }
 
-                            MemberSetData standardMembers;
-                            members = Read_Members(out standardMembers);
+                            members = Read_Members(out MemberSetData standardMembers);
                             if (standardMembers != null)
                             {
                                 // Somewhat pointless - but if we see PSStandardMembers inside a memberset, it's
@@ -1987,8 +1984,7 @@ namespace System.Management.Automation.Runspaces
                     return;
                 }
 
-                TypeMemberData typeMemberData;
-                if (StandardMembers.TryGetValue(TypeTable.SerializationMethodNode, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.SerializationMethodNode, out TypeMemberData typeMemberData))
                 {
                     ((NotePropertyData)typeMemberData).Value = _serializationMethod;
                 }
@@ -2019,8 +2015,7 @@ namespace System.Management.Automation.Runspaces
                     return;
                 }
 
-                TypeMemberData typeMemberData;
-                if (StandardMembers.TryGetValue(TypeTable.TargetTypeForDeserialization, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.TargetTypeForDeserialization, out TypeMemberData typeMemberData))
                 {
                     ((NotePropertyData)typeMemberData).Value = _targetTypeForDeserialization;
                 }
@@ -2046,8 +2041,7 @@ namespace System.Management.Automation.Runspaces
             {
                 _serializationDepth = value;
 
-                TypeMemberData typeMemberData;
-                if (StandardMembers.TryGetValue(TypeTable.SerializationDepth, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.SerializationDepth, out TypeMemberData typeMemberData))
                 {
                     ((NotePropertyData)typeMemberData).Value = _serializationDepth;
                 }
@@ -2078,8 +2072,7 @@ namespace System.Management.Automation.Runspaces
                     return;
                 }
 
-                TypeMemberData typeMemberData;
-                if (StandardMembers.TryGetValue(TypeTable.DefaultDisplayProperty, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.DefaultDisplayProperty, out TypeMemberData typeMemberData))
                 {
                     ((NotePropertyData)typeMemberData).Value = _defaultDisplayProperty;
                 }
@@ -2104,8 +2097,7 @@ namespace System.Management.Automation.Runspaces
             set
             {
                 _inheritPropertySerializationSet = value;
-                TypeMemberData typeMemberData;
-                if (StandardMembers.TryGetValue(TypeTable.InheritPropertySerializationSet, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.InheritPropertySerializationSet, out TypeMemberData typeMemberData))
                 {
                     ((NotePropertyData)typeMemberData).Value = _inheritPropertySerializationSet;
                 }
@@ -2151,8 +2143,7 @@ namespace System.Management.Automation.Runspaces
                     _stringSerializationSourceProperty = null;
                 }
 
-                TypeMemberData typeMemberData;
-                if (StandardMembers.TryGetValue(TypeTable.StringSerializationSource, out typeMemberData))
+                if (StandardMembers.TryGetValue(TypeTable.StringSerializationSource, out TypeMemberData typeMemberData))
                 {
                     ((AliasPropertyData)typeMemberData).ReferencedMemberName = _stringSerializationSource;
                 }
@@ -3088,8 +3079,7 @@ namespace System.Management.Automation.Runspaces
             bool serializationSettingsOk;
             do // false loop
             {
-                PSNoteProperty serializationMethodNote;
-                serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationMethodNode, typeof(SerializationMethod), out serializationMethodNote);
+                serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationMethodNode, typeof(SerializationMethod), out PSNoteProperty serializationMethodNote);
                 if (!serializationSettingsOk)
                 {
                     break;
@@ -3123,17 +3113,15 @@ namespace System.Management.Automation.Runspaces
                 }
                 else if (serializationMethod == SerializationMethod.SpecificProperties)
                 {
-                    PSNoteProperty inheritPropertiesNote;
-                    serializationSettingsOk = GetCheckNote(errors, typeName, members, InheritPropertySerializationSet, typeof(bool), out inheritPropertiesNote);
+                    serializationSettingsOk = GetCheckNote(errors, typeName, members, InheritPropertySerializationSet, typeof(bool), out PSNoteProperty inheritPropertiesNote);
                     if (!serializationSettingsOk)
                     {
                         break;
                     }
 
-                    PSMemberInfo propertySerializationSet;
                     serializationSettingsOk = GetCheckMemberType(errors, typeName, members,
                         PropertySerializationSet, typeof(PSPropertySet),
-                        out propertySerializationSet);
+                        out PSMemberInfo propertySerializationSet);
                     if (!serializationSettingsOk)
                     {
                         break;
@@ -3154,8 +3142,7 @@ namespace System.Management.Automation.Runspaces
                         break;
                     }
 
-                    PSNoteProperty noteProperty;
-                    serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationDepth, typeof(int), out noteProperty);
+                    serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationDepth, typeof(int), out PSNoteProperty noteProperty);
                     if (!serializationSettingsOk)
                     {
                         break;
@@ -3175,16 +3162,14 @@ namespace System.Management.Automation.Runspaces
                         break;
                     }
 
-                    PSNoteProperty noteProperty;
-                    serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationDepth, typeof(int), out noteProperty);
+                    serializationSettingsOk = GetCheckNote(errors, typeName, members, SerializationDepth, typeof(int), out PSNoteProperty noteProperty);
                     if (!serializationSettingsOk)
                     {
                         break;
                     }
                 }
 
-                PSMemberInfo serializationSource;
-                serializationSettingsOk = GetCheckMemberType(errors, typeName, members, StringSerializationSource, typeof(PSPropertyInfo), out serializationSource);
+                serializationSettingsOk = GetCheckMemberType(errors, typeName, members, StringSerializationSource, typeof(PSPropertyInfo), out PSMemberInfo serializationSource);
                 if (!serializationSettingsOk)
                 {
                     break;
@@ -3202,8 +3187,7 @@ namespace System.Management.Automation.Runspaces
                 members.Remove(SerializationDepth);
             }
 
-            PSMemberInfo otherMember;
-            if (!GetCheckMemberType(errors, typeName, members, DefaultDisplayPropertySet, typeof(PSPropertySet), out otherMember))
+            if (!GetCheckMemberType(errors, typeName, members, DefaultDisplayPropertySet, typeof(PSPropertySet), out PSMemberInfo otherMember))
             {
                 members.Remove(DefaultDisplayPropertySet);
             }
@@ -3213,14 +3197,12 @@ namespace System.Management.Automation.Runspaces
                 members.Remove(DefaultKeyPropertySet);
             }
 
-            PSNoteProperty defaultDisplayProperty;
-            if (!GetCheckNote(errors, typeName, members, DefaultDisplayProperty, typeof(string), out defaultDisplayProperty))
+            if (!GetCheckNote(errors, typeName, members, DefaultDisplayProperty, typeof(string), out PSNoteProperty defaultDisplayProperty))
             {
                 members.Remove(DefaultDisplayProperty);
             }
 
-            PSNoteProperty targetTypeForDeserialization;
-            if (!GetCheckNote(errors, typeName, members, TargetTypeForDeserialization, typeof(Type), out targetTypeForDeserialization))
+            if (!GetCheckNote(errors, typeName, members, TargetTypeForDeserialization, typeof(Type), out PSNoteProperty targetTypeForDeserialization))
             {
                 members.Remove(TargetTypeForDeserialization);
             }
@@ -3754,8 +3736,7 @@ namespace System.Management.Automation.Runspaces
 
             // We always remove the whole type
             bool typeExist = false;
-            PSMemberInfoInternalCollection<PSMemberInfo> memberCollection;
-            if (_extendedMembers.TryRemove(typeName, out memberCollection))
+            if (_extendedMembers.TryRemove(typeName, out PSMemberInfoInternalCollection<PSMemberInfo> memberCollection))
             {
                 typeExist = true;
                 foreach (var m in memberCollection)
@@ -3933,8 +3914,7 @@ namespace System.Management.Automation.Runspaces
                     throw PSTraceSource.NewArgumentException("typeFile", TypesXmlStrings.TypeFileNotRooted, typefile);
                 }
 
-                bool unused;
-                Initialize(string.Empty, typefile, errors, authorizationManager, host, out unused);
+                Initialize(string.Empty, typefile, errors, authorizationManager, host, out bool unused);
                 _typeFileList.Add(typefile);
             }
 
@@ -4102,8 +4082,7 @@ namespace System.Management.Automation.Runspaces
                 return null;
             }
 
-            object result;
-            _typeConverters.TryGetValue(typeName, out result);
+            _typeConverters.TryGetValue(typeName, out object result);
             return result;
         }
 
@@ -4130,8 +4109,7 @@ namespace System.Management.Automation.Runspaces
              *         the M3 milestone.
              */
 #if true
-            PSObject.AdapterSet result;
-            _typeAdapters.TryGetValue(type.FullName, out result);
+            _typeAdapters.TryGetValue(type.FullName, out PSObject.AdapterSet result);
             return result;
 #else
             foreach (PSObject.AdapterSet adapterSet in this.typeAdapters.Values)
@@ -4380,8 +4358,7 @@ namespace System.Management.Automation.Runspaces
             Dbg.Assert(typeData != null && typeData.TypeName != null, "The caller needs to make sure typeData != null");
             string typeName = typeData.TypeName;
 
-            PSMemberInfoInternalCollection<PSMemberInfo> typeMembers;
-            if (_extendedMembers.TryGetValue(typeName, out typeMembers))
+            if (_extendedMembers.TryGetValue(typeName, out PSMemberInfoInternalCollection<PSMemberInfo> typeMembers))
             {
                 Dbg.Assert(typeMembers != null, "members should not be null");
                 foreach (PSMemberInfo member in typeMembers)
@@ -4401,8 +4378,7 @@ namespace System.Management.Automation.Runspaces
             Dbg.Assert(typeData != null && typeData.TypeName != null, "The caller needs to make sure typeData != null");
             string typeName = typeData.TypeName;
 
-            object converterResult;
-            if (_typeConverters.TryGetValue(typeName, out converterResult))
+            if (_typeConverters.TryGetValue(typeName, out object converterResult))
             {
                 Dbg.Assert(converterResult != null, "converter should not be null");
                 typeData.TypeConverter = converterResult.GetType();
@@ -4417,8 +4393,7 @@ namespace System.Management.Automation.Runspaces
             Dbg.Assert(typeData != null && typeData.TypeName != null, "The caller needs to make sure typeData != null");
             string typeName = typeData.TypeName;
 
-            PSObject.AdapterSet adapterResult;
-            if (_typeAdapters.TryGetValue(typeName, out adapterResult))
+            if (_typeAdapters.TryGetValue(typeName, out PSObject.AdapterSet adapterResult))
             {
                 Dbg.Assert(adapterResult != null, "adapter should not be null");
                 typeData.TypeAdapter = ((ThirdPartyAdapter)(adapterResult.OriginalAdapter)).ExternalAdapterType;
@@ -4549,9 +4524,7 @@ namespace System.Management.Automation.Runspaces
                 return;
             }
 
-            bool isFullyTrusted;
-            bool isProductCode;
-            string fileContents = GetModuleContents(snapinName, fileToLoad, errors, authorizationManager, host, out isFullyTrusted, out failToLoadFile, out isProductCode);
+            string fileContents = GetModuleContents(snapinName, fileToLoad, errors, authorizationManager, host, out bool isFullyTrusted, out failToLoadFile, out bool isProductCode);
 
             if (fileContents == null)
             {
@@ -4764,10 +4737,8 @@ namespace System.Management.Automation.Runspaces
             {
                 // Get file contents and perform authorization check
                 // (including possible user prompt) outside of the lock.
-                bool isFullyTrusted;
-                bool isProductCode;
 
-                var fileContents = GetModuleContents(moduleName, filePath, errors, authorizationManager, host, out isFullyTrusted, out failToLoadFile, out isProductCode);
+                var fileContents = GetModuleContents(moduleName, filePath, errors, authorizationManager, host, out bool isFullyTrusted, out failToLoadFile, out bool isProductCode);
 
                 if (fileContents != null)
                 {

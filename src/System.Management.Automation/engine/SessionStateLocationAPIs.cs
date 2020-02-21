@@ -387,8 +387,7 @@ namespace System.Management.Automation
                 string currentPath = path;
                 try
                 {
-                    string providerName = null;
-                    currentPathisProviderQualifiedPath = LocationGlobber.IsProviderQualifiedPath(resolvedPath.Path, out providerName);
+                    currentPathisProviderQualifiedPath = LocationGlobber.IsProviderQualifiedPath(resolvedPath.Path, out string providerName);
                     if (currentPathisProviderQualifiedPath)
                     {
                         // The path should be the provider-qualified path without the provider ID
@@ -639,15 +638,13 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            PSDriveInfo drive = null;
-            ProviderInfo provider = null;
 
             string providerSpecificPath =
                 Globber.GetProviderPath(
                     path,
                     context,
-                    out provider,
-                    out drive);
+                    out ProviderInfo provider,
+                    out PSDriveInfo drive);
 
             if (drive != null)
             {
@@ -708,15 +705,13 @@ namespace System.Management.Automation
                 s_tracer.WriteLine("Provider path = {0}", providerSpecificPath);
 
                 // Get the current working directory provider specific path
-                PSDriveInfo currentWorkingDrive = null;
-                ProviderInfo currentDriveProvider = null;
 
                 string currentWorkingPath =
                     Globber.GetProviderPath(
                         ".",
                         context,
-                        out currentDriveProvider,
-                        out currentWorkingDrive);
+                        out ProviderInfo currentDriveProvider,
+                        out PSDriveInfo currentWorkingDrive);
 
                 Dbg.Diagnostics.Assert(
                     currentWorkingDrive == CurrentDrive,
@@ -823,9 +818,8 @@ namespace System.Management.Automation
             }
 
             // Get the location stack from the hashtable
-            Stack<PathInfo> locationStack = null;
 
-            if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
+            if (!_workingLocationStack.TryGetValue(stackName, out Stack<PathInfo> locationStack))
             {
                 locationStack = new Stack<PathInfo>();
                 _workingLocationStack[stackName] = locationStack;
@@ -928,8 +922,7 @@ namespace System.Management.Automation
 
             try
             {
-                Stack<PathInfo> locationStack = null;
-                if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
+                if (!_workingLocationStack.TryGetValue(stackName, out Stack<PathInfo> locationStack))
                 {
                     if (!string.Equals(stackName, startingDefaultStackName, StringComparison.OrdinalIgnoreCase))
                     {
@@ -997,9 +990,8 @@ namespace System.Management.Automation
                 stackName = _defaultStackName;
             }
 
-            Stack<PathInfo> locationStack = null;
 
-            if (!_workingLocationStack.TryGetValue(stackName, out locationStack))
+            if (!_workingLocationStack.TryGetValue(stackName, out Stack<PathInfo> locationStack))
             {
                 // If the request was for the default stack, but it doesn't
                 // yet exist, create a dummy stack and return it.

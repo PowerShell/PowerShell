@@ -162,7 +162,6 @@ namespace Microsoft.PowerShell.Commands
             string contentType = ContentHelper.GetContentType(BaseResponse);
             if (ContentHelper.IsText(contentType))
             {
-                Encoding encoding = null;
                 // fill the Content buffer
                 string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
 
@@ -171,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
                     characterSet = Encoding.UTF8.HeaderName;
                 }
 
-                this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out encoding);
+                this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out Encoding encoding);
                 this.Encoding = encoding;
             }
             else

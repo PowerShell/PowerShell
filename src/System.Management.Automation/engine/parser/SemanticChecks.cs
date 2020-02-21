@@ -1701,8 +1701,7 @@ namespace System.Management.Automation.Language
                     {
                         if (na.ArgumentName.Equals("Key", StringComparison.OrdinalIgnoreCase))
                         {
-                            object attrArgValue;
-                            if (IsConstantValueVisitor.IsConstant(na.Argument, out attrArgValue, forAttribute: true, forRequires: false)
+                            if (IsConstantValueVisitor.IsConstant(na.Argument, out object attrArgValue, forAttribute: true, forRequires: false)
                                 && LanguagePrimitives.IsTrue(attrArgValue))
                             {
                                 hasKey = true;

@@ -46,8 +46,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void AddField(string key, string value)
         {
-            string test;
-            if (key != null && !Fields.TryGetValue(key, out test))
+            if (key != null && !Fields.TryGetValue(key, out string test))
             {
                 Fields[key] = value;
             }

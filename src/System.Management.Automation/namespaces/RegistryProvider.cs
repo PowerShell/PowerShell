@@ -1016,8 +1016,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (newItem != null)
                         {
-                            RegistryValueKind kind;
-                            if (!ParseKind(type, out kind))
+                            if (!ParseKind(type, out RegistryValueKind kind))
                             {
                                 return;
                             }
@@ -1794,14 +1793,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // get a set of matching properties on the key itself
-            IRegistryWrapper key;
-            Collection<string> filteredPropertyCollection;
             GetFilteredRegistryKeyProperties(path,
                                             providerSpecificPickList,
                                             true,
                                             false,
-                                            out key,
-                                            out filteredPropertyCollection);
+                                            out IRegistryWrapper key,
+                                            out Collection<string> filteredPropertyCollection);
             if (key == null)
             {
                 return;
@@ -1987,14 +1984,12 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // get a set of matching properties on the key itself
-            IRegistryWrapper key;
-            Collection<string> filteredPropertyCollection;
             GetFilteredRegistryKeyProperties(path,
                                             propertyToClear,
                                             false,
                                             true,
-                                            out key,
-                                            out filteredPropertyCollection);
+                                            out IRegistryWrapper key,
+                                            out Collection<string> filteredPropertyCollection);
             if (key == null)
             {
                 return;
@@ -2153,8 +2148,7 @@ namespace Microsoft.PowerShell.Commands
             if (ShouldProcess(resource, action))
             {
                 // convert the type to a RegistryValueKind
-                RegistryValueKind kind;
-                if (!ParseKind(type, out kind))
+                if (!ParseKind(type, out RegistryValueKind kind))
                 {
                     key.Close();
                     return;

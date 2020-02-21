@@ -290,14 +290,13 @@ namespace System.Management.Automation
             {
                 foreach (var requiredModule in scriptInfo.RequiresModules)
                 {
-                    ErrorRecord error = null;
                     ModuleCmdletBase.LoadRequiredModule(
                         context: context,
                         currentModule: null,
                         requiredModuleSpecification: requiredModule,
                         moduleManifestPath: null,
                         manifestProcessingFlags: ModuleCmdletBase.ManifestProcessingFlags.LoadElements | ModuleCmdletBase.ManifestProcessingFlags.WriteErrors,
-                        error: out error);
+                        error: out ErrorRecord error);
                     if (error != null)
                     {
                         ScriptRequiresException scriptRequiresException =
@@ -332,8 +331,7 @@ namespace System.Management.Automation
             IEnumerable<PSSnapInSpecification> requiresPSSnapIns = scriptInfo.RequiresPSSnapIns;
             if (requiresPSSnapIns != null && requiresPSSnapIns.Any())
             {
-                Collection<string> requiresMissingPSSnapIns = null;
-                VerifyRequiredSnapins(requiresPSSnapIns, context, out requiresMissingPSSnapIns);
+                VerifyRequiredSnapins(requiresPSSnapIns, context, out Collection<string> requiresMissingPSSnapIns);
                 if (requiresMissingPSSnapIns != null)
                 {
                     ScriptRequiresException scriptRequiresException =
@@ -1091,15 +1089,13 @@ namespace System.Management.Automation
 
                             if (exportedCommands == null) { continue; }
 
-                            CommandTypes exportedCommandTypes;
                             // Skip if module only has class or other types and no commands.
-                            if (exportedCommands.TryGetValue(commandName, out exportedCommandTypes))
+                            if (exportedCommands.TryGetValue(commandName, out CommandTypes exportedCommandTypes))
                             {
-                                Exception exception;
                                 discoveryTracer.WriteLine("Found in module: {0}", expandedModulePath);
                                 Collection<PSModuleInfo> matchingModule = AutoloadSpecifiedModule(expandedModulePath, context,
                                     cmdletInfo != null ? cmdletInfo.Visibility : SessionStateEntryVisibility.Private,
-                                        out exception);
+                                        out Exception exception);
                                 lastError = exception;
                                 if ((matchingModule == null) || (matchingModule.Count == 0))
                                 {
@@ -1175,8 +1171,7 @@ namespace System.Management.Automation
             {
                 string versionString = moduleCommandName.Substring(0, secondBackslash);
                 // The second '\' could be version specified. eg: "Microsoft.PowerShell.Archive\1.0.0.0\Compress-Archive", we need to support this scenario
-                Version version;
-                if (Version.TryParse(versionString, out version))
+                if (Version.TryParse(versionString, out Version version))
                 {
                     moduleCommandName = moduleCommandName.Substring(secondBackslash + 1, moduleCommandName.Length - secondBackslash - 1);
                     moduleName = commandName.Substring(0, colonOrBackslash) + "\\" + versionString + "\\" + commandName.Substring(0, colonOrBackslash) + ".psd1";
@@ -1209,8 +1204,7 @@ namespace System.Management.Automation
                     if (existingModule == null || existingModule.Count == 0)
                     {
                         discoveryTracer.WriteLine("Attempting to load module: {0}", moduleName);
-                        Exception exception;
-                        Collection<PSModuleInfo> importedModule = AutoloadSpecifiedModule(moduleName, context, cmdletInfo.Visibility, out exception);
+                        Collection<PSModuleInfo> importedModule = AutoloadSpecifiedModule(moduleName, context, cmdletInfo.Visibility, out Exception exception);
                         lastError = exception;
 
                         if ((importedModule == null) || (importedModule.Count == 0))
@@ -1231,8 +1225,7 @@ namespace System.Management.Automation
                         discoveredModule = existingModule[0];
                     }
 
-                    CommandInfo exportedResult;
-                    if (discoveredModule.ExportedCommands.TryGetValue(moduleCommandName, out exportedResult))
+                    if (discoveredModule.ExportedCommands.TryGetValue(moduleCommandName, out CommandInfo exportedResult))
                     {
                         // Return the command if we found a module
                         result = exportedResult;
@@ -1466,8 +1459,7 @@ namespace System.Management.Automation
 
             foreach (SessionStateScope scope in scopeEnumerator)
             {
-                List<CmdletInfo> cmdlets;
-                if (!scope.CmdletTable.TryGetValue(commandName.ShortName, out cmdlets))
+                if (!scope.CmdletTable.TryGetValue(commandName.ShortName, out List<CmdletInfo> cmdlets))
                 {
                     continue;
                 }

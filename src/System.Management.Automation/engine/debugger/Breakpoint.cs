@@ -507,8 +507,7 @@ namespace System.Management.Automation
                 couldBeInNestedScriptBlock = false;
             }
 
-            int sequencePointIndex;
-            var sequencePoint = FindSequencePoint(functionContext, Line, Column, out sequencePointIndex);
+            var sequencePoint = FindSequencePoint(functionContext, Line, Column, out int sequencePointIndex);
             if (sequencePoint != null)
             {
                 // If the bp could be in a nested script block, we want to be careful and get the bp in the correct script block.

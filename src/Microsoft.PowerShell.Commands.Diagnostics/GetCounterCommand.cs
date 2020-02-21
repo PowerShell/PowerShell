@@ -328,10 +328,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             CultureInfo culture = GetCurrentCulture();
-            List<Tuple<char, char>> characterReplacementList = null;
             StringCollection validPaths = new StringCollection();
 
-            _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out characterReplacementList);
+            _cultureAndSpecialCharacterMap.TryGetValue(culture.Name, out List<Tuple<char, char>> characterReplacementList);
 
             foreach (string pattern in _listSet)
             {
@@ -467,8 +466,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                StringCollection expandedPaths;
-                res = _pdhHelper.ExpandWildCardPath(localizedPath, out expandedPaths);
+                res = _pdhHelper.ExpandWildCardPath(localizedPath, out StringCollection expandedPaths);
                 if (res != 0)
                 {
                     WriteDebug("Could not expand path " + localizedPath);
@@ -510,7 +508,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            PerformanceCounterSampleSet nextSet;
 
             bool bSkip = true;
             uint sampleReads = 0;
@@ -523,7 +520,7 @@ namespace Microsoft.PowerShell.Commands
             while (true)
             {
                 // read the first set just to get the initial values
-                res = _pdhHelper.ReadNextSet(out nextSet, bSkip);
+                res = _pdhHelper.ReadNextSet(out PerformanceCounterSampleSet nextSet, bSkip);
 
                 if (res == 0)
                 {
@@ -571,8 +568,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ReportPdhError(uint res, bool bTerminate)
         {
-            string msg;
-            uint formatRes = CommonUtilities.FormatMessageFromModule(res, "pdh.dll", out msg);
+            uint formatRes = CommonUtilities.FormatMessageFromModule(res, "pdh.dll", out string msg);
             if (formatRes != 0)
             {
                 msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterApiError"), res);

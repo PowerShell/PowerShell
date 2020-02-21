@@ -861,8 +861,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         for (int index = 0; index < helpInfos.Count; index++)
                         {
-                            HelpInfo helpInfo;
-                            if (LanguagePrimitives.TryConvertTo<HelpInfo>(helpInfos[index], out helpInfo))
+                            if (LanguagePrimitives.TryConvertTo<HelpInfo>(helpInfos[index], out HelpInfo helpInfo))
                             {
                                 Uri result = helpInfo.GetUriForOnlineHelp();
                                 if (result != null)

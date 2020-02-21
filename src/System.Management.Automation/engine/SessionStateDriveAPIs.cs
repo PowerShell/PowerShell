@@ -792,9 +792,8 @@ namespace System.Management.Automation
             {
                 s_tracer.WriteLine("Auto-mounting built-in drive: {0}", name);
                 CommandInfo commandInfo = new CmdletInfo("Import-Module", typeof(Microsoft.PowerShell.Commands.ImportModuleCommand), null, null, context);
-                Exception exception = null;
                 s_tracer.WriteLine("Attempting to load module: {0}", moduleName);
-                CommandDiscovery.AutoloadSpecifiedModule(moduleName, context, commandInfo.Visibility, out exception);
+                CommandDiscovery.AutoloadSpecifiedModule(moduleName, context, commandInfo.Visibility, out Exception exception);
                 if (exception != null)
                 {
                     // Call-out to user code, catch-all OK

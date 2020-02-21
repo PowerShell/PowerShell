@@ -541,9 +541,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            string helpTarget;
-            HelpCategory helpCategory;
-            if (commandProcessorBase.IsHelpRequested(out helpTarget, out helpCategory))
+            if (commandProcessorBase.IsHelpRequested(out string helpTarget, out HelpCategory helpCategory))
             {
                 commandProcessorBase = CommandProcessorBase.CreateGetHelpCommandProcessor(
                     executionContext,

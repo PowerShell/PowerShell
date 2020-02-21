@@ -398,8 +398,7 @@ namespace Microsoft.PowerShell.Commands
                                 continue;
                             }
 
-                            string[] resolvedComputernames = null;
-                            ResolveComputerNames(_computerNames, out resolvedComputernames);
+                            ResolveComputerNames(_computerNames, out string[] resolvedComputernames);
 
                             foreach (string resolvedComputerName in resolvedComputernames)
                             {
@@ -1500,8 +1499,7 @@ namespace Microsoft.PowerShell.Commands
             // this is because of the way the synchronization happens
             // with the pipeline thread and event handler thread using
             // _writeExistingData
-            bool eventWritten;
-            _eventArgsWritten.TryGetValue(job.InstanceId, out eventWritten);
+            _eventArgsWritten.TryGetValue(job.InstanceId, out bool eventWritten);
 
             if (eventWritten)
             {

@@ -703,8 +703,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Create new remote runspace with name and Id.
-                        int rsId;
-                        string rsName = GetRunspaceName(rsIndex, out rsId);
+                        string rsName = GetRunspaceName(rsIndex, out int rsId);
                         RemoteRunspace newRemoteRunspace = new RemoteRunspace(
                             typeTable, newConnectionInfo, this.Host, this.SessionOption.ApplicationArguments,
                             rsName, rsId);
@@ -764,8 +763,7 @@ namespace Microsoft.PowerShell.Commands
                     connectionInfo.EnableNetworkAccess = EnableNetworkAccess;
 
                     // Create new remote runspace with name and Id.
-                    int rsId;
-                    string rsName = GetRunspaceName(i, out rsId);
+                    string rsName = GetRunspaceName(i, out int rsId);
                     RemoteRunspace remoteRunspace = new RemoteRunspace(
                         Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo, this.Host,
                         this.SessionOption.ApplicationArguments, rsName, rsId);
@@ -806,9 +804,8 @@ namespace Microsoft.PowerShell.Commands
                 new List<RemoteRunspace>();
 
             // Resolve all the machine names
-            string[] resolvedComputerNames;
 
-            ResolveComputerNames(ComputerName, out resolvedComputerNames);
+            ResolveComputerNames(ComputerName, out string[] resolvedComputerNames);
 
             ValidateComputerName(resolvedComputerNames);
 
@@ -840,8 +837,7 @@ namespace Microsoft.PowerShell.Commands
                     connectionInfo.EnableNetworkAccess = EnableNetworkAccess;
 
                     // Create new remote runspace with name and Id.
-                    int rsId;
-                    string rsName = GetRunspaceName(i, out rsId);
+                    string rsName = GetRunspaceName(i, out int rsId);
                     RemoteRunspace runspace = new RemoteRunspace(
                         Utils.GetTypeTableFromExecutionContextTLS(), connectionInfo, this.Host,
                         this.SessionOption.ApplicationArguments, rsName, rsId);
@@ -973,8 +969,7 @@ namespace Microsoft.PowerShell.Commands
                 // create helper objects for VM GUIDs or names
                 RemoteRunspace runspace = null;
                 VMConnectionInfo connectionInfo;
-                int rsId;
-                string rsName = GetRunspaceName(index, out rsId);
+                string rsName = GetRunspaceName(index, out int rsId);
 
                 try
                 {
@@ -1029,8 +1024,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 RemoteRunspace runspace = null;
                 ContainerConnectionInfo connectionInfo = null;
-                int rsId;
-                string rsName = GetRunspaceName(index, out rsId);
+                string rsName = GetRunspaceName(index, out int rsId);
                 index++;
 
                 try
@@ -1094,9 +1088,8 @@ namespace Microsoft.PowerShell.Commands
         private List<RemoteRunspace> CreateRunspacesForSSHHostParameterSet()
         {
             // Resolve all the machine names
-            string[] resolvedComputerNames;
 
-            ResolveComputerNames(HostName, out resolvedComputerNames);
+            ResolveComputerNames(HostName, out string[] resolvedComputerNames);
 
             var remoteRunspaces = new List<RemoteRunspace>();
             int index = 0;

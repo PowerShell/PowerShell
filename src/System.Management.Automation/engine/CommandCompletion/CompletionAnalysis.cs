@@ -179,11 +179,10 @@ namespace System.Management.Automation
         /// </summary>
         private static bool CompleteAgainstSwitchFile(Ast lastAst, Token tokenBeforeCursor)
         {
-            Tuple<Token, Ast> fileConditionTuple;
 
             var errorStatement = lastAst as ErrorStatementAst;
             if (errorStatement != null && errorStatement.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
-                errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out fileConditionTuple))
+                errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out Tuple<Token, Ast> fileConditionTuple))
             {
                 // Handle "switch -file <tab>"
                 return fileConditionTuple.Item1.Extent.EndOffset == tokenBeforeCursor.Extent.EndOffset;
@@ -481,8 +480,7 @@ namespace System.Management.Automation
                             //     {
                             //         DependsOn=@('[user]x',|)
                             //
-                            bool unused;
-                            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
+                            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out bool unused);
                         }
 
                         break;
@@ -561,14 +559,12 @@ namespace System.Management.Automation
 
                     case TokenKind.DynamicKeyword:
                         {
-                            DynamicKeywordStatementAst keywordAst;
                             ConfigurationDefinitionAst configureAst = GetAncestorConfigurationAstAndKeywordAst(
-                                completionContext.CursorPosition, lastAst, out keywordAst);
+                                completionContext.CursorPosition, lastAst, out DynamicKeywordStatementAst keywordAst);
                             Diagnostics.Assert(configureAst != null, "ConfigurationDefinitionAst should never be null");
-                            bool matched = false;
                             completionContext.WordToComplete = tokenAtCursor.Text.Trim();
                             // Current token is within ConfigurationDefinitionAst or DynamicKeywordStatementAst
-                            return GetResultForIdentifierInConfiguration(completionContext, configureAst, null, out matched);
+                            return GetResultForIdentifierInConfiguration(completionContext, configureAst, null, out bool matched);
                         }
                     case TokenKind.Equals:
                     case TokenKind.AtParen:
@@ -610,8 +606,7 @@ namespace System.Management.Automation
                                 //         DependsOn=@(|)
                                 //         DependsOn=(|
                                 //
-                                bool unused;
-                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
+                                result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out bool unused);
                             }
 
                             break;
@@ -732,12 +727,10 @@ namespace System.Management.Automation
                         result = GetResultForHashtable(completionContext);
                         if (result == null || result.Count == 0)
                         {
-                            DynamicKeywordStatementAst keywordAst;
-                            ConfigurationDefinitionAst configAst = GetAncestorConfigurationAstAndKeywordAst(cursor, lastAst, out keywordAst);
+                            ConfigurationDefinitionAst configAst = GetAncestorConfigurationAstAndKeywordAst(cursor, lastAst, out DynamicKeywordStatementAst keywordAst);
                             if (configAst != null)
                             {
-                                bool matched;
-                                result = GetResultForIdentifierInConfiguration(completionContext, configAst, keywordAst, out matched);
+                                result = GetResultForIdentifierInConfiguration(completionContext, configAst, keywordAst, out bool matched);
                             }
                         }
                     }
@@ -773,8 +766,7 @@ namespace System.Management.Automation
                                             }
                                         }
 
-                                        bool unused;
-                                        result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
+                                        result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out bool unused);
                                         break;
                                     }
                                 case TokenKind.LParen:
@@ -785,9 +777,8 @@ namespace System.Management.Automation
                                     }
                                     else
                                     {
-                                        bool unused;
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
-                                            ref replacementIndex, ref replacementLength, out unused);
+                                            ref replacementIndex, ref replacementLength, out bool unused);
                                     }
 
                                     break;
@@ -905,8 +896,7 @@ namespace System.Management.Automation
             else
             {
                 // Handle property completion on a blank line for DynamicKeyword statement
-                Ast lastChildofHashtableAst;
-                hashTableAst = Ast.GetAncestorHashtableAst(lastAst, out lastChildofHashtableAst);
+                hashTableAst = Ast.GetAncestorHashtableAst(lastAst, out Ast lastChildofHashtableAst);
 
                 // Check if the hashtable within a DynamicKeyword statement
                 if (hashTableAst != null)
@@ -1310,8 +1300,7 @@ namespace System.Management.Automation
             bool isCursorInString = completionContext.TokenAtCursor is StringToken;
             List<CompletionResult> result = null;
             var lastAst = completionContext.RelatedAsts.Last();
-            Ast lastChildofHashtableAst;
-            var hashTableAst = Ast.GetAncestorHashtableAst(lastAst, out lastChildofHashtableAst);
+            var hashTableAst = Ast.GetAncestorHashtableAst(lastAst, out Ast lastChildofHashtableAst);
             Diagnostics.Assert(stringToComplete != null, "stringToComplete should never be null");
             // Check if the hashtable within a DynamicKeyword statement
             if (hashTableAst != null)
@@ -1326,8 +1315,7 @@ namespace System.Management.Automation
                         var propertyNameAst = keyValuePairWithCursor.Item1 as StringConstantExpressionAst;
                         if (propertyNameAst != null)
                         {
-                            DynamicKeywordProperty property;
-                            if (keywordAst.Keyword.Properties.TryGetValue(propertyNameAst.Value, out property))
+                            if (keywordAst.Keyword.Properties.TryGetValue(propertyNameAst.Value, out DynamicKeywordProperty property))
                             {
                                 List<string> existingValues = null;
                                 WildcardPattern wildcardPattern = null;
@@ -1483,8 +1471,7 @@ namespace System.Management.Automation
             StringConstantType strType = constantString != null ? constantString.StringConstantType : expandableString.StringConstantType;
             string subInput = null;
 
-            bool shouldContinue;
-            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, strValue, ref replacementIndex, ref replacementLength, out shouldContinue);
+            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, strValue, ref replacementIndex, ref replacementLength, out bool shouldContinue);
             if (!shouldContinue || (result != null && result.Count > 0))
             {
                 return result;
@@ -1514,8 +1501,7 @@ namespace System.Management.Automation
                 var analysis = new CompletionAnalysis(_ast, _tokens, _cursorPosition, _options);
                 var subContext = analysis.CreateCompletionContext(completionContext.TypeInferenceContext);
 
-                int subReplaceIndex, subReplaceLength;
-                var subResult = analysis.GetResultHelper(subContext, out subReplaceIndex, out subReplaceLength, true);
+                var subResult = analysis.GetResultHelper(subContext, out int subReplaceIndex, out int subReplaceLength, true);
 
                 if (subResult != null && subResult.Count > 0)
                 {
@@ -1822,12 +1808,11 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        string expandedString = null;
                         var expandableStringAst = new ExpandableStringExpressionAst(strConst.Extent, strConst.Value, StringConstantType.BareWord);
                         if (CompletionCompleters.IsPathSafelyExpandable(expandableStringAst: expandableStringAst,
                                                                         extraText: string.Empty,
                                                                         executionContext: completionContext.ExecutionContext,
-                                                                        expandedString: out expandedString))
+                                                                        expandedString: out string expandedString))
                         {
                             completionContext.WordToComplete = expandedString;
                         }
@@ -1845,8 +1830,7 @@ namespace System.Management.Automation
                 //
                 // Handle completion of DSC resources within Configuration
                 //
-                DynamicKeywordStatementAst keywordAst;
-                ConfigurationDefinitionAst configureAst = GetAncestorConfigurationAstAndKeywordAst(completionContext.CursorPosition, lastAst, out keywordAst);
+                ConfigurationDefinitionAst configureAst = GetAncestorConfigurationAstAndKeywordAst(completionContext.CursorPosition, lastAst, out DynamicKeywordStatementAst keywordAst);
                 bool matched = false;
                 List<CompletionResult> keywordResult = null;
                 if (configureAst != null)

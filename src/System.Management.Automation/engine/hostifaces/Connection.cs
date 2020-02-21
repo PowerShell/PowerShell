@@ -769,10 +769,9 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal Version GetRemoteProtocolVersion()
         {
-            Version remoteProtocolVersionDeclaredByServer;
             bool isServerDeclarationValid = PSPrimitiveDictionary.TryPathGet(
                 this.GetApplicationPrivateData(),
-                out remoteProtocolVersionDeclaredByServer,
+                out Version remoteProtocolVersionDeclaredByServer,
                 PSVersionInfo.PSVersionTableName,
                 PSVersionInfo.PSRemotingProtocolVersionName);
 
@@ -821,8 +820,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     foreach (var item in s_runspaceDictionary.Values)
                     {
-                        Runspace runspace;
-                        if (item.TryGetTarget(out runspace))
+                        if (item.TryGetTarget(out Runspace runspace))
                         {
                             runspaceList.Add(runspace);
                         }

@@ -185,8 +185,7 @@ namespace System.Management.Automation
                     ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorGetValue",
                         null,
                         ExtendedTypeSystem.PropertyNotFoundInTypeDescriptor, this.Name);
-                    bool shouldThrow;
-                    object returnValue = DealWithGetValueException(e, out shouldThrow);
+                    object returnValue = DealWithGetValueException(e, out bool shouldThrow);
                     if (shouldThrow)
                     {
                         throw e;
@@ -200,8 +199,7 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException e)
             {
                 PSObjectTypeDescriptor.typeDescriptor.WriteLine("Exception getting the value of the property \"{0}\": \"{1}\".", this.Name, e.Message);
-                bool shouldThrow;
-                object returnValue = DealWithGetValueException(e, out shouldThrow);
+                object returnValue = DealWithGetValueException(e, out bool shouldThrow);
                 if (shouldThrow)
                 {
                     throw;
@@ -283,8 +281,7 @@ namespace System.Management.Automation
                     ExtendedTypeSystemException e = new ExtendedTypeSystemException("PropertyNotFoundInPropertyDescriptorSetValue",
                         null,
                         ExtendedTypeSystem.PropertyNotFoundInTypeDescriptor, this.Name);
-                    bool shouldThrow;
-                    DealWithSetValueException(e, out shouldThrow);
+                    DealWithSetValueException(e, out bool shouldThrow);
                     if (shouldThrow)
                     {
                         throw e;
@@ -298,8 +295,7 @@ namespace System.Management.Automation
             catch (ExtendedTypeSystemException e)
             {
                 PSObjectTypeDescriptor.typeDescriptor.WriteLine("Exception setting the value of the property \"{0}\": \"{1}\".", this.Name, e.Message);
-                bool shouldThrow;
-                DealWithSetValueException(e, out shouldThrow);
+                DealWithSetValueException(e, out bool shouldThrow);
                 if (shouldThrow)
                 {
                     throw;

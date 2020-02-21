@@ -329,13 +329,12 @@ namespace System.Management.Automation.Interpreter
         public static Exception UpdateForRethrow(Exception rethrow)
         {
 #if !SILVERLIGHT
-            List<StackTrace> prev;
 
             // we don't have any dynamic stack trace data, capture the data we can
             // from the raw exception object.
             StackTrace st = new StackTrace(rethrow, true);
 
-            if (!TryGetAssociatedStackTraces(rethrow, out prev))
+            if (!TryGetAssociatedStackTraces(rethrow, out List<StackTrace> prev))
             {
                 prev = new List<StackTrace>();
                 AssociateStackTraces(rethrow, prev);
@@ -351,8 +350,7 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         public static IList<StackTrace> GetExceptionStackTraces(Exception rethrow)
         {
-            List<StackTrace> result;
-            return TryGetAssociatedStackTraces(rethrow, out result) ? result : null;
+            return TryGetAssociatedStackTraces(rethrow, out List<StackTrace> result) ? result : null;
         }
 
         private static void AssociateStackTraces(Exception e, List<StackTrace> traces)
@@ -506,8 +504,7 @@ namespace System.Management.Automation.Interpreter
             {
                 Debug.Assert(key != null);
 
-                TValue res;
-                if (TryGetValue(key, out res))
+                if (TryGetValue(key, out TValue res))
                 {
                     return res;
                 }
@@ -597,8 +594,7 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         public bool TryGetValue(TKey key, out TValue value)
         {
-            KeyInfo storedValue;
-            if (_dict.TryGetValue(key, out storedValue))
+            if (_dict.TryGetValue(key, out KeyInfo storedValue))
             {
                 LinkedListNode<TKey> node = storedValue.List;
                 if (node.Previous != null)
@@ -622,8 +618,7 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         public void Add(TKey key, TValue value)
         {
-            KeyInfo keyInfo;
-            if (_dict.TryGetValue(key, out keyInfo))
+            if (_dict.TryGetValue(key, out KeyInfo keyInfo))
             {
                 // remove original entry from the linked list
                 _list.Remove(keyInfo.List);
@@ -652,8 +647,7 @@ namespace System.Management.Automation.Interpreter
         {
             get
             {
-                TValue res;
-                if (TryGetValue(key, out res))
+                if (TryGetValue(key, out TValue res))
                 {
                     return res;
                 }

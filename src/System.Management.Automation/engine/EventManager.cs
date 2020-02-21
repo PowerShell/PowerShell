@@ -595,8 +595,7 @@ namespace System.Management.Automation
                 _consecutiveIdleSamples = 0;
                 lock (_engineEventSubscribers)
                 {
-                    List<PSEventSubscriber> subscribers = null;
-                    if (_engineEventSubscribers.TryGetValue(PSEngineEvent.OnIdle, out subscribers) && subscribers.Count > 0)
+                    if (_engineEventSubscribers.TryGetValue(PSEngineEvent.OnIdle, out List<PSEventSubscriber> subscribers) && subscribers.Count > 0)
                     {
                         // We send out on-idle event and keep enabling the timer only if there still are subscribers to the on-idle event
                         GenerateEvent(PSEngineEvent.OnIdle, null, new object[] { }, null, false, false);
@@ -774,8 +773,7 @@ namespace System.Management.Automation
                         _timerInitialized = true;
                     }
 
-                    List<PSEventSubscriber> subscribers = null;
-                    if (!_engineEventSubscribers.TryGetValue(engineEventSourceIdentifier, out subscribers))
+                    if (!_engineEventSubscribers.TryGetValue(engineEventSourceIdentifier, out List<PSEventSubscriber> subscribers))
                     {
                         subscribers = new List<PSEventSubscriber>();
                         _engineEventSubscribers.Add(engineEventSourceIdentifier, subscribers);
@@ -1111,8 +1109,7 @@ namespace System.Management.Automation
                             nextAction = _actionQueue.Dequeue();
                         }
 
-                        bool addActionBackToActionQueue = false;
-                        InvokeAction(nextAction, out addActionBackToActionQueue);
+                        InvokeAction(nextAction, out bool addActionBackToActionQueue);
                         processed++;
 
                         if (!addActionBackToActionQueue)
@@ -1210,8 +1207,7 @@ namespace System.Management.Automation
                                 while (IsExecutingEventAction)
                                     System.Threading.Thread.Sleep(100);
 
-                                bool addActionBackToActionQueue = false;
-                                InvokeAction(pendingAction, out addActionBackToActionQueue);
+                                InvokeAction(pendingAction, out bool addActionBackToActionQueue);
 
                                 if (addActionBackToActionQueue)
                                 {

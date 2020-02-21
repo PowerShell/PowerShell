@@ -291,11 +291,9 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(path))
             {
                 CmdletProviderContext cmdletProviderContext = new CmdletProviderContext(command);
-                ProviderInfo provider = null;
-                PSDriveInfo drive = null;
                 path =
                     command.SessionState.Path.GetUnresolvedProviderPathFromPSPath(
-                        filePath, cmdletProviderContext, out provider, out drive);
+                        filePath, cmdletProviderContext, out ProviderInfo provider, out PSDriveInfo drive);
                 cmdletProviderContext.ThrowFirstErrorOrDoNothing();
                 if (!provider.NameEquals(command.Context.ProviderNames.FileSystem))
                 {

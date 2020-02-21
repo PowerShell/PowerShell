@@ -71,8 +71,6 @@ namespace System.Management.Automation.Language
 
             string errorId = null;
             string errorMsg = null;
-            bool expandParamsOnBest;
-            bool callNonVirtually;
             var positionalArgCount = positionalArgs.Length;
 
             var bestMethod = Adapter.FindBestMethod(
@@ -82,8 +80,8 @@ namespace System.Management.Automation.Language
                 positionalArgs,
                 ref errorId,
                 ref errorMsg,
-                out expandParamsOnBest,
-                out callNonVirtually);
+                out bool expandParamsOnBest,
+                out bool callNonVirtually);
 
             if (bestMethod == null)
             {
@@ -290,8 +288,7 @@ namespace System.Management.Automation.Language
                 _parser = parser;
                 _typeDefinitionAst = typeDefinitionAst;
 
-                List<Type> interfaces;
-                var baseClass = this.GetBaseTypes(parser, typeDefinitionAst, out interfaces);
+                var baseClass = this.GetBaseTypes(parser, typeDefinitionAst, out List<Type> interfaces);
 
                 _typeBuilder = module.DefineType(typeName, Reflection.TypeAttributes.Class | Reflection.TypeAttributes.Public, baseClass, interfaces.ToArray());
                 _staticHelpersTypeBuilder = module.DefineType(string.Format(CultureInfo.InvariantCulture, "{0}_<staticHelpers>", typeName), Reflection.TypeAttributes.Class);
@@ -713,8 +710,7 @@ namespace System.Management.Automation.Language
 
             private bool CheckForDuplicateOverload(FunctionMemberAst functionMemberAst, Type[] newParameters)
             {
-                List<Tuple<FunctionMemberAst, Type[]>> overloads;
-                if (!_definedMethods.TryGetValue(functionMemberAst.Name, out overloads))
+                if (!_definedMethods.TryGetValue(functionMemberAst.Name, out List<Tuple<FunctionMemberAst, Type[]>> overloads))
                 {
                     overloads = new List<Tuple<FunctionMemberAst, Type[]>>();
                     _definedMethods.Add(functionMemberAst.Name, overloads);
@@ -1204,8 +1200,7 @@ namespace System.Management.Automation.Language
                     var enumerator = (PropertyMemberAst)member;
                     if (enumerator.InitialValue != null)
                     {
-                        object constValue;
-                        if (IsConstantValueVisitor.IsConstant(enumerator.InitialValue, out constValue, false, false))
+                        if (IsConstantValueVisitor.IsConstant(enumerator.InitialValue, out object constValue, false, false))
                         {
                             if (!LanguagePrimitives.TryConvertTo(constValue, underlyingType, out value))
                             {

@@ -125,8 +125,7 @@ namespace Microsoft.PowerShell.Commands
             // We are doing this since temporary locations in user directory are more secure.
             DirectoryInfo tempDirectory = PathUtils.CreateTemporaryDirectory();
 
-            Dictionary<string, string> alias2resolvedCommandName;
-            List<CommandMetadata> listOfCommandMetadata = this.GetRemoteCommandMetadata(out alias2resolvedCommandName);
+            List<CommandMetadata> listOfCommandMetadata = this.GetRemoteCommandMetadata(out Dictionary<string, string> alias2resolvedCommandName);
             List<ExtendedTypeDefinition> listOfFormatData = this.GetRemoteFormatData();
 
             List<string> generatedFiles = GenerateProxyModule(
@@ -282,8 +281,7 @@ namespace Microsoft.PowerShell.Commands
 
             DirectoryInfo moduleDirectory = PathUtils.CreateTemporaryDirectory();
 
-            Dictionary<string, string> alias2resolvedCommandName;
-            List<CommandMetadata> listOfCommandMetadata = this.GetRemoteCommandMetadata(out alias2resolvedCommandName);
+            List<CommandMetadata> listOfCommandMetadata = this.GetRemoteCommandMetadata(out Dictionary<string, string> alias2resolvedCommandName);
             List<ExtendedTypeDefinition> listOfFormatData = this.GetRemoteFormatData();
 
             List<string> generatedFiles = this.GenerateProxyModule(
@@ -902,10 +900,9 @@ namespace Microsoft.PowerShell.Commands
                 // try to get the list from server's application private data
                 if (_commandSkipListFromServer == null)
                 {
-                    string[] serverDeclaredListOfCommandsToSkip;
                     if (PSPrimitiveDictionary.TryPathGet(
                             this.Session.ApplicationPrivateData,
-                            out serverDeclaredListOfCommandsToSkip,
+                            out string[] serverDeclaredListOfCommandsToSkip,
                             ImplicitRemotingKey,
                             ImplicitRemotingCommandsToSkipKey))
                     {
@@ -988,8 +985,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            T t;
-            if (!LanguagePrimitives.TryConvertTo<T>(value, out t))
+            if (!LanguagePrimitives.TryConvertTo<T>(value, out T t))
             {
                 this.ThrowTerminatingError(this.GetErrorMalformedDataFromRemoteCommand(commandName));
             }
@@ -1393,8 +1389,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(alias2resolvedCommandName != null, "alias2resolvedCommandName parameter != null");
             Dbg.Assert(remoteCommandInfo != null, "remoteCommandInfo parameter != null");
 
-            string resolvedCommandName;
-            CommandMetadata commandMetadata = RehydrateCommandMetadata(remoteCommandInfo, out resolvedCommandName);
+            CommandMetadata commandMetadata = RehydrateCommandMetadata(remoteCommandInfo, out string resolvedCommandName);
             if (!IsSafeCommandMetadata(commandMetadata))
             {
                 return;
@@ -1416,8 +1411,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            CommandMetadata previousCommandWithSameName;
-            if (name2commandMetadata.TryGetValue(commandMetadata.Name, out previousCommandWithSameName))
+            if (name2commandMetadata.TryGetValue(commandMetadata.Name, out CommandMetadata previousCommandWithSameName))
             {
                 int previousCommandPriority = this.GetCommandTypePriority(previousCommandWithSameName.WrappedCommandType);
                 int currentCommandPriority = this.GetCommandTypePriority(commandMetadata.WrappedCommandType);
@@ -1506,8 +1500,7 @@ namespace Microsoft.PowerShell.Commands
                     return -1;
                 }
 
-                int count;
-                if (LanguagePrimitives.TryConvertTo<int>(countProperty.Value, out count))
+                if (LanguagePrimitives.TryConvertTo<int>(countProperty.Value, out int count))
                 {
                     return count;
                 }
@@ -2406,10 +2399,9 @@ function Get-PSImplicitRemotingSession
                 throw PSTraceSource.NewArgumentNullException("writer");
             }
 
-            string hashString;
             PSPrimitiveDictionary.TryPathGet(
                 _remoteRunspaceInfo.ApplicationPrivateData,
-                out hashString,
+                out string hashString,
                 ImplicitRemotingCommandBase.ImplicitRemotingKey,
                 ImplicitRemotingCommandBase.ImplicitRemotingHashKey);
             hashString = hashString ?? string.Empty;
@@ -2581,8 +2573,7 @@ function Get-PSImplicitRemotingSession
 
             if (connectionInfo.UseDefaultWSManPort)
             {
-                bool isSSLSpecified;
-                WSManConnectionInfo.GetConnectionString(connectionInfo.ConnectionUri, out isSSLSpecified);
+                WSManConnectionInfo.GetConnectionString(connectionInfo.ConnectionUri, out bool isSSLSpecified);
                 return string.Format(CultureInfo.InvariantCulture,
                     ComputerNameParameterTemplate,
                     CodeGeneration.EscapeSingleQuotedStringContent(connectionInfo.ComputerName),

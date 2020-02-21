@@ -128,8 +128,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var entry in nestedModules)
                 {
-                    List<PSModuleInfo> values = null;
-                    if (modulesToRemove.TryGetValue(entry.Key, out values))
+                    if (modulesToRemove.TryGetValue(entry.Key, out List<PSModuleInfo> values))
                     {
                         foreach (var module in entry.Value)
                         {
@@ -232,9 +231,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!BaseForce)
                     {
-                        List<PSModuleInfo> requiredBy = null;
 
-                        if (requiredDependencies.TryGetValue(module, out requiredBy))
+                        if (requiredDependencies.TryGetValue(module, out List<PSModuleInfo> requiredBy))
                         {
                             for (int i = requiredBy.Count - 1; i >= 0; i--)
                             {
@@ -323,9 +321,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (PSModuleInfo requiredModule in module.RequiredModules)
                 {
-                    List<PSModuleInfo> requiredByList = null;
 
-                    if (!requiredDependencies.TryGetValue(requiredModule, out requiredByList))
+                    if (!requiredDependencies.TryGetValue(requiredModule, out List<PSModuleInfo> requiredByList))
                     {
                         requiredDependencies.Add(requiredModule, requiredByList = new List<PSModuleInfo>());
                     }

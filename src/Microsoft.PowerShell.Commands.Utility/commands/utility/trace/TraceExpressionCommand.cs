@@ -151,8 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            Collection<PSTraceSource> preconfiguredSources = null;
-            _matchingSources = ConfigureTraceSource(base.NameInternal, false, out preconfiguredSources);
+            _matchingSources = ConfigureTraceSource(base.NameInternal, false, out Collection<PSTraceSource> preconfiguredSources);
 
             TurnOnTracing(_matchingSources, false);
             TurnOnTracing(preconfiguredSources, true);

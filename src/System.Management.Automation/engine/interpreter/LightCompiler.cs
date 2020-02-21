@@ -404,8 +404,7 @@ namespace System.Management.Automation.Interpreter
 
         private LocalVariable EnsureAvailableForClosure(ParameterExpression expr)
         {
-            LocalVariable local;
-            if (_locals.TryGetLocalOrClosure(expr, out local))
+            if (_locals.TryGetLocalOrClosure(expr, out LocalVariable local))
             {
                 if (!local.InClosure && !local.IsBoxed)
                 {
@@ -433,8 +432,7 @@ namespace System.Management.Automation.Interpreter
 
         private LocalVariable ResolveLocal(ParameterExpression variable)
         {
-            LocalVariable local;
-            if (!_locals.TryGetLocalOrClosure(variable, out local))
+            if (!_locals.TryGetLocalOrClosure(variable, out LocalVariable local))
             {
                 local = EnsureAvailableForClosure(variable);
             }
@@ -1184,8 +1182,7 @@ namespace System.Management.Automation.Interpreter
 
         private LabelInfo EnsureLabel(LabelTarget node)
         {
-            LabelInfo result;
-            if (!_treeLabels.TryGetValue(node, out result))
+            if (!_treeLabels.TryGetValue(node, out LabelInfo result))
             {
                 _treeLabels[node] = result = new LabelInfo(node);
             }

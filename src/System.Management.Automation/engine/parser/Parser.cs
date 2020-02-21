@@ -271,8 +271,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             var tokenizer = parser._tokenizer;
             tokenizer.Initialize(null, typename, null);
-            Token unused;
-            var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out unused);
+            var result = parser.TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out Token unused);
 
             SemanticChecks.CheckArrayTypeNameDepth(result, PositionUtilities.EmptyExtent, parser);
             if (!ignoreErrors && parser.ErrorList.Count > 0)
@@ -711,9 +710,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            Token[] throwAwayTokens;
-            ParseError[] parseErrors;
-            var ast = Parser.ParseInput(input, out throwAwayTokens, out parseErrors);
+            var ast = Parser.ParseInput(input, out Token[] throwAwayTokens, out ParseError[] parseErrors);
 
             if ((ast == null) ||
                 parseErrors.Length > 0 ||
@@ -749,8 +746,7 @@ namespace System.Management.Automation.Language
                 return false;
             }
 
-            object hashtable;
-            if (!IsConstantValueVisitor.IsConstant(hashTableAst, out hashtable, forRequires: true))
+            if (!IsConstantValueVisitor.IsConstant(hashTableAst, out object hashtable, forRequires: true))
             {
                 return false;
             }
@@ -1065,8 +1061,7 @@ namespace System.Management.Automation.Language
 
             SkipNewlines();
 
-            Token firstTypeNameToken;
-            ITypeName typeName = TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out firstTypeNameToken);
+            ITypeName typeName = TypeNameRule(allowAssemblyQualifiedNames: true, firstTypeNameToken: out Token firstTypeNameToken);
             if (typeName == null)
             {
                 // ErrorRecovery: Return null so we stop looking for attributes.
@@ -2122,8 +2117,7 @@ namespace System.Management.Automation.Language
 
         private StringConstantExpressionAst SimpleNameRule()
         {
-            Token token;
-            return SimpleNameRule(out token);
+            return SimpleNameRule(out Token token);
         }
 
         private StringConstantExpressionAst SimpleNameRule(out Token token)
@@ -2898,8 +2892,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                object outValue;
-                if (IsConstantValueVisitor.IsConstant(configurationName, out outValue))
+                if (IsConstantValueVisitor.IsConstant(configurationName, out object outValue))
                 {
                     simpleConfigurationNameValue = outValue as string;
                     if (simpleConfigurationNameValue == null ||
@@ -4158,8 +4151,7 @@ namespace System.Management.Automation.Language
             }
 
             SkipNewlines();
-            Token classNameToken;
-            var name = SimpleNameRule(out classNameToken);
+            var name = SimpleNameRule(out Token classNameToken);
             if (name == null)
             {
                 ReportIncompleteInput(After(classToken),
@@ -4187,11 +4179,10 @@ namespace System.Management.Automation.Language
                     this.SkipToken();
                     SkipNewlines();
                     ITypeName superClass;
-                    Token unused;
                     Token commaToken = null;
                     while (true)
                     {
-                        superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                        superClass = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out Token unused);
                         if (superClass == null)
                         {
                             ReportIncompleteInput(After(ExtentFromFirstOf(commaToken, colonToken)),
@@ -4672,8 +4663,7 @@ namespace System.Management.Automation.Language
                     this.SkipToken();
                     SkipNewlines();
                     ITypeName underlyingType;
-                    Token unused;
-                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out unused);
+                    underlyingType = this.TypeNameRule(allowAssemblyQualifiedNames: false, firstTypeNameToken: out Token unused);
                     if (underlyingType == null)
                     {
                         ReportIncompleteInput(
@@ -5003,10 +4993,9 @@ namespace System.Management.Automation.Language
         private StringConstantExpressionAst ResolveUsingAssembly(StringConstantExpressionAst name)
         {
             var assemblyName = name.Value;
-            Uri uri;
             // assemblyName can be invalid, i.e. during typing.
             // We only use uri to check that we don't allow UNC paths.
-            if (Uri.TryCreate(assemblyName, UriKind.Absolute, out uri))
+            if (Uri.TryCreate(assemblyName, UriKind.Absolute, out Uri uri))
             {
                 if (uri.IsUnc)
                 {
@@ -5289,9 +5278,7 @@ namespace System.Management.Automation.Language
             // A function name that matches a keyword isn't really a keyword, so don't color it that way
             functionNameToken.TokenFlags &= ~TokenFlags.Keyword;
 
-            IScriptExtent endErrorStatement;
-            Token rParen;
-            var parameters = this.FunctionParameterDeclarationRule(out endErrorStatement, out rParen);
+            var parameters = this.FunctionParameterDeclarationRule(out IScriptExtent endErrorStatement, out Token rParen);
 
             Token lCurly = NextToken();
             if (lCurly.Kind != TokenKind.LCurly)

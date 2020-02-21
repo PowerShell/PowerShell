@@ -1599,8 +1599,7 @@ namespace Microsoft.PowerShell.Commands
                     string sessionName = oldRunspacePool.RemoteRunspacePoolInternal.Name;
                     if (string.IsNullOrEmpty(sessionName))
                     {
-                        int id;
-                        sessionName = PSSession.GenerateRunspaceName(out id);
+                        sessionName = PSSession.GenerateRunspaceName(out int id);
                     }
 
                     RunspacePool runspacePool = new RunspacePool(

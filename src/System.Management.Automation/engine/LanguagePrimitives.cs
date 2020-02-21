@@ -1564,15 +1564,13 @@ namespace System.Management.Automation
                 return "[object]";
             }
 
-            string mappedType;
-            if (s_nameMap.TryGetValue(typeName, out mappedType))
+            if (s_nameMap.TryGetValue(typeName, out string mappedType))
             {
                 return ('[' + mappedType + ']');
             }
 
             // Then check dot net types
-            Type dotNetType;
-            if (TypeResolver.TryResolveType(typeName, out dotNetType))
+            if (TypeResolver.TryResolveType(typeName, out Type dotNetType))
             {
                 // Pass through the canonicalize type name we get back from the type converter...
                 return '[' + LanguagePrimitives.ConvertTo<string>(dotNetType) + ']';
@@ -1927,8 +1925,7 @@ namespace System.Management.Automation
             {
                 lock (s_enumTable)
                 {
-                    EnumHashEntry returnValue;
-                    if (s_enumTable.TryGetValue(enumType, out returnValue))
+                    if (s_enumTable.TryGetValue(enumType, out EnumHashEntry returnValue))
                     {
                         return returnValue;
                     }
@@ -2824,8 +2821,7 @@ namespace System.Management.Automation
                                                 TypeTable backupTable)
         {
             Diagnostics.Assert(valueToConvert is string, "Value to convert must be a string");
-            Exception exception;
-            Type namedType = TypeResolver.ResolveType((string)valueToConvert, out exception);
+            Type namedType = TypeResolver.ResolveType((string)valueToConvert, out Exception exception);
             if (namedType == null)
             {
                 if (exception is PSInvalidCastException)
@@ -3868,8 +3864,7 @@ namespace System.Management.Automation
                     foreach (object item in array)
                     {
                         object baseObj = PSObject.Base(item);
-                        object convertedValue;
-                        if (!LanguagePrimitives.TryConvertTo(baseObj, ElementType, formatProvider, out convertedValue))
+                        if (!LanguagePrimitives.TryConvertTo(baseObj, ElementType, formatProvider, out object convertedValue))
                         {
                             ThrowInvalidCastException(valueToConvert, resultType);
                             Diagnostics.Assert(false, "ThrowInvalidCastException always throws");
@@ -4101,7 +4096,6 @@ namespace System.Management.Automation
                                     IFormatProvider formatProvider,
                                     TypeTable backupTable)
             {
-                object result = null;
 
                 if (tryfirstConverter != null)
                 {
@@ -4114,7 +4108,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (IsCustomTypeConversion(originalValueToConvert ?? valueToConvert, resultType, formatProvider, out result, backupTable))
+                if (IsCustomTypeConversion(originalValueToConvert ?? valueToConvert, resultType, formatProvider, out object result, backupTable))
                 {
                     typeConversion.WriteLine("Custom Type Conversion succeeded.");
                     return result;
@@ -4365,8 +4359,7 @@ namespace System.Management.Automation
         {
             lock (s_converterCache)
             {
-                IConversionData result = null;
-                s_converterCache.TryGetValue(new ConversionTypePair(fromType, toType), out result);
+                s_converterCache.TryGetValue(new ConversionTypePair(fromType, toType), out IConversionData result);
                 return result;
             }
         }
@@ -4613,10 +4606,10 @@ namespace System.Management.Automation
                                 object propValue = prop.Value;
                                 if (recursion && prop.Value != null)
                                 {
-                                    Type propType;
-                                    if (TypeResolver.TryResolveType(property.TypeNameOfValue, out propType))
+                                    if (TypeResolver.TryResolveType(property.TypeNameOfValue, out Type propType))
                                     {
-                                        if (formatProvider == null) { formatProvider = CultureInfo.InvariantCulture; }
+                                        if (formatProvider == null)
+                                        { formatProvider = CultureInfo.InvariantCulture; }
 
                                         try
                                         {
@@ -4784,8 +4777,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException("resultType");
                 }
 
-                bool debase;
-                var conversion = FigureConversion(valueToConvert, resultType, out debase);
+                var conversion = FigureConversion(valueToConvert, resultType, out bool debase);
 
                 return conversion.Invoke(
                     debase ? PSObject.Base(valueToConvert) : valueToConvert,
@@ -5083,10 +5075,10 @@ namespace System.Management.Automation
                 int length = argumentTypes.Length;
                 if (length != targetParameters.Length + 1) { return false; }
 
-                bool typesMatchExactly, allTypesMatchExactly;
+                bool allTypesMatchExactly;
                 Type sourceReturnType = argumentTypes[length - 1];
 
-                if (ProjectedTypeMatchesTargetType(sourceReturnType, targetReturnType, TypeMatchingContext.ReturnType, out typesMatchExactly))
+                if (ProjectedTypeMatchesTargetType(sourceReturnType, targetReturnType, TypeMatchingContext.ReturnType, out bool typesMatchExactly))
                 {
                     allTypesMatchExactly = typesMatchExactly;
                     for (int i = 0; i < targetParameters.Length; i++)
@@ -5603,9 +5595,8 @@ namespace System.Management.Automation
                 return CacheConversion(fromType, toType, ConvertNoConversion, ConversionRank.None);
             }
 
-            PSConverter<object> valueDependentConversion = null;
             ConversionRank valueDependentRank = ConversionRank.None;
-            IConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
+            IConversionData conversionData = FigureLanguageConversion(fromType, toType, out PSConverter<object> valueDependentConversion, out valueDependentRank);
             if (conversionData != null)
             {
                 return conversionData;

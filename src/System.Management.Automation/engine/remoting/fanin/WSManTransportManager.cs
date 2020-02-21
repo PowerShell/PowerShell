@@ -258,8 +258,7 @@ namespace System.Management.Automation.Remoting.Client
             int transportErrorCode,
             string defaultFQEID)
         {
-            string specificErrorId;
-            if (s_transportErrorCodeToFQEID.TryGetValue(transportErrorCode, out specificErrorId))
+            if (s_transportErrorCodeToFQEID.TryGetValue(transportErrorCode, out string specificErrorId))
             {
                 return specificErrorId + "," + defaultFQEID;
             }
@@ -911,8 +910,7 @@ namespace System.Management.Automation.Remoting.Client
             // should be included in payload
             if (_openContent == null)
             {
-                DataPriorityType additionalDataType;
-                byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
+                byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out DataPriorityType additionalDataType);
 
                 if (additionalData != null)
                 {
@@ -1065,8 +1063,7 @@ namespace System.Management.Automation.Remoting.Client
             // the dataToBeSent buffer.
             if (_openContent == null)
             {
-                DataPriorityType additionalDataType;
-                byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
+                byte[] additionalData = dataToBeSent.ReadOrRegisterCallback(null, out DataPriorityType additionalDataType);
 
                 #region SHIM: Redirection code for session data send.
 
@@ -1245,10 +1242,9 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (serverProtocolVersion <= RemotingConstants.ProtocolVersionWin7RTM)
             {
-                int maxEnvSize;
                 WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
                     WSManNativeApi.WSManSessionOption.WSMAN_OPTION_MAX_ENVELOPE_SIZE_KB,
-                    out maxEnvSize);
+                    out int maxEnvSize);
 
                 if (maxEnvSize == WSManNativeApi.WSMAN_DEFAULT_MAX_ENVELOPE_SIZE_KB_V3)
                 {
@@ -1266,10 +1262,9 @@ namespace System.Management.Automation.Remoting.Client
                     }
 
                     // retrieve the packet size again
-                    int packetSize;
                     WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
                         WSManNativeApi.WSManSessionOption.WSMAN_OPTION_SHELL_MAX_DATA_SIZE_PER_MESSAGE_KB,
-                        out packetSize);
+                        out int packetSize);
                     // packet size returned is in KB. Convert this into bytes
                     Fragmentor.FragmentSize = packetSize << 10;
                 }
@@ -1502,10 +1497,9 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // set the packet size for this session
-            int packetSize;
             WSManNativeApi.WSManGetSessionOptionAsDword(_wsManSessionHandle,
                 WSManNativeApi.WSManSessionOption.WSMAN_OPTION_SHELL_MAX_DATA_SIZE_PER_MESSAGE_KB,
-                out packetSize);
+                out int packetSize);
             // packet size returned is in KB. Convert this into bytes..
             Fragmentor.FragmentSize = packetSize << 10;
 
@@ -1836,9 +1830,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Client Session TM: CreateShell callback received");
 
-            long sessionTMHandle = 0;
-            WSManClientSessionTransportManager sessionTM = null;
-            if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
+            if (!TryGetSessionTransportManager(operationContext, out WSManClientSessionTransportManager sessionTM, out long sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
@@ -1956,9 +1948,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Client Session TM: CloseShell callback received");
 
-            long sessionTMHandle = 0;
-            WSManClientSessionTransportManager sessionTM = null;
-            if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
+            if (!TryGetSessionTransportManager(operationContext, out WSManClientSessionTransportManager sessionTM, out long sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
@@ -2003,9 +1993,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Client Session TM: CreateShell callback received");
 
-            long sessionTMHandle = 0;
-            WSManClientSessionTransportManager sessionTM = null;
-            if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
+            if (!TryGetSessionTransportManager(operationContext, out WSManClientSessionTransportManager sessionTM, out long sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
@@ -2071,9 +2059,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Client Session TM: CreateShell callback received");
 
-            long sessionTMHandle = 0;
-            WSManClientSessionTransportManager sessionTM = null;
-            if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
+            if (!TryGetSessionTransportManager(operationContext, out WSManClientSessionTransportManager sessionTM, out long sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
@@ -2176,9 +2162,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Client Session TM: Connect callback received");
 
-            long sessionTMHandle = 0;
-            WSManClientSessionTransportManager sessionTM = null;
-            if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
+            if (!TryGetSessionTransportManager(operationContext, out WSManClientSessionTransportManager sessionTM, out long sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
@@ -2259,9 +2243,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Client Session TM: SendComplete callback received");
 
-            long sessionTMHandle = 0;
-            WSManClientSessionTransportManager sessionTM = null;
-            if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
+            if (!TryGetSessionTransportManager(operationContext, out WSManClientSessionTransportManager sessionTM, out long sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
@@ -2335,9 +2317,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Client Session TM: OnRemoteDataReceived callback.");
 
-            long sessionTMHandle = 0;
-            WSManClientSessionTransportManager sessionTM = null;
-            if (!TryGetSessionTransportManager(operationContext, out sessionTM, out sessionTMHandle))
+            if (!TryGetSessionTransportManager(operationContext, out WSManClientSessionTransportManager sessionTM, out long sessionTMHandle))
             {
                 // We dont have the session TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for context {0}.", sessionTMHandle);
@@ -2406,10 +2386,9 @@ namespace System.Management.Automation.Remoting.Client
 
         private void SendOneItem()
         {
-            DataPriorityType priorityType;
             // This will either return data or register callback but doesn't do both.
             byte[] data = dataToBeSent.ReadOrRegisterCallback(_onDataAvailableToSendCallback,
-                out priorityType);
+                out DataPriorityType priorityType);
             if (data != null)
             {
                 SendData(data, priorityType);
@@ -3283,9 +3262,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("OnCreateCmdCompleted callback received");
 
-            long cmdContextId = 0;
-            WSManClientCommandTransportManager cmdTM = null;
-            if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
+            if (!TryGetCmdTransportManager(operationContext, out WSManClientCommandTransportManager cmdTM, out long cmdContextId))
             {
                 // We dont have the command TM handle..just return.
                 tracer.WriteLine("OnCreateCmdCompleted: Unable to find a transport manager for the command context {0}.", cmdContextId);
@@ -3384,9 +3361,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("OnConnectCmdCompleted callback received");
 
-            long cmdContextId = 0;
-            WSManClientCommandTransportManager cmdTM = null;
-            if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
+            if (!TryGetCmdTransportManager(operationContext, out WSManClientCommandTransportManager cmdTM, out long cmdContextId))
             {
                 // We dont have the command TM handle..just return.
                 tracer.WriteLine("OnConnectCmdCompleted: Unable to find a transport manager for the command context {0}.", cmdContextId);
@@ -3473,9 +3448,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("OnCloseCmdCompleted callback received for operation context {0}", commandOperationHandle);
 
-            long cmdContextId = 0;
-            WSManClientCommandTransportManager cmdTM = null;
-            if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
+            if (!TryGetCmdTransportManager(operationContext, out WSManClientCommandTransportManager cmdTM, out long cmdContextId))
             {
                 // We dont have the command TM handle..just return.
                 tracer.WriteLine("OnCloseCmdCompleted: Unable to find a transport manager for the command context {0}.", cmdContextId);
@@ -3505,9 +3478,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("SendComplete callback received");
 
-            long cmdContextId = 0;
-            WSManClientCommandTransportManager cmdTM = null;
-            if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
+            if (!TryGetCmdTransportManager(operationContext, out WSManClientCommandTransportManager cmdTM, out long cmdContextId))
             {
                 // We dont have the command TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for the command context {0}.", cmdContextId);
@@ -3588,9 +3559,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Remote Command DataReceived callback.");
 
-            long cmdContextId = 0;
-            WSManClientCommandTransportManager cmdTM = null;
-            if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
+            if (!TryGetCmdTransportManager(operationContext, out WSManClientCommandTransportManager cmdTM, out long cmdContextId))
             {
                 // We dont have the command TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for the given command context {0}.", cmdContextId);
@@ -3670,9 +3639,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr operationHandle,
             IntPtr data)
         {
-            long cmdContextId = 0;
-            WSManClientCommandTransportManager cmdTM = null;
-            if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
+            if (!TryGetCmdTransportManager(operationContext, out WSManClientCommandTransportManager cmdTM, out long cmdContextId))
             {
                 // We dont have the command TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for the given command context {0}.", cmdContextId);
@@ -3731,9 +3698,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Signal Completed callback received.");
 
-            long cmdContextId = 0;
-            WSManClientCommandTransportManager cmdTM = null;
-            if (!TryGetCmdTransportManager(operationContext, out cmdTM, out cmdContextId))
+            if (!TryGetCmdTransportManager(operationContext, out WSManClientCommandTransportManager cmdTM, out long cmdContextId))
             {
                 // We dont have the command TM handle..just return.
                 tracer.WriteLine("Unable to find a transport manager for the given command context {0}.", cmdContextId);

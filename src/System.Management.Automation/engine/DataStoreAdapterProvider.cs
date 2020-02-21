@@ -645,8 +645,7 @@ namespace System.Management.Automation
                         continue;
                     }
 
-                    List<PSTypeName> l;
-                    if (!_providerOutputType.TryGetValue(outputType.ProviderCmdlet, out l))
+                    if (!_providerOutputType.TryGetValue(outputType.ProviderCmdlet, out List<PSTypeName> l))
                     {
                         l = new List<PSTypeName>();
                         _providerOutputType[outputType.ProviderCmdlet] = l;
@@ -656,8 +655,7 @@ namespace System.Management.Automation
                 }
             }
 
-            List<PSTypeName> cmdletOutputType = null;
-            if (_providerOutputType.TryGetValue(cmdletname, out cmdletOutputType))
+            if (_providerOutputType.TryGetValue(cmdletname, out List<PSTypeName> cmdletOutputType))
             {
                 listToAppend.AddRange(cmdletOutputType);
             }

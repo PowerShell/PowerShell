@@ -163,8 +163,7 @@ namespace System.Management.Automation.Language
                 if (varPath.IsAnyLocal())
                 {
                     var variableName = VariableAnalysis.GetUnaliasedVariableName(varPath);
-                    VariableAnalysisDetails analysisDetails;
-                    if (_variables.TryGetValue(variableName, out analysisDetails))
+                    if (_variables.TryGetValue(variableName, out VariableAnalysisDetails analysisDetails))
                     {
                         // Forget whatever type we deduced in the body, we'll revisit that type after walking
                         // the flow graph.  We should see the parameter type for the variable first.
@@ -176,8 +175,7 @@ namespace System.Management.Automation.Language
                         // valuetype because the parameter has no value yet.  For example:
                         //     & { param([System.Reflection.MemberTypes]$m) ($null -eq $m) }
 
-                        object unused;
-                        if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out unused))
+                        if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out object unused))
                         {
                             analysisDetails.LocalTupleIndex = VariableAnalysis.ForceDynamic;
                         }

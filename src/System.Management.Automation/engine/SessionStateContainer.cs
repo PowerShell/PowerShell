@@ -255,8 +255,6 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                 new CmdletProviderContext(context);
@@ -270,8 +268,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {
@@ -441,15 +439,13 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            ProviderInfo provider = null;
-            PSDriveInfo driveInfo = null;
 
             string providerPath =
                 Globber.GetProviderPath(
                     path,
                     context,
-                    out provider,
-                    out driveInfo);
+                    out ProviderInfo provider,
+                    out PSDriveInfo driveInfo);
 
             ItemCmdletProvider providerInstance = GetItemProviderInstance(provider);
 
@@ -850,16 +846,14 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewArgumentNullException("paths");
                 }
 
-                ProviderInfo provider = null;
-                CmdletProvider providerInstance = null;
 
                 Collection<string> providerPaths =
                     Globber.GetGlobbedProviderPathsFromMonadPath(
                         path,
                         false,
                         context,
-                        out provider,
-                        out providerInstance);
+                        out ProviderInfo provider,
+                        out CmdletProvider providerInstance);
 
                 foreach (string providerPath in providerPaths)
                 {
@@ -973,12 +967,11 @@ namespace System.Management.Automation
             {
                 if (context.HasIncludeOrExclude)
                 {
-                    int childrenNotMatchingFilterCriteria = 0;
 
                     // Use the new code path only if either Include or Exclude is specified
                     // This will take care of all the child items.
                     // This will also take care of the case where "path" is not a container.
-                    ProcessPathItems(providerInstance, path, recurse, context, out childrenNotMatchingFilterCriteria, ProcessMode.Delete, skipIsItemContainerCheck: false);
+                    ProcessPathItems(providerInstance, path, recurse, context, out int childrenNotMatchingFilterCriteria, ProcessMode.Delete, skipIsItemContainerCheck: false);
 
                     // Now delete the container if it matches the filter(s)
                     // and the container does not have any children.
@@ -1084,8 +1077,6 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                 new CmdletProviderContext(context);
@@ -1099,8 +1090,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {
@@ -1434,8 +1425,7 @@ namespace System.Management.Automation
                                 return;
                             }
 
-                            int unUsedChildrenNotMatchingFilterCriteria = 0;
-                            ProcessPathItems(providerInstance, providerPath, recurse, depth, context, out unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
+                            ProcessPathItems(providerInstance, providerPath, recurse, depth, context, out int unUsedChildrenNotMatchingFilterCriteria, ProcessMode.Enumerate);
                         }
                     }
                     else
@@ -1473,7 +1463,6 @@ namespace System.Management.Automation
             }
             else
             {
-                PSDriveInfo drive = null;
 
                 string originalPath = path;
                 path =
@@ -1481,7 +1470,7 @@ namespace System.Management.Automation
                         context.SuppressWildcardExpansion ? path : WildcardPattern.Unescape(path),
                         context,
                         out provider,
-                        out drive);
+                        out PSDriveInfo drive);
 
                 if (drive != null)
                 {
@@ -1873,8 +1862,7 @@ namespace System.Management.Automation
                             bool emitItem = true;
                             if (filteredChildNameDictionary != null)
                             {
-                                bool isChildNameInDictionary = false;
-                                emitItem = filteredChildNameDictionary.TryGetValue(childName, out isChildNameInDictionary);
+                                emitItem = filteredChildNameDictionary.TryGetValue(childName, out bool isChildNameInDictionary);
                             }
 
                             if (emitItem)
@@ -1994,11 +1982,10 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
             CmdletProvider providerInstance = null;
 
             // Get the provider that will handle this path
-            Globber.GetProviderPath(path, out provider);
+            Globber.GetProviderPath(path, out ProviderInfo provider);
 
             // See if it supports dynamic parameters. If not, we don't need to
             // glob the path.
@@ -2047,11 +2034,10 @@ namespace System.Management.Automation
             {
                 if (providerInstance != null)
                 {
-                    PSDriveInfo drive = null;
                     // If we get here, the GetProviderPath should always succeed. This method was already invoked
                     // in the call to GetGlobbedProviderPathsFromMonadPath, and since "providerInstance" is not null,
                     // the invocation in method GetGlobbedProviderPathsFromMonadPath should succeed.
-                    string providerPath = Globber.GetProviderPath(path, context, out provider, out drive);
+                    string providerPath = Globber.GetProviderPath(path, context, out provider, out PSDriveInfo drive);
                     if (providerPath != null)
                     {
                         return GetChildItemsDynamicParameters(providerInstance, providerPath, recurse, newContext);
@@ -2339,8 +2325,6 @@ namespace System.Management.Automation
 
             if (LocationGlobber.ShouldPerformGlobbing(path, context))
             {
-                ProviderInfo provider = null;
-                CmdletProvider providerInstance = null;
 
                 // We don't want to process include/exclude filters
                 // when globbing the targets of the operation, so
@@ -2360,8 +2344,8 @@ namespace System.Management.Automation
                         path,
                         false,
                         resolvePathContext,
-                        out provider,
-                        out providerInstance);
+                        out ProviderInfo provider,
+                        out CmdletProvider providerInstance);
 
                 if (resolvePathContext.Drive != null)
                 {
@@ -2436,15 +2420,13 @@ namespace System.Management.Automation
             {
                 // Figure out which provider to use
 
-                ProviderInfo provider = null;
-                PSDriveInfo drive = null;
 
                 string providerPath =
                     Globber.GetProviderPath(
                         context.SuppressWildcardExpansion ? path : WildcardPattern.Unescape(path),
                         context,
-                        out provider,
-                        out drive);
+                        out ProviderInfo provider,
+                        out PSDriveInfo drive);
 
                 ContainerCmdletProvider providerInstance = GetContainerProviderInstance(provider);
 
@@ -2847,11 +2829,10 @@ namespace System.Management.Automation
             {
                 if (providerInstance != null)
                 {
-                    PSDriveInfo drive = null;
                     // If we get here, the GetProviderPath should always succeed. This method was already invoked
                     // in the call to GetGlobbedProviderPathsFromMonadPath, and since "providerInstance" is not null,
                     // the invocation in method GetGlobbedProviderPathsFromMonadPath should succeed.
-                    string providerPath = Globber.GetProviderPath(path, context, out provider, out drive);
+                    string providerPath = Globber.GetProviderPath(path, context, out provider, out PSDriveInfo drive);
                     if (providerPath != null)
                     {
                         result = GetChildNamesDynamicParameters(providerInstance, providerPath, newContext);
@@ -3040,16 +3021,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             Collection<string> providerPaths =
                 Globber.GetGlobbedProviderPathsFromMonadPath(
                     path,
                     false,
                     context,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             // Can only rename one item at a time, so if we glob more than
             // one item write out an error.
@@ -3191,8 +3170,6 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                 new CmdletProviderContext(context);
@@ -3206,8 +3183,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {
@@ -3433,7 +3410,6 @@ namespace System.Management.Automation
                 }
 
                 ProviderInfo provider = null;
-                PSDriveInfo driveInfo;
                 CmdletProvider providerInstance = null;
 
                 Collection<string> providerPaths = new Collection<string>();
@@ -3443,7 +3419,7 @@ namespace System.Management.Automation
                 if (string.IsNullOrEmpty(name))
                 {
                     string providerPath =
-                        Globber.GetProviderPath(resolvePath, context, out provider, out driveInfo);
+                        Globber.GetProviderPath(resolvePath, context, out provider, out PSDriveInfo driveInfo);
 
                     providerInstance = GetProviderInstance(provider);
                     providerPaths.Add(providerPath);
@@ -3510,15 +3486,13 @@ namespace System.Management.Automation
                             throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, targetPath);
                         }
 
-                        ProviderInfo targetProvider = null;
-                        CmdletProvider targetProviderInstance = null;
 
                         var globbedTarget = Globber.GetGlobbedProviderPathsFromMonadPath(
                             targetPath,
                             allowNonexistingPath,
                             context,
-                            out targetProvider,
-                            out targetProviderInstance);
+                            out ProviderInfo targetProvider,
+                            out CmdletProvider targetProviderInstance);
 
                         if (string.Compare(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase) != 0)
                         {
@@ -3668,8 +3642,6 @@ namespace System.Management.Automation
                 return null;
             }
 
-            ProviderInfo provider = null;
-            CmdletProvider providerInstance = null;
 
             CmdletProviderContext newContext =
                 new CmdletProviderContext(context);
@@ -3683,8 +3655,8 @@ namespace System.Management.Automation
                     path,
                     true,
                     newContext,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             if (providerPaths.Count > 0)
             {
@@ -3874,16 +3846,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            ProviderInfo provider = null;
 
-            CmdletProvider providerInstance = null;
             Collection<string> providerPaths =
                 Globber.GetGlobbedProviderPathsFromMonadPath(
                     path,
                     false,
                     context,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             bool result = false;
             foreach (string providerPath in providerPaths)

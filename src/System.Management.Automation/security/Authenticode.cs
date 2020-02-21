@@ -435,7 +435,6 @@ namespace System.Management.Automation
         {
             Signature signature = null;
 
-            NativeMethods.WINTRUST_DATA wtd;
             DWORD error = Win32Errors.E_FAIL;
 
             if (fileContent == null)
@@ -447,7 +446,7 @@ namespace System.Management.Automation
 
             try
             {
-                error = GetWinTrustData(fileName, fileContent, out wtd);
+                error = GetWinTrustData(fileName, fileContent, out NativeMethods.WINTRUST_DATA wtd);
 
                 if (error != Win32Errors.NO_ERROR)
                 {

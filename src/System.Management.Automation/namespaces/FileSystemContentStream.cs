@@ -1181,8 +1181,7 @@ namespace Microsoft.PowerShell.Commands
                  _currentEncoding.Equals(_defaultAnsiEncoding))
                 && Platform.IsWindows)
             {
-                NativeMethods.CPINFO cpInfo;
-                if (NativeMethods.GetCPInfo((uint)_currentEncoding.CodePage, out cpInfo) &&
+                if (NativeMethods.GetCPInfo((uint)_currentEncoding.CodePage, out NativeMethods.CPINFO cpInfo) &&
                     cpInfo.MaxCharSize == 1)
                 {
                     _singleByteCharSet = true;

@@ -384,8 +384,7 @@ namespace System.Management.Automation
 
         internal CimClass GetCimClassFromCache(TKey key)
         {
-            CimClass cimClass;
-            if (_cimClassIdToClass.TryGetValue(key, out cimClass))
+            if (_cimClassIdToClass.TryGetValue(key, out CimClass cimClass))
             {
                 /* PRINTF DEBUG
                 Console.WriteLine("GetCimClassFromCache - class found: {0}", key);
@@ -610,8 +609,7 @@ namespace System.Management.Automation
         /// </exception>
         internal object Deserialize()
         {
-            string ignore;
-            return Deserialize(out ignore);
+            return Deserialize(out string ignore);
         }
 
         /// <summary>
@@ -1201,8 +1199,6 @@ namespace System.Management.Automation
 
             ContainerType ct = ContainerType.None;
             PSObject mshSource = source as PSObject;
-            IEnumerable enumerable = null;
-            IDictionary dictionary = null;
 
             // If passed in object is PSObject with no baseobject, return false.
             if (mshSource != null && mshSource.ImmediateBaseObjectIsEmpty)
@@ -1212,7 +1208,7 @@ namespace System.Management.Automation
 
             // Check if source (or baseobject in mshSource) is known container type
             SerializationUtilities.GetKnownContainerTypeInfo(mshSource != null ? mshSource.ImmediateBaseObject : source, out ct,
-                                      out dictionary, out enumerable);
+                                      out IDictionary dictionary, out IEnumerable enumerable);
 
             if (ct == ContainerType.None)
                 return false;
@@ -1781,8 +1777,7 @@ namespace System.Management.Automation
 
                 if (info.MemberType == (info.MemberType & PSMemberTypes.Properties))
                 {
-                    bool gotValue;
-                    object value = SerializationUtilities.GetPropertyValueInThreadSafeManner((PSPropertyInfo)info, this.CanUseDefaultRunspaceInThreadSafeManner, out gotValue);
+                    object value = SerializationUtilities.GetPropertyValueInThreadSafeManner((PSPropertyInfo)info, this.CanUseDefaultRunspaceInThreadSafeManner, out bool gotValue);
                     if (gotValue)
                     {
                         if (writeEnclosingMemberSetElementTag && !enclosingTagWritten)
@@ -1992,8 +1987,7 @@ namespace System.Management.Automation
                     startElementWritten = true;
                 }
 
-                bool success;
-                object value = SerializationUtilities.GetPropertyValueInThreadSafeManner(prop, this.CanUseDefaultRunspaceInThreadSafeManner, out success);
+                object value = SerializationUtilities.GetPropertyValueInThreadSafeManner(prop, this.CanUseDefaultRunspaceInThreadSafeManner, out bool success);
                 if (success)
                 {
                     WriteOneObject(value, null, prop.Name, depth);
@@ -2230,8 +2224,7 @@ namespace System.Management.Automation
             string result = null;
             if (serializationProperty != null)
             {
-                bool success;
-                object val = SerializationUtilities.GetPropertyValueInThreadSafeManner(serializationProperty, this.CanUseDefaultRunspaceInThreadSafeManner, out success);
+                object val = SerializationUtilities.GetPropertyValueInThreadSafeManner(serializationProperty, this.CanUseDefaultRunspaceInThreadSafeManner, out bool success);
                 if (success && (val != null))
                 {
                     result = SerializationUtilities.GetToString(val);
@@ -3238,8 +3231,7 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    Type originalArrayType;
-                    if (!LanguagePrimitives.TryConvertTo(originalArrayTypeName, CultureInfo.InvariantCulture, out originalArrayType))
+                    if (!LanguagePrimitives.TryConvertTo(originalArrayTypeName, CultureInfo.InvariantCulture, out Type originalArrayType))
                     {
                         return false;
                     }
@@ -3249,8 +3241,7 @@ namespace System.Management.Automation
                         return false;
                     }
 
-                    object newPropertyValue;
-                    if (!LanguagePrimitives.TryConvertTo(propertyValue, originalArrayType, CultureInfo.InvariantCulture, out newPropertyValue))
+                    if (!LanguagePrimitives.TryConvertTo(propertyValue, originalArrayType, CultureInfo.InvariantCulture, out object newPropertyValue))
                     {
                         return false;
                     }
@@ -3544,8 +3535,7 @@ namespace System.Management.Automation
                     throw NewXmlException(Serialization.DeserializationTooDeep, null);
                 }
 
-                bool isKnownPrimitiveType;
-                object result = ReadOneDeserializedObject(out streamName, out isKnownPrimitiveType);
+                object result = ReadOneDeserializedObject(out streamName, out bool isKnownPrimitiveType);
                 if (result == null)
                 {
                     return null;
@@ -3610,8 +3600,7 @@ namespace System.Management.Automation
 
         private object ReadOneObject()
         {
-            string ignore;
-            return ReadOneObject(out ignore);
+            return ReadOneObject(out string ignore);
         }
 
         // Reads one PSObject
@@ -4980,8 +4969,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal string GetRefId(T t)
         {
-            UInt64 refId;
-            if ((_object2refId != null) && (_object2refId.TryGetValue(t, out refId)))
+            if ((_object2refId != null) && (_object2refId.TryGetValue(t, out ulong refId)))
             {
                 return refId.ToString(System.Globalization.CultureInfo.InvariantCulture);
             }
@@ -5010,8 +4998,7 @@ namespace System.Management.Automation
         internal T GetReferencedObject(string refId)
         {
             Dbg.Assert(_refId2object.ContainsKey(refId), "Reference id wasn't seen earlier");
-            T t;
-            if (_refId2object.TryGetValue(refId, out t))
+            if (_refId2object.TryGetValue(refId, out T t))
             {
                 return t;
             }
@@ -5113,8 +5100,7 @@ namespace System.Management.Automation
         /// <returns>TypeSerializationInfo for the type, null if it doesn't exist.</returns>
         internal static TypeSerializationInfo GetTypeSerializationInfo(Type type)
         {
-            TypeSerializationInfo temp;
-            if (!s_knownTableKeyType.TryGetValue(type.FullName, out temp) && typeof(XmlDocument).IsAssignableFrom(type))
+            if (!s_knownTableKeyType.TryGetValue(type.FullName, out TypeSerializationInfo temp) && typeof(XmlDocument).IsAssignableFrom(type))
             {
                 temp = s_xdInfo;
             }
@@ -5129,8 +5115,7 @@ namespace System.Management.Automation
         /// <returns>TypeSerializationInfo entry, null if no entry exist for the tag.</returns>
         internal static TypeSerializationInfo GetTypeSerializationInfoFromItemTag(string itemTag)
         {
-            TypeSerializationInfo temp;
-            s_knownTableKeyItemTag.TryGetValue(itemTag, out temp);
+            s_knownTableKeyItemTag.TryGetValue(itemTag, out TypeSerializationInfo temp);
             return temp;
         }
 
@@ -6556,8 +6541,7 @@ namespace System.Management.Automation
             }
             else
             {
-                IDictionary subData;
-                if (LanguagePrimitives.TryConvertTo<IDictionary>(data[keys[0]], out subData)
+                if (LanguagePrimitives.TryConvertTo<IDictionary>(data[keys[0]], out IDictionary subData)
                     && subData != null)
                 {
                     string[] subKeys = new string[keys.Length - 1];

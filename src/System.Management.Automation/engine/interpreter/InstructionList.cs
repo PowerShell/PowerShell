@@ -929,8 +929,7 @@ namespace System.Management.Automation.Interpreter
         {
             lock (s_loadFields)
             {
-                Instruction instruction;
-                if (!s_loadFields.TryGetValue(field, out instruction))
+                if (!s_loadFields.TryGetValue(field, out Instruction instruction))
                 {
                     if (field.IsStatic)
                     {

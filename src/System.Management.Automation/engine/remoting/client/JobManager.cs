@@ -140,8 +140,7 @@ namespace System.Management.Automation
         {
             lock (s_syncObject)
             {
-                KeyValuePair<int, string> keyValuePair;
-                if (s_jobIdsForReuse.TryGetValue(instanceId, out keyValuePair) && keyValuePair.Value.Equals(typeName))
+                if (s_jobIdsForReuse.TryGetValue(instanceId, out KeyValuePair<int, string> keyValuePair) && keyValuePair.Value.Equals(typeName))
                     return new JobIdentifier(keyValuePair.Key, instanceId);
                 return null;
             }

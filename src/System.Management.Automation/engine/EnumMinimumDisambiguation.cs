@@ -72,8 +72,7 @@ namespace System.Management.Automation
                     }
                 }
                 // test for special cases match
-                string[] minDisambiguateNames;
-                if (s_specialDisambiguateCases.TryGetValue(enumType, out minDisambiguateNames))
+                if (s_specialDisambiguateCases.TryGetValue(enumType, out string[] minDisambiguateNames))
                 {
                     foreach (string tName in minDisambiguateNames)
                     {

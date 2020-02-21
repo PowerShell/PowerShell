@@ -140,7 +140,6 @@ namespace System.Management.Automation
                 {
                     string helpFileToFind = moduleName + "-Help.xml";
 
-                    string helpFileName = null;
 
                     Collection<string> searchPaths = new Collection<string>();
                     searchPaths.Add(moduleDir);
@@ -159,7 +158,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    HelpInfo helpInfo = GetHelpInfoFromHelpFile(current, helpFileToFind, searchPaths, true, out helpFileName);
+                    HelpInfo helpInfo = GetHelpInfoFromHelpFile(current, helpFileToFind, searchPaths, true, out string helpFileName);
 
                     if (helpInfo != null)
                     {

@@ -112,9 +112,7 @@ namespace System.Management.Automation
         internal static string GetNameFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc)
         {
             // Get the method or property name.
-            string strName, strDoc, strHelp;
-            int id;
-            typeinfo.GetDocumentation(funcdesc.memid, out strName, out strDoc, out id, out strHelp);
+            typeinfo.GetDocumentation(funcdesc.memid, out string strName, out string strDoc, out int id, out string strHelp);
             return strName;
         }
 
@@ -126,16 +124,13 @@ namespace System.Management.Automation
         /// <returns>Name of the custom type.</returns>
         private static string GetStringFromCustomType(COM.ITypeInfo typeinfo, IntPtr refptr)
         {
-            COM.ITypeInfo custtypeinfo;
             int reftype = unchecked((int)(long)refptr); // note that we cast to long first to prevent overflows; this cast is OK since we are only interested in the lower word
 
-            typeinfo.GetRefTypeInfo(reftype, out custtypeinfo);
+            typeinfo.GetRefTypeInfo(reftype, out COM.ITypeInfo custtypeinfo);
 
             if (custtypeinfo != null)
             {
-                string strName, strDoc, strHelp;
-                int id;
-                custtypeinfo.GetDocumentation(-1, out strName, out strDoc, out id, out strHelp);
+                custtypeinfo.GetDocumentation(-1, out string strName, out string strDoc, out int id, out string strHelp);
                 return strName;
             }
 
@@ -355,8 +350,7 @@ namespace System.Management.Automation
 
             foreach (int index in methods)
             {
-                IntPtr pFuncDesc;
-                typeInfo.GetFuncDesc(index, out pFuncDesc);
+                typeInfo.GetFuncDesc(index, out IntPtr pFuncDesc);
                 COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
                 returnValue[count++] = ComUtil.GetMethodInformation(funcdesc, skipLastParameters);
                 typeInfo.ReleaseFuncDesc(pFuncDesc);

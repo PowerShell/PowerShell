@@ -364,8 +364,6 @@ namespace Microsoft.PowerShell.Commands
 
                 bool completed = false;
                 int byteIndex = 0;
-                int bytesUsed;
-                int charsUsed;
 
                 while (!completed)
                 {
@@ -373,7 +371,7 @@ namespace Microsoft.PowerShell.Commands
                     bool flush = (bytesRead == 0);
                     decoder.Convert(bytes, byteIndex, bytesRead - byteIndex,
                                     chars, 0, useBufferSize, flush,
-                                    out bytesUsed, out charsUsed, out completed);
+                                    out int bytesUsed, out int charsUsed, out completed);
 
                     // The conversion produced the number of characters indicated by charsUsed. Write that number
                     // of characters to our result buffer
@@ -450,10 +448,9 @@ namespace Microsoft.PowerShell.Commands
                     Match match = s_metaexp.Match(content);
                     if (match.Success)
                     {
-                        Encoding localEncoding = null;
                         string characterSet = match.Groups["charset"].Value;
 
-                        if (TryGetEncoding(characterSet, out localEncoding))
+                        if (TryGetEncoding(characterSet, out Encoding localEncoding))
                         {
                             stream.Seek(0, SeekOrigin.Begin);
                             content = StreamToString(stream, localEncoding);

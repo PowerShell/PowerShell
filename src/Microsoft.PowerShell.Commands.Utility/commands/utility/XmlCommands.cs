@@ -196,7 +196,6 @@ namespace Microsoft.PowerShell.Commands
 
             if (!ShouldProcess(Path)) return;
 
-            StreamWriter sw;
             PathUtils.MasterStreamOpen(
                 this,
                 this.Path,
@@ -206,7 +205,7 @@ namespace Microsoft.PowerShell.Commands
                 this.Force,
                 this.NoClobber,
                 out _fs,
-                out sw,
+                out StreamWriter sw,
                 out _readOnlyFileInfo,
                 _isLiteralPath
                 );
@@ -1029,8 +1028,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        ProviderInfo provider;
-                        Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(fpath, out provider);
+                        Collection<string> resolvedPaths = GetResolvedProviderPathFromPSPath(fpath, out ProviderInfo provider);
                         if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))
                         {
                             // Cannot open File error

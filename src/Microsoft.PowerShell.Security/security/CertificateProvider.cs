@@ -644,10 +644,9 @@ namespace Microsoft.PowerShell.Commands
                                 bool recurse)
         {
             path = NormalizePath(path);
-            bool isContainer = false;
             bool fDeleteKey = false;
 
-            object outObj = GetItemAtPath(path, false, out isContainer);
+            object outObj = GetItemAtPath(path, false, out bool isContainer);
             string[] pathElements = GetPathElements(path);
 
             bool fUserContext = string.Equals(pathElements[0], "CurrentUser", StringComparison.OrdinalIgnoreCase);
@@ -758,8 +757,7 @@ namespace Microsoft.PowerShell.Commands
             string[] pathElements = GetPathElements(path);
             string[] destElements = GetPathElements(destination);
 
-            bool isContainer = false;
-            object cert = GetItemAtPath(path, false, out isContainer);
+            object cert = GetItemAtPath(path, false, out bool isContainer);
 
             //
             // isContainer = true; means an invalid path
@@ -825,8 +823,7 @@ namespace Microsoft.PowerShell.Commands
             if (cert != null) // we get cert
             {
                 // get destination store
-                bool isDestContainer = false;
-                object store = GetItemAtPath(destination, false, out isDestContainer);
+                object store = GetItemAtPath(destination, false, out bool isDestContainer);
 
                 X509Certificate2 certificate = cert as X509Certificate2;
                 X509NativeStore certstore = store as X509NativeStore;
@@ -1006,9 +1003,8 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
 
-            bool isContainer = false;
 
-            object item = GetItemAtPath(path, false, out isContainer);
+            object item = GetItemAtPath(path, false, out bool isContainer);
 
             if ((item != null) && isContainer)
             {
@@ -1167,10 +1163,9 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override void GetItem(string path)
         {
-            bool isContainer = false;
 
             path = NormalizePath(path);
-            object item = GetItemAtPath(path, false, out isContainer);
+            object item = GetItemAtPath(path, false, out bool isContainer);
             CertificateFilterInfo filter = GetFilter();
 
             if (item != null)

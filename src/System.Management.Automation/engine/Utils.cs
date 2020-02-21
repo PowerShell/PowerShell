@@ -634,8 +634,7 @@ namespace System.Management.Automation
                 versionString += ".0";
             }
 
-            Version result = null;
-            if (Version.TryParse(versionString, out result))
+            if (Version.TryParse(versionString, out Version result))
             {
                 return result;
             }
@@ -1214,8 +1213,7 @@ namespace System.Management.Automation
         /// <returns>True if current identity is impersonated.</returns>
         internal static bool TryGetWindowsImpersonatedIdentity(out WindowsIdentity impersonatedIdentity)
         {
-            WindowsIdentity currentIdentity;
-            if (TryGetWindowsCurrentIdentity(out currentIdentity) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation))
+            if (TryGetWindowsCurrentIdentity(out WindowsIdentity currentIdentity) && (currentIdentity.ImpersonationLevel == TokenImpersonationLevel.Impersonation))
             {
                 impersonatedIdentity = currentIdentity;
                 return true;
@@ -1237,8 +1235,7 @@ namespace System.Management.Automation
 #if UNIX
             return true;
 #else
-            WindowsIdentity currentIdentity;
-            if (TryGetWindowsCurrentIdentity(out currentIdentity))
+            if (TryGetWindowsCurrentIdentity(out WindowsIdentity currentIdentity))
             {
                 var principal = new WindowsPrincipal(currentIdentity);
                 return principal.IsInRole(WindowsBuiltInRole.Administrator);
@@ -1292,8 +1289,7 @@ namespace System.Management.Automation
                 return true;
             }
 
-            Uri uri;
-            return Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+            return Uri.TryCreate(path, UriKind.Absolute, out Uri uri) && uri.IsUnc;
 #endif
         }
 
@@ -1674,9 +1670,7 @@ namespace System.Management.Automation
                     }
 
                     // Make sure that this is a simple pipeline
-                    string errorId;
-                    string errorMsg;
-                    scriptBlockAst.GetSimplePipeline(true, out errorId, out errorMsg);
+                    scriptBlockAst.GetSimplePipeline(true, out string errorId, out string errorMsg);
                     if (errorId != null)
                     {
                         WriteVerbose(ps, ParserStrings.ImplicitRemotingPipelineBatchingNotASimplePipeline);

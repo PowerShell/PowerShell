@@ -111,15 +111,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string path in paths)
                 {
-                    ProviderInfo provider = null;
-                    PSDriveInfo drive = null;
 
                     // I don't really care about the returned path, just the provider name
                     SessionState.Path.GetUnresolvedProviderPathFromPSPath(
                         path,
                         this.CmdletProviderContext,
-                        out provider,
-                        out drive);
+                        out ProviderInfo provider,
+                        out PSDriveInfo drive);
 
                     // Check the provider's capabilities
 

@@ -111,10 +111,9 @@ namespace Microsoft.WSMan.Management
         {
             lock (Sessions.SessionObjCache)
             {
-                object sessionobj;
                 foreach (string key in Sessions.SessionObjCache.Keys)
                 {
-                    Sessions.SessionObjCache.TryGetValue(key, out sessionobj);
+                    Sessions.SessionObjCache.TryGetValue(key, out object sessionobj);
                     try
                     {
                         Marshal.ReleaseComObject(sessionobj);
@@ -216,8 +215,7 @@ namespace Microsoft.WSMan.Management
                 }
                 else
                 {
-                    object objsession = null;
-                    Sessions.SessionObjCache.TryGetValue(key, out objsession);
+                    Sessions.SessionObjCache.TryGetValue(key, out object objsession);
                     try
                     {
                         Marshal.ReleaseComObject(objsession);

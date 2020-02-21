@@ -93,8 +93,7 @@ namespace System.Management.Automation
         internal override object GetDefaultParameterValue(string name)
         {
             object result = null;
-            RuntimeDefinedParameter parameter;
-            if (this.Target.TryGetValue(name, out parameter) && parameter != null)
+            if (this.Target.TryGetValue(name, out RuntimeDefinedParameter parameter) && parameter != null)
             {
                 result = parameter.Value;
             }

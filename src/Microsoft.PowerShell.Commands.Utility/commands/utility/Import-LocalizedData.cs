@@ -201,8 +201,7 @@ namespace Microsoft.PowerShell.Commands
                         return;
                     }
 
-                    SessionStateScope scope = null;
-                    PSVariable variable = SessionState.Internal.GetVariableItem(variablePath, out scope);
+                    PSVariable variable = SessionState.Internal.GetVariableItem(variablePath, out SessionStateScope scope);
 
                     if (variable == null)
                     {

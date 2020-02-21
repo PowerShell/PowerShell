@@ -601,9 +601,8 @@ namespace Microsoft.PowerShell.Commands
                     // Check for PowerShell Version before checking other keys
                     // If a PowerShellVersion exists and does not match the requirements, then the error is InsufficientPowerShellVersion
                     // Else, the error is InvalidManifestMember
-                    Version powerShellVersion;
                     Version currentPowerShellVersion = PSVersionInfo.PSVersion;
-                    if (GetScalarFromData<Version>(data, moduleManifestPath, "PowerShellVersion", manifestProcessingFlags, out powerShellVersion) &&
+                    if (GetScalarFromData<Version>(data, moduleManifestPath, "PowerShellVersion", manifestProcessingFlags, out Version powerShellVersion) &&
                         currentPowerShellVersion < powerShellVersion)
                     {
                         message = StringUtil.Format(Modules.ModuleManifestInsufficientPowerShellVersion,
@@ -791,8 +790,7 @@ namespace Microsoft.PowerShell.Commands
                         if (tempModuleInfoFromVerification != null)
                         {
                             var subdirName = Path.GetFileName(tempModuleInfoFromVerification.ModuleBase);
-                            Version version;
-                            if (Version.TryParse(subdirName, out version))
+                            if (Version.TryParse(subdirName, out Version version))
                             {
                                 var moduleBaseWithoutVersion = Path.GetDirectoryName(tempModuleInfoFromVerification.ModuleBase);
 
@@ -989,8 +987,7 @@ namespace Microsoft.PowerShell.Commands
                         else
                         {
                             // Given path is a directory, we first check if it is end with module version.
-                            Version version;
-                            if (Version.TryParse(moduleName, out version))
+                            if (Version.TryParse(moduleName, out Version version))
                             {
                                 moduleName = Path.GetFileName(Directory.GetParent(resolvedModulePath).Name);
                             }
@@ -1125,9 +1122,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static Version GetMaximumVersion(string stringVersion)
         {
-            Version maxVersion;
             // First, try to convert maxVersion to version directly
-            if (System.Version.TryParse(stringVersion, out maxVersion))
+            if (System.Version.TryParse(stringVersion, out Version maxVersion))
             {
                 return maxVersion;
             }
@@ -1167,8 +1163,7 @@ namespace Microsoft.PowerShell.Commands
         private PSModuleInfo CreateModuleInfoForGetModule(string file, bool refresh)
         {
             // Ensure we don't have any recursion in module lookup
-            PSModuleInfo moduleInfo = null;
-            if (_currentlyProcessingModules.TryGetValue(file, out moduleInfo))
+            if (_currentlyProcessingModules.TryGetValue(file, out PSModuleInfo moduleInfo))
             {
                 return moduleInfo;
             }
@@ -1199,8 +1194,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (extension.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
-                    string throwAwayScriptName;
-                    ExternalScriptInfo scriptInfo = GetScriptInfoForFile(file, out throwAwayScriptName, true);
+                    ExternalScriptInfo scriptInfo = GetScriptInfoForFile(file, out string throwAwayScriptName, true);
 
                     // At this place, we used to check if the module is already loaded. If so, return that.
                     // This was done to fix the issue where we were not getting the ExportedCommands since they are populated only after an import.
@@ -1219,9 +1213,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // It's not a module manifest, process the individual module
                     ImportModuleOptions options = new ImportModuleOptions();
-                    bool found = false;
 
-                    moduleInfo = LoadModule(file, moduleBase: null, prefix: string.Empty, ss: null, ref options, flags, out found);
+                    moduleInfo = LoadModule(file, moduleBase: null, prefix: string.Empty, ss: null, ref options, flags, out bool found);
                 }
 
                 // return fake PSModuleInfo if can't read the file for any reason
@@ -1272,8 +1265,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     moduleInfo.SetModuleType(ModuleType.Cim);
 
-                    string moduleName;
-                    ExternalScriptInfo scriptInfo = GetScriptInfoForFile(file, out moduleName, true);
+                    ExternalScriptInfo scriptInfo = GetScriptInfoForFile(file, out string moduleName, true);
                     var cmdletizationXmlReader = new StringReader(scriptInfo.ScriptContents);
                     var scriptWriter = new ScriptWriter(
                         cmdletizationXmlReader,
@@ -1361,9 +1353,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(scriptInfo != null, "scriptInfo for module (.psd1) can't be null");
             bool containedErrors = false;
 
-            Hashtable data = null;
-            Hashtable localizedData = null;
-            if (!LoadModuleManifestData(scriptInfo, manifestProcessingFlags, out data, out localizedData, ref containedErrors))
+            if (!LoadModuleManifestData(scriptInfo, manifestProcessingFlags, out Hashtable data, out Hashtable localizedData, ref containedErrors))
             {
                 return null;
             }
@@ -1497,19 +1487,19 @@ namespace Microsoft.PowerShell.Commands
 
             // START: Check if the ModuleToProcess is already loaded..if it is, ignore the this load manifest
             // call and return
-            string moduleToProcess = null;
 
-            if (!GetScalarFromData<string>(data, moduleManifestPath, "ModuleToProcess", manifestProcessingFlags, out moduleToProcess))
+            if (!GetScalarFromData<string>(data, moduleManifestPath, "ModuleToProcess", manifestProcessingFlags, out string moduleToProcess))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
-            string rootModule = null;
-            if (!GetScalarFromData<string>(data, moduleManifestPath, "RootModule", manifestProcessingFlags, out rootModule))
+            if (!GetScalarFromData<string>(data, moduleManifestPath, "RootModule", manifestProcessingFlags, out string rootModule))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             if (!string.IsNullOrEmpty(moduleToProcess))
@@ -1556,13 +1546,13 @@ namespace Microsoft.PowerShell.Commands
             string actualRootModule = moduleToProcess ?? rootModule;
 
             // extract defaultCommandPrefix from the manifest
-            string defaultCommandPrefix = null;
             if (
                 !GetScalarFromData<string>(data, moduleManifestPath, "DefaultCommandPrefix", manifestProcessingFlags,
-                    out defaultCommandPrefix))
+                    out string defaultCommandPrefix))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             string resolvedCommandPrefix = string.Empty;
@@ -1648,21 +1638,21 @@ namespace Microsoft.PowerShell.Commands
                 if (bailOnFirstError) return null;
             }
 
-            Guid? manifestGuid;
-            if (!GetScalarFromData(data, moduleManifestPath, "guid", manifestProcessingFlags, out manifestGuid))
+            if (!GetScalarFromData(data, moduleManifestPath, "guid", manifestProcessingFlags, out Guid? manifestGuid))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             // Verify that the module manifest contains the module version information
-            Version moduleVersion;
             if (
                 !GetScalarFromData<Version>(data, moduleManifestPath, "ModuleVersion", manifestProcessingFlags,
-                    out moduleVersion))
+                    out Version moduleVersion))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
             else
             {
@@ -1678,7 +1668,8 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(er);
                     }
 
-                    if (bailOnFirstError) return null;
+                    if (bailOnFirstError)
+                        return null;
                 }
                 else if (!ModuleIntrinsics.AreModuleFieldsMatchingConstraints(
                     moduleGuid: manifestGuid,
@@ -1710,9 +1701,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                 }
 
-                Version moduleVersionFromFolderName;
                 if (parent != null &&
-                    Version.TryParse(parent.Name, out moduleVersionFromFolderName) &&
+                    Version.TryParse(parent.Name, out Version moduleVersionFromFolderName) &&
                     parent.Parent != null &&
                     parent.Parent.Name.Equals(Path.GetFileNameWithoutExtension(moduleManifestPath)))
                 {
@@ -1729,19 +1719,20 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(er);
                         }
 
-                        if (bailOnFirstError) return null;
+                        if (bailOnFirstError)
+                            return null;
                     }
                 }
             }
 
             // Test that the PowerShellVersion version is valid...
-            Version powerShellVersion;
             if (
                 !GetScalarFromData<Version>(data, moduleManifestPath, "PowerShellVersion", manifestProcessingFlags,
-                    out powerShellVersion))
+                    out Version powerShellVersion))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
             else if (powerShellVersion != null)
             {
@@ -1760,15 +1751,15 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(er);
                     }
 
-                    if (bailOnFirstError) return null;
+                    if (bailOnFirstError)
+                        return null;
                 }
             }
 
             // Test that the PowerShellHostVersion version is valid...
-            string requestedHostName;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "PowerShellHostName", manifestProcessingFlags,
-                    out requestedHostName))
+                    out string requestedHostName))
             {
                 containedErrors = true;
                 // Ignore errors related to HostVersion as per the ManifestProcessingFlags
@@ -1797,16 +1788,16 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(er);
                         }
 
-                        if (bailOnFirstError) return null;
+                        if (bailOnFirstError)
+                            return null;
                     }
                 }
             }
 
             // Test that the PowerShellHostVersion version is valid...
-            Version requestedHostVersion;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "PowerShellHostVersion", manifestProcessingFlags,
-                    out requestedHostVersion))
+                    out Version requestedHostVersion))
             {
                 containedErrors = true;
                 // Ignore errors related to HostVersion as per the ManifestProcessingFlags
@@ -1836,19 +1827,20 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(er);
                         }
 
-                        if (bailOnFirstError) return null;
+                        if (bailOnFirstError)
+                            return null;
                     }
                 }
             }
 
             // Test the required processor architecture
-            ProcessorArchitecture requiredProcessorArchitecture;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "ProcessorArchitecture", manifestProcessingFlags,
-                    out requiredProcessorArchitecture))
+                    out ProcessorArchitecture requiredProcessorArchitecture))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
             else if ((requiredProcessorArchitecture != ProcessorArchitecture.None) &&
                      (requiredProcessorArchitecture != ProcessorArchitecture.MSIL))
@@ -1868,47 +1860,47 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(er);
                     }
 
-                    if (bailOnFirstError) return null;
+                    if (bailOnFirstError)
+                        return null;
                 }
             }
 
             // Test the required CLR version
-            Version requestedClrVersion;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "CLRVersion", manifestProcessingFlags,
-                    out requestedClrVersion))
+                    out Version requestedClrVersion))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             // Test the required .NET Framework version
-            Version requestedDotNetFrameworkVersion;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "DotNetFrameworkVersion", manifestProcessingFlags,
-                    out requestedDotNetFrameworkVersion))
+                    out Version requestedDotNetFrameworkVersion))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             // HelpInfo URI
-            string helpInfoUri = null;
 
-            GetScalarFromData<string>(data, moduleManifestPath, "HelpInfoURI", manifestProcessingFlags, out helpInfoUri);
+            GetScalarFromData<string>(data, moduleManifestPath, "HelpInfoURI", manifestProcessingFlags, out string helpInfoUri);
 
             List<PSModuleInfo> requiredModulesLoaded = new List<PSModuleInfo>();
 
             // In case of Get-Module -List and Test-ModuleManifest, we populate this list with fake PSModuleInfo for each of the required modules specified
             List<PSModuleInfo> requiredModulesSpecifiedInModuleManifest = new List<PSModuleInfo>();
 
-            ModuleSpecification[] requiredModules;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "RequiredModules", manifestProcessingFlags,
-                    out requiredModules))
+                    out ModuleSpecification[] requiredModules))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
             else if ((requiredModules != null))
             {
@@ -1936,9 +1928,8 @@ namespace Microsoft.PowerShell.Commands
                         // We must process it so paths work.
                         ModuleSpecification normalizedRequiredModuleSpec = requiredModule?.WithNormalizedName(Context, moduleBase);
 
-                        ErrorRecord error = null;
                         PSModuleInfo module = LoadRequiredModule(fakeManifestInfo, normalizedRequiredModuleSpec, moduleManifestPath,
-                            manifestProcessingFlags, containedErrors, out error);
+                            manifestProcessingFlags, containedErrors, out ErrorRecord error);
                         if (module == null && error != null)
                         {
                             WriteError(error);
@@ -1962,13 +1953,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Validate the list of nestedModules...
-            ModuleSpecification[] tmpNestedModules;
             if (
                 !GetScalarFromData(data, moduleManifestPath, "NestedModules", manifestProcessingFlags,
-                    out tmpNestedModules))
+                    out ModuleSpecification[] tmpNestedModules))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             List<ModuleSpecification> nestedModules = new List<ModuleSpecification>();
@@ -2063,49 +2054,49 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Process all of the exports...
-            List<WildcardPattern> exportedFunctions;
             if (
                 !GetListOfWildcardsFromData(data, moduleManifestPath, "FunctionsToExport", manifestProcessingFlags,
-                    out exportedFunctions))
+                    out List<WildcardPattern> exportedFunctions))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
-            List<WildcardPattern> exportedVariables;
             if (
                 !GetListOfWildcardsFromData(data, moduleManifestPath, "VariablesToExport", manifestProcessingFlags,
-                    out exportedVariables))
+                    out List<WildcardPattern> exportedVariables))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
-            List<WildcardPattern> exportedAliases;
             if (
                 !GetListOfWildcardsFromData(data, moduleManifestPath, "AliasesToExport", manifestProcessingFlags,
-                    out exportedAliases))
+                    out List<WildcardPattern> exportedAliases))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
-            List<WildcardPattern> exportedCmdlets;
             if (
                 !GetListOfWildcardsFromData(data, moduleManifestPath, "CmdletsToExport", manifestProcessingFlags,
-                    out exportedCmdlets))
+                    out List<WildcardPattern> exportedCmdlets))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
-            List<WildcardPattern> exportedDscResources;
             if (
                 !GetListOfWildcardsFromData(data, moduleManifestPath, "DscResourcesToExport", manifestProcessingFlags,
-                    out exportedDscResources))
+                    out List<WildcardPattern> exportedDscResources))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             InitialSessionState iss = null;
@@ -2124,13 +2115,12 @@ namespace Microsoft.PowerShell.Commands
             bool doBind = false;
 
             // Set up to load any required assemblies that have been specified...
-            List<string> tmpAssemblyList;
             List<string> assemblyList = new List<string>();
             List<string> fixedUpAssemblyPathList = new List<string>();
 
             if (
                 !GetListOfStringsFromData(data, moduleManifestPath, "RequiredAssemblies", manifestProcessingFlags,
-                    out tmpAssemblyList))
+                    out List<string> tmpAssemblyList))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -2183,13 +2173,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set up to load any types files that have been specified...
-            List<string> exportedTypeFiles;
             if (
                 !GetListOfFilesFromData(data, moduleManifestPath, "TypesToProcess", manifestProcessingFlags, moduleBase,
-                    ".ps1xml", true, out exportedTypeFiles))
+                    ".ps1xml", true, out List<string> exportedTypeFiles))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
             else
             {
@@ -2228,13 +2218,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set up to load any format files that have been specified...
-            List<string> exportedFormatFiles;
             if (
                 !GetListOfFilesFromData(data, moduleManifestPath, "FormatsToProcess", manifestProcessingFlags,
-                    moduleBase, ".ps1xml", true, out exportedFormatFiles))
+                    moduleBase, ".ps1xml", true, out List<string> exportedFormatFiles))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
             else
             {
@@ -2270,13 +2260,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // scripts to process
-            List<string> scriptsToProcess;
             if (
                 !GetListOfFilesFromData(data, moduleManifestPath, "ScriptsToProcess", manifestProcessingFlags,
-                    moduleBase, ".ps1", true, out scriptsToProcess))
+                    moduleBase, ".ps1", true, out List<string> scriptsToProcess))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
             else
             {
@@ -2293,7 +2283,8 @@ namespace Microsoft.PowerShell.Commands
                                 manifestProcessingFlags);
 
                             containedErrors = true;
-                            if (bailOnFirstError) return null;
+                            if (bailOnFirstError)
+                                return null;
                         }
                     }
                 }
@@ -2317,36 +2308,36 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Process "FileList"
-            List<string> fileList;
             if (
                 !GetListOfFilesFromData(data, moduleManifestPath, "FileList", manifestProcessingFlags, moduleBase, ""
                     /*extension*/,
                     false
                     /* don't check file existence - don't want to change current behavior without feature team discussion */,
-                    out fileList))
+                    out List<string> fileList))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             // Process "ModuleList
-            ModuleSpecification[] moduleList;
             if (
                 !GetScalarFromData<ModuleSpecification[]>(data, moduleManifestPath, "ModuleList",
-                    manifestProcessingFlags, out moduleList))
+                    manifestProcessingFlags, out ModuleSpecification[] moduleList))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             // Process "CompatiblePSEditions"
-            string[] compatiblePSEditions;
             if (
                 !GetScalarFromData<string[]>(data, moduleManifestPath, "CompatiblePSEditions",
-                    manifestProcessingFlags, out compatiblePSEditions))
+                    manifestProcessingFlags, out string[] compatiblePSEditions))
             {
                 containedErrors = true;
-                if (bailOnFirstError) return null;
+                if (bailOnFirstError)
+                    return null;
             }
 
             // On Windows, we want to include any modules under %WINDIR%\System32\WindowsPowerShell\v1.0\Modules
@@ -2600,11 +2591,10 @@ namespace Microsoft.PowerShell.Commands
                         if (xml != null && xml.Properties["RepositorySourceLocation"] != null)
                         {
                             var repositorySourceLocation = xml.Properties["RepositorySourceLocation"].Value.ToString();
-                            Uri repositorySourceLocationUri;
 
                             if (!string.IsNullOrWhiteSpace(repositorySourceLocation) &&
                                 Uri.TryCreate(repositorySourceLocation, UriKind.RelativeOrAbsolute,
-                                    out repositorySourceLocationUri))
+                                    out Uri repositorySourceLocationUri))
                             {
                                 manifestInfo.RepositorySourceLocation = repositorySourceLocationUri;
                             }
@@ -2805,14 +2795,13 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (string scriptFile in scriptsToProcess)
                     {
-                        bool found = false;
                         PSModuleInfo module = LoadModule(scriptFile,
                             moduleBase,
                             string.Empty, // prefix (-Prefix shouldn't be applied to dot sourced scripts)
                             null,
                             ref options,
                             manifestProcessingFlags,
-                            out found);
+                            out bool found);
 
                         // If we're in analysis, add the detected exports to this module's
                         // exports
@@ -2907,7 +2896,6 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (ModuleSpecification nestedModuleSpecification in nestedModules)
                 {
-                    bool found = false;
                     // Never load nested modules to the global scope.
                     bool oldGlobal = this.BaseGlobal;
                     this.BaseGlobal = false;
@@ -2924,7 +2912,7 @@ namespace Microsoft.PowerShell.Commands
                             loadTypesFiles: true,
                             loadFormatFiles: true,
                             privateData: privateData,
-                            found: out found,
+                            found: out bool found,
                             shortModuleName: null,
                             manifestLanguageMode: ((manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null));
 
@@ -3014,7 +3002,6 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    bool found;
                     newManifestInfo = LoadModuleNamedInManifest(
                         parentModule: null,
                         moduleSpecification: new ModuleSpecification(actualRootModule),
@@ -3027,7 +3014,7 @@ namespace Microsoft.PowerShell.Commands
                         loadTypesFiles: (exportedTypeFiles == null || 0 == exportedTypeFiles.Count),        // If types files already loaded, don't load snapin files
                         loadFormatFiles: (exportedFormatFiles == null || 0 == exportedFormatFiles.Count),   // if format files already loaded, don't load snapin files
                         privateData: privateData,
-                        found: out found,
+                        found: out bool found,
                         shortModuleName: null,
                         manifestLanguageMode: ((manifestScriptInfo != null) ? manifestScriptInfo.DefiningLanguageMode.GetValueOrDefault() : (PSLanguageMode?)null));
 
@@ -3754,8 +3741,7 @@ namespace Microsoft.PowerShell.Commands
             PSModuleInfo result = null;
 
             ModuleMatchFailure loadFailureReason = ModuleMatchFailure.None;
-            bool loaded = false;
-            object loadedModule = IsModuleLoaded(context, requiredModuleSpecification, out loadFailureReason, out loaded);
+            object loadedModule = IsModuleLoaded(context, requiredModuleSpecification, out loadFailureReason, out bool loaded);
 
             if (loadedModule == null)
             {
@@ -3974,9 +3960,7 @@ namespace Microsoft.PowerShell.Commands
                         ms.MaximumVersion = requiredModule.MaximumVersion;
                     }
 
-                    ModuleMatchFailure loadFailureReason;
-                    bool loaded = false;
-                    object r = IsModuleLoaded(context, ms, out loadFailureReason, out loaded);
+                    object r = IsModuleLoaded(context, ms, out ModuleMatchFailure loadFailureReason, out bool loaded);
 
                     Dbg.Assert(r is PSModuleInfo, "The returned value should be PSModuleInfo");
 
@@ -4293,8 +4277,7 @@ namespace Microsoft.PowerShell.Commands
         {
             list = null;
 
-            List<string> listOfStrings;
-            if (!GetListOfStringsFromData(data, moduleManifestPath, key, manifestProcessingFlags, out listOfStrings))
+            if (!GetListOfStringsFromData(data, moduleManifestPath, key, manifestProcessingFlags, out List<string> listOfStrings))
             {
                 return false;
             }
@@ -4422,8 +4405,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal void SetModuleLoggingInformation(PSModuleInfo m)
         {
-            IEnumerable<string> moduleNames;
-            ModuleLoggingGroupPolicyStatus status = GetModuleLoggingInformation(out moduleNames);
+            ModuleLoggingGroupPolicyStatus status = GetModuleLoggingInformation(out IEnumerable<string> moduleNames);
             if (status != ModuleLoggingGroupPolicyStatus.Undefined)
             {
                 SetModuleLoggingInformation(status, m, moduleNames);
@@ -4920,7 +4902,6 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="moduleNameInRemoveModuleCmdlet">Module name specified in the cmdlet.</param>
         internal void RemoveModule(PSModuleInfo module, string moduleNameInRemoveModuleCmdlet)
         {
-            bool isTopLevelModule = false;
 
             // if the module path is empty string, means it is a dynamically generated assembly.
             // We have set the module path to be module name as key to make it unique, we need update here as well in case the module can be removed.
@@ -4929,7 +4910,7 @@ namespace Microsoft.PowerShell.Commands
                 module.Path = module.Name;
             }
 
-            bool shouldModuleBeRemoved = ShouldModuleBeRemoved(module, moduleNameInRemoveModuleCmdlet, out isTopLevelModule);
+            bool shouldModuleBeRemoved = ShouldModuleBeRemoved(module, moduleNameInRemoveModuleCmdlet, out bool isTopLevelModule);
 
             if (shouldModuleBeRemoved)
             {
@@ -5307,9 +5288,8 @@ namespace Microsoft.PowerShell.Commands
             string moduleName, string fileBaseName, string extension, string moduleBase,
             string prefix, SessionState ss, ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out bool found)
         {
-            bool throwAwayModuleFileFound = false;
             return LoadUsingExtensions(parentModule, moduleName, fileBaseName, extension, moduleBase, prefix, ss,
-                                       options, manifestProcessingFlags, out found, out throwAwayModuleFileFound);
+                                       options, manifestProcessingFlags, out found, out bool throwAwayModuleFileFound);
         }
 
         /// <summary>
@@ -5435,14 +5415,11 @@ namespace Microsoft.PowerShell.Commands
             string extension = Path.GetExtension(module.Path);
             if (!string.IsNullOrEmpty(extension) && extension.Equals(StringLiterals.PowerShellDataFileExtension, StringComparison.OrdinalIgnoreCase))
             {
-                string throwAwayScriptName;
-                ExternalScriptInfo scriptInfo = GetScriptInfoForFile(module.Path, out throwAwayScriptName, true);
+                ExternalScriptInfo scriptInfo = GetScriptInfoForFile(module.Path, out string throwAwayScriptName, true);
                 Dbg.Assert(scriptInfo != null, "scriptInfo for module (.psd1) can't be null");
                 bool containedErrors = false;
-                Hashtable data = null;
-                Hashtable localizedData = null;
 
-                if (LoadModuleManifestData(scriptInfo, ManifestProcessingFlags.NullOnFirstError, out data, out localizedData, ref containedErrors))
+                if (LoadModuleManifestData(scriptInfo, ManifestProcessingFlags.NullOnFirstError, out Hashtable data, out Hashtable localizedData, ref containedErrors))
                 {
                     // Get Default prefix
                     if (data.Contains("DefaultCommandPrefix"))
@@ -5518,8 +5495,7 @@ namespace Microsoft.PowerShell.Commands
         internal PSModuleInfo LoadModule(string fileName, string moduleBase, string prefix, SessionState ss, ref ImportModuleOptions options,
             ManifestProcessingFlags manifestProcessingFlags, out bool found)
         {
-            bool throwAwayModuleFileFound = false;
-            return LoadModule(null, fileName, moduleBase, prefix, ss, null, ref options, manifestProcessingFlags, out found, out throwAwayModuleFileFound);
+            return LoadModule(null, fileName, moduleBase, prefix, ss, null, ref options, manifestProcessingFlags, out found, out bool throwAwayModuleFileFound);
         }
 
         /// <summary>
@@ -5929,8 +5905,7 @@ namespace Microsoft.PowerShell.Commands
                                 sb.LanguageMode = PSLanguageMode.FullLanguage;
 
                                 // proceed with regular module import
-                                List<object> results;
-                                module = Context.Modules.CreateModule(moduleName, fileName, sb, ss, out results, BaseArgumentList);
+                                module = Context.Modules.CreateModule(moduleName, fileName, sb, ss, out List<object> results, BaseArgumentList);
                                 module.SetModuleBase(moduleBase);
                                 scriptWriter.PopulatePSModuleInfo(module);
                                 scriptWriter.ReportExportedCommands(module, prefix);
@@ -6975,9 +6950,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(prefix))
                 return commandName;
 
-            string verb;
-            string noun;
-            if (CmdletInfo.SplitCmdletName(commandName, out verb, out noun))
+            if (CmdletInfo.SplitCmdletName(commandName, out string verb, out string noun))
             {
                 commandName = verb + "-" + prefix + noun;
             }
@@ -7005,9 +6978,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(prefix))
                 return result;
 
-            string verb;
-            string noun;
-            if (CmdletInfo.SplitCmdletName(commandName, out verb, out noun))
+            if (CmdletInfo.SplitCmdletName(commandName, out string verb, out string noun))
             {
                 if (noun.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
                 {
@@ -7031,8 +7002,7 @@ namespace Microsoft.PowerShell.Commands
             Dbg.Assert(commandInfo != null, "Caller should verify that commandInfo is not null");
             Dbg.Assert(!string.IsNullOrEmpty(commandInfo.Prefix), "Caller should verify that the commandInfo has prefix");
 
-            string verb, noun;
-            bool isPrefixed = CmdletInfo.SplitCmdletName(commandInfo.Name, out verb, out noun)
+            bool isPrefixed = CmdletInfo.SplitCmdletName(commandInfo.Name, out string verb, out string noun)
                              ? noun.StartsWith(commandInfo.Prefix, StringComparison.OrdinalIgnoreCase)
                              : commandInfo.Name.StartsWith(commandInfo.Prefix, StringComparison.OrdinalIgnoreCase);
 
@@ -7232,8 +7202,7 @@ namespace Microsoft.PowerShell.Commands
                 if (SessionStateUtilities.MatchesAnyWildcardPattern(aliasToImport.Name, aliasPatterns, noPatternsSpecified))
                 {
                     string prefixedAliasName = AddPrefixToCommandName(aliasToImport.Name, prefix);
-                    string prefixedAliasDefinition;
-                    if (!usePrefix || !original2prefixedName.TryGetValue(aliasToImport.Definition, out prefixedAliasDefinition))
+                    if (!usePrefix || !original2prefixedName.TryGetValue(aliasToImport.Definition, out string prefixedAliasDefinition))
                     {
                         prefixedAliasDefinition = aliasToImport.Definition;
                     }
@@ -7316,8 +7285,7 @@ namespace Microsoft.PowerShell.Commands
                     if (SessionStateUtilities.MatchesAnyWildcardPattern(ai.Name, aliasPatterns, noPatternsSpecified))
                     {
                         string prefixedAliasName = AddPrefixToCommandName(ai.Name, prefix);
-                        string prefixedAliasDefinition;
-                        if (!usePrefix || !original2prefixedName.TryGetValue(ai.Definition, out prefixedAliasDefinition))
+                        if (!usePrefix || !original2prefixedName.TryGetValue(ai.Definition, out string prefixedAliasDefinition))
                         {
                             prefixedAliasDefinition = ai.Definition;
                         }
@@ -7485,11 +7453,9 @@ namespace Microsoft.PowerShell.Commands
                                                 ref bool checkVerb,
                                                 ref bool checkNoun)
         {
-            string verb;
-            string noun;
             string message;
 
-            if (!CmdletInfo.SplitCmdletName(commandName, out verb, out noun))
+            if (!CmdletInfo.SplitCmdletName(commandName, out string verb, out string noun))
                 return;
 
             if (!Verbs.IsStandard(verb))

@@ -68,8 +68,7 @@ namespace System.Management.Automation.Interpreter
         {
             lock (s_runCache)
             {
-                Func<LightLambda, Delegate> fastCtor;
-                if (s_runCache.TryGetValue(delegateType, out fastCtor))
+                if (s_runCache.TryGetValue(delegateType, out Func<LightLambda, Delegate> fastCtor))
                 {
                     return fastCtor;
                 }

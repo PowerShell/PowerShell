@@ -87,9 +87,8 @@ namespace System.Management.Automation
 
             while (_scopeEnumerable.MoveNext())
             {
-                T newCurrentItem;
 
-                if (TryGetNewScopeItem(((IEnumerator<SessionStateScope>)_scopeEnumerable).Current, out newCurrentItem))
+                if (TryGetNewScopeItem(((IEnumerator<SessionStateScope>)_scopeEnumerable).Current, out T newCurrentItem))
                 {
                     _currentScope = ((IEnumerator<SessionStateScope>)_scopeEnumerable).Current;
                     _current = newCurrentItem;

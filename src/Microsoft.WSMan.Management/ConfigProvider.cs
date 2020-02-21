@@ -392,8 +392,7 @@ namespace Microsoft.WSMan.Management
             lock (WSManHelper.AutoSession)
             {
                 // Gets the session object from the cache.
-                object sessionobj;
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 /*
                 WsMan Config Can be divided in to Four Fixed Regions to Check Whether it has Child Items.
@@ -412,8 +411,7 @@ namespace Microsoft.WSMan.Management
                     XmlDocument xmlListeners = EnumerateResourceValue(sessionobj, WsManURI);
                     if (xmlListeners != null)
                     {
-                        Hashtable KeyCache, ListenerObjCache;
-                        ProcessListenerObjects(xmlListeners, out ListenerObjCache, out KeyCache);
+                        ProcessListenerObjects(xmlListeners, out Hashtable ListenerObjCache, out Hashtable KeyCache);
                         if (ListenerObjCache.Count > 0)
                         {
                             return true;
@@ -424,13 +422,12 @@ namespace Microsoft.WSMan.Management
                 else if (WsManURI.Contains(WSManStringLiterals.containerCertMapping))
                 {
                     XmlDocument xmlCertificates = EnumerateResourceValue(sessionobj, WsManURI);
-                    Hashtable KeyCache, CertificatesObjCache;
                     if (xmlCertificates == null)
                     {
                         return true;
                     }
 
-                    ProcessCertMappingObjects(xmlCertificates, out CertificatesObjCache, out KeyCache);
+                    ProcessCertMappingObjects(xmlCertificates, out Hashtable CertificatesObjCache, out Hashtable KeyCache);
                     if (CertificatesObjCache.Count > 0)
                     {
                         return true;
@@ -474,8 +471,7 @@ namespace Microsoft.WSMan.Management
 
                     string filter = WsManURI + "?Name=" + currentpluginname;
                     XmlDocument CurrentPluginXML = GetResourceValue(sessionobj, filter, null);
-                    ArrayList arrSecurities = null;
-                    ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out arrSecurities);
+                    ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out ArrayList arrSecurities);
                     ArrayList arrInitParams = ProcessPluginInitParamLevel(CurrentPluginXML);
                     strPathCheck = strPathCheck + WSManStringLiterals.DefaultPathSeparator;
                     if (path.EndsWith(strPathCheck + WSManStringLiterals.containerResources, StringComparison.OrdinalIgnoreCase))
@@ -613,8 +609,7 @@ namespace Microsoft.WSMan.Management
             lock (WSManHelper.AutoSession)
             {
                 // Gets the session object from the cache.
-                object sessionobj;
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 XmlDocument xmlResource = FindResourceValue(sessionobj, uri, null);
                 if (xmlResource == null) { return; }
@@ -660,8 +655,7 @@ namespace Microsoft.WSMan.Management
                         }
 
                         PSObject objPluginlevel = ProcessPluginConfigurationLevel(CurrentPluginXML, true);
-                        ArrayList arrSecurity = null;
-                        ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out arrSecurity);
+                        ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out ArrayList arrSecurity);
                         ArrayList arrInitParams = ProcessPluginInitParamLevel(CurrentPluginXML);
                         try
                         {
@@ -952,9 +946,8 @@ namespace Microsoft.WSMan.Management
             lock (WSManHelper.AutoSession)
             {
                 // Gets the session object from the cache.
-                object sessionobj;
                 Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 List<string> warningMessage = new List<string>();
 
@@ -1005,8 +998,7 @@ namespace Microsoft.WSMan.Management
 
                         XmlDocument CurrentPluginXML = pluginConfiguration.RootDocument;
 
-                        ArrayList arrSecurity = null;
-                        ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out arrSecurity);
+                        ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out ArrayList arrSecurity);
                         ArrayList arrInitParams = ProcessPluginInitParamLevel(CurrentPluginXML);
 
                         try
@@ -1456,8 +1448,7 @@ namespace Microsoft.WSMan.Management
             lock (WSManHelper.AutoSession)
             {
                 // Gets the session object from the cache.
-                object sessionobj;
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 /*
                 WsMan Config Can be divided in to Four Fixed Regions to Check Whether Item is Container
@@ -1483,8 +1474,7 @@ namespace Microsoft.WSMan.Management
 
                     if (xmlListeners != null)
                     {
-                        Hashtable KeyCache, ListenerObjCache;
-                        ProcessListenerObjects(xmlListeners, out ListenerObjCache, out KeyCache);
+                        ProcessListenerObjects(xmlListeners, out Hashtable ListenerObjCache, out Hashtable KeyCache);
                         if (KeyCache.Contains(childname))
                         {
                             return true;
@@ -1503,8 +1493,7 @@ namespace Microsoft.WSMan.Management
                     XmlDocument xmlCertificates = EnumerateResourceValue(sessionobj, WsManURI);
                     if (xmlCertificates != null)
                     {
-                        Hashtable KeyCache, CertificatesObjCache;
-                        ProcessCertMappingObjects(xmlCertificates, out CertificatesObjCache, out KeyCache);
+                        ProcessCertMappingObjects(xmlCertificates, out Hashtable CertificatesObjCache, out Hashtable KeyCache);
                         if (KeyCache.Contains(childname))
                         {
                             return true;
@@ -1534,8 +1523,7 @@ namespace Microsoft.WSMan.Management
 
                     string filter = WsManURI + "?Name=" + currentpluginname;
                     XmlDocument CurrentPluginXML = GetResourceValue(sessionobj, filter, null);
-                    ArrayList arrSecurities = null;
-                    ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out arrSecurities);
+                    ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out ArrayList arrSecurities);
                     if (path.EndsWith(strPathCheck, StringComparison.OrdinalIgnoreCase))
                     {
                         return true;
@@ -1671,9 +1659,8 @@ namespace Microsoft.WSMan.Management
             lock (WSManHelper.AutoSession)
             {
                 // Gets the session object from the cache.
-                object sessionobj;
                 Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 // if endswith '\', removes it.
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -1713,8 +1700,7 @@ namespace Microsoft.WSMan.Management
                     XmlDocument pxml = GetResourceValue(sessionobj, filter1, null);
 
                     PSObject ps = ProcessPluginConfigurationLevel(pxml);
-                    ArrayList SecurityArray = null;
-                    ArrayList ResourceArray = ProcessPluginResourceLevel(pxml, out SecurityArray);
+                    ArrayList ResourceArray = ProcessPluginResourceLevel(pxml, out ArrayList SecurityArray);
                     ArrayList InitParamArray = ProcessPluginInitParamLevel(pxml);
 
                     strPathCheck = strPathCheck + WSManStringLiterals.DefaultPathSeparator + pName + WSManStringLiterals.DefaultPathSeparator;
@@ -1803,7 +1789,6 @@ namespace Microsoft.WSMan.Management
         protected override void NewItem(string path, string itemTypeName, object newItemValue)
         {
             string inputStr = string.Empty;
-            object sessionobj;
 
             // if endswith '\', removes it.
             if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -1841,7 +1826,7 @@ namespace Microsoft.WSMan.Management
             lock (WSManHelper.AutoSession)
             {
                 Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 string strPathChk = host + WSManStringLiterals.DefaultPathSeparator;
                 if (path.Contains(strPathChk + WSManStringLiterals.containerPlugin))//(path.Contains(@"\plugin"))
@@ -2144,9 +2129,8 @@ namespace Microsoft.WSMan.Management
                 string filter = uri + "?Name=" + pName;
                 XmlDocument pxml = GetResourceValue(sessionobj, filter, null);
 
-                ArrayList SecurityArray = null;
                 PSObject ps = ProcessPluginConfigurationLevel(pxml);
-                ArrayList ResourceArray = ProcessPluginResourceLevel(pxml, out SecurityArray);
+                ArrayList ResourceArray = ProcessPluginResourceLevel(pxml, out ArrayList SecurityArray);
                 ArrayList InitParamArray = ProcessPluginInitParamLevel(pxml);
 
                 strPathChk = strPathChk + WSManStringLiterals.DefaultPathSeparator + pName + WSManStringLiterals.DefaultPathSeparator;
@@ -2165,8 +2149,7 @@ namespace Microsoft.WSMan.Management
                             XmlDocument xdoc = new XmlDocument();
                             xdoc.LoadXml(inputStr);
 
-                            ArrayList arrList = null;
-                            ArrayList NewResource = ProcessPluginResourceLevel(xdoc, out arrList);
+                            ArrayList NewResource = ProcessPluginResourceLevel(xdoc, out ArrayList arrList);
 
                             NewItem = ((PSObject)NewResource[0]).Properties["ResourceDir"].Value.ToString();
                             Keys = new string[] { "Uri=" + ((PSObject)NewResource[0]).Properties["ResourceURI"].Value.ToString() };
@@ -2757,9 +2740,8 @@ namespace Microsoft.WSMan.Management
         /// <returns></returns>
         private XmlDocument EnumerateResourceValue(object sessionobj, string ResourceURI)
         {
-            XmlDocument xmlEnumResources = null;
 
-            if (!this.enumerateMapping.TryGetValue(ResourceURI, out xmlEnumResources))
+            if (!this.enumerateMapping.TryGetValue(ResourceURI, out XmlDocument xmlEnumResources))
             {
                 try
                 {
@@ -3439,10 +3421,9 @@ namespace Microsoft.WSMan.Management
 
             lock (WSManHelper.AutoSession)
             {
-                object sessionobj;
                 // gets the sessionobject
                 Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 // Normalize to the required uri
                 string uri = NormalizePath(path, host);
@@ -3493,8 +3474,7 @@ namespace Microsoft.WSMan.Management
                         }
 
                         PSObject objPluginlevel = ProcessPluginConfigurationLevel(CurrentPluginXML);
-                        ArrayList arrSecurity = null;
-                        ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out arrSecurity);
+                        ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out ArrayList arrSecurity);
                         ArrayList arrInitParams = ProcessPluginInitParamLevel(CurrentPluginXML);
                         strPathchk = strPathchk + WSManStringLiterals.containerPlugin + WSManStringLiterals.DefaultPathSeparator;
                         strPathchk = strPathchk + currentpluginname + WSManStringLiterals.DefaultPathSeparator;
@@ -3627,8 +3607,7 @@ namespace Microsoft.WSMan.Management
 
                                 lock (WSManHelper.AutoSession)
                                 {
-                                    object sessionobj;
-                                    SessionObjCache.TryGetValue(hostname, out sessionobj);
+                                    SessionObjCache.TryGetValue(hostname, out object sessionobj);
                                     XmlDocument outxml = FindResourceValue(sessionobj, uri, null);
                                     if (outxml != null)
                                     {
@@ -3903,9 +3882,8 @@ namespace Microsoft.WSMan.Management
 
             lock (WSManHelper.AutoSession)
             {
-                object sessionobj = null;
                 Dictionary<string, object> SessionObjCache = WSManHelper.GetSessionObjCache();
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 strpathChk = host + WSManStringLiterals.DefaultPathSeparator;
                 // Check for host path
@@ -3933,8 +3911,7 @@ namespace Microsoft.WSMan.Management
                     string filter = uri + "?Name=" + currentpluginname;
                     XmlDocument CurrentPluginXML = GetResourceValue(sessionobj, filter, null);
                     PSObject mshPluginLvl = ProcessPluginConfigurationLevel(CurrentPluginXML);
-                    ArrayList arrSecurities = null;
-                    ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out arrSecurities);
+                    ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out ArrayList arrSecurities);
                     ArrayList arrInitParams = ProcessPluginInitParamLevel(CurrentPluginXML);
                     strpathChk = strpathChk + WSManStringLiterals.containerPlugin + WSManStringLiterals.DefaultPathSeparator + currentpluginname;
                     if (path.Equals(strpathChk, StringComparison.OrdinalIgnoreCase))
@@ -4206,9 +4183,8 @@ namespace Microsoft.WSMan.Management
 
             lock (WSManHelper.AutoSession)
             {
-                object sessionobj;
                 // gets the sessionobject
-                SessionObjCache.TryGetValue(host, out sessionobj);
+                SessionObjCache.TryGetValue(host, out object sessionobj);
 
                 // Normalize to the required uri
                 string uri = NormalizePath(path, host);
@@ -4284,8 +4260,7 @@ namespace Microsoft.WSMan.Management
                         }
 
                         PSObject objPluginlevel = ProcessPluginConfigurationLevel(CurrentPluginXML, true);
-                        ArrayList arrSecurity = null;
-                        ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out arrSecurity);
+                        ArrayList arrResources = ProcessPluginResourceLevel(CurrentPluginXML, out ArrayList arrSecurity);
                         ArrayList arrInitParams = ProcessPluginInitParamLevel(CurrentPluginXML);
                         strPathchk = strPathchk + WSManStringLiterals.containerPlugin + WSManStringLiterals.DefaultPathSeparator;
                         if (path.EndsWith(strPathchk + currentpluginname, StringComparison.OrdinalIgnoreCase))
@@ -4734,7 +4709,6 @@ namespace Microsoft.WSMan.Management
             {
                 Hashtable InputAttributes = new Hashtable();
                 PSObject objCerts = new PSObject();
-                string[] keys = null;
                 string ItemName = string.Empty;
                 foreach (XmlNode childnode in node.ChildNodes)
                 {
@@ -4765,7 +4739,7 @@ namespace Microsoft.WSMan.Management
                     objCerts.Properties.Add(new PSNoteProperty(childnode.LocalName, childnode.InnerText));
                 }
 
-                GenerateObjectNameAndKeys(InputAttributes, WSManStringLiterals.containerCertMapping, WSManStringLiterals.containerClientCertificate, out ItemName, out keys);
+                GenerateObjectNameAndKeys(InputAttributes, WSManStringLiterals.containerCertMapping, WSManStringLiterals.containerClientCertificate, out ItemName, out string[] keys);
                 // lCache.Add(WSManStringLiterals.containerClientCertificate + "_" + Math.Abs(sbCerts.ToString().GetHashCode()), objCerts);
                 lCache.Add(ItemName, objCerts);
                 kCache.Add(ItemName, keys);
@@ -4792,7 +4766,6 @@ namespace Microsoft.WSMan.Management
             {
                 Hashtable InputAttributes = new Hashtable();
                 PSObject objListener = new PSObject();
-                string[] Keys = null;
                 string ItemName = string.Empty;
                 foreach (XmlNode childnode in node.ChildNodes)
                 {
@@ -4826,7 +4799,7 @@ namespace Microsoft.WSMan.Management
                     }
                 }
 
-                GenerateObjectNameAndKeys(InputAttributes, WSManStringLiterals.containerListener, WSManStringLiterals.containerListener, out ItemName, out Keys);
+                GenerateObjectNameAndKeys(InputAttributes, WSManStringLiterals.containerListener, WSManStringLiterals.containerListener, out ItemName, out string[] Keys);
                 // lCache.Add(WSManStringLiterals.containerListener + "_" + Math.Abs(sbListener.ToString().GetHashCode()), objListener);
                 lCache.Add(ItemName, objListener);
                 kCache.Add(ItemName, Keys);

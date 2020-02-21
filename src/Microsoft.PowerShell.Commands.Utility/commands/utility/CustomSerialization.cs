@@ -364,8 +364,6 @@ namespace System.Management.Automation
 
             ContainerType ct = ContainerType.None;
             PSObject mshSource = source as PSObject;
-            IEnumerable enumerable = null;
-            IDictionary dictionary = null;
 
             // If passed in object is PSObject with no baseobject, return false.
             if (mshSource != null && mshSource.ImmediateBaseObjectIsEmpty)
@@ -375,7 +373,7 @@ namespace System.Management.Automation
 
             // Check if source (or baseobject in mshSource) is known container type
             GetKnownContainerTypeInfo(mshSource != null ? mshSource.ImmediateBaseObject : source, out ct,
-                                      out dictionary, out enumerable);
+                                      out IDictionary dictionary, out IEnumerable enumerable);
 
             if (ct == ContainerType.None)
                 return false;

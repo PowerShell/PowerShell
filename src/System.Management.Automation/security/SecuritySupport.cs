@@ -506,7 +506,6 @@ namespace System.Management.Automation.Internal
             }
 
             SAFER_CODE_PROPERTIES codeProperties = new SAFER_CODE_PROPERTIES();
-            IntPtr hAuthzLevel;
 
             // Prepare the code properties struct.
             codeProperties.cbSize = (uint)Marshal.SizeOf(typeof(SAFER_CODE_PROPERTIES));
@@ -525,7 +524,7 @@ namespace System.Management.Automation.Internal
             codeProperties.dwWVTUIChoice = NativeConstants.WTD_UI_NONE;
 
             // Identify the level associated with the code
-            if (NativeMethods.SaferIdentifyLevel(1, ref codeProperties, out hAuthzLevel, NativeConstants.SRP_POLICY_SCRIPT))
+            if (NativeMethods.SaferIdentifyLevel(1, ref codeProperties, out IntPtr hAuthzLevel, NativeConstants.SRP_POLICY_SCRIPT))
             {
                 // We found an Authorization Level applicable to this application.
                 IntPtr hRestrictedToken = IntPtr.Zero;
@@ -1137,11 +1136,10 @@ namespace System.Management.Automation
         private void ResolveFromBase64Encoding(ResolutionPurpose purpose, out ErrorRecord error)
         {
             error = null;
-            int startIndex, endIndex;
             byte[] messageBytes = null;
             try
             {
-                messageBytes = CmsUtils.RemoveAsciiArmor(_identifier, CmsUtils.BEGIN_CERTIFICATE_SIGIL, CmsUtils.END_CERTIFICATE_SIGIL, out startIndex, out endIndex);
+                messageBytes = CmsUtils.RemoveAsciiArmor(_identifier, CmsUtils.BEGIN_CERTIFICATE_SIGIL, CmsUtils.END_CERTIFICATE_SIGIL, out int startIndex, out int endIndex);
             }
             catch (FormatException)
             {

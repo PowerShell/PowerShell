@@ -1372,8 +1372,7 @@ namespace System.Management.Automation.Runspaces
             foreach (PSSnapInInfo si in defaultSnapins)
             {
                 // ImportPSSnapIn always sets "out warning" to "null";  all our internal calls ignore/discard "out warning"
-                PSSnapInException warning;
-                iss.ImportPSSnapIn(si, out warning);
+                iss.ImportPSSnapIn(si, out PSSnapInException warning);
             }
 
             // restrict what gets exposed
@@ -1499,7 +1498,6 @@ namespace System.Management.Automation.Runspaces
         {
             // Read all of the registered PSSnapins
             Collection<PSSnapInInfo> defaultSnapins;
-            PSSnapInException warning;
 
             InitialSessionState ss = new InitialSessionState();
 
@@ -1515,7 +1513,7 @@ namespace System.Management.Automation.Runspaces
             {
                 try
                 {
-                    ss.ImportPSSnapIn(si, out warning);
+                    ss.ImportPSSnapIn(si, out PSSnapInException warning);
                 }
                 catch (PSSnapInException pse)
                 {
@@ -2417,8 +2415,7 @@ namespace System.Management.Automation.Runspaces
             foreach (SessionStateAssemblyEntry ssae in Assemblies)
             {
                 if (etwEnabled) RunspaceEventSource.Log.LoadAssemblyStart(ssae.Name, ssae.FileName);
-                Exception error = null;
-                Assembly asm = context.AddAssembly(ssae.Name, ssae.FileName, out error);
+                Assembly asm = context.AddAssembly(ssae.Name, ssae.FileName, out Exception error);
 
                 if (asm == null || error != null)
                 {
@@ -2593,8 +2590,7 @@ namespace System.Management.Automation.Runspaces
             HashSet<string> commandsToResolve = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (var unresolvedCommand in unresolvedCommands)
             {
-                string moduleName;
-                string command = Utils.ParseCommandName(unresolvedCommand, out moduleName);
+                string command = Utils.ParseCommandName(unresolvedCommand, out string moduleName);
                 if (!string.IsNullOrEmpty(moduleName))
                 {
                     // Skip fully qualified module names since they are already processed.
@@ -3019,8 +3015,7 @@ namespace System.Management.Automation.Runspaces
                 // Now go through the list of commands not yet resolved to ensure they are public if requested
                 foreach (string unresolvedCommand in unresolvedCmdsToExpose.ToArray<string>())
                 {
-                    string moduleName;
-                    string commandToMakeVisible = Utils.ParseCommandName(unresolvedCommand, out moduleName);
+                    string commandToMakeVisible = Utils.ParseCommandName(unresolvedCommand, out string moduleName);
                     bool found = false;
 
                     foreach (CommandInfo cmd in LookupCommands(commandToMakeVisible, moduleName, initializedRunspace.ExecutionContext))
@@ -3412,8 +3407,7 @@ namespace System.Management.Automation.Runspaces
                     SessionStateCmdletEntry ssce = cmd as SessionStateCmdletEntry;
                     if (ssce != null)
                     {
-                        List<CmdletInfo> matches;
-                        if (context.TopLevelSessionState.GetCmdletTable().TryGetValue(ssce.Name, out matches))
+                        if (context.TopLevelSessionState.GetCmdletTable().TryGetValue(ssce.Name, out List<CmdletInfo> matches))
                         {
                             // Remove the name from the list...
                             for (int i = matches.Count - 1; i >= 0; i--)
@@ -3443,8 +3437,7 @@ namespace System.Management.Automation.Runspaces
 
                     foreach (SessionStateProviderEntry sspe in _providers)
                     {
-                        List<ProviderInfo> pl;
-                        if (providerTable.TryGetValue(sspe.Name, out pl))
+                        if (providerTable.TryGetValue(sspe.Name, out List<ProviderInfo> pl))
                         {
                             Diagnostics.Assert(pl != null, "There should never be a null list of entries in the provider table");
                             // For each provider with the same name...
@@ -3603,8 +3596,7 @@ namespace System.Management.Automation.Runspaces
                             moduleName = sste.PSSnapIn.Name;
                         }
 
-                        bool unused;
-                        context.TypeTable.Update(moduleName, sste.FileName, errors, context.AuthorizationManager, context.EngineHostInterface, out unused);
+                        context.TypeTable.Update(moduleName, sste.FileName, errors, context.AuthorizationManager, context.EngineHostInterface, out bool unused);
                     }
                 }
                 else if (sste.TypeTable != null)
@@ -3823,8 +3815,7 @@ namespace System.Management.Automation.Runspaces
             this.defaultSnapins.Add(coreSnapin);
             try
             {
-                PSSnapInException warning;
-                this.ImportPSSnapIn(coreSnapin, out warning);
+                this.ImportPSSnapIn(coreSnapin, out PSSnapInException warning);
             }
             catch (PSSnapInException pse)
             {
@@ -4011,8 +4002,7 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            PSSnapInInfo importedSnapin = null;
-            if (ImportedSnapins.TryGetValue(psSnapinName, out importedSnapin))
+            if (ImportedSnapins.TryGetValue(psSnapinName, out PSSnapInInfo importedSnapin))
             {
                 if (loadedSnapins == null)
                 {
@@ -4050,12 +4040,9 @@ namespace System.Management.Automation.Runspaces
                 throw e;
             }
 
-            Dictionary<string, SessionStateCmdletEntry> cmdlets = null;
-            Dictionary<string, List<SessionStateAliasEntry>> aliases = null;
-            Dictionary<string, SessionStateProviderEntry> providers = null;
 
             string assemblyPath = assembly.Location;
-            PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, psSnapInInfo: null, module, out cmdlets, out aliases, out providers, helpFile: out _);
+            PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, psSnapInInfo: null, module, out Dictionary<string, SessionStateCmdletEntry> cmdlets, out Dictionary<string, List<SessionStateAliasEntry>> aliases, out Dictionary<string, SessionStateProviderEntry> providers, helpFile: out _);
 
             // If this is an in-memory assembly, don't added it to the list of AssemblyEntries
             // since it can't be loaded by path or name
@@ -4895,9 +4882,8 @@ end {
 
         internal static string GetNestedModuleDllName(string moduleName)
         {
-            string result = null;
 
-            if (!EngineModuleNestedModuleMapping.TryGetValue(moduleName, out result))
+            if (!EngineModuleNestedModuleMapping.TryGetValue(moduleName, out string result))
             {
                 result = string.Empty;
             }
@@ -5002,8 +4988,7 @@ end {
 
             // See if this assembly has already been scanned...
 
-            Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>> cachedCmdlets;
-            if (s_cmdletCache.Value.TryGetValue(assembly, out cachedCmdlets))
+            if (s_cmdletCache.Value.TryGetValue(assembly, out Dictionary<string, Tuple<SessionStateCmdletEntry, List<SessionStateAliasEntry>>> cachedCmdlets))
             {
                 cmdlets = new Dictionary<string, SessionStateCmdletEntry>(cachedCmdlets.Count, StringComparer.OrdinalIgnoreCase);
                 aliases = new Dictionary<string, List<SessionStateAliasEntry>>(cachedCmdlets.Count, StringComparer.OrdinalIgnoreCase);
@@ -5049,8 +5034,7 @@ end {
                 }
             }
 
-            Dictionary<string, SessionStateProviderEntry> cachedProviders;
-            if (s_providerCache.Value.TryGetValue(assembly, out cachedProviders))
+            if (s_providerCache.Value.TryGetValue(assembly, out Dictionary<string, SessionStateProviderEntry> cachedProviders))
             {
                 providers = new Dictionary<string, SessionStateProviderEntry>(s_providerCache.Value.Count, StringComparer.OrdinalIgnoreCase);
                 foreach (var pair in cachedProviders)
@@ -5109,8 +5093,7 @@ end {
                 Diagnostics.Assert(providersCheck.Count == providers.Count, "new Provider added to System.Management.Automation.dll - update InitializeCoreCmdletsAndProviders");
                 foreach (var pair in providersCheck)
                 {
-                    SessionStateProviderEntry other;
-                    if (providers.TryGetValue(pair.Key, out other))
+                    if (providers.TryGetValue(pair.Key, out SessionStateProviderEntry other))
                     {
                         Diagnostics.Assert((object)pair.Value.HelpFileName == (object)other.HelpFileName, "Pre-generated Provider help file incorrect");
                         Diagnostics.Assert(pair.Value.ImplementingType == other.ImplementingType, "Pre-generated Provider implementing type incorrect");
@@ -5129,8 +5112,7 @@ end {
 
                 foreach (var pair in cmdletsCheck)
                 {
-                    SessionStateCmdletEntry other;
-                    if (cmdlets.TryGetValue(pair.Key, out other))
+                    if (cmdlets.TryGetValue(pair.Key, out SessionStateCmdletEntry other))
                     {
                         Diagnostics.Assert((object)pair.Value.HelpFileName == (object)other.HelpFileName, "Pre-generated Provider help file incorrect");
                         Diagnostics.Assert(pair.Value.ImplementingType == other.ImplementingType, "Pre-generated Provider implementing type incorrect");
@@ -5164,8 +5146,7 @@ end {
 
                 foreach (var entry in cmdlets)
                 {
-                    List<SessionStateAliasEntry> aliasEntries;
-                    if (aliases != null && aliases.TryGetValue(entry.Key, out aliasEntries))
+                    if (aliases != null && aliases.TryGetValue(entry.Key, out List<SessionStateAliasEntry> aliasEntries))
                     {
                         aliasesCloneList = new List<SessionStateAliasEntry>(aliases.Count);
                         foreach (var aliasEntry in aliasEntries)

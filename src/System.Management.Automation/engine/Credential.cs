@@ -121,9 +121,7 @@ namespace System.Management.Automation
 
             if (_password != null && _password.Length > 0)
             {
-                byte[] key;
-                byte[] iv;
-                if (s_delegate != null && s_delegate(context, out key, out iv))
+                if (s_delegate != null && s_delegate(context, out byte[] key, out byte[] iv))
                 {
                     safePassword = SecureStringHelper.Encrypt(_password, key, iv).EncryptedData;
                 }
@@ -164,9 +162,7 @@ namespace System.Management.Automation
             }
             else
             {
-                byte[] key;
-                byte[] iv;
-                if (s_delegate != null && s_delegate(context, out key, out iv))
+                if (s_delegate != null && s_delegate(context, out byte[] key, out byte[] iv))
                 {
                     _password = SecureStringHelper.Decrypt(safePassword, key, iv);
                 }
@@ -258,10 +254,8 @@ namespace System.Management.Automation
         {
             if (_netCred == null)
             {
-                string user = null;
-                string domain = null;
 
-                if (IsValidUserName(_userName, out user, out domain))
+                if (IsValidUserName(_userName, out string user, out string domain))
                 {
                     _netCred = new NetworkCredential(user, _password, domain);
                 }

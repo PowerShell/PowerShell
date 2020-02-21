@@ -208,10 +208,8 @@ namespace Microsoft.PowerShell
                         {
                             fieldPromptList.Append(
                                 string.Format(CultureInfo.InvariantCulture, "{0}]: ", inputList.Count));
-                            bool inputListEnd = false;
-                            object convertedObj = null;
                             string inputString = PromptForSingleItem(elementType, fieldPromptList.ToString(), fieldPrompt, caption, message,
-                                desc, fieldEchoOnPrompt, true, out inputListEnd, out cancelInput, out convertedObj);
+                                desc, fieldEchoOnPrompt, true, out bool inputListEnd, out cancelInput, out object convertedObj);
 
                             if (cancelInput || inputListEnd)
                             {
@@ -227,8 +225,7 @@ namespace Microsoft.PowerShell
                         // if cancelInput, should throw OperationCancelException?
                         if (!cancelInput)
                         {
-                            object tryConvertResult = null;
-                            if (LanguagePrimitives.TryConvertTo(inputList, fieldType, out tryConvertResult))
+                            if (LanguagePrimitives.TryConvertTo(inputList, fieldType, out object tryConvertResult))
                             {
                                 inputPSObject = PSObject.AsPSObject(tryConvertResult);
                             }
@@ -243,11 +240,9 @@ namespace Microsoft.PowerShell
                         string printFieldPrompt = StringUtil.Format(ConsoleHostUserInterfaceStrings.PromptFieldPromptInputSeparatorTemplate,
                             fieldPrompt);
                         // field is not a list
-                        object convertedObj = null;
-                        bool dummy = false;
 
                         PromptForSingleItem(fieldType, printFieldPrompt, fieldPrompt, caption, message, desc,
-                                            fieldEchoOnPrompt, false, out dummy, out cancelInput, out convertedObj);
+                                            fieldEchoOnPrompt, false, out bool dummy, out cancelInput, out object convertedObj);
                         if (!cancelInput)
                         {
                             inputPSObject = PSObject.AsPSObject(convertedObj);

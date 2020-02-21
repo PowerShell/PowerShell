@@ -131,8 +131,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public static DynamicKeyword GetKeyword(string name)
         {
-            DynamicKeyword keywordToReturn;
-            DynamicKeyword.DynamicKeywords.TryGetValue(name, out keywordToReturn);
+            DynamicKeyword.DynamicKeywords.TryGetValue(name, out DynamicKeyword keywordToReturn);
             return keywordToReturn;
         }
 
@@ -393,8 +392,7 @@ namespace System.Management.Automation.Language
             string keywordName = keyword.Keyword;
             if (string.Compare(keywordName, @"Node", StringComparison.OrdinalIgnoreCase) == 0)
             {
-                List<string> excludeKeywords;
-                if (s_excludeKeywords.TryGetValue(keywordName, out excludeKeywords))
+                if (s_excludeKeywords.TryGetValue(keywordName, out List<string> excludeKeywords))
                 {
                     return allowedKeywords.Where(k => !excludeKeywords.Contains(k.Keyword));
                 }
@@ -1774,9 +1772,7 @@ namespace System.Management.Automation.Language
 
         private void ScanLineComment()
         {
-            bool sawBeginSig;
-            bool matchedRequires;
-            ScanToEndOfCommentLine(out sawBeginSig, out matchedRequires);
+            ScanToEndOfCommentLine(out bool sawBeginSig, out bool matchedRequires);
             var token = NewCommentToken();
             if (sawBeginSig)
             {
@@ -2022,8 +2018,7 @@ namespace System.Management.Automation.Language
                 return;
             }
 
-            object argumentValue;
-            if (!IsConstantValueVisitor.IsConstant(argumentAst, out argumentValue, forRequires: true))
+            if (!IsConstantValueVisitor.IsConstant(argumentAst, out object argumentValue, forRequires: true))
             {
                 ReportError(argumentAst.Extent,
                     nameof(ParserStrings.RequiresArgumentMustBeConstant),
@@ -3315,8 +3310,7 @@ namespace System.Management.Automation.Language
 
             if (InExpressionMode())
             {
-                TokenKind operatorKind;
-                if (s_operatorTable.TryGetValue(str, out operatorKind))
+                if (s_operatorTable.TryGetValue(str, out TokenKind operatorKind))
                 {
                     return NewToken(operatorKind);
                 }
@@ -3877,8 +3871,7 @@ namespace System.Management.Automation.Language
                 return ScanGenericToken(GetStringBuilder());
             }
 
-            object value;
-            if (!TryGetNumberValue(strNum, format, suffix, real, multiplier, out value))
+            if (!TryGetNumberValue(strNum, format, suffix, real, multiplier, out object value))
             {
                 if (!InExpressionMode())
                 {
@@ -4417,10 +4410,9 @@ namespace System.Management.Automation.Language
 
             if (!WantSimpleName && (InCommandMode() || InSignatureMode()))
             {
-                TokenKind tokenKind;
                 var ident = GetStringAndRelease(sb);
                 sb = null;
-                if (s_keywordTable.TryGetValue(ident, out tokenKind))
+                if (s_keywordTable.TryGetValue(ident, out TokenKind tokenKind))
                 {
                     if (tokenKind != TokenKind.InlineScript || InWorkflowContext)
                         return NewToken(tokenKind);

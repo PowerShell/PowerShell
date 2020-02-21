@@ -395,13 +395,10 @@ namespace System.Management.Automation
             // we have to see if the redirection is actually being done at the topmost level or not.
 
             // Calculate if input and output are redirected.
-            bool redirectOutput;
-            bool redirectError;
-            bool redirectInput;
 
             _startPosition = new Host.Coordinates();
 
-            CalculateIORedirection(out redirectOutput, out redirectError, out redirectInput);
+            CalculateIORedirection(out bool redirectOutput, out bool redirectError, out bool redirectInput);
 
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
@@ -642,8 +639,7 @@ namespace System.Management.Automation
             }
             else
             {
-                ProcessOutputObject record = null;
-                _nativeProcessOutputQueue.TryTake(out record);
+                _nativeProcessOutputQueue.TryTake(out ProcessOutputObject record);
                 return record;
             }
         }
@@ -1590,8 +1586,7 @@ namespace System.Management.Automation
                     Deserializer des = new Deserializer(xmlReader);
                     while (!des.Done())
                     {
-                        string streamName;
-                        object obj = des.Deserialize(out streamName);
+                        object obj = des.Deserialize(out string streamName);
 
                         // Decide the stream to which data belongs
                         MinishellStream stream = MinishellStream.Unknown;

@@ -378,8 +378,7 @@ namespace System.Management.Automation.Interpreter
                 if (!_tryHandler.IsCatchBlockExist) { throw; }
 
                 // Search for the best handler in the TryCatchFinally block. If no suitable handler is found, rethrow
-                ExceptionHandler exHandler;
-                frame.InstructionIndex += _tryHandler.GotoHandler(frame, exception, out exHandler);
+                frame.InstructionIndex += _tryHandler.GotoHandler(frame, exception, out ExceptionHandler exHandler);
                 if (exHandler == null) { throw; }
                 bool rethrow = false;
                 try
@@ -686,8 +685,7 @@ namespace System.Management.Automation.Interpreter
 
         public override int Run(InterpretedFrame frame)
         {
-            int target;
-            return _cases.TryGetValue((int)frame.Pop(), out target) ? target : 1;
+            return _cases.TryGetValue((int)frame.Pop(), out int target) ? target : 1;
         }
     }
 

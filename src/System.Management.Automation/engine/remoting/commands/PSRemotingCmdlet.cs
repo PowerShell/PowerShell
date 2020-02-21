@@ -1901,10 +1901,9 @@ namespace Microsoft.PowerShell.Commands
             // so we can use it to differentiate PSv2 from PSv3+.
             if (remoteRunspace.CanDisconnect)
             {
-                Version serverPsVersion = null;
                 PSPrimitiveDictionary.TryPathGet(
                     psApplicationPrivateData,
-                    out serverPsVersion,
+                    out Version serverPsVersion,
                     PSVersionInfo.PSVersionTableName,
                     PSVersionInfo.PSVersionName);
 
@@ -2071,8 +2070,7 @@ namespace Microsoft.PowerShell.Commands
                 case PSExecutionCmdlet.LiteralFilePathComputerNameParameterSet:
                 case PSExecutionCmdlet.ComputerNameParameterSet:
                     {
-                        string[] resolvedComputerNames = null;
-                        ResolveComputerNames(ComputerName, out resolvedComputerNames);
+                        ResolveComputerNames(ComputerName, out string[] resolvedComputerNames);
                         ResolvedComputerNames = resolvedComputerNames;
 
                         CreateHelpersForSpecifiedComputerNames();
@@ -2083,8 +2081,7 @@ namespace Microsoft.PowerShell.Commands
                 case PSExecutionCmdlet.SSHHostParameterSet:
                 case PSExecutionCmdlet.FilePathSSHHostParameterSet:
                     {
-                        string[] resolvedComputerNames = null;
-                        ResolveComputerNames(HostName, out resolvedComputerNames);
+                        ResolveComputerNames(HostName, out string[] resolvedComputerNames);
                         ResolvedComputerNames = resolvedComputerNames;
 
                         CreateHelpersForSpecifiedSSHComputerNames();
@@ -2180,10 +2177,8 @@ namespace Microsoft.PowerShell.Commands
                 if (_powershellV2 != null) { return _powershellV2; }
             }
 
-            List<string> newParameterNames;
-            List<object> newParameterValues;
 
-            string scriptTextAdaptedForPSv2 = GetConvertedScript(out newParameterNames, out newParameterValues);
+            string scriptTextAdaptedForPSv2 = GetConvertedScript(out List<string> newParameterNames, out List<object> newParameterValues);
             _powershellV2 = System.Management.Automation.PowerShell.Create().AddScript(scriptTextAdaptedForPSv2);
 
             if (_args != null)
@@ -3793,14 +3788,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (allowNonexistingPaths)
                 {
-                    ProviderInfo provider = null;
-                    System.Management.Automation.PSDriveInfo drive = null;
                     string unresolvedPath =
                         cmdlet.SessionState.Path.GetUnresolvedProviderPathFromPSPath(
                             pathToResolve,
                             cmdContext,
-                            out provider,
-                            out drive);
+                            out ProviderInfo provider,
+                            out PSDriveInfo drive);
 
                     PathInfo pathInfo =
                         new PathInfo(
@@ -3894,8 +3887,7 @@ namespace Microsoft.PowerShell.Commands
                         // We don't want to propagate the exception so just write error here.
                         if (stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
                         {
-                            int errorCode;
-                            string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out errorCode));
+                            string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out int errorCode));
                             string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "RemotePSSessionQueryFailed");
                             Exception reason = new RuntimeException(msg, e.InnerException);
                             ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);

@@ -39,9 +39,8 @@ namespace TestOrder.TestCaseOrdering
 
         private static TValue GetOrCreate<TKey, TValue>(IDictionary<TKey, TValue> dictionary, TKey key) where TValue : new()
         {
-            TValue result;
 
-            if (dictionary.TryGetValue(key, out result))
+            if (dictionary.TryGetValue(key, out TValue result))
             {
                 return result;
             }

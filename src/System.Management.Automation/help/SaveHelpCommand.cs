@@ -460,8 +460,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        PSModuleInfo elementValueModuleInfo = null;
-                        if (TryConvertFromDeserializedModuleInfo(elementValue, out elementValueModuleInfo))
+                        if (TryConvertFromDeserializedModuleInfo(elementValue, out PSModuleInfo elementValueModuleInfo))
                         {
                             target.SetValue(elementValueModuleInfo, targetIndex++);
                         }
@@ -475,8 +474,7 @@ namespace Microsoft.PowerShell.Commands
                 return target;
             }
 
-            PSModuleInfo moduleInfo = null;
-            if (TryConvertFromDeserializedModuleInfo(inputData, out moduleInfo))
+            if (TryConvertFromDeserializedModuleInfo(inputData, out PSModuleInfo moduleInfo))
             {
                 return moduleInfo;
             }
@@ -490,17 +488,13 @@ namespace Microsoft.PowerShell.Commands
             PSObject pso = inputData as PSObject;
             if (Deserializer.IsDeserializedInstanceOfType(pso, typeof(PSModuleInfo)))
             {
-                string moduleName;
-                LanguagePrimitives.TryConvertTo<string>(pso.Properties["Name"].Value, out moduleName);
+                LanguagePrimitives.TryConvertTo<string>(pso.Properties["Name"].Value, out string moduleName);
 
-                Guid moduleGuid;
-                LanguagePrimitives.TryConvertTo<Guid>(pso.Properties["Guid"].Value, out moduleGuid);
+                LanguagePrimitives.TryConvertTo<Guid>(pso.Properties["Guid"].Value, out Guid moduleGuid);
 
-                Version moduleVersion;
-                LanguagePrimitives.TryConvertTo<Version>(pso.Properties["Version"].Value, out moduleVersion);
+                LanguagePrimitives.TryConvertTo<Version>(pso.Properties["Version"].Value, out Version moduleVersion);
 
-                string helpInfoUri;
-                LanguagePrimitives.TryConvertTo<string>(pso.Properties["HelpInfoUri"].Value, out helpInfoUri);
+                LanguagePrimitives.TryConvertTo<string>(pso.Properties["HelpInfoUri"].Value, out string helpInfoUri);
 
                 moduleInfo = new PSModuleInfo(name: moduleName, path: null, context: null, sessionState: null);
                 moduleInfo.SetGuid(moduleGuid);

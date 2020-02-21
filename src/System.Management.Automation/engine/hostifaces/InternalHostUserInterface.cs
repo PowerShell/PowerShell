@@ -681,8 +681,7 @@ namespace System.Management.Automation.Internal.Host
 
         internal static Type GetFieldType(FieldDescription field)
         {
-            Type result;
-            if (TypeResolver.TryResolveType(field.ParameterAssemblyFullName, out result) ||
+            if (TypeResolver.TryResolveType(field.ParameterAssemblyFullName, out Type result) ||
                 TypeResolver.TryResolveType(field.ParameterTypeFullName, out result))
             {
                 return result;
@@ -940,8 +939,7 @@ namespace System.Management.Automation.Internal.Host
                 choicesMessage.Append(newLine);
             }
 
-            string[,] hotkeysAndPlainLabels = null;
-            HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out hotkeysAndPlainLabels);
+            HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out string[,] hotkeysAndPlainLabels);
 
             string choiceTemplate = "[{0}] {1}  ";
             for (int i = 0; i < hotkeysAndPlainLabels.GetLength(1); ++i)

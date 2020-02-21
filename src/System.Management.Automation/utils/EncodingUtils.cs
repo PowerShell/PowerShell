@@ -57,8 +57,7 @@ namespace System.Management.Automation
                 return ClrFacade.GetDefaultEncoding();
             }
 
-            Encoding foundEncoding;
-            if (encodingMap.TryGetValue(encoding, out foundEncoding))
+            if (encodingMap.TryGetValue(encoding, out Encoding foundEncoding))
             {
                 return foundEncoding;
             }

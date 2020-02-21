@@ -81,17 +81,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private static string GetCimClassName(string cmdletizationClassName)
         {
-            string throwAway;
-            string cimClassName;
-            ExtractCimNamespaceAndClassName(cmdletizationClassName, out throwAway, out cimClassName);
+            ExtractCimNamespaceAndClassName(cmdletizationClassName, out string throwAway, out string cimClassName);
             return cimClassName;
         }
 
         private static string GetCimNamespace(string cmdletizationClassName)
         {
-            string cimNamespace;
-            string throwAway;
-            ExtractCimNamespaceAndClassName(cmdletizationClassName, out cimNamespace, out throwAway);
+            ExtractCimNamespaceAndClassName(cmdletizationClassName, out string cimNamespace, out string throwAway);
             return cimNamespace;
         }
 

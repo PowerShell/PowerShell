@@ -392,8 +392,7 @@ function __cmdletization_BindCommonParameters
         {
             Dbg.Assert(methodMetadata != null, "Caller should verify that instanceMethod != null");
 
-            int uniqueId;
-            if (!_staticMethodMetadataToUniqueId.TryGetValue(methodMetadata, out uniqueId))
+            if (!_staticMethodMetadataToUniqueId.TryGetValue(methodMetadata, out int uniqueId))
             {
                 uniqueId = _staticMethodMetadataToUniqueId.Count;
                 _staticMethodMetadataToUniqueId.Add(methodMetadata, uniqueId);
@@ -1187,8 +1186,7 @@ function __cmdletization_BindCommonParameters
                                 methodParameter.CmdletParameterMetadata);
                             cmdletParameterName = parameterMetadata.Name;
 
-                            ParameterMetadata oldParameterMetadata;
-                            if (methodParameters.TryGetValue(parameterMetadata.Name, out oldParameterMetadata))
+                            if (methodParameters.TryGetValue(parameterMetadata.Name, out ParameterMetadata oldParameterMetadata))
                             {
                                 try
                                 {
@@ -1881,10 +1879,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             Dbg.Assert(commonParameterSets != null && (commonParameterSets.Count > 0),
                        "Verifying stuff returned by GetCommonParameterSets");
 
-            Dictionary<string, ParameterMetadata> methodParameters;
-            string methodProcessingScript;
-            string outputTypeAttributeDeclaration;
-            GenerateMethodParametersProcessing(staticCmdlet, commonParameterSets, out methodProcessingScript, out methodParameters, out outputTypeAttributeDeclaration);
+            GenerateMethodParametersProcessing(staticCmdlet, commonParameterSets, out string methodProcessingScript, out Dictionary<string, ParameterMetadata> methodParameters, out string outputTypeAttributeDeclaration);
             List<string> methodParameterSets = GetMethodParameterSets(staticCmdlet);
 
             CommandMetadata commandMetadata = this.GetCommandMetadata(staticCmdlet.CmdletMetadata);
@@ -1966,14 +1961,9 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             List<string> methodParameterSets = GetMethodParameterSets(instanceCmdlet);
             List<string> queryParameterSets = GetQueryParameterSets(instanceCmdlet);
 
-            Dictionary<string, ParameterMetadata> queryParameters;
-            string queryProcessingScript;
-            GenerateQueryParametersProcessing(instanceCmdlet, commonParameterSets, queryParameterSets, methodParameterSets, out queryProcessingScript, out queryParameters);
+            GenerateQueryParametersProcessing(instanceCmdlet, commonParameterSets, queryParameterSets, methodParameterSets, out string queryProcessingScript, out Dictionary<string, ParameterMetadata> queryParameters);
 
-            Dictionary<string, ParameterMetadata> methodParameters;
-            string methodProcessingScript;
-            string outputTypeAttributeDeclaration;
-            GenerateMethodParametersProcessing(instanceCmdlet, commonParameterSets, queryParameterSets, out methodProcessingScript, out methodParameters, out outputTypeAttributeDeclaration);
+            GenerateMethodParametersProcessing(instanceCmdlet, commonParameterSets, queryParameterSets, out string methodProcessingScript, out Dictionary<string, ParameterMetadata> methodParameters, out string outputTypeAttributeDeclaration);
 
             CommandMetadata commandMetadata = this.GetCommandMetadata(instanceCmdlet.CmdletMetadata);
             GetCmdletParameters getCmdletParameters = this.GetGetCmdletParameters(instanceCmdlet);
@@ -2059,9 +2049,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
             methodParameterSets.Add(string.Empty);
             List<string> queryParameterSets = GetQueryParameterSets(null);
 
-            Dictionary<string, ParameterMetadata> queryParameters;
-            string queryProcessingScript;
-            GenerateQueryParametersProcessing(null, commonParameterSets, queryParameterSets, methodParameterSets, out queryProcessingScript, out queryParameters);
+            GenerateQueryParametersProcessing(null, commonParameterSets, queryParameterSets, methodParameterSets, out string queryProcessingScript, out Dictionary<string, ParameterMetadata> queryParameters);
 
             CommonCmdletMetadata cmdletMetadata = this.GetGetCmdletMetadata();
             Dbg.Assert(cmdletMetadata != null, "xsd should ensure that cmdlet metadata element is always present");
@@ -2109,8 +2097,7 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
 
                 lock (s_enumCompilationLock)
                 {
-                    Type alreadyExistingType;
-                    if (!LanguagePrimitives.TryConvertTo(enumFullName, CultureInfo.InvariantCulture, out alreadyExistingType))
+                    if (!LanguagePrimitives.TryConvertTo(enumFullName, CultureInfo.InvariantCulture, out Type alreadyExistingType))
                     {
                         EnumWriter.Compile(enumMetadata);
                     }

@@ -323,8 +323,7 @@ namespace System.Management.Automation
                     isPathValid = false;
                 }
 
-                ProviderInfo provider;
-                var resolvedPaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(psDataFilePath, out provider);
+                var resolvedPaths = context.SessionState.Path.GetResolvedProviderPathFromPSPath(psDataFilePath, out ProviderInfo provider);
 
                 // ConfigPath should be resolved as FileSystem provider
                 if (provider == null || !Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName.Equals(provider.Name, StringComparison.OrdinalIgnoreCase))
@@ -419,8 +418,7 @@ namespace System.Management.Automation
         internal static Hashtable GetModuleManifestProperties(string psDataFilePath, string[] keys)
         {
             string dataFileContents = ScriptAnalysis.ReadScript(psDataFilePath);
-            ParseError[] parseErrors;
-            var ast = (new Parser()).Parse(psDataFilePath, dataFileContents, null, out parseErrors, ParseMode.ModuleAnalysis);
+            var ast = (new Parser()).Parse(psDataFilePath, dataFileContents, null, out ParseError[] parseErrors, ParseMode.ModuleAnalysis);
             if (parseErrors.Length > 0)
             {
                 var pe = new ParseException(parseErrors);
@@ -431,9 +429,7 @@ namespace System.Management.Automation
                     pe.Message);
             }
 
-            string unused1;
-            string unused2;
-            var pipeline = ast.GetSimplePipeline(false, out unused1, out unused2);
+            var pipeline = ast.GetSimplePipeline(false, out string unused1, out string unused2);
             if (pipeline != null)
             {
                 var hashtableAst = pipeline.GetPureExpression() as HashtableAst;

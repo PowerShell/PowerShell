@@ -642,9 +642,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Debug.Assert(!string.IsNullOrEmpty(_path));
 
-            ProviderInfo provider = null;
-            PSDriveInfo drive;
-            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_path, out provider, out drive);
+            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_path, out ProviderInfo provider, out PSDriveInfo drive);
 
             if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDISCFileExtension, StringComparison.OrdinalIgnoreCase))
             {
@@ -655,9 +653,6 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(er);
             }
 
-            FileStream fileStream;
-            StreamWriter streamWriter;
-            FileInfo readOnlyFileInfo;
 
             // Now open the output file...
             PathUtils.MasterStreamOpen(
@@ -668,9 +663,9 @@ namespace Microsoft.PowerShell.Commands
                 /* Append */ false,
                 /* Force */ false,
                 /* NoClobber */ false,
-                out fileStream,
-                out streamWriter,
-                out readOnlyFileInfo,
+                out FileStream fileStream,
+                out StreamWriter streamWriter,
+                out FileInfo readOnlyFileInfo,
                 false
             );
 
@@ -1544,9 +1539,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Debug.Assert(!string.IsNullOrEmpty(_path));
 
-            ProviderInfo provider = null;
-            PSDriveInfo drive;
-            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_path, out provider, out drive);
+            string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(_path, out ProviderInfo provider, out PSDriveInfo drive);
 
             if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellRoleCapabilityFileExtension, StringComparison.OrdinalIgnoreCase))
             {
@@ -1557,9 +1550,6 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(er);
             }
 
-            FileStream fileStream;
-            StreamWriter streamWriter;
-            FileInfo readOnlyFileInfo;
 
             // Now open the output file...
             PathUtils.MasterStreamOpen(
@@ -1570,9 +1560,9 @@ namespace Microsoft.PowerShell.Commands
                 /* Append */ false,
                 /* Force */ false,
                 /* NoClobber */ false,
-                out fileStream,
-                out streamWriter,
-                out readOnlyFileInfo,
+                out FileStream fileStream,
+                out StreamWriter streamWriter,
+                out FileInfo readOnlyFileInfo,
                 false
             );
 

@@ -45,9 +45,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 if (!_useEnumerateInstancesInsteadOfWql.HasValue)
                 {
                     bool newValue = false;
-                    string queryLanguage;
                     if (_privateData != null &&
-                        _privateData.TryGetValue(QueryLanguageKey, out queryLanguage) &&
+                        _privateData.TryGetValue(QueryLanguageKey, out string queryLanguage) &&
                         queryLanguage.Equals("None", StringComparison.OrdinalIgnoreCase))
                     {
                         newValue = true;
@@ -76,14 +75,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             get
             {
-                string defaultThrottleLimitString;
-                if (!_privateData.TryGetValue("DefaultThrottleLimit", out defaultThrottleLimitString))
+                if (!_privateData.TryGetValue("DefaultThrottleLimit", out string defaultThrottleLimitString))
                 {
                     return FallbackDefaultThrottleLimit;
                 }
 
-                int defaultThrottleLimitInteger;
-                if (!LanguagePrimitives.TryConvertTo(defaultThrottleLimitString, CultureInfo.InvariantCulture, out defaultThrottleLimitInteger))
+                if (!LanguagePrimitives.TryConvertTo(defaultThrottleLimitString, CultureInfo.InvariantCulture, out int defaultThrottleLimitInteger))
                 {
                     return FallbackDefaultThrottleLimit;
                 }
@@ -118,11 +115,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 if (!_resourceUriHasBeenCalculated)
                 {
-                    string newResourceUriString;
-                    Uri newResourceUri;
                     if (_privateData != null &&
-                        _privateData.TryGetValue("ResourceUri", out newResourceUriString) &&
-                        Uri.TryCreate(newResourceUriString, UriKind.RelativeOrAbsolute, out newResourceUri))
+                        _privateData.TryGetValue("ResourceUri", out string newResourceUriString) &&
+                        Uri.TryCreate(newResourceUriString, UriKind.RelativeOrAbsolute, out Uri newResourceUri))
                     {
                         _resourceUri = newResourceUri;
                     }
@@ -148,9 +143,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 {
                     CimOperationFlags newSchemaConformanceLevel = 0;
 
-                    string schemaConformanceFromCdxml;
                     if (_privateData != null &&
-                        _privateData.TryGetValue("TypeInformation", out schemaConformanceFromCdxml))
+                        _privateData.TryGetValue("TypeInformation", out string schemaConformanceFromCdxml))
                     {
                         if (schemaConformanceFromCdxml.Equals("Basic", StringComparison.OrdinalIgnoreCase))
                         {

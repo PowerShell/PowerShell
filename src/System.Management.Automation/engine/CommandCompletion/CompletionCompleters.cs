@@ -164,8 +164,7 @@ namespace System.Management.Automation
                 }
 
                 // Exception is ignored, the user simply does not get any completion results if the pipeline fails
-                Exception exceptionThrown;
-                var commandInfos = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
+                var commandInfos = context.Helper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
 
                 if (commandInfos == null || commandInfos.Count == 0)
                 {
@@ -305,8 +304,7 @@ namespace System.Management.Automation
                     if (name == null) { continue; }
                 }
 
-                object value;
-                if (!commandTable.TryGetValue(name, out value))
+                if (!commandTable.TryGetValue(name, out object value))
                 {
                     commandTable.Add(name, baseObj);
                 }
@@ -444,8 +442,7 @@ namespace System.Management.Automation
                 }
             }
 
-            Exception exceptionThrown;
-            var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
+            var psObjects = context.Helper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
 
             if (psObjects != null)
             {
@@ -1198,14 +1195,13 @@ namespace System.Management.Automation
                 var shareMatch = Regex.Match(pathAst.Value, @"^(\[[\w\d\.]+\]::[\w\d\*]*)$");
                 if (shareMatch.Success)
                 {
-                    int fakeReplacementIndex, fakeReplacementLength;
                     var input = shareMatch.Groups[1].Value;
                     var completionParameters = CommandCompletion.MapStringInputToParsedInput(input, input.Length);
                     var completionAnalysis = new CompletionAnalysis(completionParameters.Item1, completionParameters.Item2, completionParameters.Item3, context.Options);
                     var ret = completionAnalysis.GetResults(
                         context.Helper.CurrentPowerShell,
-                        out fakeReplacementIndex,
-                        out fakeReplacementLength);
+                        out int fakeReplacementIndex,
+                        out int fakeReplacementLength);
 
                     if (ret != null && ret.Count > 0)
                     {
@@ -1362,12 +1358,11 @@ namespace System.Management.Automation
             else
             {
                 var expandablePathAst = stringAst as ExpandableStringExpressionAst;
-                string fullPath = null;
                 if (expandablePathAst != null &&
                     IsPathSafelyExpandable(expandableStringAst: expandablePathAst,
                                            extraText: partialPath,
                                            executionContext: completionContext.ExecutionContext,
-                                           expandedString: out fullPath))
+                                           expandedString: out string fullPath))
                 {
                     return fullPath;
                 }
@@ -1444,12 +1439,11 @@ namespace System.Management.Automation
 
             if (argLocation.IsPositional && argLocation.Argument == null)
             {
-                AstPair lastPositionalArg;
                 AstParameterArgumentPair targetPositionalArg =
                     FindTargetPositionalArgument(
                         bindingInfo.AllParsedArguments,
                         argLocation.Position,
-                        out lastPositionalArg);
+                        out AstPair lastPositionalArg);
 
                 if (targetPositionalArg != null)
                     argLocation.Argument = targetPositionalArg;
@@ -1817,8 +1811,7 @@ namespace System.Management.Automation
                 yield break;
             }
 
-            AstParameterArgumentPair astParameterArgumentPair;
-            if (!boundArguments.TryGetValue(parameterName, out astParameterArgumentPair))
+            if (!boundArguments.TryGetValue(parameterName, out AstParameterArgumentPair astParameterArgumentPair))
             {
                 yield break;
             }
@@ -1874,8 +1867,7 @@ namespace System.Management.Automation
                 }
             }
 
-            object argumentValue;
-            if (argumentExpressionAst != null && SafeExprEvaluator.TrySafeEval(argumentExpressionAst, context.ExecutionContext, out argumentValue))
+            if (argumentExpressionAst != null && SafeExprEvaluator.TrySafeEval(argumentExpressionAst, context.ExecutionContext, out object argumentValue))
             {
                 if (argumentValue != null)
                 {
@@ -1921,8 +1913,7 @@ namespace System.Management.Automation
                 return result;
             }
 
-            AstParameterArgumentPair argumentValue;
-            if (!boundArguments.TryGetValue(parameterName, out argumentValue))
+            if (!boundArguments.TryGetValue(parameterName, out AstParameterArgumentPair argumentValue))
             {
                 return result;
             }
@@ -2354,8 +2345,7 @@ namespace System.Management.Automation
                             var exprAst = parameterAst != null
                                               ? parameterAst.Argument
                                               : astPair.Argument as ExpressionAst;
-                            object value;
-                            if (exprAst != null && SafeExprEvaluator.TrySafeEval(exprAst, context.ExecutionContext, out value))
+                            if (exprAst != null && SafeExprEvaluator.TrySafeEval(exprAst, context.ExecutionContext, out object value))
                             {
                                 result[boundArgument.Key] = value;
                             }
@@ -2500,8 +2490,7 @@ namespace System.Management.Automation
         {
             if (boundArguments != null)
             {
-                AstParameterArgumentPair astParameterArgumentPair;
-                if ((boundArguments.TryGetValue("ComputerName", out astParameterArgumentPair)
+                if ((boundArguments.TryGetValue("ComputerName", out AstParameterArgumentPair astParameterArgumentPair)
                      || boundArguments.TryGetValue("CimSession", out astParameterArgumentPair))
                     && astParameterArgumentPair != null)
                 {
@@ -2932,8 +2921,7 @@ namespace System.Management.Automation
                 var powerShellExecutionHelper = context.Helper;
                 var powershell = powerShellExecutionHelper.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-EventLog").AddParameter("LogName", "*");
 
-                Exception exceptionThrown;
-                var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
+                var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
 
                 if (psObjects != null)
                 {
@@ -2985,8 +2973,7 @@ namespace System.Management.Automation
             var powerShellExecutionHelper = context.Helper;
             powerShellExecutionHelper.AddCommandWithPreferenceSetting("Get-Job", typeof(GetJobCommand)).AddParameter(parameterName, value);
 
-            Exception exceptionThrown;
-            var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
+            var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
             if (psObjects == null)
                 return;
 
@@ -3077,8 +3064,7 @@ namespace System.Management.Automation
                 powerShellExecutionHelper.AddCommandWithPreferenceSetting("PSScheduledJob\\Get-ScheduledJob");
             }
 
-            Exception exceptionThrown;
-            var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
+            var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
             if (psObjects == null)
                 return;
 
@@ -3209,8 +3195,7 @@ namespace System.Management.Automation
                 powerShellExecutionHelper.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Process").AddParameter("Name", wordToComplete);
             }
 
-            Exception exceptionThrown;
-            var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
+            var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
             if (psObjects == null)
                 return;
 
@@ -3527,9 +3512,8 @@ namespace System.Management.Automation
                     commandName += "*";
                 }
 
-                Exception exceptionThrown;
                 var powershell = powerShellExecutionHelper.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Get-Alias").AddParameter("Name", commandName);
-                var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
+                var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
                 if (psObjects != null)
                 {
                     foreach (dynamic aliasInfo in psObjects)
@@ -3590,8 +3574,7 @@ namespace System.Management.Automation
 
             var powerShellExecutionHelper = context.Helper;
             var powershell = powerShellExecutionHelper.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Get-TraceSource").AddParameter("Name", traceSourceName);
-            Exception exceptionThrown;
-            var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
+            var psObjects = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
             if (psObjects == null)
                 return;
 
@@ -3669,8 +3652,7 @@ namespace System.Management.Automation
             var boundArgs = GetBoundArgumentsAsHashtable(context);
             var providedPath = boundArgs["Path"] as string ?? executionContext.SessionState.Path.CurrentLocation.Path;
 
-            ProviderInfo provider;
-            executionContext.LocationGlobber.GetProviderPath(providedPath, out provider);
+            executionContext.LocationGlobber.GetProviderPath(providedPath, out ProviderInfo provider);
 
             var isFileSystem = provider != null &&
                                provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase);
@@ -3806,8 +3788,7 @@ namespace System.Management.Automation
             IEnumerable<PSTypeName> prevType = null;
             if (i == 0)
             {
-                AstParameterArgumentPair pair;
-                if (!context.PseudoBindingInfo.BoundArguments.TryGetValue("InputObject", out pair)
+                if (!context.PseudoBindingInfo.BoundArguments.TryGetValue("InputObject", out AstParameterArgumentPair pair)
                     || !pair.ArgumentSpecified)
                 {
                     return;
@@ -4179,8 +4160,7 @@ namespace System.Management.Automation
                     .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")
                     .AddParameter("Path", wordToComplete + "*");
 
-                Exception exceptionThrown;
-                var psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
+                var psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
 
                 if (psobjs != null)
                 {
@@ -4520,12 +4500,9 @@ namespace System.Management.Automation
 #if UNIX
             return new List<string>();
 #else
-            IntPtr shBuf;
-            uint numEntries;
-            uint totalEntries;
             uint resumeHandle = 0;
-            int result = NetShareEnum(machine, 1, out shBuf,
-                                        MAX_PREFERRED_LENGTH, out numEntries, out totalEntries,
+            int result = NetShareEnum(machine, 1, out IntPtr shBuf,
+                                        MAX_PREFERRED_LENGTH, out uint numEntries, out uint totalEntries,
                                         ref resumeHandle);
 
             var shares = new List<string>();
@@ -4718,8 +4695,7 @@ namespace System.Management.Automation
                 .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Item").AddParameter("Path", pattern)
                 .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Name");
 
-            Exception exceptionThrown;
-            var psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out exceptionThrown);
+            var psobjs = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
             if (psobjs != null)
             {
                 foreach (dynamic psobj in psobjs)
@@ -4870,11 +4846,10 @@ namespace System.Management.Automation
                     StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false, desiredParameters);
                     if (bindingResult != null)
                     {
-                        ParameterBindingResult parameterBindingResult;
 
                         foreach (string commandVariableParameter in desiredParameters)
                         {
-                            if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out parameterBindingResult))
+                            if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out ParameterBindingResult parameterBindingResult))
                             {
                                 _variableSources.Add(new Tuple<string, Ast>((string)parameterBindingResult.ConstantValue, commandAst));
                             }
@@ -4932,8 +4907,7 @@ namespace System.Management.Automation
             string wordToComplete = matchResult.Groups[1].Value;
             Collection<PSObject> psobjs;
 
-            int entryId;
-            if (Regex.IsMatch(wordToComplete, @"^[0-9]+$") && LanguagePrimitives.TryConvertTo(wordToComplete, out entryId))
+            if (Regex.IsMatch(wordToComplete, @"^[0-9]+$") && LanguagePrimitives.TryConvertTo(wordToComplete, out int entryId))
             {
                 context.Helper.AddCommandWithPreferenceSetting("Get-History", typeof(GetHistoryCommand)).AddParameter("Id", entryId);
                 psobjs = context.Helper.ExecuteCurrentPowerShell(out _);
@@ -5278,8 +5252,7 @@ namespace System.Management.Automation
                     .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
                     .AddParameter("Property", new[] { "ResultType", "ListItemText" })
                     .AddParameter("Unique");
-                Exception unused;
-                var sortedResults = powerShellExecutionHelper.ExecuteCurrentPowerShell(out unused, results);
+                var sortedResults = powerShellExecutionHelper.ExecuteCurrentPowerShell(out Exception unused, results);
                 results.Clear();
                 results.AddRange(sortedResults.Select(psobj => PSObject.Base(psobj) as CompletionResult));
             }
@@ -5727,9 +5700,9 @@ namespace System.Management.Automation
             var entries = new Dictionary<string, TypeCompletionMapping>(StringComparer.OrdinalIgnoreCase);
             foreach (var type in TypeAccelerators.Get)
             {
-                var typeCompletionInstance = new TypeCompletion { _type = type.Value };
+                var typeCompletionInstance = new TypeCompletion { Type = type.Value };
 
-                if (entries.TryGetValue(type.Key, out entry))
+                if (entries.TryGetValue(type.Key, out TypeCompletionMapping entry))
                 {
                     // Check if this accelerator type is already included in the mapping entry referenced by the same key.
                     Type acceleratorType = type.Value;
@@ -5849,8 +5822,7 @@ namespace System.Management.Automation
                                         ? @namespace.Substring(0, dotIndex)
                                         : @namespace;
 
-                TypeCompletionMapping entry;
-                if (!entryCache.TryGetValue(subNamespace, out entry))
+                if (!entryCache.TryGetValue(subNamespace, out TypeCompletionMapping entry))
                 {
                     entry = new TypeCompletionMapping
                     {
@@ -5908,8 +5880,7 @@ namespace System.Management.Automation
 
             // If the full type name has already been included, then we know for sure that the short type
             // name and the accelerator type names (if there are any) have also been included.
-            TypeCompletionMapping entry;
-            if (!entryCache.TryGetValue(fullTypeName, out entry))
+            if (!entryCache.TryGetValue(fullTypeName, out TypeCompletionMapping entry))
             {
                 entry = new TypeCompletionMapping
                 {
@@ -6557,8 +6528,7 @@ namespace System.Management.Automation
             CompletionContext context,
             List<CompletionResult> results)
         {
-            object value;
-            if (SafeExprEvaluator.TrySafeEval(targetExpr, context.ExecutionContext, out value) && value != null)
+            if (SafeExprEvaluator.TrySafeEval(targetExpr, context.ExecutionContext, out object value) && value != null)
             {
                 if (targetExpr is ArrayExpressionAst && !(value is object[]))
                 {
@@ -6716,9 +6686,7 @@ namespace System.Management.Automation
             // If the tokenizer sees the completion as more than two tokens, or if there is some error, then
             // some form of quoting is necessary (if it's a variable, we'd need ${}, filenames would need [], etc.)
 
-            Language.Token[] tokens;
-            ParseError[] errors;
-            Language.Parser.ParseInput(completion, out tokens, out errors);
+            Language.Parser.ParseInput(completion, out Token[] tokens, out ParseError[] errors);
 
             char[] charToCheck = escape ? new[] { '$', '[', ']', '`' } : new[] { '$', '`' };
 

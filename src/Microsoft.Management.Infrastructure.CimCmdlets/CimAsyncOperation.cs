@@ -132,8 +132,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             if (!this.actionQueue.IsEmpty)
             {
-                CimBaseAction action;
-                while (GetActionAndRemove(out action))
+                while (GetActionAndRemove(out CimBaseAction action))
                 {
                     action.Execute(cmdletOperation);
                     if (this.Disposed)
@@ -505,8 +504,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             // unblock thread that waiting for more actions
             this.moreActionEvent.Set();
-            CimBaseAction action;
-            while (GetActionAndRemove(out action))
+            while (GetActionAndRemove(out CimBaseAction action))
             {
                 DebugHelper.WriteLog("Action {0}", 2, action);
 

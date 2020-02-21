@@ -113,16 +113,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            ProviderInfo provider = null;
 
-            CmdletProvider providerInstance = null;
             Collection<string> providerPaths =
                 Globber.GetGlobbedProviderPathsFromMonadPath(
                     path,
                     false,
                     context,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             foreach (string providerPath in providerPaths)
             {
@@ -255,16 +253,14 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("securityDescriptor");
             }
 
-            ProviderInfo provider = null;
 
-            CmdletProvider providerInstance = null;
             Collection<string> providerPaths =
                 Globber.GetGlobbedProviderPathsFromMonadPath(
                     path,
                     false,
                     context,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             foreach (string providerPath in providerPaths)
             {
@@ -397,15 +393,13 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            ProviderInfo provider = null;
 
-            CmdletProvider providerInstance = null;
             Collection<string> providerPaths =
                 Globber.GetGlobbedProviderPathsFromMonadPath(
                     path,
                     false,
-                    out provider,
-                    out providerInstance);
+                    out ProviderInfo provider,
+                    out CmdletProvider providerInstance);
 
             //
             // path must resolve to exact 1 item,

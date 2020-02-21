@@ -236,9 +236,7 @@ namespace System.Management.Automation
             // pipelines in a PowerShell (it just grabs the last command directly.)  The rest of this
             // code properly supports multiple pipelines, so it should just work to change the false to true
             // if/when Invoke-Command can support multiple pipelines.
-            string errorId;
-            string errorMsg;
-            body.GetSimplePipeline(true, out errorId, out errorMsg);
+            body.GetSimplePipeline(true, out string errorId, out string errorMsg);
             if (errorId != null)
             {
                 throw new ScriptBlockToPowerShellNotSupportedException(errorId, null, errorMsg);

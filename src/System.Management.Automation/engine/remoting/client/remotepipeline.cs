@@ -531,8 +531,7 @@ namespace System.Management.Automation
         /// </summary>
         public override void Stop()
         {
-            bool isAlreadyStopping = false;
-            if (CanStopPipeline(out isAlreadyStopping))
+            if (CanStopPipeline(out bool isAlreadyStopping))
             {
                 // A pipeline can be stopped before it is started.so protecting against that
                 if (_powershell != null)
@@ -563,8 +562,7 @@ namespace System.Management.Automation
         /// </summary>
         public override void StopAsync()
         {
-            bool isAlreadyStopping;
-            if (CanStopPipeline(out isAlreadyStopping))
+            if (CanStopPipeline(out bool isAlreadyStopping))
             {
                 try
                 {

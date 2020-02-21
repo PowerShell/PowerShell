@@ -108,10 +108,9 @@ namespace System.Management.Automation
 
             lock (PSTraceSource.s_getTracerLock)
             {
-                PSTraceSource result = null;
 
                 // See if we can find an PSTraceSource for this category in the catalog.
-                PSTraceSource.TraceCatalog.TryGetValue(name, out result);
+                PSTraceSource.TraceCatalog.TryGetValue(name, out PSTraceSource result);
 
                 // If it's not already in the catalog, see if we can find it in the
                 // pre-configured trace source list

@@ -339,8 +339,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return ErrorCategory.NotSpecified;
             }
 
-            ErrorCategory errorCategoryValue;
-            if (!LanguagePrimitives.TryConvertTo<ErrorCategory>(errorCategoryProperty.Value, CultureInfo.InvariantCulture, out errorCategoryValue))
+            if (!LanguagePrimitives.TryConvertTo<ErrorCategory>(errorCategoryProperty.Value, CultureInfo.InvariantCulture, out ErrorCategory errorCategoryValue))
             {
                 return ErrorCategory.NotSpecified;
             }

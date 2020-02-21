@@ -1004,8 +1004,7 @@ namespace System.Management.Automation
             MergedCompiledCommandParameter parameter,
             ParameterSetSpecificMetadata parameterSetData)
         {
-            Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter> positionalCommandParameters;
-            if (result.TryGetValue(positionInParameterSet, out positionalCommandParameters))
+            if (result.TryGetValue(positionInParameterSet, out Dictionary<MergedCompiledCommandParameter, PositionalCommandParameter> positionalCommandParameters))
             {
                 // Check to see if any of the other parameters in this position are in the same parameter set.
                 if (ContainsPositionalParameterInSet(positionalCommandParameters, parameter, parameterSetData.ParameterSetFlag))
@@ -1021,8 +1020,7 @@ namespace System.Management.Automation
                     throw PSTraceSource.NewInvalidOperationException();
                 }
 
-                PositionalCommandParameter positionalCommandParameter;
-                if (!positionalCommandParameters.TryGetValue(parameter, out positionalCommandParameter))
+                if (!positionalCommandParameters.TryGetValue(parameter, out PositionalCommandParameter positionalCommandParameter))
                 {
                     positionalCommandParameter = new PositionalCommandParameter(parameter);
                     positionalCommandParameters.Add(parameter, positionalCommandParameter);
@@ -1114,8 +1112,7 @@ namespace System.Management.Automation
         {
             ScriptParameterBinder spb = (ScriptParameterBinder)this.DefaultParameterBinder;
             ScriptBlock script = spb.Script;
-            RuntimeDefinedParameter runtimeDefinedParameter;
-            if (script.RuntimeDefinedParameters.TryGetValue(parameter.Parameter.Name, out runtimeDefinedParameter))
+            if (script.RuntimeDefinedParameters.TryGetValue(parameter.Parameter.Name, out RuntimeDefinedParameter runtimeDefinedParameter))
             {
                 bool oldRecordParameters = spb.RecordBoundParameters;
                 try

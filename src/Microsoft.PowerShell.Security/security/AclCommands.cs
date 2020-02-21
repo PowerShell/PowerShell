@@ -1131,12 +1131,11 @@ namespace Microsoft.PowerShell.Commands
                     // be deallocated separately (but with the entire buffer
                     // returned by LsaQueryCAPs).
                     freeCapId = false;
-                    uint capCount = 0;
                     rs = NativeMethods.LsaQueryCAPs(
                         null,
                         0,
                         out caps,
-                        out capCount);
+                        out uint capCount);
                     if (rs != NativeMethods.STATUS_SUCCESS)
                     {
                         throw new Win32Exception((int)rs);
@@ -1482,9 +1481,7 @@ namespace Microsoft.PowerShell.Commands
                         context.PassThru = Passthru;
                         if (_isLiteralPath)
                         {
-                            ProviderInfo Provider = null;
-                            PSDriveInfo Drive = null;
-                            string pathStr = SessionState.Path.GetUnresolvedProviderPathFromPSPath(p, out Provider, out Drive);
+                            string pathStr = SessionState.Path.GetUnresolvedProviderPathFromPSPath(p, out ProviderInfo Provider, out PSDriveInfo Drive);
                             pathsToProcess.Add(new PathInfo(Drive, Provider, pathStr, SessionState));
                             context.SuppressWildcardExpansion = true;
                         }

@@ -95,11 +95,9 @@ namespace System.Management.Automation.Remoting
                 Type requestedType = InternalHostUserInterface.GetFieldType(description);
                 if (requestedType != null)
                 {
-                    PSObject valueFromClient;
-                    if (results.TryGetValue(description.Name, out valueFromClient))
+                    if (results.TryGetValue(description.Name, out PSObject valueFromClient))
                     {
-                        object conversionResult;
-                        if (LanguagePrimitives.TryConvertTo(valueFromClient, requestedType, CultureInfo.InvariantCulture, out conversionResult))
+                        if (LanguagePrimitives.TryConvertTo(valueFromClient, requestedType, CultureInfo.InvariantCulture, out object conversionResult))
                         {
                             if (conversionResult != null)
                             {

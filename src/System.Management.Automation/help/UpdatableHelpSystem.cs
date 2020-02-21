@@ -1062,8 +1062,7 @@ namespace System.Management.Automation.Help
                     Directory.Delete(combinedTempPath, true);
                 }
 
-                bool needToCopy = true;
-                UnzipHelpContent(context, combinedSourcePath, combinedTempPath, out needToCopy);
+                UnzipHelpContent(context, combinedSourcePath, combinedTempPath, out bool needToCopy);
                 if (needToCopy)
                 {
                     ValidateAndCopyHelpContent(combinedTempPath, destPaths, culture.Name, xsdPath, out installed);

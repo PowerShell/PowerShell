@@ -1506,8 +1506,7 @@ namespace System.Management.Automation
         /// <returns>The path to the matched module.</returns>
         internal static string ResolveUsingAppDomainLevelModuleCache(string moduleName)
         {
-            string path;
-            if (s_appdomainModulePathCache.TryGetValue(moduleName, out path))
+            if (s_appdomainModulePathCache.TryGetValue(moduleName, out string path))
             {
                 return path;
             }
@@ -1543,8 +1542,7 @@ namespace System.Management.Automation
         /// <returns>True if the module was remove.</returns>
         internal static bool RemoveFromAppDomainLevelCache(string moduleName)
         {
-            string outString;
-            return s_appdomainModulePathCache.TryRemove(moduleName, out outString);
+            return s_appdomainModulePathCache.TryRemove(moduleName, out string outString);
         }
 
         private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, string> s_appdomainModulePathCache =

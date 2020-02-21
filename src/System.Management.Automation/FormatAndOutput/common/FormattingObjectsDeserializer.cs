@@ -418,8 +418,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         // returns null on failure
         private static FormatInfoData CreateInstance(string clsid, FormatObjectDeserializer deserializer)
         {
-            Func<FormatInfoData> ctor;
-            if (!s_constructors.TryGetValue(clsid, out ctor))
+            if (!s_constructors.TryGetValue(clsid, out Func<FormatInfoData> ctor))
             {
                 CreateInstanceError(PSTraceSource.NewArgumentException("clsid"), clsid, deserializer);
                 return null;

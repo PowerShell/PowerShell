@@ -177,9 +177,7 @@ namespace System.Management.Automation
         internal static PSCommand[] GetProfileCommands(string shellId, bool useTestProfile)
         {
             List<PSCommand> commands = new List<PSCommand>();
-            string allUsersAllHosts, allUsersCurrentHost, currentUserAllHosts, currentUserCurrentHost;
-            PSObject dollarProfile;
-            HostUtilities.GetProfileObjectData(shellId, useTestProfile, out allUsersAllHosts, out allUsersCurrentHost, out currentUserAllHosts, out currentUserCurrentHost, out dollarProfile);
+            HostUtilities.GetProfileObjectData(shellId, useTestProfile, out string allUsersAllHosts, out string allUsersCurrentHost, out string currentUserAllHosts, out string currentUserCurrentHost, out PSObject dollarProfile);
 
             PSCommand command = new PSCommand();
             command.AddCommand("set-variable");

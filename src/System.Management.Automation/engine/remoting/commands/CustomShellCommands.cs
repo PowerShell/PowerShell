@@ -513,11 +513,9 @@ else
             }
 
             // Configuration file copy information.
-            string srcConfigFilePath;
-            string destConfigFilePath;
 
             // construct plugin config file.
-            string pluginContent = ConstructPluginContent(out srcConfigFilePath, out destConfigFilePath);
+            string pluginContent = ConstructPluginContent(out string srcConfigFilePath, out string destConfigFilePath);
 
             // Create temporary file with the content.
             string file = ConstructTemporaryFile(pluginContent);
@@ -546,10 +544,8 @@ else
                         shellName));
 
                 // gather -WhatIf, -Confirm parameter data and pass it to the script block
-                bool whatIf = false;
                 // confirm is always true to start with
-                bool confirm = true;
-                PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out whatIf, out confirm);
+                PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out bool whatIf, out bool confirm);
                 // gather -ErrorAction parameter data and pass it to the script block. if -ErrorAction is not set, pass $null in
                 object errorAction = null;
                 if (Context.CurrentCommandProcessor.CommandRuntime.IsErrorActionSet)
@@ -800,9 +796,7 @@ else
             // DISC endpoint
             if (Path != null)
             {
-                ProviderInfo provider = null;
-                PSDriveInfo drive;
-                string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path, out provider, out drive);
+                string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path, out ProviderInfo provider, out PSDriveInfo drive);
 
                 if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDISCFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
@@ -816,13 +810,12 @@ else
                 Guid sessionGuid = Guid.Empty;
 
                 // Load session GUID from config file
-                string scriptName;
                 ExternalScriptInfo scriptInfo = null;
                 Hashtable configTable = null;
 
                 try
                 {
-                    scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, filePath, out scriptName);
+                    scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, filePath, out string scriptName);
                     configTable = DISCUtils.LoadConfigFile(this.Context, scriptInfo);
                 }
                 catch (RuntimeException rte)
@@ -905,11 +898,10 @@ else
                     }
 
                     // Get role account and group restriction SDDL from configuration table, if any.
-                    ErrorRecord error;
                     _configTableSDDL = PSSessionConfigurationCommandUtilities.ComputeSDDLFromConfiguration(
                         configTable,
                         AccessMode,
-                        out error);
+                        out ErrorRecord error);
                     if (error != null)
                     {
                         WriteError(error);
@@ -1596,9 +1588,7 @@ else
             // epilogue string contains the ending (and optional) SACL components
             //    S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)
             // (https://msdn.microsoft.com/library/windows/desktop/aa379570(v=vs.85).aspx)
-            string prologue;
-            string epilogue;
-            Collection<string> aces = ParseDACLACEs(sddl, out prologue, out epilogue);
+            Collection<string> aces = ParseDACLACEs(sddl, out string prologue, out string epilogue);
 
             if (aces.Count == 0) { return sddl; }
 
@@ -2615,10 +2605,8 @@ else
             string csNotFoundMessageFormat = RemotingErrorIdStrings.CustomShellNotFound;
 
             // gather -WhatIf, -Confirm parameter data and pass it to the script block
-            bool whatIf = false;
             // confirm is always true to start with
-            bool confirm = true;
-            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out whatIf, out confirm);
+            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out bool whatIf, out bool confirm);
             // gather -ErrorAction parameter data and pass it to the script block. if -ErrorAction is not set, pass $null in
             object errorAction = null;
             if (Context.CurrentCommandProcessor.CommandRuntime.IsErrorActionSet)
@@ -3255,21 +3243,17 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             // Populate the configTable hash, and get its SDDL if needed
             if (Path != null)
             {
-                ProviderInfo provider = null;
-                PSDriveInfo drive;
-                _configFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path, out provider, out drive);
+                _configFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path, out ProviderInfo provider, out PSDriveInfo drive);
 
-                string scriptName;
-                ExternalScriptInfo scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, _configFilePath, out scriptName);
+                ExternalScriptInfo scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, _configFilePath, out string scriptName);
                 _configTable = DISCUtils.LoadConfigFile(this.Context, scriptInfo);
 
                 if (!isSddlSpecified)
                 {
-                    ErrorRecord error;
                     _configSddl = PSSessionConfigurationCommandUtilities.ComputeSDDLFromConfiguration(
                         _configTable,
                         AccessMode,
-                        out error);
+                        out ErrorRecord error);
                     if (error != null)
                     {
                         WriteError(error);
@@ -3568,9 +3552,8 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 if (idleTimeOut != 0 && quotas.ContainsKey(WSManConfigurationOption.AttribMaxIdleTimeout))
                 {
                     bool setMaxIdleTimeoutFirst = true;
-                    int maxIdleTimeOut;
 
-                    if (LanguagePrimitives.TryConvertTo<int>(quotas[WSManConfigurationOption.AttribMaxIdleTimeout], out maxIdleTimeOut))
+                    if (LanguagePrimitives.TryConvertTo<int>(quotas[WSManConfigurationOption.AttribMaxIdleTimeout], out int maxIdleTimeOut))
                     {
                         int? currentIdleTimeoutms = WSManConfigurationOption.DefaultIdleTimeout;
 
@@ -3944,9 +3927,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
             // DISC endpoint
             if (Path != null)
             {
-                ProviderInfo provider = null;
-                PSDriveInfo drive;
-                string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path, out provider, out drive);
+                string filePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path, out ProviderInfo provider, out PSDriveInfo drive);
 
                 if (!provider.NameEquals(Context.ProviderNames.FileSystem) || !filePath.EndsWith(StringLiterals.PowerShellDISCFileExtension, StringComparison.OrdinalIgnoreCase))
                 {
@@ -3960,8 +3941,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                 Guid sessionGuid = Guid.Empty;
 
                 // Load session GUID from config file
-                string scriptName;
-                ExternalScriptInfo scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, filePath, out scriptName);
+                ExternalScriptInfo scriptInfo = DISCUtils.GetScriptInfoForFile(this.Context, filePath, out string scriptName);
 
                 Hashtable configTable = DISCUtils.LoadConfigFile(this.Context, scriptInfo);
 
@@ -4367,10 +4347,8 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
             WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.EcsScriptMessageV, enablePluginSbFormat));
 
             // gather -WhatIf, -Confirm parameter data and pass it to the script block
-            bool whatIf = false;
             // confirm is always true to start with
-            bool confirm = true;
-            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out whatIf, out confirm);
+            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out bool whatIf, out bool confirm);
 
             string qcCaptionMessage = StringUtil.Format(RemotingErrorIdStrings.EcsWSManQCCaption);
             string qcQueryMessage = StringUtil.Format(RemotingErrorIdStrings.EcsWSManQCQuery, setWSManConfigCommand);
@@ -4606,10 +4584,8 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
             WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.EcsScriptMessageV, disablePluginSbFormat));
 
             // gather -WhatIf, -Confirm parameter data and pass it to the script block
-            bool whatIf = false;
             // confirm is always true to start with
-            bool confirm = true;
-            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out whatIf, out confirm);
+            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out bool whatIf, out bool confirm);
 
             string restartWinRMMessage = RemotingErrorIdStrings.RestartWinRMMessage;
             string setEnabledTarget = RemotingErrorIdStrings.SetEnabledFalseTarget;
@@ -4983,10 +4959,8 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
             WriteWarning(RemotingErrorIdStrings.PSCoreRemotingEnableWarning);
 
             // gather -WhatIf, -Confirm parameter data and pass it to the script block
-            bool whatIf = false;
             // confirm is always true to start with
-            bool confirm = true;
-            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out whatIf, out confirm);
+            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out bool whatIf, out bool confirm);
 
             string captionMessage = RemotingErrorIdStrings.ERemotingCaption;
             string queryMessage = RemotingErrorIdStrings.ERemotingQuery;
@@ -5190,10 +5164,8 @@ Disable-PSRemoting -force:$args[0] -queryForSet $args[1] -captionForSet $args[2]
             WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.EcsScriptMessageV, disablePSRemotingFormat));
 
             // gather -WhatIf, -Confirm parameter data and pass it to the script block
-            bool whatIf = false;
             // confirm is always true to start with
-            bool confirm = true;
-            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out whatIf, out confirm);
+            PSSessionConfigurationCommandUtilities.CollectShouldProcessParameters(this, out bool whatIf, out bool confirm);
 
             string captionMessage = StringUtil.Format(RemotingErrorIdStrings.CSShouldProcessAction, "Set-PSSessionConfiguration");
             string queryMessage = RemotingErrorIdStrings.DisableRemotingShouldProcessTarget;

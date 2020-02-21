@@ -150,12 +150,10 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (int id in ids)
             {
-                WeakReference<Runspace> runspaceRef;
 
-                if (Runspace.RunspaceDictionary.TryGetValue(id, out runspaceRef))
+                if (Runspace.RunspaceDictionary.TryGetValue(id, out WeakReference<Runspace> runspaceRef))
                 {
-                    Runspace runspace;
-                    if (runspaceRef.TryGetTarget(out runspace))
+                    if (runspaceRef.TryGetTarget(out Runspace runspace))
                     {
                         rtnRunspaces.Add(runspace);
                     }

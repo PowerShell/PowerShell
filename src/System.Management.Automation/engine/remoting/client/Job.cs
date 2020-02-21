@@ -839,8 +839,7 @@ namespace System.Management.Automation
 
         internal bool ShouldContinue(string query, string caption)
         {
-            Exception exceptionThrownOnCmdletThread;
-            return this.ShouldContinue(query, caption, out exceptionThrownOnCmdletThread);
+            return this.ShouldContinue(query, caption, out Exception exceptionThrownOnCmdletThread);
         }
 
         internal bool ShouldContinue(string query, string caption, out Exception exceptionThrownOnCmdletThread)
@@ -859,12 +858,11 @@ namespace System.Management.Automation
             InvokeCmdletMethodAndIgnoreResults(
                     delegate (Cmdlet cmdlet)
                     {
-                        ShouldProcessReason throwAwayProcessReason;
                         cmdlet.ShouldProcess(
                             verboseDescription,
                             verboseWarning,
                             caption,
-                            out throwAwayProcessReason);
+                            out ShouldProcessReason throwAwayProcessReason);
                     });
         }
 
@@ -3729,9 +3727,8 @@ namespace System.Management.Automation
         /// <param name="helper"></param>
         protected void DeterminedAndSetJobState(ExecutionCmdletHelper helper)
         {
-            Exception failureException;
             // Process the reason in case of failure.
-            ProcessJobFailure(helper, out failureException, out _failureErrorRecord);
+            ProcessJobFailure(helper, out Exception failureException, out _failureErrorRecord);
 
             if (failureException != null)
             {
@@ -4295,11 +4292,9 @@ namespace System.Management.Automation
             ExecutionCmdletHelper helper = sender as ExecutionCmdletHelper;
             Dbg.Assert(helper != null, "Sender of OperationComplete has to be ExecutionCmdletHelper");
 
-            Exception failureException;
             // Process the reason in case of failure.
-            ErrorRecord failureErrorRecord;
 
-            ProcessJobFailure(helper, out failureException, out failureErrorRecord);
+            ProcessJobFailure(helper, out Exception failureException, out ErrorRecord failureErrorRecord);
 
             if (failureErrorRecord != null)
             {
@@ -4417,9 +4412,8 @@ namespace System.Management.Automation
         /// <returns>PowerShell instance.</returns>
         internal override PowerShell GetPowerShell(Guid instanceId)
         {
-            PowerShell powershell = null;
 
-            _powershells.TryGetValue(instanceId, out powershell);
+            _powershells.TryGetValue(instanceId, out PowerShell powershell);
 
             return powershell;
         }

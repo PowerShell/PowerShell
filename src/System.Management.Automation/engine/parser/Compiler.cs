@@ -1682,8 +1682,7 @@ namespace System.Management.Automation.Language
                     attributeAst.TypeName.FullName);
             }
 
-            Func<AttributeAst, Attribute> generator;
-            if (s_builtinAttributeGenerator.TryGetValue(attributeType, out generator))
+            if (s_builtinAttributeGenerator.TryGetValue(attributeType, out Func<AttributeAst, Attribute> generator))
             {
                 return generator(attributeAst);
             }
@@ -1821,8 +1820,7 @@ namespace System.Management.Automation.Language
 
             if (parameterAst.DefaultValue != null)
             {
-                object constantValue;
-                if (IsConstantValueVisitor.IsConstant(parameterAst.DefaultValue, out constantValue))
+                if (IsConstantValueVisitor.IsConstant(parameterAst.DefaultValue, out object constantValue))
                 {
                     result.Value = constantValue;
                 }
@@ -1835,8 +1833,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                object defaultValue;
-                if (TryGetDefaultParameterValue(parameterAst.StaticType, out defaultValue) && defaultValue != null)
+                if (TryGetDefaultParameterValue(parameterAst.StaticType, out object defaultValue) && defaultValue != null)
                 {
                     // Skip setting the value when defaultValue is null because if we do call the setter,
                     // we'll try converting null to the parameter, which we might not want, e.g. if the parameter is [ref].
@@ -2061,8 +2058,7 @@ namespace System.Management.Automation.Language
             ref IScriptExtent[] sequencePoints,
             ref Type localsTupleType)
         {
-            object constantValue;
-            if (IsConstantValueVisitor.IsConstant(expressionAst, out constantValue))
+            if (IsConstantValueVisitor.IsConstant(expressionAst, out object constantValue))
             {
                 return constantValue;
             }
@@ -2628,8 +2624,7 @@ namespace System.Management.Automation.Language
             }
             else
             {
-                Assembly[] assemblies;
-                typesToAdd = LoadUsingsImpl(usingStatements, out assemblies);
+                typesToAdd = LoadUsingsImpl(usingStatements, out Assembly[] assemblies);
                 trs = new TypeResolutionState(
                     TypeOps.GetNamespacesForTypeResolutionState(usingStatements),
                     assemblies);
@@ -2741,8 +2736,7 @@ namespace System.Management.Automation.Language
                 // We only need to populate types, if ASTs are not reused. Otherwise it's already populated.
                 if (parseTypePair.Value.Type == null)
                 {
-                    TypeDefinitionAst typeDefinitionAst;
-                    if (!runtimeTypes.TryGetValue(parseTypePair.Key, out typeDefinitionAst))
+                    if (!runtimeTypes.TryGetValue(parseTypePair.Key, out TypeDefinitionAst typeDefinitionAst))
                     {
                         throw InterpreterError.NewInterpreterException(
                             parseTypePair.Value,
@@ -5613,8 +5607,7 @@ namespace System.Management.Automation.Language
 
         public object VisitBinaryExpression(BinaryExpressionAst binaryExpressionAst)
         {
-            object constantValue;
-            if (!CompilingConstantExpression && IsConstantValueVisitor.IsConstant(binaryExpressionAst, out constantValue))
+            if (!CompilingConstantExpression && IsConstantValueVisitor.IsConstant(binaryExpressionAst, out object constantValue))
             {
                 return Expression.Constant(constantValue);
             }
@@ -5922,8 +5915,7 @@ namespace System.Management.Automation.Language
 
         public object VisitUnaryExpression(UnaryExpressionAst unaryExpressionAst)
         {
-            object constantValue;
-            if (!CompilingConstantExpression && IsConstantValueVisitor.IsConstant(unaryExpressionAst, out constantValue))
+            if (!CompilingConstantExpression && IsConstantValueVisitor.IsConstant(unaryExpressionAst, out object constantValue))
             {
                 return Expression.Constant(constantValue);
             }
@@ -6030,8 +6022,7 @@ namespace System.Management.Automation.Language
 
         public object VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
-            object constantValue;
-            if (!CompilingConstantExpression && IsConstantValueVisitor.IsConstant(convertExpressionAst, out constantValue))
+            if (!CompilingConstantExpression && IsConstantValueVisitor.IsConstant(convertExpressionAst, out object constantValue))
             {
                 return Expression.Constant(constantValue);
             }
@@ -6068,9 +6059,7 @@ namespace System.Management.Automation.Language
                 {
                     // We'll wrap the variable in a PSReference, but not the constant variables ($true, $false, $null) because those
                     // can't be changed.
-                    IEnumerable<PropertyInfo> unused1;
-                    bool unused2;
-                    var varType = varExpr.GetVariableType(this, out unused1, out unused2);
+                    var varType = varExpr.GetVariableType(this, out IEnumerable<PropertyInfo> unused1, out bool unused2);
                     return Expression.Call(
                         CachedReflectionInfo.VariableOps_GetVariableAsRef,
                         Expression.Constant(varExpr.VariablePath),

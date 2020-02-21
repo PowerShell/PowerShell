@@ -438,8 +438,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("cmdletTypeName");
             }
 
-            Exception e = null;
-            Type cmdletType = TypeResolver.ResolveType(cmdletTypeName, out e);
+            Type cmdletType = TypeResolver.ResolveType(cmdletTypeName, out Exception e);
             if (e != null)
             {
                 throw e;

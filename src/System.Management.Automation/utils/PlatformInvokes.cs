@@ -296,9 +296,8 @@ namespace System.Management.Automation
                         requiredPrivilege.PrivilegeCount = 1;
                         // PRIVILEGE_SET_ALL_NECESSARY is defined as 1
                         requiredPrivilege.Control = 1;
-                        bool privilegeEnabled = false;
 
-                        if (PrivilegeCheck(tokenHandler, ref requiredPrivilege, out privilegeEnabled) && privilegeEnabled)
+                        if (PrivilegeCheck(tokenHandler, ref requiredPrivilege, out bool privilegeEnabled) && privilegeEnabled)
                         {
                             // The specified privilege is already enabled
                             oldPrivilegeState.PrivilegeCount = 0;

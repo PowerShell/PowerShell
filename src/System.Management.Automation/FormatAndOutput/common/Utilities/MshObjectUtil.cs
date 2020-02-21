@@ -583,8 +583,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 // we cache script blocks from expression tokens
                 if (_expressionCache != null)
                 {
-                    PSPropertyExpression value;
-                    if (_expressionCache.TryGetValue(et, out value))
+                    if (_expressionCache.TryGetValue(et, out PSPropertyExpression value))
                     {
                         // got a hit on the cache, just return
                         return value;

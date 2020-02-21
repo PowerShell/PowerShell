@@ -269,8 +269,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal void Override(RemoteRunspace remoteRunspace)
         {
-            bool isRunspacePushed = false;
-            Override(remoteRunspace, null, out isRunspacePushed);
+            Override(remoteRunspace, null, out bool isRunspacePushed);
         }
 
         /// <summary>

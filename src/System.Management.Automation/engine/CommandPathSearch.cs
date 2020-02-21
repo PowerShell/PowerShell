@@ -129,11 +129,10 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        ProviderInfo provider;
                         resolvedPath =
                             pathResolver.GetProviderPath(
                                 _lookupPaths[index],
-                                out provider);
+                                out ProviderInfo provider);
                     }
                     catch (ProviderInvocationException providerInvocationException)
                     {

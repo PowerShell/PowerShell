@@ -845,8 +845,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else if (sste.FileName != null)
                         {
-                            bool unused;
-                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out unused);
+                            Context.TypeTable.Update(sste.FileName, sste.FileName, errors, Context.AuthorizationManager, Context.InitialSessionState.Host, out bool unused);
                         }
                         else
                         {
@@ -1091,8 +1090,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static void ConstructFileToIndexMap(string fileName, int index, Dictionary<string, List<int>> fileNameToIndexMap)
         {
-            List<int> indexList;
-            if (fileNameToIndexMap.TryGetValue(fileName, out indexList))
+            if (fileNameToIndexMap.TryGetValue(fileName, out List<int> indexList))
             {
                 indexList.Add(index);
             }
@@ -1140,8 +1138,7 @@ namespace Microsoft.PowerShell.Commands
                     string removeFileFormattedTarget = string.Format(CultureInfo.InvariantCulture, removeFileTarget, typeFile);
                     if (ShouldProcess(removeFileFormattedTarget, removeFileAction))
                     {
-                        List<int> indexList;
-                        if (fileToIndexMap.TryGetValue(typeFile, out indexList))
+                        if (fileToIndexMap.TryGetValue(typeFile, out List<int> indexList))
                         {
                             indicesToRemove.AddRange(indexList);
                         }
@@ -1306,10 +1303,9 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                Type type;
                 string typeNameInUse = typeName;
                 // Respect the type shortcut
-                if (LanguagePrimitives.TryConvertTo(typeNameInUse, out type))
+                if (LanguagePrimitives.TryConvertTo(typeNameInUse, out Type type))
                 {
                     typeNameInUse = type.FullName;
                 }
@@ -1374,9 +1370,8 @@ namespace Microsoft.PowerShell.Commands
             else if (target is string)
             {
                 // Respect the type shortcut
-                Type type;
                 typeName = (string)target;
-                if (LanguagePrimitives.TryConvertTo(typeName, out type))
+                if (LanguagePrimitives.TryConvertTo(typeName, out Type type))
                 {
                     typeName = type.FullName;
                 }

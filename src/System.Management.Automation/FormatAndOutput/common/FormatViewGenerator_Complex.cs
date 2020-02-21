@@ -372,8 +372,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return true;
 
             PSPropertyExpression ex = _expressionFactory.CreateFromExpressionToken(conditionToken, _loadingInfo);
-            PSPropertyExpressionResult expressionResult;
-            bool retVal = DisplayCondition.Evaluate(so, ex, out expressionResult);
+            bool retVal = DisplayCondition.Evaluate(so, ex, out PSPropertyExpressionResult expressionResult);
 
             if (expressionResult != null && expressionResult.Exception != null)
             {

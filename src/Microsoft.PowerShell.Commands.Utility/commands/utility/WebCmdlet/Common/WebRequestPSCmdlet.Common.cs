@@ -725,8 +725,7 @@ namespace Microsoft.PowerShell.Commands
 
             // before creating the web request,
             // preprocess Body if content is a dictionary and method is GET (set as query)
-            IDictionary bodyAsDictionary;
-            LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
+            LanguagePrimitives.TryConvertTo<IDictionary>(Body, out IDictionary bodyAsDictionary);
             if ((bodyAsDictionary != null)
                 && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
                      || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
@@ -1110,8 +1109,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Set 'User-Agent' if WebSession.Headers doesn't already contain it
-            string userAgent = null;
-            if (WebSession.Headers.TryGetValue(HttpKnownHeaderNames.UserAgent, out userAgent))
+            if (WebSession.Headers.TryGetValue(HttpKnownHeaderNames.UserAgent, out string userAgent))
             {
                 WebSession.UserAgent = userAgent;
             }
@@ -1177,8 +1175,7 @@ namespace Microsoft.PowerShell.Commands
             else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
-                string contentType = null;
-                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out contentType);
+                WebSession.ContentHeaders.TryGetValue(HttpKnownHeaderNames.ContentType, out string contentType);
                 if (string.IsNullOrEmpty(contentType))
                 {
                     WebSession.ContentHeaders[HttpKnownHeaderNames.ContentType] = "application/x-www-form-urlencoded";
@@ -1830,8 +1827,7 @@ namespace Microsoft.PowerShell.Commands
             // we only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
             string pattern = "<(?<url>.*?)>;\\s*rel=(\"?)(?<rel>.*?)\\1[^\\w -.]?";
-            IEnumerable<string> links;
-            if (response.Headers.TryGetValues("Link", out links))
+            if (response.Headers.TryGetValues("Link", out IEnumerable<string> links))
             {
                 foreach (string linkHeader in links)
                 {

@@ -624,8 +624,7 @@ namespace System.Management.Automation.Internal
             Type resultType = typeof(ReturnType);
             if (typeof(PSObject) == resultType || typeof(object) == resultType)
             {
-                ReturnType result;
-                LanguagePrimitives.TryConvertTo(inputObject, out result);
+                LanguagePrimitives.TryConvertTo(inputObject, out ReturnType result);
                 return result;
             }
 
@@ -800,8 +799,7 @@ namespace System.Management.Automation.Internal
             Type resultType = typeof(ReturnType);
             if (typeof(PSObject) == resultType || typeof(object) == resultType)
             {
-                ReturnType result;
-                LanguagePrimitives.TryConvertTo(inputObject, out result);
+                LanguagePrimitives.TryConvertTo(inputObject, out ReturnType result);
                 return result;
             }
 

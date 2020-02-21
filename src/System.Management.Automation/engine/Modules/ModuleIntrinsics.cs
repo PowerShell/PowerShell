@@ -114,8 +114,7 @@ namespace System.Management.Automation
         /// <returns>The constructed module object.</returns>
         internal PSModuleInfo CreateModule(string path, ExternalScriptInfo scriptInfo, IScriptExtent scriptPosition, SessionState ss, object privateData, params object[] arguments)
         {
-            List<object> result;
-            return CreateModuleImplementation(ModuleIntrinsics.GetModuleName(path), path, scriptInfo, scriptPosition, ss, privateData, out result, arguments);
+            return CreateModuleImplementation(ModuleIntrinsics.GetModuleName(path), path, scriptInfo, scriptPosition, ss, privateData, out List<object> result, arguments);
         }
 
         /// <summary>
@@ -817,8 +816,7 @@ namespace System.Management.Automation
                 object versionValue = dataFileSetting["ModuleVersion"];
                 if (versionValue != null)
                 {
-                    Version moduleVersion;
-                    if (LanguagePrimitives.TryConvertTo(versionValue, out moduleVersion))
+                    if (LanguagePrimitives.TryConvertTo(versionValue, out Version moduleVersion))
                     {
                         return moduleVersion;
                     }
@@ -841,8 +839,7 @@ namespace System.Management.Automation
                 object guidValue = dataFileSetting["GUID"];
                 if (guidValue != null)
                 {
-                    Guid guidID;
-                    if (LanguagePrimitives.TryConvertTo(guidValue, out guidID))
+                    if (LanguagePrimitives.TryConvertTo(guidValue, out Guid guidID))
                     {
                         return guidID;
                     }

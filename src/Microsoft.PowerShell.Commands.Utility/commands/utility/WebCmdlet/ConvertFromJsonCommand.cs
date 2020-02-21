@@ -112,8 +112,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if successfully converted, else returns false.</returns>
         private bool ConvertFromJsonHelper(string input)
         {
-            ErrorRecord error = null;
-            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, out error);
+            object result = JsonObject.ConvertFromJson(input, AsHashtable.IsPresent, Depth, out ErrorRecord error);
 
             if (error != null)
             {

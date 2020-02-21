@@ -34,9 +34,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private string GetString(StringResourceReference resourceReference)
         {
-            LoadingResult result;
-            AssemblyBindingStatus bindingStatus;
-            return GetStringHelper(resourceReference, out result, out bindingStatus);
+            return GetStringHelper(resourceReference, out LoadingResult result, out AssemblyBindingStatus bindingStatus);
         }
 
         private string GetStringHelper(StringResourceReference resourceReference, out LoadingResult result, out AssemblyBindingStatus bindingStatus)
@@ -55,8 +53,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 loadResult = new AssemblyLoadResult();
                 // we do not have an assembly, we try to load it
-                bool foundInGac;
-                loadResult.a = LoadAssemblyFromResourceReference(resourceReference, out foundInGac);
+                loadResult.a = LoadAssemblyFromResourceReference(resourceReference, out bool foundInGac);
                 if (loadResult.a == null)
                 {
                     loadResult.status = AssemblyBindingStatus.NotFound;

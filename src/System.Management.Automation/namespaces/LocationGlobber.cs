@@ -429,7 +429,6 @@ namespace System.Management.Automation
             out CmdletProvider providerInstance)
         {
             providerInstance = null;
-            PSDriveInfo drive = null;
 
             Collection<PathInfo> result = new Collection<PathInfo>();
 
@@ -440,7 +439,7 @@ namespace System.Management.Automation
                     path,
                     context,
                     !context.SuppressWildcardExpansion,
-                    out drive,
+                    out PSDriveInfo drive,
                     out providerInstance);
 
             Dbg.Diagnostics.Assert(
@@ -756,8 +755,7 @@ namespace System.Management.Automation
                     context.Drive = null;
                 }
 
-                PSDriveInfo drive = null;
-                string providerPath = GetProviderPath(path, context, out provider, out drive);
+                string providerPath = GetProviderPath(path, context, out provider, out PSDriveInfo drive);
 
                 if (providerPath == null)
                 {
@@ -1006,8 +1004,7 @@ namespace System.Management.Automation
         /// </exception>
         internal string GetProviderPath(string path)
         {
-            ProviderInfo provider = null;
-            return GetProviderPath(path, out provider);
+            return GetProviderPath(path, out ProviderInfo provider);
         }
 
         /// <summary>
@@ -1063,10 +1060,9 @@ namespace System.Management.Automation
             CmdletProviderContext context =
                 new CmdletProviderContext(_sessionState.Internal.ExecutionContext);
 
-            PSDriveInfo drive = null;
             provider = null;
 
-            string result = GetProviderPath(path, context, out provider, out drive);
+            string result = GetProviderPath(path, context, out provider, out PSDriveInfo drive);
 
             if (context.HasErrors())
             {
@@ -1132,10 +1128,8 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
-            PSDriveInfo drive = null;
-            ProviderInfo provider = null;
 
-            string result = GetProviderPath(path, context, out provider, out drive);
+            string result = GetProviderPath(path, context, out ProviderInfo provider, out PSDriveInfo drive);
 
             return result;
         }
@@ -1256,8 +1250,7 @@ namespace System.Management.Automation
             {
                 s_pathResolutionTracer.WriteLine("Path is PROVIDER-QUALIFIED");
 
-                string providerId = null;
-                result = ParseProviderPath(path, out providerId);
+                result = ParseProviderPath(path, out string providerId);
                 drive = null;
 
                 // Get the provider info
@@ -1270,8 +1263,7 @@ namespace System.Management.Automation
             {
                 s_pathResolutionTracer.WriteLine("Path is DRIVE-QUALIFIED");
 
-                CmdletProvider providerInstance = null;
-                string relativePath = GetDriveRootRelativePathFromPSPath(path, context, false, out drive, out providerInstance);
+                string relativePath = GetDriveRootRelativePathFromPSPath(path, context, false, out drive, out CmdletProvider providerInstance);
 
                 Dbg.Diagnostics.Assert(
                     drive != null,
@@ -1347,8 +1339,7 @@ namespace System.Management.Automation
         /// </exception>
         internal static bool IsProviderQualifiedPath(string path)
         {
-            string providerId = null;
-            return IsProviderQualifiedPath(path, out providerId);
+            return IsProviderQualifiedPath(path, out string providerId);
         }
 
         /// <summary>
@@ -4004,10 +3995,9 @@ namespace System.Management.Automation
                             throw new PipelineStoppedException();
                         }
 
-                        string unescapedDir = null;
 
                         Collection<PSObject> childNamesObjectArray =
-                            GetChildNamesInDir(dir, leafElement, !isLastLeaf, context, true, null, provider, out unescapedDir);
+                            GetChildNamesInDir(dir, leafElement, !isLastLeaf, context, true, null, provider, out string unescapedDir);
 
                         if (childNamesObjectArray == null)
                         {
@@ -4232,15 +4222,13 @@ namespace System.Management.Automation
                     //    in 'dir' is escaped
                     modifiedDirPath = GetMshQualifiedPath(dir, drive);
 
-                    ProviderInfo providerIgnored = null;
-                    CmdletProvider providerInstanceIgnored = null;
                     Collection<string> resolvedPaths =
                         GetGlobbedProviderPathsFromMonadPath(
                             modifiedDirPath,
                             false,
                             getChildNamesContext,
-                            out providerIgnored,
-                            out providerInstanceIgnored);
+                            out ProviderInfo providerIgnored,
+                            out CmdletProvider providerInstanceIgnored);
 
                     // After resolving the path, we unescape the modifiedDirPath if necessary.
                     modifiedDirPath = context.SuppressWildcardExpansion

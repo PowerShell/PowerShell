@@ -75,9 +75,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("cursorIndex");
             }
 
-            Token[] tokens;
-            ParseError[] errors;
-            var ast = Parser.ParseInput(input, out tokens, out errors);
+            var ast = Parser.ParseInput(input, out Token[] tokens, out ParseError[] errors);
 
             IScriptPosition cursorPosition =
                 ((InternalScriptPosition)ast.Extent.StartScriptPosition).CloneWithNewOffset(cursorIndex);
@@ -186,11 +184,9 @@ namespace System.Management.Automation
                         //      SupportsDisconnect (0x1)            -> If remoteMachine is Win8 or later
                         //      Default (0x0)                       -> If remoteMachine is Win7
                         // Remoting to a Win7 machine. Use the legacy tab completion function from V1/V2
-                        int replacementIndex;
-                        int replacementLength;
 
                         powershell.Commands.Clear();
-                        var results = InvokeLegacyTabExpansion(powershell, input, cursorIndex, true, out replacementIndex, out replacementLength);
+                        var results = InvokeLegacyTabExpansion(powershell, input, cursorIndex, true, out int replacementIndex, out int replacementLength);
                         return new CommandCompletion(
                             new Collection<CompletionResult>(results ?? EmptyCompletionResult),
                             -1, replacementIndex, replacementLength);
@@ -260,13 +256,11 @@ namespace System.Management.Automation
                         //      SupportsDisconnect (0x1)            -> If remoteMachine is Win8 or later
                         //      Default (0x0)                       -> If remoteMachine is Win7
                         // Remoting to a Win7 machine. Use the legacy tab completion function from V1/V2
-                        int replacementIndex;
-                        int replacementLength;
 
                         // When call the win7 TabExpansion script, the input should be the single current line
                         powershell.Commands.Clear();
                         var inputAndCursor = GetInputAndCursorFromAst(cursorPosition);
-                        var results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, true, out replacementIndex, out replacementLength);
+                        var results = InvokeLegacyTabExpansion(powershell, inputAndCursor.Item1, inputAndCursor.Item2, true, out int replacementIndex, out int replacementLength);
                         return new CommandCompletion(
                             new Collection<CompletionResult>(results ?? EmptyCompletionResult),
                             -1, replacementIndex + inputAndCursor.Item3, replacementLength);
@@ -645,15 +639,13 @@ namespace System.Management.Automation
             List<CompletionResult> results = null;
 
             var legacyInput = (cursorIndex != input.Length) ? input.Substring(0, cursorIndex) : input;
-            char quote;
-            var lastword = LastWordFinder.FindLastWord(legacyInput, out replacementIndex, out quote);
+            var lastword = LastWordFinder.FindLastWord(legacyInput, out replacementIndex, out char quote);
             replacementLength = legacyInput.Length - replacementIndex;
             var helper = new PowerShellExecutionHelper(powershell);
 
             powershell.AddCommand("TabExpansion").AddArgument(legacyInput).AddArgument(lastword);
 
-            Exception exceptionThrown;
-            var oldResults = helper.ExecuteCurrentPowerShell(out exceptionThrown);
+            var oldResults = helper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
             if (oldResults != null)
             {
                 results = new List<CompletionResult>();
@@ -762,9 +754,8 @@ namespace System.Management.Automation
             internal static List<CompletionResult> PSv2GenerateMatchSetOfCmdlets(PowerShellExecutionHelper helper, string lastWord, string quote, bool completingAtStartOfLine)
             {
                 var results = new List<CompletionResult>();
-                bool isSnapinSpecified;
 
-                if (!PSv2IsCommandLikeCmdlet(lastWord, out isSnapinSpecified))
+                if (!PSv2IsCommandLikeCmdlet(lastWord, out bool isSnapinSpecified))
                     return results;
 
                 helper.CurrentPowerShell
@@ -773,8 +764,7 @@ namespace System.Management.Automation
                     .AddCommand("Sort-Object")
                     .AddParameter("Property", "Name");
 
-                Exception exceptionThrown;
-                Collection<PSObject> commands = helper.ExecuteCurrentPowerShell(out exceptionThrown);
+                Collection<PSObject> commands = helper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
 
                 if (commands != null && commands.Count > 0)
                 {
@@ -1037,8 +1027,7 @@ namespace System.Management.Automation
                     return default(T);
                 }
 
-                T returnValue;
-                if (LanguagePrimitives.TryConvertTo(propertyValue, out returnValue))
+                if (LanguagePrimitives.TryConvertTo(propertyValue, out T returnValue))
                 {
                     return returnValue;
                 }
@@ -1085,7 +1074,6 @@ namespace System.Management.Automation
                 Diagnostics.Assert(!string.IsNullOrEmpty(path), "path should have a value");
                 var result = new List<PathItemAndConvertedPath>();
 
-                Exception exceptionThrown;
                 PowerShell powershell = helper.CurrentPowerShell;
 
                 // It's OK to use script, since tab completion is useless when the remote Win7 machine is in nolanguage mode
@@ -1104,7 +1092,7 @@ namespace System.Management.Automation
                         path));
                 }
 
-                Collection<PSObject> paths = helper.ExecuteCurrentPowerShell(out exceptionThrown);
+                Collection<PSObject> paths = helper.ExecuteCurrentPowerShell(out Exception exceptionThrown);
                 if (paths == null || paths.Count == 0)
                 {
                     return null;

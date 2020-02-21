@@ -1031,8 +1031,7 @@ namespace System.Management.Automation
                     return _inBreakpoint;
                 }
 
-                Debugger activeDebugger;
-                if (_activeDebuggers.TryPeek(out activeDebugger))
+                if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
                 {
                     return activeDebugger.InBreakpoint;
                 }
@@ -1233,16 +1232,14 @@ namespace System.Management.Automation
 
         internal void RegisterScriptFile(string path, string scriptContents)
         {
-            Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>> boundBreakpoints;
-            if (!_boundBreakpoints.TryGetValue(path, out boundBreakpoints))
+            if (!_boundBreakpoints.TryGetValue(path, out Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>> boundBreakpoints))
             {
                 _boundBreakpoints[path] = Tuple.Create(new WeakReference(scriptContents), new ConcurrentDictionary<int, LineBreakpoint>());
             }
             else
             {
                 // If script contents have changed, or if the file got collected, we must rebind the breakpoints.
-                string oldScriptContents;
-                boundBreakpoints.Item1.TryGetTarget(out oldScriptContents);
+                boundBreakpoints.Item1.TryGetTarget(out string oldScriptContents);
                 if (oldScriptContents == null || !oldScriptContents.Equals(scriptContents, StringComparison.Ordinal))
                 {
                     UnbindBoundBreakpoints(boundBreakpoints.Item2.Values.ToList());
@@ -1366,8 +1363,7 @@ namespace System.Management.Automation
         {
             bool removed = _pendingBreakpoints.Remove(breakpoint.Id, out _);
 
-            Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>> value;
-            if (_boundBreakpoints.TryGetValue(breakpoint.Script, out value))
+            if (_boundBreakpoints.TryGetValue(breakpoint.Script, out Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>> value))
             {
                 removed = value.Item2.Remove(breakpoint.Id, out _);
             }
@@ -1451,8 +1447,7 @@ namespace System.Management.Automation
             {
                 SetInternalDebugMode(InternalDebugMode.Disabled);
 
-                ConcurrentDictionary<int, VariableBreakpoint> breakpoints;
-                if (!_variableBreakpoints.TryGetValue(variableName, out breakpoints))
+                if (!_variableBreakpoints.TryGetValue(variableName, out ConcurrentDictionary<int, VariableBreakpoint> breakpoints))
                 {
                     // $PSItem is an alias for $_.  We don't use PSItem internally, but a user might
                     // have set a bp on $PSItem, so look for that if appropriate.
@@ -1486,8 +1481,7 @@ namespace System.Management.Automation
         // is hit, to find which breakpoints are set on that sequence point.)
         internal List<LineBreakpoint> GetBoundBreakpoints(IScriptExtent[] sequencePoints)
         {
-            Tuple<List<LineBreakpoint>, BitArray> tuple;
-            if (_mapScriptToBreakpoints.TryGetValue(sequencePoints, out tuple))
+            if (_mapScriptToBreakpoints.TryGetValue(sequencePoints, out Tuple<List<LineBreakpoint>, BitArray> tuple))
             {
                 return tuple.Item1;
             }
@@ -1888,8 +1882,7 @@ namespace System.Management.Automation
                         ScriptBlock.Create(originalPromptString), true, ScopedItemOptions.Unspecified);
                 }
 
-                DebuggerStopEventArgs oldArgs;
-                _debuggerStopEventArgs.TryPop(out oldArgs);
+                _debuggerStopEventArgs.TryPop(out DebuggerStopEventArgs oldArgs);
 
                 _context.QuestionMarkVariableValue = oldQuestionMarkVariableValue;
 
@@ -2000,8 +1993,7 @@ namespace System.Management.Automation
             foreach (var breakpoint in boundBreakpoints)
             {
                 // Also remove unbound breakpoints from the script to breakpoint map.
-                Tuple<List<LineBreakpoint>, BitArray> lineBreakTuple;
-                if (_mapScriptToBreakpoints.TryGetValue(breakpoint.SequencePoints, out lineBreakTuple))
+                if (_mapScriptToBreakpoints.TryGetValue(breakpoint.SequencePoints, out Tuple<List<LineBreakpoint>, BitArray> lineBreakTuple))
                 {
                     lineBreakTuple.Item1.Remove(breakpoint);
                 }
@@ -2033,8 +2025,7 @@ namespace System.Management.Automation
             // breakpoints in the script.
             RegisterScriptFile(currentScriptFile, functionContext.CurrentPosition.StartScriptPosition.GetFullScript());
 
-            Tuple<List<LineBreakpoint>, BitArray> tuple;
-            if (!_mapScriptToBreakpoints.TryGetValue(functionContext._sequencePoints, out tuple))
+            if (!_mapScriptToBreakpoints.TryGetValue(functionContext._sequencePoints, out Tuple<List<LineBreakpoint>, BitArray> tuple))
             {
                 Diagnostics.Assert(false, "If the script block is still alive, the entry should not be collected.");
             }
@@ -2215,8 +2206,7 @@ namespace System.Management.Automation
                     SetInternalDebugMode(InternalDebugMode.Enabled);
                 }
 
-                Debugger activeDebugger;
-                if (_activeDebuggers.TryPeek(out activeDebugger))
+                if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
                 {
                     // Set active debugger to StepInto mode.
                     activeDebugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
@@ -2248,8 +2238,7 @@ namespace System.Management.Automation
                 ResumeExecution(DebuggerResumeAction.Continue);
                 RestoreInternalDebugMode();
 
-                Debugger activeDebugger;
-                if (_activeDebuggers.TryPeek(out activeDebugger))
+                if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
                 {
                     activeDebugger.SetDebuggerStepMode(false);
                 }
@@ -2287,8 +2276,7 @@ namespace System.Management.Automation
         /// <returns>DebuggerStopEventArgs.</returns>
         public override DebuggerStopEventArgs GetDebuggerStopArgs()
         {
-            DebuggerStopEventArgs rtnArgs;
-            if (_debuggerStopEventArgs.TryPeek(out rtnArgs))
+            if (_debuggerStopEventArgs.TryPeek(out DebuggerStopEventArgs rtnArgs))
             {
                 return rtnArgs;
             }
@@ -2614,8 +2602,7 @@ namespace System.Management.Automation
         {
             get
             {
-                Debugger activeDebugger;
-                if (_activeDebuggers.TryPeek(out activeDebugger))
+                if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
                 {
                     return (activeDebugger is RemotingJobDebugger);
                 }
@@ -2631,8 +2618,7 @@ namespace System.Management.Automation
         /// <returns>CallStackFrame[].</returns>
         internal override CallStackFrame[] GetActiveDebuggerCallStack()
         {
-            Debugger activeDebugger;
-            if (_activeDebuggers.TryPeek(out activeDebugger))
+            if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
             {
                 return activeDebugger.GetCallStack().ToArray();
             }
@@ -3134,8 +3120,7 @@ namespace System.Management.Automation
 
             if (emptyQueue && _runspaceDebugQueue.IsValueCreated)
             {
-                StartRunspaceDebugProcessingEventArgs args;
-                while (_runspaceDebugQueue.Value.TryDequeue(out args))
+                while (_runspaceDebugQueue.Value.TryDequeue(out StartRunspaceDebugProcessingEventArgs args))
                 {
                     args.Runspace.StateChanged -= RunspaceStateChangedHandler;
                     args.Runspace.AvailabilityChanged -= RunspaceAvailabilityChangedHandler;
@@ -3293,8 +3278,7 @@ namespace System.Management.Automation
                 // Pop from active debugger stack.
                 lock (_syncActiveDebuggerStopObject)
                 {
-                    Debugger activeDebugger;
-                    if (_activeDebuggers.TryPeek(out activeDebugger))
+                    if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
                     {
                         if (activeDebugger.Equals(jobArgs.Debugger))
                         {
@@ -3349,8 +3333,7 @@ namespace System.Management.Automation
 
         private Debugger PopActiveDebugger()
         {
-            Debugger poppedDebugger = null;
-            if (_activeDebuggers.TryPop(out poppedDebugger))
+            if (_activeDebuggers.TryPop(out Debugger poppedDebugger))
             {
                 int runningJobCount;
                 lock (_syncObject)
@@ -3468,8 +3451,7 @@ namespace System.Management.Automation
             bool pushSucceeded = false;
             lock (_syncActiveDebuggerStopObject)
             {
-                Debugger activeDebugger = null;
-                if (_activeDebuggers.TryPeek(out activeDebugger))
+                if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
                 {
                     if (activeDebugger.Equals(senderDebugger))
                     {
@@ -3555,8 +3537,7 @@ namespace System.Management.Automation
                                   ((command.Commands[0].CommandText.Equals("Detach", StringComparison.OrdinalIgnoreCase)) ||
                                    (command.Commands[0].CommandText.Equals("d", StringComparison.OrdinalIgnoreCase))));
 
-            Debugger activeDebugger;
-            if (_activeDebuggers.TryPeek(out activeDebugger))
+            if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
             {
                 if (detachCommand)
                 {
@@ -3575,8 +3556,7 @@ namespace System.Management.Automation
                 }
 
                 // Get current debugger stop breakpoint info.
-                DebuggerStopEventArgs stopArgs;
-                if (_debuggerStopEventArgs.TryPeek(out stopArgs))
+                if (_debuggerStopEventArgs.TryPeek(out DebuggerStopEventArgs stopArgs))
                 {
                     string commandText = command.Commands[0].CommandText;
 
@@ -3604,8 +3584,7 @@ namespace System.Management.Automation
 
         private bool StopCommandForActiveDebugger()
         {
-            Debugger activeDebugger;
-            if (_activeDebuggers.TryPeek(out activeDebugger))
+            if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
             {
                 activeDebugger.StopProcessCommand();
                 return true;
@@ -3704,8 +3683,7 @@ namespace System.Management.Automation
                 // If current active debugger, then pop.
                 lock (_syncActiveDebuggerStopObject)
                 {
-                    Debugger activeDebugger;
-                    if (_activeDebuggers.TryPeek(out activeDebugger))
+                    if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
                     {
                         if (activeDebugger.Equals(nestedDebugger))
                         {
@@ -3771,8 +3749,7 @@ namespace System.Management.Automation
             bool pushSucceeded = false;
             lock (_syncActiveDebuggerStopObject)
             {
-                Debugger activeDebugger;
-                if (_activeDebuggers.TryPeek(out activeDebugger))
+                if (_activeDebuggers.TryPeek(out Debugger activeDebugger))
                 {
                     // Replace current runspace debugger by first popping the old debugger.
                     if (IsRunningRSDebugger(activeDebugger))
@@ -3907,8 +3884,7 @@ namespace System.Management.Automation
 
         private void DebuggerQueueThreadProc()
         {
-            StartRunspaceDebugProcessingEventArgs runspaceDebugProcessArgs;
-            while (_runspaceDebugQueue.Value.TryDequeue(out runspaceDebugProcessArgs))
+            while (_runspaceDebugQueue.Value.TryDequeue(out StartRunspaceDebugProcessingEventArgs runspaceDebugProcessArgs))
             {
                 if (IsStartRunspaceDebugProcessingEventSubscribed())
                 {
@@ -4872,11 +4848,9 @@ namespace System.Management.Automation
                 !string.IsNullOrEmpty(parentStackFrame.ScriptName) &&
                 System.IO.File.Exists(parentStackFrame.ScriptName))
             {
-                ParseError[] errors;
-                Token[] tokens;
                 _parentScriptBlockAst = Parser.ParseInput(
                     System.IO.File.ReadAllText(parentStackFrame.ScriptName),
-                    out tokens, out errors);
+                    out Token[] tokens, out ParseError[] errors);
             }
 
             if (_parentScriptBlockAst != null)
@@ -5169,10 +5143,10 @@ namespace System.Management.Automation
                 return _lastCommand;
             }
 
-            DebuggerCommand debuggerCommand;
-            if (_commandTable.TryGetValue(command, out debuggerCommand))
+            if (_commandTable.TryGetValue(command, out DebuggerCommand debuggerCommand))
             {
-                if (debuggerCommand.ExecutedByDebugger || (debuggerCommand.ResumeAction != null)) { _lastCommand = debuggerCommand; }
+                if (debuggerCommand.ExecutedByDebugger || (debuggerCommand.ResumeAction != null))
+                { _lastCommand = debuggerCommand; }
 
                 return debuggerCommand;
             }
@@ -5213,9 +5187,8 @@ namespace System.Management.Automation
             }
 
             // Check for the rest of the debugger commands
-            DebuggerCommand debuggerCommand = null;
 
-            if (_commandTable.TryGetValue(command, out debuggerCommand))
+            if (_commandTable.TryGetValue(command, out DebuggerCommand debuggerCommand))
             {
                 // Check for the help command
                 if (debuggerCommand == _helpCommand)

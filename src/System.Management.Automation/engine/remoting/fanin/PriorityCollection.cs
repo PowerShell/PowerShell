@@ -255,9 +255,8 @@ namespace System.Management.Automation.Remoting
 
             if (_onDataAvailableCallback != null)
             {
-                DataPriorityType prType;
                 // now get the fragment and call the callback..
-                byte[] result = ReadOrRegisterCallback(_onDataAvailableCallback, out prType);
+                byte[] result = ReadOrRegisterCallback(_onDataAvailableCallback, out DataPriorityType prType);
 
                 if (result != null)
                 {

@@ -687,9 +687,8 @@ namespace Microsoft.PowerShell.Commands
                 string resolvedPath = null;
                 if (!string.IsNullOrEmpty(_definitionPath))
                 {
-                    ProviderInfo provider = null;
                     System.Collections.ObjectModel.Collection<string> paths =
-                        this.Context.SessionState.Path.GetResolvedProviderPathFromPSPath(_definitionPath, out provider);
+                        this.Context.SessionState.Path.GetResolvedProviderPathFromPSPath(_definitionPath, out ProviderInfo provider);
 
                     // Only file system paths are allowed.
                     if (!provider.NameEquals(this.Context.ProviderNames.FileSystem))

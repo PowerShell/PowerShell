@@ -85,13 +85,10 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-                GetBufferInfo(out bufferInfo);
+                GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
-                ConsoleColor foreground;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out foreground, out unused);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out ConsoleColor foreground, out ConsoleColor unused);
                 return foreground;
             }
 
@@ -99,9 +96,8 @@ namespace Microsoft.PowerShell
             {
                 if (ConsoleControl.IsConsoleColor(value))
                 {
-                    ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-                    ConsoleHandle handle = GetBufferInfo(out bufferInfo);
+                    ConsoleHandle handle = GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
                     // mask in the foreground from the current color.
                     short a = (short)bufferInfo.Attributes;
@@ -136,13 +132,10 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-                GetBufferInfo(out bufferInfo);
+                GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
-                ConsoleColor background;
-                ConsoleColor unused;
 
-                ConsoleControl.WORDToColor(bufferInfo.Attributes, out unused, out background);
+                ConsoleControl.WORDToColor(bufferInfo.Attributes, out ConsoleColor unused, out ConsoleColor background);
                 return background;
             }
 
@@ -150,9 +143,8 @@ namespace Microsoft.PowerShell
             {
                 if (ConsoleControl.IsConsoleColor(value))
                 {
-                    ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-                    ConsoleHandle handle = GetBufferInfo(out bufferInfo);
+                    ConsoleHandle handle = GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
                     // mask in the background from the current color.
                     short a = (short)bufferInfo.Attributes;
@@ -186,8 +178,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-                GetBufferInfo(out bufferInfo);
+                GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
                 Coordinates c = new Coordinates(bufferInfo.CursorPosition.X, bufferInfo.CursorPosition.Y);
                 return c;
@@ -197,9 +188,8 @@ namespace Microsoft.PowerShell
             {
                 // cursor position can't be outside the buffer area
 
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-                ConsoleHandle handle = GetBufferInfo(out bufferInfo);
+                ConsoleHandle handle = GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
                 CheckCoordinateWithinBuffer(ref value, ref bufferInfo, "value");
                 ConsoleControl.SetConsoleCursorPosition(handle, value);
@@ -285,8 +275,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-                GetBufferInfo(out bufferInfo);
+                GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
                 Coordinates c = new Coordinates(bufferInfo.WindowRect.Left, bufferInfo.WindowRect.Top);
 
@@ -295,9 +284,8 @@ namespace Microsoft.PowerShell
 
             set
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-                ConsoleHandle handle = GetBufferInfo(out bufferInfo);
+                ConsoleHandle handle = GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
                 ConsoleControl.SMALL_RECT r = bufferInfo.WindowRect;
 
                 // the dimensions of the window can't extend past the dimensions of the screen buffer.  This means that the
@@ -352,8 +340,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-                GetBufferInfo(out bufferInfo);
+                GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
                 return new Size(bufferInfo.BufferSize.X, bufferInfo.BufferSize.Y);
             }
 
@@ -405,8 +392,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-                GetBufferInfo(out bufferInfo);
+                GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
                 Size s =
                     new Size(
@@ -418,9 +404,8 @@ namespace Microsoft.PowerShell
 
             set
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-                ConsoleHandle handle = GetBufferInfo(out bufferInfo);
+                ConsoleHandle handle = GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
                 // the dimensions of the window can't extend past the dimensions of the screen buffer.  This means that the
                 // width of the window is limited to the buffer width minus one minus the window X position, and the height
@@ -526,8 +511,7 @@ namespace Microsoft.PowerShell
         {
             get
             {
-                ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
-                GetBufferInfo(out bufferInfo);
+                GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
                 Size s = new Size(bufferInfo.MaxWindowSize.X, bufferInfo.MaxWindowSize.Y);
 
                 return s;
@@ -884,9 +868,8 @@ namespace Microsoft.PowerShell
             }
             // the origin must be within the window.
 
-            ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-            ConsoleHandle handle = GetBufferInfo(out bufferInfo);
+            ConsoleHandle handle = GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
             CheckCoordinateWithinBuffer(ref origin, ref bufferInfo, "origin");
 
             // The output is clipped by the console subsystem, so we don't have to check that the array exceeds the buffer
@@ -943,9 +926,8 @@ namespace Microsoft.PowerShell
                     "region.Bottom", "region.Top");
             }
 
-            ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-            ConsoleHandle handle = GetBufferInfo(out bufferInfo);
+            ConsoleHandle handle = GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
 
             int bufferWidth = bufferInfo.BufferSize.X;
             int bufferHeight = bufferInfo.BufferSize.Y;
@@ -1103,9 +1085,8 @@ namespace Microsoft.PowerShell
                     "region.Bottom", "region.Top");
             }
 
-            ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
-            ConsoleHandle handle = GetBufferInfo(out bufferInfo);
+            ConsoleHandle handle = GetBufferInfo(out ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
             int bufferWidth = bufferInfo.BufferSize.X;
             int bufferHeight = bufferInfo.BufferSize.Y;
 

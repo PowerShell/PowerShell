@@ -57,10 +57,9 @@ namespace Microsoft.PowerShell
                     break;
                 }
 
-                ArrayList listWhereFound = null;
                 int indexWhereFound = -1;
                 ProgressNode foundNode =
-                    FindNodeById(sourceId, record.ActivityId, out listWhereFound, out indexWhereFound);
+                    FindNodeById(sourceId, record.ActivityId, out ArrayList listWhereFound, out indexWhereFound);
 
                 if (foundNode != null)
                 {
@@ -150,10 +149,9 @@ namespace Microsoft.PowerShell
         void
         EvictNode()
         {
-            ArrayList listWhereFound = null;
             int indexWhereFound = -1;
 
-            ProgressNode oldestNode = FindOldestLeafmostNode(out listWhereFound, out indexWhereFound);
+            ProgressNode oldestNode = FindOldestLeafmostNode(out ArrayList listWhereFound, out indexWhereFound);
             if (oldestNode == null)
             {
                 // Well that's a surprise.  There's got to be at least one node there that's older than 0.
@@ -361,10 +359,9 @@ namespace Microsoft.PowerShell
         ProgressNode
         FindNodeById(Int64 sourceId, int activityId)
         {
-            ArrayList listWhereFound = null;
             int indexWhereFound = -1;
             return
-                FindNodeById(sourceId, activityId, out listWhereFound, out indexWhereFound);
+                FindNodeById(sourceId, activityId, out ArrayList listWhereFound, out indexWhereFound);
         }
 
         private
@@ -901,7 +898,6 @@ namespace Microsoft.PowerShell
         {
             Dbg.Assert(_topLevelNodes != null, "Shouldn't need to compress if no data exists");
 
-            int nodesCompressed = 0;
 
             // This algorithm potentially makes many, many passes over the tree.  It might be possible to optimize
             // that some, but I'm not trying to be too clever just yet.
@@ -911,7 +907,7 @@ namespace Microsoft.PowerShell
                     rawUi,
                     maxHeight,
                     maxWidth,
-                    out nodesCompressed,
+                    out int nodesCompressed,
                     ProgressNode.RenderStyle.FullPlus,
                     ProgressNode.RenderStyle.Full))
             {

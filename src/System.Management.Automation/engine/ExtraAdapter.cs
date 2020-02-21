@@ -320,8 +320,7 @@ namespace System.Management.Automation
             MethodInformation[] methodInformation = new MethodInformation[1];
             methodInformation[0] = new MethodInformation(false, false, parameters);
 
-            object[] newArguments;
-            GetBestMethodAndArguments(method.Name, methodInformation, arguments, out newArguments);
+            GetBestMethodAndArguments(method.Name, methodInformation, arguments, out object[] newArguments);
 
             DirectoryEntry entry = (DirectoryEntry)method.baseObject;
 

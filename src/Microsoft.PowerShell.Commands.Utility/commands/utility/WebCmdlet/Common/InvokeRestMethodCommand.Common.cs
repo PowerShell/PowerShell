@@ -186,8 +186,7 @@ namespace Microsoft.PowerShell.Commands
             bool converted = false;
             try
             {
-                ErrorRecord error;
-                obj = JsonObject.ConvertFromJson(json, out error);
+                obj = JsonObject.ConvertFromJson(json, out ErrorRecord error);
 
                 if (obj == null)
                 {

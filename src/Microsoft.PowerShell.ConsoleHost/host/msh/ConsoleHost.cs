@@ -1873,11 +1873,9 @@ namespace Microsoft.PowerShell
                 {
                     Executor.ExecutionOptions executionOptions = Executor.ExecutionOptions.AddOutputter;
 
-                    Token[] tokens;
-                    ParseError[] errors;
 
                     // Detect if they're using input. If so, read from it.
-                    Ast parsedInput = Parser.ParseFile(filePath, out tokens, out errors);
+                    Ast parsedInput = Parser.ParseFile(filePath, out Token[] tokens, out ParseError[] errors);
                     if (AstSearcher.IsUsingDollarInput(parsedInput))
                     {
                         executionOptions |= Executor.ExecutionOptions.ReadInputObjects;
@@ -1935,11 +1933,9 @@ namespace Microsoft.PowerShell
                 {
                     Executor.ExecutionOptions executionOptions = Executor.ExecutionOptions.AddOutputter;
 
-                    Token[] tokens;
-                    ParseError[] errors;
 
                     // Detect if they're using input. If so, read from it.
-                    Ast parsedInput = Parser.ParseInput(initialCommand, out tokens, out errors);
+                    Ast parsedInput = Parser.ParseInput(initialCommand, out Token[] tokens, out ParseError[] errors);
                     if (AstSearcher.IsUsingDollarInput(parsedInput))
                     {
                         executionOptions |= Executor.ExecutionOptions.ReadInputObjects;
@@ -2782,8 +2778,7 @@ namespace Microsoft.PowerShell
 
             private string EvaluatePrompt()
             {
-                Exception unused = null;
-                string promptString = _promptExec.ExecuteCommandAndGetResultAsString("prompt", out unused);
+                string promptString = _promptExec.ExecuteCommandAndGetResultAsString("prompt", out Exception unused);
 
                 if (string.IsNullOrEmpty(promptString))
                 {

@@ -531,9 +531,7 @@ namespace System.Management.Automation
 
         internal static bool NonWindowsGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
-            UInt64 device = 0UL;
-            UInt64 inode = 0UL;
-            var result = Unix.NativeMethods.GetInodeData(path, out device, out inode);
+            var result = Unix.NativeMethods.GetInodeData(path, out ulong device, out ulong inode);
 
             inodeData = (device, inode);
             return result == 0;
@@ -839,9 +837,8 @@ namespace System.Management.Automation
                     return false;
                 }
 
-                int count;
                 string filePath = fs.FullName;
-                int ret = NativeMethods.GetLinkCount(filePath, out count);
+                int ret = NativeMethods.GetLinkCount(filePath, out int count);
                 if (ret == 0)
                 {
                     return count > 1;
@@ -939,8 +936,7 @@ namespace System.Management.Automation
             /// <returns>An instance of the CommonStat for the path.</returns>
             public static CommonStat GetLStat(string path)
             {
-                NativeMethods.CommonStatStruct css;
-                if (NativeMethods.GetCommonLStat(path, out css) == 0)
+                if (NativeMethods.GetCommonLStat(path, out NativeMethods.CommonStatStruct css) == 0)
                 {
                     return CopyStatStruct(css);
                 }
@@ -953,8 +949,7 @@ namespace System.Management.Automation
             /// <returns>An instance of the CommonStat for the path.</returns>
             public static CommonStat GetStat(string path)
             {
-                NativeMethods.CommonStatStruct css;
-                if (NativeMethods.GetCommonStat(path, out css) == 0)
+                if (NativeMethods.GetCommonStat(path, out NativeMethods.CommonStatStruct css) == 0)
                 {
                     return CopyStatStruct(css);
                 }

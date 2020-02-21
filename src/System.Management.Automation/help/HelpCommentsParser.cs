@@ -83,8 +83,7 @@ namespace System.Management.Automation
             int i = 0;
             foreach (string parameterName in _commandMetadata.StaticCommandParameterMetadata.BindableParameters.Keys)
             {
-                string description;
-                if (!_parameters.TryGetValue(parameterName.ToUpperInvariant(), out description))
+                if (!_parameters.TryGetValue(parameterName.ToUpperInvariant(), out string description))
                 {
                     if (i < _parameterDescriptions.Count)
                     {
@@ -100,8 +99,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(parameterName), "Parameter name must not be empty");
 
-            string description;
-            _parameters.TryGetValue(parameterName.ToUpperInvariant(), out description);
+            _parameters.TryGetValue(parameterName.ToUpperInvariant(), out string description);
             return description;
         }
 
@@ -264,7 +262,6 @@ namespace System.Management.Automation
                 string parameterName = pair.Key;
                 string description = GetParameterDescription(parameterName);
 
-                ParameterSetSpecificMetadata parameterSetData;
                 bool isMandatory = false;
                 bool valueFromPipeline = false;
                 bool valueFromPipelineByPropertyName = false;
@@ -272,7 +269,7 @@ namespace System.Management.Automation
                 int i = 0;
 
                 CompiledCommandParameter parameter = mergedParameter.Parameter;
-                parameter.ParameterSetData.TryGetValue(ParameterAttribute.AllParameterSets, out parameterSetData);
+                parameter.ParameterSetData.TryGetValue(ParameterAttribute.AllParameterSets, out ParameterSetSpecificMetadata parameterSetData);
                 while (parameterSetData == null && i < 32)
                 {
                     parameterSetData = parameter.GetParameterSetData(1u << i++);
@@ -305,8 +302,7 @@ namespace System.Management.Automation
                 {
                     if (defaultValue == null)
                     {
-                        RuntimeDefinedParameter rdp;
-                        if (_scriptBlock.RuntimeDefinedParameters.TryGetValue(parameterName, out rdp))
+                        if (_scriptBlock.RuntimeDefinedParameters.TryGetValue(parameterName, out RuntimeDefinedParameter rdp))
                         {
                             defaultValue = rdp.Value;
                         }
@@ -366,10 +362,7 @@ namespace System.Management.Automation
                     XmlText title_text = _doc.CreateTextNode(titleStr);
                     example_node.AppendChild(title).AppendChild(title_text);
 
-                    string prompt_str;
-                    string code_str;
-                    string remarks_str;
-                    GetExampleSections(example, out prompt_str, out code_str, out remarks_str);
+                    GetExampleSections(example, out string prompt_str, out string code_str, out string remarks_str);
 
                     // Introduction (usually the prompt)
                     XmlElement introduction = _doc.CreateElement("maml:introduction", mamlURI);
@@ -669,9 +662,8 @@ namespace System.Management.Automation
             IScriptCommandInfo scriptCommandInfo = (IScriptCommandInfo)commandInfo;
             SessionState sessionState = scriptCommandInfo.ScriptBlock.SessionState;
             object runspaceInfoAsObject = sessionState.PSVariable.GetValue(_sections.RemoteHelpRunspace);
-            PSSession runspaceInfo;
             if (runspaceInfoAsObject == null ||
-                !LanguagePrimitives.TryConvertTo(runspaceInfoAsObject, out runspaceInfo))
+                !LanguagePrimitives.TryConvertTo(runspaceInfoAsObject, out PSSession runspaceInfo))
             {
                 string errorMessage = HelpErrors.RemoteRunspaceNotAvailable;
                 throw new InvalidOperationException(errorMessage);
@@ -1107,14 +1099,12 @@ namespace System.Management.Automation
             }
 
             //  tokens saved from reparsing the script.
-            Language.Token[] tokens = null;
-            scriptBlockTokenCache.TryGetValue(rootAst, out tokens);
+            scriptBlockTokenCache.TryGetValue(rootAst, out Token[] tokens);
 
             if (tokens == null)
             {
-                ParseError[] errors;
                 // storing all comment tokens
-                Language.Parser.ParseInput(rootAst.Extent.Text, out tokens, out errors);
+                Language.Parser.ParseInput(rootAst.Extent.Text, out tokens, out ParseError[] errors);
                 scriptBlockTokenCache[rootAst] = tokens;
             }
 

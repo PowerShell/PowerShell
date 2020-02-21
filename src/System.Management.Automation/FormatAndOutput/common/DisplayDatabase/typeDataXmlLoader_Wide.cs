@@ -36,8 +36,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         }
 
                         autosizeNodeFound = true;
-                        bool tempVal;
-                        if (!this.ReadBooleanNode(n, out tempVal))
+                        if (!this.ReadBooleanNode(n, out bool tempVal))
                         {
                             return null; // fatal error
                         }

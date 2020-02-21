@@ -687,8 +687,7 @@ namespace System.Management.Automation
                 if (staticQualifier == null)
                     return false;
 
-                bool result = false;
-                LanguagePrimitives.TryConvertTo<bool>(staticQualifier.Value, out result);
+                LanguagePrimitives.TryConvertTo<bool>(staticQualifier.Value, out bool result);
 
                 return result;
             }
@@ -705,13 +704,12 @@ namespace System.Management.Automation
         private object AuxillaryInvokeMethod(ManagementObject obj, WMIMethodCacheEntry mdata, object[] arguments)
         {
             // Evaluate method and arguments
-            object[] verifiedArguments;
 
             MethodInformation[] methods = new MethodInformation[1];
             methods[0] = mdata.MethodInfoStructure;
 
             // This will convert Null Strings to Empty Strings
-            GetBestMethodAndArguments(mdata.Name, methods, arguments, out verifiedArguments);
+            GetBestMethodAndArguments(mdata.Name, methods, arguments, out object[] verifiedArguments);
 
             ParameterInformation[] parameterList = mdata.MethodInfoStructure._parameters;
 

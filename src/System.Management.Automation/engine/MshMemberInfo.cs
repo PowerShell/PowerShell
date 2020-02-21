@@ -4785,8 +4785,7 @@ namespace System.Management.Automation
                         // if it is a reserved name, ensures the value is loaded.
                         EnsureReservedMemberIsLoaded(name);
                         delegateOwner = _mshOwner;
-                        PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers;
-                        if (PSObject.HasInstanceMembers(_mshOwner, out instanceMembers))
+                        if (PSObject.HasInstanceMembers(_mshOwner, out PSMemberInfoInternalCollection<PSMemberInfo> instanceMembers))
                         {
                             member = instanceMembers[name];
                             if (member is T memberAsT)

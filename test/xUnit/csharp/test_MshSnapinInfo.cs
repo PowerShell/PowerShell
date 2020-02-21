@@ -15,9 +15,7 @@ namespace PSTests.Parallel
         public void TestReadRegistryInfo()
         {
             Skip.IfNot(Platform.IsWindows);
-            Version someVersion = null;
-            string someString = null;
-            PSSnapInReader.ReadRegistryInfo(out someVersion, out someString, out someString, out someString, out someString, out someVersion);
+            PSSnapInReader.ReadRegistryInfo(out Version someVersion, out string someString, out someString, out someString, out someString, out someVersion);
         }
 
         // PublicKeyToken is null on Linux

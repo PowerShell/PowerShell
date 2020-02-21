@@ -80,8 +80,7 @@ namespace Microsoft.PowerShell
 
                 int result = defaultChoice;
 
-                string[,] hotkeysAndPlainLabels = null;
-                HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out hotkeysAndPlainLabels);
+                HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out string[,] hotkeysAndPlainLabels);
 
                 Dictionary<int, bool> defaultChoiceKeys = new Dictionary<int, bool>();
                 // add the default choice key only if it is valid. -1 is used to specify
@@ -95,8 +94,7 @@ namespace Microsoft.PowerShell
                 {
                     WriteChoicePrompt(hotkeysAndPlainLabels, defaultChoiceKeys, false);
 
-                    ReadLineResult rlResult;
-                    string response = ReadChoiceResponse(out rlResult);
+                    string response = ReadChoiceResponse(out ReadLineResult rlResult);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {
@@ -220,8 +218,7 @@ namespace Microsoft.PowerShell
                     WriteLineToConsole(WrapToCurrentWindowWidth(message));
                 }
 
-                string[,] hotkeysAndPlainLabels = null;
-                HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out hotkeysAndPlainLabels);
+                HostUIHelperMethods.BuildHotkeysAndPlainLabels(choices, out string[,] hotkeysAndPlainLabels);
 
                 WriteChoicePrompt(hotkeysAndPlainLabels, defaultChoiceKeys, true);
                 if (defaultChoiceKeys.Count > 0)
@@ -237,8 +234,7 @@ namespace Microsoft.PowerShell
                     string choiceMsg = StringUtil.Format(ConsoleHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
                     WriteToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(choiceMsg));
 
-                    ReadLineResult rlResult;
-                    string response = ReadChoiceResponse(out rlResult);
+                    string response = ReadChoiceResponse(out ReadLineResult rlResult);
 
                     if (rlResult == ReadLineResult.endedOnBreak)
                     {

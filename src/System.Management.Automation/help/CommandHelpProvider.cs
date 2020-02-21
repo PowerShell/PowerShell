@@ -1395,8 +1395,7 @@ namespace System.Management.Automation
                 }
             }
 
-            string name;
-            if (!userDefinedHelpData.Properties.TryGetValue("name", out name))
+            if (!userDefinedHelpData.Properties.TryGetValue("name", out string name))
             {
                 return null;
             }

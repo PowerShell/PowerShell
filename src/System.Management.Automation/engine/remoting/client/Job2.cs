@@ -1776,9 +1776,8 @@ namespace System.Management.Automation
 
         private void ParentJobStateCalculation(JobStateEventArgs e)
         {
-            JobState computedState;
             if (ComputeJobStateFromChildJobStates("ContainerParentJob", e, ref _blockedChildJobsCount, ref _suspendedChildJobsCount, ref _suspendingChildJobsCount,
-                    ref _finishedChildJobsCount, ref _failedChildJobsCount, ref _stoppedChildJobsCount, ChildJobs.Count, out computedState))
+                    ref _finishedChildJobsCount, ref _failedChildJobsCount, ref _stoppedChildJobsCount, ChildJobs.Count, out JobState computedState))
             {
                 if (computedState != JobStateInfo.State)
                 {

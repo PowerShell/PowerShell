@@ -29,8 +29,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private static int GetNumberOfSessions(InvocationInfo invocationInfo)
         {
             // if user explicitly specifies CimSession, then the cmdlet runs against exactly those sessions
-            object cimSessionArgument;
-            if (invocationInfo.BoundParameters.TryGetValue("CimSession", out cimSessionArgument))
+            if (invocationInfo.BoundParameters.TryGetValue("CimSession", out object cimSessionArgument))
             {
                 IList cimSessionArgumentAsList = (IList)cimSessionArgument;
                 return cimSessionArgumentAsList.Count;
@@ -80,8 +79,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal static TerminatingErrorTracker GetTracker(InvocationInfo invocationInfo)
         {
-            TerminatingErrorTracker tracker;
-            bool foundTracker = s_invocationToTracker.TryGetValue(invocationInfo, out tracker);
+            bool foundTracker = s_invocationToTracker.TryGetValue(invocationInfo, out TerminatingErrorTracker tracker);
             Dbg.Assert(foundTracker, "The other overload of GetTracker should always be called first");
             return tracker;
         }
@@ -109,8 +107,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         internal bool DidSessionAlreadyPassedConnectivityTest(CimSession session)
         {
-            bool alreadyPassedConnectivityTest = false;
-            if (_sessionToIsConnected.TryGetValue(session, out alreadyPassedConnectivityTest))
+            if (_sessionToIsConnected.TryGetValue(session, out bool alreadyPassedConnectivityTest))
             {
                 return alreadyPassedConnectivityTest;
             }
@@ -135,9 +132,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             {
                 try
                 {
-                    CimInstance throwAwayCimInstance;
-                    CimException cimException;
-                    potentiallyBrokenSession.TestConnection(out throwAwayCimInstance, out cimException);
+                    potentiallyBrokenSession.TestConnection(out CimInstance throwAwayCimInstance, out CimException cimException);
                     sessionException = cimException;
                     if (sessionException == null)
                     {

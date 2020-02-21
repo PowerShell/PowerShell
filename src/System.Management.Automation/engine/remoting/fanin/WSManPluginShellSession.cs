@@ -460,7 +460,6 @@ namespace System.Management.Automation.Remoting
             try
             {
                 byte[] inputData;
-                byte[] outputData;
 
                 // Retrieve the string (Base64 encoded)
                 inputData = ServerOperationHelpers.ExtractEncodedXmlElement(
@@ -470,7 +469,7 @@ namespace System.Management.Automation.Remoting
                 // this will raise exceptions on failure
                 try
                 {
-                    _remoteSession.ExecuteConnect(inputData, out outputData);
+                    _remoteSession.ExecuteConnect(inputData, out byte[] outputData);
 
                     // construct Xml to send back
                     string responseData = string.Format(System.Globalization.CultureInfo.InvariantCulture,
@@ -653,8 +652,7 @@ namespace System.Management.Automation.Remoting
         {
             lock (shellSyncObject)
             {
-                WSManPluginCommandSession result = null;
-                _activeCommandSessions.TryGetValue(cmdContext, out result);
+                _activeCommandSessions.TryGetValue(cmdContext, out WSManPluginCommandSession result);
                 return result;
             }
         }

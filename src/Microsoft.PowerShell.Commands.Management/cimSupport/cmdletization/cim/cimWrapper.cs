@@ -262,8 +262,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                         (protocolProperty.Value != null) &&
                         (protocolProperty.Value.ToString().Equals("DCOM", StringComparison.OrdinalIgnoreCase)))
                     {
-                        bool sessionWasAlreadyTerminated;
-                        terminatingErrorTracker.MarkSessionAsTerminated(cimSession, out sessionWasAlreadyTerminated);
+                        terminatingErrorTracker.MarkSessionAsTerminated(cimSession, out bool sessionWasAlreadyTerminated);
                         if (!sessionWasAlreadyTerminated)
                         {
                             string nameOfUnsupportedSwitch;
@@ -378,8 +377,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                 return null;
             }
 
-            RuntimeDefinedParameter runtimeParameter;
-            if (!_dynamicParameters.TryGetValue(CimNamespaceParameter, out runtimeParameter))
+            if (!_dynamicParameters.TryGetValue(CimNamespaceParameter, out RuntimeDefinedParameter runtimeParameter))
             {
                 return null;
             }

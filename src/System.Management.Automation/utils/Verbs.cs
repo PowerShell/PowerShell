@@ -1321,8 +1321,7 @@ namespace System.Management.Automation
 
         internal static string[] SuggestedAlternates(string verb)
         {
-            string[] result = null;
-            s_recommendedAlternateVerbs.TryGetValue(verb, out result);
+            s_recommendedAlternateVerbs.TryGetValue(verb, out string[] result);
             return result;
         }
     }

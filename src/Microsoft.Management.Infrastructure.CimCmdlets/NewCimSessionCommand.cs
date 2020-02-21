@@ -223,9 +223,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         protected override void ProcessRecord()
         {
-            CimSessionOptions outputOptions;
-            CimCredential outputCredential;
-            BuildSessionOptions(out outputOptions, out outputCredential);
+            BuildSessionOptions(out CimSessionOptions outputOptions, out CimCredential outputCredential);
             cimNewSession.NewCimSession(this, outputOptions, outputCredential);
             cimNewSession.ProcessActions(this.CmdletOperation);
         }

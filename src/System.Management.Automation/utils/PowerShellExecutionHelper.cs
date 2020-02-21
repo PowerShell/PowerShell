@@ -48,14 +48,12 @@ namespace System.Management.Automation
 
         internal Collection<PSObject> ExecuteCommand(string command)
         {
-            Exception unused;
-            return ExecuteCommand(command, true, out unused, null);
+            return ExecuteCommand(command, true, out Exception unused, null);
         }
 
         internal bool ExecuteCommandAndGetResultAsBool()
         {
-            Exception exceptionThrown;
-            Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out exceptionThrown);
+            Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out Exception exceptionThrown);
 
             if (exceptionThrown != null || streamResults == null || streamResults.Count == 0)
             {
@@ -68,8 +66,7 @@ namespace System.Management.Automation
 
         internal string ExecuteCommandAndGetResultAsString()
         {
-            Exception exceptionThrown;
-            Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out exceptionThrown);
+            Collection<PSObject> streamResults = ExecuteCurrentPowerShell(out Exception exceptionThrown);
 
             if (exceptionThrown != null || streamResults == null || streamResults.Count == 0)
             {

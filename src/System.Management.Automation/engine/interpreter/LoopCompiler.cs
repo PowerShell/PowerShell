@@ -92,8 +92,7 @@ namespace System.Management.Automation.Interpreter
 
             foreach (var variable in _loopVariables)
             {
-                LocalVariable local;
-                if (!_outerVariables.TryGetValue(variable.Key, out local))
+                if (!_outerVariables.TryGetValue(variable.Key, out LocalVariable local))
                 {
                     local = _closureVariables[variable.Key];
                 }
@@ -157,7 +156,6 @@ namespace System.Management.Automation.Interpreter
 
         protected override Expression VisitGoto(GotoExpression node)
         {
-            BranchLabel label;
 
             var target = node.Target;
             var value = Visit(node.Value);
@@ -165,7 +163,7 @@ namespace System.Management.Automation.Interpreter
             // TODO: Is it possible for an inner reducible node of the loop to rely on nodes produced by reducing outer reducible nodes?
 
             // Unknown label => must be within the loop:
-            if (!_labelMapping.TryGetValue(target, out label))
+            if (!_labelMapping.TryGetValue(target, out BranchLabel label))
             {
                 return node.Update(target, value);
             }
@@ -325,21 +323,19 @@ namespace System.Management.Automation.Interpreter
         private Expression VisitVariable(ParameterExpression node, ExpressionAccess access)
         {
             ParameterExpression box;
-            LoopVariable existing;
-            LocalVariable loc;
 
             if (_loopLocals.Contains(node))
             {
                 // local to the loop - not propagated in or out
                 return node;
             }
-            else if (_loopVariables.TryGetValue(node, out existing))
+            else if (_loopVariables.TryGetValue(node, out LoopVariable existing))
             {
                 // existing outer variable that we are already tracking
                 box = existing.BoxStorage;
                 _loopVariables[node] = new LoopVariable(existing.Access | access, box);
             }
-            else if (_outerVariables.TryGetValue(node, out loc) ||
+            else if (_outerVariables.TryGetValue(node, out LocalVariable loc) ||
               (_closureVariables != null && _closureVariables.TryGetValue(node, out loc)))
             {
                 // not tracking this variable yet, but defined in outer scope and seen for the 1st time

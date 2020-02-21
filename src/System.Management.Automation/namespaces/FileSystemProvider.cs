@@ -3351,8 +3351,7 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override bool ItemExists(string path)
         {
-            ErrorRecord error = null;
-            bool result = ItemExists(path, out error);
+            bool result = ItemExists(path, out ErrorRecord error);
 
             if (error != null)
             {
@@ -8082,7 +8081,6 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    int bytesReturned;
                     string linkType = null;
 
                     // OACR warning 62001 about using DeviceIOControl has been disabled.
@@ -8093,7 +8091,7 @@ namespace Microsoft.PowerShell.Commands
                     IntPtr dangerousHandle = handle.DangerousGetHandle();
 
                     bool result = DeviceIoControl(dangerousHandle, FSCTL_GET_REPARSE_POINT,
-                        IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero);
+                        IntPtr.Zero, 0, outBuffer, outBufferSize, out int bytesReturned, IntPtr.Zero);
 
                     if (!result)
                     {
@@ -8236,10 +8234,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
                 {
-                    BY_HANDLE_FILE_INFORMATION infoOne;
-                    BY_HANDLE_FILE_INFORMATION infoTwo;
-                    if (GetFileInformationByHandle(sfOne.DangerousGetHandle(), out infoOne)
-                        && GetFileInformationByHandle(sfTwo.DangerousGetHandle(), out infoTwo))
+                    if (GetFileInformationByHandle(sfOne.DangerousGetHandle(), out BY_HANDLE_FILE_INFORMATION infoOne)
+                        && GetFileInformationByHandle(sfTwo.DangerousGetHandle(), out BY_HANDLE_FILE_INFORMATION infoTwo))
                     {
                         return infoOne.VolumeSerialNumber == infoTwo.VolumeSerialNumber
                                && infoOne.FileIndexHigh == infoTwo.FileIndexHigh
@@ -8274,9 +8270,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!sf.IsInvalid)
                 {
-                    BY_HANDLE_FILE_INFORMATION info;
 
-                    if (GetFileInformationByHandle(sf.DangerousGetHandle(), out info))
+                    if (GetFileInformationByHandle(sf.DangerousGetHandle(), out BY_HANDLE_FILE_INFORMATION info))
                     {
                         UInt64 tmp = info.FileIndexHigh;
                         tmp = (tmp << 32) | info.FileIndexLow;
@@ -8304,8 +8299,7 @@ namespace Microsoft.PowerShell.Commands
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods")]
         internal static bool WinIsHardLink(ref IntPtr handle)
         {
-            BY_HANDLE_FILE_INFORMATION handleInfo;
-            bool succeeded = InternalSymbolicLinkLinkCodeMethods.GetFileInformationByHandle(handle, out handleInfo);
+            bool succeeded = InternalSymbolicLinkLinkCodeMethods.GetFileInformationByHandle(handle, out BY_HANDLE_FILE_INFORMATION handleInfo);
             return succeeded && (handleInfo.NumberOfLinks > 1);
         }
 
@@ -8319,14 +8313,13 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                int bytesReturned;
 
                 // OACR warning 62001 about using DeviceIOControl has been disabled.
                 // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
                 handle.DangerousAddRef(ref success);
 
                 bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_GET_REPARSE_POINT,
-                    IntPtr.Zero, 0, outBuffer, outBufferSize, out bytesReturned, IntPtr.Zero);
+                    IntPtr.Zero, 0, outBuffer, outBufferSize, out int bytesReturned, IntPtr.Zero);
 
                 if (!result)
                 {
@@ -8427,13 +8420,12 @@ namespace Microsoft.PowerShell.Commands
                         {
                             Marshal.StructureToPtr(mountPoint, nativeBuffer, false);
 
-                            int bytesReturned = 0;
 
                             // OACR warning 62001 about using DeviceIOControl has been disabled.
                             // According to MSDN guidance DangerousAddRef() and DangerousRelease() have been used.
                             handle.DangerousAddRef(ref success);
 
-                            bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT, nativeBuffer, mountPointBytes.Length + 20, IntPtr.Zero, 0, out bytesReturned, IntPtr.Zero);
+                            bool result = DeviceIoControl(handle.DangerousGetHandle(), FSCTL_SET_REPARSE_POINT, nativeBuffer, mountPointBytes.Length + 20, IntPtr.Zero, 0, out int bytesReturned, IntPtr.Zero);
 
                             if (!result)
                             {
