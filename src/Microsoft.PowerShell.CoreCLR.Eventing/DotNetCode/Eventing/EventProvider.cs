@@ -49,11 +49,13 @@ namespace System.Diagnostics.Eventing
         private struct EventData
         {
             [FieldOffset(0)]
+#pragma warning disable IDE1006 // Naming Styles
             internal ulong DataPointer;
             [FieldOffset(8)]
             internal uint Size;
             [FieldOffset(12)]
             internal int Reserved;
+#pragma warning restore IDE1006 // Naming Styles
         }
 
         private enum ActivityControl : uint
