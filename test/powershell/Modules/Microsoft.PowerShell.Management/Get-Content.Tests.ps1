@@ -93,7 +93,7 @@ Describe "Get-Content" -Tags "CI" {
         { Get-Content -Path Variable:\PSHOME -Tail 1 -TotalCount 5 -ErrorAction Stop} | Should -Throw -ErrorId 'TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand'
     }
 
-    It 'Verifies -Tail with content that uses an explicit encoding' -TestCases @(
+    It 'Verifies -Tail with content that uses an explicit/implicit encoding' -TestCases @(
         @{EncodingName = 'String'},
         @{EncodingName = 'OEM'},
         @{EncodingName = 'Unicode'},
@@ -107,24 +107,30 @@ Describe "Get-Content" -Tags "CI" {
         ){
         param($EncodingName)
 
-        $content = @"
-one
-two
-foo
-bar
-baz
-"@
-        $expected = 'foo'
-        $tailCount = 3
-
-        $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
-        $content | Set-Content -Path $testPath -Encoding $encodingName
-        $expected = 'foo'
-
-        $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encodingName
-        $actual | Should -BeOfType string
-        $actual.Length | Should -Be $tailCount
-        $actual[0] | Should -BeExactly $expected
+        $contentSets = 
+            @(@('a1','aa2','aaa3','aaaa4','aaaaa5'), # utf-8
+              @('€1','€€2','€€€3','€€€€4','€€€€€5'), # utf-16
+              @('𐍈1','𐍈𐍈2','𐍈𐍈𐍈3','𐍈𐍈𐍈𐍈4','𐍈𐍈𐍈𐍈𐍈5')) # utf-32
+        ForEach ($content in $contentSets)
+        {
+            $tailCount = 3
+            $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
+            $content | Set-Content -Path $testPath -Encoding $EncodingName
+            
+            # read and verify using explicit encoding
+            $expected = (Get-Content -Path $testPath -Encoding $EncodingName)[-$tailCount]
+            $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $EncodingName
+            $actual | Should -BeOfType string
+            $actual.Length | Should -Be $tailCount
+            $actual[0] | Should -BeExactly $expected
+            
+            # read and verify using implicit encoding
+            $expected = (Get-Content -Path $testPath)[-$tailCount]
+            $actual = Get-Content -Path $testPath -Tail $tailCount
+            $actual | Should -BeOfType string
+            $actual.Length | Should -Be $tailCount
+            $actual[0] | Should -BeExactly $expected  
+        }
     }
 
     It "should Get-Content with a variety of -Tail and -ReadCount: <test>" -TestCases @(
