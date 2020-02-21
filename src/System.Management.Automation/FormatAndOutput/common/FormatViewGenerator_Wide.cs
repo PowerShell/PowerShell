@@ -78,8 +78,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             WideControlEntryDefinition activeWideControlEntryDefinition =
                     GetActiveWideControlEntryDefinition(wideBody, so);
 
-            WideViewEntry wve = new WideViewEntry();
-            wve.formatPropertyField = GenerateFormatPropertyField(activeWideControlEntryDefinition.formatTokenList, so, enumerationLimit);
+            WideViewEntry wve = new WideViewEntry
+            {
+                formatPropertyField = GenerateFormatPropertyField(activeWideControlEntryDefinition.formatTokenList, so, enumerationLimit)
+            };
 
             // wve.alignment = activeWideViewEntryDefinition.alignment;
 

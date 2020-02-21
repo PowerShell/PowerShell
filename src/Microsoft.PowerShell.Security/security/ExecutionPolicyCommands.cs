@@ -69,9 +69,10 @@ namespace Microsoft.PowerShell.Commands
                     new InvalidOperationException(),
                     "ListAndScopeSpecified",
                     ErrorCategory.InvalidOperation,
-                    null);
-
-                errorRecord.ErrorDetails = new ErrorDetails(message);
+                    null)
+                {
+                    ErrorDetails = new ErrorDetails(message)
+                };
                 ThrowTerminatingError(errorRecord);
 
                 return;
@@ -180,9 +181,10 @@ namespace Microsoft.PowerShell.Commands
                     new InvalidOperationException(),
                     "CantSetGroupPolicy",
                     ErrorCategory.InvalidOperation,
-                    null);
-
-                errorRecord.ErrorDetails = new ErrorDetails(message);
+                    null)
+                {
+                    ErrorDetails = new ErrorDetails(message)
+                };
                 ThrowTerminatingError(errorRecord);
 
                 return;
@@ -225,10 +227,13 @@ namespace Microsoft.PowerShell.Commands
                             new System.Security.SecurityException(),
                             "ExecutionPolicyOverride",
                             ErrorCategory.PermissionDenied,
-                            null);
-
-                        errorRecord.ErrorDetails = new ErrorDetails(message);
-                        errorRecord.ErrorDetails.RecommendedAction = recommendedAction;
+                            null)
+                        {
+                            ErrorDetails = new ErrorDetails(message)
+                            {
+                                RecommendedAction = recommendedAction
+                            }
+                        };
                         ThrowTerminatingError(errorRecord);
                     }
                 }
@@ -333,9 +338,10 @@ namespace Microsoft.PowerShell.Commands
                 exception,
                 exception.GetType().FullName,
                 ErrorCategory.PermissionDenied,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(message);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(message)
+            };
             ThrowTerminatingError(errorRecord);
         }
     }

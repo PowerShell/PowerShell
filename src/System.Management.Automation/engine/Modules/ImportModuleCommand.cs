@@ -1747,8 +1747,10 @@ namespace Microsoft.PowerShell.Commands
                 throw new PSArgumentOutOfRangeException(message);
             }
 
-            ImportModuleOptions importModuleOptions = new ImportModuleOptions();
-            importModuleOptions.NoClobber = NoClobber;
+            ImportModuleOptions importModuleOptions = new ImportModuleOptions
+            {
+                NoClobber = NoClobber
+            };
             if (!string.IsNullOrEmpty(Scope) && Scope.Equals(StringLiterals.Local, StringComparison.OrdinalIgnoreCase))
             {
                 importModuleOptions.Local = true;

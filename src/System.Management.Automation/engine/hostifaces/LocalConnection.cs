@@ -382,8 +382,10 @@ namespace System.Management.Automation.Runspaces
         /// <returns>DebugPreference.</returns>
         private static DebugPreference CreateDebugPreference(string[] AppDomainNames)
         {
-            DebugPreference DebugPreference = new DebugPreference();
-            DebugPreference.AppDomainNames = AppDomainNames;
+            DebugPreference DebugPreference = new DebugPreference
+            {
+                AppDomainNames = AppDomainNames
+            };
             return DebugPreference;
         }
 
@@ -744,14 +746,16 @@ namespace System.Management.Automation.Runspaces
         {
             Dbg.Assert(exception != null, "Caller should validate the parameter");
 
-            LogContext logContext = new LogContext();
-            logContext.EngineVersion = Version.ToString();
-            logContext.HostId = Host.InstanceId.ToString();
-            logContext.HostName = Host.Name;
-            logContext.HostVersion = Host.Version.ToString();
-            logContext.RunspaceId = InstanceId.ToString();
-            logContext.Severity = severity.ToString();
-            logContext.ShellId = Utils.DefaultPowerShellShellID;
+            LogContext logContext = new LogContext
+            {
+                EngineVersion = Version.ToString(),
+                HostId = Host.InstanceId.ToString(),
+                HostName = Host.Name,
+                HostVersion = Host.Version.ToString(),
+                RunspaceId = InstanceId.ToString(),
+                Severity = severity.ToString(),
+                ShellId = Utils.DefaultPowerShellShellID
+            };
             MshLog.LogEngineHealthEvent(
                 logContext,
                 id,
@@ -1392,9 +1396,11 @@ namespace System.Management.Automation.Runspaces
         {
             _job.StateChanged -= new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
 
-            OperationStateEventArgs operationStateArgs = new OperationStateEventArgs();
-            operationStateArgs.OperationState = OperationState.StartComplete;
-            operationStateArgs.BaseEvent = EventArgs.Empty;
+            OperationStateEventArgs operationStateArgs = new OperationStateEventArgs
+            {
+                OperationState = OperationState.StartComplete,
+                BaseEvent = EventArgs.Empty
+            };
 
             OperationComplete.SafeInvoke(this, operationStateArgs);
         }
@@ -1495,10 +1501,12 @@ namespace System.Management.Automation.Runspaces
             _remoteRunspace.StateChanged -= new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
 
             OperationStateEventArgs operationStateEventArgs =
-                    new OperationStateEventArgs();
-            operationStateEventArgs.OperationState =
-                    OperationState.StartComplete;
-            operationStateEventArgs.BaseEvent = EventArgs.Empty;
+                    new OperationStateEventArgs
+                    {
+                        OperationState =
+                    OperationState.StartComplete,
+                        BaseEvent = EventArgs.Empty
+                    };
 
             OperationComplete.SafeInvoke(this, operationStateEventArgs);
         }

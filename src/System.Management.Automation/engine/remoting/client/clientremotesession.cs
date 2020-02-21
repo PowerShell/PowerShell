@@ -199,8 +199,10 @@ namespace System.Management.Automation.Remoting
             base.RemoteRunspacePoolInternal = rsPool;
             Context.RemoteAddress = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<Uri>(rsPool.ConnectionInfo,
                 "ConnectionUri", null);
-            _cryptoHelper = new PSRemotingCryptoHelperClient();
-            _cryptoHelper.Session = this;
+            _cryptoHelper = new PSRemotingCryptoHelperClient
+            {
+                Session = this
+            };
             Context.ClientCapability = RemoteSessionCapability.CreateClientCapability();
             Context.UserCredential = rsPool.ConnectionInfo.Credential;
 

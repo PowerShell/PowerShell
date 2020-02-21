@@ -790,9 +790,11 @@ namespace Microsoft.PowerShell.Commands
                     PSTraceSource.NewArgumentException("Property"),
                     errorId,
                     ErrorCategory.InvalidArgument,
-                    null);
-            errorRecord.ErrorDetails = new ErrorDetails(
-                this, "MeasureObjectStrings", "PropertyNotFound", propertyName);
+                    null)
+            {
+                ErrorDetails = new ErrorDetails(
+                this, "MeasureObjectStrings", "PropertyNotFound", propertyName)
+            };
             WriteError(errorRecord);
         }
 
@@ -901,11 +903,13 @@ namespace Microsoft.PowerShell.Commands
 
             if (shouldUseGenericMeasureInfo)
             {
-                GenericMeasureInfo gmi = new GenericMeasureInfo();
-                gmi.Count = stat.count;
-                gmi.Sum = sum;
-                gmi.Average = average;
-                gmi.StandardDeviation = StandardDeviation;
+                GenericMeasureInfo gmi = new GenericMeasureInfo
+                {
+                    Count = stat.count,
+                    Sum = sum,
+                    Average = average,
+                    StandardDeviation = StandardDeviation
+                };
                 if (max != null)
                 {
                     gmi.Maximum = (double)max;
@@ -920,12 +924,14 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                GenericObjectMeasureInfo gomi = new GenericObjectMeasureInfo();
-                gomi.Count = stat.count;
-                gomi.Sum = sum;
-                gomi.Average = average;
-                gomi.Maximum = max;
-                gomi.Minimum = min;
+                GenericObjectMeasureInfo gomi = new GenericObjectMeasureInfo
+                {
+                    Count = stat.count,
+                    Sum = sum,
+                    Average = average,
+                    Maximum = max,
+                    Minimum = min
+                };
 
                 return gomi;
             }

@@ -82,8 +82,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     throw PSTraceSource.NewArgumentException("formatFiles", FormatAndOutXmlLoadingStrings.FormatFileNotRooted, formatFile);
                 }
 
-                PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile);
-                fileToLoad.Errors = errors;
+                PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile)
+                {
+                    Errors = errors
+                };
                 filesToLoad.Add(fileToLoad);
                 _formatFileList.Add(formatFile);
             }
@@ -171,8 +173,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 foreach (ExtendedTypeDefinition typeDefinition in formatData)
                 {
-                    PSSnapInTypeAndFormatErrors entryToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, typeDefinition);
-                    entryToLoad.Errors = errors;
+                    PSSnapInTypeAndFormatErrors entryToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, typeDefinition)
+                    {
+                        Errors = errors
+                    };
                     filesToLoad.Add(entryToLoad);
                 }
                 // check if the passed in formatData is empty
@@ -186,8 +190,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 foreach (string formatFile in _formatFileList)
                 {
-                    PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile);
-                    fileToLoad.Errors = errors;
+                    PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile)
+                    {
+                        Errors = errors
+                    };
                     filesToLoad.Add(fileToLoad);
                 }
             }
@@ -196,8 +202,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 foreach (ExtendedTypeDefinition typeDefinition in formatData)
                 {
-                    PSSnapInTypeAndFormatErrors entryToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, typeDefinition);
-                    entryToLoad.Errors = errors;
+                    PSSnapInTypeAndFormatErrors entryToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, typeDefinition)
+                    {
+                        Errors = errors
+                    };
                     filesToLoad.Add(entryToLoad);
                 }
                 // check if the passed in formatData is empty
@@ -545,8 +553,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // add entry for the output of update-formatdata
             // we want to be able to display this as a list, unless overridden
             // by an entry loaded from file
-            FormatShapeSelectionOnType sel = new FormatShapeSelectionOnType();
-            sel.appliesTo = new AppliesTo();
+            FormatShapeSelectionOnType sel = new FormatShapeSelectionOnType
+            {
+                appliesTo = new AppliesTo()
+            };
             sel.appliesTo.AddAppliesToType("Microsoft.PowerShell.Commands.FormatDataLoadingInfo");
             sel.formatShape = FormatShape.List;
 

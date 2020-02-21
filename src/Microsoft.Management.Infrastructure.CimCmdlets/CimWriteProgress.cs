@@ -79,11 +79,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ProgressRecord record = new ProgressRecord(
                 this.activityID,
                 this.activity,
-                this.statusDescription);
-            record.Activity = this.activity;
-            record.ParentActivityId = 0;
-            record.SecondsRemaining = (int)this.secondsRemaining;
-            record.PercentComplete = (int)this.percentageCompleted;
+                this.statusDescription)
+            {
+                Activity = this.activity,
+                ParentActivityId = 0,
+                SecondsRemaining = (int)this.secondsRemaining,
+                PercentComplete = (int)this.percentageCompleted
+            };
             cmdlet.WriteProgress(record);
         }
 

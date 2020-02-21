@@ -254,9 +254,10 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         protected override void BeginProcessing()
         {
-            helper = new WSManHelper(this);
-
-            helper.WSManOp = "invoke";
+            helper = new WSManHelper(this)
+            {
+                WSManOp = "invoke"
+            };
 
             // create the connection string
             connectionStr = helper.CreateConnectionString(connectionuri, port, computername, applicationname);

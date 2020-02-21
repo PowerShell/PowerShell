@@ -1446,8 +1446,10 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 }
 
                 // Otherwise, add it to the Keyword List.
-                var keyProp = new System.Management.Automation.Language.DynamicKeywordProperty();
-                keyProp.Name = prop.Name;
+                var keyProp = new System.Management.Automation.Language.DynamicKeywordProperty
+                {
+                    Name = prop.Name
+                };
 
                 // Set the mandatory flag if appropriate
                 if ((prop.Flags & Microsoft.Management.Infrastructure.CimFlags.Key) == Microsoft.Management.Infrastructure.CimFlags.Key)

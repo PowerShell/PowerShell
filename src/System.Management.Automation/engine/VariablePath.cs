@@ -203,10 +203,12 @@ namespace System.Management.Automation
         {
             Debug.Assert(IsUnscopedVariable, "Special method to clone, input must be unqualified");
 
-            VariablePath result = new VariablePath();
-            result._userPath = _userPath;
-            result._unqualifiedPath = _unqualifiedPath;
-            result._flags = VariablePathFlags.Local | VariablePathFlags.Variable;
+            VariablePath result = new VariablePath
+            {
+                _userPath = _userPath,
+                _unqualifiedPath = _unqualifiedPath,
+                _flags = VariablePathFlags.Local | VariablePathFlags.Variable
+            };
             return result;
         }
 

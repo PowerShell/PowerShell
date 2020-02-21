@@ -27,8 +27,10 @@ namespace System.Management.Automation
                 {
                     ProgressRecord analysisProgress = new ProgressRecord(0,
                         Modules.ScriptAnalysisPreparing,
-                        string.Format(CultureInfo.InvariantCulture, Modules.ScriptAnalysisModule, path));
-                    analysisProgress.RecordType = ProgressRecordType.Processing;
+                        string.Format(CultureInfo.InvariantCulture, Modules.ScriptAnalysisModule, path))
+                    {
+                        RecordType = ProgressRecordType.Processing
+                    };
 
                     // Write the progress using a static source ID so that all
                     // analysis messages get single-threaded in the progress pane (rather than nesting).

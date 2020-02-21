@@ -141,9 +141,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                             PSTraceSource.NewArgumentException("classId"),
                                             errorId,
                                             ErrorCategory.InvalidData,
-                                            obj);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                            obj)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
         }
 
@@ -216,9 +217,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 PSTraceSource.NewArgumentException("property"),
                                 "FormatObjectDeserializerRecursiveProperty",
                                 ErrorCategory.InvalidData,
-                                so);
-
-                errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                so)
+                {
+                    ErrorDetails = new ErrorDetails(msg)
+                };
                 this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
 
@@ -246,9 +248,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 PSTraceSource.NewArgumentException("property"),
                                 "FormatObjectDeserializerInvalidPropertyType",
                                 ErrorCategory.InvalidData,
-                                so);
-
-                errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                so)
+                {
+                    ErrorDetails = new ErrorDetails(msg)
+                };
                 this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
 
@@ -342,9 +345,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                             new ArgumentException(),
                                             "FormatObjectDeserializerNullDataMember",
                                             ErrorCategory.InvalidData,
-                                            null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                            null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
         }
     }
@@ -401,9 +405,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                                 PSTraceSource.NewArgumentException("classid"),
                                                 "FormatObjectDeserializerInvalidClassidProperty",
                                                 ErrorCategory.InvalidData,
-                                                so);
-
-                errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                                so)
+                {
+                    ErrorDetails = new ErrorDetails(msg)
+                };
                 deserializer.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
 
@@ -472,9 +477,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                             e,
                                             "FormatObjectDeserializerInvalidClassid",
                                             ErrorCategory.InvalidData,
-                                            null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                            null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             deserializer.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
         }
 

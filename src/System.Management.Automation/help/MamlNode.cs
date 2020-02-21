@@ -673,8 +673,10 @@ namespace System.Management.Automation
         /// <param name="childNode"></param>
         private void WriteMamlInvalidChildNodeError(XmlNode node, XmlNode childNode)
         {
-            ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeError"), "MamlInvalidChildNodeError", ErrorCategory.SyntaxError, null);
-            errorRecord.ErrorDetails = new ErrorDetails(typeof(MamlNode).Assembly, "HelpErrors", "MamlInvalidChildNodeError", node.LocalName, childNode.LocalName, GetNodePath(node));
+            ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeError"), "MamlInvalidChildNodeError", ErrorCategory.SyntaxError, null)
+            {
+                ErrorDetails = new ErrorDetails(typeof(MamlNode).Assembly, "HelpErrors", "MamlInvalidChildNodeError", node.LocalName, childNode.LocalName, GetNodePath(node))
+            };
             this.Errors.Add(errorRecord);
         }
 
@@ -686,8 +688,10 @@ namespace System.Management.Automation
         /// <param name="count"></param>
         private void WriteMamlInvalidChildNodeCountError(XmlNode node, string childNodeName, int count)
         {
-            ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeCountError"), "MamlInvalidChildNodeCountError", ErrorCategory.SyntaxError, null);
-            errorRecord.ErrorDetails = new ErrorDetails(typeof(MamlNode).Assembly, "HelpErrors", "MamlInvalidChildNodeCountError", node.LocalName, childNodeName, count, GetNodePath(node));
+            ErrorRecord errorRecord = new ErrorRecord(new ParentContainsErrorRecordException("MamlInvalidChildNodeCountError"), "MamlInvalidChildNodeCountError", ErrorCategory.SyntaxError, null)
+            {
+                ErrorDetails = new ErrorDetails(typeof(MamlNode).Assembly, "HelpErrors", "MamlInvalidChildNodeCountError", node.LocalName, childNodeName, count, GetNodePath(node))
+            };
             this.Errors.Add(errorRecord);
         }
 

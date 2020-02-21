@@ -61,8 +61,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("path");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                SuppressWildcardExpansion = literalPath
+            };
 
             GetProperty(paths, providerSpecificPickList, context);
 
@@ -420,9 +422,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("properties");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             SetProperty(paths, property, context);
 
@@ -789,9 +793,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("propertyToClear");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             ClearProperty(paths, propertyToClear, context);
 

@@ -238,9 +238,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                 new NotSupportedException(),
                                 errorId,
                                 ErrorCategory.InvalidArgument,
-                                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             invocationContext.ThrowTerminatingError(errorRecord);
         }
 

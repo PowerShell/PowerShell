@@ -413,8 +413,10 @@ namespace Microsoft.PowerShell
                 {
                     // we're not already running HandleBreak on a separate thread, so run it now.
 
-                    host._breakHandlerThread = new Thread(new ThreadStart(ConsoleHost.HandleBreak));
-                    host._breakHandlerThread.Name = "ConsoleHost.HandleBreak";
+                    host._breakHandlerThread = new Thread(new ThreadStart(ConsoleHost.HandleBreak))
+                    {
+                        Name = "ConsoleHost.HandleBreak"
+                    };
                     host._breakHandlerThread.Start();
                 }
             }

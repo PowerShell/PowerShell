@@ -59,9 +59,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("paths");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             GetItem(paths, context);
 
@@ -396,9 +398,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("paths");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             SetItem(paths, value, context);
 
@@ -745,9 +749,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("paths");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             ClearItem(paths, context);
 
@@ -1074,8 +1080,10 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("paths");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                SuppressWildcardExpansion = literalPath
+            };
 
             InvokeDefaultAction(paths, context);
 

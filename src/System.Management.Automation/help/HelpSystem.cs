@@ -463,11 +463,12 @@ namespace System.Management.Automation
             bool searchInHelpContent = false;
             bool shouldBreak = false;
 
-            HelpProgressInfo progress = new HelpProgressInfo();
-
-            progress.Activity = StringUtil.Format(HelpDisplayStrings.SearchingForHelpContent, helpRequest.Target);
-            progress.Completed = false;
-            progress.PercentComplete = 0;
+            HelpProgressInfo progress = new HelpProgressInfo
+            {
+                Activity = StringUtil.Format(HelpDisplayStrings.SearchingForHelpContent, helpRequest.Target),
+                Completed = false,
+                PercentComplete = 0
+            };
 
             try
             {

@@ -71,9 +71,11 @@ namespace Microsoft.PowerShell
             switch (format)
             {
                 case DataFormat.XML:
-                    XmlWriterSettings settings = new XmlWriterSettings();
-                    settings.CheckCharacters = false;
-                    settings.OmitXmlDeclaration = true;
+                    XmlWriterSettings settings = new XmlWriterSettings
+                    {
+                        CheckCharacters = false,
+                        OmitXmlDeclaration = true
+                    };
                     _xmlWriter = XmlWriter.Create(textWriter, settings);
                     _xmlSerializer = new Serializer(_xmlWriter);
                     break;

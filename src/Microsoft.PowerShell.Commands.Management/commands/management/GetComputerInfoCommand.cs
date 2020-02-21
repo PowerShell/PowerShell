@@ -225,8 +225,10 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void UpdateProgress(string status)
         {
-            ProgressRecord progress = new ProgressRecord(0, activity, status ?? ComputerResources.ProgressStatusCompleted);
-            progress.RecordType = status == null ? ProgressRecordType.Completed : ProgressRecordType.Processing;
+            ProgressRecord progress = new ProgressRecord(0, activity, status ?? ComputerResources.ProgressStatusCompleted)
+            {
+                RecordType = status == null ? ProgressRecordType.Completed : ProgressRecordType.Processing
+            };
 
             WriteProgress(progress);
         }
@@ -350,25 +352,26 @@ namespace Microsoft.PowerShell.Commands
 
                 foreach (var processor in processors)
                 {
-                    var proc = new Processor();
-
-                    proc.AddressWidth = processor.AddressWidth;
-                    proc.Architecture = EnumConverter<CpuArchitecture>.Convert(processor.Architecture);
-                    proc.Availability = EnumConverter<CpuAvailability>.Convert(processor.Availability);
-                    proc.CpuStatus = EnumConverter<CpuStatus>.Convert(processor.CpuStatus);
-                    proc.CurrentClockSpeed = processor.CurrentClockSpeed;
-                    proc.DataWidth = processor.DataWidth;
-                    proc.Description = processor.Description;
-                    proc.Manufacturer = processor.Manufacturer;
-                    proc.MaxClockSpeed = processor.MaxClockSpeed;
-                    proc.Name = processor.Name;
-                    proc.NumberOfCores = processor.NumberOfCores;
-                    proc.NumberOfLogicalProcessors = processor.NumberOfLogicalProcessors;
-                    proc.ProcessorID = processor.ProcessorId;
-                    proc.ProcessorType = EnumConverter<ProcessorType>.Convert(processor.ProcessorType);
-                    proc.Role = processor.Role;
-                    proc.SocketDesignation = processor.SocketDesignation;
-                    proc.Status = processor.Status;
+                    var proc = new Processor
+                    {
+                        AddressWidth = processor.AddressWidth,
+                        Architecture = EnumConverter<CpuArchitecture>.Convert(processor.Architecture),
+                        Availability = EnumConverter<CpuAvailability>.Convert(processor.Availability),
+                        CpuStatus = EnumConverter<CpuStatus>.Convert(processor.CpuStatus),
+                        CurrentClockSpeed = processor.CurrentClockSpeed,
+                        DataWidth = processor.DataWidth,
+                        Description = processor.Description,
+                        Manufacturer = processor.Manufacturer,
+                        MaxClockSpeed = processor.MaxClockSpeed,
+                        Name = processor.Name,
+                        NumberOfCores = processor.NumberOfCores,
+                        NumberOfLogicalProcessors = processor.NumberOfLogicalProcessors,
+                        ProcessorID = processor.ProcessorId,
+                        ProcessorType = EnumConverter<ProcessorType>.Convert(processor.ProcessorType),
+                        Role = processor.Role,
+                        SocketDesignation = processor.SocketDesignation,
+                        Status = processor.Status
+                    };
 
                     list.Add(proc);
                 }

@@ -332,9 +332,10 @@ namespace Microsoft.PowerShell.Commands
                                 formatException,
                                 "ImportAliasFileFormatError",
                                 ErrorCategory.ReadError,
-                                filePath);
-
-                        errorRecord.ErrorDetails = new ErrorDetails(message);
+                                filePath)
+                            {
+                                ErrorDetails = new ErrorDetails(message)
+                            };
 
                         ThrowTerminatingError(errorRecord);
                     }
@@ -354,9 +355,10 @@ namespace Microsoft.PowerShell.Commands
                                 argException,
                                 "ImportAliasOptionsError",
                                 ErrorCategory.ReadError,
-                                filePath);
-
-                        errorRecord.ErrorDetails = new ErrorDetails(message);
+                                filePath)
+                            {
+                                ErrorDetails = new ErrorDetails(message)
+                            };
                         WriteError(errorRecord);
                         continue;
                     }
@@ -452,9 +454,10 @@ namespace Microsoft.PowerShell.Commands
                 e,
                 "FileOpenFailure",
                 ErrorCategory.OpenError,
-                pathWithError);
-
-            errorRecord.ErrorDetails = new ErrorDetails(message);
+                pathWithError)
+            {
+                ErrorDetails = new ErrorDetails(message)
+            };
             this.ThrowTerminatingError(errorRecord);
         }
 

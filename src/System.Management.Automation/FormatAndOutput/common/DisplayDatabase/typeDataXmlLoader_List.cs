@@ -256,13 +256,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // finally build the item to return
-                ListControlItemDefinition lvid = new ListControlItemDefinition();
+                ListControlItemDefinition lvid = new ListControlItemDefinition
+                {
 
-                // add the label
-                lvid.label = labelToken;
+                    // add the label
+                    label = labelToken,
 
-                // add condition
-                lvid.conditionToken = condition;
+                    // add condition
+                    conditionToken = condition
+                };
 
                 // add either the text token or the PSPropertyExpression with optional format string
                 if (match.TextToken != null)
@@ -271,8 +273,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    FieldPropertyToken fpt = new FieldPropertyToken();
-                    fpt.expression = match.Expression;
+                    FieldPropertyToken fpt = new FieldPropertyToken
+                    {
+                        expression = match.Expression
+                    };
                     fpt.fieldFormattingDirective.formatString = match.FormatString;
                     lvid.formatTokenList.Add(fpt);
                 }

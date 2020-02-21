@@ -737,9 +737,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo();
-                    connectionInfo.ConnectionUri = ConnectionUri[i];
-                    connectionInfo.ShellUri = ConfigurationName;
+                    WSManConnectionInfo connectionInfo = new WSManConnectionInfo
+                    {
+                        ConnectionUri = ConnectionUri[i],
+                        ShellUri = ConfigurationName
+                    };
                     if (CertificateThumbprint != null)
                     {
                         connectionInfo.CertificateThumbprint = CertificateThumbprint;
@@ -1337,9 +1339,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     _stopComplete = true;
                     _startComplete = true;
-                    operationStateEventArgs = new OperationStateEventArgs();
-                    operationStateEventArgs.BaseEvent = new RunspaceStateEventArgs(OperatedRunspace.RunspaceStateInfo);
-                    operationStateEventArgs.OperationState = OperationState.StopComplete;
+                    operationStateEventArgs = new OperationStateEventArgs
+                    {
+                        BaseEvent = new RunspaceStateEventArgs(OperatedRunspace.RunspaceStateInfo),
+                        OperationState = OperationState.StopComplete
+                    };
                 }
                 else
                 {
@@ -1425,16 +1429,20 @@ namespace Microsoft.PowerShell.Commands
                     // accordingly.
                     _stopComplete = true;
                     _startComplete = true;
-                    operationStateEventArgs = new OperationStateEventArgs();
-                    operationStateEventArgs.BaseEvent = stateEventArgs;
-                    operationStateEventArgs.OperationState = OperationState.StopComplete;
+                    operationStateEventArgs = new OperationStateEventArgs
+                    {
+                        BaseEvent = stateEventArgs,
+                        OperationState = OperationState.StopComplete
+                    };
                 }
                 else if (!_startComplete)
                 {
                     _startComplete = true;
-                    operationStateEventArgs = new OperationStateEventArgs();
-                    operationStateEventArgs.BaseEvent = stateEventArgs;
-                    operationStateEventArgs.OperationState = OperationState.StartComplete;
+                    operationStateEventArgs = new OperationStateEventArgs
+                    {
+                        BaseEvent = stateEventArgs,
+                        OperationState = OperationState.StartComplete
+                    };
                 }
             }
 

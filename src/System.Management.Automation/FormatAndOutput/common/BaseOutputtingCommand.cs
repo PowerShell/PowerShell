@@ -350,9 +350,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                                 new InvalidOperationException(),
                                                 "ConsoleLineOutputOutOfSequencePacket",
                                                 ErrorCategory.InvalidData,
-                                                null);
-
-                errorRecord.ErrorDetails = new ErrorDetails(msg);
+                                                null)
+                {
+                    ErrorDetails = new ErrorDetails(msg)
+                };
                 this.TerminatingErrorContext.ThrowTerminatingError(errorRecord);
             }
         }
@@ -696,9 +697,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            TableFormattingHint hint = new TableFormattingHint();
-
-            hint.columnWidths = widths;
+            TableFormattingHint hint = new TableFormattingHint
+            {
+                columnWidths = widths
+            };
             _formattingHint = hint;
         }
 
@@ -729,9 +731,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            WideFormattingHint hint = new WideFormattingHint();
-
-            hint.maxWidth = maxLen;
+            WideFormattingHint hint = new WideFormattingHint
+            {
+                maxWidth = maxLen
+            };
             _formattingHint = hint;
         }
 

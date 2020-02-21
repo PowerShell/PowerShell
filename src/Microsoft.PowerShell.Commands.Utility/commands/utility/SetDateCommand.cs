@@ -77,14 +77,16 @@ namespace Microsoft.PowerShell.Commands
                 }
 #else
                 // build up the SystemTime struct to pass to SetSystemTime
-                NativeMethods.SystemTime systemTime = new NativeMethods.SystemTime();
-                systemTime.Year = (UInt16)dateToUse.Year;
-                systemTime.Month = (UInt16)dateToUse.Month;
-                systemTime.Day = (UInt16)dateToUse.Day;
-                systemTime.Hour = (UInt16)dateToUse.Hour;
-                systemTime.Minute = (UInt16)dateToUse.Minute;
-                systemTime.Second = (UInt16)dateToUse.Second;
-                systemTime.Milliseconds = (UInt16)dateToUse.Millisecond;
+                NativeMethods.SystemTime systemTime = new NativeMethods.SystemTime
+                {
+                    Year = (UInt16)dateToUse.Year,
+                    Month = (UInt16)dateToUse.Month,
+                    Day = (UInt16)dateToUse.Day,
+                    Hour = (UInt16)dateToUse.Hour,
+                    Minute = (UInt16)dateToUse.Minute,
+                    Second = (UInt16)dateToUse.Second,
+                    Milliseconds = (UInt16)dateToUse.Millisecond
+                };
 #pragma warning disable 56523
                 if (!NativeMethods.SetLocalTime(ref systemTime))
                 {

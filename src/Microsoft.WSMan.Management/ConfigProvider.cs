@@ -114,8 +114,10 @@ namespace Microsoft.WSMan.Management
 
             try
             {
-                XmlReaderSettings readerSettings = new XmlReaderSettings();
-                readerSettings.XmlResolver = null;
+                XmlReaderSettings readerSettings = new XmlReaderSettings
+                {
+                    XmlResolver = null
+                };
                 using (XmlReader reader = XmlReader.Create(helpFile, readerSettings))
                 {
                     document.Load(reader);

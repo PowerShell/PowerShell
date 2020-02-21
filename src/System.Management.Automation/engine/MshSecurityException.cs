@@ -23,8 +23,10 @@ namespace System.Management.Automation
                 new ParentContainsErrorRecordException(this),
                 "UnauthorizedAccess",
                 ErrorCategory.SecurityError,
-                null);
-            _errorRecord.ErrorDetails = new ErrorDetails(SessionStateStrings.CanNotRun);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(SessionStateStrings.CanNotRun)
+            };
             _message = _errorRecord.ErrorDetails.Message;
         }
 
@@ -42,8 +44,10 @@ namespace System.Management.Automation
                 new ParentContainsErrorRecordException(this),
                 "UnauthorizedAccess",
                 ErrorCategory.SecurityError,
-                null);
-            _errorRecord.ErrorDetails = new ErrorDetails(SessionStateStrings.CanNotRun);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(SessionStateStrings.CanNotRun)
+            };
             _message = _errorRecord.ErrorDetails.Message;
             // no fields, nothing more to serialize
             // no need for a GetObjectData implementation
@@ -62,8 +66,10 @@ namespace System.Management.Automation
                 new ParentContainsErrorRecordException(this),
                 "UnauthorizedAccess",
                 ErrorCategory.SecurityError,
-                null);
-            _errorRecord.ErrorDetails = new ErrorDetails(message);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(message)
+            };
         }
 
         /// <summary>
@@ -80,8 +86,10 @@ namespace System.Management.Automation
                 new ParentContainsErrorRecordException(this),
                 "UnauthorizedAccess",
                 ErrorCategory.SecurityError,
-                null);
-            _errorRecord.ErrorDetails = new ErrorDetails(message);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(message)
+            };
             _message = _errorRecord.ErrorDetails.Message;
         }
         #endregion ctor

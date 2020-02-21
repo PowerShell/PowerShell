@@ -70,9 +70,10 @@ namespace System.Management.Automation
                 PSTraceSource.NewArgumentException("Encoding"),
                 "WriteToFileEncodingUnknown",
                 ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             cmdlet.ThrowTerminatingError(errorRecord);
 
             return null;

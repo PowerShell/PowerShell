@@ -540,8 +540,10 @@ namespace Microsoft.PowerShell.Commands
                 if (_logNamesMatchingWildcard.Count > 1)
                 {
                     string query = BuildStructuredQuery(eventLogSession);
-                    logQuery = new EventLogQuery(null, PathType.LogName, query);
-                    logQuery.TolerateQueryErrors = true;
+                    logQuery = new EventLogQuery(null, PathType.LogName, query)
+                    {
+                        TolerateQueryErrors = true
+                    };
                 }
                 else
                 {
@@ -576,8 +578,10 @@ namespace Microsoft.PowerShell.Commands
                 if (_providersByLogMap.Count > 1)
                 {
                     string query = BuildStructuredQuery(eventLogSession);
-                    logQuery = new EventLogQuery(null, PathType.LogName, query);
-                    logQuery.TolerateQueryErrors = true;
+                    logQuery = new EventLogQuery(null, PathType.LogName, query)
+                    {
+                        TolerateQueryErrors = true
+                    };
                 }
                 else
                 {
@@ -750,9 +754,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                EventLogQuery logQuery = new EventLogQuery(null, PathType.LogName, _xmlQuery.InnerXml);
-                logQuery.Session = eventLogSession;
-                logQuery.ReverseDirection = !_oldest;
+                EventLogQuery logQuery = new EventLogQuery(null, PathType.LogName, _xmlQuery.InnerXml)
+                {
+                    Session = eventLogSession,
+                    ReverseDirection = !_oldest
+                };
 
                 ReadEvents(logQuery);
             }
@@ -787,8 +793,10 @@ namespace Microsoft.PowerShell.Commands
                 else if (_resolvedPaths.Count > 1)
                 {
                     string query = BuildStructuredQuery(eventLogSession);
-                    logQuery = new EventLogQuery(null, PathType.FilePath, query);
-                    logQuery.TolerateQueryErrors = true;
+                    logQuery = new EventLogQuery(null, PathType.FilePath, query)
+                    {
+                        TolerateQueryErrors = true
+                    };
                 }
                 else
                 {
@@ -817,10 +825,12 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                EventLogQuery logQuery = new EventLogQuery(null, PathType.FilePath, query);
-                logQuery.Session = eventLogSession;
-                logQuery.TolerateQueryErrors = true;
-                logQuery.ReverseDirection = !_oldest;
+                EventLogQuery logQuery = new EventLogQuery(null, PathType.FilePath, query)
+                {
+                    Session = eventLogSession,
+                    TolerateQueryErrors = true,
+                    ReverseDirection = !_oldest
+                };
 
                 ReadEvents(logQuery);
             }

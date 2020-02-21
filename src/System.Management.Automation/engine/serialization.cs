@@ -106,11 +106,13 @@ namespace System.Management.Automation
         {
             // Create an xml writer
             StringBuilder sb = new StringBuilder();
-            XmlWriterSettings xmlSettings = new XmlWriterSettings();
-            xmlSettings.CloseOutput = true;
-            xmlSettings.Encoding = System.Text.Encoding.Unicode;
-            xmlSettings.Indent = true;
-            xmlSettings.OmitXmlDeclaration = true;
+            XmlWriterSettings xmlSettings = new XmlWriterSettings
+            {
+                CloseOutput = true,
+                Encoding = System.Text.Encoding.Unicode,
+                Indent = true,
+                OmitXmlDeclaration = true
+            };
             XmlWriter xw = XmlWriter.Create(sb, xmlSettings);
 
             // Serialize the objects
@@ -1593,8 +1595,10 @@ namespace System.Management.Automation
             {
                 PSNoteProperty classMetadataNote = new PSNoteProperty(
                     InternalDeserializer.CimClassMetadataProperty,
-                    psoClasses);
-                classMetadataNote.IsHidden = true;
+                    psoClasses)
+                {
+                    IsHidden = true
+                };
                 psObject.Properties.Add(classMetadataNote);
             }
 
@@ -1614,8 +1618,10 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    PSNoteProperty instanceMetadataNote = new PSNoteProperty(InternalDeserializer.CimInstanceMetadataProperty, instanceMetadata);
-                    instanceMetadataNote.IsHidden = true;
+                    PSNoteProperty instanceMetadataNote = new PSNoteProperty(InternalDeserializer.CimInstanceMetadataProperty, instanceMetadata)
+                    {
+                        IsHidden = true
+                    };
                     psObject.Properties.Add(instanceMetadataNote);
                 }
 
@@ -4071,22 +4077,23 @@ namespace System.Management.Automation
 
         private static XmlReaderSettings GetXmlReaderSettingsForCliXml()
         {
-            XmlReaderSettings xrs = new XmlReaderSettings();
+            XmlReaderSettings xrs = new XmlReaderSettings
+            {
+                CheckCharacters = false,
+                CloseInput = false,
 
-            xrs.CheckCharacters = false;
-            xrs.CloseInput = false;
-
-            // The XML data needs to be in conformance to the rules for a well-formed XML 1.0 document.
-            xrs.ConformanceLevel = ConformanceLevel.Document;
-            xrs.IgnoreComments = true;
-            xrs.IgnoreProcessingInstructions = true;
-            xrs.IgnoreWhitespace = false;
-            xrs.MaxCharactersFromEntities = 1024;
-            xrs.XmlResolver = null;
-            xrs.DtdProcessing = DtdProcessing.Prohibit;
-            xrs.Schemas = null;
-            xrs.ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags.None;
-            xrs.ValidationType = ValidationType.None;
+                // The XML data needs to be in conformance to the rules for a well-formed XML 1.0 document.
+                ConformanceLevel = ConformanceLevel.Document,
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                IgnoreWhitespace = false,
+                MaxCharactersFromEntities = 1024,
+                XmlResolver = null,
+                DtdProcessing = DtdProcessing.Prohibit,
+                Schemas = null,
+                ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags.None,
+                ValidationType = ValidationType.None
+            };
             return xrs;
         }
 
@@ -4094,19 +4101,20 @@ namespace System.Management.Automation
 
         private static XmlReaderSettings GetXmlReaderSettingsForUntrustedXmlDocument()
         {
-            XmlReaderSettings settings = new XmlReaderSettings();
-
-            settings.CheckCharacters = false;
-            settings.ConformanceLevel = ConformanceLevel.Auto;
-            settings.IgnoreComments = true;
-            settings.IgnoreProcessingInstructions = true;
-            settings.IgnoreWhitespace = true;
-            settings.MaxCharactersFromEntities = 1024;
-            settings.MaxCharactersInDocument = 512 * 1024 * 1024; // 512M characters = 1GB
-            settings.XmlResolver = null;
-            settings.DtdProcessing = DtdProcessing.Parse;   // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument
-            settings.ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags.None;
-            settings.ValidationType = ValidationType.None;
+            XmlReaderSettings settings = new XmlReaderSettings
+            {
+                CheckCharacters = false,
+                ConformanceLevel = ConformanceLevel.Auto,
+                IgnoreComments = true,
+                IgnoreProcessingInstructions = true,
+                IgnoreWhitespace = true,
+                MaxCharactersFromEntities = 1024,
+                MaxCharactersInDocument = 512 * 1024 * 1024, // 512M characters = 1GB
+                XmlResolver = null,
+                DtdProcessing = DtdProcessing.Parse,   // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument
+                ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags.None,
+                ValidationType = ValidationType.None
+            };
             return settings;
         }
 
@@ -4570,8 +4578,10 @@ namespace System.Management.Automation
             try
             {
                 XmlReader xmlReader = XmlReader.Create(textReader, settings);
-                XmlDocument xmlDocument = new XmlDocument();
-                xmlDocument.PreserveWhitespace = preserveNonElements;
+                XmlDocument xmlDocument = new XmlDocument
+                {
+                    PreserveWhitespace = preserveNonElements
+                };
                 xmlDocument.Load(xmlReader);
                 return xmlDocument;
             }
@@ -7013,31 +7023,32 @@ namespace Microsoft.PowerShell
 
         internal static PSSessionOption RehydratePSSessionOption(PSObject pso)
         {
-            PSSessionOption option = new PSSessionOption();
-
-            option.ApplicationArguments = GetPropertyValue<PSPrimitiveDictionary>(pso, "ApplicationArguments");
-            option.CancelTimeout = GetPropertyValue<TimeSpan>(pso, "CancelTimeout");
-            option.Culture = GetPropertyValue<CultureInfo>(pso, "Culture");
-            option.IdleTimeout = GetPropertyValue<TimeSpan>(pso, "IdleTimeout");
-            option.MaximumConnectionRedirectionCount = GetPropertyValue<int>(pso, "MaximumConnectionRedirectionCount");
-            option.MaximumReceivedDataSizePerCommand = GetPropertyValue<int?>(pso, "MaximumReceivedDataSizePerCommand");
-            option.MaximumReceivedObjectSize = GetPropertyValue<int?>(pso, "MaximumReceivedObjectSize");
-            option.NoCompression = GetPropertyValue<bool>(pso, "NoCompression");
-            option.NoEncryption = GetPropertyValue<bool>(pso, "NoEncryption");
-            option.NoMachineProfile = GetPropertyValue<bool>(pso, "NoMachineProfile");
-            option.OpenTimeout = GetPropertyValue<TimeSpan>(pso, "OpenTimeout");
-            option.OperationTimeout = GetPropertyValue<TimeSpan>(pso, "OperationTimeout");
-            option.OutputBufferingMode = GetPropertyValue<OutputBufferingMode>(pso, "OutputBufferingMode");
-            option.MaxConnectionRetryCount = GetPropertyValue<int>(pso, "MaxConnectionRetryCount");
-            option.ProxyAccessType = GetPropertyValue<ProxyAccessType>(pso, "ProxyAccessType");
-            option.ProxyAuthentication = GetPropertyValue<AuthenticationMechanism>(pso, "ProxyAuthentication");
-            option.ProxyCredential = GetPropertyValue<PSCredential>(pso, "ProxyCredential");
-            option.SkipCACheck = GetPropertyValue<bool>(pso, "SkipCACheck");
-            option.SkipCNCheck = GetPropertyValue<bool>(pso, "SkipCNCheck");
-            option.SkipRevocationCheck = GetPropertyValue<bool>(pso, "SkipRevocationCheck");
-            option.UICulture = GetPropertyValue<CultureInfo>(pso, "UICulture");
-            option.UseUTF16 = GetPropertyValue<bool>(pso, "UseUTF16");
-            option.IncludePortInSPN = GetPropertyValue<bool>(pso, "IncludePortInSPN");
+            PSSessionOption option = new PSSessionOption
+            {
+                ApplicationArguments = GetPropertyValue<PSPrimitiveDictionary>(pso, "ApplicationArguments"),
+                CancelTimeout = GetPropertyValue<TimeSpan>(pso, "CancelTimeout"),
+                Culture = GetPropertyValue<CultureInfo>(pso, "Culture"),
+                IdleTimeout = GetPropertyValue<TimeSpan>(pso, "IdleTimeout"),
+                MaximumConnectionRedirectionCount = GetPropertyValue<int>(pso, "MaximumConnectionRedirectionCount"),
+                MaximumReceivedDataSizePerCommand = GetPropertyValue<int?>(pso, "MaximumReceivedDataSizePerCommand"),
+                MaximumReceivedObjectSize = GetPropertyValue<int?>(pso, "MaximumReceivedObjectSize"),
+                NoCompression = GetPropertyValue<bool>(pso, "NoCompression"),
+                NoEncryption = GetPropertyValue<bool>(pso, "NoEncryption"),
+                NoMachineProfile = GetPropertyValue<bool>(pso, "NoMachineProfile"),
+                OpenTimeout = GetPropertyValue<TimeSpan>(pso, "OpenTimeout"),
+                OperationTimeout = GetPropertyValue<TimeSpan>(pso, "OperationTimeout"),
+                OutputBufferingMode = GetPropertyValue<OutputBufferingMode>(pso, "OutputBufferingMode"),
+                MaxConnectionRetryCount = GetPropertyValue<int>(pso, "MaxConnectionRetryCount"),
+                ProxyAccessType = GetPropertyValue<ProxyAccessType>(pso, "ProxyAccessType"),
+                ProxyAuthentication = GetPropertyValue<AuthenticationMechanism>(pso, "ProxyAuthentication"),
+                ProxyCredential = GetPropertyValue<PSCredential>(pso, "ProxyCredential"),
+                SkipCACheck = GetPropertyValue<bool>(pso, "SkipCACheck"),
+                SkipCNCheck = GetPropertyValue<bool>(pso, "SkipCNCheck"),
+                SkipRevocationCheck = GetPropertyValue<bool>(pso, "SkipRevocationCheck"),
+                UICulture = GetPropertyValue<CultureInfo>(pso, "UICulture"),
+                UseUTF16 = GetPropertyValue<bool>(pso, "UseUTF16"),
+                IncludePortInSPN = GetPropertyValue<bool>(pso, "IncludePortInSPN")
+            };
 
             return option;
         }
@@ -7177,10 +7188,11 @@ namespace Microsoft.PowerShell
                 psCertDetails);
             PSPrincipal psPrincipal = new PSPrincipal(psIdentity, WindowsIdentity.GetCurrent());
 
-            PSSenderInfo senderInfo = new PSSenderInfo(psPrincipal, GetPropertyValue<string>(pso, "ConnectionString"));
-
-            senderInfo.ClientTimeZone = TimeZoneInfo.Local;
-            senderInfo.ApplicationArguments = GetPropertyValue<PSPrimitiveDictionary>(pso, "ApplicationArguments");
+            PSSenderInfo senderInfo = new PSSenderInfo(psPrincipal, GetPropertyValue<string>(pso, "ConnectionString"))
+            {
+                ClientTimeZone = TimeZoneInfo.Local,
+                ApplicationArguments = GetPropertyValue<PSPrimitiveDictionary>(pso, "ApplicationArguments")
+            };
 
             return senderInfo;
         }

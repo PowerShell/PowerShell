@@ -1029,8 +1029,10 @@ namespace System.Management.Automation
                 .AddParameter("Property", new string[] {
                     "Name", "Namespace", "HelpUri", "CommandType", "ResolvedCommandName", "OutputType", "Parameters" });
 
-            HostInfo useRunspaceHost = new HostInfo(null);
-            useRunspaceHost.UseRunspaceHost = true;
+            HostInfo useRunspaceHost = new HostInfo(null)
+            {
+                UseRunspaceHost = true
+            };
 
             if (_remoteHost.IsRunspacePushed)
             {

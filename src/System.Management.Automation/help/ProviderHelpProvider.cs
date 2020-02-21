@@ -81,8 +81,10 @@ namespace System.Management.Automation
                 //         he may mean to search for provider help.
                 if (this.HelpSystem.LastHelpCategory == HelpCategory.Provider)
                 {
-                    ErrorRecord errorRecord = new ErrorRecord(e, "ProviderLoadError", ErrorCategory.ResourceUnavailable, null);
-                    errorRecord.ErrorDetails = new ErrorDetails(typeof(ProviderHelpProvider).Assembly, "HelpErrors", "ProviderLoadError", helpRequest.Target, e.Message);
+                    ErrorRecord errorRecord = new ErrorRecord(e, "ProviderLoadError", ErrorCategory.ResourceUnavailable, null)
+                    {
+                        ErrorDetails = new ErrorDetails(typeof(ProviderHelpProvider).Assembly, "HelpErrors", "ProviderLoadError", helpRequest.Target, e.Message)
+                    };
                     this.HelpSystem.LastErrors.Add(errorRecord);
                 }
             }

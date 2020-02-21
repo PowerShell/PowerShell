@@ -31,11 +31,12 @@ namespace System.Management.Automation
             PSInformationalBuffers newBuffers,
             PSHost newHost)
         {
-            ExecutionContextForStepping result = new ExecutionContextForStepping(ctxt);
-
-            result._originalInformationalBuffers
-                = ctxt.InternalHost.InternalUI.GetInformationalMessageBuffers();
-            result._originalHost = ctxt.InternalHost.ExternalHost;
+            ExecutionContextForStepping result = new ExecutionContextForStepping(ctxt)
+            {
+                _originalInformationalBuffers
+                = ctxt.InternalHost.InternalUI.GetInformationalMessageBuffers(),
+                _originalHost = ctxt.InternalHost.ExternalHost
+            };
 
             ctxt.InternalHost.InternalUI.SetInformationalMessageBuffers(newBuffers);
             ctxt.InternalHost.SetHostRef(newHost);

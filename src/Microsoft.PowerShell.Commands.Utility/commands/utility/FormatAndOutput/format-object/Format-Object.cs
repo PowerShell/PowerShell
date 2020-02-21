@@ -86,8 +86,10 @@ namespace Microsoft.PowerShell.Commands
 
             parameters.expansion = ProcessExpandParameter();
 
-            ComplexSpecificParameters csp = new ComplexSpecificParameters();
-            csp.maxDepth = _depth;
+            ComplexSpecificParameters csp = new ComplexSpecificParameters
+            {
+                maxDepth = _depth
+            };
             parameters.shapeParameters = csp;
 
             return parameters;

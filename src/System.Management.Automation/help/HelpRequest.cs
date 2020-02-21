@@ -39,15 +39,16 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal HelpRequest Clone()
         {
-            HelpRequest helpRequest = new HelpRequest(this.Target, this.HelpCategory);
-
-            helpRequest.Provider = this.Provider;
-            helpRequest.MaxResults = this.MaxResults;
-            helpRequest.Component = this.Component;
-            helpRequest.Role = this.Role;
-            helpRequest.Functionality = this.Functionality;
-            helpRequest.ProviderContext = this.ProviderContext;
-            helpRequest.CommandOrigin = CommandOrigin;
+            HelpRequest helpRequest = new HelpRequest(this.Target, this.HelpCategory)
+            {
+                Provider = this.Provider,
+                MaxResults = this.MaxResults,
+                Component = this.Component,
+                Role = this.Role,
+                Functionality = this.Functionality,
+                ProviderContext = this.ProviderContext,
+                CommandOrigin = CommandOrigin
+            };
 
             return helpRequest;
         }

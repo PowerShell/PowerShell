@@ -51,9 +51,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
             else
             {
-                loadResult = new AssemblyLoadResult();
-                // we do not have an assembly, we try to load it
-                loadResult.a = LoadAssemblyFromResourceReference(resourceReference, out bool foundInGac);
+                loadResult = new AssemblyLoadResult
+                {
+                    // we do not have an assembly, we try to load it
+                    a = LoadAssemblyFromResourceReference(resourceReference, out bool foundInGac)
+                };
                 if (loadResult.a == null)
                 {
                     loadResult.status = AssemblyBindingStatus.NotFound;

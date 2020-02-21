@@ -30,8 +30,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal override ControlBase Copy()
         {
-            ListControlBody result = new ListControlBody();
-            result.autosize = this.autosize;
+            ListControlBody result = new ListControlBody
+            {
+                autosize = this.autosize
+            };
             if (defaultEntryDefinition != null)
             {
                 result.defaultEntryDefinition = this.defaultEntryDefinition.Copy();
@@ -69,8 +71,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         internal ListControlEntryDefinition Copy()
         {
-            ListControlEntryDefinition result = new ListControlEntryDefinition();
-            result.appliesTo = this.appliesTo;
+            ListControlEntryDefinition result = new ListControlEntryDefinition
+            {
+                appliesTo = this.appliesTo
+            };
             foreach (ListControlItemDefinition lcid in this.itemDefinitionList)
             {
                 result.itemDefinitionList.Add(lcid);

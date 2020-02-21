@@ -196,10 +196,12 @@ namespace Microsoft.PowerShell.Commands
                 if (_defaultListener == null)
                 {
                     _defaultListener =
-                        new DefaultTraceListener();
+                        new DefaultTraceListener
+                        {
 
-                    // Note, this is not meant to be localized.
-                    _defaultListener.Name = "Debug";
+                            // Note, this is not meant to be localized.
+                            Name = "Debug"
+                        };
                 }
 
                 AddListenerToSources(matchingSources, _defaultListener);
@@ -210,10 +212,12 @@ namespace Microsoft.PowerShell.Commands
                 if (_hostListener == null)
                 {
                     ((MshCommandRuntime)this.CommandRuntime).DebugPreference = ActionPreference.Continue;
-                    _hostListener = new PSHostTraceListener(this);
+                    _hostListener = new PSHostTraceListener(this)
+                    {
 
-                    // Note, this is not meant to be localized.
-                    _hostListener.Name = "Host";
+                        // Note, this is not meant to be localized.
+                        Name = "Host"
+                    };
                 }
 
                 AddListenerToSources(matchingSources, _hostListener);
@@ -304,9 +308,10 @@ namespace Microsoft.PowerShell.Commands
                             // Open the file stream
 
                             TextWriterTraceListener fileListener =
-                                    new TextWriterTraceListener(fileStream, resolvedPath);
-
-                            fileListener.Name = FileListener;
+                                    new TextWriterTraceListener(fileStream, resolvedPath)
+                                    {
+                                        Name = FileListener
+                                    };
 
                             _fileListeners.Add(fileListener);
                         }

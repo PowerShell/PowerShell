@@ -197,10 +197,11 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                ProgressRecord progress = new ProgressRecord(activityId, HelpDisplayStrings.UpdateProgressActivityForModule, HelpDisplayStrings.UpdateProgressInstalling);
-
-                progress.PercentComplete = 100;
-                progress.RecordType = ProgressRecordType.Completed;
+                ProgressRecord progress = new ProgressRecord(activityId, HelpDisplayStrings.UpdateProgressActivityForModule, HelpDisplayStrings.UpdateProgressInstalling)
+                {
+                    PercentComplete = 100,
+                    RecordType = ProgressRecordType.Completed
+                };
 
                 WriteProgress(progress);
             }

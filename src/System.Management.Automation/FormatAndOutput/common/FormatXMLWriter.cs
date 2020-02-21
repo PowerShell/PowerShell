@@ -38,10 +38,12 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                var settings = new XmlWriterSettings();
-                settings.Indent = true;
-                settings.IndentChars = "  ";
-                settings.NewLineOnAttributes = true;
+                var settings = new XmlWriterSettings
+                {
+                    Indent = true,
+                    IndentChars = "  ",
+                    NewLineOnAttributes = true
+                };
 
                 using (XmlWriter xmlWriter = XmlWriter.Create(streamWriter, settings))
                 {

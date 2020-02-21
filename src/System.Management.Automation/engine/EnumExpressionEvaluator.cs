@@ -591,8 +591,10 @@ namespace System.Management.Automation
                     Node idNode = new OperandNode(token.Text);
                     if (notFlag)    // identifier preceded by NOT
                     {
-                        Node notNode = new NotNode();
-                        notNode.Operand1 = idNode;
+                        Node notNode = new NotNode
+                        {
+                            Operand1 = idNode
+                        };
                         notFlag = false;
                         andQueue.Enqueue(notNode);
                     }
@@ -616,8 +618,10 @@ namespace System.Management.Automation
                     Node andCurrent = andQueue.Dequeue();
                     while (andQueue.Count > 0)
                     {
-                        Node andNode = new AndNode(andCurrent);
-                        andNode.Operand1 = andQueue.Dequeue();
+                        Node andNode = new AndNode(andCurrent)
+                        {
+                            Operand1 = andQueue.Dequeue()
+                        };
                         andCurrent = andNode;
                     }
 
@@ -630,8 +634,10 @@ namespace System.Management.Automation
             Node orCurrent = orQueue.Dequeue();
             while (orQueue.Count > 0)
             {
-                Node orNode = new OrNode(orCurrent);
-                orNode.Operand1 = orQueue.Dequeue();
+                Node orNode = new OrNode(orCurrent)
+                {
+                    Operand1 = orQueue.Dequeue()
+                };
                 orCurrent = orNode;
             }
 

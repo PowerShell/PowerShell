@@ -145,11 +145,12 @@ namespace System.Management.Automation
                                                                                resource.Path,
                                                                                resource.ParentPath,
                                                                                _context
-                                                                               );
+                                                                               )
+                            {
+                                FriendlyName = resource.FriendlyName,
 
-                            resourceInfo.FriendlyName = resource.FriendlyName;
-
-                            resourceInfo.CompanyName = resource.CompanyName;
+                                CompanyName = resource.CompanyName
+                            };
 
 
                             if (resource.Module is PSModuleInfo psMod)
@@ -168,9 +169,11 @@ namespace System.Management.Automation
 
                                 foreach (dynamic prop in properties)
                                 {
-                                    DscResourcePropertyInfo propInfo = new DscResourcePropertyInfo();
-                                    propInfo.Name = prop.Name;
-                                    propInfo.PropertyType = prop.PropertyType;
+                                    DscResourcePropertyInfo propInfo = new DscResourcePropertyInfo
+                                    {
+                                        Name = prop.Name,
+                                        PropertyType = prop.PropertyType
+                                    };
                                     propInfo.UpdateValues(prop.Values);
 
                                     propertyList.Add(propInfo);

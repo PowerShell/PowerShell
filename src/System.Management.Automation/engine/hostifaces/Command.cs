@@ -430,8 +430,10 @@ namespace System.Management.Automation.Runspaces
                 return mcr.OutputPipe;
             }
 
-            Pipe pipe = new Pipe();
-            pipe.NullPipe = true;
+            Pipe pipe = new Pipe
+            {
+                NullPipe = true
+            };
             return pipe;
         }
 

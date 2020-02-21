@@ -442,9 +442,11 @@ namespace Microsoft.PowerShell
             try
             {
                 pbDataIn = GCHandle.Alloc(userData, GCHandleType.Pinned);
-                CAPI.CRYPTOAPI_BLOB dataIn = new CAPI.CRYPTOAPI_BLOB();
-                dataIn.cbData = (uint)userData.Length;
-                dataIn.pbData = pbDataIn.AddrOfPinnedObject();
+                CAPI.CRYPTOAPI_BLOB dataIn = new CAPI.CRYPTOAPI_BLOB
+                {
+                    cbData = (uint)userData.Length,
+                    pbData = pbDataIn.AddrOfPinnedObject()
+                };
                 CAPI.CRYPTOAPI_BLOB entropy = new CAPI.CRYPTOAPI_BLOB();
                 if (optionalEntropy != null)
                 {
@@ -530,9 +532,11 @@ namespace Microsoft.PowerShell
             try
             {
                 pbDataIn = GCHandle.Alloc(encryptedData, GCHandleType.Pinned);
-                CAPI.CRYPTOAPI_BLOB dataIn = new CAPI.CRYPTOAPI_BLOB();
-                dataIn.cbData = (uint)encryptedData.Length;
-                dataIn.pbData = pbDataIn.AddrOfPinnedObject();
+                CAPI.CRYPTOAPI_BLOB dataIn = new CAPI.CRYPTOAPI_BLOB
+                {
+                    cbData = (uint)encryptedData.Length,
+                    pbData = pbDataIn.AddrOfPinnedObject()
+                };
                 CAPI.CRYPTOAPI_BLOB entropy = new CAPI.CRYPTOAPI_BLOB();
                 if (optionalEntropy != null)
                 {

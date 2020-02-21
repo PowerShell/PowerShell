@@ -1078,9 +1078,11 @@ namespace Microsoft.PowerShell.Commands
                                     if (ResolvedComputerNames.Length != 0 && Operations.Count > 0)
                                     {
                                         PSRemotingJob job = new PSRemotingJob(ResolvedComputerNames, Operations,
-                                                ScriptBlock.ToString(), ThrottleLimit, _name);
-                                        job.PSJobTypeName = RemoteJobType;
-                                        job.HideComputerName = _hideComputerName;
+                                                ScriptBlock.ToString(), ThrottleLimit, _name)
+                                        {
+                                            PSJobTypeName = RemoteJobType,
+                                            HideComputerName = _hideComputerName
+                                        };
                                         this.JobRepository.Add(job);
                                         WriteObject(job);
                                     }
@@ -1092,9 +1094,11 @@ namespace Microsoft.PowerShell.Commands
                             case InvokeCommandCommand.FilePathSessionParameterSet:
                                 {
                                     PSRemotingJob job = new PSRemotingJob(Session, Operations,
-                                            ScriptBlock.ToString(), ThrottleLimit, _name);
-                                    job.PSJobTypeName = RemoteJobType;
-                                    job.HideComputerName = _hideComputerName;
+                                            ScriptBlock.ToString(), ThrottleLimit, _name)
+                                    {
+                                        PSJobTypeName = RemoteJobType,
+                                        HideComputerName = _hideComputerName
+                                    };
                                     this.JobRepository.Add(job);
                                     WriteObject(job);
                                 }
@@ -1113,9 +1117,11 @@ namespace Microsoft.PowerShell.Commands
                                         }
 
                                         PSRemotingJob job = new PSRemotingJob(locations, Operations,
-                                            ScriptBlock.ToString(), ThrottleLimit, _name);
-                                        job.PSJobTypeName = RemoteJobType;
-                                        job.HideComputerName = _hideComputerName;
+                                            ScriptBlock.ToString(), ThrottleLimit, _name)
+                                        {
+                                            PSJobTypeName = RemoteJobType,
+                                            HideComputerName = _hideComputerName
+                                        };
                                         this.JobRepository.Add(job);
                                         WriteObject(job);
                                     }
@@ -1391,8 +1397,10 @@ namespace Microsoft.PowerShell.Commands
                     _operationsComplete.Reset();
                     Dbg.Assert(_disconnectComplete == null, "disconnectComplete event should only be used once.");
                     _disconnectComplete = new ManualResetEvent(false);
-                    _job = new PSInvokeExpressionSyncJob(Operations, _throttleManager);
-                    _job.HideComputerName = _hideComputerName;
+                    _job = new PSInvokeExpressionSyncJob(Operations, _throttleManager)
+                    {
+                        HideComputerName = _hideComputerName
+                    };
                     _job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
 
                     // Add robust connection retry notification handler.

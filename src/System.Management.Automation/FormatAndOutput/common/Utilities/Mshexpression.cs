@@ -150,9 +150,10 @@ namespace Microsoft.PowerShell.Commands
             if (Script != null)
             {
                 // script block, just add it to the list and be done
-                PSPropertyExpression ex = new PSPropertyExpression(Script);
-
-                ex._isResolved = true;
+                PSPropertyExpression ex = new PSPropertyExpression(Script)
+                {
+                    _isResolved = true
+                };
                 retVal.Add(ex);
                 return retVal;
             }
@@ -238,9 +239,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!hash.ContainsKey(m.Name))
                 {
-                    PSPropertyExpression ex = new PSPropertyExpression(m.Name);
-
-                    ex._isResolved = true;
+                    PSPropertyExpression ex = new PSPropertyExpression(m.Name)
+                    {
+                        _isResolved = true
+                    };
                     retVal.Add(ex);
                     hash.Add(m.Name, null);
                 }

@@ -58,9 +58,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("paths");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             Collection<IContentReader> results = GetContentReader(paths, context);
 
@@ -397,9 +399,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("paths");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             Collection<IContentWriter> results = GetContentWriter(paths, context);
 
@@ -737,9 +741,11 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("paths");
             }
 
-            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
-            context.Force = force;
-            context.SuppressWildcardExpansion = literalPath;
+            CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext)
+            {
+                Force = force,
+                SuppressWildcardExpansion = literalPath
+            };
 
             ClearContent(paths, context);
 

@@ -132,9 +132,11 @@ namespace System.Management.Automation.Runspaces
         {
             InvalidRunspaceStateException exception = new InvalidRunspaceStateException(
                 RunspaceStrings.InvalidRunspaceStateGeneral,
-                this);
-            exception.CurrentState = RunspacePoolStateToRunspaceState(this.CurrentState);
-            exception.ExpectedState = RunspacePoolStateToRunspaceState(this.ExpectedState);
+                this)
+            {
+                CurrentState = RunspacePoolStateToRunspaceState(this.CurrentState),
+                ExpectedState = RunspacePoolStateToRunspaceState(this.ExpectedState)
+            };
             return exception;
         }
 

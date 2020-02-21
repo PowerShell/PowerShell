@@ -693,9 +693,10 @@ namespace System.Management.Automation
                             systemDriveInfo.RootDirectory.FullName,
                             volumeLabel,
                             null,
-                            displayRoot);
-
-                    newPSDriveInfo.IsAutoMounted = true;
+                            displayRoot)
+                        {
+                            IsAutoMounted = true
+                        };
 
                     CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
 

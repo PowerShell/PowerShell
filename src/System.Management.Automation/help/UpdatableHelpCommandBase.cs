@@ -150,9 +150,10 @@ namespace Microsoft.PowerShell.Commands
             string activity = (e.CommandType == UpdatableHelpCommandType.UpdateHelpCommand) ?
                 HelpDisplayStrings.UpdateProgressActivityForModule : HelpDisplayStrings.SaveProgressActivityForModule;
 
-            ProgressRecord progress = new ProgressRecord(activityId, StringUtil.Format(activity, e.ModuleName), e.ProgressStatus);
-
-            progress.PercentComplete = e.ProgressPercent;
+            ProgressRecord progress = new ProgressRecord(activityId, StringUtil.Format(activity, e.ModuleName), e.ProgressStatus)
+            {
+                PercentComplete = e.ProgressPercent
+            };
 
             WriteProgress(progress);
         }
@@ -374,9 +375,11 @@ namespace Microsoft.PowerShell.Commands
                     e = new UpdatableHelpExceptionContext(new UpdatableHelpSystemException(
                         "HelpCultureNotSupported", StringUtil.Format(HelpDisplayStrings.CannotMatchUICulturePattern,
                         string.Join(", ", exception.Cultures)),
-                        ErrorCategory.InvalidArgument, exception.Cultures, null));
-                    e.Modules = exception.Modules;
-                    e.Cultures = exception.Cultures;
+                        ErrorCategory.InvalidArgument, exception.Cultures, null))
+                    {
+                        Modules = exception.Modules,
+                        Cultures = exception.Cultures
+                    };
                 }
 
                 WriteError(e.CreateErrorRecord(_commandType));
@@ -760,9 +763,11 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     // Win8: 566738
-                    CmdletProviderContext context = new CmdletProviderContext(this.Context);
-                    // resolvedPath is already resolved..so no need to expand wildcards anymore
-                    context.SuppressWildcardExpansion = true;
+                    CmdletProviderContext context = new CmdletProviderContext(this.Context)
+                    {
+                        // resolvedPath is already resolved..so no need to expand wildcards anymore
+                        SuppressWildcardExpansion = true
+                    };
                     if (isLiteralPath || InvokeProvider.Item.IsContainer(resolvedPath, context))
                     {
                         yield return resolvedPath;

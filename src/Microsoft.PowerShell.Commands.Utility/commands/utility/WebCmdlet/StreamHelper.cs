@@ -302,8 +302,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 ProgressRecord record = new ProgressRecord(ActivityId,
                     WebCmdletStrings.WriteRequestProgressActivity,
-                    StringUtil.Format(WebCmdletStrings.WriteRequestComplete, totalWritten));
-                record.RecordType = ProgressRecordType.Completed;
+                    StringUtil.Format(WebCmdletStrings.WriteRequestComplete, totalWritten))
+                {
+                    RecordType = ProgressRecordType.Completed
+                };
                 cmdlet.WriteProgress(record);
             }
 

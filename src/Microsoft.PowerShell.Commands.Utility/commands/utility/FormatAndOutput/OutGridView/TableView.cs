@@ -25,10 +25,11 @@ namespace Microsoft.PowerShell.Commands
             _typeInfoDatabase = db;
 
             // Initialize Format Error Manager.
-            FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
-
-            formatErrorPolicy.ShowErrorsAsMessages = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages;
-            formatErrorPolicy.ShowErrorsInFormattedOutput = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsInFormattedOutput;
+            FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy
+            {
+                ShowErrorsAsMessages = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsAsMessages,
+                ShowErrorsInFormattedOutput = _typeInfoDatabase.defaultSettingsSection.formatErrorPolicy.ShowErrorsInFormattedOutput
+            };
 
             _errorManager = new FormatErrorManager(formatErrorPolicy);
         }

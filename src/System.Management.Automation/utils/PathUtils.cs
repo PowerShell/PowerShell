@@ -143,13 +143,15 @@ namespace System.Management.Automation
                 {
                     // This probably happened because the file already exists
                     ErrorRecord errorRecord = new ErrorRecord(
-                        e, "NoClobber", ErrorCategory.ResourceExists, resolvedPath);
-                    errorRecord.ErrorDetails = new ErrorDetails(
+                        e, "NoClobber", ErrorCategory.ResourceExists, resolvedPath)
+                    {
+                        ErrorDetails = new ErrorDetails(
                         cmdlet,
                         "PathUtilsStrings",
                         "UtilityFileExistsNoClobber",
                         filePath,
-                        "NoClobber"); // prevents localization
+                        "NoClobber") // prevents localization
+                    };
 
                     // NOTE: this call will throw
                     cmdlet.ThrowTerminatingError(errorRecord);
@@ -312,9 +314,10 @@ namespace System.Management.Automation
                 PSTraceSource.NewInvalidOperationException(),
                 "ReadWriteFileNotFileSystemProvider",
                 ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             cmdlet.ThrowTerminatingError(errorRecord);
         }
 
@@ -326,9 +329,10 @@ namespace System.Management.Automation
                 PSTraceSource.NewInvalidOperationException(),
                 "ReadWriteMultipleFilesNotSupported",
                 ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                null)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             cmdlet.ThrowTerminatingError(errorRecord);
         }
 
@@ -340,9 +344,10 @@ namespace System.Management.Automation
                 new FileNotFoundException(),
                 "FileOpenFailure",
                 ErrorCategory.OpenError,
-                filePath);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
+                filePath)
+            {
+                ErrorDetails = new ErrorDetails(msg)
+            };
             cmdlet.ThrowTerminatingError(errorRecord);
         }
 

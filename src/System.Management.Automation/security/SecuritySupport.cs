@@ -505,15 +505,17 @@ namespace System.Management.Automation.Internal
                 return status;
             }
 
-            SAFER_CODE_PROPERTIES codeProperties = new SAFER_CODE_PROPERTIES();
+            SAFER_CODE_PROPERTIES codeProperties = new SAFER_CODE_PROPERTIES
+            {
 
-            // Prepare the code properties struct.
-            codeProperties.cbSize = (uint)Marshal.SizeOf(typeof(SAFER_CODE_PROPERTIES));
-            codeProperties.dwCheckFlags = (
+                // Prepare the code properties struct.
+                cbSize = (uint)Marshal.SizeOf(typeof(SAFER_CODE_PROPERTIES)),
+                dwCheckFlags = (
                 NativeConstants.SAFER_CRITERIA_IMAGEPATH |
                 NativeConstants.SAFER_CRITERIA_IMAGEHASH |
-                NativeConstants.SAFER_CRITERIA_AUTHENTICODE);
-            codeProperties.ImagePath = path;
+                NativeConstants.SAFER_CRITERIA_AUTHENTICODE),
+                ImagePath = path
+            };
 
             if (handle != null)
             {

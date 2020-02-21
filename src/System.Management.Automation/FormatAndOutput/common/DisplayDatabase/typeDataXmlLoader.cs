@@ -467,9 +467,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // Set AppliesTo and Name in the view
-            ViewDefinition view = new ViewDefinition();
-            view.appliesTo = appliesTo;
-            view.name = formatView.Name;
+            ViewDefinition view = new ViewDefinition
+            {
+                appliesTo = appliesTo,
+                name = formatView.Name
+            };
 
             var firstTypeName = typeNames[0];
             PSControl control = formatView.Control;
@@ -597,8 +599,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 //   Alignment --- Alignment cardinality 0..1
                 if (!string.IsNullOrEmpty(header.Label))
                 {
-                    TextToken tt = new TextToken();
-                    tt.text = header.Label;
+                    TextToken tt = new TextToken
+                    {
+                        text = header.Label
+                    };
                     chd.label = tt;
                 }
 
@@ -680,8 +684,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return;
                     }
 
-                    FieldPropertyToken fpt = new FieldPropertyToken();
-                    fpt.expression = expression;
+                    FieldPropertyToken fpt = new FieldPropertyToken
+                    {
+                        expression = expression
+                    };
                     fpt.fieldFormattingDirective.formatString = column.FormatString;
                     rid.formatTokenList.Add(fpt);
                 }
@@ -891,16 +897,20 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return; // fatal
                     }
 
-                    FieldPropertyToken fpt = new FieldPropertyToken();
-                    fpt.expression = expression;
+                    FieldPropertyToken fpt = new FieldPropertyToken
+                    {
+                        expression = expression
+                    };
                     fpt.fieldFormattingDirective.formatString = listItem.FormatString;
                     lvid.formatTokenList.Add(fpt);
                 }
 
                 if (!string.IsNullOrEmpty(listItem.Label))
                 {
-                    TextToken tt = new TextToken();
-                    tt.text = listItem.Label;
+                    TextToken tt = new TextToken
+                    {
+                        text = listItem.Label
+                    };
                     lvid.label = tt;
                 }
 
@@ -931,12 +941,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         private WideControlBody LoadWideControlFromObjectModel(WideControl wide, int viewIndex, string typeName)
         {
-            WideControlBody wideBody = new WideControlBody();
+            WideControlBody wideBody = new WideControlBody
+            {
 
-            // Contains:
-            //   Columns --- ColumnNumbers  cardinality 0..1
-            //   Entries --- WideEntries    cardinality 1
-            wideBody.columns = (int)wide.Columns;
+                // Contains:
+                //   Columns --- ColumnNumbers  cardinality 0..1
+                //   Entries --- WideEntries    cardinality 1
+                columns = (int)wide.Columns
+            };
 
             if (wide.AutoSize)
                 wideBody.autosize = true;
@@ -1027,8 +1039,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null; // fatal
             }
 
-            FieldPropertyToken fpt = new FieldPropertyToken();
-            fpt.expression = expression;
+            FieldPropertyToken fpt = new FieldPropertyToken
+            {
+                expression = expression
+            };
             fpt.fieldFormattingDirective.formatString = wideItem.FormatString;
             wved.formatTokenList.Add(fpt);
 
@@ -1393,9 +1407,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         using (this.StackFrame(n, typeRefCount++))
                         {
-                            TypeReference tr = new TypeReference();
-
-                            tr.name = GetMandatoryInnerText(n);
+                            TypeReference tr = new TypeReference
+                            {
+                                name = GetMandatoryInnerText(n)
+                            };
                             typeGroupDefinition.typeReferenceList.Add(tr);
                         }
                     }
@@ -1483,8 +1498,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (val != null)
             {
-                TypeReference tr = new TypeReference();
-                tr.name = val;
+                TypeReference tr = new TypeReference
+                {
+                    name = val
+                };
                 return tr;
             }
 
@@ -1497,8 +1514,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (val != null)
             {
-                TypeGroupReference tgr = new TypeGroupReference();
-                tgr.name = val;
+                TypeGroupReference tgr = new TypeGroupReference
+                {
+                    name = val
+                };
                 return tgr;
             }
 
@@ -1961,8 +1980,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return false; // fatal error
                     }
 
-                    _token = new ExpressionToken();
-                    _token.expressionValue = _loader.GetMandatoryInnerText(n);
+                    _token = new ExpressionToken
+                    {
+                        expressionValue = _loader.GetMandatoryInnerText(n)
+                    };
                     if (_token.expressionValue == null)
                     {
                         // Error at XPath {0} in file {1}: Missing property.
@@ -1984,9 +2005,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return false; // fatal error
                     }
 
-                    _token = new ExpressionToken();
-                    _token.isScriptBlock = true;
-                    _token.expressionValue = _loader.GetMandatoryInnerText(n);
+                    _token = new ExpressionToken
+                    {
+                        isScriptBlock = true,
+                        expressionValue = _loader.GetMandatoryInnerText(n)
+                    };
                     if (_token.expressionValue == null)
                     {
                         // Error at XPath {0} in file {1}: Missing script block text.
@@ -2203,9 +2226,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         return false;
                     }
 
-                    ControlReference controlRef = new ControlReference();
-                    controlRef.name = name;
-                    controlRef.controlType = typeof(ComplexControlBody);
+                    ControlReference controlRef = new ControlReference
+                    {
+                        name = name,
+                        controlType = typeof(ComplexControlBody)
+                    };
                     _control = controlRef;
                     return true;
                 }
