@@ -17,7 +17,7 @@ namespace System.Management.Automation.Remoting
     {
         #region Members
 
-        private System.Net.Sockets.AddressFamily _addressFamily;
+        private readonly System.Net.Sockets.AddressFamily _addressFamily;
         private Guid _vmId;
         private Guid _serviceId;
 
@@ -138,7 +138,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
-        private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         #endregion
 
@@ -337,9 +337,9 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
-        private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+        private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
-        private static ManualResetEvent s_connectDone =
+        private static readonly ManualResetEvent s_connectDone =
                 new ManualResetEvent(false);
 
         #endregion

@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(WSManConfigurationOption))]
     public sealed class NewPSTransportOptionCommand : PSCmdlet
     {
-        private WSManConfigurationOption _option = new WSManConfigurationOption();
+        private readonly WSManConfigurationOption _option = new WSManConfigurationOption();
 
         /// <summary>
         /// MaxIdleTimeoutSec.

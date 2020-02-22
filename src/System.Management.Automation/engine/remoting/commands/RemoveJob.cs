@@ -1011,7 +1011,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Members
 
-        private HashSet<Guid> _pendingJobs = new HashSet<Guid>();
+        private readonly HashSet<Guid> _pendingJobs = new HashSet<Guid>();
         private readonly ManualResetEvent _waitForJobs = new ManualResetEvent(false);
         private readonly Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>> _cleanUpActions =
             new Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>>();
