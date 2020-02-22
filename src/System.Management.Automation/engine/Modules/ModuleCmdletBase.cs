@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands
             "DefaultCommandPrefix"
         };
 
-        private static string[] s_moduleVersionMembers = new string[] {
+        private static readonly string[] s_moduleVersionMembers = new string[] {
             "ModuleName",
             "GUID",
             "ModuleVersion"
@@ -299,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal static object s_WindowsPowerShellCompatSyncObject = new object();
 
-        private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
+        private readonly Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
         internal bool LoadUsingModulePath(bool found, IEnumerable<string> modulePath, string name, SessionState ss,
             ImportModuleOptions options, ManifestProcessingFlags manifestProcessingFlags, out PSModuleInfo module)
@@ -6065,7 +6065,7 @@ namespace Microsoft.PowerShell.Commands
             return shouldProcessModule;
         }
 
-        private static object s_lockObject = new object();
+        private static readonly object s_lockObject = new object();
 
         private void ClearAnalysisCaches()
         {
@@ -6077,7 +6077,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // Analyzes a binary module implementation for its cmdlets.
-        private static Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
+        private static readonly Dictionary<string, Tuple<BinaryAnalysisResult, Version>> s_binaryAnalysisCache =
             new Dictionary<string, Tuple<BinaryAnalysisResult, Version>>();
 
 #if CORECLR
@@ -6271,7 +6271,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         // Analyzes a script module implementation for its exports.
-        private static Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
+        private static readonly Dictionary<string, PSModuleInfo> s_scriptAnalysisCache = new Dictionary<string, PSModuleInfo>();
 
         private PSModuleInfo AnalyzeScriptFile(string filename, bool force, ExecutionContext context)
         {

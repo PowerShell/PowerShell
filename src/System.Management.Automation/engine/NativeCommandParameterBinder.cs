@@ -383,7 +383,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The native command to bind to.
         /// </summary>
-        private NativeCommand _nativeCommand;
+        private readonly NativeCommand _nativeCommand;
         #endregion private members
     }
 }

@@ -91,7 +91,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _fullName;
+        private readonly string _fullName;
 
         /// <summary>
         /// Gets the command's PSSnapin name.
@@ -104,7 +104,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _psSnapinName;
+        private readonly string _psSnapinName;
 
         /// <summary>
         /// Gets the command's short name.
@@ -117,7 +117,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _shortName;
+        private readonly string _shortName;
 
         /// <summary>
         /// The full name.

@@ -945,7 +945,7 @@ namespace System.Management.Automation
 
         #region Private Data
 
-        private static HybridDictionary s_instanceMethodCacheTable = new HybridDictionary();
+        private static readonly HybridDictionary s_instanceMethodCacheTable = new HybridDictionary();
 
         #endregion
     }

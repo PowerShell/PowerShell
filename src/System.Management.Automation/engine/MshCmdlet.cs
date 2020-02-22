@@ -70,7 +70,7 @@ namespace System.Management.Automation
     /// </summary>
     public struct SwitchParameter
     {
-        private bool _isPresent;
+        private readonly bool _isPresent;
         /// <summary>
         /// Returns true if the parameter was specified on the command line, false otherwise.
         /// </summary>
@@ -233,9 +233,9 @@ namespace System.Management.Automation
     /// </summary>
     public class CommandInvocationIntrinsics
     {
-        private ExecutionContext _context;
-        private PSCmdlet _cmdlet;
-        private MshCommandRuntime _commandRuntime;
+        private readonly ExecutionContext _context;
+        private readonly PSCmdlet _cmdlet;
+        private readonly MshCommandRuntime _commandRuntime;
 
         internal CommandInvocationIntrinsics(ExecutionContext context, PSCmdlet cmdlet)
         {
