@@ -114,7 +114,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
-        private string _errorId = "NotSupported";
+        private readonly string _errorId = "NotSupported";
     }
 }
 
