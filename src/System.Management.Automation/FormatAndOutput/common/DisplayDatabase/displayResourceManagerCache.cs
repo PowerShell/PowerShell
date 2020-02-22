@@ -216,11 +216,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return result;
             }
 
-            private Hashtable _assemblyReferences = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            private readonly Hashtable _assemblyReferences = new Hashtable(StringComparer.OrdinalIgnoreCase);
         }
 
-        private AssemblyNameResolver _assemblyNameResolver = new AssemblyNameResolver();
-        private Hashtable _resourceReferenceToAssemblyCache = new Hashtable();
+        private readonly AssemblyNameResolver _assemblyNameResolver = new AssemblyNameResolver();
+        private readonly Hashtable _resourceReferenceToAssemblyCache = new Hashtable();
     }
 }
 

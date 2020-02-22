@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _command.ThrowTerminatingError(errorRecord);
         }
 
-        private PSCmdlet _command;
+        private readonly PSCmdlet _command;
     }
 
     /// <summary>
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private string _commandName = null;
         private Type _commandType;
-        private List<CommandParameterInternal> _commandParameterList = new List<CommandParameterInternal>();
+        private readonly List<CommandParameterInternal> _commandParameterList = new List<CommandParameterInternal>();
 
         private ExecutionContext _context = null;
     }
