@@ -523,7 +523,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #endregion
 
-        private CommandParameterDefinition _paramDef = null;
+        private readonly CommandParameterDefinition _paramDef = null;
     }
 }
 
