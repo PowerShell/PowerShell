@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         [Dbg.TraceSourceAttribute(
             "RegistryProvider",
             "The namespace navigation provider for the Windows Registry")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("RegistryProvider",
             "The namespace navigation provider for the Windows Registry");
 
