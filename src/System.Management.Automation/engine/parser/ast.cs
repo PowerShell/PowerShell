@@ -2367,7 +2367,7 @@ namespace System.Management.Automation.Language
     /// </summary>
     public class StatementBlockAst : Ast
     {
-        private static ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
+        private static readonly ReadOnlyCollection<StatementAst> s_emptyStatementCollection = Utils.EmptyReadOnlyCollection<StatementAst>();
 
         /// <summary>
         /// Construct a statement block.

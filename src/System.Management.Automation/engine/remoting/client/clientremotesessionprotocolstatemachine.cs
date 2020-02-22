@@ -32,25 +32,25 @@ namespace System.Management.Automation.Remoting
     internal class ClientRemoteSessionDSHandlerStateMachine
     {
         [TraceSourceAttribute("CRSessionFSM", "CRSessionFSM")]
-        private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
+        private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("CRSessionFSM", "CRSessionFSM");
 
         /// <summary>
         /// Event handling matrix. It defines what action to take when an event occur.
         /// [State,Event]=>Action.
         /// </summary>
-        private EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
-        private Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
+        private readonly EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
+        private readonly Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
 
         /// <summary>
         /// Current state of session.
         /// </summary>
         private RemoteSessionState _state;
 
-        private Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
+        private readonly Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
         // all events raised through the state machine
         // will be queued in this
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         // object for synchronizing access to the above
         // queue
 
