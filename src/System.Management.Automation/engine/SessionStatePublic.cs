@@ -311,7 +311,7 @@ namespace System.Management.Automation
 
         #region private data
 
-        private SessionStateInternal _sessionState;
+        private readonly SessionStateInternal _sessionState;
         private DriveManagementIntrinsics _drive;
         private CmdletProviderManagementIntrinsics _provider;
         private PathIntrinsics _path;

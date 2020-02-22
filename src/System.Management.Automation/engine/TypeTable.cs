@@ -1752,7 +1752,7 @@ namespace System.Management.Automation.Runspaces
     [Serializable]
     public class TypeTableLoadException : RuntimeException
     {
-        private Collection<string> _errors;
+        private readonly Collection<string> _errors;
 
         #region Constructors
 

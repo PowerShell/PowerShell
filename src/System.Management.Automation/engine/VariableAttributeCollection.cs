@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// The variable whose value needs to be verified anytime
         /// the attributes change.
         /// </summary>
-        private PSVariable _variable;
+        private readonly PSVariable _variable;
         #endregion private data
     }
 }

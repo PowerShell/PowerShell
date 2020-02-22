@@ -46,7 +46,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
+        private static readonly Lazy<HashSet<string>> s_commonParameters = new Lazy<HashSet<string>>(
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
+        private static readonly Lazy<HashSet<string>> s_optionalCommonParameters = new Lazy<HashSet<string>>(
             () =>
             {
                 return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
