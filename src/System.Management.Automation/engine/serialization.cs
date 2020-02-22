@@ -174,7 +174,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Default depth of serialization.
         /// </summary>
-        private static int s_mshDefaultSerializationDepth = 1;
+        private static readonly int s_mshDefaultSerializationDepth = 1;
     }
 
     /// <summary>
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation
             _writer.WriteEndElement();
         }
 
-        private static Lazy<CimSerializer> s_cimSerializer = new Lazy<CimSerializer>(CimSerializer.Create);
+        private static readonly Lazy<CimSerializer> s_cimSerializer = new Lazy<CimSerializer>(CimSerializer.Create);
 
         private void PrepareCimInstanceForSerialization(PSObject psObject, CimInstance cimInstance)
         {
@@ -3004,7 +3004,7 @@ namespace System.Management.Automation
 
         #region Known CIMTypes
 
-        private static Lazy<HashSet<Type>> s_knownCimArrayTypes = new Lazy<HashSet<Type>>(
+        private static readonly Lazy<HashSet<Type>> s_knownCimArrayTypes = new Lazy<HashSet<Type>>(
             () =>
                 new HashSet<Type>
                 {
@@ -3296,7 +3296,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static Lazy<CimDeserializer> s_cimDeserializer = new Lazy<CimDeserializer>(CimDeserializer.Create);
+        private static readonly Lazy<CimDeserializer> s_cimDeserializer = new Lazy<CimDeserializer>(CimDeserializer.Create);
 
         private CimClass RehydrateCimClass(PSPropertyInfo classMetadataProperty)
         {

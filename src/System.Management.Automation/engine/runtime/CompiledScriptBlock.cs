@@ -1713,11 +1713,11 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static object s_syncObject = new object();
+        private static readonly object s_syncObject = new object();
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
-        private static Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
+        private static readonly Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
             () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
 
@@ -2181,7 +2181,7 @@ namespace System.Management.Automation
         private readonly bool _fromScriptFile;
         private readonly bool _useLocalScope;
         private readonly bool _runOptimized;
-        private bool _rethrowExitException;
+        private readonly bool _rethrowExitException;
         private MshCommandRuntime _commandRuntime;
         private readonly MutableTuple _localsTuple;
         private bool _exitWasCalled;

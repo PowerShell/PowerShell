@@ -29,7 +29,7 @@ namespace System.Management.Automation
     {
         #region Private data
 
-        private object _syncObject = new object();
+        private readonly object _syncObject = new object();
         private bool _initialized = false;
         private PSLocalEventManager _eventManager;
         private PSEventSubscriber _startSubscriber;

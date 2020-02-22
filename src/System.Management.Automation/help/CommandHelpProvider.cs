@@ -48,7 +48,7 @@ namespace System.Management.Automation
             s_engineModuleHelpFileCache.Add("Microsoft.WSMan.Management", "Microsoft.Wsman.Management.dll-Help.xml");
         }
 
-        private static Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
+        private static readonly Dictionary<string, string> s_engineModuleHelpFileCache = new Dictionary<string, string>();
 
         private readonly ExecutionContext _context;
 
