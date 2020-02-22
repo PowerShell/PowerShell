@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         private const string DynamicTypeSet = "DynamicTypeSet";
         private const string TypeDataSet = "TypeDataSet";
 
-        private static object s_notSpecified = new object();
+        private static readonly object s_notSpecified = new object();
         private static bool HasBeenSpecified(object obj)
         {
             return !System.Object.ReferenceEquals(obj, s_notSpecified);
