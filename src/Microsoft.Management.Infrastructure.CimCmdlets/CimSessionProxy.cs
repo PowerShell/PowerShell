@@ -218,7 +218,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// then call Dispose on it.
         /// </para>
         /// </summary>
-        private static Dictionary<CimSession, uint> temporarySessionCache = new Dictionary<CimSession, uint>();
+        private static readonly Dictionary<CimSession, uint> temporarySessionCache = new Dictionary<CimSession, uint>();
 
         /// <summary>
         /// <para>
@@ -1065,7 +1065,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
 #if DEBUG
-        private static bool isCliXmlTestabilityHookActive = GetIsCliXmlTestabilityHookActive();
+        private static readonly bool isCliXmlTestabilityHookActive = GetIsCliXmlTestabilityHookActive();
         private static bool GetIsCliXmlTestabilityHookActive()
         {
             return !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CDXML_CLIXML_TEST"));
@@ -1567,7 +1567,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// The current operation parameters.
         /// </summary>
-        private Hashtable operationParameters = new Hashtable();
+        private readonly Hashtable operationParameters = new Hashtable();
 
         /// <summary>
         /// Handler used to cancel operation.
@@ -1675,7 +1675,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// created to handle the "default" session, in cases where cmdlets are invoked without
         /// ComputerName and/or CimSession parameters.
         /// </summary>
-        private bool isDefaultSession;
+        private readonly bool isDefaultSession;
 
         #endregion
 
@@ -2259,7 +2259,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region private members
 
-        private CimNewCimInstance newCimInstance = null;
+        private readonly CimNewCimInstance newCimInstance = null;
         internal CimNewCimInstance NewCimInstanceOperation
         {
             get
@@ -2348,7 +2348,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Ture indicates need to output the modified result.
         /// </summary>
-        private bool passThru = false;
+        private readonly bool passThru = false;
 
         #endregion
     }
