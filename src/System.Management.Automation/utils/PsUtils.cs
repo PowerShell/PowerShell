@@ -566,7 +566,7 @@ namespace System.Management.Automation
     {
         // CRC-32C polynomial representations
         private const uint polynomial = 0x1EDC6F41;
-        private static uint[] table;
+        private static readonly uint[] table;
 
         static CRC32Hash()
         {

@@ -374,7 +374,7 @@ namespace PSTests.Sequential
 
     public class PowerShellPolicyTests : IClassFixture<PowerShellPolicyFixture>
     {
-        private PowerShellPolicyFixture fixture;
+        private readonly PowerShellPolicyFixture fixture;
 
         public PowerShellPolicyTests(PowerShellPolicyFixture fixture)
         {

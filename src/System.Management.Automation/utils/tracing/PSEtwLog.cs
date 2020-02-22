@@ -15,7 +15,7 @@ namespace System.Management.Automation.Tracing
 #if UNIX
         private static PSSysLogProvider provider;
 #else
-        private static PSEtwLogProvider provider;
+        private static readonly PSEtwLogProvider provider;
 #endif
 
         /// <summary>
