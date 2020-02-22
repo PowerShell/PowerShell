@@ -396,14 +396,14 @@ namespace Microsoft.PowerShell.Commands
         // Other private members and constants
         //
         private ResourceManager _resourceMgr = null;
-        private Dictionary<string, StringCollection> _providersByLogMap = new Dictionary<string, StringCollection>();
+        private readonly Dictionary<string, StringCollection> _providersByLogMap = new Dictionary<string, StringCollection>();
 
         private StringCollection _logNamesMatchingWildcard = null;
-        private StringCollection _resolvedPaths = new StringCollection();
+        private readonly StringCollection _resolvedPaths = new StringCollection();
 
-        private List<string> _accumulatedLogNames = new List<string>();
-        private List<string> _accumulatedProviderNames = new List<string>();
-        private List<string> _accumulatedFileNames = new List<string>();
+        private readonly List<string> _accumulatedLogNames = new List<string>();
+        private readonly List<string> _accumulatedProviderNames = new List<string>();
+        private readonly List<string> _accumulatedFileNames = new List<string>();
 
         private const uint MAX_EVENT_BATCH = 100;
 
