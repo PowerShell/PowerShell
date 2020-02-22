@@ -760,7 +760,7 @@ namespace System.Management.Automation.Runspaces
             StopHelper();
         }
 
-        private PipelineStopper _stopper;
+        private readonly PipelineStopper _stopper;
 
         /// <summary>
         /// Gets PipelineStopper object which maintains stack of PipelineProcessor
@@ -1120,7 +1120,7 @@ namespace System.Management.Automation.Runspaces
         /// This is list of HistoryInfo ids which have been executed in
         /// this pipeline.
         /// </summary>
-        private List<long> _invokeHistoryIds = new List<long>();
+        private readonly List<long> _invokeHistoryIds = new List<long>();
 
         internal bool PresentInInvokeHistoryEntryList(HistoryInfo entry)
         {
@@ -1283,9 +1283,9 @@ namespace System.Management.Automation.Runspaces
             Dispose();
         }
 
-        private Thread _worker;
+        private readonly Thread _worker;
         private ThreadStart _workItem;
-        private AutoResetEvent _workItemReady;
+        private readonly AutoResetEvent _workItemReady;
         private bool _closed;
     }
 
@@ -1300,13 +1300,13 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Stack of current executing pipeline processor.
         /// </summary>
-        private Stack<PipelineProcessor> _stack = new Stack<PipelineProcessor>();
+        private readonly Stack<PipelineProcessor> _stack = new Stack<PipelineProcessor>();
 
         /// <summary>
         /// Object used for synchronization.
         /// </summary>
-        private object _syncRoot = new object();
-        private LocalPipeline _localPipeline;
+        private readonly object _syncRoot = new object();
+        private readonly LocalPipeline _localPipeline;
 
         /// <summary>
         /// Default constructor.
