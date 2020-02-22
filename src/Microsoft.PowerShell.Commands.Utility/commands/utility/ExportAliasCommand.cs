@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Holds all the matching aliases for writing to the file.
         /// </summary>
-        private Collection<AliasInfo> _matchingAliases = new Collection<AliasInfo>();
+        private readonly Collection<AliasInfo> _matchingAliases = new Collection<AliasInfo>();
 
         private static string GetAliasLine(AliasInfo alias, string formatString)
         {

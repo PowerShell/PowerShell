@@ -852,7 +852,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal class ExportCsvHelper : IDisposable
     {
-        private char _delimiter;
+        private readonly char _delimiter;
         readonly private BaseCsvWritingCommand.QuoteKind _quoteKind;
         readonly private HashSet<string> _quoteFields;
         readonly private StringBuilder _outputString;
