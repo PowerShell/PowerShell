@@ -427,7 +427,7 @@ namespace System.Management.Automation.Remoting
     internal class SerializedDataStream : Stream, IDisposable
     {
         [TraceSourceAttribute("SerializedDataStream", "SerializedDataStream")]
-        private static PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
+        private static readonly PSTraceSource s_trace = PSTraceSource.GetTracer("SerializedDataStream", "SerializedDataStream");
         #region Global Constants
 
         private static long s_objectIdSequenceNumber = 0;
@@ -437,20 +437,20 @@ namespace System.Management.Automation.Remoting
         #region Private Data
 
         private bool _isEntered;
-        private FragmentedRemoteObject _currentFragment;
+        private readonly FragmentedRemoteObject _currentFragment;
         private long _fragmentId;
 
-        private int _fragmentSize;
-        private object _syncObject;
+        private readonly int _fragmentSize;
+        private readonly object _syncObject;
         private bool _isDisposed;
-        private bool _notifyOnWriteFragmentImmediately;
+        private readonly bool _notifyOnWriteFragmentImmediately;
 
         // MemoryStream does not dynamically resize as data is read. This will waste
         // lot of memory as data sent on the network will still be there in memory.
         // To avoid this a queue of memory streams (each stream is of fragmentsize)
         // is created..so after data is sent the MemoryStream is disposed there by
         // clearing resources.
-        private Queue<MemoryStream> _queuedStreams;
+        private readonly Queue<MemoryStream> _queuedStreams;
         private MemoryStream _writeStream;
         private MemoryStream _readStream;
         private int _writeOffset;
@@ -956,13 +956,13 @@ namespace System.Management.Automation.Remoting
     internal class Fragmentor
     {
         #region Global Constants
-        private static UTF8Encoding s_utf8Encoding = new UTF8Encoding();
+        private static readonly UTF8Encoding s_utf8Encoding = new UTF8Encoding();
         // This const defines the default depth to be used for serializing objects for remoting.
         private const int SerializationDepthForRemoting = 1;
         #endregion
 
         private int _fragmentSize;
-        private SerializationContext _serializationContext;
+        private readonly SerializationContext _serializationContext;
 
         #region Constructor
 

@@ -31,17 +31,17 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Server dispatch table.
         /// </summary>
-        private ServerDispatchTable _serverDispatchTable;
+        private readonly ServerDispatchTable _serverDispatchTable;
 
         /// <summary>
         /// Remote host call data type.
         /// </summary>
-        private RemotingDataType _remoteHostCallDataType;
+        private readonly RemotingDataType _remoteHostCallDataType;
 
         /// <summary>
         /// Transport manager.
         /// </summary>
-        private AbstractServerTransportManager _transportManager;
+        private readonly AbstractServerTransportManager _transportManager;
 
         /// <summary>
         /// Constructor for ServerMethodExecutor.

@@ -38,7 +38,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Static Data
 
         // Fully qualified error Id modifiers based on transport (WinRM) error codes.
-        private static Dictionary<int, string> s_transportErrorCodeToFQEID = new Dictionary<int, string>()
+        private static readonly Dictionary<int, string> s_transportErrorCodeToFQEID = new Dictionary<int, string>()
         {
             {WSManNativeApi.ERROR_WSMAN_ACCESS_DENIED, "AccessDenied"},
             {WSManNativeApi.ERROR_WSMAN_OUTOF_MEMORY, "ServerOutOfMemory"},
@@ -332,10 +332,10 @@ namespace System.Management.Automation.Remoting.Client
 
         private WSManTransportManagerUtils.tmStartModes _startMode = WSManTransportManagerUtils.tmStartModes.None;
 
-        private string _sessionName;
+        private readonly string _sessionName;
 
         // callbacks
-        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+        private readonly PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
 
         // instance callback handlers
         private WSManNativeApi.WSManShellAsync _createSessionCallback;
@@ -449,7 +449,7 @@ namespace System.Management.Automation.Remoting.Client
 
         // This dictionary maintains active session transport managers to be used from various
         // callbacks.
-        private static Dictionary<long, WSManClientSessionTransportManager> s_sessionTMHandles =
+        private static readonly Dictionary<long, WSManClientSessionTransportManager> s_sessionTMHandles =
             new Dictionary<long, WSManClientSessionTransportManager>();
         private static long s_sessionTMSeed;
         // generate unique session id
@@ -495,8 +495,8 @@ namespace System.Management.Automation.Remoting.Client
 
         #region SHIM: Redirection delegates for test purposes
 
-        private static Delegate s_sessionSendRedirect = null;
-        private static Delegate s_protocolVersionRedirect = null;
+        private static readonly Delegate s_sessionSendRedirect = null;
+        private static readonly Delegate s_protocolVersionRedirect = null;
 
         #endregion
 
@@ -2592,9 +2592,9 @@ namespace System.Management.Automation.Remoting.Client
             private WSManNativeApi.WSManStreamIDSet_ManToUn _outputStreamSet;
             // Dispose
             private bool _isDisposed;
-            private object _syncObject = new object();
+            private readonly object _syncObject = new object();
 #if !UNIX
-            private WindowsIdentity _identityToImpersonate;
+            private readonly WindowsIdentity _identityToImpersonate;
 #endif
 
             /// <summary>
@@ -2729,7 +2729,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         // operation handles
-        private IntPtr _wsManShellOperationHandle;
+        private readonly IntPtr _wsManShellOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManCmdOperationHandle;
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
@@ -2741,7 +2741,7 @@ namespace System.Management.Automation.Remoting.Client
         // this is used with WSMan callbacks to represent a command transport manager.
         private long _cmdContextId;
 
-        private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+        private readonly PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
 
         // should be integrated with receiveDataInitiated
         private bool _shouldStartReceivingData;
@@ -2768,7 +2768,7 @@ namespace System.Management.Automation.Remoting.Client
         // will be sent during subsequent SendOneItem()
         private SendDataChunk _chunkToSend;
 
-        private string _cmdLine;
+        private readonly string _cmdLine;
         private readonly WSManClientSessionTransportManager _sessnTm;
 
         private class SendDataChunk
@@ -2883,7 +2883,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region SHIM: Redirection delegate for command code send.
 
-        private static Delegate s_commandCodeSendRedirect = null;
+        private static readonly Delegate s_commandCodeSendRedirect = null;
 
         #endregion
 
@@ -3862,7 +3862,7 @@ namespace System.Management.Automation.Remoting.Client
 
         #region SHIM: Redirection delegate for command data send.
 
-        private static Delegate s_commandSendRedirect = null;
+        private static readonly Delegate s_commandSendRedirect = null;
 
         #endregion
 
@@ -3990,7 +3990,7 @@ namespace System.Management.Automation.Remoting.Client
 
         // This dictionary maintains active command transport managers to be used from various
         // callbacks.
-        private static Dictionary<long, WSManClientCommandTransportManager> s_cmdTMHandles =
+        private static readonly Dictionary<long, WSManClientCommandTransportManager> s_cmdTMHandles =
             new Dictionary<long, WSManClientCommandTransportManager>();
         private static long s_cmdTMSeed;
 

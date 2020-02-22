@@ -127,9 +127,9 @@ namespace System.Management.Automation.Remoting
     {
         #region Private Members
 
-        private Dictionary<IntPtr, WSManPluginShellSession> _activeShellSessions;
-        private object _syncObject;
-        private static Dictionary<IntPtr, WSManPluginInstance> s_activePlugins = new Dictionary<IntPtr, WSManPluginInstance>();
+        private readonly Dictionary<IntPtr, WSManPluginShellSession> _activeShellSessions;
+        private readonly object _syncObject;
+        private static readonly Dictionary<IntPtr, WSManPluginInstance> s_activePlugins = new Dictionary<IntPtr, WSManPluginInstance>();
 
         /// <summary>
         /// Enables dependency injection after the static constructor is called.
