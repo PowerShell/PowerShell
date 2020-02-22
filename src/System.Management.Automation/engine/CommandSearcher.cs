@@ -1483,7 +1483,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines which command types will be globbed.
         /// </summary>
-        private SearchResolutionOptions _commandResolutionOptions;
+        private readonly SearchResolutionOptions _commandResolutionOptions;
 
         /// <summary>
         /// Determines which types of commands to look for.
@@ -1499,7 +1499,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The execution context instance for the current engine...
         /// </summary>
-        private ExecutionContext _context;
+        private readonly ExecutionContext _context;
 
         /// <summary>
         /// A routine to initialize the path searcher...

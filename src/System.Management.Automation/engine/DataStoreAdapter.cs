@@ -29,7 +29,7 @@ namespace System.Management.Automation
         [Dbg.TraceSourceAttribute(
              "PSDriveInfo",
              "The namespace navigation tracer")]
-        private static Dbg.PSTraceSource s_tracer =
+        private static readonly Dbg.PSTraceSource s_tracer =
             Dbg.PSTraceSource.GetTracer("PSDriveInfo",
              "The namespace navigation tracer");
 

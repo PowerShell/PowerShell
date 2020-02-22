@@ -477,7 +477,7 @@ namespace System.Management.Automation
 
         #region Private
         // back-reference for facade class
-        private ErrorRecord _errorRecord;
+        private readonly ErrorRecord _errorRecord;
 
         /// <summary>
         /// The Activity, Reason, TargetName and TargetType strings in
@@ -757,7 +757,7 @@ namespace System.Management.Automation
             get { return ErrorRecord.NotNull(_message); }
         }
 
-        private string _message = string.Empty;
+        private readonly string _message = string.Empty;
 
         /// <summary>
         /// Text describing the recommended action in the event that this error
@@ -1635,7 +1635,7 @@ namespace System.Management.Automation
         #endregion Public Properties
 
         #region Private
-        private string _errorId;
+        private readonly string _errorId;
 
         #region Exposed by ErrorCategoryInfo
         internal ErrorCategory _category;

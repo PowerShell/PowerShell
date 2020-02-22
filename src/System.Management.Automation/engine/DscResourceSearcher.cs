@@ -27,8 +27,8 @@ namespace System.Management.Automation
 
         #region private properties
 
-        private string _resourceName = null;
-        private ExecutionContext _context = null;
+        private readonly string _resourceName = null;
+        private readonly ExecutionContext _context = null;
         private DscResourceInfo _currentMatch = null;
         private IEnumerator<DscResourceInfo> _matchingResource = null;
         private Collection<DscResourceInfo> _matchingResourceList = null;
