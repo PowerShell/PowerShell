@@ -15,9 +15,12 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Test-Json command.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Json", HelpUri = "")]
+    [Cmdlet(VerbsDiagnostic.Test, "Json", DefaultParameterSetName = ParameterAttribute.AllParameterSets, HelpUri = "")]
     public class TestJsonCommand : PSCmdlet
     {
+        private const string SchemaPathParameterSet = "SchemaPath";
+        private const string SchemaStringParameterSet = "SchemaString";
+
         /// <summary>
         /// An JSON to be validated.
         /// </summary>
@@ -32,9 +35,21 @@ namespace Microsoft.PowerShell.Commands
         /// then validates the JSON against the schema. Before testing the JSON string,
         /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
-        [Parameter(Position = 1)]
+        [Parameter(Position = 1, ParameterSetName = TestJsonCommand.SchemaStringParameterSet)]
         [ValidateNotNullOrEmpty()]
         public string Schema { get; set; }
+
+        /// <summary>
+        /// A path to the file containg schema to validate the JSON against.
+        /// This is optional parameter.
+        /// If the parameter is absent the cmdlet only attempts to parse the JSON string.
+        /// If the parameter present the cmdlet attempts to parse the JSON string and
+        /// then validates the JSON against the schema. Before testing the JSON string,
+        /// the cmdlet parses the schema doing implicitly check the schema too.
+        /// </summary>
+        [Parameter(Position = 1, ParameterSetName = TestJsonCommand.SchemaPathParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public string SchemaPath { get; set; }
 
         private JsonSchema _jschema;
 
@@ -43,17 +58,34 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            if (Schema != null)
+            try
             {
-                try
+                if (Schema != null)
                 {
                     _jschema = JsonSchema.FromJsonAsync(Schema).Result;
+
                 }
-                catch (Exception exc)
+                else if (SchemaPath != null)
                 {
-                    Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonSchema, exc);
-                    ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, null));
+                    string resolvedpath = string.Empty;
+
+                    try
+                    {
+                        resolvedpath = PathUtils.ResolveFilePath(SchemaPath, this, true);
+                    }
+                    catch (ItemNotFoundException e)
+                    {
+                        // NOTE: This will throw
+                        PathUtils.ReportFileOpenFailure(this, resolvedpath, e);
+                    }
+
+                    _jschema = JsonSchema.FromFileAsync(resolvedpath).Result;
                 }
+            }
+            catch (Exception exc)
+            {
+                Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonSchema, exc);
+                ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, null));
             }
         }
 
