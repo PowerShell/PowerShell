@@ -1632,6 +1632,14 @@ namespace System.Management.Automation.Runspaces
                 .EndTable());
         }
 
+        private const string GetPreReleaseStringScriptBlock = @"
+                            if ($_.PrivateData -and 
+                                $_.PrivateData.ContainsKey('PSData') -and 
+                                $_.PrivateData.PSData.ContainsKey('PreRelease'))
+                            {
+                                    $_.PrivateData.PSData.PreRelease
+                            }";
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_ModuleInfoGrouping(CustomControl[] sharedControls)
         {
             yield return new FormatViewDefinition("Module",
@@ -1646,11 +1654,7 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
-                        .AddScriptBlockColumn(@"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }")
+                        .AddScriptBlockColumn(GetPreReleaseStringScriptBlock)
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn(@"
                             $result = [System.Collections.ArrayList]::new()
@@ -1683,11 +1687,7 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
-                        .AddScriptBlockColumn(@"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }")
+                        .AddScriptBlockColumn(GetPreReleaseStringScriptBlock)
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn("$_.ExportedCommands.Keys")
                     .EndRowDefinition()
@@ -1707,11 +1707,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"ModuleType")
                         .AddItemProperty(@"Version")
                         .AddItemScriptBlock(
-                            @"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }",
+                            GetPreReleaseStringScriptBlock,
                             label: "PreRelease")
                         .AddItemProperty(@"NestedModules")
                         .AddItemScriptBlock(@"$_.ExportedFunctions.Keys", label: "ExportedFunctions")
