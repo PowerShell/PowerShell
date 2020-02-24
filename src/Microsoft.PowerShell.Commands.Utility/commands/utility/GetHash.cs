@@ -156,6 +156,16 @@ namespace Microsoft.PowerShell.Commands
                         path);
                     WriteError(errorRecord);
                 }
+                catch (IOException ioException)
+                {
+                    ThrowTerminatingError(
+                        new ErrorRecord(
+                            ioException,
+                            "FileReadError",
+                            ErrorCategory.ReadError,
+                            path));
+                    return;
+                }
                 finally
                 {
                     openfilestream?.Dispose();
