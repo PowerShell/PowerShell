@@ -158,13 +158,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (IOException ioException)
                 {
-                    ThrowTerminatingError(
-                        new ErrorRecord(
-                            ioException,
-                            "FileReadError",
-                            ErrorCategory.ReadError,
-                            path));
-                    return;
+                    var errorRecord = new ErrorRecord(
+                        ioException,
+                        "FileReadError",
+                        ErrorCategory.ReadError,
+                        path);
+                    WriteError(errorRecord);
                 }
                 finally
                 {
