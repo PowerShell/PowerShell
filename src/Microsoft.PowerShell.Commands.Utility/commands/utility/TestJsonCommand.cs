@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
 
                     try
                     {
-                        resolvedpath = PathUtils.ResolveFilePath(SchemaPath, this, true);
+                        resolvedpath = PathUtils.ResolveFilePath(SchemaPath, this, isLiteralPath: true);
                     }
                     catch (ItemNotFoundException e)
                     {
