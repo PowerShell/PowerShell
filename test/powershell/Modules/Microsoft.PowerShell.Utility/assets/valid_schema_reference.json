@@ -1,0 +1,12 @@
+{
+    "description": "A person",
+    "type": "object",
+    "properties": {
+        "name": {
+            "$ref": "valid_schema_definitions.json#/definitions/name"
+        },
+        "hobbies": {
+            "$ref": "valid_schema_definitions.json#/definitions/hobbies"
+        }
+    }
+}
