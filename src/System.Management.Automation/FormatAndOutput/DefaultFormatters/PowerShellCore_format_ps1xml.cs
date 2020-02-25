@@ -1658,13 +1658,20 @@ namespace System.Management.Automation.Runspaces
 
                             if (-not $editions)
                             {
-                                if ($_.PrivateData -and ($_.PrivateData.PSData.Tags -contains 'PSEdition_Desktop' -or 
+                                if ($_.PrivateData -and ($_.PrivateData.PSData.Tags -contains 'PSEdition_Desktop' -or
                                                          $_.PrivateData.PSData.Tags -contains 'PSEdition_Core'))
                                 {
                                     $editions = @(($_.PrivateData.PSData.Tags | Where-Object {$_ -like 'PSEdition_*'}) -replace 'PSEdition_', '')
                                 }
-                                else {
+                                elseif ($_.ModuleBase -like '{0}*' -f $PSHOME) {
+                                    $editions = @('Core')
+                                }
+                                elseif ($IsWindows -and
+                                        $_.ModuleBase -like '{0}\Windows\system32\WindowsPowerShell\v1.0\Modules' -f $Env:SystemDrive ) {
                                     $editions = @('Desktop')
+                                }
+                                else {
+                                    $editions = @()
                                 }
                             }
 
@@ -1673,7 +1680,7 @@ namespace System.Management.Automation.Runspaces
                                 $result += $edition.Substring(0,4)
                             }
 
-                            ($result | Sort-Object) -join ','")
+                            if ($result) { ($result | Sort-Object) -join ','}")
                         .AddScriptBlockColumn("$_.ExportedCommands.Keys")
                     .EndRowDefinition()
                 .EndTable());
