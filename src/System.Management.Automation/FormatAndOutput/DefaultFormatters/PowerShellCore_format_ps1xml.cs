@@ -1655,9 +1655,17 @@ namespace System.Management.Automation.Runspaces
                         .AddScriptBlockColumn(@"
                             $result = [System.Collections.ArrayList]::new()
                             $editions = $_.CompatiblePSEditions
+
                             if (-not $editions)
                             {
-                                $editions = @('Desktop')
+                                if ($_.PrivateData -and ($_.PrivateData.PSData.Tags -contains 'PSEdition_Desktop' -or 
+                                                         $_.PrivateData.PSData.Tags -contains 'PSEdition_Core'))
+                                {
+                                    $editions = @(($_.PrivateData.PSData.Tags | Where-Object {$_ -like 'PSEdition_*'}) -replace 'PSEdition_', '')
+                                }
+                                else {
+                                    $editions = @('Desktop')
+                                }
                             }
 
                             foreach ($edition in $editions)
