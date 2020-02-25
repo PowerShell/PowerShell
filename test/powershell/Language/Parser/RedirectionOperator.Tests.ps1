@@ -46,26 +46,22 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
     }
 
     $availableEncodings = 
-        @([System.Text.Encoding]::ASCII,
-          [System.Text.Encoding]::BigEndianUnicode,
-          (New-Object System.Text.UTF32Encoding($true,$true)),
-          [System.Text.Encoding]::Unicode,
-          [System.Text.Encoding]::UTF7,
-          [System.Text.Encoding]::UTF8,
-          [System.Text.Encoding]::UTF32);
+        @([System.Text.Encoding]::ASCII
+          [System.Text.Encoding]::BigEndianUnicode
+          [System.Text.UTF32Encoding]::new($true,$true)
+          [System.Text.Encoding]::Unicode
+          [System.Text.Encoding]::UTF7
+          [System.Text.Encoding]::UTF8
+          [System.Text.Encoding]::UTF32)
               
     foreach($encoding in $availableEncodings) {
 
-        # some of the encodings accepted by Out-File aren't real,
-        # and Out-File has its own translation, so we'll
-        # not do that logic here, but simply ignore those encodings
-        # as they eventually are translated to "real" encoding
         $encodingName = $encoding.EncodingName
         $msg = "Overriding encoding for Out-File is respected for $encodingName"
         $BOM = $encoding.GetPreamble()
         $TXT = $encoding.GetBytes($asciiString)
         $CR  = $encoding.GetBytes($asciiCR)
-        $expectedBytes = .{ $BOM; $TXT; $CR }
+        $expectedBytes = @( $BOM; $TXT; $CR )
         $PSDefaultParameterValues["Out-File:Encoding"] = $encoding
         $asciiString > TESTDRIVE:/file.txt
         $observedBytes = Get-Content -AsByteStream TESTDRIVE:/file.txt
