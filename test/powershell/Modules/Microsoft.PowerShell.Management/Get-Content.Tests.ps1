@@ -97,6 +97,7 @@ Describe "Get-Content" -Tags "CI" {
         @{EncodingName = 'String'},
         @{EncodingName = 'Unicode'},
         @{EncodingName = 'BigEndianUnicode'},
+        @{EncodingName = 'BigEndianUTF32'},
         @{EncodingName = 'UTF8'},
         @{EncodingName = 'UTF7'},
         @{EncodingName = 'UTF32'},

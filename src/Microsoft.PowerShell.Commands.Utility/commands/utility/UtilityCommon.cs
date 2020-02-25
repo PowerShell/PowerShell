@@ -44,6 +44,11 @@ namespace Microsoft.PowerShell.Commands
         BigEndianUnicode,
 
         /// <summary>
+        /// Big Endian UTF32 encoding.
+        /// </summary>
+        BigEndianUTF32,
+        
+        /// <summary>
         /// UTF8 encoding.
         /// </summary>
         Utf8,
