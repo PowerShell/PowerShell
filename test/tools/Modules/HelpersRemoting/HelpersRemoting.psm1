@@ -267,23 +267,31 @@ function Get-PipePath {
 function Get-WindowsOpenSSHLink
 {
     # From the Win OpenSSH Wiki page (https://github.com/PowerShell/Win32-OpenSSH/wiki/How-to-retrieve-links-to-latest-packages)
+    $origSecurityProtocol = [Net.ServicePointManager]::SecurityProtocol
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-    $url = 'https://github.com/PowerShell/Win32-OpenSSH/releases/latest/'
-    $request = [System.Net.WebRequest]::Create($url)
-    $request.AllowAutoRedirect = $false
-    $response = & { $request.GetResponse() } 2>$null
-
-    if ($null -ne $response)
+    try
     {
-        $location = [string] $response.GetResponseHeader("Location")
-        if (! [string]::IsNullOrEmpty($location))
+        $url = 'https://github.com/PowerShell/Win32-OpenSSH/releases/latest/'
+        $request = [System.Net.WebRequest]::Create($url)
+        $request.AllowAutoRedirect = $false
+        $response = & { $request.GetResponse() } 2>$null
+
+        if ($null -ne $response)
         {
-            return $location.Replace('tag', 'download') + '/OpenSSH-Win64.zip'
+            $location = [string] $response.GetResponseHeader("Location")
+            if (! [string]::IsNullOrEmpty($location))
+            {
+                return $location.Replace('tag', 'download') + '/OpenSSH-Win64.zip'
+            }
         }
+    }
+    finally
+    {
+        [Net.ServicePointManager]::SecurityProtocol = $origSecurityProtocol
     }
 
     # Default to last known latest release
-    Write-Warning "Unable to get latest OpenSSH release link.  Using default release link."
+    Write-Warning "Unable to get latest OpenSSH release link. Using default release link."
     return 'https://github.com/PowerShell/Win32-OpenSSH/releases/download/v8.1.0.0p1-Beta/OpenSSH-Win64.zip'
 }
 
@@ -310,7 +318,7 @@ function Install-WindowsOpenSSH
     # Get link to latest OpenSSH release
     Write-Verbose -Verbose "Downloading latest OpenSSH-Win64 package link ..."
     $downLoadLink = Get-WindowsOpenSSHLink
-    
+
     # Download and extract OpenSSH package
     Write-Verbose -Verbose "Downloading OpenSSH-Win64 zip package ..."
     $packageFilePath = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath 'OpenSSH-Win64.zip'
@@ -328,7 +336,7 @@ function Install-WindowsOpenSSH
 
     # Install and start SSHD service
     Push-Location $destPath
-    try 
+    try
     {
         Write-Verbose -Verbose "Running install-sshd.ps1 ..."
         .\install-sshd.ps1
@@ -364,9 +372,9 @@ function Install-WindowsOpenSSH
             if (!$modified) { $modified = $true }
             $sshdNewContent += "#" + $item
         }
-        else 
+        else
         {
-            $sshdNewContent += $item    
+            $sshdNewContent += $item
         }
     }
     if ($modified)
@@ -445,9 +453,9 @@ function Install-SSHRemotingOnWindows
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
     $session = New-PSSession -HostName localhost
-    try 
+    try
     {
-        if ($null -eq $session)    
+        if ($null -eq $session)
         {
             throw "Could not successfully create SSH remoting connection."
         }
@@ -480,7 +488,7 @@ function Install-SSHRemotingOnLinux
     # Configure SSH to authenticate with keys for this user.
     # PubkeyAuthentication should be enabled by default.
     # RSA keys should be enabled by default.
-    
+
     # Create user .ssh directory.
     if (! (Test-Path -Path "$HOME/.ssh"))
     {
@@ -528,9 +536,9 @@ function Install-SSHRemotingOnLinux
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
     $session = New-PSSession -HostName localhost
-    try 
+    try
     {
-        if ($null -eq $session)    
+        if ($null -eq $session)
         {
             throw "Could not successfully create SSH remoting connection."
         }
