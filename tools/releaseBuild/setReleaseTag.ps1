@@ -93,9 +93,6 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
 
-    	$vstsCommandString = "vso[task.setvariable variable=vpackBranch]release"
-        Write-Host -Object "##$vstsCommandString"
-
         if ($CreateJson.IsPresent)
         {
             New-BuildInfoJson -ReleaseTag $releaseTag -IsDaily
@@ -117,9 +114,6 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
         $releaseTag = "$versionPart-$branchOnly"
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
-        Write-Host -Object "##$vstsCommandString"
-
-        $vstsCommandString = "vso[task.setvariable variable=vpackBranch]$branchOnly"
         Write-Host -Object "##$vstsCommandString"
 
         if ($CreateJson.IsPresent)
