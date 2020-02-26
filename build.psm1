@@ -1571,6 +1571,8 @@ function Start-PSxUnit {
 
         # Path manipulation to obtain test project output directory
 
+        $options = Get-PSOptions -DefaultToNew
+
         if(-not $environment.IsWindows)
         {
             if($environment.IsMacOS)
@@ -1590,7 +1592,6 @@ function Start-PSxUnit {
 
             if((Test-Path $requiredDependencies) -notcontains $false)
             {
-                $options = Get-PSOptions -DefaultToNew
                 $Destination = "bin/$($options.configuration)/$($options.framework)"
                 New-Item $Destination -ItemType Directory -Force > $null
                 Copy-Item -Path $requiredDependencies -Destination $Destination -Force
