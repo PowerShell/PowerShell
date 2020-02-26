@@ -1388,7 +1388,7 @@ function New-ManGzip
 
     if ($IsPreview.IsPresent -or $IsLTS.IsPresent)
     {
-        $prodName = if ($IsPreview) { 'pwsh-preview' } else { 'pwsh-lts' }
+        $prodName = if ($IsLTS) { 'pwsh-lts' } else { 'pwsh-preview' }
         $newRonnFile = $RonnFile -replace 'pwsh', $prodName
         Copy-Item -Path $RonnFile -Destination $newRonnFile -force
         $RonnFile = $newRonnFile
