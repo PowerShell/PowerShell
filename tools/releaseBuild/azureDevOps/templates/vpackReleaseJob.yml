@@ -37,7 +37,6 @@ jobs:
     displayName: 'Validate Zip and MSI Package Names'
 
   - pwsh: |
-      $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
           if($_.Name -match 'PowerShell-\d\.\d\.\d\-([a-z]*.\d+\-)?win\-(${{ parameters.architecture }})\.(zip){1}')
           {
@@ -84,3 +83,4 @@ jobs:
       owner: tplunk
       provData: false
       version: '$(vpackVersion)'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
