@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See https://go.microsoft.com/fwlink/?linkid=2090316 for license information.
 #-------------------------------------------------------------------------------------------------------------
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1.101
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1.102
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
