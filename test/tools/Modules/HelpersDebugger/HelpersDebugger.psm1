@@ -17,6 +17,9 @@ $internalExtentProperty = [System.Management.Automation.InvocationInfo].GetPrope
 # along with their debug command queue and results collection
 $runspacesRegistered = @{}
 
+# The results of the last script block that was run through the Test-Debugger command
+$lastDebuggerTestOutput = $null
+
 # A debugger handler that can be used to run debugger commands
 $debuggerStopHandler = {
     [CmdletBinding()]
@@ -56,13 +59,13 @@ $debuggerStopHandler = {
             $output[0] = $PSDebugContext.Trigger -isnot [System.Management.Automation.ErrorRecord]
         }
         $rsData[$runspace].DbgResults.Add([pscustomobject]@{
-                PSTypeName          = 'DebuggerCommandResult'
-                Command             = $stringDbgCommand
-                Context             = $PSDebugContext
-                Output              = $output
-                EvaluatedByDebugger = $result.EvaluatedByDebugger
-                ResumeAction        = $result.ResumeAction
-            })
+            PSTypeName          = 'DebuggerCommandResult'
+            Command             = $stringDbgCommand
+            Context             = $PSDebugContext
+            Output              = $output
+            EvaluatedByDebugger = $result.EvaluatedByDebugger
+            ResumeAction        = $result.ResumeAction
+        })
     } while ($result -eq $null -or $result.ResumeAction -eq $null)
     $e.ResumeAction = $result.ResumeAction
 }
@@ -113,10 +116,6 @@ function Register-DebuggerHandler {
             $Runspace.Debugger.add_DebuggerStop($script:debuggerStopHandler)
             $Runspace.Debugger.add_BreakpointUpdated($script:breakpointUpdatedHandler)
             $script:runspacesRegistered.Add($Runspace, $null)
-            # Disable debugger interactivity so that all debugger events go
-            # through the DebuggerStop event only (i.e. breakpoints don't
-            # actually generate a prompt for user interaction)
-            $host.DebuggerEnabled = $false
         }
     } catch {
         Write-Error -ErrorRecord $_ -ErrorAction $callerEAP
@@ -171,15 +170,25 @@ function Test-Debugger {
         [int]
         $BreakpointUpdates,
 
+        [switch]
+        $AsJob = $false,
+
         [ValidateNotNull()]
         [runspace]
         $Runspace = $host.Runspace
     )
     try {
         $callerEAP = $ErrorActionPreference
+        # If the host runspace is selected, running as a job is not supported
+        if ($Runspace -eq $host.Runspace -and $AsJob) {
+            $message = 'You must provide a new, opened runspace to the runspace parameter if you want to run this test with -AsJob.'
+            $exception = [System.ArgumentException]::new($message)
+            $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, $exception.GetType().Name, 'InvalidArgument', $null)
+            throw $errorRecord
+        }
         # If the debugger is not set up properly, notify the user with an
         # error message
-        if (-not $script:runspacesRegistered.ContainsKey($Runspace) -or $host.DebuggerEnabled) {
+        if (-not $script:runspacesRegistered.ContainsKey($Runspace)) {
             $message = 'You must invoke Register-DebuggerHandler before invoking Test-Debugger, and Unregister-DebuggerHandler after invoking Test-Debugger. As a best practice, invoke Register-DebuggerHandler in the BeforeAll block and Unregister-DebuggerHandler in the AfterAll block of your test script.'
             $exception = [System.InvalidOperationException]::new($message)
             $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, $exception.GetType().Name, 'InvalidOperation', $null)
@@ -193,6 +202,10 @@ function Test-Debugger {
             $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, $exception.GetType().Name, 'InvalidOperation', $null)
             throw $errorRecord
         }
+        # Disable debugger interactivity so that all debugger events go through
+        # the DebuggerStop event only (i.e. breakpoints don't actually generate
+        # a prompt for user interaction)
+        $host.DebuggerEnabled = $false
         # Setup collections for debug commands and for the results of those
         # debug commands
         $dbgCmdQueue = [System.Collections.Queue]::new()
@@ -206,23 +219,100 @@ function Test-Debugger {
         }
         # We re-create the script block before invoking it to ensure that it will
         # work regardless of where the script itself was defined in the test file.
-        # We also discard any standard output because this invocation is about the
-        # debugger output, not the output of the script itself.
         & {
             [System.Diagnostics.DebuggerStepThrough()]
             [CmdletBinding()]
-            param()
+            param(
+                $CallingCmdlet
+            )
             try {
+                $script:lastDebuggerTestOutput = $null
+                $invocationSettings = [System.Management.Automation.PSInvocationSettings]::new()
+                $invocationSettings.ExposeFlowControlExceptions = $true
                 $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
-                if ($Runspace -eq $host.Runspace) {
-                    [scriptblock]::Create($ScriptBlock).Invoke() > $null
-                } else {
-                    [powershell]::Create($Runspace).AddScript($ScriptBlock).Invoke() > $null
+                $ps = $null
+                $requiredDebugMode = [System.Management.Automation.DebugModes]::LocalScript -bor [System.Management.Automation.DebugModes]::RemoteScript
+                if ($Runspace.Debugger -ne $null -and $Runspace.Debugger.DebugMode -ne $requiredDebugMode) {
+                    $Runspace.Debugger.SetDebugMode($requiredDebugMode)
                 }
-            } catch {
-                Write-Error -ErrorRecord $_ -ErrorAction Stop
+                if ($Runspace -eq $host.Runspace) {
+                    $ps = [powershell]::CreateNestedPowerShell($CallingCmdlet)
+                    $script:lastDebuggerTestOutput = $ps.AddScript($ScriptBlock).Invoke($null, $invocationSettings)
+                } else {
+                    $ps = [powershell]::Create($Runspace)
+                    if ($AsJob) {
+                        $helpersDebuggerModulePath = Split-Path -Path $ExecutionContext.SessionState.Module.Path -Parent
+                        $passThruParameters = @{ }
+                        foreach ($key in $CallingCmdlet.MyInvocation.BoundParameters.Keys.where{ $_ -notin 'Runspace', 'AsJob' }) {
+                            $passThruParameters[$key] = $CallingCmdlet.MyInvocation.BoundParameters[$key]
+                        }
+                        $ps = $ps.AddScript(@'
+[CmdletBinding()]
+param(
+    [ValidateNotNullOrEmpty()]
+    [string]
+    $HelpersDebuggerModulePath,
+
+    [ValidateNotNullOrEmpty()]
+    [hashtable]
+    $PassThruParameters
+)
+try {
+    $now = [DateTime]::UtcNow
+    $job = Start-Job -ScriptBlock {
+        $helperDebuggerModulePath = $args[0]
+        $passThruParameters = $args[1]
+        $passThruParameters['ScriptBlock'] = [scriptblock]::Create($passThruParameters['ScriptBlock'])
+        Import-Module -Name $helperDebuggerModulePath -ErrorAction Stop
+        try {
+            Register-DebuggerHandler
+            Test-Debugger @PassThruParameters
+        } finally {
+            Unregister-DebuggerHandler
+        }
+    } -ArgumentList $HelpersDebuggerModulePath,$PassThruParameters
+    <#
+    foreach ($childJob in $job.ChildJobs) {
+        while ($childJob.JobStateInfo.State -eq 'NotStarted') {
+            if ([DateTime]::UtcNow.Subtract($now).TotalSeconds -gt 10) {
+                throw 'Child job failed to start in 10 seconds.'
             }
         }
+        Write-Verbose "Child job started after $([DateTime]::UtcNow.Subtract($now).TotalSeconds) seconds."
+        $childjob.Debugger.SetDebugMode('LocalScript,RemoteScript')
+        if ($childJob.Debugger -ne $null) {
+            $childJob.Debugger.add_DebuggerStop($DebuggerStopHandler)
+            $childJob.Debugger.add_BreakpointUpdated($BreakpointUpdatedHandler)
+        }
+        if ($childJob.Runspace -ne $null) {
+            Enable-RunspaceDebug -Runspace $childJob.Runspace -BreakAll -ErrorAction Stop
+        }
+    }
+    #>
+    Wait-Job -Job $job | Receive-Job *>&1
+} catch {
+    throw
+}
+'@).AddParameter('HelpersDebuggerModulePath', $helpersDebuggerModulePath).AddParameter('PassThruParameters', $passThruParameters).AddParameter('Verbose')
+                    } else {
+                        $ps = $ps.AddScript($ScriptBlock)
+                    }
+                    $task = $ps.InvokeAsync([System.Management.Automation.PSDataCollection[PSObject]]$null, [System.Management.Automation.PSInvocationSettings]$invocationSettings, [System.AsyncCallback]$null, $null)
+                    while ($ps.InvocationStateInfo.State -notin @('Completed', 'Failed', 'Stopped')) {
+                        Start-Sleep -Milliseconds 100
+                    }
+                    $script:lastDebuggerTestOutput = $task.Result
+                }
+            } catch [System.Management.Automation.TerminateException] {
+                # Silence any TerminateExeception instances so that results are returned.
+                # TerminateException detection is done by using -ErrorVariable to capture
+                # the errors.
+            } finally {
+                if ($ps -ne $null) {
+                    $ps.Dispose()
+                }
+            }
+        } -CallingCmdlet $PSCmdlet
         switch ($PSCmdlet.ParameterSetName) {
             'DebuggerCommands' {
                 # Return the results of the debugger commands that were processed
@@ -252,6 +342,14 @@ function Test-Debugger {
     }
 }
 Export-ModuleMember -Function Test-Debugger
+
+function Get-LastDebuggerTestOutput {
+    [CmdletBinding()]
+    [OutputType([System.Management.Automation.PSDataCollection[PSObject]])]
+    param()
+    $script:lastDebuggerTestOutput
+}
+Export-ModuleMember -Function Get-LastDebuggerTestOutput
 
 function Get-DebuggerExtent {
     [CmdletBinding()]
@@ -333,7 +431,10 @@ function ShouldHaveSameExtentAs {
     }
     process {
         $sourceExtent = Get-DebuggerExtent -DebuggerCommandResult $SourceDebuggerCommandResult
-        $sourceExtent | Should -Be $targetExtent
+        $sourceExtent.StartLineNumber | Should -Be $targetExtent.StartLineNumber
+        $sourceExtent.StartColumnNumber | Should -Be $targetExtent.StartColumnNumber
+        $sourceExtent.EndLineNumber | Should -Be $targetExtent.EndLineNumber
+        $sourceExtent.EndColumnNumber | Should -Be $targetExtent.EndColumnNumber
     }
 }
 Export-ModuleMember -Function ShouldHaveSameExtentAs

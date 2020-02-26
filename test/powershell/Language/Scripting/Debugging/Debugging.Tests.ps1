@@ -76,7 +76,7 @@ Describe 'Basic breakpoint tests' -tag 'CI' {
 <# 17 #>
 <# 18 #> Test-PSRemoveBreakpoint -WhatIf
 '@
-        $testScriptPath = [System.IO.Path]::Combine([System.IO.Path]::GetTempPath(), 'BreakpointTestScript.ps1')
+        $testScriptPath = [System.IO.Path]::Combine($testDrive.FullName, 'BreakpointTestScript.ps1')
         [System.IO.File]::WriteAllText($testScriptPath, $testScript)
 
         $bpActionScript = {

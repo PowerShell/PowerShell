@@ -126,4 +126,47 @@ Describe 'Debugger APIs' -Tags 'CI' {
             $runspace.Debugger.IsActive | Should -BeTrue
         }
     }
+
+    Context 'Debugger Break Test' {
+        BeforeAll {
+            $runspace = [System.Management.Automation.Runspaces.RunspaceFactory]::CreateRunspace()
+            $runspace.Open()
+            $ps = [powershell]::Create($runspace)
+            $ps.AddScript(@'
+$maxValue = 5
+$count = 0
+while ($count -lt $maxValue) {
+    ++$count
+    'Output'
+    sleep 1
+}
+'@)
+            $debuggerStopHandler = {
+                $global:DebuggerStopEventReceived = $true
+            }
+            $runspace.Debugger.add_DebuggerStop($debuggerStopHandler)
+        }
+
+        AfterAll {
+            Remove-Variable -Name DebuggerStopEventReceived -Scope Global -ErrorAction Ignore
+            $runspace.Debugger.remove_DebuggerStop($debuggerStopHandler)
+            $ps.Dispose()
+            $runspace.Dispose()
+        }
+
+        It 'Debugger.SetDebuggerStepMode should break into a running script' {
+            $task = $ps.InvokeAsync()
+            $global:DebuggerStopEventReceived = $false
+            $runspace.Debugger.SetDebuggerStepMode($true)
+            for ($i = 0; $i -lt 20; $i++) {
+                if ($global:DebuggerStopEventReceived) {
+                    break
+                }
+                Start-Sleep -Milliseconds 250
+            }
+            $runspace.Debugger.IsActive | Should -BeTrue
+            $global:DebuggerStopEventReceived | Should -BeTrue
+            $ps.StopAsync($null, $null)
+        }
+    }
 }

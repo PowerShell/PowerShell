@@ -1,14 +1,18 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-
+<#
 Describe 'Basic debugger command tests' -tag 'CI' {
-
     BeforeAll {
         Register-DebuggerHandler
     }
 
     AfterAll {
+        Get-PSBreakpoint | Remove-PSBreakpoint
         Unregister-DebuggerHandler
+    }
+
+    BeforeEach {
+        Get-PSBreakpoint | Remove-PSBreakpoint
     }
 
     Context 'Help (?, h) command should display the debugger help message' {
@@ -30,8 +34,8 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should show 3 debugger commands were invoked' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $results.Count | Should -Be 3
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $results.Count | Should -Be 3
         }
 
         It '''h'' and ''?'' should show identical help messages' {
@@ -85,8 +89,8 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should show 3 debugger commands were invoked' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $results.Count | Should -Be 3
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $results.Count | Should -Be 3
         }
 
         It '''l'' and ''list'' should show identical script listings' {
@@ -130,8 +134,8 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should show 3 debugger commands were invoked' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $results.Count | Should -Be 3
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $results.Count | Should -Be 3
         }
 
         It '''l 4'' and ''list 4'' should show identical script listings' {
@@ -172,8 +176,8 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should show 3 debugger commands were invoked' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $results.Count | Should -Be 3
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $results.Count | Should -Be 3
         }
 
         It '''l 3 2'' and ''list 3 2'' should show identical script listings' {
@@ -209,8 +213,8 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should show 3 debugger commands were invoked' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $results.Count | Should -Be 3
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $results.Count | Should -Be 3
         }
 
         It 'Should only have CallStackFrame output from the callstack command' {
@@ -223,8 +227,107 @@ Describe 'Basic debugger command tests' -tag 'CI' {
     }
 }
 
-Describe 'Simple debugger stepping command tests' -tag 'CI' {
+Describe 'Debug quit command tests' -tag 'CI' {
+    BeforeAll {
+        Register-DebuggerHandler
+    }
 
+    AfterAll {
+        Unregister-DebuggerHandler
+    }
+
+    Context 'Quit (q) command should terminate execution of a local script' {
+        BeforeAll {
+            $testScript = {
+                1..10 | ForEach-Object {
+                    if ($_ -eq 5) {
+                        Wait-Debugger
+                    }
+                }
+            }
+
+            $ev1 = $null
+            $ev2 = $null
+            $result = @{
+                'q' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'q' -ErrorVariable ev1 -ErrorAction Ignore)
+                'quit' = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'quit' -ErrorVariable ev2 -ErrorAction Ignore)
+            }
+        }
+
+        It 'Only receive a TerminateException for each invocation' {
+            $ev1 | Select-Object -ExpandProperty FullyQualifiedErrorId -Unique | Should -Be 'TerminateException'
+            $ev2 | Select-Object -ExpandProperty FullyQualifiedErrorId -Unique | Should -Be 'TerminateException'
+        }
+
+        It 'Only 1 debugger command was invoked for each test (to quit the debugger)' {
+            $result['q'] | Should -HaveCount 1
+            $result['quit'] | Should -HaveCount 1
+        }
+
+        It 'The debugger returns ResumeAction.Stop when the quit command is invoked' {
+            $result['q'].ResumeAction | Should -Be Stop
+        }
+
+        It '''q'' and ''quit'' should have identical behaviour' {
+            $result['q'][0] | ShouldHaveSameExtentAs -DebuggerCommandResult $result['quit'][0]
+        }
+
+        It 'The only extent should be the statement containing Wait-Debugger' {
+            $result['q'][0] | ShouldHaveExtent -Line 4 -FromColumn 25 -ToColumn 38
+        }
+    }
+
+    Context 'Quit (q) command should terminate execution of a local script' {
+        BeforeAll {
+            $testScript = {
+                1..10 | ForEach-Object {
+                    Write-Output "Item ${_} of 10."
+                }
+            }
+
+            Set-PSBreakpoint -Command Write-Output > $null
+
+            $ev = $null
+            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'Get-PSBreakpoint','Get-PSBreakpoint | Remove-PSBreakpoint','Get-PSBreakpoint','q' -ErrorVariable ev -ErrorAction Ignore)
+        }
+
+        It 'Only one TerminateException was received' {
+            $ev | Select-Object -ExpandProperty FullyQualifiedErrorId -Unique | Should -Be 'TerminateException'
+        }
+
+        It 'Only 4 commands were invoked in the debugger' {
+            $results | Should -HaveCount 4
+        }
+
+        It 'Should return the single command breakpoint with one hitcount from the first command' {
+            $results[0].Output | Should -HaveCount 1
+            $results[0].Output[0] | Should -BeOfType System.Management.Automation.CommandBreakpoint
+            $results[0].Output[0].Command | Should -Be 'Write-Output'
+            $results[0].Output[0].HitCount | Should -Be 1
+        }
+
+        It 'Should return no output from the second command' {
+            $results[1].Output | Should -HaveCount 0
+        }
+
+        It 'Should return no output from the third command' {
+            $results[2].Output | Should -HaveCount 0
+        }
+
+        It 'The debugger returns ResumeAction.Stop when the quit command is invoked' {
+            $results[3].ResumeAction | Should -Be Stop
+        }
+
+        It 'The only extent should be the statement containing Write-Output' {
+            $results[0] | ShouldHaveExtent -Line 3 -FromColumn 21 -ToColumn 52
+            $results[1] | ShouldHaveSameExtentAs -DebuggerCommandResult $results[0]
+            $results[2] | ShouldHaveSameExtentAs -DebuggerCommandResult $results[0]
+            $results[3] | ShouldHaveSameExtentAs -DebuggerCommandResult $results[0]
+        }
+    }
+}
+
+Describe 'Simple debugger stepping command tests' -tag 'CI' {
     BeforeAll {
         Register-DebuggerHandler
     }
@@ -254,9 +357,9 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
         }
 
         It 'Should show 4 debugger commands were invoked twice' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $result['s'].Count | Should -Be 5
-             $result['stepInto'].Count | Should -Be 5
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $result['s'].Count | Should -Be 5
+            $result['stepInto'].Count | Should -Be 5
         }
 
         It '''s'' and ''stepInto'' should have identical behaviour' {
@@ -307,9 +410,9 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
         }
 
         It 'Should show 4 debugger commands were invoked twice' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $result['v'].Count | Should -Be 5
-             $result['stepOver'].Count | Should -Be 5
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $result['v'].Count | Should -Be 5
+            $result['stepOver'].Count | Should -Be 5
         }
 
         It '''v'' and ''stepOver'' should have identical behaviour' {
@@ -358,9 +461,9 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
         }
 
         It 'Should show 3 debugger commands were invoked twice' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $result['o'].Count | Should -Be 4
-             $result['stepOut'].Count | Should -Be 4
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $result['o'].Count | Should -Be 4
+            $result['stepOut'].Count | Should -Be 4
         }
 
         It '''o'' and ''stepOut'' should have identical behaviour' {
@@ -384,7 +487,6 @@ Describe 'Simple debugger stepping command tests' -tag 'CI' {
 }
 
 Describe 'Debugger bug fix tests' -tag 'CI' {
-
     BeforeAll {
         Register-DebuggerHandler
     }
@@ -412,18 +514,18 @@ Describe 'Debugger bug fix tests' -tag 'CI' {
         }
 
         It 'Should show 3 debugger commands were invoked for stepInto' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $result['s'].Count | Should -Be 4
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $result['s'].Count | Should -Be 4
         }
 
         It 'Should show 3 debugger commands were invoked for stepOver' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $result['v'].Count | Should -Be 4
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $result['v'].Count | Should -Be 4
         }
 
         It 'Should show 2 debugger commands were invoked for stepOut' {
-             # One extra for the implicit 'c' command that keeps the debugger automation moving
-             $result['o'].Count | Should -Be 3
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $result['o'].Count | Should -Be 3
         }
 
         It 'The last extent for stepInto should be on 1 + 1' {
@@ -439,3 +541,109 @@ Describe 'Debugger bug fix tests' -tag 'CI' {
         }
     }
 }
+#>
+Describe 'Debug quit command tests' -tag 'CI' {
+    BeforeAll {
+        $runspace = [runspacefactory]::CreateRunspace()
+        $runspace.Open()
+        $runspace.Debugger.SetDebugMode([System.Management.Automation.DebugModes]::RemoteScript -bor [System.Management.Automation.DebugModes]::LocalScript)
+        Register-DebuggerHandler -Runspace $runspace
+    }
+
+    AfterAll {
+        Unregister-DebuggerHandler -Runspace $runspace
+        $runspace.Close()
+        $runspace.Dispose()
+    }
+
+    Context 'Quit (q) command should terminate execution of a job' {
+        BeforeAll {
+            $testScript = {
+                $job = Start-Job {
+                    foreach ($i in 1..100) {
+                        Start-Sleep -Milliseconds 100
+                        "Output ${i} of 100"
+                        if ($i -eq 20) {
+                            Wait-Debugger
+                        }
+                    }
+                }
+                # Wait for the job to return something. This indicates the job is running.
+                $now = [DateTime]::UtcNow
+                do {
+                    $output = @(Receive-Job -Job $job -Keep)
+                    if ($output.Count -gt 0) {
+                        break
+                    }
+                    Start-Sleep -Milliseconds 100
+                } until ([DateTime]::UtcNow.Subtract($now).TotalSeconds -gt 10)
+                # If the job returned nothing after 10 seconds, bail out of the script, it failed.
+                if ($output.Count -eq 0) {
+                    throw 'Job failed to start within 10 seconds.'
+                }
+                Debug-Job -Job $job
+                Wait-Job -Job $job | Receive-Job *>&1
+            }
+
+            $ev = $null
+            $results = @(Test-Debugger -Runspace $runspace -ScriptBlock $testScript -CommandQueue 'q' -ErrorVariable ev -ErrorAction Ignore)
+        }
+
+        It 'Only a TerminateException was received' {
+            $ev | Should -Be 'TerminateException'
+        }
+
+        It 'Only 1 debugger command (to quit the debugger) was invoked' {
+            $results | Should -HaveCount 1
+        }
+
+        It 'The debugger returns ResumeAction.Stop when the quit command is invoked' {
+            $results[0].ResumeAction | Should -Be Stop
+        }
+    }
+}
+
+<#
+Describe 'Debug quit command tests' -tag 'CI' {
+    BeforeAll {
+        $runspace = [runspacefactory]::CreateRunspace()
+        $runspace.Open()
+        Register-DebuggerHandler -Runspace $runspace
+    }
+
+    AfterAll {
+        Unregister-DebuggerHandler -Runspace $runspace
+        $runspace.Close()
+        $runspace.Dispose()
+    }
+
+    Context 'Quit (q) command should terminate execution of a job' {
+        BeforeAll {
+            $testScript = {
+                foreach ($i in 1..50) {
+                    Start-Sleep -Milliseconds 100
+                    "Output ${i} of 50"
+                    if ($i -eq 20) {
+                        Wait-Debugger
+                    }
+                }
+            }
+
+            $ev = $null
+            $results = @(Test-Debugger -Runspace $runspace -ScriptBlock $testScript -AsJob -CommandQueue 'q' -ErrorVariable ev -ErrorAction Ignore)
+        }
+
+        It 'Only a TerminateException was received' {
+            $ev | Should -Be 'TerminateException'
+        }
+
+        It 'Only 1 debugger command (to quit the debugger) was invoked' {
+            $results | Should -HaveCount 1
+        }
+
+        It 'The debugger returns ResumeAction.Stop when the quit command is invoked' {
+            $results[0].ResumeAction | Should -Be Stop
+        }
+    }
+}
+#>

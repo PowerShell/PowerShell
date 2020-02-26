@@ -934,6 +934,46 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Creates a nested powershell within the current instance.
+        /// Nested PowerShell is used to do simple operations like checking state
+        /// of a variable while another command is using the runspace.
+        ///
+        /// Nested PowerShell should be invoked from the same thread as the parent
+        /// PowerShell invocation thread. So effectively the parent Powershell
+        /// invocation thread is blocked until nested invoke() operation is
+        /// complete.
+        ///
+        /// Implement PSHost.EnterNestedPrompt to perform invoke() operation on the
+        /// nested powershell.
+        /// </summary>
+        /// <remarks>
+        /// This overload of CreateNestedPowerShell allows a nested powershell
+        /// instance to be created from within a running cmdlet or advanced
+        /// function, where you may not have the original powershell instance to
+        /// work with.
+        /// </remarks>
+        /// <exception cref="InvalidOperationException">
+        /// 1. State of powershell instance is not valid to create a nested powershell instance.
+        /// Nested PowerShell should be created only for a running powershell instance.
+        /// </exception>
+        public static PowerShell CreateNestedPowerShell(PSCmdlet runningCommand)
+        {
+            var currentRunspace = runningCommand?.Context?.CurrentRunspace;
+            if (currentRunspace != null && runningCommand.CommandRuntime != null)
+            {
+                return new PowerShell(
+                    new PSCommand(),
+                    null,
+                    currentRunspace)
+                {
+                    IsNested = true
+                };
+            }
+
+            throw PSTraceSource.NewInvalidOperationException(PowerShellStrings.InvalidStateCreateNested);
+        }
+
+        /// <summary>
         /// Method needed when deserializing PowerShell object coming from a RemoteDataObject.
         /// </summary>
         /// <param name="isNested">Indicates if PowerShell object is nested.</param>
