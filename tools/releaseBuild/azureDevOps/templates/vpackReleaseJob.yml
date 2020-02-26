@@ -22,13 +22,6 @@ jobs:
   - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
     displayName: 'Capture Artifact Listing'
 
-  # - pwsh: |
-  #     if('$(ReleaseTagVar)' -like '*-*')
-  #     {
-  #         throw "Don't release a vpack for a preview"
-  #     }
-  #   displayName: 'Verify a Stable or better build'
-
   - pwsh: |
       $message = @()
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
