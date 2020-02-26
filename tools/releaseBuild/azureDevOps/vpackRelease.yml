@@ -72,9 +72,9 @@ jobs:
       Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
           if($_.Name -match 'PowerShell-\d\.\d\.\d\-([a-z]*.\d+\-)?win\-(x64)\.(zip){1}')
           {
-                $destDir = "$(System.ArtifactsDirectory)/vpackx64"
-                $null = new-item -ItemType Directory -Path $destDir
-                Expand-Archive -Path $_.FullName -DestinationPath $destDir
+              $destDir = "$(System.ArtifactsDirectory)\vpackx64"
+              $null = new-item -ItemType Directory -Path $destDir
+              Expand-Archive -Path $_.FullName -DestinationPath $destDir
               $vstsCommandString = "vso[task.setvariable variable=vpackDir]$destDir"
               Write-Host "sending " + $vstsCommandString
               Write-Host "##$vstsCommandString"
@@ -94,4 +94,5 @@ jobs:
       platforms: x64
       target: '$(System.ArtifactsDirectory)'
       owner: tplunk
+      provData: false
       version: '$(version)-testpublish'
