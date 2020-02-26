@@ -677,7 +677,7 @@ foo``u{2195}abc
     It "Test that typing a number at the command line will return that number. (line 1630)" {
         $result = ExecuteCommand '3'
         $result | Should -Be "3"
-        $result | Should -BeOfType [int]
+        $result | Should -BeOfType int
     }
 
     It "This test will check that an msh script can be run without invoking. (line 1641)" {
@@ -741,28 +741,28 @@ foo``u{2195}abc
             @{ Script = 'if (0 -or 1) { $true } else { $false }'; Expected = $true }
             @{ Script = 'if (0 -or 0) { $true } else { $false }'; Expected = $false }
             #-eq
-            @{ Script = 'if ($False -eq $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -eq $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -eq $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -eq $false) { $true } else { $false }'; Expected = $false }
             #-ieq
-            @{ Script = 'if ($False -ieq $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ieq $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ieq $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ieq $false) { $true } else { $false }'; Expected = $false }
             #-le
-            @{ Script = 'if ($False -le $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -le $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -le $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -le $false) { $true } else { $false }'; Expected = $false }
             #-ile
-            @{ Script = 'if ($False -ile $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ile $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ile $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ile $false) { $true } else { $false }'; Expected = $false }
             #-ge
-            @{ Script = 'if ($False -ge $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ge $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ge $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ge $false) { $true } else { $false }'; Expected = $false }
             #-ige
-            @{ Script = 'if ($False -ige $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ige $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ige $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ige $false) { $true } else { $false }'; Expected = $false }
             #-like
-            @{ Script = 'if ($False -like $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -like $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -like $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -like $false) { $true } else { $false }'; Expected = $false }
             #!
-            @{ Script = 'if (!$True -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if (!$true -and $false) { $true } else { $false }'; Expected = $false }
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )

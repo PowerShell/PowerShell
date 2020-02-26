@@ -132,12 +132,8 @@ namespace System.Management.Automation.Remoting
             _senderInfo = senderInfo;
             _configProviderId = configurationProviderId;
             _initParameters = initializationParameters;
-#if !UNIX
             _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
             _cryptoHelper.Session = this;
-#else
-            _cryptoHelper = null;
-#endif
 
             Context = new ServerRemoteSessionContext();
             SessionDataStructureHandler = new ServerRemoteSessionDSHandlerImpl(this, transportManager);

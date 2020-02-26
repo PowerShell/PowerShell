@@ -569,14 +569,7 @@ namespace System.Management.Automation.Remoting.Server
                 s_singletonInstance = new SSHProcessMediator();
             }
 
-            PSRemotingCryptoHelperServer cryptoHelper;
-#if !UNIX
-            cryptoHelper = new PSRemotingCryptoHelperServer();
-#else
-            cryptoHelper = null;
-#endif
-
-            s_singletonInstance.Start(initialCommand, cryptoHelper);
+            s_singletonInstance.Start(initialCommand, new PSRemotingCryptoHelperServer());
         }
 
         #endregion

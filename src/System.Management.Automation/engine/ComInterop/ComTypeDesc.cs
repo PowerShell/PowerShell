@@ -192,10 +192,7 @@ namespace System.Management.Automation.ComInterop
                 {
                     foreach (string name in Events.Keys)
                     {
-                        if (!names.ContainsKey(name))
-                        {
-                            names.Add(name, null);
-                        }
+                        names.TryAdd(name, null);
                     }
                 }
             }

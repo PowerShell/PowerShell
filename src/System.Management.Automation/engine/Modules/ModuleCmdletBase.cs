@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
         /// Session name for WindowsPS compat remoting session.
         /// </summary>
         internal const string WindowsPowerShellCompatRemotingSessionName = "WinPSCompatSession";
-        
+
         /// <summary>
         /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
         /// </summary>
@@ -332,27 +332,27 @@ namespace Microsoft.PowerShell.Commands
                     {
                         fileBaseName = moduleName;
 #endif
-                        string qualifiedPath = Path.Combine(path, fileBaseName);
-                        module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
-                        if (!found)
-                        {
-                            if (name.IndexOfAny(Utils.Separators.Directory) == -1)
-                            {
-                                qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
-                            }
-                            else if (Directory.Exists(qualifiedPath))
-                            {
-                                // if it points to a directory, add the basename back onto the path...
-                                qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
-                            }
+                string qualifiedPath = Path.Combine(path, fileBaseName);
+                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+                if (!found)
+                {
+                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    {
+                        qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
+                    }
+                    else if (Directory.Exists(qualifiedPath))
+                    {
+                        // if it points to a directory, add the basename back onto the path...
+                        qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
+                    }
 
-                            module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
-                        }
+                    module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                }
 
-                        if (found)
-                        {
-                            break;
-                        }
+                if (found)
+                {
+                    break;
+                }
 #if UNIX
                     }
                 }
@@ -1853,23 +1853,15 @@ namespace Microsoft.PowerShell.Commands
             else if ((requiredProcessorArchitecture != ProcessorArchitecture.None) &&
                      (requiredProcessorArchitecture != ProcessorArchitecture.MSIL))
             {
-                bool isRunningOnArm = false;
-                ProcessorArchitecture currentArchitecture = PsUtils.GetProcessorArchitecture(out isRunningOnArm);
+                ProcessorArchitecture currentArchitecture = typeof(object).Assembly.GetName().ProcessorArchitecture;
 
-                // For ARM Architectures, we need to do additional string-level comparison
-                if ((currentArchitecture != requiredProcessorArchitecture && !isRunningOnArm) ||
-                    (isRunningOnArm &&
-                     !requiredProcessorArchitecture.ToString()
-                         .Equals(PsUtils.ArmArchitecture, StringComparison.OrdinalIgnoreCase)))
+                if (currentArchitecture != requiredProcessorArchitecture)
                 {
                     containedErrors = true;
                     if (writingErrors)
                     {
-                        string actualCurrentArchitecture = isRunningOnArm
-                            ? PsUtils.ArmArchitecture
-                            : currentArchitecture.ToString();
                         message = StringUtil.Format(Modules.InvalidProcessorArchitecture,
-                            actualCurrentArchitecture, moduleManifestPath, requiredProcessorArchitecture);
+                            currentArchitecture, moduleManifestPath, requiredProcessorArchitecture);
                         InvalidOperationException ioe = new InvalidOperationException(message);
                         ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidProcessorArchitecture",
                             ErrorCategory.ResourceUnavailable, moduleManifestPath);
@@ -2363,21 +2355,14 @@ namespace Microsoft.PowerShell.Commands
             bool isConsideredCompatible = ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
             if (!BaseSkipEditionCheck && !isConsideredCompatible)
             {
-                if (ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility"))
+                if (PowerShellConfig.Instance.IsImplicitWinCompatEnabled())
                 {
                     if (importingModule)
                     {
-                        var commandInfo = new CmdletInfo("Import-Module", typeof(ImportModuleCommand));
-                        using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
-                        ps.AddCommand(commandInfo);
-                        ps.AddParameter("PassThru", true);
-                        ps.AddParameter("Name", moduleManifestPath);
-                        ps.AddParameter("UseWindowsPowerShell", true);
-
-                        var moduleProxies = ps.Invoke<PSModuleInfo>();
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string[] { moduleManifestPath }, null, new ImportModuleOptions());
 
                         // we are loading by a single ManifestPath so expect max of 1
-                        if(moduleProxies.Count > 0) 
+                        if (moduleProxies.Count > 0)
                         {
                             return moduleProxies[0];
                         }
@@ -2390,20 +2375,16 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     containedErrors = true;
-
                     if (writingErrors)
                     {
                         message = StringUtil.Format(
-                            Modules.PSEditionNotSupported,
+                            Modules.ImplicitWinCompatDisabled,
                             moduleManifestPath,
-                            PSVersionInfo.PSEdition,
                             string.Join(',', inferredCompatiblePSEditions));
 
-                        InvalidOperationException ioe = new InvalidOperationException(message);
-
                         ErrorRecord er = new ErrorRecord(
-                            ioe,
-                            nameof(Modules) + "_" + nameof(Modules.PSEditionNotSupported),
+                            new InvalidOperationException(message),
+                            nameof(Modules) + "_" + nameof(Modules.ImplicitWinCompatDisabled),
                             ErrorCategory.ResourceUnavailable,
                             moduleManifestPath);
 
@@ -4811,7 +4792,7 @@ namespace Microsoft.PowerShell.Commands
             return filePaths;
         }
 
-        internal PSSession GetWindowsPowerShellCompatRemotingSession()
+        internal static PSSession GetWindowsPowerShellCompatRemotingSession()
         {
             PSSession result = null;
             var commandInfo = new CmdletInfo("Get-PSSession", typeof(GetPSSessionCommand));
@@ -4826,10 +4807,10 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        internal PSSession CreateWindowsPowerShellCompatResources()
+        internal static PSSession CreateWindowsPowerShellCompatResources()
         {
             PSSession compatSession = null;
-            lock(s_WindowsPowerShellCompatSyncObject)
+            lock (s_WindowsPowerShellCompatSyncObject)
             {
                 compatSession = GetWindowsPowerShellCompatRemotingSession();
                 if (compatSession == null)
@@ -4851,13 +4832,18 @@ namespace Microsoft.PowerShell.Commands
             return compatSession;
         }
 
-        internal void CleanupWindowsPowerShellCompatResources()
+        internal static void CleanupWindowsPowerShellCompatResources(SessionState sessionState)
         {
-            lock(s_WindowsPowerShellCompatSyncObject)
+            lock (s_WindowsPowerShellCompatSyncObject)
             {
                 var compatSession = GetWindowsPowerShellCompatRemotingSession();
                 if (compatSession != null)
                 {
+                    if (sessionState?.InvokeCommand.LocationChangedAction != null)
+                    {
+                        sessionState.InvokeCommand.LocationChangedAction -= SyncCurrentLocationDelegate;
+                    }
+
                     var commandInfo = new CmdletInfo("Remove-PSSession", typeof(RemovePSSessionCommand));
                     using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
                     ps.AddCommand(commandInfo);
@@ -4866,6 +4852,23 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
+        internal static void SyncCurrentLocationHandler(object sender, LocationChangedEventArgs args)
+        {
+            PSSession compatSession = GetWindowsPowerShellCompatRemotingSession();
+            if (compatSession?.Runspace.RunspaceStateInfo.State == RunspaceState.Opened)
+            {
+                using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                ps.AddCommand(new CmdletInfo("Invoke-Command", typeof(InvokeCommandCommand)));
+                ps.AddParameter("Session", compatSession);
+                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Format("Set-Location -Path '{0}'", args.NewPath.Path)));
+                ps.Invoke();
+            }
+        }
+
+        internal static System.EventHandler<LocationChangedEventArgs> SyncCurrentLocationDelegate;
+
+        internal virtual IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions) { throw new System.NotImplementedException(); }
 
         private void RemoveTypesAndFormatting(
             IList<string> formatFilesToRemove,
@@ -4959,9 +4962,9 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if (ExperimentalFeature.IsEnabled("PSWindowsPowerShellCompatibility") && module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
+                    if (module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
                     {
-                        CleanupWindowsPowerShellCompatResources();
+                        CleanupWindowsPowerShellCompatResources(this.SessionState);
                     }
 
                     // First remove cmdlets from the session state

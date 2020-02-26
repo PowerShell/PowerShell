@@ -75,7 +75,7 @@ Describe "Unblock-File" -Tags "CI" {
         It "Write an error if a file is read only" {
             $TestFile = Join-Path $TestDrive "testfileunlock.ps1"
             Block-File -Path $TestFile
-            Set-ItemProperty -Path $TestFile -Name IsReadOnly -Value $True
+            Set-ItemProperty -Path $TestFile -Name IsReadOnly -Value $true
 
             $TestFileCreated = Get-ChildItem $TestFile
             $TestFileCreated.IsReadOnly | Should -BeTrue

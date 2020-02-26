@@ -131,7 +131,7 @@ Describe "Parameter Binding Tests" -Tags "CI" {
             Should -Throw -ErrorId "ParameterArgumentTransformationError,test-singleintparameter" -PassThru
         $e.CategoryInfo | Should -Match "ParameterBindingArgumentTransformationException"
         $e.Exception.Message | Should -Match "Input string was not in a correct format"
-        $e.Exception.Message | should -Match "Parameter1"
+        $e.Exception.Message | Should -Match "Parameter1"
     }
 
     It "Verify that WhatIf is available when SupportShouldProcess is true" {
@@ -241,8 +241,8 @@ Describe "Parameter Binding Tests" -Tags "CI" {
 
         $e = { test-nameconflicts6 -Parameter2 1 } | Should -Throw -ErrorId "ParameterNameConflictsWithAlias" -PassThru
         $e.CategoryInfo | Should -Match "MetadataException"
-        $e.Exception.Message | should -Match "Parameter1"
-        $e.Exception.Message | should -Match "Parameter2"
+        $e.Exception.Message | Should -Match "Parameter1"
+        $e.Exception.Message | Should -Match "Parameter2"
     }
 
     It "PipelineVariable shouldn't cause a NullRef exception when 'DynamicParam' block is present" {
@@ -277,7 +277,7 @@ Describe "Parameter Binding Tests" -Tags "CI" {
             $test2File = Join-Path -Path $tempDir -ChildPath "test2.ps1"
 
             $expected = "[$tempDir]"
-            $psPath = "$PSHOME\pwsh"
+            $pwsh = "$PSHOME\pwsh"
 
             $null = New-Item -Path $tempDir -ItemType Directory -Force
             Set-Content -Path $test1File -Value $test1 -Force
@@ -297,10 +297,10 @@ Describe "Parameter Binding Tests" -Tags "CI" {
         }
 
         It "Test 'powershell -File' should evaluate '`$PSScriptRoot' for parameter default value" {
-            $result = & $psPath -NoProfile -File $test1File
+            $result = & $pwsh -NoProfile -File $test1File
             $result | Should -Be $expected
 
-            $result = & $psPath -NoProfile -File $test2File
+            $result = & $pwsh -NoProfile -File $test2File
             $result | Should -Be $expected
         }
     }

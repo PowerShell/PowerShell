@@ -470,7 +470,7 @@ try
 
         BeforeAll {
 
-            function VulnerableFunctionFromFullLanguage { Invoke-Expression $Args[0] }
+            function VulnerableFunctionFromFullLanguage { Invoke-Expression $args[0] }
 
             $TestCasesIEX = @(
                 @{testName = "Verifies direct Invoke-Expression does not bypass constrained language mode";
@@ -884,23 +884,6 @@ try
     }
 
     Describe "ForEach-Object -Parallel Constrained Language Tests" -Tags 'Feature','RequireAdminOnWindows' {
-
-        BeforeAll {
-
-            $skipTest = -not $EnabledExperimentalFeatures.Contains('PSForEachObjectParallel')
-            if ($skipTest) {
-                Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSForEachObjectParallel' to be enabled." -Verbose
-                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-                $PSDefaultParameterValues["it:skip"] = $true
-            }
-        }
-
-        AfterAll {
-
-            if ($skipTest) {
-                $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            }
-        }
 
         It 'Foreach-Object -Parallel must run in ConstrainedLanguage mode under system lock down' {
 

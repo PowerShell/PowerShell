@@ -600,7 +600,8 @@ namespace System.Management.Automation
 
                 int subStringLength = 0;
 
-                for (int charCount = 0; charCount < item.Length; charCount++) {
+                for (int charCount = 0; charCount < item.Length; charCount++)
+                {
                     // Evaluate the predicate using the character at cursor.
                     object predicateResult = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,
@@ -967,7 +968,15 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval?.ToString() ?? string.Empty;
+                string lvalString;
+                if (ExperimentalFeature.IsEnabled("PSCultureInvariantReplaceOperator"))
+                {
+                    lvalString = PSObject.ToStringParser(context, lval) ?? string.Empty;
+                }
+                else
+                {
+                    lvalString = lval?.ToString() ?? string.Empty;
+                }
 
                 return ReplaceOperatorImpl(context, lvalString, rr, substitute);
             }

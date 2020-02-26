@@ -663,8 +663,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string key in Headers.Keys)
                 {
-                    // add the header value (or overwrite it if already present)
-                    WebSession.Headers[key] = Headers[key].ToString();
+                    var value = Headers[key];
+
+                    // null is not valid value for header.
+                    // We silently ignore header if value is null.
+                    if (!(value is null))
+                    {
+                        // add the header value (or overwrite it if already present)
+                        WebSession.Headers[key] = value.ToString();
+                    }
                 }
             }
 
@@ -1260,21 +1267,24 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (var entry in WebSession.ContentHeaders)
             {
-                if (SkipHeaderValidation)
+                if (!string.IsNullOrWhiteSpace(entry.Value))
                 {
-                    request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
-                }
-                else
-                {
-                    try
+                    if (SkipHeaderValidation)
                     {
-                        request.Content.Headers.Add(entry.Key, entry.Value);
+                        request.Content.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
                     }
-                    catch (FormatException ex)
+                    else
                     {
-                        var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
-                        ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
-                        ThrowTerminatingError(er);
+                        try
+                        {
+                            request.Content.Headers.Add(entry.Key, entry.Value);
+                        }
+                        catch (FormatException ex)
+                        {
+                            var outerEx = new ValidationMetadataException(WebCmdletStrings.ContentTypeException, ex);
+                            ErrorRecord er = new ErrorRecord(outerEx, "WebCmdletContentTypeException", ErrorCategory.InvalidArgument, ContentType);
+                            ThrowTerminatingError(er);
+                        }
                     }
                 }
             }
@@ -1819,7 +1829,7 @@ namespace Microsoft.PowerShell.Commands
 
             // we only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            string pattern = "<(?<url>.*?)>;\\s*rel=\"(?<rel>.*?)\"";
+            string pattern = "<(?<url>.*?)>;\\s*rel=(\"?)(?<rel>.*?)\\1[^\\w -.]?";
             IEnumerable<string> links;
             if (response.Headers.TryGetValues("Link", out links))
             {

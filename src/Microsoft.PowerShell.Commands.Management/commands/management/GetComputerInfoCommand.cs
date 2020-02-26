@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
 
     #region GetComputerInfoCommand cmdlet implementation
     /// <summary>
-    /// The Get=ComputerInfo cmdlet gathers and reports information
+    /// The Get-ComputerInfo cmdlet gathers and reports information
     /// about a computer.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ComputerInfo",

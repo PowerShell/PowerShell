@@ -7,7 +7,7 @@ ModuleVersion="7.0.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=855958'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113632'
 FunctionsToExport = @()
 AliasesToExport = @("gcb", "gtz", "scb")
 CmdletsToExport=@("Add-Content",
@@ -55,5 +55,6 @@ CmdletsToExport=@("Add-Content",
     "Set-Content",
     "Set-ItemProperty",
     "Get-TimeZone",
-    "Stop-Computer")
+    "Stop-Computer",
+    "Restart-Computer")
 }

@@ -146,7 +146,6 @@ namespace System.Management.Automation.Runspaces
             var errorRecord_Exception = new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord",
                 ViewsOf_System_Management_Automation_ErrorRecord());
-            errorRecord_Exception.TypeNames.Add("System.Exception");
             yield return errorRecord_Exception;
 
             yield return new ExtendedTypeDefinition(
@@ -884,25 +883,28 @@ namespace System.Management.Automation.Runspaces
                                                 }
                                             }
                                         }
-                                        # anything else, we use ToString()
+                                        # Anything else, we convert to string.
+                                        # ToString() can throw so we use LanguagePrimitives.TryConvertTo() to hide a convert error
                                         else {
-                                            $value = $prop.Value.ToString().Trim()
-
-                                            $isFirstLine = $true
-                                            if ($value.Contains($newline)) {
-                                                # the 3 is to account for ' : '
-                                                $valueIndent = ' ' * ($propLength + 3)
-                                                # need to trim any extra whitespace already in the text
-                                                foreach ($line in $value.Split($newline)) {
-                                                    if (!$isFirstLine) {
-                                                        $null = $output.Append(""${newline}${prefix}${valueIndent}"")
+                                            $value = $null
+                                            if ([System.Management.Automation.LanguagePrimitives]::TryConvertTo($prop.Value, [string], [ref]$value) -and $value -ne $null)
+                                            {
+                                                $isFirstLine = $true
+                                                if ($value.Contains($newline)) {
+                                                    # the 3 is to account for ' : '
+                                                    $valueIndent = ' ' * ($propLength + 3)
+                                                    # need to trim any extra whitespace already in the text
+                                                    foreach ($line in $value.Split($newline)) {
+                                                        if (!$isFirstLine) {
+                                                            $null = $output.Append(""${newline}${prefix}${valueIndent}"")
+                                                        }
+                                                        $null = $output.Append($line.Trim())
+                                                        $isFirstLine = $false
                                                     }
-                                                    $null = $output.Append($line.Trim())
-                                                    $isFirstLine = $false
                                                 }
-                                            }
-                                            else {
-                                                $null = $output.Append($value)
+                                                else {
+                                                    $null = $output.Append($value)
+                                                }
                                             }
                                         }
 
@@ -991,9 +993,10 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
+                                    Set-StrictMode -Off
+                                    $newline = [Environment]::Newline
 
                                     function Get-ConciseViewPositionMessage {
-                                        Set-StrictMode -Off
 
                                         $resetColor = ''
                                         if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
@@ -1047,17 +1050,37 @@ namespace System.Management.Automation.Runspaces
                                         $offsetWhitespace = ''
                                         $message = ''
                                         $prefix = ''
-                                        $newline = [Environment]::Newline
 
                                         if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
-                                            if ($myinv.ScriptName) {
-                                                $posmsg = ""${resetcolor}$($myinv.ScriptName)${newline}""
+                                            $useTargetObject = $false
+
+                                            # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
+                                            if ($_.TargetObject.Line -and $_.TargetObject.LineText) {
+                                                $posmsg = ""${resetcolor}$($_.TargetObject.File)${newline}""
+                                                $useTargetObject = $true
+                                            }
+                                            elseif ($myinv.ScriptName) {
+                                                if ($env:TERM_PROGRAM -eq 'vscode') {
+                                                    # If we are running in vscode, we know the file:line:col links are clickable so we use this format
+                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber):$($myinv.OffsetInLine)${newline}""
+                                                }
+                                                else {
+                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber)${newline}""
+                                                }
                                             }
                                             else {
                                                 $posmsg = ""${newline}""
                                             }
 
-                                            $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            if ($useTargetObject) {
+                                                $scriptLineNumber = $_.TargetObject.Line
+                                                $scriptLineNumberLength = $_.TargetObject.Line.ToString().Length
+                                            }
+                                            else {
+                                                $scriptLineNumber = $myinv.ScriptLineNumber
+                                                $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            }
+
                                             if ($scriptLineNumberLength -gt 4) {
                                                 $headerWhitespace = ' ' * ($scriptLineNumberLength - 4)
                                             }
@@ -1069,29 +1092,52 @@ namespace System.Management.Automation.Runspaces
 
                                             $verticalBar = '|'
                                             $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
-                                            $line = $myinv.Line
-                                            $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
-                                            $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
 
-                                            # don't color the whole line red
-                                            if ($offsetLength -lt $line.Length - 1) {
-                                                $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor).Insert($myinv.OffsetInLine - 1, $accentColor)
+                                            $highlightLine = ''
+                                            if ($useTargetObject) {
+                                                $line = $_.TargetObject.LineText.Trim()
+                                                $offsetLength = 0
+                                                $offsetInLine = 0
+                                            }
+                                            else {
+                                                $positionMessage = $myinv.PositionMessage.Split($newline)
+                                                $line = $positionMessage[1].Substring(1) # skip the '+' at the start
+                                                $highlightLine = $positionMessage[$positionMessage.Count - 1].Substring(1)
+                                                $offsetLength = $highlightLine.Trim().Length
+                                                $offsetInLine = $highlightLine.IndexOf('~')
                                             }
 
-                                            $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
-                                            $offsetWhitespace = ' ' * ($myinv.OffsetInLine - 1)
+                                            if (-not $line.EndsWith($newline)) {
+                                                $line += $newline
+                                            }
+
+                                            # don't color the whole line
+                                            if ($offsetLength -lt $line.Length - 1) {
+                                                $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
+                                            }
+
+                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}""
+                                            $offsetWhitespace = ' ' * $offsetInLine
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
-                                            $message = ""${prefix}${offsetWhitespace}^ ""
+                                            if ($highlightLine -ne '') {
+                                                $posMsg += ""${prefix}${highlightLine}${newline}""
+                                            }
+                                            $message = ""${prefix}""
                                         }
 
                                         if (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
-                                            # we use `n instead of $newline here because that's what is in the message
-                                            if ($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception.Message.Contains(""~`n"")) {
+                                            if ($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception.Message.Contains(""~$newline"")) {
                                                 # need to parse out the relevant part of the pre-rendered positionmessage
-                                                $message += $err.Exception.Message.split(""~`n"")[1].split(""${newline}${newline}"")[0]
+                                                $message += $err.Exception.Message.split(""~$newline"")[1].split(""${newline}${newline}"")[0]
+                                            }
+                                            elseif ($err.Exception) {
+                                                $message += $err.Exception.Message
+                                            }
+                                            elseif ($err.Message) {
+                                                $message += $err.Message
                                             }
                                             else {
-                                                $message += $err.Exception.Message
+                                                $message += $err.ToString()
                                             }
                                         }
                                         else {
@@ -1105,18 +1151,32 @@ namespace System.Management.Automation.Runspaces
 
                                             # replace newlines in message so it lines up correct
                                             $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
-                                            if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
+
+                                            $windowWidth = 120
+                                            if ($Host.UI.RawUI -ne $null) {
+                                                $windowWidth = $Host.UI.RawUI.WindowSize.Width
+                                            }
+
+                                            if ($windowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt $windowWidth) {
                                                 $sb = [Text.StringBuilder]::new()
-                                                $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
+                                                $substring = Get-TruncatedString -string $message -length ($windowWidth + $prefixVTLength)
                                                 $null = $sb.Append($substring)
                                                 $remainingMessage = $message.Substring($substring.Length).Trim()
                                                 $null = $sb.Append($newline)
-                                                while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
+                                                while (($remainingMessage.Length + $prefixLength) -gt $windowWidth) {
                                                     $subMessage = $prefix + $remainingMessage
-                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth + $prefixVtLength)
-                                                    $null = $sb.Append($substring)
-                                                    $null = $sb.Append($newline)
-                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    $substring = Get-TruncatedString -string $subMessage -length ($windowWidth + $prefixVtLength)
+
+                                                    if ($substring.Length - $prefix.Length -gt 0)
+                                                    {
+                                                        $null = $sb.Append($substring)
+                                                        $null = $sb.Append($newline)
+                                                        $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    }
+                                                    else
+                                                    {
+                                                        break
+                                                    }
                                                 }
                                                 $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()
@@ -1182,7 +1242,7 @@ namespace System.Management.Automation.Runspaces
 
                                         if ($posmsg -ne '')
                                         {
-                                            $posmsg = ""`n"" + $posmsg
+                                            $posmsg = $newline + $posmsg
                                         }
 
                                         if ($err.PSMessageDetails) {
@@ -1206,24 +1266,24 @@ namespace System.Management.Automation.Runspaces
                                             $indentString = '+ CategoryInfo          : ' + $err.CategoryInfo
                                         }
 
-                                        $posmsg += ""`n"" + $indentString
+                                        $posmsg += $newline + $indentString
 
                                         $indentString = ""+ FullyQualifiedErrorId : "" + $err.FullyQualifiedErrorId
-                                        $posmsg += ""`n"" + $indentString
+                                        $posmsg += $newline + $indentString
 
                                         $originInfo = $err.OriginInfo
 
                                         if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
                                         {
                                             $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
-                                            $posmsg += ""`n"" + $indentString
+                                            $posmsg += $newline + $indentString
                                         }
 
                                         if ($ErrorView -eq 'CategoryView') {
                                             $err.CategoryInfo.GetMessage()
                                         }
                                         elseif (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
-                                            $err.Exception.Message + $posmsg + ""`n""
+                                            $err.Exception.Message + $posmsg + $newline
                                         } else {
                                             $err.ErrorDetails.Message + $posmsg
                                         }

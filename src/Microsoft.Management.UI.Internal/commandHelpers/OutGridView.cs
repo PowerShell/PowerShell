@@ -409,7 +409,7 @@ namespace Microsoft.Management.UI.Internal
             this.managementList.Dispatcher.Invoke(
                 System.Windows.Threading.DispatcherPriority.Normal,
                 new Action(
-                    delegate()
+                    () =>
                     {
                         // Pick the length of the shortest incoming arrays. Normally all incoming arrays should be of the same length.
                         int length = propertyNames.Length;
@@ -461,19 +461,19 @@ namespace Microsoft.Management.UI.Internal
                             // Set focus on ListView
                             this.managementList.List.SelectedIndex = 0;
                             this.managementList.List.Focus();
-                       }
-                       catch (Exception e)
-                       {
-                           // Store the exception in a local variable that will be checked later.
-                           if (e.InnerException != null)
-                           {
-                               this.exception = e.InnerException;
-                           }
-                           else
-                           {
-                            this.exception = e;
-                           }
-                       }
+                        }
+                        catch (Exception e)
+                        {
+                            // Store the exception in a local variable that will be checked later.
+                            if (e.InnerException != null)
+                            {
+                                this.exception = e.InnerException;
+                            }
+                            else
+                            {
+                                this.exception = e;
+                            }
+                        }
                     }));
         }
 
@@ -492,7 +492,7 @@ namespace Microsoft.Management.UI.Internal
             this.managementList.Dispatcher.BeginInvoke(
                 System.Windows.Threading.DispatcherPriority.Normal,
                 new Action(
-                    delegate()
+                    () =>
                     {
                         try
                         {

@@ -6,6 +6,6 @@ Describe "Resolve types in additional referenced assemblies" -Tag CI {
         @{ typename = "[System.DirectoryServices.AccountManagement.AdvancedFilters]"; name = "AdvancedFilters" }
     ){
         param ($typename, $name)
-        pwsh -noprofile -command "$typename.Name" | Should -BeExactly $name
+        & "$PSHOME/pwsh" -noprofile -command "$typename.Name" | Should -BeExactly $name
     }
 }

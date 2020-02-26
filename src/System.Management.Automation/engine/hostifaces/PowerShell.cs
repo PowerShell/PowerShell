@@ -4539,7 +4539,9 @@ namespace System.Management.Automation
                 {
                     if (pool != null)
                     {
+#if !UNIX
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, false);
+#endif
 
                         // getting the runspace asynchronously so that Stop can be supported from a different
                         // thread.
@@ -4552,7 +4554,9 @@ namespace System.Management.Automation
                         rsToUse = _rsConnection as Runspace;
                         if (rsToUse != null)
                         {
+#if !UNIX
                             VerifyThreadSettings(settings, rsToUse.ApartmentState, rsToUse.ThreadOptions, false);
+#endif
 
                             if (rsToUse.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
@@ -4817,7 +4821,9 @@ namespace System.Management.Automation
                 {
                     if (pool != null)
                     {
+#if !UNIX
                         VerifyThreadSettings(settings, pool.ApartmentState, pool.ThreadOptions, pool.IsRemote);
+#endif
 
                         pool.AssertPoolIsOpen();
 
@@ -4894,7 +4900,9 @@ namespace System.Management.Automation
                         LocalRunspace rs = _rsConnection as LocalRunspace;
                         if (rs != null)
                         {
+#if !UNIX
                             VerifyThreadSettings(settings, rs.ApartmentState, rs.ThreadOptions, false);
+#endif
 
                             if (rs.RunspaceStateInfo.State != RunspaceState.Opened)
                             {
@@ -4944,6 +4952,8 @@ namespace System.Management.Automation
             return _invokeAsyncResult;
         }
 
+        // Apartment thread state does not apply to non-Windows platforms.
+#if !UNIX
         /// <summary>
         /// Verifies the settings for ThreadOptions and ApartmentState.
         /// </summary>
@@ -4978,6 +4988,7 @@ namespace System.Management.Automation
                 }
             }
         }
+#endif
 
         /// <summary>
         /// </summary>

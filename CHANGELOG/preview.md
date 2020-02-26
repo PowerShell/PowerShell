@@ -1,6 +1,124 @@
 # Current preview Changelog
 
-## v7.0.0-preview.6 - 10/21/2019
+## [7.0.0-rc.2] - 2020-01-16
+
+### Breaking Changes
+- Use `ISOWeek` for week numbers in `Get-Date` accounting for leap years #11536 (Thanks @paalbra!)
+
+### Engine Updates and Fixes
+- Revert the PRs that made `DBNull.Value` and `NullString.Value` treated as `$null` (#11584)
+- Support expanding `~` in `$env:PATH` when doing command discovery (#11552)
+- Skip null data in output data received handler to fix a `NullReferenceException` (#11448) (Thanks @iSazonov!)
+- Add `ssh` parameter sets for the parameter `-JobName` in `Invoke-Command` (#11444)
+- Adding `PowerShell Editor Services` and `PSScriptAnalyzer` to tracked modules (#11514)
+- Fix key exchange hang with `SecureString` for the `OutOfProc` transports (#11380, #11406)
+- Add setting to disable the implicit `WinPS` module loading (#11332)
+
+### General Cmdlet Updates and Fixes
+- Fix `NullReferenceException` in `ConciseView` (#11435) (Thanks @iSazonov!)
+- Remove the default value of `$true` for the parameter `-RequireLicenseAcceptance` in `New-ModuleManifest` (#11512) (Thanks @ThomasNieto!)
+- Make Web Cmdlets skip processing the content headers with a null or empty value for backward compatibility (#11421) (Thanks @spongemike2!)
+- Don't format exceptions that are not `ErrorRecord` objects (#11415)
+- Mark `InitialSessionState.ImportPSSnapIn` as Obsolete (#11399)
+- Use `PositionMessage` for the line context information for `ConciseView` (#11398)
+- Add trailing line number to `filename` for `ConciseView` (#11391)
+- Update `HelpInfoUri` for all modules in PowerShell 7.0 (#11389)
+- Remove unnecessary newline in `ConciseView` (#11383)
+- Move `Set-StrictMode` to the outer script block for `ErrorView` (#11381)
+- Remove the declaration of `Get-Error` experimental feature from module manifest (#11369)
+- Update error message if `Update-Help` fails for the current `UICulture` (#11356)
+- `Test-Connection`: Fallback to hop IP Address on `-Traceroute` without `-ResolveDestination` (#11335) (Thanks @vexx32!)
+- Add null host name check in `WSMan` (#11288) (Thanks @iSazonov!)
+- Add `Type` member to exceptions containing type of exception for `Get-Error` (#11076)
+- Write an error if argument is a directory in `Get-FileHash` cmdlet (#11114) (Thanks @iSazonov!)
+- Update `Get-Error` to not modify the original `$Error` object (#11125)
+
+### Code Cleanup
+- Use .NET code to check for processor architecture instead of P/Invoke (#11046) (Thanks @iSazonov!)
+
+### Tests
+- Test fixes for various platforms (#11579, #11541)
+- Various test fixes for debugger and remoting  (#11528)
+- `DSC` test fixes for `Alpine` and `Raspbian` (#11508)
+- Normalize line endings before comparing string in tests (#11499)
+- Fix `ssh` remoting test to work on all platforms (#11500)
+- Build test artifacts for `Alpine` (#11483)
+- Make null member access tests as string to avoid parsing errors (#11385)
+- Fix test failing when `UnixStat` feature is disabled (#11370)
+- Update hosting tests to use the SDK version from the build property (#11368)
+- Add retry to `Enter-PSHostProcess` test (#11360)
+
+### Build and Packaging Improvements
+- Bump `Microsoft.PowerShell.Native` from `7.0.0-rc.1` to `7.0.0.rc.2` (#11583)
+- Update .NET SDK version to 3.1.101 (#11582)
+- Bump `PSReadLine` from `2.0.0-rc1` to `2.0.0-rc2` (#11581)
+- Bump `NJsonSchema` from `10.0.28` to `10.1.3` (#11382, #11573)
+- Generate the correct reference assembly for `Microsoft.PowerShell.ConsoleHost` NuGet package (#11545)
+- Update building of `MSIX` for `RC` to use 100 range revision (#11526)
+- Fix symbolic links on Debian 10 packages (#11474)
+- Bump `Microsoft.PowerShell.Archive` from `1.2.3.0` to `1.2.4.0` (#11502)
+- Add script to rebuild `WIX` component references (#11485)
+- Bump `PackageManagement` from `1.4.5` to `1.4.6` (#11427)
+- Bump `PowerShellGet` from `2.2.2` to `2.2.3` (#11426)
+- Bump `ThreadJob` from `2.0.2` to `2.0.3` (#11416)
+- Fix symbolic links to `libs` on Debian 10 (#11390)
+- Improve Ubuntu detection for Ubuntu derivatives like `GalliumOS` etc (#11155)
+
+### Documentation and Help Content
+- Fix broken link in debugging `README.md` (#11503)
+
+## [7.0.0-rc.1] - 2019-12-16
+
+### Breaking Changes
+- Make update notification support `LTS` and default channels (#11132)
+
+### Engine Updates and Fixes
+- Improvements in breakpoint APIs for remote scenarios (#11312)
+- Fix PowerShell class definition leaking into another Runspace (#11273)
+- Fix a regression in formatting caused by the `FirstOrDefault` primitive added in `7.0.0-Preview1` (#11258)
+- Additional Microsoft Modules to track in `PS7` Telemetry (#10751)
+- Make approved features non-experimental (#11303)
+- Update `ConciseView` to use `TargetObject` if applicable (#11075)
+- Fix `NullReferenceException` in `CompletionCompleters` public methods (#11274)
+- Fix apartment thread state check on non-Windows platforms (#11301)
+- Update setting `PSModulePath` to concatenate the process and machine environment variables (#11276)
+- Bump `.NET Core` to `3.1.0` (#11260)
+- Fix detection of `$PSHOME` in front of `$env:PATH` (#11141)
+
+### General Cmdlet Updates and Fixes
+- Fix for issue on Raspbian for setting date of file changes in `UnixStat` Experimental Feature (#11313)
+- Add `-AsPlainText` to `ConvertFrom-SecureString` (#11142)
+- Added `WindowsPS` version check for `WinCompat` (#11148)
+- Fix error-reporting in some `WinCompat` scenarios (#11259)
+- Add native binary resolver (#11032) (Thanks @iSazonov!)
+- Update calculation of char width to respect `CJK` chars correctly (#11262)
+- Add `Unblock-File` for macOS (#11137)
+- Fix regression in `Get-PSCallStack` (#11210) (Thanks @iSazonov!)
+- Avoid automatically loading the `ScheduledJob` module when using Job cmdlets (#11194)
+- Add `OutputType` to `Get-Error` cmdlet and preserve original `TypeNames` (#10856)
+- Fix null reference in `SupportsVirtualTerminal` property (#11105)
+
+### Code Cleanup
+- Change comment and element text to meet Microsoft standards (#11304)
+
+### Tests
+- Make unreliable `DSC` test pending (#11131)
+
+### Build and Packaging Improvements
+- Fix Nuget package signing for Coordinated Package build (#11316)
+- Update dependencies from PowerShell Gallery and NuGet (#11323)
+- Bump `Microsoft.ApplicationInsights` from `2.11.0` to `2.12.0` (#11305)
+- Bump `Microsoft.CodeAnalysis.CSharp` from `3.3.1` to `3.4.0` (#11265)
+- Updates packages for Debian 10 and 11 (#11236)
+- Only enable experimental features prior to `RC` (#11162)
+- Update macOS minimum version (#11163)
+- Bump `NJsonSchema` from `10.0.27` to `10.0.28` (#11170)
+
+### Documentation and Help Content
+- Refactor change logs into one log per release (#11165)
+- Fix `FWLinks` for PowerShell 7 online help documents (#11071)
+
+## [7.0.0-preview.6] - 2019-11-21
 
 ### Breaking Changes
 
@@ -116,7 +234,7 @@
 - Fix to `Select-String` emphasis and `Import-DscResource` in CHANGELOG.md (#10890)
 - Remove the stale link from `powershell-beginners-guide.md` (#10926)
 
-## v7.0.0-preview.5 - 10/23/2019
+## [7.0.0-preview.5] - 2019-10-23
 
 ### Breaking Changes
 
@@ -224,7 +342,7 @@
 - Add processor architecture to distribution request template (#10661)
 - Add new PowerShell MoL book to learning PowerShell docs (#10602)
 
-## v7.0.0-preview.4 - 09/19/2019
+## [7.0.0-preview.4] - 2019-09-19
 
 ### Engine Updates and Fixes
 
@@ -296,7 +414,7 @@
 - Add a reference to `PSKoans` module to Learning Resources documentation (#10369) (Thanks @vexx32!)
 - Update `README.md` and `metadata.json` for `7.0.0-preview.3` (#10393)
 
-## v7.0.0-preview.3 - 08/20/2019
+## [7.0.0-preview.3] - 2019-08-20
 
 ### Breaking Changes
 
@@ -379,7 +497,7 @@
 - Create `Distribution_Request` issue template (#10253)
 - Fix: Removed dependency file with `Dependabot` (#10212) (Thanks @RDIL!)
 
-## v7.0.0-preview.2 - 07/17/2019
+## [7.0.0-preview.2] - 2019-07-17
 
 ### Breaking Changes
 
@@ -503,7 +621,7 @@
 - Update readme `gitter` badge (#9920) (Thanks @RDIL!)
 - Update `README` and `metadata.json` for `7.0.0-preview.1` release (#9767)
 
-## v7.0.0-preview.1 - 05/30/2019
+## [7.0.0-preview.1] - 2019-05-30
 
 ### Breaking Changes
 
@@ -752,3 +870,12 @@
 - Documentation Cleanup (#8851) (Thanks @RDIL!)
 - Update docs for `6.2.0-rc.1` release (#9022)
 - Update release template (#8996)
+
+[7.0.0-rc.2]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-rc.1...v7.0.0-rc.2
+[7.0.0-rc.1]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.6...v7.0.0-rc.1
+[7.0.0-preview.6]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.5...v7.0.0-preview.6
+[7.0.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.4...v7.0.0-preview.5
+[7.0.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.3...v7.0.0-preview.4
+[7.0.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.2...v7.0.0-preview.3
+[7.0.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.1...v7.0.0-preview.2
+[7.0.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v6.2.0-rc.1...v7.0.0-preview.1

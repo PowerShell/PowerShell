@@ -62,10 +62,6 @@ namespace Microsoft.PowerShell.Commands
 
         private Ping? _sender;
 
-        private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
-
-        private PingCompletedEventArgs? _pingCompleteArgs;
-
         #endregion
 
         #region Parameters
@@ -285,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            if (!InitProcessPing(targetNameOrAddress, out _, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -336,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
         {
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -351,8 +347,6 @@ namespace Microsoft.PowerShell.Commands
             IPAddress hopAddress;
             do
             {
-                // Clear the stored router name for every hop
-                string routerName = string.Empty;
                 pingOptions.Ttl = currentHop;
 
 #if !UNIX
@@ -383,25 +377,25 @@ namespace Microsoft.PowerShell.Commands
 #endif
                 var hopAddressString = discoveryReply.Address.ToString();
 
+                string routerName = hopAddressString;
+                try
+                {
+                    if (!TryResolveNameOrAddress(hopAddressString, out routerName, out _))
+                    {
+                        routerName = hopAddressString;
+                    }
+                }
+                catch
+                {
+                    // Swallow hostname resolve exceptions and continue with traceroute
+                }
+
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
                 for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
                     try
                     {
-#if !UNIX
-                        if (ResolveDestination.IsPresent && routerName == string.Empty)
-                        {
-                            try
-                            {
-                                InitProcessPing(hopAddressString, out routerName, out _);
-                            }
-                            catch
-                            {
-                                // Swallow host resolve exceptions and just use the IP address.
-                            }
-                        }
-#endif
                         reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
                         if (!Quiet.IsPresent)
@@ -475,7 +469,7 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessMTUSize(string targetNameOrAddress)
         {
             PingReply? reply, replyResult = null;
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -578,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPing(string targetNameOrAddress)
         {
-            if (!InitProcessPing(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
                 return;
             }
@@ -643,7 +637,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion PingTest
 
-        private bool InitProcessPing(
+        private bool TryResolveNameOrAddress(
             string targetNameOrAddress,
             out string resolvedTargetName,
             [NotNullWhen(true)]
@@ -799,7 +793,6 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing)
                 {
                     _sender?.Dispose();
-                    _pingComplete?.Dispose();
                 }
 
                 _disposed = true;
@@ -817,48 +810,24 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 _sender = new Ping();
-                _sender.PingCompleted += OnPingComplete;
 
                 timer?.Start();
-                _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
-                _pingComplete.Wait();
-                timer?.Stop();
-                _pingComplete.Reset();
-
-                if (_pingCompleteArgs == null)
-                {
-                    throw new PingException(string.Format(
-                        TestConnectionResources.NoPingResult,
-                        targetAddress,
-                        IPStatus.Unknown));
-                }
-
-                if (_pingCompleteArgs.Cancelled)
-                {
-                    // The only cancellation we have implemented is on pipeline stops via StopProcessing().
-                    throw new PipelineStoppedException();
-                }
-
-                if (_pingCompleteArgs.Error != null)
-                {
-                    throw new PingException(_pingCompleteArgs.Error.Message, _pingCompleteArgs.Error);
-                }
-
-                return _pingCompleteArgs.Reply;
+                // 'SendPingAsync' always uses the default synchronization context (threadpool).
+                // This is what we want to avoid the deadlock resulted by async work being scheduled back to the
+                // pipeline thread due to a change of the current synchronization context of the pipeline thread.
+                return _sender.SendPingAsync(targetAddress, timeout, buffer, pingOptions).GetAwaiter().GetResult();
+            }
+            catch (PingException ex) when (ex.InnerException is TaskCanceledException)
+            {
+                // The only cancellation we have implemented is on pipeline stops via StopProcessing().
+                throw new PipelineStoppedException();
             }
             finally
             {
+                timer?.Stop();
                 _sender?.Dispose();
                 _sender = null;
             }
-        }
-
-        // This event is triggered when the ping is completed, and passes along the eventargs so that we know
-        // if the ping was cancelled, or an exception was thrown.
-        private static void OnPingComplete(object sender, PingCompletedEventArgs e)
-        {
-            ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
-            ((TestConnectionCommand)e.UserState)._pingComplete.Set();
         }
 
         /// <summary>
@@ -1007,6 +976,16 @@ namespace Microsoft.PowerShell.Commands
                 Source = source;
                 Target = destination;
                 TargetAddress = destinationAddress;
+
+                if (_status.Address == IPAddress.Any
+                    || _status.Address == IPAddress.IPv6Any)
+                {
+                    Hostname = null;
+                }
+                else
+                {
+                    Hostname = _status.Destination;
+                }
             }
 
             private readonly PingStatus _status;
@@ -1020,13 +999,7 @@ namespace Microsoft.PowerShell.Commands
             /// Gets the hostname of the current hop point.
             /// </summary>
             /// <value></value>
-            public string? Hostname
-            {
-                get => _status.Destination != IPAddress.Any.ToString()
-                    && _status.Destination != IPAddress.IPv6Any.ToString()
-                        ? _status.Destination
-                        : null;
-            }
+            public string? Hostname { get; }
 
             /// <summary>
             /// Gets the sequence number of the ping in the sequence of pings to the hop point.

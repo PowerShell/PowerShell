@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// by Get-Member cmdlet, original MethodData and computed method information such
         /// as whether a method is static etc.
         /// </summary>
-        internal class WMIMethodCacheEntry
+        internal class WMIMethodCacheEntry : CacheEntry
         {
             public string Name { get; }
 

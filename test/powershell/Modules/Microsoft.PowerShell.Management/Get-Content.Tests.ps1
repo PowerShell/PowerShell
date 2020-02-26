@@ -33,13 +33,13 @@ Describe "Get-Content" -Tags "CI" {
         $content = (Get-Content -Path $testPath)
         $content | Should -BeExactly $testString
         $content.Count | Should -Be 1
-        $content | Should -BeOfType "System.String"
+        $content | Should -BeOfType System.String
     }
 
     It "Should deliver an array object when listing a file with multiple lines and the correct information from a file" {
         $content = (Get-Content -Path $testPath2)
         @(Compare-Object $content $testString2.Split($nl) -SyncWindow 0).Length | Should -Be 0
-        ,$content | Should -BeOfType "System.Array"
+        ,$content | Should -BeOfType System.Array
     }
 
     It "Should be able to return a specific line from a file" {
@@ -119,7 +119,7 @@ baz
         $expected = 'foo'
 
         $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $encodingName
-        $actual | Should -BeOfType [string]
+        $actual | Should -BeOfType string
         $actual.Length | Should -Be $tailCount
         $actual[0] | Should -BeExactly $expected
     }
@@ -196,7 +196,7 @@ baz
         Set-Content -Path $testPath $testContent
         $result = Get-Content @GetContentParams
         $result.Length | Should -Be $expectedLength
-        if ($isWindows) {
+        if ($IsWindows) {
             $result | Should -BeExactly $expectedWindowsContent
         } else {
             $result | Should -BeExactly $expectedNotWindowsContent
@@ -224,7 +224,7 @@ baz
         Get-Content -Path $testPath | Should -BeExactly $testString
         Get-Content -Path $testPath -Stream hello | Should -BeExactly "World"
         $item = Get-Item -Path $testPath -Stream hello
-        $item | Should -BeOfType 'System.Management.Automation.Internal.AlternateStreamData'
+        $item | Should -BeOfType System.Management.Automation.Internal.AlternateStreamData
         $item.Stream | Should -BeExactly "hello"
         Clear-Content -Path $testPath -Stream hello
         Get-Content -Path $testPath -Stream hello | Should -BeNullOrEmpty

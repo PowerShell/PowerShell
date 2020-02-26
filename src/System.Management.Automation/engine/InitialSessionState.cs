@@ -3584,7 +3584,7 @@ namespace System.Management.Automation.Runspaces
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
             // Use at most 3 locks (we don't expect contention on that many cores anyways,
             // and typically we'll be processing just 2 or 3 files anyway, hence capacity=3.
-            ConcurrentDictionary<string, string> filesProcessed  = new ConcurrentDictionary<string, string>(
+            ConcurrentDictionary<string, string> filesProcessed = new ConcurrentDictionary<string, string>(
                     concurrencyLevel: 3,
                     capacity: 3,
                     StringComparer.OrdinalIgnoreCase);
@@ -3782,6 +3782,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="name"></param>
         /// <param name="warning"></param>
         /// <returns></returns>
+        [Obsolete("Custom PSSnapIn is deprecated. Please use a module instead.", true)]
         public PSSnapInInfo ImportPSSnapIn(string name, out PSSnapInException warning)
         {
             if (string.IsNullOrEmpty(name))
@@ -4305,8 +4306,12 @@ param(
             }
         }
 
-        # If the pager is an application, format the output width before sending to the app.
-        if ((Get-Command $pagerCommand -ErrorAction Ignore).CommandType -eq 'Application') {
+        $pagerCommandInfo = Get-Command -Name $pagerCommand -ErrorAction Ignore
+        if ($pagerCommandInfo -eq $null) {
+            $help
+        }
+        elseif ($pagerCommandInfo.CommandType -eq 'Application') {
+            # If the pager is an application, format the output width before sending to the app.
             $consoleWidth = [System.Math]::Max([System.Console]::WindowWidth, 20)
 
             if ($pagerArgs) {
@@ -4426,7 +4431,7 @@ end {
         internal const ActionPreference DefaultWarningPreference = ActionPreference.Continue;
         internal const ActionPreference DefaultInformationPreference = ActionPreference.SilentlyContinue;
 
-        internal const ErrorView DefaultErrorView = ErrorView.NormalView;
+        internal const ErrorView DefaultErrorView = ErrorView.ConciseView;
         internal const bool DefaultWhatIfPreference = false;
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
@@ -4501,7 +4506,7 @@ end {
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))),
             new SessionStateVariableEntry(
                 SpecialVariables.ErrorView,
-                ExperimentalFeature.IsEnabled("PSErrorView") ? ErrorView.ConciseView : DefaultErrorView,
+                DefaultErrorView,
                 RunspaceInit.ErrorViewDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ErrorView))),

@@ -5,7 +5,7 @@
 trap { throw $_ }
 
 # Strict mode FTW.
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 # Enable explicit export so that there are no surprises with commands exported from the module.
 Export-ModuleMember
@@ -108,7 +108,7 @@ function Register-DebuggerHandler {
     param(
         [ValidateNotNull()]
         [runspace]
-        $Runspace = $host.Runspace
+        $Runspace = $Host.Runspace
     )
     try {
         $callerEAP = $ErrorActionPreference
@@ -129,7 +129,7 @@ function Unregister-DebuggerHandler {
     param(
         [ValidateNotNull()]
         [runspace]
-        $Runspace = $host.Runspace
+        $Runspace = $Host.Runspace
     )
     try {
         $callerEAP = $ErrorActionPreference
@@ -140,7 +140,7 @@ function Unregister-DebuggerHandler {
             # Re-enable debugger interactivity so that breakpoints generate a
             # prompt for user interaction
             if ($script:runspacesRegistered.Count -eq 0) {
-                $host.DebuggerEnabled = $true
+                $Host.DebuggerEnabled = $true
             }
         }
     } catch {
@@ -175,12 +175,12 @@ function Test-Debugger {
 
         [ValidateNotNull()]
         [runspace]
-        $Runspace = $host.Runspace
+        $Runspace = $Host.Runspace
     )
     try {
         $callerEAP = $ErrorActionPreference
         # If the host runspace is selected, running as a job is not supported
-        if ($Runspace -eq $host.Runspace -and $AsJob) {
+        if ($Runspace -eq $Host.Runspace -and $AsJob) {
             $message = 'You must provide a new, opened runspace to the runspace parameter if you want to run this test with -AsJob.'
             $exception = [System.ArgumentException]::new($message)
             $errorRecord = [System.Management.Automation.ErrorRecord]::new($exception, $exception.GetType().Name, 'InvalidArgument', $null)
@@ -205,7 +205,7 @@ function Test-Debugger {
         # Disable debugger interactivity so that all debugger events go through
         # the DebuggerStop event only (i.e. breakpoints don't actually generate
         # a prompt for user interaction)
-        $host.DebuggerEnabled = $false
+        $Host.DebuggerEnabled = $false
         # Setup collections for debug commands and for the results of those
         # debug commands
         $dbgCmdQueue = [System.Collections.Queue]::new()
@@ -235,7 +235,7 @@ function Test-Debugger {
                 if ($Runspace.Debugger -ne $null -and $Runspace.Debugger.DebugMode -ne $requiredDebugMode) {
                     $Runspace.Debugger.SetDebugMode($requiredDebugMode)
                 }
-                if ($Runspace -eq $host.Runspace) {
+                if ($Runspace -eq $Host.Runspace) {
                     $ps = [powershell]::CreateNestedPowerShell($CallingCmdlet)
                     $script:lastDebuggerTestOutput = $ps.AddScript($ScriptBlock).Invoke($null, $invocationSettings)
                 } else {

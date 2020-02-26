@@ -286,6 +286,7 @@ gitter
 glachancecmaisonneuve
 globbing
 GoogleTest
+GUIs
 gzip
 hackathons
 hashtable
@@ -610,6 +611,7 @@ repo
 reportgenerator
 resgen
 responseheaders
+REST
 rest.ps1
 restart-apachehttpserver
 resx
@@ -636,6 +638,7 @@ securestring
 seemethere
 select-xml
 semver
+serverless
 sessionid
 sessionstate
 sessionstatecontainer
@@ -774,6 +777,7 @@ v6.2.0
 v6.2.1
 v6.2.2
 v6.2.3
+v6.2.4
 validatenotnullorempty
 versioned
 versioning
@@ -924,3 +928,6 @@ wpa
 wpaProfile
  - demos/WindowsPowerShellModules/README.md
 2.x.
+ - CHANGELOG/preview.md
+ThomasNieto
+spongemike2

@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var rawSecurityDescriptor = new RawSecurityDescriptor(securityDescriptorSddl);
             RawAcl rawDiscretionaryAcl = rawSecurityDescriptor.DiscretionaryAcl;
-            var discretionaryAcl = new DiscretionaryAcl (false, false, rawDiscretionaryAcl);
+            var discretionaryAcl = new DiscretionaryAcl(false, false, rawDiscretionaryAcl);
 
             byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
             discretionaryAcl.GetBinaryForm(rawDacl, 0);
@@ -1920,7 +1920,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
+                    if (!string.IsNullOrEmpty(SecurityDescriptorSddl))
                     {
                         SetServiceSecurityDescriptor(service, SecurityDescriptorSddl, hService);
                     }
@@ -2473,7 +2473,7 @@ namespace Microsoft.PowerShell.Commands
                             service,
                             exception,
                             "CouldNotRemoveService",
-                            ServiceResources.CouldNotSetService,
+                            ServiceResources.CouldNotRemoveService,
                             ErrorCategory.PermissionDenied);
                         return;
                     }
@@ -2640,7 +2640,7 @@ namespace Microsoft.PowerShell.Commands
         internal const DWORD SERVICE_CONFIG_DELAYED_AUTO_START_INFO = 3;
         internal const DWORD SERVICE_CONFIG_SERVICE_SID_INFO = 5;
         internal const DWORD WRITE_DAC = 262144;
-        internal const DWORD WRITE_OWNER =524288;
+        internal const DWORD WRITE_OWNER = 524288;
         internal const DWORD SERVICE_WIN32_OWN_PROCESS = 0x10;
         internal const DWORD SERVICE_ERROR_NORMAL = 1;
 

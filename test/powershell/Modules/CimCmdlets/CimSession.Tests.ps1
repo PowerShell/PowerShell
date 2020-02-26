@@ -16,7 +16,7 @@ Describe "New-CimSession" -Tag @("CI","RequireAdminOnWindows") {
         $session = New-CimSession -ComputerName . -Name $sessionName
         $sessions += $session
         $session.Name | Should -BeExactly $sessionName
-        $session.InstanceId  | Should -BeOfType "System.Guid"
+        $session.InstanceId  | Should -BeOfType System.Guid
     }
 
     It "A Cim session can be retrieved" -Pending:(-not $IsWindows) {
