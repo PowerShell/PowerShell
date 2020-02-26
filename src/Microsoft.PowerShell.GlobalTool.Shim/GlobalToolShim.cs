@@ -36,6 +36,11 @@ namespace Microsoft.PowerShell.GlobalTool.Shim
 
             if (File.Exists(pwshPath))
             {
+                Console.CancelKeyPress += (sender, e) =>
+                {
+                    e.Cancel = true;
+                };
+
                 var process = System.Diagnostics.Process.Start("dotnet", processArgs);
                 process.WaitForExit();
                 return process.ExitCode;
