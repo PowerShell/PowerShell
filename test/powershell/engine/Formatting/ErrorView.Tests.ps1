@@ -87,6 +87,12 @@ Describe 'Tests for $ErrorView' -Tag CI {
             # validate line number is shown
             $e | Should -BeLike '* 2 *'
         }
+
+        It "Position message does not contain line information" {
+
+            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" | Out-String
+            $e | Should -Not -BeLike "*At line*"
+        }
     }
 
     Context 'NormalView tests' {
