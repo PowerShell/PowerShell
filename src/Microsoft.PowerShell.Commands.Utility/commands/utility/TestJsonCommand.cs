@@ -65,16 +65,7 @@ namespace Microsoft.PowerShell.Commands
                 else if (SchemaPath != null)
                 {
                     string resolvedpath = string.Empty;
-
-                    try
-                    {
-                        resolvedpath = PathUtils.ResolveFilePath(SchemaPath, this, isLiteralPath: true);
-                    }
-                    catch (ItemNotFoundException e)
-                    {
-                        // NOTE: This will throw
-                        PathUtils.ReportFileOpenFailure(this, resolvedpath, e);
-                    }
+                    resolvedpath = PathUtils.ResolveFilePath(SchemaPath, this, isLiteralPath: true);
 
                     _jschema = JsonSchema.FromFileAsync(resolvedpath).Result;
                 }
