@@ -118,7 +118,6 @@ Describe 'Basic breakpoint tests' -tag 'CI' {
     }
 
     AfterAll {
-        [System.IO.File]::Delete($testScriptPath)
         Unregister-DebuggerHandler
     }
 
