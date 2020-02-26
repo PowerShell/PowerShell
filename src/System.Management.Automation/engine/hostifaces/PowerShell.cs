@@ -937,12 +937,10 @@ namespace System.Management.Automation
         /// Creates a nested powershell within the current instance.
         /// Nested PowerShell is used to do simple operations like checking state
         /// of a variable while another command is using the runspace.
-        ///
         /// Nested PowerShell should be invoked from the same thread as the parent
         /// PowerShell invocation thread. So effectively the parent Powershell
         /// invocation thread is blocked until nested invoke() operation is
         /// complete.
-        ///
         /// Implement PSHost.EnterNestedPrompt to perform invoke() operation on the
         /// nested powershell.
         /// </summary>
@@ -952,6 +950,10 @@ namespace System.Management.Automation
         /// function, where you may not have the original powershell instance to
         /// work with.
         /// </remarks>
+        /// <param name="runningCommand">The current running cmdlet.</param>
+        /// <returns>
+        /// The nested PowerShell instance.
+        /// </returns>
         /// <exception cref="InvalidOperationException">
         /// 1. State of powershell instance is not valid to create a nested powershell instance.
         /// Nested PowerShell should be created only for a running powershell instance.
