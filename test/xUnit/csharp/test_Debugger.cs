@@ -156,6 +156,7 @@ namespace PSTests.Sequential
             }
         }
 
+#if !UNIX
         [Fact]
         public void TestDebugJobIPC()
         {
@@ -257,8 +258,10 @@ namespace PSTests.Sequential
                     string.Format("FAIL {0}:{1}", s_errorMessage, s_errorId));
             }
         }
+#endif
     }
 
+#if !UNIX
     public class RemoteDebuggerTests : DebuggerTestsBase, IDisposable
     {
         private static bool s_stopTest;
@@ -1361,11 +1364,13 @@ namespace PSTests.Sequential
         }
 
     }
+#endif
 
     public class RunspaceDebuggingTests : IDisposable
     {
         private static bool s_debuggerStop;
 
+#if !UNIX
         public void Dispose()
         {
             // Restart the WinRM service before exiting test because when VSTS
@@ -1377,7 +1382,9 @@ namespace PSTests.Sequential
                   .AddParameter("Name", "WinRM")
                   .Invoke();
             }
+
         }
+#endif
 
         [Fact]
         public void TestMonitorRunspaceInfo()
@@ -1708,6 +1715,7 @@ namespace PSTests.Sequential
             }
         }
 
+#if !UNIX
         /// <summary>
         /// This test verifies that both local and remote runspaces are reflected in
         /// the global runspace collection.
@@ -1781,6 +1789,7 @@ namespace PSTests.Sequential
                     "FAIL: TestRunspaceName: Expected remote runspace name to change to 'MyRemoteRunspace'");
             }
         }
+#endif
 
         /// <summary>
         /// Tests that a debug break stop is preserved in a runspace, blocking
@@ -1973,6 +1982,7 @@ namespace PSTests.Sequential
                 "FAIL: TestDebugRunspaceOnLocalRunspace: Expected Debug-Runspace to break into debugger.");
         }
 
+#if !UNIX
         /// <summary>
         /// Tests the Debug-Runspace cmdlet for remote runspaces.
         /// </summary>
@@ -2030,6 +2040,7 @@ namespace PSTests.Sequential
             Assert.True(s_debuggerStop,
                 "FAIL: TestDebugRunspaceOnRemoteRunspace: Expected Debug-Runspace to break into debugger.");
         }
+#endif
 
         /// <summary>
         /// Tests the Debug-Runspace cmdlet on a local Runspace for multiple scripts.
@@ -2121,6 +2132,7 @@ namespace PSTests.Sequential
             }
         }
 
+#if !UNIX
         /// <summary>
         /// Tests the Debug-Runspace cmdlet on a remote Runspace for multiple scripts.
         /// </summary>
@@ -2216,6 +2228,7 @@ namespace PSTests.Sequential
                 dbgRunspace.Dispose();
             }
         }
+#endif
 
         /// <summary>
         /// This tests the Debugger 'Exit' command that cancels debugging
@@ -2285,6 +2298,7 @@ namespace PSTests.Sequential
             }
         }
 
+#if !UNIX
         /// <summary>
         /// Tests the BreakAll runspace debug option on a remote runspace.
         /// </summary>
@@ -2301,6 +2315,7 @@ namespace PSTests.Sequential
                 TestDebugOptionOnRunspace(rs, "TestDebugOptionOnRemoteRunspace");
             }
         }
+#endif
 
         /// <summary>
         /// Tests the Wait-Debugger cmdlet on a local runspace.
@@ -2345,6 +2360,7 @@ namespace PSTests.Sequential
             }
         }
 
+#if !UNIX
         /// <summary>
         /// Test that the debugger can execute commands during a debug session
         /// on a nested runspace.
@@ -2414,6 +2430,7 @@ namespace PSTests.Sequential
                     "FAIL: TestCommandOnDebugRemoteNestedRunspace: Expected debugger stop command to execute successfully.");
             }
         }
+#endif
 
         private void TestDebugOptionOnRunspace(Runspace runspace, string testName)
         {
