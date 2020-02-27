@@ -27,7 +27,7 @@ function ExecuteWebCommand {
     return $result
 }
 
-# This function calls either Invoke-WebRequest or Invoke-RestMethod using the Path parameter
+# This function calls either Invoke-WebRequest or Invoke-RestMethod using the OutFile parameter
 # Then, the file content is read and return in a $result object.
 #
 function ExecuteRequestWithOutFile {
@@ -44,9 +44,9 @@ function ExecuteRequestWithOutFile {
     $filePath = Join-Path $TestDrive ((Get-Random).ToString() + ".txt")
     try {
         if ($cmdletName -eq "Invoke-WebRequest") {
-            Invoke-WebRequest -Uri $uri -Path $filePath
+            Invoke-WebRequest -Uri $uri -OutFile $filePath
         } else {
-            Invoke-RestMethod -Uri $uri -Path $filePath
+            Invoke-RestMethod -Uri $uri -OutFile $filePath
         }
         $result.Output = Get-Content $filePath -Raw -ErrorAction SilentlyContinue
     } catch {
@@ -641,7 +641,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
     }
 
-    It "Validate Invoke-WebRequest -Path" {
+    It "Validate Invoke-WebRequest -OutFile" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-WebRequest" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
@@ -812,31 +812,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -Command $command
         $result.output | Should -BeNullOrEmpty
         $result.error | Should -Not -BeNullOrEmpty
-    }
-
-    Context "Path and LigeralPath parameters work" {
-        BeforeAll {
-            $uri = Get-WebListenerUrl -Test 'Get'
-            $testOutfile1 = Join-Path $TestDrive "[outfile1].txt"
-            $testOutfile2 = Join-Path $TestDrive "[outfile2].txt"
-        }
-
-        It "Cannot use both Path and LigeralPath parameters" {
-            { Invoke-WebRequest -uri $uri -Path $testOutFile1 -LiteralPath $testOutFile1 -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyPAthAndLiteralPath,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-            { Invoke-RestMethod -uri $uri -Path $testOutFile1 -LiteralPath $testOutFile1 -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyPAthAndLiteralPath,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-        }
-
-        It "Path and LigeralPath parameters work in Invoke-WebRequest" {
-            { Invoke-WebRequest -uri $uri -Path $testOutFile1 -ErrorAction Stop } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-            Invoke-WebRequest -uri $uri -LiteralPath $testOutFile1 -ErrorAction Stop
-            Test-Path -LiteralPath $testOutFile1 | Should -BeTrue
-        }
-
-        It "Path and LigeralPath parameters work in Invoke-RestMethod" {
-            { Invoke-RestMethod -uri $uri -Path $testOutFile1 -ErrorAction Stop } | Should -Throw -ErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-            Invoke-RestMethod -uri $uri -LiteralPath $testOutFile2 -ErrorAction Stop
-            Test-Path -LiteralPath $testOutFile2 | Should -BeTrue
-        }
     }
 
     Context "Redirect" {
@@ -1779,7 +1754,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # Download the entire file to reference in tests
             $referenceFile = Join-Path $TestDrive "reference.txt"
             $resumeUri = Get-WebListenerUrl -Test 'Resume'
-            Invoke-WebRequest -uri $resumeUri -Path $referenceFile -ErrorAction Stop
+            Invoke-WebRequest -uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
             $referenceFileHash = Get-FileHash -Algorithm SHA256 -Path $referenceFile
             $referenceFileSize = Get-Item $referenceFile | Select-Object -ExpandProperty Length
         }
@@ -1788,13 +1763,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
         }
 
-        It "Invoke-WebRequest -Resume requires -Path" {
+        It "Invoke-WebRequest -Resume requires -OutFile" {
             { Invoke-WebRequest -Resume -Uri $resumeUri -ErrorAction Stop } |
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
         }
 
         It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
-            $response = Invoke-WebRequest -uri $resumeUri -Path $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1811,7 +1786,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $response = Invoke-WebRequest -uri $resumeUri -Path $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1829,7 +1804,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
-            $response = Invoke-WebRequest -Uri $uri -Path $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -Uri $uri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1849,10 +1824,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             param($bytes, $statuscode)
             # Simulate partial download
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue "Bytes/$bytes"
-            $null = Invoke-WebRequest -uri $uri -Path $outFile
+            $null = Invoke-WebRequest -uri $uri -OutFile $outFile
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $bytes
 
-            $response = Invoke-WebRequest -uri $resumeUri -Path $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1866,10 +1841,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Invoke-WebRequest -Resume assumes the file was successfully completed when the local and remote file are the same size." {
             # Download the entire file
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
-            $null = Invoke-WebRequest -uri $uri -Path $outFile
+            $null = Invoke-WebRequest -uri $uri -OutFile $outFile
             $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $response = Invoke-WebRequest -uri $resumeUri -Path $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -2234,7 +2209,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
     }
 
-    It "Validate Invoke-RestMethod -Path" {
+    It "Validate Invoke-RestMethod -OutFile" {
         $uri = Get-WebListenerUrl -Test 'Get'
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-RestMethod" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
@@ -3303,7 +3278,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             # Download the entire file to reference in tests
             $referenceFile = Join-Path $TestDrive "reference.txt"
             $resumeUri = Get-WebListenerUrl -Test 'Resume'
-            Invoke-RestMethod -uri $resumeUri -Path $referenceFile -ErrorAction Stop
+            Invoke-RestMethod -uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
             $referenceFileHash = Get-FileHash -Algorithm SHA256 -Path $referenceFile
             $referenceFileSize = Get-Item $referenceFile | Select-Object -ExpandProperty Length
         }
@@ -3312,7 +3287,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
         }
 
-        It "Invoke-RestMethod -Resume requires -Path" {
+        It "Invoke-RestMethod -Resume requires -OutFile" {
             { Invoke-RestMethod -Resume -Uri $resumeUri -ErrorAction Stop } |
                 Should -Throw -ErrorId 'WebCmdletOutFileMissingException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
         }
@@ -3321,7 +3296,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             # ensure the file does not exist
             Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
 
-            Invoke-RestMethod -uri $resumeUri -Path $outFile -ResponseHeadersVariable 'Headers' -Resume
+            Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -3337,7 +3312,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $response = Invoke-RestMethod -uri $resumeUri -Path $outFile -ResponseHeadersVariable 'Headers' -Resume
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -3354,7 +3329,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
-            $response = Invoke-RestMethod -uri $uri -Path $outFile -ResponseHeadersVariable 'Headers' -Resume
+            $response = Invoke-RestMethod -uri $uri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -3374,10 +3349,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             param($bytes)
             # Simulate partial download
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue "Bytes/$bytes"
-            $null = Invoke-RestMethod -uri $uri -Path $outFile
+            $null = Invoke-RestMethod -uri $uri -OutFile $outFile
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $bytes
 
-            $response = Invoke-RestMethod -uri $resumeUri -Path $outFile -ResponseHeadersVariable 'Headers' -Resume
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -3390,10 +3365,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Invoke-RestMethod -Resume assumes the file was successfully completed when the local and remote file are the same size." {
             # Download the entire file
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
-            $null = Invoke-RestMethod -uri $uri -Path $outFile
+            $null = Invoke-RestMethod -uri $uri -OutFile $outFile
             $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $response = Invoke-RestMethod -uri $resumeUri -Path $outFile -ResponseHeadersVariable 'Headers' -Resume
+            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash

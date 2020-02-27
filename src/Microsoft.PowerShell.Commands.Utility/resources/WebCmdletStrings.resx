@@ -187,10 +187,10 @@
     <value>Path '{0}' is not a file system path. Please specify the path to a file in the file system.</value>
   </data>
   <data name="OutFileMissing" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Path (or LiteralPath). Provide a valid Path (or LiteralPath) parameter value when using the {0} parameter, then retry.</value>
+    <value>The cmdlet cannot run because the following parameter is missing: OutFile. Provide a valid OutFile parameter value when using the {0} parameter, then retry.</value>
   </data>
   <data name="OutFileWritingSkipped" xml:space="preserve">
-    <value>The file will not be re-downloaded because the remote file is the same size as the output file: {0}</value>
+    <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
   </data>
   <data name="ProxyCredentialConflict" xml:space="preserve">
     <value>The cmdlet cannot run because the following conflicting parameters are specified: ProxyCredential and ProxyUseDefaultCredentials. Specify either ProxyCredential or ProxyUseDefaultCredentials, then retry.</value>
@@ -260,8 +260,5 @@
   </data>
   <data name="RetryVerboseMsg" xml:space="preserve">
     <value>Retrying after interval of {0} seconds. Status code for previous attempt: {1}</value>
-  </data>
-  <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
-    <value>You must specify either the -Path or -LiteralPath parameter, but not both.</value>
   </data>
 </root>
