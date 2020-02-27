@@ -13,6 +13,30 @@ using Xunit;
 
 namespace PSTests.Sequential
 {
+    public class RemotingTestFixture : IDisposable
+    {
+        public void Dispose()
+        {
+            // Restart the WinRM service before exiting test because when VSTS
+            // unloads the app domain WinRM can throw an exception if it is not
+            // finished cleaning up server side state.
+            using (PowerShell ps = PowerShell.Create())
+            {
+                ps.AddCommand("Restart-Service")
+                  .AddParameter("Name", "WinRM")
+                  .Invoke();
+            }
+        }
+    }
+
+    [CollectionDefinition("Remoting test collection")]
+    public class RemotingTestCollection: ICollectionFixture<RemotingTestFixture>
+    {
+        // This class has no code, and is never created. Its purpose is simply
+        // to be the place to apply [CollectionDefinition] and all the
+        // ICollectionFixture<> interfaces.
+    }
+
     public class DebuggerTestsBase
     {
         protected static bool s_testSucceeded;
@@ -176,14 +200,14 @@ namespace PSTests.Sequential
                         $ErrorActionPreference = 'Stop'
 
                         $job = Start-ThreadJob { 1..100 | ForEach-Object { Start-Sleep -Milliseconds 100; $_ } }
-
-                        # Wait for output to indicate job is running.
                         while (-not $job.HasMoreData -and $job.JobStateInfo.State -in @('NotStarted','Running'))
                         {
                             Start-Sleep -Milliseconds 100
                         }
 
-                        Debug-Job -Id $job.Id -BreakAll
+                        Debug-Job -Id $job.Id -BreakAll 1>$null
+
+                        Remove-Job -Id $job.Id -Force
                     ";
                     RunScript(runspace, script);
                 }
@@ -262,6 +286,7 @@ namespace PSTests.Sequential
     }
 
 #if !UNIX
+    [Collection("Remoting test collection")]
     public class RemoteDebuggerTests : DebuggerTestsBase, IDisposable
     {
         private static bool s_stopTest;
@@ -292,16 +317,6 @@ namespace PSTests.Sequential
 
         public void Dispose()
         {
-            // Restart the WinRM service before exiting test because when VSTS
-            // unloads the app domain WinRM can throw an exception if it is not
-            // finished cleaning up server side state.
-            using (PowerShell ps = PowerShell.Create())
-            {
-                ps.AddCommand("Restart-Service")
-                  .AddParameter("Name", "WinRM")
-                  .Invoke();
-            }
-
             if (File.Exists(s_scriptFilePath))
             {
                 File.Delete(s_scriptFilePath);
@@ -971,17 +986,17 @@ namespace PSTests.Sequential
 
                 // Invoke a test script with some delay to wait for break action.
                 var script = @"
-                    $job = start-job { 1..300 | % { sleep 1; 'Output' } }
+                    $ErrorActionPreference = 'Stop'
 
-                    # Wait for output to indicate job is running.
-                    $output = Receive-Job $job
-                    while ($output.Count -eq 0)
+                    $job = Start-ThreadJob { 1..100 | ForEach-Object { Start-Sleep -Milliseconds 100; $_ } }
+                    while (-not $job.HasMoreData -and $job.JobStateInfo.State -in @('NotStarted','Running'))
                     {
-                        sleep 1
-                        $output = Receive-Job $job
+                        Start-Sleep -Milliseconds 100
                     }
 
-                    Debug-Job $job
+                    Debug-Job -Id $job.Id -BreakAll 1>$null
+
+                    Remove-Job -Id $job.Id -Force
                 ";
                 RunScript(runspace, script);
 
@@ -1366,26 +1381,155 @@ namespace PSTests.Sequential
     }
 #endif
 
-    public class RunspaceDebuggingTests : IDisposable
+    public class RunspaceDebuggingTestsBase
     {
-        private static bool s_debuggerStop;
+        protected static bool s_debuggerStop;
 
-#if !UNIX
-        public void Dispose()
+        /// <summary>
+        /// Runs the Debug-Runspace cmdlet for the given Runspace name.
+        /// </summary>
+        protected void DebugRunspace(string debugRunspaceName)
         {
-            // Restart the WinRM service before exiting test because when VSTS
-            // unloads the app domain WinRM can throw an exception if it is not
-            // finished cleaning up server side state.
-            using (PowerShell ps = PowerShell.Create())
+            string scriptDebugRunspace = @"
+                param ([string] $runspaceName)
+                Debug-Runspace -Name $runspaceName -BreakAll
+            ";
+
+            using Runspace rs = RunspaceFactory.CreateRunspace();
+            rs.Open();
+
+            using PowerShell ps = PowerShell.Create(rs);
+
+            ps.AddScript(scriptDebugRunspace)
+              .AddParameter("runspaceName", debugRunspaceName);
+
+            // Run Debug-Runspace command.
+            var async = ps.BeginInvoke();
+
+            // Wait for debug stop to occur.
+            WaitFor(
+                () => { return s_debuggerStop; },
+                30000,
+                1000);
+
+            // Signal Debug-Runspace to end.
+            rs.Debugger.RaiseNestedDebuggingCancelEvent();
+
+            // Let command complete
+            ps.EndInvoke(async);
+        }
+
+        protected void DebugRunspace(string debugRunspaceName, out Runspace runspace, out PowerShell powershell, out IAsyncResult async)
+        {
+            string scriptDebugRunspace = @"
+                param ([string] $runspaceName)
+                Debug-Runspace -Name $runspaceName
+            ";
+
+            runspace = RunspaceFactory.CreateRunspace();
+            runspace.Open();
+
+            powershell = PowerShell.Create(runspace);
+
+            async = powershell.AddScript(scriptDebugRunspace)
+                              .AddParameter("runspaceName", debugRunspaceName)
+                              .BeginInvoke();
+
+            if (!WaitFor(
+                    () => { return s_debuggerStop; },
+                    30000,
+                    1000))
             {
-                ps.AddCommand("Restart-Service")
-                  .AddParameter("Name", "WinRM")
-                  .Invoke();
+                runspace.Dispose();
+                runspace = null;
+                powershell.Dispose();
+                powershell = null;
+                async = null;
+            }
+        }
+
+        /// <summary>
+        /// Waits for condition as defined by the predicate function.
+        /// </summary>
+        protected static bool WaitFor(
+            Func<bool> predicate,
+            int timeoutMs,
+            int timeoutIncMs)
+        {
+            int totalTimeMs = 0;
+
+            while (!predicate() && (totalTimeMs < timeoutMs))
+            {
+                System.Threading.Thread.Sleep(timeoutIncMs);
+                totalTimeMs += timeoutIncMs;
             }
 
+            return predicate();
         }
-#endif
 
+        protected void TestDebugOptionOnRunspace(Runspace runspace, string testName)
+        {
+            string script = @"
+            ""Hello""
+        ";
+            string scriptBreakAll = @"
+            param ([string] $RunspaceName)
+            Enable-RunspaceDebug -RunspaceName $RunspaceName -BreakAll
+        ";
+            string scriptNoBreakAll = @"
+            param ([string] $RunspaceName)
+            Disable-RunspaceDebug -RunspaceName $RunspaceName
+        ";
+            bool debuggerStop = false;
+
+            runspace.Debugger.DebuggerStop += (sender, args) =>
+            {
+                debuggerStop = true;
+            };
+
+            using (Runspace localRunspace = RunspaceFactory.CreateRunspace())
+            {
+                localRunspace.Open();
+
+                // Set BreakAll option on Runspace
+                using (PowerShell ps = PowerShell.Create(localRunspace))
+                {
+                    ps.AddScript(scriptBreakAll)
+                      .AddParameter("RunspaceName", runspace.Name)
+                      .Invoke();
+                }
+
+                // Run script with BreakAll option.
+                debuggerStop = false;
+                using (PowerShell ps = PowerShell.Create(runspace))
+                {
+                    ps.AddScript(script).Invoke();
+                }
+                Assert.True(debuggerStop,
+                    string.Format("FAIL: {0}: Expected breakpoint hit in debugger.", testName));
+
+                // Un-set BreakAll option on Runspace
+                using (PowerShell ps = PowerShell.Create(localRunspace))
+                {
+                    ps.AddScript(scriptNoBreakAll)
+                      .AddParameter("RunspaceName", runspace.Name)
+                      .Invoke();
+                }
+
+                // Run script with all options off.
+                debuggerStop = false;
+                using (PowerShell ps = PowerShell.Create(runspace))
+                {
+                    ps.AddScript(script).Invoke();
+                }
+                Assert.False(debuggerStop,
+                    string.Format("FAIL: {0}: Expected no breakpoint hit in debugger.", testName));
+            }
+        }
+    }
+
+    public class RunspaceDebuggingTests : RunspaceDebuggingTestsBase
+    {
         [Fact]
         public void TestMonitorRunspaceInfo()
         {
@@ -1613,11 +1757,9 @@ namespace PSTests.Sequential
                         DebuggerUtils.StartMonitoringRunspace(rootRunspace.Debugger, monitorRunspaceInfo);
 
                         // Run script and do "break all".
-                        using (var ps = PowerShell.Create())
+                        using (var ps = PowerShell.Create(nestedRunspace))
                         {
-                            ps.Runspace = nestedRunspace;
-                            ps.AddScript(nestedScript);
-                            var async = ps.BeginInvoke();
+                            var async = ps.AddScript(nestedScript).BeginInvoke();
 
                             Thread.Sleep(1000);
 
@@ -1699,12 +1841,11 @@ namespace PSTests.Sequential
                 };
 
                 // Run script.
-                using (var ps = PowerShell.Create())
+                using (var ps = PowerShell.Create(rootRunspace))
                 {
-                    ps.Runspace = rootRunspace;
-                    ps.AddScript(script).AddParameter("rootDebugger", rootRunspace.Debugger);
-
-                    ps.Invoke();
+                    ps.AddScript(script)
+                      .AddParameter("rootDebugger", rootRunspace.Debugger)
+                      .Invoke();
                 }
 
                 Assert.True(embeddedBreakAllReceived,
@@ -1715,7 +1856,412 @@ namespace PSTests.Sequential
             }
         }
 
+        /// <summary>
+        /// Tests that a debug break stop is preserved in a runspace, blocking
+        /// script execution if UnhandledBreakpointMode is set to Wait in the
+        /// debugger, and the break event can be handled once a handler is added
+        /// and the debug stop wait is released with ReleaseSavedDebugStop().
+        /// </summary>
+        [Fact]
+        public void TestPreserveDebugStopOnRunspace()
+        {
+            // One statement script.
+            string script = @"
+                Write-Output ""Hello from script.""
+            ";
+
+            bool debugStopReceived = false;
+
+            // Create local runspace
+            using (Runspace runspace = RunspaceFactory.CreateRunspace())
+            {
+                runspace.Open();
+
+                // Set debugger to step mode.
+                runspace.Debugger.SetDebuggerStepMode(true);
+
+                // Set debugger to preserve debug stops.
+                runspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
+
+                // Run script.
+                using (PowerShell ps = PowerShell.Create(runspace))
+                {
+                    // Start script.  Script will halt in debugger.
+                    var async = ps.AddScript(script).BeginInvoke();
+
+                    // Wait for debugger halt, for up to 30 seconds.
+                    if (!WaitFor(
+                        () => { return runspace.Debugger.IsPendingDebugStopEvent; },
+                        30000,
+                        1000))
+                    {
+                        Assert.True(false,
+                            "FAIL: TestPreserveDebugStopOnRunspace: Expected runspace debugger stop.");
+                    }
+
+                    // Subscribe to debug stop event.
+                    runspace.Debugger.DebuggerStop += (sender, args) =>
+                    {
+                        debugStopReceived = true;
+                    };
+
+                    // Release the debug stop wait.
+                    runspace.Debugger.ReleaseSavedDebugStop();
+
+                    ps.EndInvoke(async);
+                }
+
+                // Verify that the saved debug stop event was handled.
+                Assert.True(debugStopReceived,
+                    "FAIL: TestPreserveDebugStopOnRunspace: Expected debugger break event to be received.");
+            }
+        }
+
+        /// <summary>
+        /// Tests that a debug stop event is preserved in a local runspace when 
+        /// UnhandledBreakpointMode property is set to wait, and that a root debugger
+        /// handles the saved debug stop event once the local runspace is passed to the 
+        /// root debugger for monitoring.
+        /// </summary>
+        [Fact]
+        public void TestPreserveDebugStopOnNestedRunspace()
+        {
+            // One statement script.
+            string script = @"
+            Write-Output ""Hello from script.""
+        ";
+
+            bool debugStopReceivedInNestedRunspace = false;
+
+            // Create root local runspace
+            using (Runspace rootRunspace = RunspaceFactory.CreateRunspace())
+            {
+                rootRunspace.Open();
+
+                rootRunspace.Debugger.DebuggerStop += (sender, args) =>
+                {
+                    debugStopReceivedInNestedRunspace = true;
+                };
+
+                // Create independent local runspace.
+                using (Runspace runspace = RunspaceFactory.CreateRunspace())
+                {
+                    runspace.Open();
+
+                    // Set debugger to step mode.
+                    runspace.Debugger.SetDebuggerStepMode(true);
+
+                    // Set debugger to preserve debug stops.
+                    runspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
+
+                    var monitorRunspaceInfo = new PSStandaloneMonitorRunspaceInfo(runspace);
+
+                    using (PowerShell ps = PowerShell.Create(runspace))
+                    {
+                        // Run script.
+                        var async = ps.AddScript(script).BeginInvoke();
+
+                        // Wait for local runspace debugger to hit breakpoint.
+                        if (!WaitFor(
+                                () => { return runspace.Debugger.IsPendingDebugStopEvent; },
+                                30000,
+                                1000))
+                        {
+                            Assert.True(false,
+                                "FAIL: TestPreserveDebugStopOnNestedRunspace: Expected runspace debugger stop.");
+                        }
+
+                        // Add local runspace to root debugger monitor, making
+                        // it a nested runspace.
+                        DebuggerUtils.StartMonitoringRunspace(rootRunspace.Debugger, monitorRunspaceInfo);
+
+                        // Wait for script to complete, after debug stop event is handled.
+                        ps.EndInvoke(async);
+
+                        DebuggerUtils.EndMonitoringRunspace(rootRunspace.Debugger, monitorRunspaceInfo);
+                    }
+                }
+            }
+
+            // Verify that the saved debug stop event was handled.
+            Assert.True(debugStopReceivedInNestedRunspace,
+                "FAIL: TestPreserveDebugStopOnNestedRunspace: Expected debugger break event from nested runspace to be received.");
+        }
+
+        /// <summary>
+        /// Tests the Debug-Runspace cmdlet for local runspaces.
+        /// </summary>
+        [Fact]
+        public void TestDebugRunspaceOnLocalRunspace()
+        {
+            s_debuggerStop = false;
+            bool dataAdded = false;
+            string debugRunspaceName = "TestDebugRunspaceOnLocalRunspaceName";
+            string script = @"
+            1..60 | % { sleep 1; ""Output $_"" }
+        ";
+
+            using (Runspace rs = RunspaceFactory.CreateRunspace())
+            {
+                rs.Name = debugRunspaceName;
+                rs.Open();
+                rs.Debugger.DebuggerStop += (sender, args) =>
+                {
+                    s_debuggerStop = true;
+                    args.ResumeAction = DebuggerResumeAction.Stop;
+                };
+
+                using (PowerShell ps = PowerShell.Create(rs))
+                {
+                    PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+                    output.DataAdded += (sender, args) =>
+                    {
+                        dataAdded = true;
+                    };
+
+                    var psAsync = ps.AddScript(script).BeginInvoke<object, PSObject>(null, output);
+
+                    // Wait for command to run.
+                    if (!WaitFor(() => { return dataAdded; },
+                            30000, 1000))
+                    {
+                        Assert.True(false,
+                            "FAIL: TestDebugRunspaceOnLocalRunspace: Expected script to run and output data.");
+                    }
+
+                    // Run the Debug-Runspace command in a new runspace.
+                    DebugRunspace(debugRunspaceName);
+
+                    ps.EndInvoke(psAsync);
+                }
+            }
+
+            Assert.True(s_debuggerStop,
+                "FAIL: TestDebugRunspaceOnLocalRunspace: Expected Debug-Runspace to break into debugger.");
+        }
+
+        /// <summary>
+        /// Tests the Debug-Runspace cmdlet on a local Runspace for multiple scripts.
+        /// </summary>
+        [Fact]
+        public void TestDebugRunspaceWithMultipleScriptsOnLocalRunspace()
+        {
+            bool dataAdded = false;
+            string debugRunspaceName = "TestDebugRunspaceWithMultipleScriptsOnLocalRunspaceName";
+            string script = @"
+            1..60 | % { sleep 1; ""Output $_"" }
+        ";
+
+            using (Runspace rs = RunspaceFactory.CreateRunspace())
+            {
+                rs.Name = debugRunspaceName;
+                rs.Open();
+                rs.Debugger.DebuggerStop += (sender, args) =>
+                {
+                    s_debuggerStop = true;
+                    args.ResumeAction = DebuggerResumeAction.Stop;
+                };
+
+                // Execute first script run.
+                s_debuggerStop = false;
+                Runspace dbgRunspace = null;
+                PowerShell dbgPowerShell = null;
+                IAsyncResult async = null;
+                using (PowerShell ps = PowerShell.Create(rs))
+                {
+                    PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+                    output.DataAdded += (sender, args) =>
+                    {
+                        dataAdded = true;
+                    };
+
+                    dataAdded = false;
+                    var psAsync = ps.AddScript(script).BeginInvoke<object, PSObject>(null, output);
+
+                    // Wait for command to run.
+                    if (!WaitFor(() => { return dataAdded; },
+                            30000, 1000))
+                    {
+                        Assert.True(false,
+                            "FAIL: TestDebugRunspaceWithMultipleScriptsOnLocalRunspace: Expected script to run and output data.");
+                    }
+
+                    // Run the Debug-Runspace command in a new runspace.
+                    DebugRunspace(debugRunspaceName, out dbgRunspace, out dbgPowerShell, out async);
+                    if (dbgRunspace == null || dbgPowerShell == null || async == null)
+                    {
+                        Assert.True(false,
+                            "FAIL: TestDebugRunspaceWithMultipleScriptsOnLocalRunspace: Debug-Runspace did not run correctly, no debugger stop occurred.");
+                    }
+
+                    ps.EndInvoke(psAsync);
+                }
+
+                // Verify that this first script run stopped in the debugger.
+                Assert.True(s_debuggerStop,
+                "FAIL: TestDebugRunspaceWithMultipleScriptsOnLocalRunspace: Expected Debug-Runspace to break into debugger for first run script.");
+
+                // Execute second script run.
+                s_debuggerStop = false;
+                dbgRunspace.Debugger.SetDebuggerStepMode(true);
+                using (PowerShell ps = PowerShell.Create(rs))
+                {
+                    PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+
+                    var psAsync = ps.AddScript(script).BeginInvoke<object, PSObject>(null, output);
+                    ps.EndInvoke(psAsync);
+                }
+
+                // Verify that this second script run stopped in the debugger.
+                Assert.True(s_debuggerStop,
+                "FAIL: TestDebugRunspaceWithMultipleScriptsOnLocalRunspace: Expected Debug-Runspace to break into debugger for second run script.");
+
+                // Allow Debug-Runspace command to complete.
+                dbgRunspace.Debugger.RaiseNestedDebuggingCancelEvent();
+                dbgPowerShell.EndInvoke(async);
+
+                // Clean up.
+                dbgPowerShell.Dispose();
+                dbgRunspace.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// This tests the Debugger 'Exit' command that cancels debugging
+        /// by detaching the debugger and allowing the job to continue running.
+        /// </summary>
+        [Fact]
+        public void TestDebugJobIPCCancelEvent()
+        {
+            bool debuggerStop = false;
+            string script = @"
+                $ErrorActionPreference = 'Stop'
+
+                $job = Start-ThreadJob { 1..10 | ForEach-Object { Start-Sleep -Seconds 1; $_ } }
+                while (-not $job.HasMoreData -and $job.JobStateInfo.State -in @('NotStarted','Running'))
+                {
+                    Start-Sleep -Milliseconds 100
+                }
+
+                Debug-Job -Id $job.Id -BreakAll 1>$null
+
+                Receive-Job -Id $job.Id -Wait -AutoRemoveJob
+            ";
+
+            using (Runspace rs = RunspaceFactory.CreateRunspace())
+            {
+                rs.Open();
+                rs.Debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
+                rs.Debugger.DebuggerStop += (sender, args) =>
+                {
+                    debuggerStop = true;
+
+                    Debugger debugger = sender as Debugger;
+                    PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
+                    PSCommand exitCommand = new PSCommand();
+                    exitCommand.AddCommand("Exit");
+                    debugger.ProcessCommand(exitCommand, output);
+                };
+
+                using (PowerShell ps = PowerShell.Create(rs))
+                {
+                    ps.Runspace = rs;
+
+                    var output = ps.AddScript(script)
+                                   .Invoke();
+
+                    // Verify that a debug stop occurred and that the job ran
+                    // to completion.
+                    Assert.True(debuggerStop,
+                        "FAIL: TestDebugJobIPCCancelEvent: Expected a debugger stop to occur.");
+
+                    Assert.True(output.Count == 10,
+                        "FAIL: TestDebugJobIPCCancelEvent: Expected job run to fully complete with 10 output items.");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Tests the BreakAll runspace debug option on a local runspace.
+        /// </summary>
+        [Fact]
+        public void TestDebugOptionOnLocalRunspace()
+        {
+            using (Runspace rs = RunspaceFactory.CreateRunspace())
+            {
+                rs.Open();
+                TestDebugOptionOnRunspace(rs, "TestDebugOptionOnLocalRunspace");
+            }
+        }
+
+        /// <summary>
+        /// Tests the Wait-Debugger cmdlet on a local runspace.
+        /// </summary>
+        [Fact]
+        public void TestDebugBreakCommandOnLocalRunspace()
+        {
+            using (Runspace rs = RunspaceFactory.CreateRunspace())
+            {
+                rs.Open();
+                TestDebugBreakOnRunspace(rs, "TestDebugBreakCommandOnLocalRunspace");
+            }
+        }
+
+        [Fact]
+        public void TestWaitDebuggerOnNonEnabledRunspace()
+        {
+            string script = @"
+                Wait-Debugger
+                ""Line where debugger will stop.""
+            ";
+
+            using (Runspace rs = RunspaceFactory.CreateRunspace())
+            {
+                rs.Name = "TestLocalRSWaitDebugger";
+                rs.Open();
+
+                using (PowerShell ps = PowerShell.Create(rs))
+                {
+                    // Start script in runspace *not* enabled for debugging.
+                    ps.AddScript(script).BeginInvoke();
+
+                    // Wait for runspace to break into debugger.
+                    bool breakHit = WaitFor(() => { return (rs.Debugger.InBreakpoint == true); }, 60000, 200);
+                    Assert.True(breakHit,
+                        "FAIL: TestWaitDebuggerOnNonEnabledRunspace: Expected Wait-Debugger to enable Runspace debugging and to break into the debugger.");
+
+                    // Let the PowerShell and Runspace objects be closed/disposed while debugger is in breakpoint.
+                }
+            }
+        }
+
+        private void TestDebugBreakOnRunspace(Runspace runspace, string testName)
+        {
+            bool debuggerStop = false;
+            string script = @"
+                Wait-Debugger
+                ""Line where debugger will stop.""
+            ";
+
+            runspace.Debugger.DebuggerStop += (sender, args) =>
+            {
+                debuggerStop = true;
+            };
+
+            using (PowerShell ps = PowerShell.Create(runspace))
+            {
+                ps.AddScript(script).Invoke();
+            }
+
+            Assert.True(debuggerStop,
+                string.Format("FAIL: {0}: Expected Wait-Debugger to cause a debugger stop.", testName));
+        }
+    }
+
 #if !UNIX
+    [Collection("Remoting test collection")]
+    public class RemoteRunspaceDebuggingTests : RunspaceDebuggingTestsBase
+    {
         /// <summary>
         /// This test verifies that both local and remote runspaces are reflected in
         /// the global runspace collection.
@@ -1789,200 +2335,7 @@ namespace PSTests.Sequential
                     "FAIL: TestRunspaceName: Expected remote runspace name to change to 'MyRemoteRunspace'");
             }
         }
-#endif
 
-        /// <summary>
-        /// Tests that a debug break stop is preserved in a runspace, blocking
-        /// script execution if UnhandledBreakpointMode is set to Wait in the
-        /// debugger, and the break event can be handled once a handler is added
-        /// and the debug stop wait is released with ReleaseSavedDebugStop().
-        /// </summary>
-        [Fact]
-        public void TestPreserveDebugStopOnRunspace()
-        {
-            // One statement script.
-            string script = @"
-                Write-Output ""Hello from script.""
-            ";
-
-            bool debugStopReceived = false;
-
-            // Create local runspace
-            using (Runspace runspace = RunspaceFactory.CreateRunspace())
-            {
-                runspace.Open();
-
-                // Set debugger to step mode.
-                runspace.Debugger.SetDebuggerStepMode(true);
-
-                // Set debugger to preserve debug stops.
-                runspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
-
-                // Run script.
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    ps.Runspace = runspace;
-                    ps.AddScript(script);
-
-                    // Start script.  Script will halt in debugger.
-                    var async = ps.BeginInvoke();
-
-                    // Wait for debugger halt, for up to 30 seconds.
-                    if (!WaitFor(
-                        () => { return runspace.Debugger.IsPendingDebugStopEvent; },
-                        30000,
-                        1000))
-                    {
-                        Assert.True(false,
-                            "FAIL: TestPreserveDebugStopOnRunspace: Expected runspace debugger stop.");
-                    }
-
-                    // Subscribe to debug stop event.
-                    runspace.Debugger.DebuggerStop += (sender, args) =>
-                    {
-                        debugStopReceived = true;
-                    };
-
-                    // Release the debug stop wait.
-                    runspace.Debugger.ReleaseSavedDebugStop();
-
-                    ps.EndInvoke(async);
-                }
-
-                // Verify that the saved debug stop event was handled.
-                Assert.True(debugStopReceived,
-                    "FAIL: TestPreserveDebugStopOnRunspace: Expected debugger break event to be received.");
-            }
-        }
-
-        /// <summary>
-        /// Tests that a debug stop event is preserved in a local runspace when 
-        /// UnhandledBreakpointMode property is set to wait, and that a root debugger
-        /// handles the saved debug stop event once the local runspace is passed to the 
-        /// root debugger for monitoring.
-        /// </summary>
-        [Fact]
-        public void TestPreserveDebugStopOnNestedRunspace()
-        {
-            // One statement script.
-            string script = @"
-            Write-Output ""Hello from script.""
-        ";
-
-            bool debugStopReceivedInNestedRunspace = false;
-
-            // Create root local runspace
-            using (Runspace rootRunspace = RunspaceFactory.CreateRunspace())
-            {
-                rootRunspace.Open();
-
-                rootRunspace.Debugger.DebuggerStop += (sender, args) =>
-                {
-                    debugStopReceivedInNestedRunspace = true;
-                };
-
-                // Create independent local runspace.
-                using (Runspace runspace = RunspaceFactory.CreateRunspace())
-                {
-                    runspace.Open();
-
-                    // Set debugger to step mode.
-                    runspace.Debugger.SetDebuggerStepMode(true);
-
-                    // Set debugger to preserve debug stops.
-                    runspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
-
-                    var monitorRunspaceInfo = new PSStandaloneMonitorRunspaceInfo(runspace);
-
-                    using (PowerShell ps = PowerShell.Create())
-                    {
-                        // Run script.
-                        ps.Runspace = runspace;
-                        ps.AddScript(script);
-                        var async = ps.BeginInvoke();
-
-                        // Wait for local runspace debugger to hit breakpoint.
-                        if (!WaitFor(
-                                () => { return runspace.Debugger.IsPendingDebugStopEvent; },
-                                30000,
-                                1000))
-                        {
-                            Assert.True(false,
-                                "FAIL: TestPreserveDebugStopOnNestedRunspace: Expected runspace debugger stop.");
-                        }
-
-                        // Add local runspace to root debugger monitor, making
-                        // it a nested runspace.
-                        DebuggerUtils.StartMonitoringRunspace(rootRunspace.Debugger, monitorRunspaceInfo);
-
-                        // Wait for script to complete, after debug stop event is handled.
-                        ps.EndInvoke(async);
-
-                        DebuggerUtils.EndMonitoringRunspace(rootRunspace.Debugger, monitorRunspaceInfo);
-                    }
-                }
-            }
-
-            // Verify that the saved debug stop event was handled.
-            Assert.True(debugStopReceivedInNestedRunspace,
-                "FAIL: TestPreserveDebugStopOnNestedRunspace: Expected debugger break event from nested runspace to be received.");
-        }
-
-        /// <summary>
-        /// Tests the Debug-Runspace cmdlet for local runspaces.
-        /// </summary>
-        [Fact]
-        public void TestDebugRunspaceOnLocalRunspace()
-        {
-            s_debuggerStop = false;
-            bool dataAdded = false;
-            string debugRunspaceName = "TestDebugRunspaceOnLocalRunspaceName";
-            string script = @"
-            1..60 | % { sleep 1; ""Output $_"" }
-        ";
-
-            using (Runspace rs = RunspaceFactory.CreateRunspace())
-            {
-                rs.Name = debugRunspaceName;
-                rs.Open();
-                rs.Debugger.DebuggerStop += (sender, args) =>
-                {
-                    s_debuggerStop = true;
-                    args.ResumeAction = DebuggerResumeAction.Stop;
-                };
-
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
-                    output.DataAdded += (sender, args) =>
-                    {
-                        dataAdded = true;
-                    };
-
-                    ps.Runspace = rs;
-                    ps.AddScript(script);
-                    var psAsync = ps.BeginInvoke<object, PSObject>(null, output);
-
-                    // Wait for command to run.
-                    if (!WaitFor(() => { return dataAdded; },
-                            30000, 1000))
-                    {
-                        Assert.True(false,
-                            "FAIL: TestDebugRunspaceOnLocalRunspace: Expected script to run and output data.");
-                    }
-
-                    // Run the Debug-Runspace command in a new runspace.
-                    DebugRunspace(debugRunspaceName);
-
-                    ps.EndInvoke(psAsync);
-                }
-            }
-
-            Assert.True(s_debuggerStop,
-                "FAIL: TestDebugRunspaceOnLocalRunspace: Expected Debug-Runspace to break into debugger.");
-        }
-
-#if !UNIX
         /// <summary>
         /// Tests the Debug-Runspace cmdlet for remote runspaces.
         /// </summary>
@@ -2010,7 +2363,7 @@ namespace PSTests.Sequential
                     args.ResumeAction = DebuggerResumeAction.Stop;
                 };
 
-                using (PowerShell ps = PowerShell.Create())
+                using (PowerShell ps = PowerShell.Create(rs))
                 {
                     PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
                     output.DataAdded += (sender, args) =>
@@ -2018,9 +2371,7 @@ namespace PSTests.Sequential
                         dataAdded = true;
                     };
 
-                    ps.Runspace = rs;
-                    ps.AddScript(script);
-                    var psAsync = ps.BeginInvoke<object, PSObject>(null, output);
+                    var psAsync = ps.AddScript(script).BeginInvoke<object, PSObject>(null, output);
 
                     // Wait for command to run.
                     if (!WaitFor(() => { return dataAdded; },
@@ -2040,99 +2391,7 @@ namespace PSTests.Sequential
             Assert.True(s_debuggerStop,
                 "FAIL: TestDebugRunspaceOnRemoteRunspace: Expected Debug-Runspace to break into debugger.");
         }
-#endif
 
-        /// <summary>
-        /// Tests the Debug-Runspace cmdlet on a local Runspace for multiple scripts.
-        /// </summary>
-        [Fact]
-        public void TestDebugRunspaceWithMultipleScriptsOnLocalRunspace()
-        {
-            bool dataAdded = false;
-            string debugRunspaceName = "TestDebugRunspaceWithMultipleScriptsOnLocalRunspaceName";
-            string script = @"
-            1..60 | % { sleep 1; ""Output $_"" }
-        ";
-
-            using (Runspace rs = RunspaceFactory.CreateRunspace())
-            {
-                rs.Name = debugRunspaceName;
-                rs.Open();
-                rs.Debugger.DebuggerStop += (sender, args) =>
-                {
-                    s_debuggerStop = true;
-                    args.ResumeAction = DebuggerResumeAction.Stop;
-                };
-
-                // Execute first script run.
-                s_debuggerStop = false;
-                Runspace dbgRunspace = null;
-                PowerShell dbgPowerShell = null;
-                IAsyncResult async = null;
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
-                    output.DataAdded += (sender, args) =>
-                    {
-                        dataAdded = true;
-                    };
-
-                    ps.Runspace = rs;
-                    ps.AddScript(script);
-                    dataAdded = false;
-                    var psAsync = ps.BeginInvoke<object, PSObject>(null, output);
-
-                    // Wait for command to run.
-                    if (!WaitFor(() => { return dataAdded; },
-                            30000, 1000))
-                    {
-                        Assert.True(false,
-                            "FAIL: TestDebugRunspaceWithMultipleScriptsOnLocalRunspace: Expected script to run and output data.");
-                    }
-
-                    // Run the Debug-Runspace command in a new runspace.
-                    DebugRunspace(debugRunspaceName, out dbgRunspace, out dbgPowerShell, out async);
-                    if (dbgRunspace == null || dbgPowerShell == null || async == null)
-                    {
-                        Assert.True(false,
-                            "FAIL: TestDebugRunspaceWithMultipleScriptsOnLocalRunspace: Debug-Runspace did not run correctly, no debugger stop occurred.");
-                    }
-
-                    ps.EndInvoke(psAsync);
-                }
-
-                // Verify that this first script run stopped in the debugger.
-                Assert.True(s_debuggerStop,
-                "FAIL: TestDebugRunspaceWithMultipleScriptsOnLocalRunspace: Expected Debug-Runspace to break into debugger for first run script.");
-
-                // Execute second script run.
-                s_debuggerStop = false;
-                dbgRunspace.Debugger.SetDebuggerStepMode(true);
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
-
-                    ps.Runspace = rs;
-                    ps.AddScript(script);
-                    var psAsync = ps.BeginInvoke<object, PSObject>(null, output);
-                    ps.EndInvoke(psAsync);
-                }
-
-                // Verify that this second script run stopped in the debugger.
-                Assert.True(s_debuggerStop,
-                "FAIL: TestDebugRunspaceWithMultipleScriptsOnLocalRunspace: Expected Debug-Runspace to break into debugger for second run script.");
-
-                // Allow Debug-Runspace command to complete.
-                dbgRunspace.Debugger.RaiseNestedDebuggingCancelEvent();
-                dbgPowerShell.EndInvoke(async);
-
-                // Clean up.
-                dbgPowerShell.Dispose();
-                dbgRunspace.Dispose();
-            }
-        }
-
-#if !UNIX
         /// <summary>
         /// Tests the Debug-Runspace cmdlet on a remote Runspace for multiple scripts.
         /// </summary>
@@ -2164,7 +2423,7 @@ namespace PSTests.Sequential
                 Runspace dbgRunspace = null;
                 PowerShell dbgPowerShell = null;
                 IAsyncResult async = null;
-                using (PowerShell ps = PowerShell.Create())
+                using (PowerShell ps = PowerShell.Create(rs))
                 {
                     PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
                     output.DataAdded += (sender, args) =>
@@ -2172,10 +2431,8 @@ namespace PSTests.Sequential
                         dataAdded = true;
                     };
 
-                    ps.Runspace = rs;
-                    ps.AddScript(script);
                     dataAdded = false;
-                    var psAsync = ps.BeginInvoke<object, PSObject>(null, output);
+                    var psAsync = ps.AddScript(script).BeginInvoke<object, PSObject>(null, output);
 
                     // Wait for command to run.
                     if (!WaitFor(() => { return dataAdded; },
@@ -2204,13 +2461,11 @@ namespace PSTests.Sequential
                 // Execute second script run.
                 s_debuggerStop = false;
                 dbgRunspace.Debugger.SetDebuggerStepMode(true);
-                using (PowerShell ps = PowerShell.Create())
+                using (PowerShell ps = PowerShell.Create(rs))
                 {
                     PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
 
-                    ps.Runspace = rs;
-                    ps.AddScript(script);
-                    var psAsync = ps.BeginInvoke<object, PSObject>(null, output);
+                    var psAsync = ps.AddScript(script).BeginInvoke<object, PSObject>(null, output);
                     ps.EndInvoke(psAsync);
                 }
 
@@ -2228,77 +2483,7 @@ namespace PSTests.Sequential
                 dbgRunspace.Dispose();
             }
         }
-#endif
 
-        /// <summary>
-        /// This tests the Debugger 'Exit' command that cancels debugging
-        /// by detaching the debugger and allowing the job to continue running.
-        /// </summary>
-        [Fact]
-        public void TestDebugJobIPCCancelEvent()
-        {
-            bool debuggerStop = false;
-            string script = @"
-                $job = Start-ThreadJob { 1..10 | % { sleep 1; ""Output $_"" } }
-
-                # Wait for output to indicate job is running.
-                $output = Receive-Job $job
-                while ($output.Count -eq 0)
-                {
-                    sleep 1
-                    $output = Receive-Job $job -Keep
-                }
-
-                Debug-Job $job -BreakAll 1>$null
-                Receive-Job $job -Wait
-            ";
-
-            using (Runspace rs = RunspaceFactory.CreateRunspace())
-            {
-                rs.Open();
-                rs.Debugger.SetDebugMode(DebugModes.LocalScript | DebugModes.RemoteScript);
-                rs.Debugger.DebuggerStop += (sender, args) =>
-                {
-                    debuggerStop = true;
-
-                    Debugger debugger = sender as Debugger;
-                    PSDataCollection<PSObject> output = new PSDataCollection<PSObject>();
-                    PSCommand exitCommand = new PSCommand();
-                    exitCommand.AddCommand("Exit");
-                    debugger.ProcessCommand(exitCommand, output);
-                };
-
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    ps.Runspace = rs;
-                    ps.AddScript(script);
-                    var output = ps.Invoke();
-
-                    // Verify that a debug stop occurred and that the job ran
-                    // to completion.
-                    Assert.True(debuggerStop,
-                        "FAIL: TestDebugJobIPCCancelEvent: Expected a debugger stop to occur.");
-
-                    Assert.True(output.Count == 10,
-                        "FAIL: TestDebugJobIPCCancelEvent: Expected job run to fully complete with 10 output items.");
-                }
-            }
-        }
-
-        /// <summary>
-        /// Tests the BreakAll runspace debug option on a local runspace.
-        /// </summary>
-        [Fact]
-        public void TestDebugOptionOnLocalRunspace()
-        {
-            using (Runspace rs = RunspaceFactory.CreateRunspace())
-            {
-                rs.Open();
-                TestDebugOptionOnRunspace(rs, "TestDebugOptionOnLocalRunspace");
-            }
-        }
-
-#if !UNIX
         /// <summary>
         /// Tests the BreakAll runspace debug option on a remote runspace.
         /// </summary>
@@ -2315,52 +2500,7 @@ namespace PSTests.Sequential
                 TestDebugOptionOnRunspace(rs, "TestDebugOptionOnRemoteRunspace");
             }
         }
-#endif
 
-        /// <summary>
-        /// Tests the Wait-Debugger cmdlet on a local runspace.
-        /// </summary>
-        [Fact]
-        public void TestDebugBreakCommandOnLocalRunspace()
-        {
-            using (Runspace rs = RunspaceFactory.CreateRunspace())
-            {
-                rs.Open();
-                TestDebugBreakOnRunspace(rs, "TestDebugBreakCommandOnLocalRunspace");
-            }
-        }
-
-        [Fact]
-        public void TestWaitDebuggerOnNonEnabledRunspace()
-        {
-            string script = @"
-                Wait-Debugger
-                ""Line where debugger will stop.""
-            ";
-
-            using (Runspace rs = RunspaceFactory.CreateRunspace())
-            {
-                rs.Name = "TestLocalRSWaitDebugger";
-                rs.Open();
-
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    // Start script in runspace *not* enabled for debugging.
-                    ps.Runspace = rs;
-                    ps.AddScript(script);
-                    ps.BeginInvoke();
-
-                    // Wait for runspace to break into debugger.
-                    bool breakHit = WaitFor(() => { return (rs.Debugger.InBreakpoint == true); }, 60000, 200);
-                    Assert.True(breakHit,
-                        "FAIL: TestWaitDebuggerOnNonEnabledRunspace: Expected Wait-Debugger to enable Runspace debugging and to break into the debugger.");
-
-                    // Let the PowerShell and Runspace objects be closed/disposed while debugger is in breakpoint.
-                }
-            }
-        }
-
-#if !UNIX
         /// <summary>
         /// Test that the debugger can execute commands during a debug session
         /// on a nested runspace.
@@ -2416,11 +2556,9 @@ namespace PSTests.Sequential
                     results = debugger.ProcessCommand(command, output);
                 };
 
-                using (PowerShell ps = PowerShell.Create())
+                using (PowerShell ps = PowerShell.Create(rootRunspace))
                 {
-                    ps.Runspace = rootRunspace;
-                    ps.AddScript(script);
-                    ps.Invoke();
+                    ps.AddScript(script).Invoke();
                 }
 
                 Assert.True(debuggerStop,
@@ -2429,95 +2567,6 @@ namespace PSTests.Sequential
                 Assert.True(commandExecuted,
                     "FAIL: TestCommandOnDebugRemoteNestedRunspace: Expected debugger stop command to execute successfully.");
             }
-        }
-#endif
-
-        private void TestDebugOptionOnRunspace(Runspace runspace, string testName)
-        {
-            string script = @"
-            ""Hello""
-        ";
-            string scriptBreakAll = @"
-            param ([string] $RunspaceName)
-            Enable-RunspaceDebug -RunspaceName $RunspaceName -BreakAll
-        ";
-            string scriptNoBreakAll = @"
-            param ([string] $RunspaceName)
-            Disable-RunspaceDebug -RunspaceName $RunspaceName
-        ";
-            bool debuggerStop = false;
-
-            runspace.Debugger.DebuggerStop += (sender, args) =>
-            {
-                debuggerStop = true;
-            };
-
-            using (Runspace localRunspace = RunspaceFactory.CreateRunspace())
-            {
-                localRunspace.Open();
-
-                // Set BreakAll option on Runspace
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    ps.Runspace = localRunspace;
-                    ps.AddScript(scriptBreakAll).AddParameter("RunspaceName", runspace.Name);
-                    ps.Invoke();
-                }
-
-                // Run script with BreakAll option.
-                debuggerStop = false;
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    ps.Runspace = runspace;
-                    ps.AddScript(script);
-                    ps.Invoke();
-                }
-                Assert.True(debuggerStop,
-                    string.Format("FAIL: {0}: Expected breakpoint hit in debugger.", testName));
-
-                // Un-set BreakAll option on Runspace
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    ps.Runspace = localRunspace;
-                    ps.AddScript(scriptNoBreakAll).AddParameter("RunspaceName", runspace.Name);
-                    ps.Invoke();
-                }
-
-                // Run script with all options off.
-                debuggerStop = false;
-                using (PowerShell ps = PowerShell.Create())
-                {
-                    ps.Runspace = runspace;
-                    ps.AddScript(script);
-                    ps.Invoke();
-                }
-                Assert.False(debuggerStop,
-                    string.Format("FAIL: {0}: Expected no breakpoint hit in debugger.", testName));
-            }
-        }
-
-        private void TestDebugBreakOnRunspace(Runspace runspace, string testName)
-        {
-            bool debuggerStop = false;
-            string script = @"
-                Wait-Debugger
-                ""Line where debugger will stop.""
-            ";
-
-            runspace.Debugger.DebuggerStop += (sender, args) =>
-            {
-                debuggerStop = true;
-            };
-
-            using (PowerShell ps = PowerShell.Create())
-            {
-                ps.Runspace = runspace;
-                ps.AddScript(script);
-                ps.Invoke();
-            }
-
-            Assert.True(debuggerStop,
-                string.Format("FAIL: {0}: Expected Wait-Debugger to cause a debugger stop.", testName));
         }
 
         /// <summary>
@@ -2536,87 +2585,7 @@ namespace PSTests.Sequential
 
             return rtnTypeTable;
         }
-
-        /// <summary>
-        /// Runs the Debug-Runspace cmdlet for the given Runspace name.
-        /// </summary>
-        private void DebugRunspace(string debugRunspaceName)
-        {
-            string scriptDebugRunspace = @"
-                param ([string] $runspaceName)
-                Debug-Runspace -Name $runspaceName -BreakAll
-            ";
-
-            using Runspace rs = RunspaceFactory.CreateRunspace();
-            rs.Open();
-
-            using PowerShell ps = PowerShell.Create(rs);
-
-            ps.AddScript(scriptDebugRunspace)
-              .AddParameter("runspaceName", debugRunspaceName);
-
-            // Run Debug-Runspace command.
-            var async = ps.BeginInvoke();
-
-            // Wait for debug stop to occur.
-            WaitFor(
-                () => { return s_debuggerStop; },
-                30000,
-                1000);
-
-            // Signal Debug-Runspace to end.
-            rs.Debugger.RaiseNestedDebuggingCancelEvent();
-
-            // Let command complete
-            ps.EndInvoke(async);
-        }
-
-        private void DebugRunspace(string debugRunspaceName, out Runspace runspace, out PowerShell powershell, out IAsyncResult async)
-        {
-            string scriptDebugRunspace = @"
-                param ([string] $runspaceName)
-                Debug-Runspace -Name $runspaceName
-            ";
-
-            runspace = RunspaceFactory.CreateRunspace();
-            runspace.Open();
-
-            powershell = PowerShell.Create();
-            powershell.Runspace = runspace;
-            powershell.AddScript(scriptDebugRunspace).AddParameter("runspaceName", debugRunspaceName);
-            async = powershell.BeginInvoke();
-
-            if (!WaitFor(
-                    () => { return s_debuggerStop; },
-                    30000,
-                    1000))
-            {
-                runspace.Dispose();
-                runspace = null;
-                powershell.Dispose();
-                powershell = null;
-                async = null;
-            }
-        }
-
-        /// <summary>
-        /// Waits for condition as defined by the predicate function.
-        /// </summary>
-        static bool WaitFor(
-            Func<bool> predicate,
-            int timeoutMs,
-            int timeoutIncMs)
-        {
-            int totalTimeMs = 0;
-
-            while (!predicate() && (totalTimeMs < timeoutMs))
-            {
-                System.Threading.Thread.Sleep(timeoutIncMs);
-                totalTimeMs += timeoutIncMs;
-            }
-
-            return predicate();
-        }
     }
+#endif
 
 }
