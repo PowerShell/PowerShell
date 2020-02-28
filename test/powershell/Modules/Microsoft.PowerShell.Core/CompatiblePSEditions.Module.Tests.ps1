@@ -229,7 +229,7 @@ Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
         }
     }
 }
-
+#>
 Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
     BeforeAll {
         $successCases = @(
@@ -282,7 +282,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             Restore-ModulePath
         }
 
-        It "Successfully imports compatible modules from the module path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
+        <#It "Successfully imports compatible modules from the module path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
             Import-Module $ModuleName -Force
@@ -354,10 +354,24 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             {
                 Set-Location $pwdBackup
             }
+        }#>
+
+        It "-NoClobber and -Scope work with implicit WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+            try
+            {
+                Set-Item function:Test-$ModuleName {"OriginalFunctionImplementation"}
+                Import-Module $ModuleName -Force -WarningAction Ignore -Scope Local -NoClobber
+                & "Test-$ModuleName" | Should -BeExactly "OriginalFunctionImplementation"
+            }
+            finally
+            {
+                Remove-Item function:Test-$ModuleName
+            }
         }
     }
 
-    Context "Imports from absolute path" {
+    <#Context "Imports from absolute path" {
         It "Successfully imports compatible modules from an absolute path with PSEdition <Editions>" -TestCases $successCases -Skip:(-not $IsWindows) {
             param($Editions, $ModuleName, $Result)
 
@@ -393,9 +407,9 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             Import-Module $path -UseWindowsPowerShell -Force
             & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
         }
-    }
+    }#>
 
-    Context "Imports using CommandDiscovery\ModuleAutoload" {
+    <#Context "Imports using CommandDiscovery\ModuleAutoload" {
         BeforeAll {
             Add-ModulePath $basePath
         }
@@ -415,9 +429,9 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
 
             & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
         }
-    }
-}#>
-
+    }#>
+}
+<#
 Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
     BeforeAll {
@@ -441,7 +455,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    <#Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
+    Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
         BeforeAll {
             $pwsh = "$PSHOME/pwsh"
             Add-ModulePath $basePath
@@ -538,7 +552,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $out = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');`$ErrorActionPreference = 'SilentlyContinue';Test-$ModuleName2;`$error[0].FullyQualifiedErrorId"
             $out | Should -BeExactly 'CouldNotAutoloadMatchingModule'
         }
-    }#>
+    }
 
     Context "Tests around PSModulePath in WinCompat process" {
         BeforeAll {
@@ -596,7 +610,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $winpsPaths | Should -Not -BeLike "*MyTestDir*"
         }
     }
-}
+}#>
 <#
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
     BeforeAll {
