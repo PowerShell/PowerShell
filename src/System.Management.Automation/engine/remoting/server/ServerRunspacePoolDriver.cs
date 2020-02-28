@@ -457,10 +457,7 @@ namespace System.Management.Automation
                 {
                     // Let exceptions propagate.
                     RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(_configurationName, _remoteHost);
-
-                    _remoteHost.AllowPushRunspace = true;
                     _remoteHost.PropagatePop = true;
-
                     _remoteHost.PushRunspace(remoteRunspace);
                 }
             }
