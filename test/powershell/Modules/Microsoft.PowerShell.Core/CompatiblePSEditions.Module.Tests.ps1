@@ -130,7 +130,7 @@ function New-TestNestedModule
     # Create the manifest
     [scriptblock]::Create($newManifestCmd).Invoke()
 }
-
+<#
 Describe "Get-Module with CompatiblePSEditions-checked paths" -Tag "CI" {
 
     BeforeAll {
@@ -416,7 +416,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
             & "Test-${ModuleName}PSEdition" | Should -Be 'Desktop'
         }
     }
-}
+}#>
 
 Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
@@ -429,6 +429,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         $ModuleName = "DesktopModule"
         $ModuleName2 = "DesktopModule2"
         $basePath = Join-Path $TestDrive "WinCompatModules"
+        $allModules = @($ModuleName, $ModuleName2)
         Remove-Item -Path $basePath -Recurse -ErrorAction SilentlyContinue
         # create an incompatible module that generates an error on import
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
@@ -440,7 +441,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
+    <#Context "Tests that ErrorAction/WarningAction have effect when Import-Module with WinCompat is used" {
         BeforeAll {
             $pwsh = "$PSHOME/pwsh"
             Add-ModulePath $basePath
@@ -537,9 +538,66 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $out = & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');`$ErrorActionPreference = 'SilentlyContinue';Test-$ModuleName2;`$error[0].FullyQualifiedErrorId"
             $out | Should -BeExactly 'CouldNotAutoloadMatchingModule'
         }
+    }#>
+
+    Context "Tests around PSModulePath in WinCompat process" {
+        BeforeAll {
+            $pwsh = "$PSHOME/pwsh"
+            Add-ModulePath $basePath
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        AfterEach {
+            Get-Module $allModules | Remove-Module -Force
+        }
+
+        It 'WinCompat process does not inherit PowerShell-Core-specific paths' {
+            # these paths were copied from test\powershell\engine\Module\ModulePath.Tests.ps1
+            $pscoreUserPath = Join-Path -Path $HOME -ChildPath "Documents\PowerShell\Modules"
+            $pscoreSharedPath = Join-Path -Path $env:ProgramFiles -ChildPath "PowerShell\Modules"
+            $pscoreSystemPath = Join-Path -Path $PSHOME -ChildPath 'Modules'
+
+            $pscorePaths = $env:psmodulepath
+            $pscorePaths | Should -BeLike "*$pscoreUserPath*"
+            $pscorePaths | Should -BeLike "*$pscoreSharedPath*"
+            $pscorePaths | Should -BeLike "*$pscoreSystemPath*"
+
+            Import-Module $ModuleName2 -UseWindowsPowerShell -Force -WarningAction Ignore
+            $s = Get-PSSession -Name WinPSCompatSession
+            $winpsPaths = Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath}
+            $winpsPaths | Should -Not -BeLike "*$pscoreUserPath*"
+            $winpsPaths | Should -Not -BeLike "*$pscoreSharedPath*"
+            $winpsPaths | Should -Not -BeLike "*$pscoreSystemPath*"
+        }
+
+        It 'WinCompat process inherits user added paths' {
+            $mypath = Join-Path $env:SystemDrive MyDir
+            $originalModulePath = $env:PSModulePath
+            try {
+                $env:PSModulePath += ";$mypath"
+                Import-Module $ModuleName2 -UseWindowsPowerShell -Force -WarningAction Ignore
+                $s = Get-PSSession -Name WinPSCompatSession
+                $winpsPaths = Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath}
+                $winpsPaths | Should -BeLike "*$mypath*"
+            }
+            finally {
+                $env:PSModulePath = $originalModulePath
+            }
+        }
+
+        It 'Windows PowerShell does not inherit path defined in powershell.config.json' -Skip:(!$IsWindows) {
+
+            '{ "PSModulePath": "C:\\MyTestDir" }' | Out-File -Force $ConfigPath
+            $winpsPaths =  & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "Import-Module $ModuleName2 -UseWindowsPowerShell -WarningAction Ignore;`$s = Get-PSSession -Name WinPSCompatSession;Invoke-Command -Session `$s -ScriptBlock {`$env:psmodulepath}"
+            $winpsPaths | Should -Not -BeLike "*MyTestDir*"
+        }
     }
 }
-
+<#
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
     BeforeAll {
         $pwsh = "$PSHOME/pwsh"
@@ -1176,4 +1234,4 @@ Describe "Import-Module nested module behaviour with Edition checking" -Tag "Fea
             }
         }
     }
-}
+}#>
