@@ -4799,6 +4799,7 @@ namespace Microsoft.PowerShell.Commands
             using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.AddCommand(commandInfo);
             ps.AddParameter("Name", WindowsPowerShellCompatRemotingSessionName);
+            ps.AddParameter("ErrorAction", ActionPreference.Ignore);
             var results = ps.Invoke<PSSession>();
             if (results.Count > 0)
             {
