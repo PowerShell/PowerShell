@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         private const string SchemaStringParameterSet = "SchemaString";
 
         /// <summary>
-        /// An JSON to be validated.
+        /// A JSON to be validated.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public string Json { get; set; }
@@ -55,7 +55,7 @@ namespace Microsoft.PowerShell.Commands
         private JsonSchema _jschema;
 
         /// <summary>
-        /// Prepare an JSON schema.
+        /// Prepare a JSON schema.
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Validate an JSON.
+        /// Validate a JSON.
         /// </summary>
         protected override void ProcessRecord()
         {
