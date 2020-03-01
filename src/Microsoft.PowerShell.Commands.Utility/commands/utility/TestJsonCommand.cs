@@ -2,6 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Runtime.ExceptionServices;
+using System.Reflection;
+using System.Security;
+using System.IO;
 using System.Management.Automation;
 
 using Newtonsoft.Json.Linq;
@@ -55,24 +59,80 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            string resolvedpath = string.Empty;
+
             try
             {
                 if (Schema != null)
                 {
-                    _jschema = JsonSchema.FromJsonAsync(Schema).Result;
-
+                    try
+                    {
+                        _jschema = JsonSchema.FromJsonAsync(Schema).Result;
+                    }
+                    // Even if only one exception is thrown, it is still wrapped in an AggregateException exception
+                    // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
+                    catch (AggregateException ae)
+                    {
+                        // Process all exceptions in the AggregateException
+                        ae.Handle(i =>
+                            {
+                                // Unwrap TargetInvocationException if any
+                                // Rethrow inner exception without losing the stack trace
+                                if (i is TargetInvocationException)
+                                {
+                                    ExceptionDispatchInfo.Capture(i.InnerException).Throw();
+                                }
+                                else
+                                {
+                                    ExceptionDispatchInfo.Capture(i).Throw();
+                                }
+                                return true;
+                            }
+                        );
+                    }
                 }
                 else if (SchemaPath != null)
                 {
-                    string resolvedpath = string.Empty;
-                    resolvedpath = PathUtils.ResolveFilePath(SchemaPath, this, isLiteralPath: true);
-
-                    _jschema = JsonSchema.FromFileAsync(resolvedpath).Result;
+                    try
+                    {
+                        resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaPath);
+                        _jschema = JsonSchema.FromFileAsync(resolvedpath).Result;
+                    }
+                    catch (AggregateException ae)
+                    {
+                        ae.Handle(i =>
+                            {
+                                if (i is TargetInvocationException)
+                                {
+                                    ExceptionDispatchInfo.Capture(i.InnerException).Throw();
+                                }
+                                else
+                                {
+                                    ExceptionDispatchInfo.Capture(i).Throw();
+                                }
+                                return true;
+                            }
+                        );
+                    }
                 }
             }
-            catch (Exception exc)
+            // Handle exceptions related to file access to provide more specific error message
+            // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
+            catch (Exception e) when (
+                e is IOException ||
+                e is UnauthorizedAccessException ||
+                e is NotSupportedException ||
+                e is SecurityException
+            )
             {
-                Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonSchema, exc);
+                // Do we really need to wrap exception? Not doing this provides more clear error message upfront.
+                // E.g.: "'{}'|Test-Json -SchemaPath c:" results in "Test-Json : Access to the path 'C:\' is denied".
+                Exception exception = new Exception("JSON schema file open failure", e); // TODO: Add resource string
+                ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, null));
+            }
+            catch (Exception e)
+            {
+                Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonSchema, e);
                 ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, null));
             }
         }
