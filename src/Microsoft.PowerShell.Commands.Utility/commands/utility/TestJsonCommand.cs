@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         private const string SchemaStringParameterSet = "SchemaString";
 
         /// <summary>
-        /// A JSON to be validated.
+        /// A JSON string to be validated.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public string Json { get; set; }
