@@ -9,6 +9,9 @@ Describe "Test-Json" -Tags "CI" {
         # JSON schema referencing invalid definitions
         $invalidSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_schema_reference.json
 
+        # JSON schema file that doesn't exist
+        $missingSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath no_such_file.json
+
         $validSchemaJson = @"
             {
             'description': 'A person',
@@ -67,6 +70,10 @@ Describe "Test-Json" -Tags "CI" {
 "@
 }
 
+    It "Missing JSON schema file doesn't exist" {
+        Test-Path -LiteralPath $missingSchemaJsonPath | Should -BeFalse
+    }
+
     It "Json is valid" {
         Test-Json -Json $validJson | Should -BeTrue
     }
@@ -99,6 +106,10 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Test-Json throw if a schema from file is invalid" {
         { Test-Json -Json $validJson -SchemaPath $invalidSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+    }
+
+    It "Test-Json throw if a path to a schema from file is invalid" {
+        { Test-Json -Json $validJson -SchemaPath $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json write an error on invalid (<name>) Json against a valid schema from string" -TestCases @(
