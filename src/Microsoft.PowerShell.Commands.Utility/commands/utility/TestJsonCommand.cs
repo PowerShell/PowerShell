@@ -74,17 +74,17 @@ namespace Microsoft.PowerShell.Commands
                     catch (AggregateException ae)
                     {
                         // Process all exceptions in the AggregateException
-                        ae.Handle(i =>
+                        ae.Handle(ie =>
                             {
                                 // Unwrap TargetInvocationException if any
                                 // Rethrow inner exception without losing the stack trace
-                                if (i is TargetInvocationException)
+                                if (ie is TargetInvocationException)
                                 {
-                                    ExceptionDispatchInfo.Capture(i.InnerException).Throw();
+                                    ExceptionDispatchInfo.Capture(ie.InnerException).Throw();
                                 }
                                 else
                                 {
-                                    ExceptionDispatchInfo.Capture(i).Throw();
+                                    ExceptionDispatchInfo.Capture(ie).Throw();
                                 }
                                 return true;
                             }
@@ -100,15 +100,15 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (AggregateException ae)
                     {
-                        ae.Handle(i =>
+                        ae.Handle(ie =>
                             {
-                                if (i is TargetInvocationException)
+                                if (ie is TargetInvocationException)
                                 {
-                                    ExceptionDispatchInfo.Capture(i.InnerException).Throw();
+                                    ExceptionDispatchInfo.Capture(ie.InnerException).Throw();
                                 }
                                 else
                                 {
-                                    ExceptionDispatchInfo.Capture(i).Throw();
+                                    ExceptionDispatchInfo.Capture(ie).Throw();
                                 }
                                 return true;
                             }
