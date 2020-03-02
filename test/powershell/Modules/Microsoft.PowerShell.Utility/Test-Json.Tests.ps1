@@ -83,7 +83,7 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Json is valid against a valid schema from file" {
-        Test-Json -Json $validJson -SchemaPath $validSchemaJsonPath | Should -BeTrue
+        Test-Json -Json $validJson -SchemaFile $validSchemaJsonPath | Should -BeTrue
     }
 
     It "Json is invalid" {
@@ -96,8 +96,8 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Json is invalid against a valid schema from file" {
-        Test-Json -Json $invalidTypeInJson2 -SchemaPath $validSchemaJsonPath -ErrorAction SilentlyContinue | Should -BeFalse
-        Test-Json -Json $invalidNodeInJson -SchemaPath $validSchemaJsonPath -ErrorAction SilentlyContinue | Should -BeFalse
+        Test-Json -Json $invalidTypeInJson2 -SchemaFile $validSchemaJsonPath -ErrorAction SilentlyContinue | Should -BeFalse
+        Test-Json -Json $invalidNodeInJson -SchemaFile $validSchemaJsonPath -ErrorAction SilentlyContinue | Should -BeFalse
     }
 
     It "Test-Json throw if a schema from string is invalid" {
@@ -105,11 +105,11 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Test-Json throw if a schema from file is invalid" {
-        { Test-Json -Json $validJson -SchemaPath $invalidSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -Json $validJson -SchemaFile $invalidSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "InvalidJsonSchema,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json throw if a path to a schema from file is invalid" {
-        { Test-Json -Json $validJson -SchemaPath $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
+        { Test-Json -Json $validJson -SchemaFile $missingSchemaJsonPath -ErrorAction Stop } | Should -Throw -ErrorId "JsonSchemaFileOpenFailure,Microsoft.PowerShell.Commands.TestJsonCommand"
     }
 
     It "Test-Json write an error on invalid (<name>) Json against a valid schema from string" -TestCases @(
@@ -131,7 +131,7 @@ Describe "Test-Json" -Tags "CI" {
         param ($json, $errorId)
 
         $errorVar = $null
-        Test-Json -Json $json -SchemaPath $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
+        Test-Json -Json $json -SchemaFile $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
         $errorVar.FullyQualifiedErrorId | Should -BeExactly $errorId
     }
@@ -148,7 +148,7 @@ Describe "Test-Json" -Tags "CI" {
 
     It "Test-Json return all errors when check invalid Json against a valid schema from file" {
         $errorVar = $null
-        Test-Json -Json $invalidTypeInJson2 -SchemaPath $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
+        Test-Json -Json $invalidTypeInJson2 -SchemaFile $validSchemaJsonPath -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
         # '$invalidTypeInJson2' contains two errors in property types.
         $errorVar.Count | Should -Be 2

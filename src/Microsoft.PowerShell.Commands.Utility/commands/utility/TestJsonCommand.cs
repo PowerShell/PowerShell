@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsDiagnostic.Test, "Json", DefaultParameterSetName = ParameterAttribute.AllParameterSets, HelpUri = "")]
     public class TestJsonCommand : PSCmdlet
     {
-        private const string SchemaPathParameterSet = "SchemaPath";
+        private const string SchemaFileParameterSet = "SchemaFile";
         private const string SchemaStringParameterSet = "SchemaString";
 
         /// <summary>
@@ -48,9 +48,9 @@ namespace Microsoft.PowerShell.Commands
         /// then validates the JSON against the schema. Before testing the JSON string,
         /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = TestJsonCommand.SchemaPathParameterSet)]
+        [Parameter(Position = 1, ParameterSetName = TestJsonCommand.SchemaFileParameterSet)]
         [ValidateNotNullOrEmpty()]
-        public string SchemaPath { get; set; }
+        public string SchemaFile { get; set; }
 
         private JsonSchema _jschema;
 
@@ -91,11 +91,11 @@ namespace Microsoft.PowerShell.Commands
                         );
                     }
                 }
-                else if (SchemaPath != null)
+                else if (SchemaFile != null)
                 {
                     try
                     {
-                        resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaPath);
+                        resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
                         _jschema = JsonSchema.FromFileAsync(resolvedpath).Result;
                     }
                     catch (AggregateException ae)
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
             )
             {
                 // Do we really need to wrap exception? Not doing this provides more clear error message upfront.
-                // E.g.: "'{}'|Test-Json -SchemaPath c:" results in "Test-Json : Access to the path 'C:\' is denied".
+                // E.g.: "'{}'|Test-Json -SchemaFile c:" results in "Test-Json : Access to the path 'C:\' is denied".
                 Exception exception = new Exception("JSON schema file open failure", e); // TODO: Add resource string
                 ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, null));
             }
