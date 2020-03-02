@@ -603,8 +603,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             }
         }
 
-        It 'Windows PowerShell does not inherit path defined in powershell.config.json' -Skip:(!$IsWindows) {
-
+        It 'Windows PowerShell does not inherit path defined in powershell.config.json' {
             '{ "PSModulePath": "C:\\MyTestDir" }' | Out-File -Force $ConfigPath
             $winpsPaths =  & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "Import-Module $ModuleName2 -UseWindowsPowerShell -WarningAction Ignore;`$s = Get-PSSession -Name WinPSCompatSession;Invoke-Command -Session `$s -ScriptBlock {`$env:psmodulepath}"
             $winpsPaths | Should -Not -BeLike "*MyTestDir*"
