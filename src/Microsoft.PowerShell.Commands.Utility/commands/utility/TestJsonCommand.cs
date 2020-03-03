@@ -2,11 +2,11 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Runtime.ExceptionServices;
-using System.Reflection;
-using System.Security;
 using System.IO;
 using System.Management.Automation;
+using System.Reflection;
+using System.Runtime.ExceptionServices;
+using System.Security;
 
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
