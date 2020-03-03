@@ -77,8 +77,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            string resolvedpath = string.Empty;
-
             try
             {
                 if (Schema != null)
@@ -98,7 +96,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
+                        string resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
                         _jschema = JsonSchema.FromFileAsync(resolvedpath).Result;
                     }
                     catch (AggregateException ae)
