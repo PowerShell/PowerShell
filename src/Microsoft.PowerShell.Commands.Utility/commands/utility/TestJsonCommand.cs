@@ -55,6 +55,24 @@ namespace Microsoft.PowerShell.Commands
         private JsonSchema _jschema;
 
         /// <summary>
+        /// Process all exceptions in the AggregateException.
+        /// Unwrap TargetInvocationException if any and
+        /// rethrow inner exception without losing the stack trace.
+        /// </summary>
+        private static bool UnwrapException(Exception e)
+        {
+            if (e is TargetInvocationException)
+            {
+                ExceptionDispatchInfo.Capture(e.InnerException).Throw();
+            }
+            else
+            {
+                ExceptionDispatchInfo.Capture(e).Throw();
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Prepare a JSON schema.
         /// </summary>
         protected override void BeginProcessing()
@@ -73,22 +91,7 @@ namespace Microsoft.PowerShell.Commands
                     // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
                     catch (AggregateException ae)
                     {
-                        // Process all exceptions in the AggregateException
-                        ae.Handle(ie =>
-                            {
-                                // Unwrap TargetInvocationException if any
-                                // Rethrow inner exception without losing the stack trace
-                                if (ie is TargetInvocationException)
-                                {
-                                    ExceptionDispatchInfo.Capture(ie.InnerException).Throw();
-                                }
-                                else
-                                {
-                                    ExceptionDispatchInfo.Capture(ie).Throw();
-                                }
-                                return true;
-                            }
-                        );
+                        ae.Handle(UnwrapException);
                     }
                 }
                 else if (SchemaFile != null)
@@ -100,19 +103,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (AggregateException ae)
                     {
-                        ae.Handle(ie =>
-                            {
-                                if (ie is TargetInvocationException)
-                                {
-                                    ExceptionDispatchInfo.Capture(ie.InnerException).Throw();
-                                }
-                                else
-                                {
-                                    ExceptionDispatchInfo.Capture(ie).Throw();
-                                }
-                                return true;
-                            }
-                        );
+                        ae.Handle(UnwrapException);
                     }
                 }
             }
