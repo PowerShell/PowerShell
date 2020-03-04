@@ -1100,8 +1100,7 @@ namespace System.Management.Automation.Runspaces
                                                 $offsetInLine = 0
                                             }
                                             else {
-                                                # use newline char instead of $newline because that is what is in the message
-                                                $positionMessage = $myinv.PositionMessage.Split(""`n"")
+                                                $positionMessage = $myinv.PositionMessage.Split($newline)
                                                 $line = $positionMessage[1].Substring(1) # skip the '+' at the start
                                                 $highlightLine = $positionMessage[$positionMessage.Count - 1].Substring(1)
                                                 $offsetLength = $highlightLine.Trim().Length
