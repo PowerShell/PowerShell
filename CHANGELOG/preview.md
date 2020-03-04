@@ -1,4 +1,4 @@
-# Current preview Changelog
+# 7.0 Changelog
 
 ## [7.0.0-rc.2] - 2020-01-16
 
