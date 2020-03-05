@@ -79,6 +79,7 @@ jobs:
     condition: succeeded()
 
   - pwsh: |
+      Import-Module .\tools\ci.psm1
       $options = (Get-PSOptions)
       Import-Module .\test\tools\Modules\HelpersRemoting
       Install-SSHRemoting -PowerShellFilePath $options.Output
