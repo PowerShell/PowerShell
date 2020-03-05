@@ -89,7 +89,7 @@ jobs:
       Import-Module .\tools\ci.psm1
       Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)
-      Import-Module .\test\too
+      Import-Module .\build.psm1
       Start-PSPester -Path test/SSHRemoting -powershell $options.Output
     displayName: Test
     condition: succeeded()
