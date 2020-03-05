@@ -45,7 +45,6 @@ resources:
 jobs:
 - job: SSHRemotingTests
   container: mcr.microsoft.com/powershell/test-deps:ubuntu-18.04
-
   displayName: SSH Remoting Tests
 
   steps:
