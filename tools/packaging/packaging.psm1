@@ -3080,7 +3080,7 @@ function New-MSIXPackage
 
     $displayName = $productName
 
-    if ($packageName.Contains('-')) {
+    if ($ProductSemanticVersion.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
     }
