@@ -80,6 +80,7 @@ jobs:
 
   - pwsh: |
       Import-Module .\tools\ci.psm1
+      Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
       $options = (Get-PSOptions)
       Import-Module .\test\tools\Modules\HelpersRemoting
       Install-SSHRemoting -PowerShellFilePath $options.Output

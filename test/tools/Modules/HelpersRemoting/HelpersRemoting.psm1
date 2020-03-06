@@ -552,12 +552,6 @@ function Install-SSHRemotingOnLinux
     }
     #>
 
-    <#
-    # Dump original configuration
-    Write-Verbose -Verbose "Original sshd_config contents ..."
-    DumpTextFile
-    #>
-
     # Add PowerShell endpoint to SSHD.
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
     Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
@@ -566,26 +560,23 @@ function Install-SSHRemotingOnLinux
     Write-Verbose -Verbose "CmdLine: $cmdLine"
     sudo pwsh -c $cmdLine
 
-    <#
-    # Verify sshd_config file changes
-    Write-Verbose -Verbose "Modified sshd_config contents ..."
-    DumpTextFile
-    #>
-
-    # Restart SSHD service for changes to take effect
-
+    # Restart SSHD service for changes to take effect.
+    Start-Sleep -Seconds 1
     WriteVerboseSSHDStatus "SSHD service status before restart"
-
     Write-Verbose -Verbose "Restarting sshd ..."
     sudo service ssh restart
-
     WriteVerboseSSHDStatus "SSHD service status after restart"
 
-    # Try starting SSHD again after 1 second
-    Start-Sleep -Seconds 1
-    Write-Verbose -Verbose "Starting sshd again ..."
-    sudo service ssh start
-    WriteVerboseSSHDStatus "SSHD service status after second start attempt"
+    # Try starting again if needed.
+    $status = sudo service ssh status
+    $result = $status | Where-Object { ($_ -like '*not running*') -or ($_ -like '*stopped*') }
+    if ($null -ne $result)
+    {
+        Start-Sleep -Seconds 1
+        Write-Verbose -Verbose "Starting sshd again ..."
+        sudo service ssh start
+        WriteVerboseSSHDStatus "SSHD service status after second start attempt"
+    }
 
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
@@ -595,6 +586,10 @@ function Install-SSHRemotingOnLinux
         if ($null -eq $session)
         {
             throw "Could not successfully create SSH remoting connection."
+        }
+        else
+        {
+            Write-Verbose -Verbose "SUCCESS: SSH remote connection"
         }
     }
     finally
@@ -622,6 +617,8 @@ function Install-SSHRemoting
     param (
         [string] $PowerShellFilePath
     )
+
+    Write-Verbose -Verbose "Install-SSHRemoting called with PowerShell file path: $PowerShellFilePath"
 
     if ($IsWindows)
     {
