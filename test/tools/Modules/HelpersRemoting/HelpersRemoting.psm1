@@ -6,7 +6,7 @@
 ##
 
 Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
-Import-Module ..\Microsoft.PowerShell.RemotingTools\Microsoft.PowerShell.RemotingTools.psm1
+Import-Module "${PSScriptRoot}\..\Microsoft.PowerShell.RemotingTools\Microsoft.PowerShell.RemotingTools.psm1"
 
 $Script:CIRemoteCred = $null
 
