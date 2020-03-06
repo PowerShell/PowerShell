@@ -476,6 +476,16 @@ function WriteVerboseSSHDStatus
     Write-Verbose -Verbose "${Msg}: $sshdStatus"
 }
 
+function DumpTextFile
+{
+    param (
+        [string] $FilePath = '/etc/ssh/sshd_config'
+    )
+
+    $content = Get-Content -Path $FilePath -Raw
+    Write-Verbose -Verbose $content
+}
+
 function Install-SSHRemotingOnLinux
 {
     param (
@@ -542,6 +552,10 @@ function Install-SSHRemotingOnLinux
     }
     #>
 
+    # Dump original configuration
+    Write-Verbose -Verbose "Original sshd_config contents ..."
+    DumpTextFile
+
     # Add PowerShell endpoint to SSHD.
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
     Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
@@ -551,8 +565,8 @@ function Install-SSHRemotingOnLinux
     sudo pwsh -c $cmdLine
 
     # Verify sshd_config file changes
-    $fileContent = Get-Content -Path '/etc/ssh/sshd_config'
-    Write-Verbose -Verbose "Modified SSHD config file content: $fileContent"
+    Write-Verbose -Verbose "Modified sshd_config contents ..."
+    DumpTextFile
 
     # Restart SSHD service for changes to take effect
 
@@ -562,6 +576,15 @@ function Install-SSHRemotingOnLinux
     sudo service ssh restart
 
     WriteVerboseSSHDStatus "SSHD service status after restart"
+
+    # Try starting SSHD again if not running
+    $status = sudo service ssh $status
+    if ($status -like '*not running*')
+    {
+        Write-Verbose -Verbose "Starting sshd again ..."
+        sudo service ssh start
+        WriteVerboseSSHDStatus "SSHD service status after second start attempt"
+    }
 
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
