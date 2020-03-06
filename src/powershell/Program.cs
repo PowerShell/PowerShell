@@ -327,6 +327,12 @@ namespace Microsoft.PowerShell
                 return Exec("/bin/zsh", execArgs);
             }
 
+            // Many profiles contain bashisms, so try this first
+            if (File.Exists("/bin/bash"))
+            {
+                return Exec("/bin/bash", execArgs);
+            }
+
             return Exec("/bin/sh", execArgs);
         }
 
