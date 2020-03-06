@@ -466,6 +466,16 @@ function Install-SSHRemotingOnWindows
     }
 }
 
+function WriteVerboseSSHDStatus
+{
+    param (
+        [string] $Msg = 'SSHD service status'
+    )
+
+    $sshdStatus = sudo service ssh status
+    Write-Verbose -Verbose "${Msg}: $sshdStatus"
+}
+
 function Install-SSHRemotingOnLinux
 {
     param (
@@ -478,7 +488,11 @@ function Install-SSHRemotingOnLinux
     {
         Write-Verbose -Verbose "Installing openssh-server ..."
         sudo apt-get install --yes openssh-server
+
+        Write-Verbose -Verbose "Restarting sshd service after install ..."
+        WriteVerboseSSHDStatus "SSHD service status before restart"
         sudo service ssh restart
+        WriteVerboseSSHDStatus "SSHD service status after restart"
     }
     if (! (Test-Path -Path /etc/ssh/sshd_config))
     {
@@ -536,12 +550,18 @@ function Install-SSHRemotingOnLinux
     Write-Verbose -Verbose "CmdLine: $cmdLine"
     sudo pwsh -c $cmdLine
 
+    # Verify sshd_config file changes
+    $fileContent = Get-Content -Path '/etc/ssh/sshd_config'
+    Write-Verbose -Verbose "Modified SSHD config file content: $fileContent"
+
+    # Restart SSHD service for changes to take effect
+
+    WriteVerboseSSHDStatus "SSHD service status before restart"
+
     Write-Verbose -Verbose "Restarting sshd ..."
     sudo service ssh restart
 
-    # Verify service and status
-    $sshdStatus = sudo service ssh status
-    Write-Verbose -Verbose "SSHD service status: $sshdStatus"
+    WriteVerboseSSHDStatus "SSHD service status after restart"
 
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
