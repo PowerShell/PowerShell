@@ -552,9 +552,11 @@ function Install-SSHRemotingOnLinux
     }
     #>
 
+    <#
     # Dump original configuration
     Write-Verbose -Verbose "Original sshd_config contents ..."
     DumpTextFile
+    #>
 
     # Add PowerShell endpoint to SSHD.
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
@@ -564,9 +566,11 @@ function Install-SSHRemotingOnLinux
     Write-Verbose -Verbose "CmdLine: $cmdLine"
     sudo pwsh -c $cmdLine
 
+    <#
     # Verify sshd_config file changes
     Write-Verbose -Verbose "Modified sshd_config contents ..."
     DumpTextFile
+    #>
 
     # Restart SSHD service for changes to take effect
 
@@ -577,14 +581,11 @@ function Install-SSHRemotingOnLinux
 
     WriteVerboseSSHDStatus "SSHD service status after restart"
 
-    # Try starting SSHD again if not running
-    $status = sudo service ssh $status
-    if ($status -like '*not running*')
-    {
-        Write-Verbose -Verbose "Starting sshd again ..."
-        sudo service ssh start
-        WriteVerboseSSHDStatus "SSHD service status after second start attempt"
-    }
+    # Try starting SSHD again after 1 second
+    Start-Sleep -Seconds 1
+    Write-Verbose -Verbose "Starting sshd again ..."
+    sudo service ssh start
+    WriteVerboseSSHDStatus "SSHD service status after second start attempt"
 
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
