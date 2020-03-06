@@ -531,7 +531,7 @@ function Install-SSHRemotingOnLinux
     sudo pwsh -c 'Enable-SSHRemoting -SSHDConfigFilePath /etc/ssh/sshd_config -PowerShellFilePath $PowerShellPath -Force'
 
     Write-Verbose -Verbose "Restarting sshd ..."
-    sudo systemctl restart ssh
+    sudo service sshd restart
 
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
