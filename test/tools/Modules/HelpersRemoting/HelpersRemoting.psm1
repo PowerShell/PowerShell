@@ -5,9 +5,6 @@
 ## WinRM Remoting helper functions for writing remoting tests
 ##
 
-Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
-Import-Module "${PSScriptRoot}\..\Microsoft.PowerShell.RemotingTools\Microsoft.PowerShell.RemotingTools.psm1"
-
 $Script:CIRemoteCred = $null
 
 if ($IsWindows) {
@@ -533,7 +530,11 @@ function Install-SSHRemotingOnLinux
 
     # Add PowerShell endpoint to SSHD.
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
-    sudo pwsh -c 'Enable-SSHRemoting -SSHDConfigFilePath /etc/ssh/sshd_config -PowerShellFilePath $PowerShellPath -Force'
+    Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
+    $modulePath = "${PSScriptRoot}\..\Microsoft.PowerShell.RemotingTools\Microsoft.PowerShell.RemotingTools.psd1"
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath /etc/ssh/sshd_config -PowerShellFilePath $PowerShellPath -Force"
+    Write-Verbose -Verbose "CmdLine: $cmdLine"
+    sudo pwsh -c $cmdLine
 
     Write-Verbose -Verbose "Restarting sshd ..."
     sudo service ssh restart
