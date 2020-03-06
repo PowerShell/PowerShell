@@ -5,6 +5,9 @@
 ## WinRM Remoting helper functions for writing remoting tests
 ##
 
+Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
+Import-Module .\test\tools\Modules\Microsoft.PowerShell.RemotingTools.psm1
+
 $Script:CIRemoteCred = $null
 
 if ($IsWindows) {
@@ -478,7 +481,7 @@ function Install-SSHRemotingOnLinux
     {
         Write-Verbose -Verbose "Installing openssh-server ..."
         sudo apt-get install --yes openssh-server
-        sudo systemctl restart ssh
+        sudo service ssh restart
     }
     if (! (Test-Path -Path /etc/ssh/sshd_config))
     {
@@ -519,19 +522,25 @@ function Install-SSHRemotingOnLinux
     Write-Verbose -Verbose "Updating known_hosts ..."
     ssh-keyscan -H localhost | Set-Content -Path "$HOME/.ssh/known_hosts" -Force
 
+    <#
     # Install Microsoft.PowerShell.RemotingTools module.
     if ($null -eq (Get-Module -Name Microsoft.PowerShell.RemotingTools -ListAvailable))
     {
         Write-Verbose -Verbose "Installing Microsoft.PowerShell.RemotingTools ..."
         Install-Module -Name Microsoft.PowerShell.RemotingTools -Force -SkipPublisherCheck
     }
+    #>
 
     # Add PowerShell endpoint to SSHD.
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
     sudo pwsh -c 'Enable-SSHRemoting -SSHDConfigFilePath /etc/ssh/sshd_config -PowerShellFilePath $PowerShellPath -Force'
 
     Write-Verbose -Verbose "Restarting sshd ..."
-    sudo service sshd restart
+    sudo service ssh restart
+
+    # Verify service and status
+    $sshdStatus = sudo service ssh status
+    Write-Verbose -Verbose "SSHD service status: $sshdStatus"
 
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
