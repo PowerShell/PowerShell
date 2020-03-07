@@ -92,6 +92,8 @@ jobs:
       Restore-PSOptions
       $options = (Get-PSOptions)
       Import-Module .\build.psm1
-      Start-PSPester -Path test/SSHRemoting -powershell $options.Output -OutputFile "$HOME/results.xml" -Verbose
+      $dir = dir /tmp 2>$null
+      Write-Verbose -Verbose "Tmp dir: $dir"
+      Start-PSPester -Path test/SSHRemoting -powershell $options.Output -OutputFile "/tmp/results.xml" -Verbose
     displayName: Test
     condition: succeeded()
