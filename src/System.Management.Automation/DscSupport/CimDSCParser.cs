@@ -1234,7 +1234,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             if (string.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentNullException("path");
-                throw new ArgumentNullException("path");
             }
 
             if (schemaValidationOption < (int)Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption.Default ||
