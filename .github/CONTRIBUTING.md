@@ -115,7 +115,7 @@ Please see [Building PowerShell](../README.md#building-the-repository).
 
 #### Testing PowerShell
 
-Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test you build locally.
+Please see PowerShell [Testing Guidelines - Running Tests Outside of CI][running-tests-outside-of-ci] on how to test your build locally.
 
 ### Finding or creating an issue
 
