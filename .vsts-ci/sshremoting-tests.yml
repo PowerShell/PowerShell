@@ -92,6 +92,6 @@ jobs:
       Restore-PSOptions
       $options = (Get-PSOptions)
       Import-Module .\build.psm1
-      Start-PSPester -Path test/SSHRemoting -powershell $options.Output -OutputFile "$PWD/sshTestResults.xml" -Verbose
+      Start-PSPester -Path test/SSHRemoting -powershell $options.Output -OutputFile "$PWD/sshTestResults.xml"
     displayName: Test
     condition: succeeded()
