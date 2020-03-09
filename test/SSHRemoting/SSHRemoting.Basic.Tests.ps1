@@ -8,13 +8,16 @@ Describe "SSHRemoting Basic Tests" -tags CI {
 
     function VerifySession {
         param (
-            $session
+            [System.Management.Automation.Runspaces.PSSession] $session
         )
 
         $session.State | Should -BeExactly 'Opened'
         $session.ComputerName | Should -BeExactly 'localhost'
         $session.Transport | Should -BeExactly 'SSH'
-        Invoke-Command -Session $session -ScriptBlock { $env:USER } | Should -BeExactly $env:USER
+        $psRemoteVersion = Invoke-Command -Session $session -ScriptBlock { $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion }
+        $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
+        $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
+
     }
 
     Context "New-PSSession Tests" {
@@ -92,10 +95,24 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         }
     }
 
-    <#
+    function VerifyRunspace {
+        param (
+            [runspace] $rs
+        )
+
+        $rs.RunspaceStateInfo.State | Should -BeExactly 'Opened'
+        $rs.RunspaceAvailability | Should -BeExactly 'Available'
+        $rs.RunspaceIsRemote | Should -BeTrue
+
+    }
+
+
     Context "SSH Remoting API Tests" {
+
+        AfterEach {
+            if ($script:rs -ne $null) { $script:rs.Dispose() }
+        }
 
 
     }
-    #>
 }
