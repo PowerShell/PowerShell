@@ -14,6 +14,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         $session.State | Should -BeExactly 'Opened'
         $session.ComputerName | Should -BeExactly 'localhost'
         $session.Transport | Should -BeExactly 'SSH'
+        Invoke-Command -Session $session -ScriptBlock { whoami } | Should -BeExactly $(whoami)
         $psRemoteVersion = Invoke-Command -Session $session -ScriptBlock { $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion }
         $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
         $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
@@ -34,7 +35,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         }
 
         It "Verifies new connection with explicit User parameter" {
-            $script:session = New-PSSession -HostName localhost -UserName ($env:USER) -ErrorVariable err
+            $script:session = New-PSSession -HostName localhost -UserName (whoami) -ErrorVariable err
             $err | Should -HaveCount 0
             VerifySession $script:session
         }
@@ -75,7 +76,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             $sshConnection = @(
             @{
                 HostName = 'localhost'
-                UserName = $env:USER
+                UserName = whoami
                 Port = 22
                 KeyFilePath = "$HOME/.ssh/id_rsa"
                 Subsystem = 'powershell'
@@ -103,9 +104,19 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         $rs.RunspaceStateInfo.State | Should -BeExactly 'Opened'
         $rs.RunspaceAvailability | Should -BeExactly 'Available'
         $rs.RunspaceIsRemote | Should -BeTrue
-
+        $ps = [powershell]::Create()
+        try
+        {
+            $ps.Runspace = $rs
+            $psRemoteVersion = $ps.AddScript('$PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion').Invoke()
+            $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
+            $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
+        }
+        finally
+        {
+            $ps.Dispose()
+        }
     }
-
 
     Context "SSH Remoting API Tests" {
 
@@ -113,6 +124,9 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             if ($script:rs -ne $null) { $script:rs.Dispose() }
         }
 
+        It "Verifies simple connection" {
+            [System.Management.Automation.Runspaces.SSHConnectionInfo]::new
 
+        }
     }
 }
