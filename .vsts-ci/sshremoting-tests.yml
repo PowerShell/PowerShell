@@ -94,6 +94,6 @@ jobs:
       Import-Module .\build.psm1
       $dir = dir /tmp 2>$null
       Write-Verbose -Verbose "Tmp dir: $dir"
-      Start-PSPester -Path test/SSHRemoting -powershell $options.Output -OutputFile "/tmp/results.xml" -Verbose
+      Start-PSPester -Path test/SSHRemoting -powershell $options.Output -OutputFile "$PWD/sshTestResults.xml" -Verbose
     displayName: Test
     condition: succeeded()
