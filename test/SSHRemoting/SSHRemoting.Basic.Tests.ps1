@@ -18,7 +18,6 @@ Describe "SSHRemoting Basic Tests" -tags CI {
         $psRemoteVersion = Invoke-Command -Session $session -ScriptBlock { $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion }
         $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
         $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
-
     }
 
     Context "New-PSSession Tests" {
@@ -111,6 +110,9 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             $psRemoteVersion = $ps.AddScript('$PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion').Invoke()
             $psRemoteVersion.Major | Should -BeExactly $PSVersionTable.PSVersion.Major
             $psRemoteVersion.Minor | Should -BeExactly $PSVersionTable.PSVersion.Minor
+
+            $ps.Commands.Clear()
+            $ps.AddScript('whoami').Invoke() | Should -BeExactly $(whoami)
         }
         finally
         {
@@ -124,9 +126,62 @@ Describe "SSHRemoting Basic Tests" -tags CI {
             if ($script:rs -ne $null) { $script:rs.Dispose() }
         }
 
-        It "Verifies simple connection" {
-            [System.Management.Automation.Runspaces.SSHConnectionInfo]::new
+        $testCases = @(
+            @{
+                testName = 'Verifies connection with implicit user'
+                UserName = $null
+                ComputerName = 'localhost'
+                KeyFilePath = $null
+                Port = 0
+                Subsystem = $null
+            },
+            @{
+                testName = 'Verifies connection with UserName'
+                UserName = whoami
+                ComputerName = 'localhost'
+                KeyFilePath = $null
+                Port = 0
+                Subsystem = $null
+            },
+            @{
+                testName = 'Verifies connection with KeyFilePath'
+                UserName = whoami
+                ComputerName = 'localhost'
+                KeyFilePath = "$HOME/.ssh/id_rsa"
+                Port = 0
+                Subsystem = $null
+            },
+            @{
+                testName = 'Verifies connection with Port specified'
+                UserName = whoami
+                ComputerName = 'localhost'
+                KeyFilePath = "$HOME/.ssh/id_rsa"
+                Port = 22
+                Subsystem = $null
+            },
+            @{
+                testName = 'Verifies connection with Subsystem specified'
+                UserName = whoami
+                ComputerName = 'localhost'
+                KeyFilePath = "$HOME/.ssh/id_rsa"
+                Port = 22
+                Subsystem = $null
+            }
+        )
 
+        It "<testName>" -TestCases $testCases {
+            param (
+                $UserName,
+                $ComputerName,
+                $KeyFilePath,
+                $Port,
+                $SubSystem
+            )
+
+            $ci = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new($UserName, $ComputerName, $KeyFilePath, $Port, $Subsystem)
+            $script:rs = [runspacefactory]::CreateRunspace($host, $ci)
+            $script:rs.Open()
+            VerifyRunspace $script:rs
         }
     }
 }
