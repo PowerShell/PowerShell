@@ -26,11 +26,6 @@ pr:
     include:
     - '/src/System.Management.Automation/engine/*'
     - '/test/SSHRemoting/*'
-    exclude:
-    - /tools/releaseBuild/**/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
