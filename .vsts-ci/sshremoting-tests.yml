@@ -66,7 +66,6 @@ jobs:
     condition: succeeded()
 
   - pwsh: |
-      [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
       Import-Module .\tools\ci.psm1
       Invoke-CIInstall -SkipUser
     displayName: Bootstrap
