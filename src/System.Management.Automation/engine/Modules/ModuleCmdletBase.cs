@@ -332,27 +332,27 @@ namespace Microsoft.PowerShell.Commands
                     {
                         fileBaseName = moduleName;
 #endif
-                        string qualifiedPath = Path.Combine(path, fileBaseName);
-                        module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
-                        if (!found)
-                        {
-                            if (name.IndexOfAny(Utils.Separators.Directory) == -1)
-                            {
-                                qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
-                            }
-                            else if (Directory.Exists(qualifiedPath))
-                            {
-                                // if it points to a directory, add the basename back onto the path...
-                                qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
-                            }
+                string qualifiedPath = Path.Combine(path, fileBaseName);
+                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+                if (!found)
+                {
+                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    {
+                        qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
+                    }
+                    else if (Directory.Exists(qualifiedPath))
+                    {
+                        // if it points to a directory, add the basename back onto the path...
+                        qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
+                    }
 
-                            module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
-                        }
+                    module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                }
 
-                        if (found)
-                        {
-                            break;
-                        }
+                if (found)
+                {
+                    break;
+                }
 #if UNIX
                     }
                 }
@@ -2359,10 +2359,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (importingModule)
                     {
-                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string [] {moduleManifestPath}, null, new ImportModuleOptions());
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string[] { moduleManifestPath }, null, options);
 
                         // we are loading by a single ManifestPath so expect max of 1
-                        if(moduleProxies.Count > 0)
+                        if (moduleProxies.Count > 0)
                         {
                             return moduleProxies[0];
                         }
@@ -4799,6 +4799,7 @@ namespace Microsoft.PowerShell.Commands
             using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.AddCommand(commandInfo);
             ps.AddParameter("Name", WindowsPowerShellCompatRemotingSessionName);
+            ps.AddParameter("ErrorAction", ActionPreference.Ignore);
             var results = ps.Invoke<PSSession>();
             if (results.Count > 0)
             {
@@ -4810,7 +4811,7 @@ namespace Microsoft.PowerShell.Commands
         internal static PSSession CreateWindowsPowerShellCompatResources()
         {
             PSSession compatSession = null;
-            lock(s_WindowsPowerShellCompatSyncObject)
+            lock (s_WindowsPowerShellCompatSyncObject)
             {
                 compatSession = GetWindowsPowerShellCompatRemotingSession();
                 if (compatSession == null)
