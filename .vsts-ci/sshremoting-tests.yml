@@ -25,7 +25,7 @@ pr:
   paths:
     include:
     - '/src/System.Management.Automation/engine/*'
-    - '/test/*'
+    - '/test/SSHRemoting/*'
     exclude:
     - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
