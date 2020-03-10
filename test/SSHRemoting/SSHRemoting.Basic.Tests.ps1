@@ -4,7 +4,7 @@
 Describe "SSHRemoting Basic Tests" -tags CI {
 
     # SSH remoting is set up to automatically authenticate current user via SSH keys
-    # All tests connect back to same localhost machine
+    # All tests connect back to localhost machine
 
     function VerifySession {
         param (
@@ -165,7 +165,7 @@ Describe "SSHRemoting Basic Tests" -tags CI {
                 ComputerName = 'localhost'
                 KeyFilePath = "$HOME/.ssh/id_rsa"
                 Port = 22
-                Subsystem = $null
+                Subsystem = 'powershell'
             }
         )
 
