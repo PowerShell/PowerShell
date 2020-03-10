@@ -2359,7 +2359,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (importingModule)
                     {
-                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string[] { moduleManifestPath }, null, new ImportModuleOptions());
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string[] { moduleManifestPath }, null, options);
 
                         // we are loading by a single ManifestPath so expect max of 1
                         if (moduleProxies.Count > 0)
@@ -4799,6 +4799,7 @@ namespace Microsoft.PowerShell.Commands
             using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.AddCommand(commandInfo);
             ps.AddParameter("Name", WindowsPowerShellCompatRemotingSessionName);
+            ps.AddParameter("ErrorAction", ActionPreference.Ignore);
             var results = ps.Invoke<PSSession>();
             if (results.Count > 0)
             {
