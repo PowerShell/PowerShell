@@ -10,12 +10,7 @@ trigger:
   paths:
     include:
     - '/src/System.Management.Automation/engine/*'
-    - '/test/*'
-    exclude:
-    - /tools/releaseBuild/**/*
-    - /.vsts-ci/misc-analysis.yml
-    - /.github/ISSUE_TEMPLATE/*
-    - /.dependabot/config.yml
+    - '/test/SSHRemoting/*'
 pr:
   branches:
     include:
