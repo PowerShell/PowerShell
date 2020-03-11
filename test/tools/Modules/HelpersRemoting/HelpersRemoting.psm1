@@ -466,6 +466,26 @@ function Install-SSHRemotingOnWindows
     }
 }
 
+function WriteVerboseSSHDStatus
+{
+    param (
+        [string] $Msg = 'SSHD service status'
+    )
+
+    $sshdStatus = sudo service ssh status
+    Write-Verbose -Verbose "${Msg}: $sshdStatus"
+}
+
+function DumpTextFile
+{
+    param (
+        [string] $FilePath = '/etc/ssh/sshd_config'
+    )
+
+    $content = Get-Content -Path $FilePath -Raw
+    Write-Verbose -Verbose $content
+}
+
 function Install-SSHRemotingOnLinux
 {
     param (
@@ -478,7 +498,11 @@ function Install-SSHRemotingOnLinux
     {
         Write-Verbose -Verbose "Installing openssh-server ..."
         sudo apt-get install --yes openssh-server
-        sudo systemctl restart ssh
+
+        Write-Verbose -Verbose "Restarting sshd service after install ..."
+        WriteVerboseSSHDStatus "SSHD service status before restart"
+        sudo service ssh restart
+        WriteVerboseSSHDStatus "SSHD service status after restart"
     }
     if (! (Test-Path -Path /etc/ssh/sshd_config))
     {
@@ -519,19 +543,40 @@ function Install-SSHRemotingOnLinux
     Write-Verbose -Verbose "Updating known_hosts ..."
     ssh-keyscan -H localhost | Set-Content -Path "$HOME/.ssh/known_hosts" -Force
 
+    <#
     # Install Microsoft.PowerShell.RemotingTools module.
     if ($null -eq (Get-Module -Name Microsoft.PowerShell.RemotingTools -ListAvailable))
     {
         Write-Verbose -Verbose "Installing Microsoft.PowerShell.RemotingTools ..."
         Install-Module -Name Microsoft.PowerShell.RemotingTools -Force -SkipPublisherCheck
     }
+    #>
 
     # Add PowerShell endpoint to SSHD.
     Write-Verbose -Verbose "Running Enable-SSHRemoting ..."
-    sudo pwsh -c 'Enable-SSHRemoting -SSHDConfigFilePath /etc/ssh/sshd_config -PowerShellFilePath $PowerShellPath -Force'
+    Write-Verbose -Verbose "PSScriptRoot: $PSScriptRoot"
+    $modulePath = "${PSScriptRoot}\..\Microsoft.PowerShell.RemotingTools\Microsoft.PowerShell.RemotingTools.psd1"
+    $cmdLine = "Import-Module ${modulePath}; Enable-SSHRemoting -SSHDConfigFilePath /etc/ssh/sshd_config -PowerShellFilePath $PowerShellPath -Force"
+    Write-Verbose -Verbose "CmdLine: $cmdLine"
+    sudo pwsh -c $cmdLine
 
+    # Restart SSHD service for changes to take effect.
+    Start-Sleep -Seconds 1
+    WriteVerboseSSHDStatus "SSHD service status before restart"
     Write-Verbose -Verbose "Restarting sshd ..."
-    sudo systemctl restart ssh
+    sudo service ssh restart
+    WriteVerboseSSHDStatus "SSHD service status after restart"
+
+    # Try starting again if needed.
+    $status = sudo service ssh status
+    $result = $status | Where-Object { ($_ -like '*not running*') -or ($_ -like '*stopped*') }
+    if ($null -ne $result)
+    {
+        Start-Sleep -Seconds 1
+        Write-Verbose -Verbose "Starting sshd again ..."
+        sudo service ssh start
+        WriteVerboseSSHDStatus "SSHD service status after second start attempt"
+    }
 
     # Test SSH remoting.
     Write-Verbose -Verbose "Testing SSH remote connection ..."
@@ -541,6 +586,10 @@ function Install-SSHRemotingOnLinux
         if ($null -eq $session)
         {
             throw "Could not successfully create SSH remoting connection."
+        }
+        else
+        {
+            Write-Verbose -Verbose "SUCCESS: SSH remote connection"
         }
     }
     finally
@@ -568,6 +617,8 @@ function Install-SSHRemoting
     param (
         [string] $PowerShellFilePath
     )
+
+    Write-Verbose -Verbose "Install-SSHRemoting called with PowerShell file path: $PowerShellFilePath"
 
     if ($IsWindows)
     {
