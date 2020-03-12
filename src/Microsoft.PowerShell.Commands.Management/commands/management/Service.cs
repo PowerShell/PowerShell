@@ -1098,6 +1098,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="services">A list of services.</param>
         internal void RemoveNotStoppedServices(List<ServiceController> services)
         {
+            // You shall not modify a collection during enumeration.
+            // https://stackoverflow.com/questions/1582285/how-to-remove-elements-from-a-generic-list-while-iterating-over-it
             services.RemoveAll(service =>
                 service.Status != ServiceControllerStatus.Stopped &&
                 service.Status != ServiceControllerStatus.StopPending);
