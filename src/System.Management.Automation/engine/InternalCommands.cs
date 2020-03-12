@@ -585,6 +585,10 @@ namespace Microsoft.PowerShell.Commands
             _taskCollection.Complete();
             _taskDataStreamWriter.WaitAndWrite();
 
+            // TODO: Debug only
+            var warningMsg = string.Format(CultureInfo.InvariantCulture, "TaskPool runspace pool count: {0}", _taskPool.RunspaceCount);
+            Console.WriteLine(warningMsg);
+
             // Check for an unexpected error from the _taskCollection handler thread and report here.
             var ex = _taskCollectionException;
             if (ex != null)

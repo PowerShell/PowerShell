@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation.Host;
@@ -320,7 +321,7 @@ namespace System.Management.Automation.PSTasks
         protected PowerShell _powershell;
         protected PSDataCollection<PSObject> _output;
 
-        private const string RunspaceName = "PSTask";
+        public const string RunspaceName = "PSTask";
 
         private static int s_taskId;
 
@@ -363,6 +364,11 @@ namespace System.Management.Automation.PSTasks
         /// Gets Task Id.
         /// </summary>
         public int Id { get => _id; }
+
+        /// <summary>
+        /// Gets Task Runspace.
+        /// </summary>
+        public Runspace Runspace { get => _runspace; }
 
         #endregion
 
@@ -410,7 +416,6 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public void Dispose()
         {
-            _runspace.Dispose();
             _powershell.Dispose();
             _output.Dispose();
         }
@@ -422,7 +427,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Start task.
         /// </summary>
-        public void Start()
+        public void Start(Runspace runspace)
         {
             if (_powershell != null)
             {
@@ -430,13 +435,8 @@ namespace System.Management.Automation.PSTasks
                 return;
             }
 
-            // Create and open Runspace for this task to run in
-            var iss = InitialSessionState.CreateDefault2();
-            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
-                ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
-            _runspace = RunspaceFactory.CreateRunspace(iss);
-            _runspace.Name = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", RunspaceName, s_taskId);
-            _runspace.Open();
+            Dbg.Assert(runspace != null, "Task runspace cannot be null.");
+            _runspace = runspace;
 
             // If available, set current working directory on the runspace.
             // Temporarily set the newly created runspace as the thread default runspace for any needed module loading.
@@ -445,8 +445,8 @@ namespace System.Management.Automation.PSTasks
                 var oldDefaultRunspace = Runspace.DefaultRunspace;
                 try
                 {
-                    Runspace.DefaultRunspace = _runspace;
-                    _runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath);
+                    Runspace.DefaultRunspace = runspace;
+                    runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath);
                 }
                 finally
                 {
@@ -456,7 +456,7 @@ namespace System.Management.Automation.PSTasks
 
             // Create the PowerShell command pipeline for the provided script block
             // The script will run on the provided Runspace in a new thread by default
-            _powershell = PowerShell.Create(_runspace);
+            _powershell = PowerShell.Create(runspace);
 
             // Initialize PowerShell object data streams and event handlers
             _output = new PSDataCollection<PSObject>();
@@ -632,6 +632,8 @@ namespace System.Management.Automation.PSTasks
         private readonly ManualResetEvent _stopAll;
         private readonly object _syncObject;
         private readonly Dictionary<int, PSTaskBase> _taskPool;
+        private readonly ConcurrentQueue<Runspace> _runspacePool;
+        private readonly ConcurrentDictionary<int, Runspace> _activeRunspaces;
         private readonly WaitHandle[] _waitHandles;
         private bool _isOpen;
 
@@ -661,6 +663,8 @@ namespace System.Management.Automation.PSTasks
                 _stopAll,           // index 1
             };
             _taskPool = new Dictionary<int, PSTaskBase>(size);
+            _runspacePool = new ConcurrentQueue<Runspace>();
+            _activeRunspaces = new ConcurrentDictionary<int, Runspace>();
         }
 
         #endregion
@@ -684,6 +688,14 @@ namespace System.Management.Automation.PSTasks
             get => _isOpen;
         }
 
+        /// <summary>
+        /// Gets a value of current runspace count.
+        /// </summary>
+        public int RunspaceCount
+        {
+            get => _activeRunspaces.Count;
+        }
+
         #endregion
 
         #region IDisposable
@@ -695,6 +707,20 @@ namespace System.Management.Automation.PSTasks
         {
             _addAvailable.Dispose();
             _stopAll.Dispose();
+
+            DisposeRunspaces();
+        }
+
+        /// <summary>
+        /// Dispose runspaces.
+        /// </summary>
+        internal void DisposeRunspaces()
+        {
+            foreach (var runspace in _activeRunspaces.Values)
+            {
+                runspace.Dispose();
+            }
+            _activeRunspaces.Clear();
         }
 
         #endregion
@@ -721,6 +747,7 @@ namespace System.Management.Automation.PSTasks
             switch (index)
             {
                 case AddAvailable:
+                    var runspace = GetRunspace(task.Id);
                     task.StateChanged += HandleTaskStateChangedDelegate;
                     lock (_syncObject)
                     {
@@ -735,7 +762,7 @@ namespace System.Management.Automation.PSTasks
                             _addAvailable.Reset();
                         }
 
-                        task.Start();
+                        task.Start(runspace);
                     }
 
                     return true;
@@ -768,13 +795,19 @@ namespace System.Management.Automation.PSTasks
             _stopAll.Set();
 
             // Stop all running tasks
+            PSTaskBase[] tasksToStop;
             lock (_syncObject)
             {
-                foreach (var task in _taskPool.Values)
-                {
-                    task.Dispose();
-                }
+                tasksToStop = new PSTaskBase[_taskPool.Values.Count];
+                _taskPool.Values.CopyTo(tasksToStop, 0);
             }
+            foreach (var task in tasksToStop)
+            {
+                task.Dispose();
+            }
+
+            // Dispose of pool runspaces
+            DisposeRunspaces();
         }
 
         /// <summary>
@@ -803,6 +836,7 @@ namespace System.Management.Automation.PSTasks
                 case PSInvocationState.Completed:
                 case PSInvocationState.Stopped:
                 case PSInvocationState.Failed:
+                    ReturnRunspace(task);
                     lock (_syncObject)
                     {
                         _taskPool.Remove(task.Id);
@@ -840,6 +874,61 @@ namespace System.Management.Automation.PSTasks
                     Dbg.Assert(false, "Exceptions should not be thrown on event thread");
                 }
             }
+        }
+
+        private Runspace GetRunspace(int taskId)
+        {
+            var runspaceName = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", PSTask.RunspaceName, taskId);
+
+            if (_runspacePool.TryDequeue(out Runspace runspace))
+            {
+                if (runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
+                    runspace.RunspaceAvailability == RunspaceAvailability.Available)
+                {
+                    runspace.Name = runspaceName;
+                    return runspace;
+                }
+                RemoveActiveRunspace(runspace);
+            }
+
+            // Create and initialize a new Runspace
+            var iss = InitialSessionState.CreateDefault2();
+            iss.LanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce)
+                ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
+            runspace = RunspaceFactory.CreateRunspace(iss);
+            runspace.Name = runspaceName;
+            runspace.Open();
+            _activeRunspaces.TryAdd(runspace.Id, runspace);
+
+            return runspace;
+        }
+
+        private void ReturnRunspace(PSTaskBase task)
+        {
+            try
+            {
+                var runspace = task.Runspace;
+                Dbg.Assert(runspace != null, "Task runspace cannot be null.");
+                if (runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
+                    runspace.RunspaceAvailability == RunspaceAvailability.Available)
+                {
+                    runspace.ResetRunspaceState();
+                    _runspacePool.Enqueue(runspace);
+                }
+                else
+                {
+                    RemoveActiveRunspace(runspace);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void RemoveActiveRunspace(Runspace runspace)
+        {
+            runspace.Dispose();
+            _activeRunspaces.TryRemove(runspace.Id, out Runspace _);
         }
 
         #endregion
@@ -1017,6 +1106,9 @@ namespace System.Management.Automation.PSTasks
                 }
 
                 SetJobState(finalState);
+
+                // Release job task pool runspace resources.
+                (sender as PSTaskPool).DisposeRunspaces();
             }
             catch (ObjectDisposedException)
             { }
