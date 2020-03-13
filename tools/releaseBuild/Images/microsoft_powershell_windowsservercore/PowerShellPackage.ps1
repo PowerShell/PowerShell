@@ -7,7 +7,7 @@ param (
 
     [string] $branch = 'master',
 
-    [string] $location = "$pwd\powershell",
+    [string] $location = "$PWD\powershell",
 
     [string] $destination = "$env:WORKSPACE",
 

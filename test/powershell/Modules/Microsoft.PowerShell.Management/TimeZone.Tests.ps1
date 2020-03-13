@@ -30,7 +30,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
     BeforeAll {
         $TimeZonesAvailable = [System.TimeZoneInfo]::GetSystemTimeZones()
 
-        $defaultParamValues = $PSdefaultParameterValues.Clone()
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
         $PSDefaultParameterValues["it:skip"] = ($TimeZonesAvailable.Count -eq 0)
     }
 
@@ -53,8 +53,8 @@ Describe "Get-Timezone test cases" -Tags "CI" {
         $list = Get-TimeZone -ListAvailable
         $list.Count | Should -BeGreaterThan 0
 
-        ,$list | Should -BeOfType "Object[]"
-        $list[0] | Should -BeOfType "TimeZoneInfo"
+        ,$list | Should -BeOfType Object[]
+        $list[0] | Should -BeOfType TimeZoneInfo
     }
 
     ## The local time zone could be set to UTC or GMT*. In this case, the .NET API returns the region ID
@@ -128,7 +128,12 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 
 try {
     $defaultParamValues = $PSdefaultParameterValues.Clone()
-    $PSDefaultParameterValues["it:skip"] = !$IsWindows
+
+    # Set-TimeZone fails due to missing ApiSet dependency on Windows Server 2012 R2.
+    $osInfo = [System.Environment]::OSVersion.Version
+    $isSrv2k12R2 = $osInfo.Major -eq 6 -and $osInfo.Minor -eq 3
+
+    $PSDefaultParameterValues["it:skip"] = !$IsWindows -or $isSrv2k12R2
 
     Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') {
         BeforeAll {
@@ -230,4 +235,3 @@ try {
 finally {
     $global:PSDefaultParameterValues = $defaultParamValues
 }
-

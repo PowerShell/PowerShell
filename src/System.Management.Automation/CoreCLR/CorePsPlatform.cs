@@ -595,49 +595,49 @@ namespace System.Management.Automation
             public enum StatMask
             {
                 /// <summary>The mask to collect the owner mode.</summary>
-                OwnerModeMask  = 0x1C0,
+                OwnerModeMask = 0x1C0,
 
                 /// <summary>The mask to get the owners read bit.</summary>
-                OwnerRead      = 0x100,
-                
+                OwnerRead = 0x100,
+
                 /// <summary>The mask to get the owners write bit.</summary>
-                OwnerWrite     = 0x080,
-                
+                OwnerWrite = 0x080,
+
                 /// <summary>The mask to get the owners execute bit.</summary>
-                OwnerExecute   = 0x040,
-                
+                OwnerExecute = 0x040,
+
                 /// <summary>The mask to get the group mode.</summary>
-                GroupModeMask  = 0x038,
-                
+                GroupModeMask = 0x038,
+
                 /// <summary>The mask to get the group mode.</summary>
-                GroupRead      = 0x20,
-                
+                GroupRead = 0x20,
+
                 /// <summary>The mask to get the group mode.</summary>
-                GroupWrite     = 0x10,
-                
+                GroupWrite = 0x10,
+
                 /// <summary>The mask to get the group mode.</summary>
-                GroupExecute   = 0x8,
-                
+                GroupExecute = 0x8,
+
                 /// <summary>The mask to get the "other" mode.</summary>
-                OtherModeMask  = 0x007,
-                
+                OtherModeMask = 0x007,
+
                 /// <summary>The mask to get the "other" read bit.</summary>
-                OtherRead      = 0x004,
-                
+                OtherRead = 0x004,
+
                 /// <summary>The mask to get the "other" write bit.</summary>
-                OtherWrite     = 0x002,
-                
+                OtherWrite = 0x002,
+
                 /// <summary>The mask to get the "other" execute bit.</summary>
-                OtherExecute   = 0x001,
+                OtherExecute = 0x001,
 
                 /// <summary>The mask to retrieve the sticky bit.</summary>
-                SetStickyMask  = 0x200,
-                
+                SetStickyMask = 0x200,
+
                 /// <summary>The mask to retrieve the setgid bit.</summary>
-                SetGidMask     = 0x400,
+                SetGidMask = 0x400,
 
                 /// <summary>The mask to retrieve the setuid bit.</summary>
-                SetUidMask     = 0x800,
+                SetUidMask = 0x800,
             }
 
             /// <summary>The Common Stat class.</summary>
@@ -772,7 +772,7 @@ namespace System.Management.Automation
 
                     return new string(modeCharacters);
                 }
-                
+
                 /// <summary>
                 /// Get the user name. This is used in formatting, but we shouldn't
                 /// do the pinvoke this unless we're going to use it.
@@ -785,14 +785,14 @@ namespace System.Management.Automation
                         return username;
                     }
 
-                    // Get and add the user name to the cache so we don't need to 
+                    // Get and add the user name to the cache so we don't need to
                     // have a pinvoke for each file.
                     username = NativeMethods.GetPwUid(UserId);
                     usernameCache.Add(UserId, username);
 
                     return username;
                 }
-                
+
                 /// <summary>
                 /// Get the group name. This is used in formatting, but we shouldn't
                 /// do the pinvoke this unless we're going to use it.
@@ -805,7 +805,7 @@ namespace System.Management.Automation
                         return groupname;
                     }
 
-                    // Get and add the group name to the cache so we don't need to 
+                    // Get and add the group name to the cache so we don't need to
                     // have a pinvoke for each file.
                     groupname = NativeMethods.GetGrGid(GroupId);
                     groupnameCache.Add(GroupId, groupname);
@@ -857,81 +857,81 @@ namespace System.Management.Automation
             /// <returns>A managed common stat class instance.</returns>
             private static CommonStat CopyStatStruct(NativeMethods.CommonStatStruct css)
             {
-                    CommonStat cs = new CommonStat();
-                    cs.Inode = css.Inode;
-                    cs.Mode = css.Mode;
-                    cs.UserId = css.UserId;
-                    cs.GroupId = css.GroupId;
-                    cs.HardlinkCount = css.HardlinkCount;
-                    cs.Size = css.Size;
+                CommonStat cs = new CommonStat();
+                cs.Inode = css.Inode;
+                cs.Mode = css.Mode;
+                cs.UserId = css.UserId;
+                cs.GroupId = css.GroupId;
+                cs.HardlinkCount = css.HardlinkCount;
+                cs.Size = css.Size;
 
-                    // These can sometime throw if we get too large a number back (seen on Raspbian).
-                    // As a fallback, set the time to UnixEpoch.
-                    try
-                    {
-                        cs.AccessTime = DateTime.UnixEpoch.AddSeconds(css.AccessTime).ToLocalTime();
-                    }
-                    catch
-                    {
-                        cs.AccessTime = DateTime.UnixEpoch.ToLocalTime();
-                    }
+                // These can sometime throw if we get too large a number back (seen on Raspbian).
+                // As a fallback, set the time to UnixEpoch.
+                try
+                {
+                    cs.AccessTime = DateTime.UnixEpoch.AddSeconds(css.AccessTime).ToLocalTime();
+                }
+                catch
+                {
+                    cs.AccessTime = DateTime.UnixEpoch.ToLocalTime();
+                }
 
-                    try
-                    {
-                        cs.ModifiedTime = DateTime.UnixEpoch.AddSeconds(css.ModifiedTime).ToLocalTime();
-                    }
-                    catch
-                    {
-                        cs.ModifiedTime = DateTime.UnixEpoch.ToLocalTime();
-                    }
+                try
+                {
+                    cs.ModifiedTime = DateTime.UnixEpoch.AddSeconds(css.ModifiedTime).ToLocalTime();
+                }
+                catch
+                {
+                    cs.ModifiedTime = DateTime.UnixEpoch.ToLocalTime();
+                }
 
-                    try
-                    {
-                        cs.StatusChangeTime = DateTime.UnixEpoch.AddSeconds(css.StatusChangeTime).ToLocalTime();
-                    }
-                    catch
-                    {
-                        cs.StatusChangeTime = DateTime.UnixEpoch.ToLocalTime();
-                    }
+                try
+                {
+                    cs.StatusChangeTime = DateTime.UnixEpoch.AddSeconds(css.StatusChangeTime).ToLocalTime();
+                }
+                catch
+                {
+                    cs.StatusChangeTime = DateTime.UnixEpoch.ToLocalTime();
+                }
 
-                    cs.BlockSize = css.BlockSize;
-                    cs.DeviceId = css.DeviceId;
-                    cs.NumberOfBlocks = css.NumberOfBlocks;
+                cs.BlockSize = css.BlockSize;
+                cs.DeviceId = css.DeviceId;
+                cs.NumberOfBlocks = css.NumberOfBlocks;
 
-                    if (css.IsDirectory == 1)
-                    {
-                        cs.ItemType = ItemType.Directory;
-                    }
-                    else if (css.IsFile == 1)
-                    {
-                        cs.ItemType = ItemType.File;
-                    }
-                    else if (css.IsSymbolicLink == 1)
-                    {
-                        cs.ItemType = ItemType.SymbolicLink;
-                    }
-                    else if (css.IsBlockDevice == 1)
-                    {
-                        cs.ItemType = ItemType.BlockDevice;
-                    }
-                    else if (css.IsCharacterDevice == 1)
-                    {
-                        cs.ItemType = ItemType.CharacterDevice;
-                    }
-                    else if (css.IsNamedPipe == 1)
-                    {
-                        cs.ItemType = ItemType.NamedPipe;
-                    }
-                    else
-                    {
-                        cs.ItemType = ItemType.Socket;
-                    }
+                if (css.IsDirectory == 1)
+                {
+                    cs.ItemType = ItemType.Directory;
+                }
+                else if (css.IsFile == 1)
+                {
+                    cs.ItemType = ItemType.File;
+                }
+                else if (css.IsSymbolicLink == 1)
+                {
+                    cs.ItemType = ItemType.SymbolicLink;
+                }
+                else if (css.IsBlockDevice == 1)
+                {
+                    cs.ItemType = ItemType.BlockDevice;
+                }
+                else if (css.IsCharacterDevice == 1)
+                {
+                    cs.ItemType = ItemType.CharacterDevice;
+                }
+                else if (css.IsNamedPipe == 1)
+                {
+                    cs.ItemType = ItemType.NamedPipe;
+                }
+                else
+                {
+                    cs.ItemType = ItemType.Socket;
+                }
 
-                    cs.IsSetUid = css.IsSetUid == 1;
-                    cs.IsSetGid = css.IsSetGid == 1;
-                    cs.IsSticky = css.IsSticky == 1;
+                cs.IsSetUid = css.IsSetUid == 1;
+                cs.IsSetGid = css.IsSetGid == 1;
+                cs.IsSticky = css.IsSticky == 1;
 
-                    return cs;
+                return cs;
             }
 
             /// <summary>Get the lstat info from a path.</summary>
@@ -976,7 +976,7 @@ namespace System.Management.Automation
                 try
                 {
                     var stat = System.IO.File.ReadAllText(path);
-                    var parts = stat.Split(new[] { ' ' }, 5);
+                    var parts = stat.Split(' ', 5);
                     if (parts.Length < 5)
                     {
                         return invalidPid;
@@ -1092,8 +1092,8 @@ namespace System.Management.Automation
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
-                /// It presents each member of the stat structure as the largest type of that member across 
-                /// all stat structures on the platforms we support. This allows us to present a common 
+                /// It presents each member of the stat structure as the largest type of that member across
+                /// all stat structures on the platforms we support. This allows us to present a common
                 /// stat structure for all our platforms.
                 /// </summary>
                 [StructLayout(LayoutKind.Sequential)]
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
 
                     /// <summary>This filesystem item is a file.</summary>
                     internal int IsFile;
-                   
+
                     /// <summary>This filesystem item is a symbolic link.</summary>
                     internal int IsSymbolicLink;
 

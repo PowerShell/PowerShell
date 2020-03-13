@@ -102,7 +102,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     Context "Module level tests" {
         It "The CimTest module should have been loaded" @ItSkipOrPending {
             $result = Get-Module CimTest
-            $result.ModuleBase | should -Be ${script:ModuleDir}
+            $result.ModuleBase | Should -Be ${script:ModuleDir}
         }
 
         It "The CimTest module should have the proper cmdlets" @ItSkipOrPending {
@@ -115,19 +115,19 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     Context "Get-CimTest cmdlet" {
         It "The Get-CimTest cmdlet should return 4 objects" @ItSkipOrPending {
             $result = Get-CimTest
-            $result.Count | should -Be 4
-            ($result.id |sort-object) -join ","  | should -Be "1,2,3,4"
+            $result.Count | Should -Be 4
+            ($result.id |sort-object) -join ","  | Should -Be "1,2,3,4"
         }
 
         It "The Get-CimTest cmdlet should retrieve an object via id" @ItSkipOrPending {
             $result = Get-CimTest -id 1
-            @($result).Count | should -Be 1
+            @($result).Count | Should -Be 1
             $result.field1 | Should -Be "instance 1"
         }
 
         It "The Get-CimTest cmdlet should retrieve an object by piped id" @ItSkipOrPending {
             $result = 1,2,4 | foreach-object { [pscustomobject]@{ id = $_ } } | Get-CimTest
-            @($result).Count | should -Be 3
+            @($result).Count | Should -Be 3
             ( $result.id | sort-object ) -join "," | Should -Be "1,2,4"
         }
 
@@ -150,7 +150,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 # the time can be adjusted
                 $null = Wait-Job -Job $job -timeout 10
                 $result = $job | Receive-Job
-                $result.Count | should -Be 4
+                $result.Count | Should -Be 4
                 ( $result.id | sort-object ) -join "," | Should -Be "1,2,3,4"
             }
             finally {
@@ -162,7 +162,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
 
         It "Should be possible to invoke a method on an object returned by Get-CimTest" @ItSkipOrPending {
             $result = Get-CimTest | Select-Object -first 1
-            $result.GetCimSessionInstanceId() | Should -BeOfType [guid]
+            $result.GetCimSessionInstanceId() | Should -BeOfType guid
         }
     }
 
@@ -180,15 +180,15 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         It "The Remote-CimTest cmdlet should remove objects by id" @ItSkipOrPending {
             Remove-CimTest -id 1
             $result = Get-CimTest
-            $result.Count | should -Be 3
-            ($result.id |sort-object) -join ","  | should -Be "2,3,4"
+            $result.Count | Should -Be 3
+            ($result.id |sort-object) -join ","  | Should -Be "2,3,4"
         }
 
         It "The Remove-CimTest cmdlet should remove piped objects" @ItSkipOrPending {
             Get-CimTest -id 2 | Remove-CimTest
             $result  = Get-CimTest
-            @($result).Count | should -Be 3
-            ($result.id |sort-object) -join ","  | should -Be "1,3,4"
+            @($result).Count | Should -Be 3
+            ($result.id |sort-object) -join ","  | Should -Be "1,3,4"
         }
 
         It "The Remove-CimTest cmdlet should work as a job" @ItSkipOrPending {
@@ -200,8 +200,8 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 # the time can be adjusted
                 $null = Wait-Job -Job $job -Timeout 10
                 $result  = Get-CimTest
-                @($result).Count | should -Be 3
-                ($result.id |sort-object) -join ","  | should -Be "1,2,4"
+                @($result).Count | Should -Be 3
+                ($result.id |sort-object) -join ","  | Should -Be "1,2,4"
             }
             finally {
                 if ( $job ) {
@@ -220,7 +220,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             }
             New-CimTest @instanceArgs
             $result = Get-CimInstance -namespace root/default -class PSCore_Test1 | Where-Object {$_.id -eq "telephone"}
-            $result.field2 | should -Be 0
+            $result.field2 | Should -Be 0
             $result.field1 | Should -Be $instanceArgs.field1
         }
 
@@ -261,12 +261,12 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             }
             New-CimTest @instanceArgs
             $result = Get-CimTest -id $instanceArgs.id
-            $result.field2 | should -Be $instanceArgs.field2
+            $result.field2 | Should -Be $instanceArgs.field2
             $result.field1 | Should -Be $instanceArgs.field1
             Set-CimTest @newValues
             $result = Get-CimTest -id $newValues.id
             $result.field1 | Should -Be $newValues.field1
-            $result.field2 | should -Be $newValues.field2
+            $result.field2 | Should -Be $newValues.field2
         }
 
         It "Should set properties on an instance via pipeline" @ItSkipOrPending {
@@ -277,14 +277,14 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             }
             New-CimTest @instanceArgs
             $result = Get-CimTest -id $instanceArgs.id
-            $result.field2 | should -Be $instanceArgs.field2
+            $result.field2 | Should -Be $instanceArgs.field2
             $result.field1 | Should -Be $instanceArgs.field1
             $result.field1 = "yet another value"
             $result.field2 = 33
             $result | Set-CimTest
             $result = Get-CimTest -id $instanceArgs.id
             $result.field1 | Should -Be "yet another value"
-            $result.field2 | should -Be 33
+            $result.field2 | Should -Be 33
         }
     }
 

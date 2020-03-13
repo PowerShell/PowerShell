@@ -885,9 +885,9 @@ namespace System.Management.Automation.Language
 
         internal void SkipNewlines(bool skipSemis)
         {
-            // We normally don't create any tokens in a Skip method, but the
-            // V2 tokenizer api returns newline, semi-colon, and line
-            // continuation tokens so we create them as they are encountered.
+        // We normally don't create any tokens in a Skip method, but the
+        // V2 tokenizer api returns newline, semi-colon, and line
+        // continuation tokens so we create them as they are encountered.
         again:
             char c = GetChar();
             switch (c)

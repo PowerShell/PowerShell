@@ -32,7 +32,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CredentialParameterSet)]
         public PasswordAuthenticationMechanism Authentication
         {
-            get { return authentication;}
+            get { return authentication; }
 
             set
             {
@@ -88,7 +88,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] ComputerName
         {
-            get { return computername;}
+            get { return computername; }
 
             set { computername = value; }
         }
@@ -109,7 +109,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public string Name
         {
-            get { return name;}
+            get { return name; }
 
             set { name = value; }
         }

@@ -2010,8 +2010,8 @@ namespace System.Management.Automation
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">Breakpoints to set.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId = null)
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
@@ -2033,9 +2033,9 @@ namespace System.Management.Automation
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The breakpoint with the specified id.</returns>
-        public override Breakpoint GetBreakpoint(int id, int? runspaceId = null)
+        public override Breakpoint GetBreakpoint(int id, int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.GetBreakpoint);
@@ -2056,9 +2056,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns breakpoints primarily for the Get-PSBreakpoint cmdlet.
         /// </summary>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>A list of breakpoints in a runspace.</returns>
-        public override List<Breakpoint> GetBreakpoints(int? runspaceId = null)
+        public override List<Breakpoint> GetBreakpoints(int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.GetBreakpoint);
@@ -2096,16 +2096,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets a command breakpoint in the debugger.
         /// </summary>
-        /// <param name="command">The name of the command that will trigger the breakpoint. This value is required and may not be null.</param>
+        /// <param name="command">The name of the command that will trigger the breakpoint. This value may not be null.</param>
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the command is invoked.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The command breakpoint that was set.</returns>
-        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null, int? runspaceId = null)
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action, string path, int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
-            
+
             Breakpoint breakpoint = new CommandBreakpoint(path, null, command, action);
             var functionParameters = new Dictionary<string, object>
             {
@@ -2123,13 +2123,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets a line breakpoint in the debugger.
         /// </summary>
-        /// <param name="path">The path to the script file where the breakpoint may be hit. This value is required and may not be null.</param>
-        /// <param name="line">The line in the script file where the breakpoint may be hit. This value is required and must be greater than or equal to 1.</param>
+        /// <param name="path">The path to the script file where the breakpoint may be hit. This value may not be null.</param>
+        /// <param name="line">The line in the script file where the breakpoint may be hit. This value must be greater than or equal to 1.</param>
         /// <param name="column">The column in the script file where the breakpoint may be hit. If 0, the breakpoint will trigger on any statement on the line.</param>
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The line breakpoint that was set.</returns>
-        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null, int? runspaceId = null)
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column, ScriptBlock action, int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
@@ -2152,13 +2152,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets a variable breakpoint in the debugger.
         /// </summary>
-        /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value is required and may not be null.</param>
-        /// <param name="accessMode">The variable access mode that will trigger the breakpoint. By default variable breakpoints will trigger only when the variable is updated.</param>
+        /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value may not be null.</param>
+        /// <param name="accessMode">The variable access mode that will trigger the breakpoint.</param>
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the variable is accessed using the specified access mode.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The variable breakpoint that was set.</returns>
-        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null, int? runspaceId = null)
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode, ScriptBlock action, string path, int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.SetBreakpoint);
@@ -2181,10 +2181,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a breakpoint from the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to remove from the debugger. This value is required and may not be null.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="breakpoint">The breakpoint to remove from the debugger. This value may not be null.</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>True if the breakpoint was removed from the debugger; false otherwise.</returns>
-        public override bool RemoveBreakpoint(Breakpoint breakpoint, int? runspaceId = null)
+        public override bool RemoveBreakpoint(Breakpoint breakpoint, int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.RemoveBreakpoint);
@@ -2210,10 +2210,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Enables a breakpoint in the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value is required and may not be null.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value may not be null.</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The updated breakpoint if it was found; null if the breakpoint was not found in the debugger.</returns>
-        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint, int? runspaceId = null)
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint, int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.EnableBreakpoint);
@@ -2239,10 +2239,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Disables a breakpoint in the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value is required and may not be null.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value may not be null.</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The updated breakpoint if it was found; null if the breakpoint was not found in the debugger.</returns>
-        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint, int? runspaceId = null)
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint, int? runspaceId)
         {
             // This is supported only for PowerShell versions >= 7.0
             CheckRemoteBreakpointManagementSupport(RemoteDebuggingCommands.DisableBreakpoint);

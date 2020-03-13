@@ -55,6 +55,18 @@ Describe "SSHConnection parameter hashtable type conversions" -Tags 'Feature', '
 
     It "<testName>" -TestCases $TestCasesSSHConnection {
         param($scriptBlock)
-        { & $scriptBlock } | Should -Throw -ErrorId '2100,PSSessionOpenFailed'
+
+        $err = $null
+        try
+        {
+            & $scriptBlock
+        }
+        catch
+        {
+            $err = $_
+        }
+        # The exact returned error id string varies depending on platform,
+        # but will always contain 'PSSessionOpenFailed'.
+        $err.FullyQualifiedErrorId | Should -Match 'PSSessionOpenFailed'
     }
 }

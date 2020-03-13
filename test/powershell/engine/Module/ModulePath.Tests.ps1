@@ -165,9 +165,9 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It 'Windows PowerShell does not inherit PowerShell paths' -Skip:(!$IsWindows) {
         $out = powershell.exe -noprofile -command '$env:PSModulePath'
-        $out | Should -Not -Contain $expectedUserPath
-        $out | Should -Not -Contain $expectedSharedPath
-        $out | Should -Not -Contain $expectedSystemPath
+        $out | Should -Not -BeLike "*$expectedUserPath*"
+        $out | Should -Not -BeLike "*$expectedSharedPath*"
+        $out | Should -Not -BeLike "*$expectedSystemPath*"
     }
 
     It 'Windows PowerShell inherits user added paths' -Skip:(!$IsWindows) {
@@ -180,7 +180,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         try {
             $userConfig = '{ "PSModulePath": "myUserPath" }'
             Set-Content -Path $userConfigPath -Value $userConfig -Force
-            $out = pwsh -noprofile -command 'powershell.exe -noprofile -command $env:PSModulePath'
+            $out = & $powershell -noprofile -command 'powershell.exe -noprofile -command $env:PSModulePath'
             $out | Should -Not -BeLike 'myUserPath;*'
         }
         finally {

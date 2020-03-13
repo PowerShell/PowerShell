@@ -236,8 +236,7 @@ namespace Microsoft.PowerShell
             {
                 try
                 {
-                    string[] fallbacks = langBuffer.Split(new char[] { '\0' },
-                            StringSplitOptions.RemoveEmptyEntries);
+                    string[] fallbacks = langBuffer.Split('\0', StringSplitOptions.RemoveEmptyEntries);
                     string fallback = fallbacks[0];
                     string[] fallbacksForParent = null;
 

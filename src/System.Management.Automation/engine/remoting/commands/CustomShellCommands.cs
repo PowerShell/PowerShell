@@ -1122,11 +1122,6 @@ else
                     tempValue);
             }
 
-            if (!isUseSharedProcessSpecified)
-            {
-                UseSharedProcess = true;
-            }
-
             string sharedHostParameter = string.Empty;
             if (isUseSharedProcessSpecified)
             {

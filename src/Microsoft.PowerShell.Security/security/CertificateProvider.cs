@@ -3088,7 +3088,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw Marshal.GetExceptionForHR(Security.NativeMethods.NTE_NOT_SUPPORTED);
+                Marshal.ThrowExceptionForHR(Security.NativeMethods.NTE_NOT_SUPPORTED);
             }
         }
 

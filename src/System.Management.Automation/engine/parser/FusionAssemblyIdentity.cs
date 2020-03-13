@@ -133,17 +133,14 @@ namespace Microsoft.CodeAnalysis
 
             if (hr != ERROR_INSUFFICIENT_BUFFER)
             {
-                throw Marshal.GetExceptionForHR(hr);
+                Marshal.ThrowExceptionForHR(hr);
             }
 
             byte[] data = new byte[(int)characterCountIncludingTerminator * 2];
             fixed (byte* p = data)
             {
                 hr = nameObject.GetDisplayName(p, ref characterCountIncludingTerminator, displayFlags);
-                if (hr != 0)
-                {
-                    throw Marshal.GetExceptionForHR(hr);
-                }
+                Marshal.ThrowExceptionForHR(hr);
 
                 return Marshal.PtrToStringUni((IntPtr)p, (int)characterCountIncludingTerminator - 1);
             }
@@ -162,17 +159,14 @@ namespace Microsoft.CodeAnalysis
 
             if (hr != ERROR_INSUFFICIENT_BUFFER)
             {
-                throw Marshal.GetExceptionForHR(hr);
+                Marshal.ThrowExceptionForHR(hr);
             }
 
             byte[] data = new byte[(int)size];
             fixed (byte* p = data)
             {
                 hr = nameObject.GetProperty(propertyId, p, ref size);
-                if (hr != 0)
-                {
-                    throw Marshal.GetExceptionForHR(hr);
-                }
+                Marshal.ThrowExceptionForHR(hr);
             }
 
             return data;
@@ -210,10 +204,7 @@ namespace Microsoft.CodeAnalysis
             uint result;
             uint size = sizeof(uint);
             int hr = nameObject.GetProperty(propertyId, &result, ref size);
-            if (hr != 0)
-            {
-                throw Marshal.GetExceptionForHR(hr);
-            }
+            Marshal.ThrowExceptionForHR(hr);
 
             if (size == 0)
             {

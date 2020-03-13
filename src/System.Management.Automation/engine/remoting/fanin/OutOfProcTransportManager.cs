@@ -650,7 +650,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // Object already disposed.
                 }
-                
+
                 _commandMessageQueue.Dispose();
             }
         }
@@ -741,41 +741,26 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        private const string GUIDTAG = "PSGuid='";
-        private const int GUID_STR_LEN = 36;        // GUID string: 32 digits plus 4 dashes
-
-        private Guid GetMessageGuid(string data)
-        {
-            // Perform quick scan for data packet for a GUID, ignoring any errors.
-            var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
-            if (iTag > -1)
-            {
-                try
-                {
-                    var psGuidString = data.Substring(iTag + GUIDTAG.Length, GUID_STR_LEN);
-                    return new Guid(psGuidString);
-                }
-                catch 
-                {
-                    // Ignore any malformed packet errors here and return an empty Guid.
-                    // Packet errors will be reported later during message processing.
-                }
-            }
-
-            return Guid.Empty;
-        }
-
         #endregion
 
         #region Event Handlers
 
+        private const string SESSIONDMESSAGETAG = "PSGuid='00000000-0000-0000-0000-000000000000'";
+
         protected void HandleOutputDataReceived(string data)
         {
+            if (string.IsNullOrEmpty(data))
+            {
+                // A null/empty data string indicates a problem in the transport,
+                // e.g., named pipe emitting a null packet because it closed or some reason.
+                // In this case we simply ignore the packet.
+                return;
+            }
+
             try
             {
                 // Route protocol message based on whether it is a session or command message.
-                // Session messages have empty Guid values.
-                if (Guid.Equals(GetMessageGuid(data), Guid.Empty))
+                if (data.IndexOf(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase) > -1)
                 {
                     // Session message
                     _sessionMessageQueue.Add(data);

@@ -1089,26 +1089,26 @@ namespace Microsoft.PowerShell.Commands
                 {
                     case StringComparison.Ordinal:
                     case StringComparison.OrdinalIgnoreCase:
-                    {
-                        return OrdinalCultureName;
-                    }
+                        {
+                            return OrdinalCultureName;
+                        }
 
                     case StringComparison.InvariantCulture:
                     case StringComparison.InvariantCultureIgnoreCase:
-                    {
-                        return InvariantCultureName;
-                    }
+                        {
+                            return InvariantCultureName;
+                        }
 
                     case StringComparison.CurrentCulture:
                     case StringComparison.CurrentCultureIgnoreCase:
-                    {
-                        return CurrentCultureName;
-                    }
+                        {
+                            return CurrentCultureName;
+                        }
 
                     default:
-                    {
-                        break;
-                    }
+                        {
+                            break;
+                        }
                 }
 
                 return _cultureName;
@@ -1126,8 +1126,8 @@ namespace Microsoft.PowerShell.Commands
         internal const string CurrentCultureName = "Current";
 
         private string _cultureName = CultureInfo.CurrentCulture.Name;
-        private StringComparison _stringComparison  = StringComparison.CurrentCultureIgnoreCase;
-        private CompareOptions _compareOptions  = CompareOptions.IgnoreCase;
+        private StringComparison _stringComparison = StringComparison.CurrentCultureIgnoreCase;
+        private CompareOptions _compareOptions = CompareOptions.IgnoreCase;
 
         private delegate int CultureInfoIndexOf(string source, string value, int startIndex, int count, CompareOptions options);
 
@@ -1140,36 +1140,36 @@ namespace Microsoft.PowerShell.Commands
             switch (_cultureName)
             {
                 case OrdinalCultureName:
-                {
-                    _stringComparison = CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
-                    _compareOptions = CaseSensitive ? CompareOptions.Ordinal : CompareOptions.OrdinalIgnoreCase;
-                    _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
-                    break;
-                }
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.Ordinal : CompareOptions.OrdinalIgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
+                        break;
+                    }
 
                 case InvariantCultureName:
-                {
-                    _stringComparison = CaseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
-                    _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
-                    _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
-                    break;
-                }
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
+                        break;
+                    }
 
                 case CurrentCultureName:
-                {
-                    _stringComparison = CaseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
-                    _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
-                    _cultureInfoIndexOf = CultureInfo.CurrentCulture.CompareInfo.IndexOf;
-                    break;
-                }
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.CurrentCulture.CompareInfo.IndexOf;
+                        break;
+                    }
 
                 default:
-                {
-                    var _cultureInfo = CultureInfo.GetCultureInfo(_cultureName);
-                    _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
-                    _cultureInfoIndexOf = _cultureInfo.CompareInfo.IndexOf;
-                    break;
-                }
+                    {
+                        var _cultureInfo = CultureInfo.GetCultureInfo(_cultureName);
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = _cultureInfo.CompareInfo.IndexOf;
+                        break;
+                    }
             }
         }
 

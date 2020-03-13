@@ -631,9 +631,8 @@ namespace System.Management.Automation
                     fileHash = CalculateFileHash(fileToHash.FullName, hashAlgorithm);
                 }
 
-                if (!fileHashes.ContainsKey(relativePath))
+                if (fileHashes.TryAdd(relativePath, fileHash))
                 {
-                    fileHashes.Add(relativePath, fileHash);
                     _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.FoundFileInPath, relativePath, fileHash));
                 }
                 else

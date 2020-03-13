@@ -71,7 +71,7 @@ namespace System.Management.Automation
             }
             else
             {
-                _probingPaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                _probingPaths = basePaths.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < _probingPaths.Length; i++)
                 {
                     string basePath = _probingPaths[i];
@@ -235,11 +235,11 @@ namespace System.Management.Automation
         /// </summary>
         internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
-            var folder = Path.GetDirectoryName(assembly.Location);
             s_nativeDllSubFolder ??= GetNativeDllSubFolderName(out s_nativeDllExtension);
-            var fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
+            string folder = Path.GetDirectoryName(assembly.Location);
+            string fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
 
-            return NativeLibrary.Load(fullName);
+            return NativeLibrary.TryLoad(fullName, out IntPtr pointer) ? pointer : IntPtr.Zero;
         }
 
         #endregion Internal_Methods

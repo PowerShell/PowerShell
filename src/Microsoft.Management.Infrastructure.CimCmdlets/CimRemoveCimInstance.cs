@@ -88,7 +88,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.CimInstanceComputerSet:
                 case CimBaseCommand.CimInstanceSessionSet:
                     string nameSpace = null;
-                    if(cmdlet.ResourceUri != null )
+                    if (cmdlet.ResourceUri != null)
                     {
                         nameSpace = GetCimInstanceParameter(cmdlet).CimSystemProperties.Namespace;
                     }

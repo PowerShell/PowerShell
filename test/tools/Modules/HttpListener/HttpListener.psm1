@@ -69,8 +69,8 @@ Function Start-HTTPListener {
                     {
                         if ($segment -match "\??(?<name>\w*)(=(?<value>.*?))?$")
                         {
-                            $name = $matches["name"]
-                            $value = $matches["value"]
+                            $name = $Matches["name"]
+                            $value = $Matches["value"]
                             if ($null -ne $value)
                             {
                                 $value = [System.Web.HttpUtility]::UrlDecode($value)

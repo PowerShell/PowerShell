@@ -359,7 +359,7 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
             foreach ($err in $errVar)
             {
                 $err.CategoryInfo.Category | Should -BeExactly "InvalidResult"
-                $err.FullyQualifiedErrorId | SHould -BeExactly "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
+                $err.FullyQualifiedErrorId | Should -BeExactly "CounterApiError,Microsoft.PowerShell.Commands.ImportCounterCommand"
             }
         }
     }

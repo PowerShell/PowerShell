@@ -229,7 +229,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
                 '111' -Match '1'
                 $Matches
                 $mAtches
-                $Error[0]
+                $error[0]
                 $error
                 $pwd
                 foreach ($i in 1..10) {$foreach}
@@ -384,7 +384,7 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
 
     [System.Management.Automation.Cmdlet("Get", "Thing", SupportsShouldProcess = $true, SupportsPaging = $true)]class C2{}
     $t = [C2].GetCustomAttributes($false)
-    It "Should have one attribute (class C2)" { $t.Count | should -Be 1 }
+    It "Should have one attribute (class C2)" { $t.Count | Should -Be 1 }
     It "Should have instance of CmdletAttribute (class C2)" { $t[0] | Should -BeOfType System.Management.Automation.CmdletAttribute }
     [System.Management.Automation.CmdletAttribute]$c = $t[0]
     It "Verb should be Get (class C2)" {$c.VerbName | Should -BeExactly 'Get'}
@@ -887,7 +887,7 @@ class A
 
     [int] GetX([Foo.Bar]$bar)
     {
-        Set-StrictMode -Version latest
+        Set-StrictMode -Version 3.0
         return $bar.x
     }
 }

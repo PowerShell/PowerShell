@@ -829,6 +829,7 @@ A Name                                  B
 
 "@
 
-            $obj | Format-Table | Out-String | Should -BeExactly $expected
+            $actual = $obj | Format-Table | Out-String
+            ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
     }

@@ -14,12 +14,12 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             param(
                 [Parameter(ValueFromPipeline)]
                 [object[]]
-                $Input
+                $input
             )
 
-            if ($Input -ne 2)
+            if ($input -ne 2)
             {
-                return $Input
+                return $input
             }
 
             $exception = [System.Exception]::new("NTERROR")
@@ -222,12 +222,12 @@ filter Test-NonTerminatingError
     param(
         [Parameter(ValueFromPipeline)]
         [object[]]
-        $Input
+        $input
     )
 
-    if ($Input -ne 2)
+    if ($input -ne 2)
     {
-        return $Input
+        return $input
     }
 
     $exception = [System.Exception]::new("NTERROR")
@@ -241,11 +241,11 @@ filter Test-NonTerminatingError
 filter Test-PipelineTerminatingError
 {
     [CmdletBinding()]
-    param([Parameter(ValueFromPipeline)][int[]]$Input)
+    param([Parameter(ValueFromPipeline)][int[]]$input)
 
-    if ($Input -ne 4)
+    if ($input -ne 4)
     {
-        return $Input
+        return $input
     }
 
     $exception = [System.Exception]::new("PIPELINE")

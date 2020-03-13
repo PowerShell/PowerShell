@@ -52,7 +52,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     foreach (string computerName in computerNames)
                     {
                         CimSessionProxy proxy = CreateSessionProxy(computerName, cmdlet.CimInstance, cmdlet);
-                            proxys.Add(proxy);
+                        proxys.Add(proxy);
                     }
 
                     break;

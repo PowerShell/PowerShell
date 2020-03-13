@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
+Set-StrictMode -Version 3.0
+
 $ErrorActionPreference = 'continue'
 $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
@@ -18,7 +20,7 @@ Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
 Import-Module (Join-Path $repoRoot 'tools\packaging') -scope Global
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
-if($PSVersionTable.PSEdition -eq 'Desktop' -or $isWindows)
+if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
 {
     Import-Module (Join-Path $PSScriptRoot 'WindowsCI.psm1') -scope Global
 }
@@ -190,7 +192,7 @@ function Invoke-CIxUnit
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    $xUnitTestResultsFile = Join-Path -Path $pwd -childpath "xUnitTestResults.xml"
+    $xUnitTestResultsFile = Join-Path -Path $PWD -childpath "xUnitTestResults.xml"
 
     Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
     Push-Artifact -Path $xUnitTestResultsFile -name xunit
@@ -239,8 +241,8 @@ function Invoke-CITest
 
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
     Write-Host -Foreground Green 'Run CoreCLR tests'
-    $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin-$TagSet.xml"
-    $testResultsAdminFile = "$pwd\TestsResultsAdmin-$TagSet.xml"
+    $testResultsNonAdminFile = "$PWD\TestsResultsNonAdmin-$TagSet.xml"
+    $testResultsAdminFile = "$PWD\TestsResultsAdmin-$TagSet.xml"
     if(!(Test-Path "$env:CoreOutput\pwsh.exe"))
     {
         throw "CoreCLR pwsh.exe was not built"
@@ -269,7 +271,7 @@ function Invoke-CITest
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
-            $expFeatureTestResultFile = "$pwd\TestsResultsNonAdmin.$featureName.xml"
+            $expFeatureTestResultFile = "$PWD\TestsResultsNonAdmin.$featureName.xml"
             $arguments['OutputFile'] = $expFeatureTestResultFile
             $arguments['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0) {
@@ -308,7 +310,7 @@ function Invoke-CITest
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
-            $expFeatureTestResultFile = "$pwd\TestsResultsAdmin.$featureName.xml"
+            $expFeatureTestResultFile = "$PWD\TestsResultsAdmin.$featureName.xml"
             $arguments['OutputFile'] = $expFeatureTestResultFile
             $arguments['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0)
@@ -407,11 +409,11 @@ function Compress-CoverageArtifacts
 
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
-    $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
+    $zipOpenCoverPath = Join-Path $PWD 'OpenCover.zip'
     [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath)
     $null = $artifacts.Add($zipOpenCoverPath)
 
-    $zipCodeCoveragePath = Join-Path $pwd "CodeCoverage.zip"
+    $zipCodeCoveragePath = Join-Path $PWD "CodeCoverage.zip"
     Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
     [System.IO.Compression.ZipFile]::CreateFromDirectory($CodeCoverageOutput, $zipCodeCoveragePath)
     $null = $artifacts.Add($zipCodeCoveragePath)
@@ -439,7 +441,7 @@ function Invoke-CIFinish
         [string] $NuGetKey
     )
 
-    if($IsLinux -or $IsMacOS)
+    if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
         return New-LinuxPackage -NugetKey $NugetKey
     }
@@ -479,7 +481,7 @@ function Invoke-CIFinish
             {
                 $null = $artifacts.Add($package)
             }
-            elseif($package -is [pscustomobject] -and $package.msi)
+            elseif($package -is [pscustomobject] -and $package.psobject.Properties['msi'])
             {
                 $null = $artifacts.Add($package.msi)
                 $null = $artifacts.Add($package.wixpdb)
@@ -497,7 +499,7 @@ function Invoke-CIFinish
         $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru
 
         # fail the CI job if the tests failed, or nothing passed
-        if($packagingTestResult.FailedCount -ne 0 -or !$packagingTestResult.PassedCount)
+        if(-not $packagingTestResult -is [pscustomobject] -or $packagingTestResult.FailedCount -ne 0 -or $packagingTestResult.PassedCount -eq 0)
         {
             throw "Packaging tests failed ($($packagingTestResult.FailedCount) failed/$($packagingTestResult.PassedCount) passed)"
         }
@@ -576,9 +578,13 @@ function Invoke-LinuxTestsCore
     )
 
     $output = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
-    $testResultsNoSudo = "$pwd/TestResultsNoSudo.xml"
-    $testResultsSudo = "$pwd/TestResultsSudo.xml"
+    $testResultsNoSudo = "$PWD/TestResultsNoSudo.xml"
+    $testResultsSudo = "$PWD/TestResultsSudo.xml"
     $testExcludeTag = $ExcludeTag + 'RequireSudoOnUnix'
+    $pesterPassThruNoSudoObject = $null
+    $pesterPassThruSudoObject = $null
+    $noSudoResultsWithExpFeatures = $null
+    $sudoResultsWithExpFeatures = $null
 
     $noSudoPesterParam = @{
         'BinDir'     = $output
@@ -603,7 +609,7 @@ function Invoke-LinuxTestsCore
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
-            $expFeatureTestResultFile = "$pwd\TestResultsNoSudo.$featureName.xml"
+            $expFeatureTestResultFile = "$PWD\TestResultsNoSudo.$featureName.xml"
             $noSudoPesterParam['OutputFile'] = $expFeatureTestResultFile
             $noSudoPesterParam['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0) {
@@ -638,7 +644,7 @@ function Invoke-LinuxTestsCore
             $featureName = $entry.Key
             $testFiles = $entry.Value
 
-            $expFeatureTestResultFile = "$pwd\TestResultsSudo.$featureName.xml"
+            $expFeatureTestResultFile = "$PWD\TestResultsSudo.$featureName.xml"
             $sudoPesterParam['OutputFile'] = $expFeatureTestResultFile
             $sudoPesterParam['ExperimentalFeatureName'] = $featureName
             if ($testFiles.Count -eq 0)

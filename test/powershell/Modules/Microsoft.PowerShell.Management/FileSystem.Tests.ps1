@@ -104,7 +104,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
         It "Verify Rename-Item will not rename to an existing name" {
             { Rename-Item -Path $testFile -NewName $testDir -ErrorAction Stop } | Should -Throw -ErrorId "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"
-            $Error[0].Exception | Should -BeOfType System.IO.IOException
+            $error[0].Exception | Should -BeOfType System.IO.IOException
             $testFile | Should -Exist
         }
 
@@ -133,7 +133,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
         It "Verify Move-Item will not move to an existing file" {
             { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
-            $Error[0].Exception | Should -BeOfType System.IO.IOException
+            $error[0].Exception | Should -BeOfType System.IO.IOException
             $testDir | Should -Exist
         }
 
@@ -282,16 +282,15 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     Context "Appx path" {
         BeforeAll {
             $skipTest = $true
-            if ($IsWindows -and (Get-Command -Name Get-AppxPackage) -and (Get-AppxPackage Microsoft.WindowsCalculator)) {
-                $skipTest = $false
+            if ($IsWindows -and (Get-Command -Name Get-AppxPackage) ) {
+                $pkgDir = (Get-AppxPackage Microsoft.WindowsCalculator -ErrorAction SilentlyContinue).InstallLocation
+                $skipTest = $pkgDir -eq $null
             }
         }
 
         It "Can get an appx package item" -Skip:$skipTest {
-            $pkgDir = (Get-AppxPackage)[0].InstallLocation
-
-            Get-Item $pkgDir\Calculator.exe -ErrorAction Stop | Should -BeOfType [System.IO.FileInfo]
-            Get-Item -Path $pkgDir -ErrorAction Stop | Should -BeOfType [System.IO.DirectoryInfo]
+            Get-Item $pkgDir\Calculator.exe -ErrorAction Stop | Should -BeOfType System.IO.FileInfo
+            Get-Item -Path $pkgDir -ErrorAction Stop | Should -BeOfType System.IO.DirectoryInfo
             Get-ChildItem -Path $pkgDir -ErrorAction Stop | Should -Not -BeNullOrEmpty
         }
     }
@@ -571,10 +570,25 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $ci[1].Name | Should -MatchExactly $filenamePattern
             $ci[2].Name | Should -MatchExactly $filenamePattern
         }
+        It "Get-ChildItem -Name gets content of linked-to directory" {
+            # The test depends on the files created in previous test:
+            #$filenamePattern = "AlphaFile[12]\.txt"
+            #New-Item -ItemType SymbolicLink -Path $alphaLink -Value $alphaDir
+            $ci = Get-ChildItem $alphaLink -Name
+            $ci.Count | Should -Be 3
+            $ci[1] | Should -MatchExactly $filenamePattern
+            $ci[2] | Should -MatchExactly $filenamePattern
+        }
         It "Get-ChildItem does not recurse into symbolic links not explicitly given on the command line" {
             New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
             $ci = Get-ChildItem $alphaLink -Recurse
             $ci.Count | Should -BeExactly 7
+        }
+        It "Get-ChildItem -Name does not recurse into symbolic links not explicitly given on the command line" -Pending {
+            # The test depends on the files created in previous test:
+            #New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
+            $ci = Get-ChildItem $alphaLink -Recurse -Name
+            $ci.Count | Should -BeExactly 7 # returns 10 - unexpectly recurce in link-alpha\link-Beta. See https://github.com/PowerShell/PowerShell/issues/11614
         }
         It "Get-ChildItem will recurse into symlinks given -FollowSymlink, avoiding link loops" {
             New-Item -ItemType Directory -Path $gammaDir
@@ -582,6 +596,16 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType SymbolicLink -Path $uptwoLink -Value $alphaDir
             New-Item -ItemType SymbolicLink -Path $omegaLink -Value $omegaDir
             $ci = Get-ChildItem -Path $alphaDir -FollowSymlink -Recurse -WarningVariable w -WarningAction SilentlyContinue
+            $ci.Count | Should -BeExactly 13
+            $w.Count | Should -BeExactly 3
+        }
+        It "Get-ChildItem -Name will recurse into symlinks given -FollowSymlink, avoiding link loops" -Pending {
+            # The test depends on the files created in previous test:
+            # New-Item -ItemType Directory -Path $gammaDir
+            # New-Item -ItemType SymbolicLink -Path $uponeLink -Value $betaDir
+            # New-Item -ItemType SymbolicLink -Path $uptwoLink -Value $alphaDir
+            # New-Item -ItemType SymbolicLink -Path $omegaLink -Value $omegaDir
+            $ci = Get-ChildItem -Path $alphaDir -FollowSymlink -Recurse -WarningVariable w -WarningAction SilentlyContinue -Name # unexpectly dead cycle. See https://github.com/PowerShell/PowerShell/issues/11614
             $ci.Count | Should -BeExactly 13
             $w.Count | Should -BeExactly 3
         }
@@ -749,8 +773,8 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
             else
             {
                 { Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-                $Error[0].Exception | Should -BeOfType System.IO.IOException
-                $Error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
+                $error[0].Exception | Should -BeOfType System.IO.IOException
+                $error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
             }
         }
     }
@@ -812,8 +836,8 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
                 )
 
                 { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | Should -Throw -ErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-                $Error[0].Exception | Should -BeOfType System.IO.IOException
-                $Error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
+                $error[0].Exception | Should -BeOfType System.IO.IOException
+                $error[0].Exception.Data[$selfCopyKey] | Should -Not -BeNullOrEmpty
             }
         }
 
@@ -1438,7 +1462,7 @@ Describe "Verify sub-directory creation under root" -Tag 'CI','RequireSudoOnUnix
         }
     }
 
-    It "Can create a sub directory under root path" {
+    It "Can create a sub directory under root path" -Skip:$IsMacOs {
         New-Item -Path $dirPath -ItemType Directory -Force > $null
         $dirPath | Should -Exist
     }

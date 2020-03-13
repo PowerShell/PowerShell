@@ -58,10 +58,10 @@ Describe "Serialization Tests" -tags "CI" {
         $objs1 = [byte]0, [byte]1, [byte]2, [byte]3, [byte]255
         $objs2 = @()
         $objs3 = [byte]128
-        $objs4 = @()
-        for($i=0;$i -lt 256;$i++)
+        $objs4 = [System.Byte[]]::new(256)
+        for($i=0; $i -lt 256; $i++)
         {
-           $objs4 += [byte]$i
+           $objs4[$i] = [byte]$i
         }
         $objsArray = New-Object System.Collections.ArrayList
         $objsArray.Add($objs1)

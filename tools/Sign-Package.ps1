@@ -21,7 +21,7 @@ function New-SelfSignedCertificate
 
         #Path to save generated Certificate
         [ValidateNotNullOrEmpty()]
-        [string] $CertificateFilePath = "$pwd\PowerShell.cer",
+        [string] $CertificateFilePath = "$PWD\PowerShell.cer",
 
         #Path to save generated pvk file
         [ValidateNotNullOrEmpty()]
@@ -55,7 +55,7 @@ function ConvertTo-Pfx
 
         #Path to Certificate file
         [ValidateNotNullOrEmpty()]
-        [string] $CertificateFilePath = "$pwd\PowerShell.cer",
+        [string] $CertificateFilePath = "$PWD\PowerShell.cer",
 
         #Path to pvk file
         [ValidateNotNullOrEmpty()]

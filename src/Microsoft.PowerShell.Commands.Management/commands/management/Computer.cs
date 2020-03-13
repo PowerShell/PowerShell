@@ -1181,7 +1181,7 @@ $result
         /// </summary>
         public void Dispose()
         {
-             _cancel.Dispose();
+            _cancel.Dispose();
         }
 
         #endregion "IDisposable Members"

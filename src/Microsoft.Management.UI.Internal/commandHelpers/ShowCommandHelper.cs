@@ -645,7 +645,7 @@ Function PSGetSerializedShowCommandInfo
             }
 
             ModuleViewModel moduleToSelect = returnValue.Modules.Find(
-                new Predicate<ModuleViewModel>(delegate(ModuleViewModel module)
+                new Predicate<ModuleViewModel>((module) =>
                 {
                     return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
                 }));
@@ -658,7 +658,7 @@ Function PSGetSerializedShowCommandInfo
             returnValue.SelectedModule = moduleToSelect;
 
             CommandViewModel commandToSelect = moduleToSelect.Commands.Find(
-                new Predicate<CommandViewModel>(delegate(CommandViewModel command)
+                new Predicate<CommandViewModel>((command) =>
                 {
                     return command.ModuleName.Equals(parentModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) &&
                         command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
@@ -876,11 +876,8 @@ Function PSGetSerializedShowCommandInfo
         {
             window.Dispatcher.Invoke(
                 new SendOrPostCallback(
-                    delegate(object ignored)
-                    {
-                        window.Activate();
-                    }),
-                    string.Empty);
+                    (_) => window.Activate()),
+                string.Empty);
         }
 
         /// <summary>
@@ -896,7 +893,7 @@ Function PSGetSerializedShowCommandInfo
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ShowAllModulesWindow(PSCmdlet cmdlet, Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter, double windowWidth, double windowHeight, bool passThrough)
         {
-            this.methodThatReturnsDialog = new DispatcherOperationCallback(delegate(object ignored)
+            this.methodThatReturnsDialog = new DispatcherOperationCallback((object ignored) =>
             {
                 ShowAllModulesWindow allModulesWindow = new ShowAllModulesWindow();
                 this.allModulesViewModel = new AllModulesViewModel(importedModules, commands, noCommonParameter);
@@ -939,7 +936,7 @@ Function PSGetSerializedShowCommandInfo
 
             this.hostWindow.Dispatcher.Invoke(
                 new SendOrPostCallback(
-                    delegate(object ignored)
+                    (_) =>
                     {
                         Window childWindow = (Window)this.methodThatReturnsDialog.Invoke(null);
                         childWindow.Owner = this.hostWindow;
@@ -967,7 +964,7 @@ Function PSGetSerializedShowCommandInfo
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ShowCommandWindow(PSCmdlet cmdlet, object commandViewModelObj, double windowWidth, double windowHeight, bool passThrough)
         {
-            this.methodThatReturnsDialog = new DispatcherOperationCallback(delegate(object ignored)
+            this.methodThatReturnsDialog = new DispatcherOperationCallback((object ignored) =>
             {
                 this.commandViewModel = (CommandViewModel)commandViewModelObj;
                 ShowCommandWindow showCommandWindow = new ShowCommandWindow();
@@ -1007,7 +1004,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate(object ignored)
+                        delegate (object ignored)
                         {
                             this.allModulesViewModel = ShowCommandHelper.GetNewAllModulesViewModel(
                                 this.allModulesViewModel,
@@ -1034,7 +1031,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate(object ignored)
+                        (_) =>
                         {
                             string message = ShowCommandHelper.GetImportModuleFailedMessage(
                                 this.commandNeedingImportModule,
@@ -1057,7 +1054,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate(object ignored)
+                        delegate (object ignored)
                         {
                             HelpWindow help = new HelpWindow(getHelpResults[0]);
                             help.Owner = this.window;

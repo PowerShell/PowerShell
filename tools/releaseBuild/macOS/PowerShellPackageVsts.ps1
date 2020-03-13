@@ -32,9 +32,18 @@ param (
 $repoRoot = $location
 
 if ($Build.IsPresent) {
-    $releaseTagParam = @{}
+    $releaseTagParam = @{ }
     if ($ReleaseTag) {
         $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+
+        #Remove the initial 'v' from the ReleaseTag
+        $version = $ReleaseTag -replace '^v'
+        $semVersion = [System.Management.Automation.SemanticVersion] $version
+
+        $metadata = Get-Content "$location/tools/metadata.json" -Raw | ConvertFrom-Json
+        $LTS = $metadata.LTSRelease
+
+        Write-Verbose -Verbose -Message "LTS is set to: $LTS"
     }
 }
 
@@ -56,6 +65,13 @@ try {
         Start-PSPackage @releaseTagParam
         switch ($ExtraPackage) {
             "tar" { Start-PSPackage -Type tar @releaseTagParam }
+        }
+
+        if ($LTS) {
+            Start-PSPackage @releaseTagParam -LTS
+            switch ($ExtraPackage) {
+                "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+            }
         }
     }
 } finally {

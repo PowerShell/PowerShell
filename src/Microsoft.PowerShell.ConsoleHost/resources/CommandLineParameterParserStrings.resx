@@ -136,15 +136,18 @@
     <value>'-' was specified as the argument to -Command but standard input has not been redirected for this process.</value>
   </data>
   <data name="MissingOutputFormatParameter" xml:space="preserve">
-    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter. Specify one of the following formats for this parameter.
+    <value>The command cannot be run because no argument has been supplied for the OutputFormat parameter.
+Specify one of the following formats for this parameter:
 {0}</value>
   </data>
   <data name="MissingInputFormatParameter" xml:space="preserve">
-    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.  Valid formats are:
+    <value>Cannot process the command because the -InputFormat parameter requires an argument. Specify a valid format argument for this parameter.
+Valid formats are:
 {0}</value>
   </data>
   <data name="BadFormatParameterValue" xml:space="preserve">
-    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.  Valid formats are:
+    <value>Cannot process the command because of an incorrect parameter value. "{0}" is not a valid format.
+Valid formats are:
 {1}</value>
   </data>
   <data name="ArgsAlreadySpecified" xml:space="preserve">

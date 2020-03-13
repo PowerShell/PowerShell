@@ -82,7 +82,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         param($parameter, $value, $script, $expectedNull)
 
         $setServiceCommand = [Microsoft.PowerShell.Commands.SetServiceCommand]::new()
-        if ($script -ne $Null) {
+        if ($script -ne $null) {
             $value = & $script
         }
         $setServiceCommand.$parameter = $value

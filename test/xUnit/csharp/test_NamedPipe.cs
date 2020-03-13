@@ -10,7 +10,7 @@ using Xunit;
 namespace PSTests.Parallel
 {
     public class NamedPipeTests
-    {        
+    {
         [Fact]
         public void TestCustomPipeNameCreation()
         {
@@ -35,7 +35,7 @@ namespace PSTests.Parallel
 
             if (!Platform.IsWindows)
             {
-                Assert.Throws<InvalidOperationException>(() => 
+                Assert.Throws<InvalidOperationException>(() =>
                     RemoteSessionNamedPipeServer.CreateCustomNamedPipeServer(longPipeName));
             }
             else

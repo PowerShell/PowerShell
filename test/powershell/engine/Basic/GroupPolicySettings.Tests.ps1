@@ -8,13 +8,13 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
             $PSDefaultParameterValues["it:skip"] = $true
         }
         else {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $True)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $true)
         }
     }
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
         if ( $IsWindows ) {
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $False)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('BypassGroupPolicyCaching', $false)
         }
     }
 
@@ -67,7 +67,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
 
                 Remove-Module $ModuleToLog -ErrorAction SilentlyContinue
                 Import-Module $ModuleToLog
-                (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -Be $False # without GP logging for the module should be OFF
+                (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -BeFalse # without GP logging for the module should be OFF
 
                 # enable GP
                 [string]$RareCommand = Get-Random
@@ -76,11 +76,11 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
 
                 Remove-Module $ModuleToLog -ErrorAction SilentlyContinue
                 Import-Module $ModuleToLog # this will read and start using GP setting
-                (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -Be $True # with GP logging for the module should be ON
+                (Get-Module $ModuleToLog).LogPipelineExecutionDetails | Should -BeTrue # with GP logging for the module should be ON
 
                 Get-Alias $RareCommand -ErrorAction SilentlyContinue | Out-Null
 
-                (Get-Module $ModuleToLog).LogPipelineExecutionDetails = $False # turn off logging
+                (Get-Module $ModuleToLog).LogPipelineExecutionDetails = $false # turn off logging
                 Remove-ItemProperty -Path $KeyPath -Name EnableModuleLogging -Force # turn off GP setting
                 Remove-item $ModuleNamesKeyPath -Recurse -Force
                 # usually event becomes visible in the log after ~500 ms
@@ -120,9 +120,9 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 $sbString = $script:CreatingScriptblockEvent.Message.Substring($sbStringStart, $sbStringEnd - $sbStringStart)
 
                 $StartedScriptBlockInvocationEvent = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4105 } -MaxEvents 5 | ? {$_.Message.Contains($sbString)}
-                $StartedScriptBlockInvocationEvent | Should Not BeNullOrEmpty
+                $StartedScriptBlockInvocationEvent | Should -Not -BeNullOrEmpty
                 $CompletedScriptBlockInvocationEvent = Get-WinEvent -FilterHashtable @{ ProviderName="PowerShellCore"; Id = 4106 } -MaxEvents 5 | ? {$_.Message.Contains($sbString)}
-                $CompletedScriptBlockInvocationEvent | Should Not BeNullOrEmpty
+                $CompletedScriptBlockInvocationEvent | Should -Not -BeNullOrEmpty
             }
 
             $KeyPath = Join-Path $KeyRoot 'ScriptBlockLogging'
@@ -151,7 +151,7 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 Set-ItemProperty -Path $KeyPath -Name EnableInvocationHeader -Value 1 -Force
 
                 $number = get-random
-                $null = pwsh -NoProfile -NonInteractive -c "$number"
+                $null = & "$PSHOME/pwsh" -NoProfile -NonInteractive -c "$number"
 
                 Remove-ItemProperty -Path $KeyPath -Name OutputDirectory -Force
                 Remove-ItemProperty -Path $KeyPath -Name EnableInvocationHeader -Force
@@ -159,8 +159,8 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 $LogPath = (gci -Path $OutputDirectory -Filter "PowerShell_transcript*.txt" -Recurse).FullName
                 $Log = Get-Content $LogPath -Raw
 
-                $Log.Contains("$number") | should be $True # verifies that Transcription policy works
-                $Log.Contains("Command start time:") | should be $True # verifies that EnableInvocationHeader works
+                $Log.Contains("$number") | Should -BeTrue # verifies that Transcription policy works
+                $Log.Contains("Command start time:") | Should -BeTrue # verifies that EnableInvocationHeader works
 
                 Remove-Item -Path $OutputDirectory -Recurse -Force
             }
@@ -228,14 +228,14 @@ Describe 'Group policy settings tests' -Tag CI,RequireAdminOnWindows {
                 Set-ItemProperty -Path $KeyPath -Name ConsoleSessionConfigurationName -Value $SessionName -Force
 
                 $LogPath = (New-TemporaryFile).FullName
-                pwsh -NoProfile -NonInteractive -c "1" *> $LogPath # this implicitly uses SessionConfiguration from the policy
+                & "$PSHOME/pwsh" -NoProfile -NonInteractive -c "1" *> $LogPath # this implicitly uses SessionConfiguration from the policy
 
                 # Log should have an error that has our configuration session name; e.g.:
                 # 'The shell cannot be started. A failure occurred during initialization:
                 # Cannot create or open the configuration session 116337267.'
 
                 $Log = Get-Content $LogPath -Raw
-                $Log.Contains("$SessionName") | should be $True
+                $Log.Contains("$SessionName") | Should -BeTrue
                 Remove-Item -Path $LogPath -Force
             }
 

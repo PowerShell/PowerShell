@@ -159,9 +159,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             List<MshResolvedExpressionParameterAssociation> retVal = new List<MshResolvedExpressionParameterAssociation>();
             foreach (string property in displayedProperties)
             {
-                if (!duplicatesFinder.ContainsKey(property))
+                if (duplicatesFinder.TryAdd(property, null))
                 {
-                    duplicatesFinder.Add(property, null);
                     PSPropertyExpression expr = new PSPropertyExpression(property, true);
                     retVal.Add(new MshResolvedExpressionParameterAssociation(null, expr));
                 }

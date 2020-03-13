@@ -705,7 +705,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"NameString",
                     GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), @"NameString"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 
@@ -716,7 +717,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"LengthString",
                     GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), @"LengthString"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 
@@ -727,7 +729,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"LastWriteTimeString",
                     GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), @"LastWriteTimeString"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 
@@ -830,7 +833,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"NameString",
                     GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), @"NameString"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 
@@ -841,7 +845,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"LengthString",
                     GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), @"LengthString"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 
@@ -852,7 +857,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"LastWriteTimeString",
                     GetMethodInfo(typeof(Microsoft.PowerShell.Commands.FileSystemProvider), @"LastWriteTimeString"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 
@@ -5095,7 +5101,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"Flags",
                     GetMethodInfo(typeof(Microsoft.PowerShell.DeserializingTypeConverter), @"GetParameterSetMetadataFlags"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 
@@ -5256,7 +5263,8 @@ namespace System.Management.Automation.Runspaces
                 new PSCodeProperty(
                     @"InstanceId",
                     GetMethodInfo(typeof(Microsoft.PowerShell.DeserializingTypeConverter), @"GetFormatViewDefinitionInstanceId"),
-                    setterCodeReference: null) { IsHidden = true },
+                    setterCodeReference: null)
+                { IsHidden = true },
                 typeMembers,
                 isOverride: false);
 

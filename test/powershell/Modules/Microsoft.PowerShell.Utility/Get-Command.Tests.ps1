@@ -35,7 +35,7 @@ Describe "Get-Command Feature tests" -Tag Feature {
         }
 
         It "Can return multiple results relying on auto module loading" {
-            $results = pwsh -outputformat xml -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
+            $results = & "$PSHOME/pwsh" -outputformat xml -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
             $results | Should -HaveCount 2
             $results.Name | Should -Contain "Invoke-FooZedZed"
             $results.Name | Should -Contain "Import-FooZedZed"

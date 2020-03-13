@@ -22,24 +22,24 @@ namespace System.Management.Automation
             Inverse
         }
 
-        private static readonly Dictionary<ConsoleColor, string> ConsoleColors = new Dictionary<ConsoleColor, string>
+        private static readonly Dictionary<ConsoleColor, string> ForegroundColorMap = new Dictionary<ConsoleColor, string>
         {
-            { ConsoleColor.Black, "\x1b[2;30m" },
-            { ConsoleColor.Gray, "\x1b[2;37m" },
-            { ConsoleColor.Red, "\x1b[1;31m" },
-            { ConsoleColor.Green, "\x1b[1;32m" },
-            { ConsoleColor.Yellow, "\x1b[1;33m" },
-            { ConsoleColor.Blue, "\x1b[1;34m" },
-            { ConsoleColor.Magenta, "\x1b[1;35m" },
-            { ConsoleColor.Cyan, "\x1b[1;36m" },
-            { ConsoleColor.White, "\x1b[1;37m" },
-            { ConsoleColor.DarkRed, "\x1b[2;31m" },
-            { ConsoleColor.DarkGreen, "\x1b[2;32m" },
-            { ConsoleColor.DarkYellow, "\x1b[2;33m" },
-            { ConsoleColor.DarkBlue, "\x1b[2;34m" },
-            { ConsoleColor.DarkMagenta, "\x1b[2;35m" },
-            { ConsoleColor.DarkCyan, "\x1b[2;36m" },
-            { ConsoleColor.DarkGray, "\x1b[1;30m" },
+            { ConsoleColor.Black, "\x1b[30m" },
+            { ConsoleColor.Gray, "\x1b[37m" },
+            { ConsoleColor.Red, "\x1b[91m" },
+            { ConsoleColor.Green, "\x1b[92m" },
+            { ConsoleColor.Yellow, "\x1b[93m" },
+            { ConsoleColor.Blue, "\x1b[94m" },
+            { ConsoleColor.Magenta, "\x1b[95m" },
+            { ConsoleColor.Cyan, "\x1b[96m" },
+            { ConsoleColor.White, "\x1b[97m" },
+            { ConsoleColor.DarkRed, "\x1b[31m" },
+            { ConsoleColor.DarkGreen, "\x1b[32m" },
+            { ConsoleColor.DarkYellow, "\x1b[33m" },
+            { ConsoleColor.DarkBlue, "\x1b[34m" },
+            { ConsoleColor.DarkMagenta, "\x1b[35m" },
+            { ConsoleColor.DarkCyan, "\x1b[36m" },
+            { ConsoleColor.DarkGray, "\x1b[90m" },
         };
 
         private static readonly Dictionary<VT, string> VTCodes = new Dictionary<VT, string>
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         public static string GetEscapeSequence(ConsoleColor color)
         {
             string value = string.Empty;
-            ConsoleColors.TryGetValue(color, out value);
+            ForegroundColorMap.TryGetValue(color, out value);
             return value;
         }
 

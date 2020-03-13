@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
 ##
@@ -116,7 +116,7 @@ try
                 if ($ps -ne $null) { $ps.Dispose() }
             }
 
-            $expectedError.FullyQualifiedErrorId | Should Be 'NotSupported,Microsoft.PowerShell.Commands.SetPSBreakpointCommand'
+            $expectedError.FullyQualifiedErrorId | Should -Be 'NotSupported,Microsoft.PowerShell.Commands.SetPSBreakpointCommand'
         }
 
         It "Verifies that Wait-Debugger is disabled on locked down system" {
@@ -145,7 +145,7 @@ try
             }
 
             # Debugger should not have been active in lockdown mode
-            $debuggerTester.DebuggerStopHitCount | Should Be 0
+            $debuggerTester.DebuggerStopHitCount | Should -Be 0
         }
     }
 }

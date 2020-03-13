@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (obj != AutomationNull.Value)
                 {
-                    SetPSCustomObject(obj);
+                    SetPSCustomObject(obj, newPSObject: addedNoteProperties.Count > 0);
                     WriteObject(obj);
                 }
 
@@ -648,16 +648,22 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isObjUnique)
                 {
-                    SetPSCustomObject(obj);
+                    SetPSCustomObject(obj, newPSObject: addedNoteProperties.Count > 0);
                     _uniques.Add(new UniquePSObjectHelper(obj, addedNoteProperties.Count));
                 }
             }
         }
 
-        private void SetPSCustomObject(PSObject psObj)
+        private void SetPSCustomObject(PSObject psObj, bool newPSObject)
         {
             if (psObj.ImmediateBaseObject is PSCustomObject)
-                psObj.TypeNames.Insert(0, "Selected." + InputObject.BaseObject.GetType().ToString());
+            {
+                var typeName = "Selected." + InputObject.BaseObject.GetType().ToString();
+                if (newPSObject || !psObj.TypeNames.Contains(typeName))
+                {
+                    psObj.TypeNames.Insert(0, typeName);
+                }
+            }
         }
 
         private void ProcessObjectAndHandleErrors(PSObject pso)
