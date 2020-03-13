@@ -636,6 +636,7 @@ namespace System.Management.Automation.PSTasks
         private readonly ConcurrentDictionary<int, Runspace> _activeRunspaces;
         private readonly WaitHandle[] _waitHandles;
         private bool _isOpen;
+        private bool _stopping;
 
         private const int AddAvailable = 0;
         private const int Stop = 1;
@@ -790,6 +791,8 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         public void StopAll()
         {
+            _stopping = true;
+            
             // Accept no more input
             Close();
             _stopAll.Set();
@@ -808,6 +811,7 @@ namespace System.Management.Automation.PSTasks
 
             // Dispose of pool runspaces
             DisposeRunspaces();
+            _stopping = false;
         }
 
         /// <summary>
@@ -847,7 +851,11 @@ namespace System.Management.Automation.PSTasks
                     }
 
                     task.StateChanged -= HandleTaskStateChangedDelegate;
-                    task.Dispose();
+                    if (!_stopping)
+                    {
+                        // StopAll disposes tasks.
+                        task.Dispose();
+                    }
                     CheckForComplete();
                     break;
             }
@@ -885,9 +893,18 @@ namespace System.Management.Automation.PSTasks
                 if (runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
                     runspace.RunspaceAvailability == RunspaceAvailability.Available)
                 {
-                    runspace.Name = runspaceName;
-                    return runspace;
+                    try
+                    {
+                        runspace.ResetRunspaceState();
+                        runspace.Name = runspaceName;
+                        return runspace;
+                    }
+                    catch
+                    {
+                        // If the runspace cannot be reset for any reason, remove it.
+                    }
                 }
+
                 RemoveActiveRunspace(runspace);
             }
 
@@ -910,16 +927,8 @@ namespace System.Management.Automation.PSTasks
             if (runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
                 runspace.RunspaceAvailability == RunspaceAvailability.Available)
             {
-                try
-                {
-                    runspace.ResetRunspaceState();
-                    _runspacePool.Enqueue(runspace);
-                    return;
-                }
-                catch
-                {
-                    // If the runspace cannot be reset for any reason, remove it.
-                }
+                _runspacePool.Enqueue(runspace);
+                return;
             }
 
             RemoveActiveRunspace(runspace);
