@@ -1036,7 +1036,8 @@ function Start-PSPester {
         [Parameter(ParameterSetName='Wait', Mandatory=$true,
             HelpMessage='Wait for the debugger to attach to PowerShell before Pester starts.  Debug builds only!')]
         [switch]$Wait,
-        [switch]$SkipTestToolBuild
+        [switch]$SkipTestToolBuild,
+        [string]$PesterOptionHashtableLiteral
     )
 
     if (-not (Get-Module -ListAvailable -Name $Pester -ErrorAction SilentlyContinue | Where-Object { $_.Version -ge "4.2" } ))
@@ -1147,6 +1148,9 @@ function Start-PSPester {
     }
     if ( $PassThru ) {
         $command += "-PassThru "
+    }
+    if ( $PesterOptionHashtableLiteral ) {
+        $command += "-PesterOption $PesterOptionHashtableLiteral"
     }
 
     $command += "'" + ($Path -join "','") + "'"
@@ -1340,6 +1344,61 @@ function Start-PSPester {
     if($ThrowOnFailure)
     {
         Test-PSPesterResults -TestResultsFile $OutputFile
+    }
+}
+
+function Start-PSPesterAdapter {
+    param(
+        # Specifies the path to the test script.
+        [Parameter(Position=0, Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string]
+        $ScriptPath,
+
+        # Specifies the name of the test taken from the Describe block's name.
+        [Parameter()]
+        [string]
+        $TestName,
+
+        # Specifies the starting line number of the DescribeBlock.  This feature requires
+        # Pester 4.6.0 or higher.
+        [Parameter()]
+        [ValidatePattern('\d*')]
+        [string]
+        $LineNumber,
+
+        # If specified, executes all the tests in the specified test script.
+        [Parameter()]
+        [switch]
+        $All,
+
+        [Parameter()]
+        [switch] $MinimumVersion5,
+
+        [Parameter(Mandatory)]
+        [string] $Output
+    )
+
+    # passing the hashtables as text because we would serialize them anyway
+    if ($All) {
+        Start-PSPester -Path $ScriptPath -PesterOptionHashtableLiteral '@{IncludeVSCodeMarker=$true}' # -Show $Output
+    }
+    elseif (($LineNumber -match '\d+') -and ($pesterModule.Version -ge '4.6.0')) {
+        $hash = "@{
+            IncludeVSCodeMarker=`$true
+            ScriptBlockFilter = @{
+                Line=$LineNumber
+                Path='$ScriptPath'
+            }
+        }"
+
+        Start-PSPester -Path $ScriptPath -PesterOptionHashtableLiteral $hash # -Show $Output
+    }
+    elseif ($TestName) {
+        throw "this should not be used"
+    }
+    else {
+        throw "this should not be used"
     }
 }
 
