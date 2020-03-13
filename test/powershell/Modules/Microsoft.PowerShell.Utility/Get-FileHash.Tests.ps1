@@ -30,7 +30,7 @@ Describe "Get-FileHash" -Tags "CI" {
         }
 
         It "Should write non-terminating error if a file is locked" -Skip:(-not $IsWindows) {
-            $result = "$env:SystemDrive\\pagefile.sys", "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
+            $result = "$env:SystemDrive\\swapfile.sys", "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
             $result.Count | Should -Be 1
             $errorVariable.FullyQualifiedErrorId | Should -BeExactly "FileReadError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
