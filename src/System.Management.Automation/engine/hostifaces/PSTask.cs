@@ -905,24 +905,24 @@ namespace System.Management.Automation.PSTasks
 
         private void ReturnRunspace(PSTaskBase task)
         {
-            try
+            var runspace = task.Runspace;
+            Dbg.Assert(runspace != null, "Task runspace cannot be null.");
+            if (runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
+                runspace.RunspaceAvailability == RunspaceAvailability.Available)
             {
-                var runspace = task.Runspace;
-                Dbg.Assert(runspace != null, "Task runspace cannot be null.");
-                if (runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
-                    runspace.RunspaceAvailability == RunspaceAvailability.Available)
+                try
                 {
                     runspace.ResetRunspaceState();
                     _runspacePool.Enqueue(runspace);
+                    return;
                 }
-                else
+                catch
                 {
-                    RemoveActiveRunspace(runspace);
+                    // If the runspace cannot be reset for any reason, remove it.
                 }
             }
-            catch
-            {
-            }
+
+            RemoveActiveRunspace(runspace);
         }
 
         private void RemoveActiveRunspace(Runspace runspace)
