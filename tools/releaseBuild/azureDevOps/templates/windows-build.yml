@@ -8,7 +8,7 @@ jobs:
   displayName: Build Windows - ${{ parameters.Architecture }}
   condition: succeeded()
   pool:
-    name: PowerShell
+    name: Package ES Standard Build
   variables:
     BuildConfiguration: ${{ parameters.BuildConfiguration }}
     BuildPlatform: ${{ parameters.BuildPlatform }}

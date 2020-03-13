@@ -92,6 +92,8 @@ jobs:
 
 - job: release_json
   displayName: Create and Upload release.json
+  pool:
+    vmImage: 'windows-latest'
   steps:
   - template: templates/SetVersionVariables.yml
     parameters:
