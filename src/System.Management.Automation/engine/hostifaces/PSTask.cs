@@ -716,9 +716,9 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         internal void DisposeRunspaces()
         {
-            foreach (var runspace in _activeRunspaces.Values)
+            foreach (var item in _activeRunspaces)
             {
-                runspace.Dispose();
+                item.Value.Dispose();
             }
             _activeRunspaces.Clear();
         }
