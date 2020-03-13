@@ -49,7 +49,7 @@ function ExecuteRequestWithOutFile {
         } else {
             Invoke-RestMethod -Uri $uri -OutFile $filePath
         }
-        $result.Output = Get-Content $filePath -Raw -ErrorAction SilentlyContinue
+        $result.Output = Get-Content -LiteralPath $filePath -Raw -ErrorAction SilentlyContinue
     } catch {
         $result.Error = $_
     } finally {
