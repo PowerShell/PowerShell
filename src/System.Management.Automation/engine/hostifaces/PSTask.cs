@@ -427,6 +427,7 @@ namespace System.Management.Automation.PSTasks
         /// <summary>
         /// Start task.
         /// </summary>
+        /// <param name="runspace">Runspace used to run task.</param>
         public void Start(Runspace runspace)
         {
             if (_powershell != null)
@@ -721,6 +722,7 @@ namespace System.Management.Automation.PSTasks
             {
                 item.Value.Dispose();
             }
+            
             _activeRunspaces.Clear();
         }
 
@@ -792,7 +794,7 @@ namespace System.Management.Automation.PSTasks
         public void StopAll()
         {
             _stopping = true;
-            
+
             // Accept no more input
             Close();
             _stopAll.Set();
@@ -804,6 +806,7 @@ namespace System.Management.Automation.PSTasks
                 tasksToStop = new PSTaskBase[_taskPool.Values.Count];
                 _taskPool.Values.CopyTo(tasksToStop, 0);
             }
+
             foreach (var task in tasksToStop)
             {
                 task.Dispose();
@@ -856,6 +859,7 @@ namespace System.Management.Automation.PSTasks
                         // StopAll disposes tasks.
                         task.Dispose();
                     }
+
                     CheckForComplete();
                     break;
             }
