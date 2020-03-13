@@ -442,12 +442,14 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
             if (filter.Length > 5 && filter.EndsWith("es", StringComparison.OrdinalIgnoreCase))
             {
-                return commandName.AsSpan().Contains(filter.AsSpan(0, filter.Length - 2), StringComparison.OrdinalIgnoreCase);
+                ReadOnlySpan<char> filterSpan = filter.AsSpan(0, filter.Length - 2);
+                return commandName.AsSpan().Contains(filterSpan, StringComparison.OrdinalIgnoreCase);
             }
 
             if (filter.Length > 4 && filter.EndsWith("s", StringComparison.OrdinalIgnoreCase))
             {
-                return commandName.AsSpan().Contains(filter.AsSpan(0, filter.Length - 1), StringComparison.OrdinalIgnoreCase);
+                ReadOnlySpan<char> filterSpan = filter.AsSpan(0, filter.Length - 1);
+                return commandName.AsSpan().Contains(filterSpan, StringComparison.OrdinalIgnoreCase);
             }
 
             return false;
