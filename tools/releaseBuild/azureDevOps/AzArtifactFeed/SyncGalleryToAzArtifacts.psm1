@@ -66,10 +66,10 @@ function SyncGalleryToAzArtifacts {
         }
 
         # Check if Az package version is less that gallery version
-        if ($foundPackageOnAz.Version -lt $foundPackageOnGallery.Version) {
+        if (CompareVersions -lt -ReferencePackage $foundPackageOnAz -DifferencePackage $foundPackageOnGallery) {
             Write-Verbose -Verbose "Module needs to be updated $($package.Name) - $($foundPackageOnGallery.Version)"
             $modulesToUpdate += $foundPackageOnGallery
-        } elseif ($foundPackageOnGallery.Version -lt $foundPackageOnAz.Version) {
+        } elseif (CompareVersions -lt -ReferencePackage $foundPackageOnGallery -DifferencePackage $foundPackageOnAz) {
             Write-Warning "Newer version found on Az Artifacts - $($foundPackageOnAz.Name) - $($foundPackageOnAz.Version)"
         } else {
             Write-Verbose -Verbose "Module is in sync - $($package.Name)"
@@ -92,7 +92,7 @@ function SyncGalleryToAzArtifacts {
 
     # Remove dependent packages downloaded by Save-Module if there are already present in AzArtifacts feed.
     try {
-        Register-PackageSource -Name local -Location $Destination -ProviderName NuGet -Force
+        $null = Register-PackageSource -Name local -Location $Destination -ProviderName NuGet -Force
         $packageNamesToKeep = @()
         $savedPackages = Find-Package -Source local -AllVersions -AllowPreReleaseVersion
 
@@ -120,6 +120,34 @@ function SyncGalleryToAzArtifacts {
 
 }
 
+Function CompareVersions {
+    param (
+        [Microsoft.PackageManagement.Packaging.SoftwareIdentity]
+        $ReferencePackage,
+        [Microsoft.PackageManagement.Packaging.SoftwareIdentity]
+        $DifferencePackage,
+        [Parameter(Mandatory = $true, ParameterSetName='lt')]
+        [switch]
+        $lt,
+        [Parameter(Mandatory = $true, ParameterSetName='gt')]
+        [switch]
+        $gt
+    )
+
+    if ($ReferencePackage.Version -eq $DifferencePackage.Version) {
+        return $false
+    }
+
+    $latest = SortPackage -p @($ReferencePackage,$DifferencePackage) | Select-Object -First 1
+
+    if ($gt.IsPresent) {
+        return $ReferencePackage -eq $latest
+    } elseif ($lt.IsPresent) {
+        return $DifferencePackage -eq $latest
+    } else {
+        throw "Unknown parameter set"
+    }
+}
 
 
 Function SortPackage {
@@ -176,4 +204,4 @@ function NormalizeVersion {
     $sVer
 }
 
-Export-ModuleMember -Function 'SyncGalleryToAzArtifacts'
+Export-ModuleMember -Function 'SyncGalleryToAzArtifacts', 'SortPackage'
