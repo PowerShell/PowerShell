@@ -384,7 +384,7 @@ DUPLICATE key '{fullName}' from '{strongAssemblyName}' (IsObsolete? {isTypeObsol
             }
 
             string allText = File.ReadAllText(referenceListPath);
-            string[] references = allText.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] references = allText.Split(';', StringSplitOptions.RemoveEmptyEntries);
             List<string> refAssemblyFiles = new List<string>(120);
 
             for (int i = 0; i < references.Length; i++)
