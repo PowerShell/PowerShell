@@ -7,7 +7,7 @@ jobs:
     ${{ parameters.parentJobs }}
   displayName: Build NuGet packages
   condition: succeeded()
-  pool: PowerShell
+  pool: Package ES Standard Build
 
   timeoutInMinutes: 90
 

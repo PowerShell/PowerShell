@@ -4,7 +4,7 @@ jobs:
   displayName: Build
   condition: succeeded()
   pool:
-    name: PowerShell
+    name: Package ES Standard Build
   strategy:
     matrix:
       Build (x64,release):
@@ -177,7 +177,7 @@ jobs:
   dependsOn: BuildJob
   condition: succeeded()
   pool:
-    name: PowerShell
+    name: Package ES Standard Build
   strategy:
     matrix:
       release-anycpu:
