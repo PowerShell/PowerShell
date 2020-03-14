@@ -1466,7 +1466,6 @@ namespace Microsoft.PowerShell.Commands
                 IsSingleByteCharacterSet())
             {
                 // Unicode -- two bytes per character
-                // BigEndianUnicode -- two types per character
                 // UTF-32 -- four bytes per character
                 // ASCII -- one byte per character
                 // The BufferSize will be a multiple of 4, so we can just read toRead number of bytes
