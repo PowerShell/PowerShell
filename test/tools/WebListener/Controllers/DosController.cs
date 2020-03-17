@@ -29,33 +29,37 @@ namespace mvc.Controllers
             }
 
             StringValues dosLengths;
-            Int32 dosLength =1;
+            Int32 dosLength = 1;
             if (Request.Query.TryGetValue("dosLength", out dosLengths))
             {
                 Int32.TryParse(dosLengths.FirstOrDefault(), out dosLength);
             }
 
             string body = string.Empty;
-            switch(dosType)
+            switch (dosType)
             {
                 case "img":
                     contentType = "text/html; charset=utf8";
                     body = "<img" + (new string(' ', dosLength));
+                    break;
+                case "img-attribute":
+                    contentType = "text/html; charset=utf8";
+                    body = "<img src=\"https://fakesite.org/image.png\" id=\"mainImage\" class=\"lightbox\">";
                     break;
                 case "charset":
                     contentType = "text/html; charset=melon";
                     body = "<meta " + (new string('.', dosLength));
                     break;
                 default:
-                    throw new InvalidOperationException("Invalid dosType: "+dosType);
+                    throw new InvalidOperationException("Invalid dosType: " + dosType);
             }
 
             // Content-Type must be applied right before it is sent to the client or MVC will overwrite.
             Response.OnStarting(state =>
                 {
-                     var httpContext = (HttpContext) state;
-                     httpContext.Response.ContentType = contentType;
-                     return Task.FromResult(0);
+                    var httpContext = (HttpContext)state;
+                    httpContext.Response.ContentType = contentType;
+                    return Task.FromResult(0);
                 }, HttpContext);
 
             Response.ContentLength = Encoding.UTF8.GetBytes(body).Length;
