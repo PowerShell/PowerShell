@@ -3,13 +3,10 @@
 
 Describe "Test-Json" -Tags "CI" {
     BeforeAll {
-        # JSON schema referencing valid definitions
         $validSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath valid_schema_reference.json
 
-        # JSON schema referencing invalid definitions
         $invalidSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath invalid_schema_reference.json
 
-        # JSON schema file that doesn't exist
         $missingSchemaJsonPath = Join-Path -Path (Join-Path $PSScriptRoot -ChildPath assets) -ChildPath no_such_file.json
 
         $validSchemaJson = @"
