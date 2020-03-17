@@ -36,7 +36,7 @@ namespace Microsoft.PowerShell.Commands
         /// then validates the JSON against the schema. Before testing the JSON string,
         /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = TestJsonCommand.SchemaStringParameterSet)]
+        [Parameter(Position = 1, ParameterSetName = SchemaStringParameterSet)]
         [ValidateNotNullOrEmpty()]
         public string Schema { get; set; }
 
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         /// then validates the JSON against the schema. Before testing the JSON string,
         /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = TestJsonCommand.SchemaFileParameterSet)]
+        [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]
         [ValidateNotNullOrEmpty()]
         public string SchemaFile { get; set; }
 
