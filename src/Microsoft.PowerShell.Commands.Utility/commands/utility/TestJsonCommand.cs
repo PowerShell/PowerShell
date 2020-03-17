@@ -41,12 +41,8 @@ namespace Microsoft.PowerShell.Commands
         public string Schema { get; set; }
 
         /// <summary>
-        /// A path to the file containg schema to validate the JSON against.
+        /// A path to the file containg schema to validate the JSON string against.
         /// This is optional parameter.
-        /// If the parameter is absent the cmdlet only attempts to parse the JSON string.
-        /// If the parameter present the cmdlet attempts to parse the JSON string and
-        /// then validates the JSON against the schema. Before testing the JSON string,
-        /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]
         [ValidateNotNullOrEmpty()]
