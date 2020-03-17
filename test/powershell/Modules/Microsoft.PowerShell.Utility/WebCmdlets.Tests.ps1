@@ -1904,7 +1904,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Image Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='img'
-                dosLength='5000'
+                dosLength='50000'
             }
             $script:content = ''
             [TimeSpan] $timeSpan = Measure-Command {
