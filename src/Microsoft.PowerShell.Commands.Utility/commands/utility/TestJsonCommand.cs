@@ -110,8 +110,6 @@ namespace Microsoft.PowerShell.Commands
                 e is SecurityException
             )
             {
-                // Do we really need to wrap exception? Not doing this provides more clear error message upfront.
-                // E.g.: "'{}'|Test-Json -SchemaFile c:" results in "Test-Json : Access to the path 'C:\' is denied".
                 Exception exception = new Exception("JSON schema file open failure", e); // TODO: Add resource string
                 ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, null));
             }
