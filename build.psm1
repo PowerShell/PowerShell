@@ -2200,7 +2200,9 @@ function Start-CrossGen {
             [Parameter(Mandatory= $true)]
             [ValidateNotNullOrEmpty()]
             [String]
-            $CrossgenPath
+            $CrossgenPath,
+            [switch]
+            $GenerateSymbols
         )
 
         $outputAssembly = $AssemblyPath.Replace(".dll", ".ni.dll")
@@ -2214,8 +2216,30 @@ function Start-CrossGen {
             # Generate the ngen assembly
             Write-Verbose "Generating assembly $niAssemblyName"
             Start-NativeExecution {
-                & $CrossgenPath /MissingDependenciesOK /in $AssemblyPath /out $outputAssembly /Platform_Assemblies_Paths $platformAssembliesPath
+                & $CrossgenPath /ReadyToRun /MissingDependenciesOK /in $AssemblyPath /out $outputAssembly /Platform_Assemblies_Paths $platformAssembliesPath
             } | Write-Verbose
+
+            if($GenerateSymbols.IsPresent)
+            {
+                $createSymbolOptionName = $null
+                if($Environment.IsWindows)
+                {
+                    $createSymbolOptionName = '-CreatePDB'
+
+                }
+                elseif ($Environment.IsLinux)
+                {
+                    $createSymbolOptionName = '-CreatePerfMap'
+                }
+                $env:COMPlus_PartialNGen=0
+
+                if($createSymbolOptionName)
+                {
+                    Start-NativeExecution {
+                        & $CrossgenPath -readytorun -platform_assemblies_paths $platformAssembliesPath $createSymbolOptionName $platformAssembliesPath $outputAssembly
+                    } | Write-Verbose
+                }
+            }
 
             <#
             # TODO: Generate the pdb for the ngen binary - currently, there is a hard dependency on diasymreader.dll, which is available at %windir%\Microsoft.NET\Framework\v4.0.30319.
@@ -2235,18 +2259,24 @@ function Start-CrossGen {
 
     # Get the path to crossgen
     $crossGenExe = if ($environment.IsWindows) { "crossgen.exe" } else { "crossgen" }
+    $generateSymbols = $false
 
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($environment.IsWindows) {
         if ($Runtime -match "-x86") {
             "win-x86"
+            $generateSymbols = $true
         } elseif ($Runtime -match "-x64") {
             "win-x64"
+            $generateSymbols = $true
         } elseif (!($env:PROCESSOR_ARCHITECTURE -match "arm")) {
             throw "crossgen for 'win-arm' and 'win-arm64' must be run on that platform"
         }
     } elseif ($Runtime -eq "linux-arm") {
         throw "crossgen is not available for 'linux-arm'"
+    } elseif ($Runtime -eq "linux-x64") {
+        $Runtime
+        $generateSymbols = $true
     } else {
         $Runtime
     }
@@ -2344,7 +2374,7 @@ function Start-CrossGen {
 
     foreach ($assemblyName in $fullAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
-        New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
+        New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath -GenerateSymbols:$generateSymbols
     }
 
     #
