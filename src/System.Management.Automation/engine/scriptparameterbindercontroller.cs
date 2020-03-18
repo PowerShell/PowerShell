@@ -274,7 +274,7 @@ namespace System.Management.Automation
                     //    foo "-abc"
                     // This is important when splatting, we reconstruct the parameter if the
                     // value is splatted.
-                    var parameterText = new PSObject(new string(parameter.ParameterText.ToCharArray()));
+                    var parameterText = new PSObject(new string(parameter.ParameterText));
                     if (parameterText.Properties[NotePropertyNameForSplattingParametersInArgs] == null)
                     {
                         var noteProperty = new PSNoteProperty(NotePropertyNameForSplattingParametersInArgs,

@@ -1164,7 +1164,7 @@ namespace System.Management.Automation
                 var tryCmdletCompletion = false;
                 var clearLiteralPathsKey = TurnOnLiteralPathOption(context);
 
-                if (context.WordToComplete.IndexOf('-') != -1)
+                if (context.WordToComplete.Contains('-'))
                 {
                     tryCmdletCompletion = true;
                 }
@@ -1224,7 +1224,7 @@ namespace System.Management.Automation
                 }
 
                 // Handle member completion with wildcard: echo $a.*<tab>
-                if (pathAst.Value.IndexOf('*') != -1 && secondToLastMemberAst != null &&
+                if (pathAst.Value.Contains('*') && secondToLastMemberAst != null &&
                     secondToLastMemberAst.Extent.EndLineNumber == pathAst.Extent.StartLineNumber &&
                     secondToLastMemberAst.Extent.EndColumnNumber == pathAst.Extent.StartColumnNumber)
                 {
@@ -1328,7 +1328,7 @@ namespace System.Management.Automation
                         context.Options.Remove("LiteralPaths");
                 }
 
-                if (context.WordToComplete != string.Empty && context.WordToComplete.IndexOf('-') != -1)
+                if (context.WordToComplete != string.Empty && context.WordToComplete.Contains('-'))
                 {
                     var commandResults = CompleteCommand(context);
                     if (commandResults != null)
@@ -3844,7 +3844,7 @@ namespace System.Management.Automation
                 wordToComplete = wordToComplete.Substring(1, wordToComplete.Length - (endQuoted ? 2 : 1));
             }
 
-            if (wordToComplete.IndexOf('[') != -1)
+            if (wordToComplete.Contains('['))
             {
                 var cursor = (InternalScriptPosition)context.CursorPosition;
                 cursor = cursor.CloneWithNewOffset(cursor.Offset - context.TokenAtCursor.Extent.StartOffset - (isQuoted ? 1 : 0));
@@ -5632,7 +5632,7 @@ namespace System.Management.Automation
                 // If the completion included a namespace and ToStringCodeMethods.Type found
                 // an accelerator, then just use the type's FullName instead because the user
                 // probably didn't want the accelerator.
-                if (keyMatched.IndexOf('.') != -1 && completion.IndexOf('.') == -1)
+                if (keyMatched.Contains('.') && !completion.Contains('.'))
                 {
                     completion = Type.FullName;
                 }
@@ -6624,7 +6624,7 @@ namespace System.Management.Automation
                     }
 
                     string tooltip = memberInfo.ToString();
-                    if (tooltip.IndexOf("),", StringComparison.Ordinal) != -1)
+                    if (tooltip.Contains("),", StringComparison.Ordinal))
                     {
                         var overloads = tooltip.Split("),", StringSplitOptions.RemoveEmptyEntries);
                         var newTooltip = new StringBuilder();

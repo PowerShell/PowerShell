@@ -150,7 +150,7 @@ namespace System.Management.Automation.Language
                                       : sourceLine.Length - position.StartColumnNumber + 1;
 
                 // Expand tabs before figuring out if we need to truncate the line
-                if (sourceLine.IndexOf('\t') != -1)
+                if (sourceLine.Contains('\t'))
                 {
                     var copyLine = new StringBuilder(sourceLine.Length * 2);
 

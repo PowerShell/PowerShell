@@ -1439,7 +1439,7 @@ namespace System.Management.Automation.Runspaces
                 return (EnableNetworkAccess &&                                                              // Interactive token requested
                         (Credential == null &&                                                              // No credential provided
                          (ComputerName.Equals(DefaultComputerName, StringComparison.OrdinalIgnoreCase) ||   // Localhost computer name
-                          ComputerName.IndexOf('.') == -1)));                                               // Not FQDN computer name
+                          !ComputerName.Contains('.'))));                                                    // Not FQDN computer name
             }
         }
 

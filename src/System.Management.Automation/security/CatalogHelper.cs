@@ -218,7 +218,7 @@ namespace System.Management.Automation
             if (dirInfo != null)
             {
                 // Relative path of the file is the path inside the containing folder excluding folder Name
-                relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
+                relativePath = fileToHash.FullName.AsSpan(dirInfo.FullName.Length).TrimStart('\\').ToString();
             }
             else
             {
@@ -613,7 +613,7 @@ namespace System.Management.Automation
             if (dirInfo != null)
             {
                 // Relative path of the file is the path inside the containing folder excluding folder Name
-                relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
+                relativePath = fileToHash.FullName.AsSpan(dirInfo.FullName.Length).TrimStart('\\').ToString();
                 exclude = fileToHash.Name;
             }
             else
