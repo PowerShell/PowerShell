@@ -47,6 +47,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_Commands_MatchInfo());
 
             yield return new ExtendedTypeDefinition(
+                "Deserialized.Microsoft.PowerShell.Commands.MatchInfo",
+                ViewsOf_Deserialized_Microsoft_PowerShell_Commands_MatchInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSVariable",
                 ViewsOf_System_Management_Automation_PSVariable());
 
@@ -378,6 +382,16 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create()
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"$_.ToEmphasizedString(((get-location).path))")
+                    .EndEntry()
+                .EndControl());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Deserialized_Microsoft_PowerShell_Commands_MatchInfo()
+        {
+            yield return new FormatViewDefinition("MatchInfo",
+                CustomControl.Create()
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(@"$_.Line")
                     .EndEntry()
                 .EndControl());
         }
