@@ -638,6 +638,8 @@ namespace System.Management.Automation.PSTasks
         private readonly WaitHandle[] _waitHandles;
         private bool _isOpen;
         private bool _stopping;
+        private bool _useRunspacePool;
+        private int _createdRunspaceCount;
 
         private const int AddAvailable = 0;
         private const int Stop = 1;
@@ -652,9 +654,13 @@ namespace System.Management.Automation.PSTasks
         /// Initializes a new instance of the <see cref="PSTaskPool"/> class.
         /// </summary>
         /// <param name="size">Total number of allowed running objects in pool at one time.</param>
-        public PSTaskPool(int size)
+        /// <param name="useNewRunspace">When true, a new runspace object is created for the task instead of reusing one from the pool.</param>
+        public PSTaskPool(
+            int size,
+            bool useNewRunspace)
         {
             _sizeLimit = size;
+            _useRunspacePool = !useNewRunspace;
             _isOpen = true;
             _syncObject = new object();
             _addAvailable = new ManualResetEvent(true);
@@ -665,8 +671,11 @@ namespace System.Management.Automation.PSTasks
                 _stopAll,           // index 1
             };
             _taskPool = new Dictionary<int, PSTaskBase>(size);
-            _runspacePool = new ConcurrentQueue<Runspace>();
             _activeRunspaces = new ConcurrentDictionary<int, Runspace>();
+            if (_useRunspacePool)
+            {
+                _runspacePool = new ConcurrentQueue<Runspace>();
+            }
         }
 
         #endregion
@@ -691,11 +700,11 @@ namespace System.Management.Automation.PSTasks
         }
 
         /// <summary>
-        /// Gets a value of current runspace count.
+        /// Gets a value of the count of total runspaces allocated.
         /// </summary>
-        public int RunspaceCount
+        public int AllocatedRunspaceCount
         {
-            get => _activeRunspaces.Count;
+            get => _createdRunspaceCount;
         }
 
         #endregion
@@ -812,7 +821,7 @@ namespace System.Management.Automation.PSTasks
                 task.Dispose();
             }
 
-            // Dispose of pool runspaces
+            // Dispose all active runspaces
             DisposeRunspaces();
             _stopping = false;
         }
@@ -892,7 +901,7 @@ namespace System.Management.Automation.PSTasks
         {
             var runspaceName = string.Format(CultureInfo.InvariantCulture, "{0}:{1}", PSTask.RunspaceName, taskId);
 
-            if (_runspacePool.TryDequeue(out Runspace runspace))
+            if (_useRunspacePool && _runspacePool.TryDequeue(out Runspace runspace))
             {
                 if (runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
                     runspace.RunspaceAvailability == RunspaceAvailability.Available)
@@ -918,8 +927,9 @@ namespace System.Management.Automation.PSTasks
                 ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
             runspace = RunspaceFactory.CreateRunspace(iss);
             runspace.Name = runspaceName;
-            runspace.Open();
             _activeRunspaces.TryAdd(runspace.Id, runspace);
+            runspace.Open();
+            _createdRunspaceCount++;
 
             return runspace;
         }
@@ -928,7 +938,8 @@ namespace System.Management.Automation.PSTasks
         {
             var runspace = task.Runspace;
             Dbg.Assert(runspace != null, "Task runspace cannot be null.");
-            if (runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
+            if (_useRunspacePool &&
+                runspace.RunspaceStateInfo.State == RunspaceState.Opened &&
                 runspace.RunspaceAvailability == RunspaceAvailability.Available)
             {
                 _runspacePool.Enqueue(runspace);
@@ -954,13 +965,25 @@ namespace System.Management.Automation.PSTasks
     /// <summary>
     /// Job for running ForEach-Object parallel task child jobs asynchronously.
     /// </summary>
-    internal sealed class PSTaskJob : Job
+    public sealed class PSTaskJob : Job
     {
         #region Members
 
         private readonly PSTaskPool _taskPool;
         private bool _isOpen;
         private bool _stopSignaled;
+
+        #endregion
+
+        #region Properties
+
+        /// <summary>
+        /// Gets a value of the count of total runspaces allocated.
+        /// </summary>
+        public int AllocatedRunspaceCount
+        {
+            get => _taskPool.AllocatedRunspaceCount;
+        }
 
         #endregion
 
@@ -973,11 +996,13 @@ namespace System.Management.Automation.PSTasks
         /// </summary>
         /// <param name="command">Job command text.</param>
         /// <param name="throttleLimit">Pool size limit for task job.</param>
-        public PSTaskJob(
+        /// <param name="useNewRunspace">When true, a new runspace object is created for the task instead of reusing one from the pool.</param>
+        internal PSTaskJob(
             string command,
-            int throttleLimit) : base(command, string.Empty)
+            int throttleLimit,
+            bool useNewRunspace) : base(command, string.Empty)
         {
-            _taskPool = new PSTaskPool(throttleLimit);
+            _taskPool = new PSTaskPool(throttleLimit, useNewRunspace);
             _isOpen = true;
             PSJobTypeName = nameof(PSTaskJob);
 
@@ -1051,14 +1076,14 @@ namespace System.Management.Automation.PSTasks
 
         #endregion
 
-        #region Public Methods
+        #region Internal Methods
 
         /// <summary>
         /// Add a child job to the collection.
         /// </summary>
         /// <param name="childJob">Child job to add.</param>
         /// <returns>True when child job is successfully added.</returns>
-        public bool AddJob(PSTaskChildJob childJob)
+        internal bool AddJob(PSTaskChildJob childJob)
         {
             if (!_isOpen)
             {
@@ -1073,7 +1098,7 @@ namespace System.Management.Automation.PSTasks
         /// Closes this parent job to adding more child jobs and starts
         /// the child jobs running with the provided throttle limit.
         /// </summary>
-        public void Start()
+        internal void Start()
         {
             _isOpen = false;
             SetJobState(JobState.Running);

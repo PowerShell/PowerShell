@@ -314,6 +314,23 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
     }
 }
 
+Describe 'ForEach-Object -Parallel runspace pool tests' -Tags 'CI' {
+
+    It "Verifies job allocated runspace count is limited to pool size" {
+
+        $job = 1..4 | ForEach-Object -Parallel { Start-Sleep 1 } -AsJob -ThrottleLimit 2 | Wait-Job
+        $job.AllocatedRunspaceCount | Should -BeExactly 2
+        $job | Remove-Job
+    }
+
+    It "Verifies job with -UseNewRunspace switch allocates one runspace per iteration" {
+
+        $job = 1..10 | ForEach-Object -Parallel { $_ } -AsJob -ThrottleLimit 2 -UseNewRunspace | Wait-Job
+        $job.AllocatedRunspaceCount | Should -BeExactly 10
+        $job | Remove-Job
+    }
+}
+
 Describe 'ForEach-Object -Parallel Functional Tests' -Tags 'Feature' {
 
     It 'Verifies job queuing and throttle limit' {
