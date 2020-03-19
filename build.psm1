@@ -2200,9 +2200,7 @@ function Start-CrossGen {
             [Parameter(Mandatory= $true)]
             [ValidateNotNullOrEmpty()]
             [String]
-            $CrossgenPath,
-            [switch]
-            $GenerateSymbols
+            $CrossgenPath
         )
 
         $outputAssembly = $AssemblyPath.Replace(".dll", ".ni.dll")
@@ -2218,36 +2216,53 @@ function Start-CrossGen {
             Start-NativeExecution {
                 & $CrossgenPath /ReadyToRun /MissingDependenciesOK /in $AssemblyPath /out $outputAssembly /Platform_Assemblies_Paths $platformAssembliesPath
             } | Write-Verbose
+        } finally {
+            Pop-Location
+        }
+    }
 
-            if($GenerateSymbols.IsPresent)
+    function New-CrossGenSymbol {
+        param (
+            [Parameter(Mandatory= $true)]
+            [ValidateNotNullOrEmpty()]
+            [String]
+            $AssemblyPath,
+            [Parameter(Mandatory= $true)]
+            [ValidateNotNullOrEmpty()]
+            [String]
+            $CrossgenPath
+        )
+
+        $platformAssembliesPath = Split-Path $AssemblyPath -Parent
+        $crossgenFolder = Split-Path $CrossgenPath
+
+        try {
+            Push-Location $crossgenFolder
+
+            $symbolsPath = [System.IO.Path]::ChangeExtension($assemblyPath, ".pdb")
+
+            $createSymbolOptionName = $null
+            if($Environment.IsWindows)
             {
-                $createSymbolOptionName = $null
-                if($Environment.IsWindows)
-                {
-                    $createSymbolOptionName = '-CreatePDB'
+                $createSymbolOptionName = '-CreatePDB'
 
-                }
-                elseif ($Environment.IsLinux)
-                {
-                    $createSymbolOptionName = '-CreatePerfMap'
-                }
-                $env:COMPlus_PartialNGen=0
+            }
+            elseif ($Environment.IsLinux)
+            {
+                $createSymbolOptionName = '-CreatePerfMap'
+            }
+            $env:COMPlus_PartialNGen=0
 
-                if($createSymbolOptionName)
-                {
-                    Start-NativeExecution {
-                        & $CrossgenPath -readytorun -platform_assemblies_paths $platformAssembliesPath $createSymbolOptionName $platformAssembliesPath $outputAssembly
-                    } | Write-Verbose
-                }
+            if($createSymbolOptionName)
+            {
+                Start-NativeExecution {
+                    & $CrossgenPath -readytorun -platform_assemblies_paths $platformAssembliesPath $createSymbolOptionName $platformAssembliesPath $AssemblyPath
+                } | Write-Verbose
             }
 
-            <#
-            # TODO: Generate the pdb for the ngen binary - currently, there is a hard dependency on diasymreader.dll, which is available at %windir%\Microsoft.NET\Framework\v4.0.30319.
-            # However, we still need to figure out the prerequisites on Linux.
-            Start-NativeExecution {
-                & $CrossgenPath /Platform_Assemblies_Paths $platformAssembliesPath  /CreatePDB $platformAssembliesPath /lines $platformAssembliesPath $niAssemblyName
-            } | Write-Verbose
-            #>
+            # Rename the corresponding ni.dll assembly to be the same as the IL assembly
+            $niSymbolsPath = [System.IO.Path]::ChangeExtension($symbolsPath, "ni.pdb")
+            Rename-Item $niSymbolsPath $symbolsPath -Force -ErrorAction Stop
         } finally {
             Pop-Location
         }
@@ -2374,7 +2389,7 @@ function Start-CrossGen {
 
     foreach ($assemblyName in $fullAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
-        New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath -GenerateSymbols:$generateSymbols
+        New-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
     #
@@ -2392,15 +2407,21 @@ function Start-CrossGen {
 
         Remove-Item $assemblyPath -Force -ErrorAction Stop
 
+        # Rename the corresponding ni.dll assembly to be the same as the IL assembly
+        $niAssemblyPath = [System.IO.Path]::ChangeExtension($assemblyPath, "ni.dll")
+        Rename-Item $niAssemblyPath $assemblyPath -Force -ErrorAction Stop
+
         # No symbols are available for Microsoft.CodeAnalysis.CSharp.dll, Microsoft.CodeAnalysis.dll,
         # Microsoft.CodeAnalysis.VisualBasic.dll, and Microsoft.CSharp.dll.
         if ($commonAssembliesForAddType -notcontains $assemblyName) {
             Remove-Item $symbolsPath -Force -ErrorAction Stop
-        }
 
-        # Rename the corresponding ni.dll assembly to be the same as the IL assembly
-        $niAssemblyPath = [System.IO.Path]::ChangeExtension($assemblyPath, "ni.dll")
-        Rename-Item $niAssemblyPath $assemblyPath -Force -ErrorAction Stop
+            if($generateSymbols)
+            {
+                Write-Verbose "Generating Symbols for $assemblyPath"
+                New-CrossGenSymbol -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
+            }
+        }
     }
 }
 
