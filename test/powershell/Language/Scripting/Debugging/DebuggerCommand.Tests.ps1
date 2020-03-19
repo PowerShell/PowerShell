@@ -250,7 +250,7 @@ Describe 'Debug quit command tests' -tag 'CI' {
         Unregister-DebuggerHandler
     }
 
-    Context 'Quit (q) command should terminate execution of a local script' {
+    Context 'Quit (q) command should terminate execution of a local script stopped on Wait-Debugger' {
         BeforeAll {
             $testScript = {
                 1..10 | ForEach-Object {
@@ -291,7 +291,7 @@ Describe 'Debug quit command tests' -tag 'CI' {
         }
     }
 
-    Context 'Quit (q) command should terminate execution of a local script' {
+    Context 'Can manage breakpoints from within the debugger and stops gracefully with quit (q) command afterwards' {
         BeforeAll {
             $testScript = {
                 1..10 | ForEach-Object {
