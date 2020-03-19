@@ -2251,7 +2251,6 @@ function Start-CrossGen {
             {
                 $createSymbolOptionName = '-CreatePerfMap'
             }
-            $env:COMPlus_PartialNGen=0
 
             if($createSymbolOptionName)
             {
