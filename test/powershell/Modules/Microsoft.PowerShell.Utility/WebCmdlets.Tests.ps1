@@ -1929,7 +1929,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # dosLength 5,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 21
             # dosLength 10,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 75
             # in some cases we will be running in a Docker container with modest resources
-            $pathologicalRatio | Should -BeGreaterThan 5
+            $pathologicalRatio | Should -BeGreaterThan 3
         }
         It "Charset Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
