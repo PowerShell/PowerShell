@@ -81,7 +81,7 @@ namespace System.Management.Automation
 
                 if (parameter.ParameterNameSpecified)
                 {
-                    Diagnostics.Assert(parameter.ParameterText.IndexOf(' ') == -1, "Parameters cannot have whitespace");
+                    Diagnostics.Assert(!parameter.ParameterText.Contains(' '), "Parameters cannot have whitespace");
                     PossiblyGlobArg(parameter.ParameterText, usedQuotes: false);
 
                     if (parameter.SpaceAfterParameter)

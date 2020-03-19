@@ -209,7 +209,6 @@ namespace System.Management.Automation.Remoting
         RemoteRunspaceHasMultipleMatchesForSpecifiedName = 955,
         RemoteRunspaceDoesNotSupportPushRunspace = 956,
         HostInNestedPrompt = 957,
-        RemoteHostDoesNotSupportPushRunspace = 958,
         InvalidVMId = 959,
         InvalidVMNameNoVM = 960,
         InvalidVMNameMultipleVM = 961,

@@ -1,0 +1,55 @@
+name: vpack-$(Build.BuildId)
+trigger:
+  branches:
+    include:
+    - master
+    - release*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+
+variables:
+  - name: DOTNET_CLI_TELEMETRY_OPTOUT
+    value: 1
+  - name: POWERSHELL_TELEMETRY_OPTOUT
+    value: 1
+  - group: Azure Blob variable group
+
+# Set AzDevOps Agent to clean the machine after the end of the build
+resources:
+- repo: self
+  clean: true
+
+jobs:
+- job: rename
+  displayName: Name the build
+  condition: succeeded()
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+
+  - template: ./templates/SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+    displayName: Set Build Name for Non-PR
+    condition: ne(variables['Build.Reason'], 'PullRequest')
+
+- template: ./templates/vpackReleaseJob.yml
+  parameters:
+    architecture: x64
+
+- template: ./templates/vpackReleaseJob.yml
+  parameters:
+    architecture: x86
+
+- template: ./templates/vpackReleaseJob.yml
+  parameters:
+    architecture: arm32
+
+- template: ./templates/vpackReleaseJob.yml
+  parameters:
+    architecture: arm64

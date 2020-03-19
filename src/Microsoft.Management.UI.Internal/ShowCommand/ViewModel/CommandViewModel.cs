@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 commandName = this.ModuleName + "\\" + commandName;
             }
 
-            if (commandName.IndexOf(' ') != -1)
+            if (commandName.Contains(' '))
             {
                 builder.AppendFormat("& \"{0}\"", commandName);
             }

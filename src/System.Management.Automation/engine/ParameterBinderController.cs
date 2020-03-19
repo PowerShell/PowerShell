@@ -345,7 +345,7 @@ namespace System.Management.Automation
                             {
                                 param = CommandParameterInternal.CreateParameterWithArgument(
                                     /*parameterAst*/null, paramText.Substring(1, colonIndex - 1), paramText,
-                                    /*argumentAst*/null, paramText.Substring(colonIndex + 1).Trim(),
+                                    /*argumentAst*/null, paramText.AsSpan(colonIndex + 1).Trim().ToString(),
                                     false);
                             }
                             else if (argIndex == arguments.Length - 1 || paramText[paramText.Length - 1] != ':')

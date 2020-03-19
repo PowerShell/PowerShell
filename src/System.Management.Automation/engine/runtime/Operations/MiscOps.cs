@@ -551,7 +551,7 @@ namespace System.Management.Automation
                             "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
                             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false)
                     {
-                        updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
+                        updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
                         updatedScriptblock.Append("${using:");
                         updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
                         updatedScriptblock.Append('}');
@@ -559,7 +559,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                updatedScriptblock.Append(scriptblockBodyString.Substring(position));
+                updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);

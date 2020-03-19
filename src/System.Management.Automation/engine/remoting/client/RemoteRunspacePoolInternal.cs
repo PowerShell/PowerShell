@@ -2151,7 +2151,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private static bool CheckForSSL(WSManConnectionInfo wsmanConnectionInfo)
         {
             return (!string.IsNullOrEmpty(wsmanConnectionInfo.Scheme) &&
-                    wsmanConnectionInfo.Scheme.IndexOf(WSManConnectionInfo.HttpsScheme, StringComparison.OrdinalIgnoreCase) != -1);
+                    wsmanConnectionInfo.Scheme.Contains(WSManConnectionInfo.HttpsScheme, StringComparison.OrdinalIgnoreCase));
         }
 
         private static int ConvertPSAuthToWSManAuth(AuthenticationMechanism psAuth)

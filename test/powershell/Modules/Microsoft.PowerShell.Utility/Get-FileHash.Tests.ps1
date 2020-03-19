@@ -28,6 +28,13 @@ Describe "Get-FileHash" -Tags "CI" {
             $result.Count | Should -Be 1
             $errorVariable.FullyQualifiedErrorId | Should -BeExactly "UnauthorizedAccessError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
+
+        It "Should write non-terminating error if a file is locked" -Skip:(-not $IsWindows) {
+            $pagefilePath = (Get-CimInstance -ClassName Win32_PageFileusage).Name
+            $result = $pagefilePath, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
+            $result.Count | Should -Be 1
+            $errorVariable.FullyQualifiedErrorId | Should -BeExactly "FileReadError,Microsoft.PowerShell.Commands.GetFileHashCommand"
+        }
     }
 
     Context "Algorithm tests" {

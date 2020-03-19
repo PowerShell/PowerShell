@@ -842,7 +842,7 @@ function New-UnixPackage {
             }
 
             # Generate gzip of man file
-            $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview
+            $ManGzipInfo = New-ManGzip -IsPreview:$IsPreview -IsLTS:$LTS
 
             # Change permissions for packaging
             Write-Log "Setting permissions..."
@@ -1376,15 +1376,20 @@ function New-ManGzip
 {
     param(
         [switch]
-        $IsPreview
+        $IsPreview,
+
+        [switch]
+        $IsLTS
     )
 
     Write-Log "Creating man gz..."
     # run ronn to convert man page to roff
     $RonnFile = "$RepoRoot/assets/pwsh.1.ronn"
-    if ($IsPreview.IsPresent)
+
+    if ($IsPreview.IsPresent -or $IsLTS.IsPresent)
     {
-        $newRonnFile = $RonnFile -replace 'pwsh', 'pwsh-preview'
+        $prodName = if ($IsLTS) { 'pwsh-lts' } else { 'pwsh-preview' }
+        $newRonnFile = $RonnFile -replace 'pwsh', $prodName
         Copy-Item -Path $RonnFile -Destination $newRonnFile -force
         $RonnFile = $newRonnFile
     }
@@ -3044,7 +3049,7 @@ function New-MSIXPackage
 
     $displayName = $productName
 
-    if ($packageName.Contains('-')) {
+    if ($ProductSemanticVersion.Contains('-')) {
         $ProductName += 'Preview'
         $displayName += ' Preview'
     }

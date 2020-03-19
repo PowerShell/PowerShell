@@ -1865,8 +1865,11 @@ namespace Microsoft.PowerShell
         /// <returns>The string with any \0 characters removed...</returns>
         private string RemoveNulls(string input)
         {
-            if (input.IndexOf('\0') == -1)
+            if (input.Contains('\0'))
+            {
                 return input;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (char c in input)
             {

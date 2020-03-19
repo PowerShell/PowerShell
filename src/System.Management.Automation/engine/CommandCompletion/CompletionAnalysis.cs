@@ -1514,19 +1514,18 @@ namespace System.Management.Automation
                 var analysis = new CompletionAnalysis(_ast, _tokens, _cursorPosition, _options);
                 var subContext = analysis.CreateCompletionContext(completionContext.TypeInferenceContext);
 
-                int subReplaceIndex, subReplaceLength;
-                var subResult = analysis.GetResultHelper(subContext, out subReplaceIndex, out subReplaceLength, true);
+                var subResult = analysis.GetResultHelper(subContext, out int subReplaceIndex, out _, true);
 
                 if (subResult != null && subResult.Count > 0)
                 {
                     result = new List<CompletionResult>();
                     replacementIndex = stringStartIndex + 1 + (cursorIndexInString - subInput.Length);
                     replacementLength = subInput.Length;
-                    string prefix = subInput.Substring(0, subReplaceIndex);
+                    ReadOnlySpan<char> prefix = subInput.AsSpan(0, subReplaceIndex);
 
                     foreach (CompletionResult entry in subResult)
                     {
-                        string completionText = prefix + entry.CompletionText;
+                        string completionText = string.Concat(prefix, entry.CompletionText.AsSpan());
                         if (entry.ResultType == CompletionResultType.Property)
                         {
                             completionText = TokenKind.DollarParen.Text() + completionText + TokenKind.RParen.Text();
@@ -1565,7 +1564,7 @@ namespace System.Management.Automation
                         result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
 
                         // Try command name completion only if the text contains '-'
-                        if (wordToComplete.IndexOf('-') != -1)
+                        if (wordToComplete.Contains('-'))
                         {
                             var commandNameResult = CompletionCompleters.CompleteCommand(completionContext);
                             if (commandNameResult != null && commandNameResult.Count > 0)

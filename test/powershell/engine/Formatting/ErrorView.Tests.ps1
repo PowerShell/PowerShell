@@ -99,6 +99,12 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = { throw "$msg" } | Should -Throw $msg -PassThru | Out-String
             $e | Should -BeLike "*$msg*"
         }
+
+        It "Position message does not contain line information" {
+
+            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" | Out-String
+            $e | Should -Not -BeLike "*At line*"
+        }
     }
 
     Context 'NormalView tests' {

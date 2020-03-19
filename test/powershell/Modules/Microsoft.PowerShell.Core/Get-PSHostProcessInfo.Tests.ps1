@@ -29,6 +29,11 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         (Get-PSHostProcessInfo).ProcessId | Should -Contain $PID
     }
 
+    It "Should return own self window title" {
+        $expected = (Get-Process -Id $PID).MainWindowTitle
+        (Get-PSHostProcessInfo -Id $PID).MainWindowTitle | Should -BeExactly $expected
+    }
+
     It "Should list info for other PowerShell hosted processes" {
         # Creation of the named pipe is async
         Wait-UntilTrue {
