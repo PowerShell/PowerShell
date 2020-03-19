@@ -636,9 +636,9 @@ namespace System.Management.Automation.PSTasks
         private readonly ConcurrentQueue<Runspace> _runspacePool;
         private readonly ConcurrentDictionary<int, Runspace> _activeRunspaces;
         private readonly WaitHandle[] _waitHandles;
+        private readonly bool _useRunspacePool;
         private bool _isOpen;
         private bool _stopping;
-        private bool _useRunspacePool;
         private int _createdRunspaceCount;
 
         private const int AddAvailable = 0;
