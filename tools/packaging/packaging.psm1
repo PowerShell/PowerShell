@@ -131,14 +131,14 @@ function Start-PSPackage {
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp3.1"           ## Last build wasn't for CoreCLR
+            $Script:Options.Framework -ne "netcoreapp5.0"           ## Last build wasn't for CoreCLR
         } else {
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp3.1"           ## Last build wasn't for CoreCLR
+            $Script:Options.Framework -ne "netcoreapp5.0"           ## Last build wasn't for CoreCLR
         }
 
         # Make sure the most recent build satisfies the package requirement
@@ -1626,7 +1626,7 @@ function CreateNugetPlatformFolder
         [string] $PlatformBinPath
     )
 
-    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp3.1")
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp5.0")
     $fullPath = Join-Path $PlatformBinPath $file
 
     if (-not(Test-Path $fullPath)) {
@@ -1726,7 +1726,7 @@ function New-ILNugetPackage
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp3.1') -ItemType Directory -Force
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp5.0') -ItemType Directory -Force
             CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
@@ -1770,8 +1770,8 @@ function New-ILNugetPackage
                     "Microsoft.PowerShell.Utility"
                 )
 
-                $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\netcoreapp3.1\Modules") -ItemType Directory -Force
-                $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\netcoreapp3.1\Modules") -ItemType Directory -Force
+                $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\netcoreapp5.0\Modules") -ItemType Directory -Force
+                $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\netcoreapp5.0\Modules") -ItemType Directory -Force
 
                 foreach ($module in $winBuiltInModules) {
                     $source = Join-Path $WinFxdBinPath "Modules\$module"
@@ -2140,7 +2140,7 @@ function New-ReferenceAssembly
             Write-Log "Running: dotnet $arguments"
             Start-NativeExecution -sb {dotnet $arguments}
 
-            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp3.1/$assemblyName.dll"
+            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp5.0/$assemblyName.dll"
             if ($null -eq $refBinPath) {
                 throw "Reference assembly was not built."
             }
@@ -3578,7 +3578,7 @@ function New-GlobalToolNupkg
     }
 
     $packageInfo | ForEach-Object {
-        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp3.1/any") -ItemType Directory
+        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp5.0/any") -ItemType Directory
 
         $packageType = $_.Type
 

@@ -712,8 +712,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp3.1")]
-        [string]$Framework = "netcoreapp3.1",
+        [ValidateSet("netcoreapp5.0")]
+        [string]$Framework = "netcoreapp5.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -2410,7 +2410,7 @@ function Copy-PSGalleryModules
     Restore-PSPackage -ProjectDirs (Split-Path $CsProjPath) -Force:$Force.IsPresent
 
     $cache = dotnet nuget locals global-packages -l
-    if ($cache -match "info : global-packages: (.*)") {
+    if ($cache -match "global-packages: (.*)") {
         $nugetCache = $Matches[1]
     }
     else {
