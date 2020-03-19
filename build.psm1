@@ -2290,7 +2290,7 @@ function Start-CrossGen {
         throw "crossgen is not available for 'linux-arm'"
     } elseif ($Runtime -eq "linux-x64") {
         $Runtime
-        # $generateSymbols = $true, but the code needs to be adjusted for different filenames
+        # We should set $generateSymbols = $true, but the code needs to be adjusted for different extension on Linux
     } else {
         $Runtime
     }
