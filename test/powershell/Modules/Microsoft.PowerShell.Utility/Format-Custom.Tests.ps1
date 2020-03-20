@@ -397,7 +397,6 @@ Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl
         $ps.Streams.Error.Clear()
         $expectedOutput = @'
 
-
 Entry selected by property
 
 Name
@@ -423,7 +422,6 @@ testing
         $null = $ps.AddScript($script).AddCommand('Out-String')
         $ps.Streams.Error.Clear()
         $expectedOutput = @'
-
 
 Entry selected by ScriptBlock
 
