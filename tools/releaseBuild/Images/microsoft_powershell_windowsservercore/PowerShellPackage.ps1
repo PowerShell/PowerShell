@@ -141,6 +141,10 @@ try{
         Write-Verbose "Starting powershell packaging(zip)..." -verbose
         Start-PSPackage @pspackageParams @releaseTagParam
 
+        $pspackageParams['Type']='zip-pdb'
+        Write-Verbose "Starting powershell symbols packaging(zip)..." -verbose
+        Start-PSPackage @pspackageParams @releaseTagParam
+
         Write-Verbose "Exporting packages ..." -verbose
 
         Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb,$location\*.msix | ForEach-Object {

@@ -3,6 +3,7 @@ parameters:
   version: 6.2.0
   msi: yes
   msix: yes
+  pdb: no
 
 steps:
 - template: upload-final-results.yml
@@ -35,6 +36,16 @@ steps:
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
   condition: succeeded()
+
+- task: AzureFileCopy@3
+  displayName: 'upload pbd zip to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-pdb-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)'
+  condition: and(succeeded(), eq('${{ parameters.pdb }}', 'yes'))
 
 - template: upload-final-results.yml
   parameters:
