@@ -282,7 +282,7 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>True if the string has wild card chars, false otherwise..</returns>
         /// <remarks>
-        /// Currently { '*', '?', '[' } are considered wild card chars and
+        /// Currently { '*', '?', '[', ']' } are considered wild card chars and
         /// '`' is the escape character.
         /// </remarks>
         public static bool ContainsWildcardCharacters(string pattern)
@@ -293,24 +293,43 @@ namespace System.Management.Automation
             }
 
             bool result = false;
+            bool leftBracket = false;
 
             for (int index = 0; index < pattern.Length; ++index)
             {
                 if (IsWildcardChar(pattern[index]))
                 {
+                    // If '[' or ']' is present alone, then it should not be treated as wildcard chars
+                    //
+                    // Check if both the '[' and the ']' brackets are present.
+                    // If present they should be in order, first '[' and then ']'
+                    // Otherwise, just treat ('[' or ']') as normal literal
+
+					// Check if we got '['
+                    if ( IsLeftBracket(pattern[index]) )
+                    {
+						// got '['.
+                        leftBracket = true;
+                        continue;
+                    }
+					// got the ']' without the '['
+                    else if ( (leftBracket == false) && IsRightBracket(pattern[index]) )
+                    {
+						// Ignore the ']' and continue
+                        continue;
+                    }
+
                     result = true;
                     break;
                 }
 
                 // If it is an escape character then advance past
                 // the next character
-
                 if (pattern[index] == escapeChar)
                 {
                     ++index;
                 }
             }
-
             return result;
         }
 
@@ -401,6 +420,16 @@ namespace System.Management.Automation
         private static bool IsWildcardChar(char ch)
         {
             return (ch == '*') || (ch == '?') || (ch == '[') || (ch == ']');
+        }
+
+        private static bool IsLeftBracket(char ch)
+        {
+            return (ch == '[');
+        }
+
+        private static bool IsRightBracket(char ch)
+        {
+            return (ch == ']');
         }
 
         /// <summary>
