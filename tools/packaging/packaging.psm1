@@ -1611,7 +1611,7 @@ function New-ZipPackage
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             $staging = "$PSScriptRoot/staging"
-            New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
+            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
 
             Get-ChildItem $staging -Filter *.pdb -recurse | Remove-Item -Force
 
@@ -1685,7 +1685,7 @@ function New-PdbZipPackage
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
             $staging = "$PSScriptRoot/staging"
-            New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath -Filter *.pdb
+            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath -Filter *.pdb
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
         }
