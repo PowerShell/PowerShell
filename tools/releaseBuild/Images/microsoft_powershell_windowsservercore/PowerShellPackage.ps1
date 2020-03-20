@@ -136,9 +136,11 @@ try{
 
     if (!$ComponentRegistration.IsPresent -and $Runtime -notlike 'fxdependent*')
     {
-        $pspackageParams['Type']='zip-pdb'
-        Write-Verbose "Starting powershell symbols packaging(zip)..." -verbose
-        Start-PSPackage @pspackageParams @releaseTagParam
+        if (!$Symbols.IsPresent) {
+            $pspackageParams['Type'] = 'zip-pdb'
+            Write-Verbose "Starting powershell symbols packaging(zip)..." -verbose
+            Start-PSPackage @pspackageParams @releaseTagParam
+        }
 
         $pspackageParams['Type']='zip'
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
