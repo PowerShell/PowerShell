@@ -288,7 +288,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // Formating system writes newline before each object
             // so no need to add newline here like:
             //     fe.formatValueList.Add(new FormatNewLine());
-
             fed.formatEntryInfo = cve;
 
             this.WriteObject(fed);
