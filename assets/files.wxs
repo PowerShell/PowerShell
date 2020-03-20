@@ -127,9 +127,6 @@
       <Component Id="cmpBF238203E0B83E373D6EC1297801D549" Guid="{A27A6344-C311-4946-B252-81CFFA9B9E7E}">
         <File Id="filB18AC8F62602F930B244F0816DBD9A96" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Security.Principal.dll" />
       </Component>
-      <Component Id="cmp721A60AE486A29EF8E3C3C6A17205BC3" Guid="{21EB2644-9608-4153-BF49-78B8F1D7230E}">
-        <File Id="fil82A50C1439BA61392D621D4158264E99" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.SDK.pdb" />
-      </Component>
       <Component Id="cmpE760EF3FAD245C208A2174DBD78FB079" Guid="{D66E856B-CD98-4216-9017-4D7CFEC4DABF}">
         <File Id="filCEBB50D1A1D5622AF54A784AE3F49282" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Reflection.dll" />
       </Component>
@@ -1183,9 +1180,6 @@
       <Component Id="cmpf2a3c81eb19246b6be74af07e70a06f0" Guid="{678cb6a4-49e8-41be-a5cb-67a77c3cf612}">
         <File Id="fil90f9e9f09d6744f68331100e6d7da03d" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.dll" />
       </Component>
-      <Component Id="cmp918c5338524c41a2ac739a0ded94cc0d" Guid="{4f1ade18-360c-4510-ba4a-94f86f8d7f63}">
-        <File Id="fil2d5d94e7f192444584831a1a48d8d9dd" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.pdb" />
-      </Component>
       <Component Id="cmp75c6b7b418bb4f439dd5519c570a14e0" Guid="{0043d5f4-4ea7-4193-8825-8a8f80e4224b}">
         <File Id="fil1c8a95614a8348f9ac6982b3340a303c" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.MarkdownRender.xml" />
       </Component>
@@ -1966,18 +1960,6 @@
         </Directory>
       </Directory>
       <Directory Id="dir20D076755BAF7EA1D1A980368C4F81A2" Name="assets">
-        <Component Id="cmpF877117B22A73BEA3855701E9BEB20D2" Guid="{14AFE4AD-F727-4154-9FC0-BCB8E238E6F4}">
-          <File Id="filE19189D8860B1FF5525D7828BA9F77D4" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_black.ico" />
-        </Component>
-        <Component Id="cmp10D3A59B81B93BFAD6049D86D593B832" Guid="{DB9E9AB5-2320-4974-9B30-8D1745333A94}">
-          <File Id="fil698DFC1CD8F4EE12BE119336AEE55EF0" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_avatar.ico" />
-        </Component>
-        <Component Id="cmp9B83A74D65192F635590641BFEF9F840" Guid="{BCE9433B-3470-4EFE-B735-081B17B5C82B}">
-          <File Id="fil0D65BAB239F3AF9916D653C31460B0A6" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_av_colors.ico" />
-        </Component>
-        <Component Id="cmpA5AD020C2A054BD299EA1D2439947B22" Guid="{35a82a3b-0b5b-472a-adba-77c68d978d16}">
-          <File Id="filFB936E0529C9496EA8132112A5C60E63" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\ps_black_32x32.ico" />
-        </Component>
       </Directory>
       <Directory Id="dirC93D10F1DE914404E3248A7E28901CDC" Name="cs">
         <Component Id="cmp8CAF71174AEF09BEBBC46FBC901FF5DD" Guid="{29FD7D9F-CB72-4DF5-B1BC-5DDD110E35BB}">
@@ -3116,42 +3098,6 @@
       <Component Id="cmp798A4EE6784541FE9B13582E52C5A818" Guid="{ec646ea5-c60e-41d5-9fd0-36fb14b1fc28}">
         <File Id="fil8A6290BE106E416CB35FB2BEA982C3B8" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.VisualBasic.Forms.dll" />
       </Component>
-      <Component Id="cmp786425328E3249EEBF16EB0D3CB75A52" Guid="{cb836f76-62cb-4785-8878-4383a4e8841e}">
-        <File Id="fil183FB26B5DFA4AE6AB5D4C7296E87EE1" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.WSMan.Management.pdb" />
-      </Component>
-      <Component Id="cmpFA1D677C9EBC4896B88D314998E0C1FA" Guid="{138e16d8-de8b-425c-a96b-4c264c7c0796}">
-        <File Id="filD87BE8939E984A56924B2865CF4240C2" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.CoreCLR.Eventing.pdb" />
-      </Component>
-      <Component Id="cmp3AAEDCB97741429DB5095B5B5DD02D37" Guid="{ec61f325-e673-486d-93d5-9a4272fe0377}">
-        <File Id="fil7413F746000740FDB9F05CF8B79D113D" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.WSMan.Runtime.pdb" />
-      </Component>
-      <Component Id="cmpDE73FE34660445FE81B6998A20CA0880" Guid="{a5d5bc43-d8d7-43e4-be78-887a4b8d723b}">
-        <File Id="filC5F45F8D58924B0696386CFB678E0956" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.Management.Infrastructure.CimCmdlets.pdb" />
-      </Component>
-      <Component Id="cmp72C42B8BDA574E99A9BDE1D1AC779D77" Guid="{da48fc69-2513-4fa5-a8ce-83316526d783}">
-        <File Id="filE0EA52D82BDA4522BEEE62DEA96D02C7" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.Commands.Diagnostics.pdb" />
-      </Component>
-      <Component Id="cmpC0D2113AAD1244BA8B3668D43F472F26" Guid="{cb0910cc-07aa-4409-9ddb-a96f4476fe82}">
-        <File Id="fil52C763AEBFC64A24A62A49AD9C82361A" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.GraphicalHost.pdb" />
-      </Component>
-      <Component Id="cmp43FEAB9E32934C98926E65185896CE88" Guid="{2cb23b70-a8db-4e8f-80d4-30c6243d4ff2}">
-        <File Id="fil87BB9E5C8A0249959A8878652E2AB027" KeyPath="yes" Source="$(env.ProductSourcePath)\pwsh.pdb" />
-      </Component>
-      <Component Id="cmpB1F91CE907214A46B7158AA391E3ACC4" Guid="{52709dae-46b8-45d2-b794-cdabd795a300}">
-        <File Id="fil9227479D83A44476A60264ED312EF0B6" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.Commands.Utility.pdb" />
-      </Component>
-      <Component Id="cmp9DA40D9DBE9B43A9925D9F63536D893A" Guid="{29479725-03b3-4947-9591-03368b09f496}">
-        <File Id="fil126141BB03DD4BE3B36D0580C755229B" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.ConsoleHost.pdb" />
-      </Component>
-      <Component Id="cmp392918B7D32C4319A4D9D71FF8302519" Guid="{b9c74b02-be75-4539-af5d-40f0d17ce44f}">
-        <File Id="fil390A3298638A4A34B89793326C4142F0" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.Security.pdb" />
-      </Component>
-      <Component Id="cmp0BFAF714EC6D4ADA8F1479A373426ABC" Guid="{31b760ab-fe53-4042-b3ab-c1618e6fd123}">
-        <File Id="filF12942D4CF374E9B8BD66B9D715C1870" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.Commands.Management.pdb" />
-      </Component>
-      <Component Id="cmp32AF38A70A52494B9387DA0DA3720A9B" Guid="{018466b9-38dd-4403-8ee4-c2b70d6bc64b}">
-        <File Id="fil0D62321987A1455194D789777F82EDAA" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Management.Automation.pdb" />
-      </Component>
     </DirectoryRef>
   </Fragment>
   <Fragment>
@@ -3197,7 +3143,6 @@
       <ComponentRef Id="cmpE4D79A97914A11003CA89DB008133BA0" />
       <ComponentRef Id="cmpAA3881D6DE91B932AEE8F4C42EF99218" />
       <ComponentRef Id="cmpBF238203E0B83E373D6EC1297801D549" />
-      <ComponentRef Id="cmp721A60AE486A29EF8E3C3C6A17205BC3" />
       <ComponentRef Id="cmpE760EF3FAD245C208A2174DBD78FB079" />
       <ComponentRef Id="cmp4A6D0CCDE897F87246D521912A7F91D2" />
       <ComponentRef Id="cmpFD79004A272CDB8F6FE78139E9D5A8BC" />
@@ -3549,7 +3494,6 @@
       <ComponentRef Id="cmp557A49B03E72CD07149A6CD0595C9245" />
       <ComponentRef Id="cmp51F2F26684B5C4D0FFFFFBD72174D1BC" />
       <ComponentRef Id="cmpf2a3c81eb19246b6be74af07e70a06f0" />
-      <ComponentRef Id="cmp918c5338524c41a2ac739a0ded94cc0d" />
       <ComponentRef Id="cmp75c6b7b418bb4f439dd5519c570a14e0" />
       <ComponentRef Id="cmp50D8B0DCCF114B58987590FF8212ACB9" />
       <ComponentRef Id="cmpC39C65F1709E407B9D6AD3AF64F710D3" />
@@ -3783,10 +3727,6 @@
       <ComponentRef Id="cmp5109AF6E6AEF499CA12097B6ADD80E7D" />
       <ComponentRef Id="cmpD84D3B43B60040C8BF73D30F89F14AA5" />
       <ComponentRef Id="cmpCC4657AEF2A7400D984E1CE6418EF589" />
-      <ComponentRef Id="cmpF877117B22A73BEA3855701E9BEB20D2" />
-      <ComponentRef Id="cmp10D3A59B81B93BFAD6049D86D593B832" />
-      <ComponentRef Id="cmp9B83A74D65192F635590641BFEF9F840" />
-      <ComponentRef Id="cmpA5AD020C2A054BD299EA1D2439947B22" />
       <ComponentRef Id="cmp8CAF71174AEF09BEBBC46FBC901FF5DD" />
       <ComponentRef Id="cmp1C0D095085408CA5B6AE3C1FCDDC2080" />
       <ComponentRef Id="cmpB613EB418AA14112BFFE06A1A9730300" />
@@ -4156,18 +4096,6 @@
       <ComponentRef Id="cmp38D8A48C68FB4CB399A0A7677FA428E4" />
       <ComponentRef Id="cmp26335B5D1FE94E87A6B6EBD56A22C2B9" />
       <ComponentRef Id="cmp57D197B18F1F4A6AAB704B28CF61B535" />
-      <ComponentRef Id="cmp786425328E3249EEBF16EB0D3CB75A52" />
-      <ComponentRef Id="cmpFA1D677C9EBC4896B88D314998E0C1FA" />
-      <ComponentRef Id="cmp3AAEDCB97741429DB5095B5B5DD02D37" />
-      <ComponentRef Id="cmpDE73FE34660445FE81B6998A20CA0880" />
-      <ComponentRef Id="cmp72C42B8BDA574E99A9BDE1D1AC779D77" />
-      <ComponentRef Id="cmpC0D2113AAD1244BA8B3668D43F472F26" />
-      <ComponentRef Id="cmp43FEAB9E32934C98926E65185896CE88" />
-      <ComponentRef Id="cmpB1F91CE907214A46B7158AA391E3ACC4" />
-      <ComponentRef Id="cmp9DA40D9DBE9B43A9925D9F63536D893A" />
-      <ComponentRef Id="cmp392918B7D32C4319A4D9D71FF8302519" />
-      <ComponentRef Id="cmp0BFAF714EC6D4ADA8F1479A373426ABC" />
-      <ComponentRef Id="cmp32AF38A70A52494B9387DA0DA3720A9B" />
     </ComponentGroup>
   </Fragment>
 </Wix>
