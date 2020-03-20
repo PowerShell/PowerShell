@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (goc.Data.groupingEntry != null)
             {
-                _lo.WriteLine(string.Empty);
+                //_lo.WriteLine(string.Empty);
 
                 ComplexWriter writer = new ComplexWriter();
                 writer.Initialize(_lo, _lo.ColumnNumber);
