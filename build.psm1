@@ -2279,7 +2279,6 @@ function Start-CrossGen {
     $crossGenRuntime = if ($environment.IsWindows) {
         if ($Runtime -match "-x86") {
             "win-x86"
-            $generateSymbols = $true
         } elseif ($Runtime -match "-x64") {
             "win-x64"
             $generateSymbols = $true
