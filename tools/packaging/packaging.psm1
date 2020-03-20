@@ -526,7 +526,7 @@ function New-TarballPackage {
     }
 
     $Staging = "$PSScriptRoot/staging"
-    New-StagingFolder -StagingPath $Staging
+    New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
 
     if (-not $ExcludeSymbolicLinks.IsPresent) {
         New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $Staging
@@ -803,7 +803,7 @@ function New-UnixPackage {
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
         if ($PSCmdlet.ShouldProcess("Create staging folder")) {
-            New-StagingFolder -StagingPath $Staging
+            New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
         }
 
         # Follow the Filesystem Hierarchy Standard for Linux and macOS
@@ -1537,7 +1537,10 @@ function New-StagingFolder
     param(
         [Parameter(Mandatory)]
         [string]
-        $StagingPath
+        $StagingPath,
+        [Parameter(Mandatory)]
+        [string]
+        $PackageSourcePath
     )
 
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
@@ -2439,7 +2442,7 @@ function New-NugetContentPackage
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
     if ($PSCmdlet.ShouldProcess("Create staging folder")) {
-        New-StagingFolder -StagingPath $contentFolder
+        New-StagingFolder -StagingPath $contentFolder -PackageSourcePath $PackageSourcePath
     }
 
     $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
@@ -2864,6 +2867,12 @@ function New-MSIPackage
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
 
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
+
+    $staging = "$PSScriptRoot/staging"
+    New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
+
+    Get-ChildItem $staging -Filter *.pdb -recurse | Remove-Item -Force
+
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
     Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
@@ -2875,7 +2884,7 @@ function New-MSIPackage
 
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
-    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
+    [Environment]::SetEnvironmentVariable("ProductSourcePath", $staging, "Process")
     # These variables are used by Product.wxs in assets directory
     [Environment]::SetEnvironmentVariable("ProductDirectoryName", $productDirectoryName, "Process")
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
@@ -2933,7 +2942,7 @@ function New-MSIPackage
     }
 
     Write-Log "verifying no new files have been added or removed..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
 
     # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
