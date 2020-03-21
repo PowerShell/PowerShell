@@ -42,6 +42,7 @@ namespace mvc.Controllers
                     contentType = "text/html; charset=utf8";
                     body = "<img" + (new string(' ', dosLength));
                     break;
+                // This is not really a DOS test, but this is the best place for it at present.
                 case "img-attribute":
                     contentType = "text/html; charset=utf8";
                     body = "<img src=\"https://fakesite.org/image.png\" id=\"mainImage\" class=\"lightbox\">";
