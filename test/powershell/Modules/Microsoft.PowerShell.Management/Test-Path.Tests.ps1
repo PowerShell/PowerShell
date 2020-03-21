@@ -4,7 +4,6 @@ Describe "Test-Path" -Tags "CI" {
     BeforeAll {
         $testDirnames = @(
             'WildCardCommandA'
-            'WildCardCommand[B]'
             '['
             'goose]'
             'du[[ck'
