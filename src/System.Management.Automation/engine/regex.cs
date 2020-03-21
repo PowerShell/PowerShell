@@ -306,7 +306,7 @@ namespace System.Management.Automation
                     // Otherwise, just treat ('[' or ']') as normal literal
 
 					// Check if we got '['
-                    if ( IsLeftBracket(pattern[index]) )
+                    if (IsLeftBracket(pattern[index]))
                     {
 						// got '['.
                         leftBracket = true;
@@ -1376,4 +1376,3 @@ namespace System.Management.Automation
         }
     }
 }
-
