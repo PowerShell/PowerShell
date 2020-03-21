@@ -5,13 +5,16 @@ Describe "Tee-Object" -Tags "CI" {
     Context "Validate Tee-Object is correctly forking output" {
 
         BeforeAll {
-            $testfile = Join-Path -Path (Join-Path -Path $TestDrive -ChildPath assets) -ChildPath testfile.txt
+            $testfile = Join-Path $TestDrive -ChildPath testfile.txt
             $testvalue = [char](244)
             if ($IsWindows) {
                 $expectedBytes = 244,13,10 -join "-"
             } else {
                 $expectedBytes = 244,10 -join "-"
             }
+        }
+
+        BeforeEach {
             Remove-Item -Path $teefile -ErrorAction SilentlyContinue -Force
         }
 
