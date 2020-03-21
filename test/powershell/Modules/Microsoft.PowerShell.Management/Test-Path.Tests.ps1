@@ -2,6 +2,32 @@
 # Licensed under the MIT License.
 Describe "Test-Path" -Tags "CI" {
     BeforeAll {
+        $testDirnames = @(
+            'WildCardCommandA'
+            'WildCardCommand[B]'
+            '['
+            'goose]'
+            'du[[ck'
+            'du][ck'
+            'duck]]'
+        )
+
+        $testFailDirnames = @(
+            'WildCardCommand'
+            ']'
+            'goos]e'
+            'du[ck'
+            'du]ck'
+            'du]]ck'
+            'duc]k]'
+        )
+
+        foreach($currentDir in $testDirNames)
+        {
+            $expandedFile = Join-Path $TestDrive -ChildPath $currentDir
+            New-Item -Path $expandedFile -ItemType Directory 
+        }
+    
         $testdirectory = $TestDrive
         $testfilename = New-Item -path $testdirectory -Name testfile.txt -ItemType file -Value 1 -force
 
@@ -141,4 +167,17 @@ Describe "Test-Path" -Tags "CI" {
         Test-Path Env:\PATH  | Should -BeTrue
     }
 
+    It "Validate Test-Path scenario where DestinationPath has incomplete brackets" {
+        foreach($currentDir in $testDirNames)
+        {
+            $expandedFile = Join-Path $TestDrive -ChildPath $currentDir
+            Test-Path -Path $expandedFile | Should Be $True
+        }
+
+        foreach($currentDir in $testFailDirnames)
+        {
+            $expandedFile = Join-Path $TestDrive -ChildPath $currentDir
+            Test-Path -Path $expandedFile | Should Be $False
+        }
+    }
 }
