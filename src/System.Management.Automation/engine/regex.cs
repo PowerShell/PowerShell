@@ -306,13 +306,13 @@ namespace System.Management.Automation
                     // Otherwise, just treat ('[' or ']') as normal literal
 
                     // Check if we got '['
-                    if (ch == '[')
+                    if (pattern[index] == '[')
                     {
                         // got '['.
                         leftBracket = true;
                         continue;
                     }
-                    else if (!leftBracket && ch == ']')
+                    else if (!leftBracket && pattern[index] == ']')
                     {
                         // got the ']' without the '['. Ignore the ']' and continue
                         continue;
