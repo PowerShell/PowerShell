@@ -15,7 +15,7 @@ Describe "Tee-Object" -Tags "CI" {
         }
 
         BeforeEach {
-            Remove-Item -Path $teefile -ErrorAction SilentlyContinue -Force
+            Remove-Item -Path $testfile -ErrorAction SilentlyContinue -Force
         }
 
 	    It "Should return the output to the screen and to the variable" {
