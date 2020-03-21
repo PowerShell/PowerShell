@@ -26,7 +26,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop")]
+        [ValidateSet("msix", "deb", "osxpkg", "rpm", "msi", "zip", "zip-pdb", "nupkg", "tar", "tar-arm", "tar-arm64", "tar-alpine", "fxdependent", "fxdependent-win-desktop")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -281,6 +281,18 @@ function Start-PSPackage {
                     New-ZipPackage @Arguments
                 }
             }
+            "zip-pdb" {
+                $Arguments = @{
+                    PackageNameSuffix = $NameSuffix
+                    PackageSourcePath = $Source
+                    PackageVersion = $Version
+                    Force = $Force
+                }
+
+                if ($PSCmdlet.ShouldProcess("Create Symbols Zip Package")) {
+                    New-PdbZipPackage @Arguments
+                }
+            }
 
             { $_ -like "fxdependent*" } {
                 ## Remove PDBs from package to reduce size.
@@ -526,7 +538,7 @@ function New-TarballPackage {
     }
 
     $Staging = "$PSScriptRoot/staging"
-    New-StagingFolder -StagingPath $Staging
+    New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
 
     if (-not $ExcludeSymbolicLinks.IsPresent) {
         New-PSSymbolicLinks -Distribution 'ubuntu.16.04' -Staging $Staging
@@ -803,7 +815,7 @@ function New-UnixPackage {
         # Setup staging directory so we don't change the original source directory
         $Staging = "$PSScriptRoot/staging"
         if ($PSCmdlet.ShouldProcess("Create staging folder")) {
-            New-StagingFolder -StagingPath $Staging
+            New-StagingFolder -StagingPath $Staging -PackageSourcePath $PackageSourcePath
         }
 
         # Follow the Filesystem Hierarchy Standard for Linux and macOS
@@ -1537,11 +1549,16 @@ function New-StagingFolder
     param(
         [Parameter(Mandatory)]
         [string]
-        $StagingPath
+        $StagingPath,
+        [Parameter(Mandatory)]
+        [string]
+        $PackageSourcePath,
+        [string]
+        $Filter = '*'
     )
 
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
-    Copy-Item -Recurse $PackageSourcePath $StagingPath
+    Copy-Item -Recurse $PackageSourcePath $StagingPath -Filter $Filter
 }
 
 # Function to create a zip file for Nano Server and xcopy deployment
@@ -1593,7 +1610,12 @@ function New-ZipPackage
     {
         if ($PSCmdlet.ShouldProcess("Create zip package"))
         {
-            Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
+            $staging = "$PSScriptRoot/staging"
+            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
+
+            Get-ChildItem $staging -Filter *.pdb -recurse | Remove-Item -Force
+
+            Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
         }
 
         if (Test-Path $zipLocationPath)
@@ -1612,6 +1634,77 @@ function New-ZipPackage
         Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
     }
 }
+
+# Function to create a zip file of PDB
+function New-PdbZipPackage
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageName = 'PowerShell-Symbols',
+
+        # Suffix of the Name
+        [string] $PackageNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [string] $PackageVersion,
+
+        # Source Path to the Product Files - required to package the contents into an Zip
+        [Parameter(Mandatory = $true)]
+        [string] $PackageSourcePath,
+
+        [switch] $Force
+    )
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
+
+    $zipPackageName = $PackageName + "-" + $ProductSemanticVersion
+    if ($PackageNameSuffix) {
+        $zipPackageName = $zipPackageName, $PackageNameSuffix -join "-"
+    }
+
+    Write-Verbose "Create Symbols Zip for Product $zipPackageName"
+
+    $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
+
+    if ($Force.IsPresent)
+    {
+        if (Test-Path $zipLocationPath)
+        {
+            Remove-Item $zipLocationPath
+        }
+    }
+
+    if (Get-Command Compress-Archive -ErrorAction Ignore)
+    {
+        if ($PSCmdlet.ShouldProcess("Create zip package"))
+        {
+            $staging = "$PSScriptRoot/staging"
+            New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath -Filter *.pdb
+
+            Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
+        }
+
+        if (Test-Path $zipLocationPath)
+        {
+            Write-Log "You can find the Zip @ $zipLocationPath"
+            $zipLocationPath
+        }
+        else
+        {
+            throw "Failed to create $zipLocationPath"
+        }
+    }
+    #TODO: Use .NET Api to do compresss-archive equivalent if the pscmdlet is not present
+    else
+    {
+        Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
+    }
+}
+
 
 function CreateNugetPlatformFolder
 {
@@ -2439,7 +2532,7 @@ function New-NugetContentPackage
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
     if ($PSCmdlet.ShouldProcess("Create staging folder")) {
-        New-StagingFolder -StagingPath $contentFolder
+        New-StagingFolder -StagingPath $contentFolder -PackageSourcePath $PackageSourcePath
     }
 
     $projectFolder = Join-Path $PSScriptRoot 'projects/nuget'
@@ -2864,6 +2957,12 @@ function New-MSIPackage
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
 
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
+
+    $staging = "$PSScriptRoot/staging"
+    New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
+
+    Get-ChildItem $staging -Filter *.pdb -recurse | Remove-Item -Force
+
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
     Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
@@ -2875,7 +2974,7 @@ function New-MSIPackage
 
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
-    [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
+    [Environment]::SetEnvironmentVariable("ProductSourcePath", $staging, "Process")
     # These variables are used by Product.wxs in assets directory
     [Environment]::SetEnvironmentVariable("ProductDirectoryName", $productDirectoryName, "Process")
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
@@ -2933,7 +3032,7 @@ function New-MSIPackage
     }
 
     Write-Log "verifying no new files have been added or removed..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir  $ProductSourcePath -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
 
     # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
