@@ -1650,12 +1650,10 @@ function New-PdbZipPackage
 
         # Version of the Product
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $PackageVersion,
 
         # Source Path to the Product Files - required to package the contents into an Zip
         [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
         [string] $PackageSourcePath,
 
         [switch] $Force
