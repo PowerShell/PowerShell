@@ -305,17 +305,16 @@ namespace System.Management.Automation
                     // If present they should be in order, first '[' and then ']'
                     // Otherwise, just treat ('[' or ']') as normal literal
 
-					// Check if we got '['
-                    if (IsLeftBracket(pattern[index]))
+                    // Check if we got '['
+                    if (ch == '[')
                     {
-						// got '['.
+                        // got '['.
                         leftBracket = true;
                         continue;
                     }
-					// got the ']' without the '['
-                    else if (!leftBracket && IsRightBracket(pattern[index]))
+                    else if (!leftBracket && ch == ']')
                     {
-						// Ignore the ']' and continue
+                        // got the ']' without the '['. Ignore the ']' and continue
                         continue;
                     }
 
@@ -330,6 +329,7 @@ namespace System.Management.Automation
                     ++index;
                 }
             }
+            
             return result;
         }
 
@@ -420,16 +420,6 @@ namespace System.Management.Automation
         private static bool IsWildcardChar(char ch)
         {
             return (ch == '*') || (ch == '?') || (ch == '[') || (ch == ']');
-        }
-
-        private static bool IsLeftBracket(char ch)
-        {
-            return (ch == '[');
-        }
-
-        private static bool IsRightBracket(char ch)
-        {
-            return (ch == ']');
         }
 
         /// <summary>
