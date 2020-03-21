@@ -1900,6 +1900,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
     }
 
+    Context "Regex Parsing" {
+
+        It 'correctly parses an image with id, class, and src attributes' {
+            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
+                dosType = 'img-attribute'
+            }
+
+            $response = Invoke-WebRequest -Uri $dosUri
+            $response.Images | Should -Not -BeNullOrEmpty
+        }
+    }
+
     Context "Denial of service" -Tag 'DOS' {
         It "Image Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
@@ -1930,15 +1942,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # dosLength 10,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 75
             # in some cases we will be running in a Docker container with modest resources
             $pathologicalRatio | Should -BeGreaterThan 5
-        }
-
-        It 'correctly parses an image with id, class, and src attributes' {
-            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
-                dosType = 'img-attribute'
-            }
-
-            $response = Invoke-WebRequest -Uri $dosUri
-            $response.Images | Should -Not -BeNullOrEmpty
         }
 
         It "Charset Parsing" {
