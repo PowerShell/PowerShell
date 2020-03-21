@@ -313,7 +313,7 @@ namespace System.Management.Automation
                         continue;
                     }
 					// got the ']' without the '['
-                    else if ( (leftBracket == false) && IsRightBracket(pattern[index]) )
+                    else if (!leftBracket && IsRightBracket(pattern[index]))
                     {
 						// Ignore the ']' and continue
                         continue;
