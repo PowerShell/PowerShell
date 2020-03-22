@@ -5,9 +5,10 @@ Describe "Tee-Object" -Tags "CI" {
     Context "Validate Tee-Object is correctly forking output" {
 
         BeforeAll {
-            $testfile = Join-Path $TestDrive -ChildPath testfile.txt
-            $testvalue = [char](244)
+            $testfile = Join-Path $TestDrive -ChildPath "testfile.txt"
+            $testvalue = "ф"
             if ($IsWindows) {
+                # Expected bytes: 244 - 'ф', 13  - '`r', 10  - '`n'.
                 $expectedBytes = 244,13,10 -join "-"
             } else {
                 $expectedBytes = 244,10 -join "-"
