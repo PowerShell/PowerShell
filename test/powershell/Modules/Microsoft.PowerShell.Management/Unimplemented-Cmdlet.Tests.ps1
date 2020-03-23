@@ -12,7 +12,6 @@ Describe "Unimplemented Management Cmdlet Tests" -Tags "CI" {
         "Set-Service",
         "New-Service",
 
-        "Restart-Computer",
         "Rename-Computer",
 
         "Get-ComputerInfo",

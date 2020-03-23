@@ -306,10 +306,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return clientOnly; }
 
-            set {
+            set
+            {
                 clientOnly = value;
                 base.SetParameter(value, nameClientOnly);
-                }
+            }
         }
 
         private SwitchParameter clientOnly;

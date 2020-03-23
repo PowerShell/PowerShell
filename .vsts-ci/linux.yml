@@ -43,14 +43,14 @@ resources:
 jobs:
 - template: templates/ci-build.yml
   parameters:
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-16.04
     jobName: linux_build
     displayName: linux Build
 
 - template: templates/nix-test.yml
   parameters:
     name: Linux
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-16.04
     purpose: UnelevatedPesterTests
     tagSet: CI
     parentJobs:
@@ -59,7 +59,7 @@ jobs:
 - template: templates/nix-test.yml
   parameters:
     name: Linux
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-16.04
     purpose: ElevatedPesterTests
     tagSet: CI
     parentJobs:
@@ -68,7 +68,7 @@ jobs:
 - template: templates/nix-test.yml
   parameters:
     name: Linux
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-16.04
     purpose: UnelevatedPesterTests
     tagSet: Others
     parentJobs:
@@ -77,7 +77,7 @@ jobs:
 - template: templates/nix-test.yml
   parameters:
     name: Linux
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-16.04
     purpose: ElevatedPesterTests
     tagSet: Others
     parentJobs:
@@ -85,7 +85,7 @@ jobs:
 
 - template: templates/verify-xunit.yml
   parameters:
-    pool: Hosted Ubuntu 1604
+    pool: ubuntu-16.04
     parentJobs:
       - linux_build
 

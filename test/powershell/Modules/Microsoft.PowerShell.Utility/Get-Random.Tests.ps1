@@ -132,7 +132,7 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return an array " {
         $randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
         $randomNumber.Count | Should -Be 3
-        ,$randomNumber | Should -BeOfType "System.Array"
+        ,$randomNumber | Should -BeOfType System.Array
     }
 
     It "Should return three random numbers for array of 1,2,3,5,8,13 " {

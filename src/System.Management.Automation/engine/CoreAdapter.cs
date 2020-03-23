@@ -3784,7 +3784,8 @@ namespace System.Management.Automation
                                     name: propertyEntry.member.Name,
                                     adapter: this,
                                     baseObject: obj,
-                                    adapterData: propertyEntry) { IsHidden = propertyEntry.IsHidden } as T);
+                                    adapterData: propertyEntry)
+                                { IsHidden = propertyEntry.IsHidden } as T);
                         }
                     }
                 }

@@ -8,14 +8,10 @@ using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-#if !CORECLR
-using Microsoft.CodeAnalysis;
-#endif
 
 namespace System.Management.Automation.Language
 {
@@ -72,7 +68,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             if (!string.IsNullOrEmpty(fileName) && fileName.Length > scriptSchemaExtension.Length && fileName.EndsWith(scriptSchemaExtension, StringComparison.OrdinalIgnoreCase))
             {
-                parser._keywordModuleName = Path.GetFileName(fileName.Substring(0, fileName.Length - scriptSchemaExtension.Length));
+                parser._keywordModuleName = Path.GetFileName(fileName.AsSpan(0, fileName.Length - scriptSchemaExtension.Length)).ToString();
                 parseDscResource = true;
             }
 
@@ -8059,7 +8055,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public override string ToString()
         {
-            return PositionUtilities.VerboseMessage(Extent) + "\n" + Message;
+            return PositionUtilities.VerboseMessage(Extent) + Environment.NewLine + Message;
         }
 
         /// <summary>
@@ -8111,7 +8107,7 @@ namespace System.Management.Automation.Language
 
         internal static string GetFileOrScript(string fileName, string input)
         {
-            return fileName ?? input.Substring(0, Math.Min(256, input.Length)).Trim();
+            return fileName ?? input.AsSpan(0, Math.Min(256, input.Length)).Trim().ToString();
         }
     }
 }

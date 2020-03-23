@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -IncludeUserName" {
-        (Get-Process -Id $pid -IncludeUserName).UserName | Should -Match $env:USERNAME
+        (Get-Process -Id $PID -IncludeUserName).UserName | Should -Match $env:USERNAME
     }
 
     It "Should support -Module" -Pending:$IsMacOS {
-        $modules = Get-Process -Id $pid -Module
+        $modules = Get-Process -Id $PID -Module
         $modules.GetType() | Should -BeExactly "System.Object[]"
         foreach ($module in $modules) {
             $module.GetType() | Should -BeExactly "System.Diagnostics.ProcessModule"
@@ -14,7 +14,7 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It "Should support -FileVersionInfo" {
-        $pwshVersion = Get-Process -Id $pid -FileVersionInfo
+        $pwshVersion = Get-Process -Id $PID -FileVersionInfo
         if ($IsWindows) {
             $pwshVersion.FileVersion | Should -Match $PSVersionTable.PSVersion.ToString().Split("-")[0]
             $pwshVersion.FileMajorPart | Should -BeExactly $PSVersionTable.PSVersion.Major
@@ -46,7 +46,7 @@ Describe "Get-Process" -Tags "CI" {
         $idleProcessPid = 0
     }
     It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsMacOS {
-        ,$ps | Should -BeOfType "System.Object[]"
+        ,$ps | Should -BeOfType System.Object[]
     }
 
     It "Should have not empty Name flags set for Get-Process object" -Pending:$IsMacOS {
@@ -71,11 +71,11 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Test for process property = Name" {
-        (Get-Process -Id $pid).Name | Should -BeExactly "pwsh"
+        (Get-Process -Id $PID).Name | Should -BeExactly "pwsh"
     }
 
     It "Test for process property = Id" {
-        (Get-Process -Id $pid).Id | Should -BeExactly $pid
+        (Get-Process -Id $PID).Id | Should -BeExactly $PID
     }
 
     It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows)  {
@@ -119,12 +119,12 @@ Describe "Get-Process Formatting" -Tags "Feature" {
 Describe "Process Parent property" -Tags "CI" {
     It "Has Parent process property" {
         $powershellexe = (get-process -id $PID).mainmodule.filename
-        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent' | Should -Not -BeNullOrEmpty
+        & $powershellexe -noprofile -command '(Get-Process -Id $PID).Parent' | Should -Not -BeNullOrEmpty
     }
 
     It "Has valid parent process ID property" {
         $powershellexe = (get-process -id $PID).mainmodule.filename
-        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent.Id' | Should -Be $pid
+        & $powershellexe -noprofile -command '(Get-Process -Id $PID).Parent.Id' | Should -Be $PID
     }
 }
 

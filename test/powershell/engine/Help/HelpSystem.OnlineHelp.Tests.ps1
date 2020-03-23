@@ -71,7 +71,7 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
             {
                 if (-not (Test-Path 'HKCR:\'))
                 {
-                    New-PSDrive -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR | Should NotBeNullOrEmpty
+                    New-PSDrive -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR | Should -Not -BeNullOrEmpty
                 }
                 $browserExe = ((Get-ItemProperty "HKCR:\$progId\shell\open\command")."(default)" -replace '"', '') -split " "
                 if ($browserExe.count -ge 1)

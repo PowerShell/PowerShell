@@ -600,7 +600,8 @@ namespace System.Management.Automation
 
                 int subStringLength = 0;
 
-                for (int charCount = 0; charCount < item.Length; charCount++) {
+                for (int charCount = 0; charCount < item.Length; charCount++)
+                {
                     // Evaluate the predicate using the character at cursor.
                     object predicateResult = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,

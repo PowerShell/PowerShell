@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell
             {
                 for (int i = 0; i < dataLen; i++)
                 {
-                    data[i] = byte.Parse(s.Substring(2 * i, 2),
+                    data[i] = byte.Parse(s.AsSpan(2 * i, 2),
                                          NumberStyles.AllowHexSpecifier,
                                          System.Globalization.CultureInfo.InvariantCulture);
                 }

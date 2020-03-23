@@ -17,7 +17,7 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
         }
 
         It 'Select-String emits VT' {
-            "select this string" | Select-String 'this' | Out-String |Should -BeLikeExactly "*`e*"
+            "select this string" | Select-String 'this' | Out-String | Should -BeLikeExactly "*`e*"
         }
 
         It 'ConciseView emits VT' {

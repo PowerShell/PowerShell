@@ -1723,7 +1723,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal static string FixupName(string name)
         {
             BCLDebug.Assert(name != null, "[FixupName]name!=null");
-            if (name.IndexOf('\\') == -1)
+            if (name.Contains('\\'))
                 return name;
 
             StringBuilder sb = new StringBuilder(name);

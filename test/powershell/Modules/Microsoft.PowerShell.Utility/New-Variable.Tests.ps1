@@ -5,19 +5,19 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 	It "New-Variable variable with description should works"{
 		New-Variable foo bar -description "my description"
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeExactly "my description"
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeExactly "my description"
 	}
 
 	It "New-Variable variable with option should works"{
 		New-Variable foo bar -option Constant
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "Constant"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "Constant"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 
 	It "New-Variable variable twice should throw Exception"{
@@ -29,10 +29,10 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 
 		New-Variable foo bar -Force -PassThru
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 
 	It "New-Variable ReadOnly variable twice should throw Exception"{
@@ -44,10 +44,10 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 
 		New-Variable foo bar -Force -PassThru
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 }
 

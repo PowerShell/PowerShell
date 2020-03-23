@@ -9,7 +9,7 @@ Describe "Group-Object DRT Unit Tests" -Tags "CI" {
         $results.Group.Count | Should -Be 4
         $results.Name | Should -Be aA,AA
         $results.Group | Should -Be aA,aA,AA,AA
-        ,$results | Should -BeOfType "System.Array"
+        ,$results | Should -BeOfType System.Array
     }
 }
 
@@ -46,13 +46,13 @@ Describe "Group-Object" -Tags "CI" {
 
     It "Should return object of 'GroupInfo' type" {
         $actualParam = Group-Object -InputObject $testObject
-        $actualParam | Should -BeOfType "Microsoft.PowerShell.Commands.GroupInfo"
+        $actualParam | Should -BeOfType Microsoft.PowerShell.Commands.GroupInfo
     }
 
     It "Should output an array when piped input is used" {
         $actual = $testObject | Group-Object
 
-        ,$actual | Should -BeOfType "System.Array"
+        ,$actual | Should -BeOfType System.Array
     }
 
     It "Should have the same output between the group alias and the group-object cmdlet" {
@@ -89,7 +89,7 @@ Describe "Group-Object" -Tags "CI" {
         $actual = $testObject | Group-Object -AsHashTable
 
         $actual | Should -Not -BeNullOrEmpty
-        $actual | Should -BeOfType "System.Collections.Hashtable"
+        $actual | Should -BeOfType System.Collections.Hashtable
     }
 
     It "Should be able to access when output as hash table" {
@@ -187,7 +187,7 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
         )
 
         $Result = $capitonyms | Group-Object -Property Capitonym -AsHashTable -CaseSensitive
-        $Result | Should -BeOfType [HashTable]
+        $Result | Should -BeOfType HashTable
         $Result.Keys | Should -BeIn @( 'Bill', 'bill' )
     }
 }

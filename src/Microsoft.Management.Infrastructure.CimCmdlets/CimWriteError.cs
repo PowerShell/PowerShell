@@ -49,7 +49,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (containsErrorRecord != null)
             {
                 return InitializeErrorRecord(context,
-                    exception : inner,
+                    exception: inner,
                     errorId: "CimCmdlet_" + containsErrorRecord.ErrorRecord.FullyQualifiedErrorId,
                     errorCategory: containsErrorRecord.ErrorRecord.CategoryInfo.Category,
                     cimResultContext: cimResultContext);
@@ -57,7 +57,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             else
             {
                 return InitializeErrorRecord(context,
-                    exception :inner,
+                    exception: inner,
                     errorId: "CimCmdlet_" + inner.GetType().Name,
                     errorCategory: ErrorCategory.NotSpecified,
                     cimResultContext: cimResultContext);

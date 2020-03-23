@@ -19,7 +19,14 @@ Describe "Built-in type information tests" -Tag "CI" {
 
     It "Should have correct number of built-in type items in type table" {
         $isUnixStatEnabled = $EnabledExperimentalFeatures -contains 'PSUnixFileStat'
-        $types.Count | Should -BeExactly ($isUnixStatEnabled ? 272 : 273)
+        $expected = if ($IsWindows) {
+            273
+        } elseif ($isUnixStatEnabled) {
+            272
+        } else {
+            271
+        }
+        $types.Count | Should -BeExactly $expected
     }
 
     It "Should have expected member info for 'System.Diagnostics.ProcessModule'" {
@@ -27,37 +34,37 @@ Describe "Built-in type information tests" -Tag "CI" {
         $typeData | Should -Not -BeNullOrEmpty
 
         $typeData.Members.Count | Should -BeExactly 6
-        $typeData.Members['Size'] | Should -BeOfType "System.Management.Automation.Runspaces.ScriptPropertyData"
+        $typeData.Members['Size'] | Should -BeOfType System.Management.Automation.Runspaces.ScriptPropertyData
         $typeData.Members['Size'].GetScriptBlock.ToString() | Should -BeExactly '$this.ModuleMemorySize / 1024'
         $typeData.Members['Size'].SetScriptBlock | Should -BeNullOrEmpty
         $typeData.Members['Size'].IsHidden | Should -BeFalse
         $typeData.Members['Size'].Name | Should -Be "Size"
 
-        $typeData.Members['Company'] | Should -BeOfType "System.Management.Automation.Runspaces.ScriptPropertyData"
+        $typeData.Members['Company'] | Should -BeOfType System.Management.Automation.Runspaces.ScriptPropertyData
         $typeData.Members['Company'].GetScriptBlock.ToString() | Should -BeExactly '$this.FileVersionInfo.CompanyName'
         $typeData.Members['Company'].SetScriptBlock | Should -BeNullOrEmpty
         $typeData.Members['Company'].IsHidden | Should -BeFalse
         $typeData.Members['Company'].Name | Should -Be "Company"
 
-        $typeData.Members['FileVersion'] | Should -BeOfType "System.Management.Automation.Runspaces.ScriptPropertyData"
+        $typeData.Members['FileVersion'] | Should -BeOfType System.Management.Automation.Runspaces.ScriptPropertyData
         $typeData.Members['FileVersion'].GetScriptBlock.ToString() | Should -BeExactly '$this.FileVersionInfo.FileVersion'
         $typeData.Members['FileVersion'].SetScriptBlock | Should -BeNullOrEmpty
         $typeData.Members['FileVersion'].IsHidden | Should -BeFalse
         $typeData.Members['FileVersion'].Name | Should -Be "FileVersion"
 
-        $typeData.Members['ProductVersion'] | Should -BeOfType "System.Management.Automation.Runspaces.ScriptPropertyData"
+        $typeData.Members['ProductVersion'] | Should -BeOfType System.Management.Automation.Runspaces.ScriptPropertyData
         $typeData.Members['ProductVersion'].GetScriptBlock.ToString() | Should -BeExactly '$this.FileVersionInfo.ProductVersion'
         $typeData.Members['ProductVersion'].SetScriptBlock | Should -BeNullOrEmpty
         $typeData.Members['ProductVersion'].IsHidden | Should -BeFalse
         $typeData.Members['ProductVersion'].Name | Should -Be "ProductVersion"
 
-        $typeData.Members['Description'] | Should -BeOfType "System.Management.Automation.Runspaces.ScriptPropertyData"
+        $typeData.Members['Description'] | Should -BeOfType System.Management.Automation.Runspaces.ScriptPropertyData
         $typeData.Members['Description'].GetScriptBlock.ToString() | Should -BeExactly '$this.FileVersionInfo.FileDescription'
         $typeData.Members['Description'].SetScriptBlock | Should -BeNullOrEmpty
         $typeData.Members['Description'].IsHidden | Should -BeFalse
         $typeData.Members['Description'].Name | Should -Be "Description"
 
-        $typeData.Members['Product'] | Should -BeOfType "System.Management.Automation.Runspaces.ScriptPropertyData"
+        $typeData.Members['Product'] | Should -BeOfType System.Management.Automation.Runspaces.ScriptPropertyData
         $typeData.Members['Product'].GetScriptBlock.ToString() | Should -BeExactly '$this.FileVersionInfo.ProductName'
         $typeData.Members['Product'].SetScriptBlock | Should -BeNullOrEmpty
         $typeData.Members['Product'].IsHidden | Should -BeFalse
@@ -83,7 +90,7 @@ Describe "Built-in type information tests" -Tag "CI" {
         $typeData | Should -Not -BeNullOrEmpty
 
         $typeData.Members.Count | Should -BeExactly 1
-        $typeData.Members['Flags'] | Should -BeOfType "System.Management.Automation.Runspaces.CodePropertyData"
+        $typeData.Members['Flags'] | Should -BeOfType System.Management.Automation.Runspaces.CodePropertyData
         $typeData.Members['Flags'].IsHidden | Should -BeFalse
         $typeData.Members['Flags'].Name | Should -Be "Flags"
 
@@ -100,7 +107,7 @@ Describe "Built-in type information tests" -Tag "CI" {
         $typeData.DefaultKeyPropertySet | Should -BeNullOrEmpty
 
         $typeData.SerializationMethod | Should -BeExactly "SpecificProperties"
-        $typeData.PropertySerializationSet | Should -BeOfType "System.Management.Automation.Runspaces.PropertySetData"
+        $typeData.PropertySerializationSet | Should -BeOfType System.Management.Automation.Runspaces.PropertySetData
         [string]::Join(",", $typeData.PropertySerializationSet.ReferencedProperties) | Should -BeExactly "Position,Flags,HelpMessage"
     }
 

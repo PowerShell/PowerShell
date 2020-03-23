@@ -1247,7 +1247,7 @@ namespace System.Management.Automation.Host
                     if (andPos + 1 < choices[i].Label.Length)
                     {
                         splitLabel.Append(choices[i].Label.Substring(andPos + 1));
-                        hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.Substring(andPos + 1, 1).Trim());
+                        hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.AsSpan(andPos + 1, 1).Trim().ToString());
                     }
 
                     hotkeysAndPlainLabels[1, i] = splitLabel.ToString().Trim();

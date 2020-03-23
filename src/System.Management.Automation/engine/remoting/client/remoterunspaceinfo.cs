@@ -322,7 +322,7 @@ namespace System.Management.Automation.Runspaces
                 case WSManConnectionInfo _:
                     return "WSMan";
 
-                case SSHConnectionInfo  _:
+                case SSHConnectionInfo _:
                     return "SSH";
 
                 case NamedPipeConnectionInfo _:

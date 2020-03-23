@@ -176,7 +176,10 @@ dbda : KM
 
 
 "@
+        $expected = $expected -replace "`r`n", "`n"
 
-        $obj | Format-List | Out-String | Should -BeExactly $expected
+        $actual = $obj | Format-List | Out-String
+        $actual = $actual -replace "`r`n", "`n"
+        $actual | Should -BeExactly $expected
     }
 }

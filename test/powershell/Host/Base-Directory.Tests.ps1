@@ -3,7 +3,7 @@
 Describe "Configuration file locations" -tags "CI","Slow" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
         $profileName = "Microsoft.PowerShell_profile.ps1"
     }
 

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell's Microsoft.PowerShell.Commands.Utility project</Description>
@@ -31,10 +31,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.4.0" />
-    <PackageReference Include="System.Threading.AccessControl" Version="4.7.0" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-    <PackageReference Include="NJsonSchema" Version="10.1.2" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.5.0" />
+    <PackageReference Include="System.Threading.AccessControl" Version="5.0.0-preview.1.20120.5" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.0-preview.1.20120.5" />
+    <PackageReference Include="NJsonSchema" Version="10.1.11" />
   </ItemGroup>
 
 </Project>

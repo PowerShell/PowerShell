@@ -23,7 +23,7 @@ Describe "Can load a native assembly" -Tags "CI" {
             $arch = "linux-" + $processArch
             $nativeDllName = "nativedll.so"
             $sourceDllName = "libhostpolicy.so"
-        } elseif ($IsMacOs) {
+        } elseif ($IsMacOS) {
             $arch = "osx-" + $processArch
             $nativeDllName = "nativedll.dylib"
             $sourceDllName = "libhostpolicy.dylib"

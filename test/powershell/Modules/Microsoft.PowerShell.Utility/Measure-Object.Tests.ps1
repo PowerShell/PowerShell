@@ -38,7 +38,7 @@ Describe "Measure-Object" -Tags "CI" {
     It "Should calculate Standard Deviation with -Sum" {
         $actual = ($testObject | Measure-Object -Sum -StandardDeviation)
         # We check this way since .StandardDeviation returns a double value
-        $actual.Sum | Should Be 8
+        $actual.Sum | Should -Be 8
         # 1.52752523165195 was calculated outside powershell using formula from
         # http://mathworld.wolfram.com/StandardDeviation.html
         [Math]::abs($actual.StandardDeviation - 1.52752523165195) | Should -BeLessThan .00000000000001
@@ -56,8 +56,8 @@ Describe "Measure-Object" -Tags "CI" {
     It "Should calculate Standard Deviation with -Sum -Average" {
         $actual = ($testObject2 | Measure-Object -Sum -Average -StandardDeviation)
         # We check this way since .StandardDeviation returns a double value
-        $actual.Sum | Should Be 5050
-        $actual.Average | Should Be 50.5
+        $actual.Sum | Should -Be 5050
+        $actual.Average | Should -Be 50.5
         # 29.011491975882 was calculated outside powershell using formula from
         # http://mathworld.wolfram.com/StandardDeviation.html
         [Math]::abs($actual.StandardDeviation - 29.011491975882) | Should -BeLessThan .0000000000001

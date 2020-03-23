@@ -233,10 +233,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-#if !CORECLR
                 PSEtwLog.LogSettingsEvent(MshLog.GetLogContext(Context, MyInvocation),
                     EtwLoggingStrings.ExecutionPolicyName, executionPolicy, null);
-#endif
             }
         }
 

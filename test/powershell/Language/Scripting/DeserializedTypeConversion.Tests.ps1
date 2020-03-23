@@ -94,7 +94,7 @@ Describe "Tests conversion of deserialized types to original type using object p
         }
 
         It 'Type casts should succeed.' {
-            { $tc1 = [test1]$dst1 }| Should -Not -Throw
+            { $tc1 = [test1]$dst1 } | Should -Not -Throw
         }
 
         It 'Parameter bindings should succeed.' {

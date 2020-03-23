@@ -8,7 +8,7 @@ Describe "Remote runspace pool should expose commands in endpoint configuration"
 
     BeforeAll {
 
-        if ($isWindows -and (Test-CanWriteToPsHome))
+        if ($IsWindows -and (Test-CanWriteToPsHome))
         {
             $configName = "restrictedV"
             $configPath = Join-Path $TestDrive ($configName + ".pssc")

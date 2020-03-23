@@ -292,7 +292,7 @@ namespace System.Management.Automation
                 }
 
                 // If the type is really an array, but the typename didn't include [], then add it.
-                if (type.IsArray && (parameterTypeString.IndexOf("[]", StringComparison.Ordinal) == -1))
+                if (type.IsArray && !parameterTypeString.Contains("[]", StringComparison.Ordinal))
                 {
                     var t = type;
                     while (t.IsArray)

@@ -178,7 +178,7 @@ Describe "Add-Member DRT Unit Tests" -Tags "CI" {
         $object = @(1,2)
         Add-Member -InputObject $object "ABC" "Value1"
         Add-Member -InputObject $object "ABC" "Value2" -ErrorVariable errorVar -ErrorAction SilentlyContinue
-        $errorVar.Exception | Should -BeOfType "System.InvalidOperationException"
+        $errorVar.Exception | Should -BeOfType System.InvalidOperationException
         $errorVar.Exception.Message | Should -Not -BeNullOrEmpty
     }
 }

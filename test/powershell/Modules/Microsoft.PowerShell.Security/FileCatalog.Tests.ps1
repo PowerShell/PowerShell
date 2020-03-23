@@ -5,7 +5,7 @@
 
 try {
     #skip all tests on non-windows platform
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
 $script:catalogPath = ""

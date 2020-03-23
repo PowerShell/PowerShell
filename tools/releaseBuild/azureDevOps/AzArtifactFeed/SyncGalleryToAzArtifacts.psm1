@@ -34,7 +34,7 @@ function SyncGalleryToAzArtifacts {
     foreach ($package in $packages) {
         try {
             # Get module from gallery
-            $foundPackageOnGallery = Find-Package -ProviderName NuGet -Source $galleryUrl -AllVersions -Name $package.Name -Force -AllowPreReleaseVersion | Sort-Object -Property Version -Descending | Select-Object -First 1
+            $foundPackageOnGallery = Find-Package -ProviderName NuGet -Source $galleryUrl -AllVersions -Name $package.Name -Force -AllowPreReleaseVersion | SortPackage | Select-Object -First 1
             Write-Verbose -Verbose "Found module $($package.Name) - $($foundPackageOnGallery.Version) in gallery"
             $galleryPackages += $foundPackageOnGallery
         } catch {
@@ -51,7 +51,7 @@ function SyncGalleryToAzArtifacts {
             # Get module from Az Artifacts
             # There seems to be a bug in the feed with RequiredVersion matching. Adding workaround with post filtering.
             # Issue: https://github.com/OneGet/oneget/issues/397
-            $foundPackageOnAz = Find-Package -ProviderName NuGet -Source $azArtifactsUrl -AllVersions -Name $package.Name -Force -Credential $azDevOpsCreds -AllowPreReleaseVersion | Sort-Object -Property Version -Descending | Select-Object -First 1
+            $foundPackageOnAz = Find-Package -ProviderName NuGet -Source $azArtifactsUrl -AllVersions -Name $package.Name -Force -Credential $azDevOpsCreds -AllowPreReleaseVersion | SortPackage | Select-Object -First 1
             Write-Verbose -Verbose "Found module $($package.Name) - $($foundPackageOnAz.Version) in azArtifacts"
             $azArtifactsPackages += $foundPackageOnAz
         } catch {
@@ -66,10 +66,10 @@ function SyncGalleryToAzArtifacts {
         }
 
         # Check if Az package version is less that gallery version
-        if ($foundPackageOnAz.Version -lt $foundPackageOnGallery.Version) {
+        if (CompareVersions -lt -ReferencePackage $foundPackageOnAz -DifferencePackage $foundPackageOnGallery) {
             Write-Verbose -Verbose "Module needs to be updated $($package.Name) - $($foundPackageOnGallery.Version)"
             $modulesToUpdate += $foundPackageOnGallery
-        } elseif ($foundPackageOnGallery.Version -lt $foundPackageOnAz.Version) {
+        } elseif (CompareVersions -lt -ReferencePackage $foundPackageOnGallery -DifferencePackage $foundPackageOnAz) {
             Write-Warning "Newer version found on Az Artifacts - $($foundPackageOnAz.Name) - $($foundPackageOnAz.Version)"
         } else {
             Write-Verbose -Verbose "Module is in sync - $($package.Name)"
@@ -92,7 +92,7 @@ function SyncGalleryToAzArtifacts {
 
     # Remove dependent packages downloaded by Save-Module if there are already present in AzArtifacts feed.
     try {
-        Register-PackageSource -Name local -Location $Destination -ProviderName NuGet -Force
+        $null = Register-PackageSource -Name local -Location $Destination -ProviderName NuGet -Force
         $packageNamesToKeep = @()
         $savedPackages = Find-Package -Source local -AllVersions -AllowPreReleaseVersion
 
@@ -120,11 +120,80 @@ function SyncGalleryToAzArtifacts {
 
 }
 
+Function CompareVersions {
+    param (
+        [Microsoft.PackageManagement.Packaging.SoftwareIdentity]
+        $ReferencePackage,
+        [Microsoft.PackageManagement.Packaging.SoftwareIdentity]
+        $DifferencePackage,
+        [Parameter(Mandatory = $true, ParameterSetName='lt')]
+        [switch]
+        $lt,
+        [Parameter(Mandatory = $true, ParameterSetName='gt')]
+        [switch]
+        $gt
+    )
+
+    if ($ReferencePackage.Version -eq $DifferencePackage.Version) {
+        return $false
+    }
+
+    $latest = SortPackage -p @($ReferencePackage,$DifferencePackage) | Select-Object -First 1
+
+    if ($gt.IsPresent) {
+        return $ReferencePackage -eq $latest
+    } elseif ($lt.IsPresent) {
+        return $DifferencePackage -eq $latest
+    } else {
+        throw "Unknown parameter set"
+    }
+}
+
+
+Function SortPackage {
+    param(
+        [Parameter(ValueFromPipeline = $true)]
+        [Microsoft.PackageManagement.Packaging.SoftwareIdentity[]]
+        $packages
+    )
+
+    Begin {
+        $allPackages = @()
+    }
+
+    Process {
+        $allPackages += $packages
+    }
+
+    End {
+        $versions = $allPackages.Version |
+        Foreach-Object { ($_ -split '-')[0] } |
+        Select-Object -Unique |
+        Sort-Object -Descending -Property Version
+
+        foreach ($version in $versions) {
+            $exactMatch = $allPackages | Where-Object {
+                Write-Verbose "testing $($_.version) -eq $version"
+                $_.version -eq $version
+            }
+
+            if ($exactMatch) {
+                Write-Output $exactMatch
+            }
+
+            $allPackages | Where-Object {
+                $_.version -like "${version}-*"
+            } | Sort-Object -Descending -Property Version | Write-Output
+        }
+    }
+}
+
+
 function NormalizeVersion {
     param ([string] $version)
 
     $sVer = if ($version -match "(\d+.\d+.\d+).0") {
-        $matches[1]
+        $Matches[1]
     } elseif ($version -match "^\d+.\d+$") {
         # Two digit versions are stored as three digit versions
         "$version.0"
@@ -135,4 +204,4 @@ function NormalizeVersion {
     $sVer
 }
 
-Export-ModuleMember -Function 'SyncGalleryToAzArtifacts'
+Export-ModuleMember -Function 'SyncGalleryToAzArtifacts', 'SortPackage'

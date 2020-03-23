@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 <#
 os_log notes:
@@ -149,7 +149,7 @@ Class OsLogIds
     [int] $Thread = 2;
     [int] $Type = 3;
     [int] $Activity = 4;
-    [int] $Pid = 5;
+    [int] $PID = 5;
     [int] $TTL = 6;
     [int] $ProcessName = 7;
     [int] $Module = 8;
@@ -187,7 +187,7 @@ class PSLogItem
 
     hidden static [int] GetMonth([string] $value)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         for ($x = 0; $x -lt [PSLogItem]::monthNames.Count; $x++)
         {
             [string] $monthName = [PSLogItem]::monthNames[$x]
@@ -201,7 +201,7 @@ class PSLogItem
 
     static [PSLogItem] ConvertSysLog([string] $content, [string] $id, [Nullable[DateTime]] $after)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         <#
         MMM dd HH:MM:SS machinename id[PID]: (commitid:TID:CHANNEL) [EventName] Message
         Expecting split to return
@@ -339,7 +339,7 @@ class PSLogItem
 
     static [object] ConvertOsLog([string] $content, [string] $id, [Nullable[DateTime]] $after)
     {
-        Set-StrictMode -Version Latest
+        Set-StrictMode -Version 3.0
         <#
         Expecting split to return
         0: date                         2018-02-07
@@ -1079,7 +1079,7 @@ function Wait-PSWinEvent
 
         foreach ($thisRecord in (get-winevent -FilterHashtable $filterHashtable -Oldest 2> $null))
         {
-            if($PsCmdlet.ParameterSetName -eq "ByPropertyName")
+            if($PSCmdlet.ParameterSetName -eq "ByPropertyName")
             {
                 if ($thisRecord."$propertyName" -like "*$propertyValue*")
                 {
@@ -1094,7 +1094,7 @@ function Wait-PSWinEvent
                 }
             }
 
-            if($PsCmdlet.ParameterSetName -eq "ByPropertyIndex")
+            if($PSCmdlet.ParameterSetName -eq "ByPropertyIndex")
             {
                 if ($thisRecord.Properties[$propertyIndex].Value -eq $propertyValue)
                 {

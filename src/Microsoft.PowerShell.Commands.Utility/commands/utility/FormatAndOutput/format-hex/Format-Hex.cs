@@ -403,6 +403,7 @@ namespace Microsoft.PowerShell.Commands
                     if (_lastInputType != null && baseType != _lastInputType)
                     {
                         _groupInput = false;
+                        FlushInputBuffer();
                     }
 
                     _lastInputType = baseType;

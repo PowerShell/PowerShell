@@ -1,4 +1,4 @@
-﻿@{
+@{
     Description = @'
 PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.

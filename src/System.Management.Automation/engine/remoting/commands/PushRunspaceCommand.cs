@@ -246,25 +246,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Check if current host is remote host.  Enter-PSSession on remote host is not
-            // currently supported.
-            if (!IsParameterSetForVM() &&
-                !IsParameterSetForContainer() &&
-                !IsParameterSetForVMContainerSession() &&
-                this.Context != null &&
-                this.Context.EngineHostInterface != null &&
-                this.Context.EngineHostInterface.ExternalHost != null &&
-                this.Context.EngineHostInterface.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)
-            {
-                WriteError(
-                    new ErrorRecord(
-                        new ArgumentException(GetMessage(RemotingErrorIdStrings.RemoteHostDoesNotSupportPushRunspace)),
-                        PSRemotingErrorId.RemoteHostDoesNotSupportPushRunspace.ToString(),
-                        ErrorCategory.InvalidArgument,
-                        null));
-                return;
-            }
-
             // for the console host and Graphical PowerShell host
             // we want to skip pushing into the the runspace if
             // the host is in a nested prompt

@@ -470,7 +470,7 @@ try
 
         BeforeAll {
 
-            function VulnerableFunctionFromFullLanguage { Invoke-Expression $Args[0] }
+            function VulnerableFunctionFromFullLanguage { Invoke-Expression $args[0] }
 
             $TestCasesIEX = @(
                 @{testName = "Verifies direct Invoke-Expression does not bypass constrained language mode";

@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         WriteObject(
-                            Context.Debugger.SetCommandBreakpoint(Command[i], Action));
+                            Context.Debugger.SetCommandBreakpoint(Command[i], Action, path: null));
                     }
                 }
             }
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         WriteObject(
-                            Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action));
+                            Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action, path: null));
                     }
                 }
             }

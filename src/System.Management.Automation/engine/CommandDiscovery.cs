@@ -888,7 +888,7 @@ namespace System.Management.Automation
             It attempts to load modules from a fixed ModulesWithJobSourceAdapters list that currently has only `PSScheduledJob` module that is not PS-Core compatible.
             Because this function does not check the result of a (currently failing) `PSScheduledJob` module autoload, it provides no value.
             After discussion it was decided to comment out this code as it may be useful if ModulesWithJobSourceAdapters list changes in the future.
-                        
+
             if (!context.IsModuleWithJobSourceAdapterLoaded)
             {
                 PSModuleAutoLoadingPreference moduleAutoLoadingPreference = GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
@@ -1328,6 +1328,15 @@ namespace System.Management.Automation
                     foreach (string directory in tokenizedPath)
                     {
                         string tempDir = directory.TrimStart();
+                        if (tempDir.EqualsOrdinalIgnoreCase("~"))
+                        {
+                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                        }
+                        else if (tempDir.StartsWith("~" + Path.DirectorySeparatorChar))
+                        {
+                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + tempDir.Substring(2);
+                        }
+
                         _cachedPath.Add(tempDir);
                         result.Add(tempDir);
                     }

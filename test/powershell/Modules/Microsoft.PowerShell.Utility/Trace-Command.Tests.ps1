@@ -80,7 +80,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ProcessID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should -Be $pid }
+            $results | ForEach-Object { $_ | Should -Be $PID }
         }
     }
 

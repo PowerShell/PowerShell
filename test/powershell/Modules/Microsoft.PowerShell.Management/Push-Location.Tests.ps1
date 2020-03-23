@@ -49,7 +49,7 @@ Describe "Test-Push-Location" -Tags "CI" {
     }
 
     It "Should produce a pathinfo object when the passthru parameter is used" {
-        Push-Location .. -PassThru | ForEach-Object { $_ | Should -BeOfType "System.Management.Automation.PathInfo" }
+        Push-Location .. -PassThru | ForEach-Object { $_ | Should -BeOfType System.Management.Automation.PathInfo }
     }
 
     # final cleanup
