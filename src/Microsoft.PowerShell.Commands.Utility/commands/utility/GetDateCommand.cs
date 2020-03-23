@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets whether to treat a number input as ticks, or unix time.
+        /// Gets or sets whether to treat a numeric input as ticks, or unix time.
         /// </summary>
         [Parameter]
         public SwitchParameter FromUnixTime;
