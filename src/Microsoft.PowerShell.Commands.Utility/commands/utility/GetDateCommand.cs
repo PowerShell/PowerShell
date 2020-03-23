@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (FromUnixTime.IsPresent)
                 {
-                    dateToUse = UnixTimeToDateTime(Date.Ticks);
+                    dateToUse = DateTimeOffset.FromUnixTimeSeconds(Date.Ticks).UtcDateTime;
                 }
                 else
                 {
@@ -558,14 +558,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return StringUtil.Format(sb.ToString(), dateTime);
-        }
-
-        /// <summary>
-        /// Converts unix time into DateTime.
-        /// </summary>
-        private static DateTime UnixTimeToDateTime(long unixTime)
-        {
-            return DateTimeOffset.FromUnixTimeSeconds(unixTime).UtcDateTime;
         }
 
         #endregion
