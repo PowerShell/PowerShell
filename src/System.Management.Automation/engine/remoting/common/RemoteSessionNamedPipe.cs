@@ -972,7 +972,10 @@ namespace System.Management.Automation.Remoting
                         // Terminate the IPC thread.
                         namedPipeServer.Dispose();
                     }
-                    catch (ObjectDisposedException) { }
+                    catch (ObjectDisposedException)
+                    {
+                        // Ignore.
+                    }
                     catch (Exception)
                     {
                         // Don't throw an exception on the app domain unload event thread.

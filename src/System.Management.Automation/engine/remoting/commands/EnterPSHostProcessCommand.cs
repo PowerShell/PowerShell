@@ -787,7 +787,7 @@ namespace Microsoft.PowerShell.Commands
         private PSHostProcessInfo() { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the PSHostProcessInfo type.
         /// </summary>
         /// <param name="processName">Name of process.</param>
         /// <param name="processId">Id of process.</param>
@@ -799,9 +799,15 @@ namespace Microsoft.PowerShell.Commands
             string appDomainName,
             string pipeNameFilePath)
         {
-            if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
+            if (string.IsNullOrEmpty(processName))
+            {
+                throw new PSArgumentNullException("processName");
+            }
 
-            if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
+            if (string.IsNullOrEmpty(appDomainName))
+            {
+                throw new PSArgumentNullException("appDomainName");
+            }
 
             MainWindowTitle = string.Empty;
             try
@@ -809,8 +815,14 @@ namespace Microsoft.PowerShell.Commands
                 var proc = Process.GetProcessById(processId);
                 MainWindowTitle = proc.MainWindowTitle ?? string.Empty;
             }
-            catch (ArgumentException) { }
-            catch (InvalidOperationException) { }
+            catch (ArgumentException)
+            {
+                // Ignore.
+            }
+            catch (InvalidOperationException)
+            {
+                // Ignore.
+            }
 
             this.ProcessName = processName;
             this.ProcessId = processId;
@@ -823,8 +835,9 @@ namespace Microsoft.PowerShell.Commands
         #region Methods
 
         /// <summary>
-        /// Returns the pipe name file path.
+        /// Retrieves the pipe name file path.
         /// </summary>
+        /// <returns>Pipe name file path.</returns>
         public string GetPipeNameFilePath()
         {
             return _pipeNameFilePath;
