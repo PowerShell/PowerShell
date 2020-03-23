@@ -277,3 +277,10 @@ Describe "Get-Date -UFormat tests" -Tags "CI" {
             Get-Date -Date $date -UFormat $format | Should -BeExactly $result
     }
 }
+
+Describe "Get-Date -FromUnixTime tests" -Tags "CI" {
+    It "-FromUnixTime works" {
+        Get-Date -Date 1577836800 -FromUnixTime | Should -Be (Get-Date -Date 637134336000000000)
+        Get-Date -Date 0 -FromUnixTime | Should -Be (Get-Date -Date 621355968000000000)
+    }
+}
