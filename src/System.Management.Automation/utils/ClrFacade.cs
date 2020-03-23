@@ -204,7 +204,7 @@ namespace System.Management.Automation
                 // has 'dot' in it, the file will be treated as in Internet security zone. Otherwise, it's
                 // in Intranet security zone.
                 string hostName = uri.Host;
-                return hostName.IndexOf('.') == -1 ? SecurityZone.Intranet : SecurityZone.Internet;
+                return hostName.Contains('.') ? SecurityZone.Intranet : SecurityZone.Internet;
             }
 
             string root = Path.GetPathRoot(filePath);

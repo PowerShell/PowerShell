@@ -1977,8 +1977,8 @@ namespace Microsoft.WSMan.Management
                 helper.CreateWsManConnection(parametersetName, dynParams.ConnectionURI, dynParams.Port, Name, dynParams.ApplicationName, dynParams.UseSSL, dynParams.Authentication, dynParams.SessionOption, this.Credential, dynParams.CertificateThumbprint);
                 if (dynParams.ConnectionURI != null)
                 {
-                    string[] constrsplit = dynParams.ConnectionURI.OriginalString.Split(new string[] { ":" + dynParams.Port + "/" + dynParams.ApplicationName }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = dynParams.ConnectionURI.OriginalString.Split(":" + dynParams.Port + "/" + dynParams.ApplicationName, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     Name = constrsplit1[1].Trim();
                 }
 
@@ -2526,9 +2526,9 @@ namespace Microsoft.WSMan.Management
         private string GetRootNodeName(string ResourceURI)
         {
             string tempuri = string.Empty;
-            if (ResourceURI.Contains("?"))
+            if (ResourceURI.Contains('?'))
             {
-                ResourceURI = ResourceURI.Split(new char[] { '?' }).GetValue(0).ToString();
+                ResourceURI = ResourceURI.Split('?').GetValue(0).ToString();
             }
 
             string PTRN_URI_LAST = "([a-z_][-a-z0-9._]*)$";
@@ -3164,8 +3164,8 @@ namespace Microsoft.WSMan.Management
 
                 if (!string.IsNullOrEmpty(existingvalue))
                 {
-                    string[] existingsplitvalues = existingvalue.Split(new string[] { Delimiter }, StringSplitOptions.None);
-                    string[] newvalues = value.Split(new string[] { Delimiter }, StringSplitOptions.None);
+                    string[] existingsplitvalues = existingvalue.Split(Delimiter, StringSplitOptions.None);
+                    string[] newvalues = value.Split(Delimiter, StringSplitOptions.None);
                     foreach (string val in newvalues)
                     {
                         if (Array.IndexOf(existingsplitvalues, val) == -1)
@@ -4105,7 +4105,7 @@ namespace Microsoft.WSMan.Management
             PSObject obj = (PSObject)objcache[CurrentNode];
 
             CurrentNode = RemainingPath.Substring(pos + 1);
-            if (CurrentNode.IndexOf(WSManStringLiterals.DefaultPathSeparator) != -1)
+            if (CurrentNode.Contains(WSManStringLiterals.DefaultPathSeparator))
             {
                 // No more directories allowed after listeners objects
                 return false;

@@ -296,7 +296,6 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
             ${array}?.length | Should -Be 3
             ${hash}?.a | Should -Be 1
 
-            (Get-Process -Id $PID)?.Name | Should -BeLike "pwsh*"
             (Get-Item $TestDrive)?.EnumerateFiles()?.Name | Should -BeExactly 'testfile.txt'
 
             [int32]::MaxValue?.ToString() | Should -BeExactly '2147483647'
@@ -360,8 +359,8 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
 
         It 'Use ?. on a dynamic property name' {
             $testContent = @'
-            $propName = 'Name'
-            (Get-Process -Id $PID)?.$propName | Should -BeLike 'pwsh*'
+            $propName = 'SI'
+            (Get-Process -Id $PID)?.$propName | Should -Be (Get-Process -id $PID).SessionId
 
             ${doesNotExist}?.$propName() | Should -BeNullOrEmpty
 '@

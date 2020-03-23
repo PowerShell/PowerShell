@@ -49,6 +49,13 @@ try {
             $element | Should -Be $drives.Item($element.DriveLetter)
         }
 
+        It "Should be able to enumerate 'IADsMembers' object" {
+            $group = [ADSI]"WinNT://./Users,Group"
+            $members = $group.Invoke('Members')
+            $names = $members | ForEach-Object { $_.GetType().InvokeMember('Name', 'GetProperty', $null, $_, $null) }
+            $names | Should -Contain 'INTERACTIVE'
+        }
+
         It "ToString() should return method paramter names" {
             $shell = New-Object -ComObject "Shell.Application"
             $fullSignature = $shell.AddToRecent.ToString()

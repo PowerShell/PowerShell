@@ -1978,6 +1978,22 @@ namespace Microsoft.PowerShell.Commands
                 string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
                 WriteWarning(message);
             }
+
+            // register LocationChanged handler so that $PWD in Windows PS process mirrors local $PWD changes
+            if (moduleProxyList.Count > 0)
+            {
+                // make sure that we add registration only once to a multicast delegate
+                SyncCurrentLocationDelegate ??= SyncCurrentLocationHandler;
+                var alreadyregistered = this.SessionState.InvokeCommand.LocationChangedAction?.GetInvocationList().Contains(SyncCurrentLocationDelegate);
+
+                if (!alreadyregistered ?? true)
+                {
+                    this.SessionState.InvokeCommand.LocationChangedAction += SyncCurrentLocationDelegate;
+
+                    // first sync has to be triggered manually
+                    SyncCurrentLocationHandler(sender: this, args: new LocationChangedEventArgs(sessionState: null, oldPath: null, newPath: this.SessionState.Path.CurrentLocation));
+                }
+            }
 #endif
             return moduleProxyList;
         }

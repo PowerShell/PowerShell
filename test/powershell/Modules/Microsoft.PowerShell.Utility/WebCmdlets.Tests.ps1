@@ -1914,6 +1914,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     Context "Denial of service" -Tag 'DOS' {
         It "Image Parsing" {
+            Set-ItResult -Pending -Because "The pathological regex runs fast due to https://github.com/dotnet/runtime/issues/33399.  Fixed in .NET 5 preview.2"
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='img'
                 dosLength='5000'

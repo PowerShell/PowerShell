@@ -47,6 +47,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_Commands_MatchInfo());
 
             yield return new ExtendedTypeDefinition(
+                "Deserialized.Microsoft.PowerShell.Commands.MatchInfo",
+                ViewsOf_Deserialized_Microsoft_PowerShell_Commands_MatchInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSVariable",
                 ViewsOf_System_Management_Automation_PSVariable());
 
@@ -378,6 +382,16 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create()
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"$_.ToEmphasizedString(((get-location).path))")
+                    .EndEntry()
+                .EndControl());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Deserialized_Microsoft_PowerShell_Commands_MatchInfo()
+        {
+            yield return new FormatViewDefinition("MatchInfo",
+                CustomControl.Create()
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(@"$_.Line")
                     .EndEntry()
                 .EndControl());
         }
@@ -1151,18 +1165,32 @@ namespace System.Management.Automation.Runspaces
 
                                             # replace newlines in message so it lines up correct
                                             $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
-                                            if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
+
+                                            $windowWidth = 120
+                                            if ($Host.UI.RawUI -ne $null) {
+                                                $windowWidth = $Host.UI.RawUI.WindowSize.Width
+                                            }
+
+                                            if ($windowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt $windowWidth) {
                                                 $sb = [Text.StringBuilder]::new()
-                                                $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
+                                                $substring = Get-TruncatedString -string $message -length ($windowWidth + $prefixVTLength)
                                                 $null = $sb.Append($substring)
                                                 $remainingMessage = $message.Substring($substring.Length).Trim()
                                                 $null = $sb.Append($newline)
-                                                while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
+                                                while (($remainingMessage.Length + $prefixLength) -gt $windowWidth) {
                                                     $subMessage = $prefix + $remainingMessage
-                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth + $prefixVtLength)
-                                                    $null = $sb.Append($substring)
-                                                    $null = $sb.Append($newline)
-                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    $substring = Get-TruncatedString -string $subMessage -length ($windowWidth + $prefixVtLength)
+
+                                                    if ($substring.Length - $prefix.Length -gt 0)
+                                                    {
+                                                        $null = $sb.Append($substring)
+                                                        $null = $sb.Append($newline)
+                                                        $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    }
+                                                    else
+                                                    {
+                                                        break
+                                                    }
                                                 }
                                                 $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()

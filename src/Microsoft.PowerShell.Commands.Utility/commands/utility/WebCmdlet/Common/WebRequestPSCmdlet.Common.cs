@@ -918,7 +918,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cancellation token source.
         /// </summary>
-        private CancellationTokenSource _cancelToken = null;
+        internal CancellationTokenSource _cancelToken = null;
 
         /// <summary>
         /// Parse Rel Links.

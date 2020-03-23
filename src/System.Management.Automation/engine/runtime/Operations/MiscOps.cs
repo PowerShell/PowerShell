@@ -551,7 +551,7 @@ namespace System.Management.Automation
                             "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
                             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false)
                     {
-                        updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
+                        updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
                         updatedScriptblock.Append("${using:");
                         updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
                         updatedScriptblock.Append('}');
@@ -559,7 +559,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                updatedScriptblock.Append(scriptblockBodyString.Substring(position));
+                updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
                 commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
@@ -1575,15 +1575,23 @@ namespace System.Management.Automation
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
             LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            bool oldIsStopping = lpl.Stopper.IsStopping;
-            lpl.Stopper.IsStopping = false;
-            return oldIsStopping;
+            if (lpl != null)
+            {
+                bool oldIsStopping = lpl.Stopper.IsStopping;
+                lpl.Stopper.IsStopping = false;
+                return oldIsStopping;
+            }
+
+            return false;
         }
 
         internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
         {
             LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            lpl.Stopper.IsStopping = oldIsStopping;
+            if (lpl != null)
+            {
+                lpl.Stopper.IsStopping = oldIsStopping;
+            }
         }
 
         internal static void CheckActionPreference(FunctionContext funcContext, Exception exception)
@@ -3291,17 +3299,28 @@ namespace System.Management.Automation
         internal static IEnumerator GetCOMEnumerator(object obj)
         {
             object targetValue = PSObject.Base(obj);
+            try
+            {
+                var enumerator = (targetValue as IEnumerable)?.GetEnumerator();
+                if (enumerator != null)
+                {
+                    return enumerator;
+                }
+            }
+            catch (Exception)
+            {
+            }
 
             // We use ComEnumerator to enumerate COM collections because the following code doesn't work in .NET Core
-            //   IEnumerable enumerable = targetValue as IEnumerable;
-            //   if (enumerable != null)
+            //   IEnumerator enumerator = targetValue as IEnumerator;
+            //   if (enumerator != null)
             //   {
-            //       var enumerator = enumerable.GetEnumerator();
+            //       enumerable.MoveNext();
             //       ...
             //   }
-            // The call to 'GetEnumerator()' throws exception because COM is not supported in .NET Core.
-            // See https://github.com/dotnet/corefx/issues/19731 for more information.
-            // When COM support is back to .NET Core, we need to change back to the original implementation.
+            // The call to 'MoveNext()' throws exception because COM is not fully supported in .NET Core.
+            // See https://github.com/dotnet/runtime/issues/21690 for more information.
+            // When COM support is fully back to .NET Core, we need to change back to directly use the type cast.
             return ComEnumerator.Create(targetValue) ?? NonEnumerableObjectEnumerator.Create(obj);
         }
 

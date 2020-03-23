@@ -189,7 +189,7 @@ namespace System.Management.Automation.Remoting
                         AssertValueNotAssigned(ModulesToImportToken, _modulesToImport);
                         _modulesToImport = new List<string>();
                         _modulesToImportInternal = new List<object>();
-                        object[] modulesToImport = optionValue.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
+                        object[] modulesToImport = optionValue.Split(',', StringSplitOptions.RemoveEmptyEntries);
                         foreach (var module in modulesToImport)
                         {
                             var s = module as string;
