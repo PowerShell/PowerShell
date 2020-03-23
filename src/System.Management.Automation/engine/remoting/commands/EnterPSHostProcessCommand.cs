@@ -707,7 +707,7 @@ namespace Microsoft.PowerShell.Commands
                                     else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
                                     {
                                         // only add if the process name matches
-                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
+                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName, namedPipe));
                                     }
                                 }
                             }
@@ -736,6 +736,12 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public sealed class PSHostProcessInfo
     {
+        #region Members
+
+        private readonly string _pipeNameFilePath;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -786,7 +792,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="processName">Name of process.</param>
         /// <param name="processId">Id of process.</param>
         /// <param name="appDomainName">Name of process AppDomain.</param>
-        internal PSHostProcessInfo(string processName, int processId, string appDomainName)
+        /// <param name="pipeNameFilePath">File path of pipe name.</param>
+        internal PSHostProcessInfo(
+            string processName,
+            int processId,
+            string appDomainName,
+            string pipeNameFilePath)
         {
             if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
 
@@ -804,6 +815,19 @@ namespace Microsoft.PowerShell.Commands
             this.ProcessName = processName;
             this.ProcessId = processId;
             this.AppDomainName = appDomainName;
+            _pipeNameFilePath = pipeNameFilePath;
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Returns the pipe name file path.
+        /// </summary>
+        public string GetPipeNameFilePath()
+        {
+            return _pipeNameFilePath;
         }
 
         #endregion
