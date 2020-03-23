@@ -389,6 +389,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "Microsoft.PowerShell.Management",
                         "Microsoft.PowerShell.ODataUtils",
                         "Microsoft.PowerShell.Operation.Validation",
+                        "Microsoft.PowerShell.SecretManagement",
                         "Microsoft.PowerShell.Security",
                         "Microsoft.PowerShell.Utility",
                         "Microsoft.SharePoint.Powershell",
