@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets whether to treat a number input as ticks, or unix time
+        /// Gets or sets whether to treat a number input as ticks, or unix time.
         /// </summary>
         [Parameter]
         public SwitchParameter FromUnixTime;
@@ -561,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Converts unix time into DateTime
+        /// Converts unix time into DateTime.
         /// </summary>
         private static DateTime UnixTimeToDateTime(long unixTime)
         {
