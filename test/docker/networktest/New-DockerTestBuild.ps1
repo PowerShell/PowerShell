@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 param ( [switch]$Force, [switch]$UseExistingMsi )
 
@@ -23,9 +23,9 @@ if ( $dockerExe.name -ne "docker.exe" ) {
 # Check to see if we already have an image, and if so
 # delete it if -Force was used, otherwise throw and exit
 $TestImage = docker images $Constants.TestImageName --format '{{.Repository}}'
-if ( $TestImage -eq $Constants.TestImageName) 
+if ( $TestImage -eq $Constants.TestImageName)
 {
-    if ( $Force ) 
+    if ( $Force )
     {
         docker rmi $Constants.TestImageName
     }
@@ -36,7 +36,7 @@ if ( $TestImage -eq $Constants.TestImageName)
 }
 # check again - there could be some permission problems
 $TestImage = docker images $Constants.TestImageName --format '{{.Repository}}'
-if ( $TestImage -eq $Constants.TestImageName) 
+if ( $TestImage -eq $Constants.TestImageName)
 {
     throw ("'{0}' still exists, giving up" -f $Constants.TestImageName)
 }
@@ -45,13 +45,13 @@ if ( $TestImage -eq $Constants.TestImageName)
 # check to see if the MSI is present
 $MsiExists = test-path $Constants.MsiName
 $msg = "{0} exists, use -Force to remove or -UseExistingMsi to use" -f $Constants.MsiName
-if ( $MsiExists -and ! ($force -or $useExistingMsi)) 
+if ( $MsiExists -and ! ($force -or $useExistingMsi))
 {
     throw $msg
 }
 
 # remove the msi
-if ( $MsiExists -and $Force -and ! $UseExistingMsi ) 
+if ( $MsiExists -and $Force -and ! $UseExistingMsi )
 {
     Remove-Item -force $Constants.MsiName
     $MsiExists = $false
@@ -64,7 +64,7 @@ if ( ! $MsiExists -and $UseExistingMsi )
 {
     throw ("{0} does not exist" -f $Constants.MsiName)
 }
-elseif ( $MsiExists -and ! $UseExistingMsi ) 
+elseif ( $MsiExists -and ! $UseExistingMsi )
 {
     throw $msg
 }

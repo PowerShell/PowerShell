@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -657,7 +657,7 @@ namespace PowershellTestConfigNamespace
                     SessionType = 'Default'
                     Author = 'User'
                     CompanyName = 'Microsoft Corporation'
-                    Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
+                    Copyright = 'Copyright (c) Microsoft Corporation.'
                     Description = 'This is a sample session configuration file.'
                     GUID = '73cba863-aa49-4cbf-9917-269ddcf2b1e3'
                     SchemaVersion = '1.0.0.0'

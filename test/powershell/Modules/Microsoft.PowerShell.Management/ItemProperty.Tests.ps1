@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Simple ItemProperty Tests" -Tag "CI" {
     It "Can retrieve the PropertyValue with Get-ItemPropertyValue" {

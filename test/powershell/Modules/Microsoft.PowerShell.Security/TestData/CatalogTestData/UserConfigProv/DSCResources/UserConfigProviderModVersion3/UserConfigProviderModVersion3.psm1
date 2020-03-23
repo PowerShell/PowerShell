@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # The Get-TargetResource cmdlet is used to fetch the desired state of the DSC managed node through a powershell script.

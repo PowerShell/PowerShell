@@ -2,7 +2,7 @@
 GUID="766204A6-330E-4263-A7AB-46C87AFC366C"
 Author="PowerShell"
 CompanyName="Microsoft Corporation"
-Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
+Copyright="Copyright (c) Microsoft Corporation."
 ModuleVersion="7.0.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="3.0"
