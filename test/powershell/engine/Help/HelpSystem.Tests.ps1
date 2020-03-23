@@ -574,7 +574,7 @@ Describe "Help failure cases" -Tags Feature {
     ) {
         param($command)
 
-        { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+        { & $command DoesNotExist -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }
 

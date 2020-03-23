@@ -486,7 +486,7 @@ Describe "Test PSDesiredStateConfiguration" -tags CI {
                 }
 
                 try {
-                    Invoke-DscResource -Name xWebSite -ModuleName 'xWebAdministration' -Method Test -Property @{TestScript = 'foobar' } -ErrorAction Stop -WarningVariable warnings
+                    Invoke-DscResource -Name xWebSite -ModuleName 'xWebAdministration' -Method Test -Property @{TestScript = 'foodbar' } -ErrorAction Stop -WarningVariable warnings
                 }
                 catch{
                     #this will fail too, but that is nat what we are testing...

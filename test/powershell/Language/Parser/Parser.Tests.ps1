@@ -293,8 +293,8 @@ foo``u{2195}abc
     }
 
     It "Test that escaping any character with no special meaning just returns that char. (line 602)" {
-        $result = ExecuteCommand '"fo`obar"'
-        $result | Should -BeExactly "foobar"
+        $result = ExecuteCommand '"fo`odbar"'
+        $result | Should -BeExactly "foodbar"
     }
 
     Context "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" {

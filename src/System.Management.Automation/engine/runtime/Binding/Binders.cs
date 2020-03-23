@@ -5246,7 +5246,7 @@ namespace System.Management.Automation.Language
 
                         if (adapterData.member.DeclaringType.IsGenericTypeDefinition || adapterData.propertyType.IsByRefLike)
                         {
-                            // This is kinda lame - we really should throw an error, but accessing property getter
+                            // We really should throw an error, but accessing property getter
                             // doesn't throw error in PowerShell since V2, even in strict mode.
                             expr = ExpressionCache.NullConstant;
                         }

@@ -1751,10 +1751,10 @@ namespace Microsoft.PowerShell.Commands
         ///     c:\temp\mdir\mdir       # resolve by using extensions. mdir is a directory, mdir.xxx is a file.
         ///     c:\temp\mdir            # load default module if mdir is directory
         ///     module                  # $PSScriptRoot/module/module.psd1 (ps1,psm1,dll)
-        ///     module/foobar.psm1      # $PSScriptRoot/module/module.psm1
-        ///     module/foobar           # $PSScriptRoot/module/foobar.XXX if foobar is not a directory...
-        ///     module/foobar           # $PSScriptRoot/module/foobar is a directory and $PSScriptRoot/module/foobar/foobar.XXX exists
-        ///     module/foobar/foobar.XXX
+        ///     module/examplemodule.psm1      # $PSScriptRoot/module/module.psm1
+        ///     module/examplemodule           # $PSScriptRoot/module/examplemodule.XXX if examplemodule is not a directory...
+        ///     module/examplemodule           # $PSScriptRoot/module/examplemodule is a directory and $PSScriptRoot/module/examplemodule/examplemodule.XXX exists
+        ///     module/examplemodule/examplemodule.XXX
         /// </remarks>
         protected override void ProcessRecord()
         {

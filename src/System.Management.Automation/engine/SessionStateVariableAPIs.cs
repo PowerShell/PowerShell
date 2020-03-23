@@ -36,7 +36,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
-        /// the scope specifiers like "global:foobar"
+        /// the scope specifiers like "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -67,7 +67,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Get a variable out of session state. This interface supports
-        /// the scope specifiers like "global:foobar"
+        /// the scope specifiers like "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -129,7 +129,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -595,7 +595,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -646,7 +646,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a variable out of session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to look up
@@ -922,7 +922,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a variable in session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "$env:PATH = 'c:\windows'" or "$global:foobar = 13"
+        /// "$env:PATH = 'c:\windows'" or "$global:example = 13"
         /// </summary>
         /// <param name="name">
         /// The name of the item to set.
@@ -967,7 +967,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Set a variable in session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "$env:PATH = 'c:\windows'" or "$global:foobar = 13"
+        /// "$env:PATH = 'c:\windows'" or "$global:example = 13"
         ///
         /// BUGBUG: this overload exists because a lot of tests in the
         /// testsuite use it. Those tests should eventually be fixed and this overload
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Set a variable in session state. This interface supports
-        /// the scope specifiers like "$global:foobar = 13"
+        /// the scope specifiers like "$global:example = 13"
         /// </summary>
         /// <param name="variable">
         /// The variable to be set.
@@ -1639,7 +1639,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove a variable from session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to remove
@@ -1669,7 +1669,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Remove a variable from session state. This interface supports
         /// the "namespace:name" syntax so you can do things like
-        /// "env:PATH" or "global:foobar"
+        /// "env:PATH" or "global:example"
         /// </summary>
         /// <param name="name">
         /// name of variable to remove
