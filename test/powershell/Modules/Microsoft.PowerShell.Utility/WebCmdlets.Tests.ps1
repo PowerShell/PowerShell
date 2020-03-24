@@ -1901,36 +1901,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     Context "Denial of service" -Tag 'DOS' {
-        It "Image Parsing" {
-            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
-                dosType='img'
-                dosLength='5000'
-            }
-            $script:content = ''
-            [TimeSpan] $timeSpan = Measure-Command {
-                $response = Invoke-WebRequest -Uri $dosUri
-                $script:content = $response.content
-                $response.Images | out-null
-            }
-
-            $script:content | Should -Not -BeNullOrEmpty
-
-            # pathological regex
-            $regex = [RegEx]::new('<img\s+[^>]*>')
-
-            [TimeSpan] $pathologicalTimeSpan = Measure-Command {
-                $regex.Match($content)
-            }
-
-            $pathologicalRatio = $pathologicalTimeSpan.TotalMilliseconds/$timeSpan.TotalMilliseconds
-            Write-Verbose "Pathological ratio: $pathologicalRatio" -Verbose
-
-            # dosLength 4,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 12
-            # dosLength 5,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 21
-            # dosLength 10,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 75
-            # in some cases we will be running in a Docker container with modest resources
-            $pathologicalRatio | Should -BeGreaterThan 5
-        }
         It "Charset Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='charset'

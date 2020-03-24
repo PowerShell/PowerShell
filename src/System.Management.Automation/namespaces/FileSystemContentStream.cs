@@ -1434,7 +1434,7 @@ namespace Microsoft.PowerShell.Commands
             int toRead = lengthLeft > BuffSize ? BuffSize : (int)lengthLeft;
             _stream.Seek(-toRead, SeekOrigin.Current);
 
-            if (_currentEncoding.Equals(Encoding.UTF8))
+            if (_currentEncoding is UTF8Encoding)
             {
                 // It's UTF-8, we need to detect the starting byte of a character
                 do
@@ -1460,14 +1460,12 @@ namespace Microsoft.PowerShell.Commands
                 _byteCount += _stream.Read(_byteBuff, _byteCount, (int)(lengthLeft - _stream.Position));
                 _stream.Position = _currentPosition;
             }
-            else if (_currentEncoding.Equals(Encoding.Unicode) ||
-                _currentEncoding.Equals(Encoding.BigEndianUnicode) ||
-                _currentEncoding.Equals(Encoding.UTF32) ||
-                _currentEncoding.Equals(Encoding.ASCII) ||
+            else if (_currentEncoding is UnicodeEncoding ||
+                _currentEncoding is UTF32Encoding ||
+                _currentEncoding is ASCIIEncoding ||
                 IsSingleByteCharacterSet())
             {
                 // Unicode -- two bytes per character
-                // BigEndianUnicode -- two types per character
                 // UTF-32 -- four bytes per character
                 // ASCII -- one byte per character
                 // The BufferSize will be a multiple of 4, so we can just read toRead number of bytes

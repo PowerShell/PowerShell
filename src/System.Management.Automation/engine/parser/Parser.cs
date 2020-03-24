@@ -68,7 +68,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             if (!string.IsNullOrEmpty(fileName) && fileName.Length > scriptSchemaExtension.Length && fileName.EndsWith(scriptSchemaExtension, StringComparison.OrdinalIgnoreCase))
             {
-                parser._keywordModuleName = Path.GetFileName(fileName.Substring(0, fileName.Length - scriptSchemaExtension.Length));
+                parser._keywordModuleName = Path.GetFileName(fileName.AsSpan(0, fileName.Length - scriptSchemaExtension.Length)).ToString();
                 parseDscResource = true;
             }
 
@@ -8107,7 +8107,7 @@ namespace System.Management.Automation.Language
 
         internal static string GetFileOrScript(string fileName, string input)
         {
-            return fileName ?? input.Substring(0, Math.Min(256, input.Length)).Trim();
+            return fileName ?? input.AsSpan(0, Math.Min(256, input.Length)).Trim().ToString();
         }
     }
 }

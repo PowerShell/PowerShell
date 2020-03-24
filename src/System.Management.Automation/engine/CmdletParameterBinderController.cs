@@ -3173,7 +3173,7 @@ namespace System.Management.Automation
             for (int i = 0; i < parameterName.Length; i++)
             {
                 // try Upper case
-                if (char.IsUpper(parameterName[i]) && (usedHotKeysStr.IndexOf(parameterName[i]) == -1))
+                if (char.IsUpper(parameterName[i]) && usedHotKeysStr.Contains(parameterName[i]))
                 {
                     label.Insert(i, hotKeyPrefix);
                     usedHotKeys.Append(parameterName[i]);
@@ -3187,7 +3187,7 @@ namespace System.Management.Automation
                 // try Lower case
                 for (int i = 0; i < parameterName.Length; i++)
                 {
-                    if (char.IsLower(parameterName[i]) && (usedHotKeysStr.IndexOf(parameterName[i]) == -1))
+                    if (char.IsLower(parameterName[i]) && usedHotKeysStr.Contains(parameterName[i]))
                     {
                         label.Insert(i, hotKeyPrefix);
                         usedHotKeys.Append(parameterName[i]);
@@ -3202,7 +3202,7 @@ namespace System.Management.Automation
                 // try non-letters
                 for (int i = 0; i < parameterName.Length; i++)
                 {
-                    if (!char.IsLetter(parameterName[i]) && (usedHotKeysStr.IndexOf(parameterName[i]) == -1))
+                    if (!char.IsLetter(parameterName[i]) && usedHotKeysStr.Contains(parameterName[i]))
                     {
                         label.Insert(i, hotKeyPrefix);
                         usedHotKeys.Append(parameterName[i]);

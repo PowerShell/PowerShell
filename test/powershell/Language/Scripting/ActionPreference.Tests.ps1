@@ -186,6 +186,27 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         { New-Item @params } | Should -Throw -ErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
         Remove-Item "$testdrive\test.txt" -Force
     }
+
+    It "Parameter binding '-<name>' throws correctly (no NRE) if argument is <argValue>" -TestCases @(
+        @{ name = "ErrorAction";       argValue = "null";           arguments = @{ ErrorAction = $null } }
+        @{ name = "WarningAction";     argValue = "null";           arguments = @{ WarningAction = $null } }
+        @{ name = "InformationAction"; argValue = "null";           arguments = @{ InformationAction = $null } }
+        @{ name = "ErrorAction";       argValue = "AutomationNull"; arguments = @{ ErrorAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
+        @{ name = "WarningAction";     argValue = "AutomationNull"; arguments = @{ WarningAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
+        @{ name = "InformationAction"; argValue = "AutomationNull"; arguments = @{ InformationAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
+    ) {
+        param($arguments)
+
+        $err = $null
+        try {
+            Test-Path .\noexistfile.ps1 @arguments
+        } catch {
+            $err = $_
+        }
+
+        $err.FullyQualifiedErrorId | Should -BeExactly "ParameterBindingFailed,Microsoft.PowerShell.Commands.TestPathCommand"
+        $err.Exception.InnerException.InnerException | Should -BeOfType "System.Management.Automation.PSInvalidCastException"
+    }
 }
 
 Describe 'ActionPreference.Break tests' -tag 'CI' {

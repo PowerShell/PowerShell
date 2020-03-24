@@ -760,7 +760,7 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 // Route protocol message based on whether it is a session or command message.
-                if (data.IndexOf(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase) > -1)
+                if (data.Contains(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase))
                 {
                     // Session message
                     _sessionMessageQueue.Add(data);
@@ -1708,7 +1708,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             if ((error.Length == 0) ||
-                error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1)
+                error.Contains("WARNING:", StringComparison.OrdinalIgnoreCase))
             {
                 // Handle as interactive warning message
                 Console.WriteLine(error);

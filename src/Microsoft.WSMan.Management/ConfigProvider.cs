@@ -4105,7 +4105,7 @@ namespace Microsoft.WSMan.Management
             PSObject obj = (PSObject)objcache[CurrentNode];
 
             CurrentNode = RemainingPath.Substring(pos + 1);
-            if (CurrentNode.IndexOf(WSManStringLiterals.DefaultPathSeparator) != -1)
+            if (CurrentNode.Contains(WSManStringLiterals.DefaultPathSeparator))
             {
                 // No more directories allowed after listeners objects
                 return false;

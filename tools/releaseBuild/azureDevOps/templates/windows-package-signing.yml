@@ -76,6 +76,7 @@ jobs:
     parameters:
       architecture: x64
       version: $(version)
+      pdb: yes
 
   - template: upload.yml
     parameters:
