@@ -817,11 +817,11 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (ArgumentException)
             {
-                // Ignore.
+                // Window title is optional.
             }
             catch (InvalidOperationException)
             {
-                // Ignore.
+                // Window title is optional.
             }
 
             this.ProcessName = processName;

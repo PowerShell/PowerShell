@@ -974,7 +974,7 @@ namespace System.Management.Automation.Remoting
                     }
                     catch (ObjectDisposedException)
                     {
-                        // Ignore.
+                        // Ignore if object already disposed.
                     }
                     catch (Exception)
                     {
