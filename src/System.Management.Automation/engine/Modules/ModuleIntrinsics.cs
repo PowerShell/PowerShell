@@ -1250,7 +1250,7 @@ namespace System.Management.Automation
             }
 
             // PowerShell specific paths including if set in powershell.config.json file we want to exclude
-            var excludeModulePaths = new HashSet<string> {
+            var excludeModulePaths = new HashSet<string> (StringComparer.OrdinalIgnoreCase) {
                 GetPersonalModulePath(),
                 GetSharedModulePath(),
                 GetPSHomeModulePath(),
