@@ -806,7 +806,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(appDomainName))
             {
-                throw new PSArgumentNullException("appDomainName");
+                throw new PSArgumentNullException(nameof(appDomainName));
             }
 
             MainWindowTitle = string.Empty;
