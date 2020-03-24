@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Convert-Path tests" -Tag CI {
     It "Convert-Path should handle provider qualified paths" {

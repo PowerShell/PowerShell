@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Content" -Tags "CI" {
     $testString = "This is a test content for a file"
@@ -107,7 +107,7 @@ Describe "Get-Content" -Tags "CI" {
         ){
         param($EncodingName)
 
-        $contentSets = 
+        $contentSets =
             @(@('a1','aa2','aaa3','aaaa4','aaaaa5'), # utf-8
               @('€1','€€2','€€€3','€€€€4','€€€€€5'), # utf-16
               @('𐍈1','𐍈𐍈2','𐍈𐍈𐍈3','𐍈𐍈𐍈𐍈4','𐍈𐍈𐍈𐍈𐍈5')) # utf-32
@@ -116,20 +116,20 @@ Describe "Get-Content" -Tags "CI" {
             $tailCount = 3
             $testPath = Join-Path -Path $TestDrive -ChildPath 'TailWithEncoding.txt'
             $content | Set-Content -Path $testPath -Encoding $EncodingName
-            
+
             # read and verify using explicit encoding
             $expected = (Get-Content -Path $testPath -Encoding $EncodingName)[-$tailCount]
             $actual = Get-Content -Path $testPath -Tail $tailCount -Encoding $EncodingName
             $actual | Should -BeOfType string
             $actual.Length | Should -Be $tailCount
             $actual[0] | Should -BeExactly $expected
-            
+
             # read and verify using implicit encoding
             $expected = (Get-Content -Path $testPath)[-$tailCount]
             $actual = Get-Content -Path $testPath -Tail $tailCount
             $actual | Should -BeOfType string
             $actual.Length | Should -Be $tailCount
-            $actual[0] | Should -BeExactly $expected  
+            $actual[0] | Should -BeExactly $expected
         }
     }
 

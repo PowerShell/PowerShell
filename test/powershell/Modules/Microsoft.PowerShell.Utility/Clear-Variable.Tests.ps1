@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 	It "Clear-Variable normal variable Name should works"{

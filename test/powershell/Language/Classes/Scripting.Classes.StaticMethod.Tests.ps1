@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Additional static method tests" -Tags "CI" {
 
@@ -32,7 +32,7 @@ class Foo
 {
     static [string] $Name
     static Foo() { [Foo]::Name = Get-Name }
-    
+
     static [string] GetName()
     {
         return (Get-AnotherName)
@@ -80,7 +80,7 @@ class Foo
         }
 
         It "Static constructor should run in the triggering Runspace if the class has been defined in that Runspace" {
-            
+
             ## The static constructor is triggered by accessing '[Foo]::Name' which happens in the current Runspace.
             ## The class 'Foo' has been defined in the current Runspace, so it uses the current Runspace to run the
             ## static constructor.
@@ -107,7 +107,7 @@ class Foo
             ## Define the functions that [Foo] depends on in PS2 Runspace.
             RunScriptInPS -PowerShell $ps2 -Script "function Get-Name { 'PS2 Runspace - Name' }" -IgnoreResult
             RunScriptInPS -PowerShell $ps2 -Script "function Get-AnotherName { 'PS2 Runspace - AnotherName' }" -IgnoreResult
-            
+
             ## Define the function to call the static method 'GetName' on the passed-in type
             RunScriptInPS -PowerShell $ps2 -Script 'function Call-GetName([type] $type) { $type::GetName() }' -IgnoreResult
 

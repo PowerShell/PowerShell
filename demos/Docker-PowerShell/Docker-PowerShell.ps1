@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a short example of the Docker-PowerShell module. The same cmdlets may be used to manage both local & remote machines, including both Windows & Linux hosts
