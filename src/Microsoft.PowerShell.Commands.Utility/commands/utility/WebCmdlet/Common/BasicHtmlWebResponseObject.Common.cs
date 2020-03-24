@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (s_imageRegex == null)
             {
-                s_imageRegex = new Regex(@"<img\s+[^\s>]*>",
+                s_imageRegex = new Regex(@"<img\s[^>]*?>",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
         }
