@@ -449,6 +449,10 @@ namespace System.Management.Automation.PSTasks
                     Runspace.DefaultRunspace = runspace;
                     runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath);
                 }
+                catch (DriveNotFoundException)
+                {
+                    // Allow task to run if current drive is not available.
+                }
                 finally
                 {
                     Runspace.DefaultRunspace = oldDefaultRunspace;
