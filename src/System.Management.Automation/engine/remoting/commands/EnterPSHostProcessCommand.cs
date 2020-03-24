@@ -801,7 +801,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(processName))
             {
-                throw new PSArgumentNullException("processName");
+                throw new PSArgumentNullException(nameof(processName));
             }
 
             if (string.IsNullOrEmpty(appDomainName))
