@@ -213,10 +213,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             additional types. Adding a handler here would cause a new sub-pipeline
             to be created.
 
-            For example, the following line would add a new handler named "out-foobar"
-            to be invoked when the incoming object type is "MyNamespace.Whatever.FooBar"
+            For example, the following line would add a new handler named "out-example"
+            to be invoked when the incoming object type is "MyNamespace.Whatever.Example"
 
-            RegisterCommandForTypes (context, "out-foobar", new string[] { "MyNamespace.Whatever.FooBar" });
+            RegisterCommandForTypes (context, "out-example", new string[] { "MyNamespace.Whatever.Example" });
 
             And the method can be like this:
             private void RegisterCommandForTypes (ExecutionContext context, string commandName, Type commandType, string[] types)

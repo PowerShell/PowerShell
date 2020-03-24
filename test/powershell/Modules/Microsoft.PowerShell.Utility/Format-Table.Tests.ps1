@@ -134,8 +134,8 @@ Describe "Format-Table" -Tags "CI" {
             @{ testName = "array"      ; testString = "line1","line2"      }
         ) {
             param ($testString)
-            $result = $testString | Format-Table -Property "foo","bar" -Force | Out-String
-            $result.Replace(" ","").Replace([Environment]::NewLine,"") | Should -BeExactly "foobar------"
+            $result = $testString | Format-Table -Property "fox","bar" -Force | Out-String
+            $result.Replace(" ","").Replace([Environment]::NewLine,"") | Should -BeExactly "foxbar------"
         }
 
         It "Format-Table with complex object for End-To-End should work" {

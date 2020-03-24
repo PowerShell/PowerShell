@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell
 
         private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text, bool newLine = false)
         {
-            // Sync access so that we don't race on color settings if called from multiple threads.
+            // Sync access so that we don't conflict on color settings if called from multiple threads.
             lock (_instanceLock)
             {
                 ConsoleColor fg = RawUI.ForegroundColor;
@@ -779,7 +779,7 @@ namespace Microsoft.PowerShell
 
         private void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value, bool newLine)
         {
-            // Sync access so that we don't race on color settings if called from multiple threads.
+            // Sync access so that we don't conflict on color settings if called from multiple threads.
             lock (_instanceLock)
             {
                 ConsoleColor fg = RawUI.ForegroundColor;
