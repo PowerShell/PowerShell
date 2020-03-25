@@ -58,6 +58,8 @@ namespace Microsoft.PowerShell.Commands
 
         private static byte[]? s_DefaultSendBuffer;
 
+        private CancellationTokenSource? _dnsLookupCancel;
+
         private bool _disposed;
 
         private Ping? _sender;
@@ -275,6 +277,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             _sender?.SendAsyncCancel();
+            _dnsLookupCancel?.Cancel();
         }
 
         #region ConnectionTest
@@ -679,16 +682,21 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
+                    hostEntry = GetHostEntryWithCancel(targetNameOrAddress);
 
                     if (ResolveDestination)
                     {
                         resolvedTargetName = hostEntry.HostName;
-                        hostEntry = Dns.GetHostEntry(hostEntry.HostName);
+                        hostEntry = GetHostEntryWithCancel(hostEntry.HostName);
                     }
                 }
                 catch (Exception ex)
                 {
+                    if (ex is PipelineStoppedException p)
+                    {
+                        throw p;
+                    }
+
                     if (Quiet)
                     {
                         return false;
@@ -735,6 +743,23 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return true;
+        }
+
+        private IPHostEntry GetHostEntryWithCancel(string targetNameOrAddress)
+        {
+            _dnsLookupCancel = new CancellationTokenSource();
+
+            var task = Dns.GetHostEntryAsync(targetNameOrAddress);
+            var waitHandles = new[] { ((IAsyncResult)task).AsyncWaitHandle, _dnsLookupCancel.Token.WaitHandle };
+
+            // WaitAny() gives us the index of the handle that gets a signal.
+            // If index 1 (our cancel token) gets a signal first, we need to abort.
+            if (WaitHandle.WaitAny(waitHandles) == 1)
+            {
+                throw new PipelineStoppedException();
+            }
+
+            return task.GetAwaiter().GetResult();
         }
 
         private IPAddress? GetHostAddress(IPHostEntry hostEntry)
