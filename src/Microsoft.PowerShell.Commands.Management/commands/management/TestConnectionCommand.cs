@@ -689,6 +689,11 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
+                    if (Quiet)
+                    {
+                        return false;
+                    }
+
                     string message = StringUtil.Format(
                         TestConnectionResources.NoPingResult,
                         resolvedTargetName,
