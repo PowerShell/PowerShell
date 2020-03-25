@@ -96,6 +96,6 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
         } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 250
 
         # Verify named pipe file path is removed.
-        Test-Path -Path $psNamedPipePath | Should -BeFalse
+        $psNamedPipePath | Should -Not -Exist
     }
 }
