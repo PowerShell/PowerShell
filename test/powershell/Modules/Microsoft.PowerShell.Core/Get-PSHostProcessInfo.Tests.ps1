@@ -87,7 +87,7 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
 
         # Verify named pipe file path.
         $psNamedPipePath = (Get-PSHostProcessInfo -Id $psProc.Id).GetPipeNameFilePath()
-        Test-Path -Path $psNamedPipePath | Should -BeTrue
+        $psNamedPipePath | Should -Exist
 
         # Signal PowerShell test process to exit normally.
         Remove-Item -Path $aliveFile -Force -ErrorAction Ignore
