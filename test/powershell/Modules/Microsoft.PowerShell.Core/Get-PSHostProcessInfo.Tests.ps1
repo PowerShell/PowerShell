@@ -56,7 +56,7 @@ Describe "Get-PSHostProcessInfo tests" -Tag CI {
 
     It "Verifies named pipe filepath get method" {
         $pipeFilePath = (Get-PSHostProcessInfo -Id $pid).GetPipeNameFilePath()
-        Test-Path -Path $pipeFilePath | Should -BeTrue
+        $pipeFilePath | Should -Exist
     }
 
     It "Verifies named pipe filepath is removed on process exit" {
