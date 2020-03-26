@@ -3529,6 +3529,9 @@ namespace Microsoft.PowerShell.Commands
                 // Since we couldn't convert the path to a DirectoryInfo
                 // the path could not be a file system container with
                 // children
+                string message = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                WriteError(new ErrorRecord(new ItemNotFoundException(message), "ItemDoesNotExist", ErrorCategory.ObjectNotFound, path));
+
                 result = false;
             }
             catch (NotSupportedException)
