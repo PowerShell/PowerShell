@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static byte[]? s_DefaultSendBuffer;
 
-        private CancellationTokenSource? _dnsLookupCancel;
+        private CancellationTokenSource? _dnsLookupCancel = new CancellationTokenSource();
 
         private bool _disposed;
 
@@ -690,13 +690,12 @@ namespace Microsoft.PowerShell.Commands
                         hostEntry = GetHostEntryWithCancel(hostEntry.HostName);
                     }
                 }
+                catch (PipelineStoppedException p)
+                {
+                    throw p;
+                }
                 catch (Exception ex)
                 {
-                    if (ex is PipelineStoppedException p)
-                    {
-                        throw p;
-                    }
-
                     if (Quiet)
                     {
                         return false;
@@ -747,8 +746,6 @@ namespace Microsoft.PowerShell.Commands
 
         private IPHostEntry GetHostEntryWithCancel(string targetNameOrAddress)
         {
-            _dnsLookupCancel = new CancellationTokenSource();
-
             var task = Dns.GetHostEntryAsync(targetNameOrAddress);
             var waitHandles = new[] { ((IAsyncResult)task).AsyncWaitHandle, _dnsLookupCancel.Token.WaitHandle };
 
@@ -756,6 +753,7 @@ namespace Microsoft.PowerShell.Commands
             // If index 1 (our cancel token) gets a signal first, we need to abort.
             if (WaitHandle.WaitAny(waitHandles) == 1)
             {
+                // The only implemented cancellation is in StopProcessing(), so the pipeline must be stopping.
                 throw new PipelineStoppedException();
             }
 
