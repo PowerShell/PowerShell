@@ -707,7 +707,7 @@ namespace Microsoft.PowerShell.Commands
                                     else if (process.ProcessName.Equals(pName, StringComparison.Ordinal))
                                     {
                                         // only add if the process name matches
-                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName));
+                                        procAppDomainInfo.Add(new PSHostProcessInfo(pName, id, appDomainName, namedPipe));
                                     }
                                 }
                             }
@@ -736,6 +736,12 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public sealed class PSHostProcessInfo
     {
+        #region Members
+
+        private readonly string _pipeNameFilePath;
+
+        #endregion
+
         #region Properties
 
         /// <summary>
@@ -783,16 +789,27 @@ namespace Microsoft.PowerShell.Commands
         private PSHostProcessInfo() { }
 
         /// <summary>
-        /// Constructor.
+        /// Initializes a new instance of the PSHostProcessInfo type.
         /// </summary>
         /// <param name="processName">Name of process.</param>
         /// <param name="processId">Id of process.</param>
         /// <param name="appDomainName">Name of process AppDomain.</param>
-        internal PSHostProcessInfo(string processName, int processId, string appDomainName)
+        /// <param name="pipeNameFilePath">File path of pipe name.</param>
+        internal PSHostProcessInfo(
+            string processName,
+            int processId,
+            string appDomainName,
+            string pipeNameFilePath)
         {
-            if (string.IsNullOrEmpty(processName)) { throw new PSArgumentNullException("processName"); }
+            if (string.IsNullOrEmpty(processName))
+            {
+                throw new PSArgumentNullException(nameof(processName));
+            }
 
-            if (string.IsNullOrEmpty(appDomainName)) { throw new PSArgumentNullException("appDomainName"); }
+            if (string.IsNullOrEmpty(appDomainName))
+            {
+                throw new PSArgumentNullException(nameof(appDomainName));
+            }
 
 #if !CORECLR
             MainWindowTitle = string.Empty;
@@ -801,13 +818,32 @@ namespace Microsoft.PowerShell.Commands
                 var proc = Process.GetProcessById(processId);
                 MainWindowTitle = proc.MainWindowTitle ?? string.Empty;
             }
-            catch (ArgumentException) { }
-            catch (InvalidOperationException) { }
-#endif
+            catch (ArgumentException)
+            {
+                // Window title is optional.
+            }
+            catch (InvalidOperationException)
+            {
+                // Window title is optional.
+            }
 
             this.ProcessName = processName;
             this.ProcessId = processId;
             this.AppDomainName = appDomainName;
+            _pipeNameFilePath = pipeNameFilePath;
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// Retrieves the pipe name file path.
+        /// </summary>
+        /// <returns>Pipe name file path.</returns>
+        public string GetPipeNameFilePath()
+        {
+            return _pipeNameFilePath;
         }
 
         #endregion
