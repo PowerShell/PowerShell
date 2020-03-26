@@ -61,7 +61,7 @@ Describe "Test-Connection" -tags "CI" {
 
         It 'returns false without errors for an unresolvable address when using -Quiet' {
             $result = $true
-            { $result = Test-Connectiong -Quiet -ErrorAction Stop -Count 1 -TargetName "fakeHost" } | Should -Not -Throw
+            { $result = Test-Connection -Quiet -ErrorAction Stop -Count 1 -TargetName "fakeHost" } | Should -Not -Throw
             $result | Should -BeFalse
         }
 
