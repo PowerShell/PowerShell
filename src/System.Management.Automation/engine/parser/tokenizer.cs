@@ -543,7 +543,7 @@ namespace System.Management.Automation.Language
         Decimal = 0x10,
 
         /// <summary>
-        /// Indicates 'I' suffix for BigInteger (arbitrarily large integer) numerals.
+        /// Indicates 'N' suffix for BigInteger (arbitrarily large integer) numerals.
         /// </summary>
         BigInteger = 0x20
     }
