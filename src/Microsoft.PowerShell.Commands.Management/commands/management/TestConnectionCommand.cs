@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static byte[]? s_DefaultSendBuffer;
 
-        private CancellationTokenSource _dnsLookupCancel = new CancellationTokenSource();
+        private readonly CancellationTokenSource _dnsLookupCancel = new CancellationTokenSource();
 
         private bool _disposed;
 
