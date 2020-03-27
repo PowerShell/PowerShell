@@ -344,8 +344,12 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $job = Start-Job { $pid }
             $processId = Receive-Job $job -Wait
 
-            # The job is done, wait 2 seconds for the cleanup to finish.
-            Start-Sleep -Seconds 2
+            # The job is done, wait for the cleanup to finish.
+            Wait-UntilTrue {
+                $null -eq (Get-Process -Id $processId -ErrorAction Ignore)
+            } -IntervalInMilliseconds 300 | Should -BeTrue
+
+            # Double check that we cannot find the process.
             { Get-Process -Id $processId -ErrorAction Stop } | Should -Throw `
                 -ErrorId 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
 
@@ -356,12 +360,16 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $job = Start-Job { $pid; Start-Sleep -Second 10 }
 
             # Wait for the pid to be received.
-            Start-Sleep -Seconds 2
+            Wait-UntilTrue { [bool](Receive-Job $job -Keep) } | Should -BeTrue
             $processId = Receive-Job $job
 
-            # Stop the job and wait 2 seconds for the cleanup to finish.
+            # Stop the job and wait for the cleanup to finish.
             Stop-Job $job
-            Start-Sleep -Seconds 2
+            Wait-UntilTrue {
+                $null -eq (Get-Process -Id $processId -ErrorAction Ignore)
+            } -IntervalInMilliseconds 300 | Should -BeTrue
+
+            # Double check that we cannot find the process.
             { Get-Process -Id $processId -ErrorAction Stop } | Should -Throw `
                 -ErrorId 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
 
@@ -372,12 +380,16 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $job = Start-Job { $pid; Start-Sleep -Second 10 }
 
             # Wait for the pid to be received.
-            Start-Sleep -Seconds 2
+            Wait-UntilTrue { [bool](Receive-Job $job -Keep) } | Should -BeTrue
             $processId = Receive-Job $job
 
-            # Remove the job and wait 2 seconds for the cleanup to finish.
+            # Remove the job and wait for the cleanup to finish.
             Remove-Job $job -Force
-            Start-Sleep -Seconds 2
+            Wait-UntilTrue {
+                $null -eq (Get-Process -Id $processId -ErrorAction Ignore)
+            } -IntervalInMilliseconds 300 | Should -BeTrue
+
+            # Double check that we cannot find the process.
             { Get-Process -Id $processId -ErrorAction Stop } | Should -Throw `
                 -ErrorId 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
         }
