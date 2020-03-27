@@ -277,7 +277,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             _sender?.SendAsyncCancel();
-            _dnsLookupCancel?.Cancel();
+            _dnsLookupCancel.Cancel();
         }
 
         #region ConnectionTest
@@ -682,36 +682,38 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    hostEntry = GetHostEntryWithCancel(targetNameOrAddress);
+                    hostEntry = GetCancellableHostEntry(targetNameOrAddress);
 
                     if (ResolveDestination)
                     {
                         resolvedTargetName = hostEntry.HostName;
-                        hostEntry = GetHostEntryWithCancel(hostEntry.HostName);
+                        hostEntry = GetCancellableHostEntry(hostEntry.HostName);
                     }
                 }
-                catch (PipelineStoppedException p)
+                catch (Exception ex) when (!(ex is PipelineStoppedException))
                 {
-                    throw p;
-                }
-                catch (Exception ex)
-                {
-                    if (Quiet)
+                    if (!Quiet.IsPresent)
                     {
-                        return false;
+                        if (exception is AggregateException ag)
+                        {
+                            // We expect this to come from the Task-based cancellable host entry code,
+                            // but only one exception should come through in any case.
+                            ex = ag.InnerExceptions[0];
+                        }
+
+                        string message = StringUtil.Format(
+                            TestConnectionResources.NoPingResult,
+                            resolvedTargetName,
+                            TestConnectionResources.CannotResolveTargetName);
+                        Exception pingException = new PingException(message, ex);
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            pingException,
+                            TestConnectionExceptionId,
+                            ErrorCategory.ResourceUnavailable,
+                            resolvedTargetName);
+                        WriteError(errorRecord);
                     }
 
-                    string message = StringUtil.Format(
-                        TestConnectionResources.NoPingResult,
-                        resolvedTargetName,
-                        TestConnectionResources.CannotResolveTargetName);
-                    Exception pingException = new PingException(message, ex);
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        pingException,
-                        TestConnectionExceptionId,
-                        ErrorCategory.ResourceUnavailable,
-                        resolvedTargetName);
-                    WriteError(errorRecord);
                     return false;
                 }
 
@@ -744,20 +746,18 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
-        private IPHostEntry GetHostEntryWithCancel(string targetNameOrAddress)
+        private IPHostEntry GetCancellableHostEntry(string targetNameOrAddress)
         {
-            var task = Dns.GetHostEntryAsync(targetNameOrAddress);
-            var waitHandles = new[] { ((IAsyncResult)task).AsyncWaitHandle, _dnsLookupCancel.Token.WaitHandle };
-
-            // WaitAny() gives us the index of the handle that gets a signal.
-            // If index 1 (our cancel token) gets a signal first, we need to abort.
-            if (WaitHandle.WaitAny(waitHandles) == 1)
+            try
             {
-                // The only implemented cancellation is in StopProcessing(), so the pipeline must be stopping.
+                var task = Dns.GetHostEntryAsync(targetNameOrAddress);
+                task.Wait(_dnsLookupCancel.Token);
+                return task.Result;
+            }
+            catch (OperationCanceledException e)
+            {
                 throw new PipelineStoppedException();
             }
-
-            return task.GetAwaiter().GetResult();
         }
 
         private IPAddress? GetHostAddress(IPHostEntry hostEntry)
