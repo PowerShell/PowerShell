@@ -1098,7 +1098,6 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     _processCreated = false;
                 }
-                // _processInstance.Start();
             }
 
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell, PSOpcode.Connect,
@@ -1278,8 +1277,6 @@ namespace System.Management.Automation.Remoting.Client
 
                     if (_processCreated)
                     {
-                        _serverProcess.CancelOutputRead();
-                        _serverProcess.CancelErrorRead();
                         _serverProcess.Kill();
                     }
                 }
