@@ -338,4 +338,48 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             ValidateJobInfo -job $jobToStop -state 'Stopped' -hasMoreData $false
         }
     }
+
+    Context 'Background pwsh process should terminate after job is done' {
+        It "Can clean up background pwsh process after job is done" {
+            $job = Start-Job { $pid }
+            $processId = Receive-Job $job -Wait
+
+            # The job is done, wait 2 seconds for the cleanup to finish.
+            Start-Sleep -Seconds 2
+            { Get-Process -Id $processId -ErrorAction Stop } | Should -Throw `
+                -ErrorId 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+
+            Remove-Job $job -Force
+        }
+
+        It "Can clean up background pwsh process when job is stopped" {
+            $job = Start-Job { $pid; Start-Sleep -Second 10 }
+
+            # Wait for the pid to be received.
+            Start-Sleep -Seconds 2
+            $processId = Receive-Job $job
+
+            # Stop the job and wait 2 seconds for the cleanup to finish.
+            Stop-Job $job
+            Start-Sleep -Seconds 2
+            { Get-Process -Id $processId -ErrorAction Stop } | Should -Throw `
+                -ErrorId 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+
+            Remove-Job $job -Force
+        }
+
+        It "Can clean up background pwsh process when job is removed" {
+            $job = Start-Job { $pid; Start-Sleep -Second 10 }
+
+            # Wait for the pid to be received.
+            Start-Sleep -Seconds 2
+            $processId = Receive-Job $job
+
+            # Remove the job and wait 2 seconds for the cleanup to finish.
+            Remove-Job $job -Force
+            Start-Sleep -Seconds 2
+            { Get-Process -Id $processId -ErrorAction Stop } | Should -Throw `
+                -ErrorId 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+        }
+    }
 }
