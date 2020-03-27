@@ -286,6 +286,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -337,6 +342,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (!Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -474,6 +484,11 @@ namespace Microsoft.PowerShell.Commands
             PingReply? reply, replyResult = null;
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(-1);
+                }
+
                 return;
             }
 
@@ -577,6 +592,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -670,7 +690,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ResolveDestination)
                 {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
+                    hostEntry = GetCancellableHostEntry(targetNameOrAddress);
                     resolvedTargetName = hostEntry.HostName;
                 }
                 else
@@ -690,17 +710,14 @@ namespace Microsoft.PowerShell.Commands
                         hostEntry = GetCancellableHostEntry(hostEntry.HostName);
                     }
                 }
-                catch (Exception ex) when (!(ex is PipelineStoppedException))
+                catch (PipelineStoppedException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
                 {
                     if (!Quiet.IsPresent)
                     {
-                        if (exception is AggregateException ag)
-                        {
-                            // We expect this to come from the Task-based cancellable host entry code,
-                            // but only one exception should come through in any case.
-                            ex = ag.InnerExceptions[0];
-                        }
-
                         string message = StringUtil.Format(
                             TestConnectionResources.NoPingResult,
                             resolvedTargetName,
@@ -748,16 +765,16 @@ namespace Microsoft.PowerShell.Commands
 
         private IPHostEntry GetCancellableHostEntry(string targetNameOrAddress)
         {
-            try
-            {
-                var task = Dns.GetHostEntryAsync(targetNameOrAddress);
-                task.Wait(_dnsLookupCancel.Token);
-                return task.Result;
-            }
-            catch (OperationCanceledException e)
+            var task = Dns.GetHostEntryAsync(targetNameOrAddress);
+            var waitHandles = new[] { ((IAsyncResult)task).AsyncWaitHandle, _dnsLookupCancel.Token.WaitHandle };
+
+            // WaitAny() returns the index of the first signal it gets; 1 is our cancellation token.
+            if (WaitHandle.WaitAny(waitHandles) == 1)
             {
                 throw new PipelineStoppedException();
             }
+
+            return task.GetAwaiter().GetResult();
         }
 
         private IPAddress? GetHostAddress(IPHostEntry hostEntry)
