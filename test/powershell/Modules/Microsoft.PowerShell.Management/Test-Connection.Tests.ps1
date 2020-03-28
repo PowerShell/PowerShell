@@ -59,18 +59,19 @@ Describe "Test-Connection" -tags "CI" {
             $result2 | Should -BeFalse
         }
 
-        It "Ping fake host" {
+        It 'returns false without errors for an unresolvable address when using -Quiet' {
+            Test-Connection -Quiet -ErrorAction Stop -Count 1 -TargetName "fakeHost" | Should -BeFalse
+        }
 
-            { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
+        It "Ping fake host" {
+            { Test-Connection "fakeHost" -Count 1 -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
             if ((Get-PlatformInfo).Platform -match "raspbian") {
                 $code = 11
-            }
-            elseif (!$IsWindows) {
+            } elseif (!$IsWindows) {
                 $code = -131073
-            }
-            else {
+            } else {
                 $code = 11001
             }
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
