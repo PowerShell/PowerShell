@@ -341,21 +341,31 @@ function Get-ChangeLog
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
     PrintChangeLog -clSection $clEngine -sectionTitle 'Engine Updates and Fixes'
     PrintChangeLog -clSection $clExperimental -sectionTitle 'Experimental Features'
-    PrintChangeLog -clSection $clGeneral -sectionTitle 'General Cmdlet Updates and Fixes'
-    PrintChangeLog -clSection $clCodeCleanup -sectionTitle 'Code Cleanup'
     PrintChangeLog -clSection $clPerformance -sectionTitle 'Performance'
+    PrintChangeLog -clSection $clGeneral -sectionTitle 'General Cmdlet Updates and Fixes'
+    PrintChangeLog -clSection $clCodeCleanup -sectionTitle 'Code Cleanup' -Compress
     PrintChangeLog -clSection $clTools -sectionTitle 'Tools'
     PrintChangeLog -clSection $clTest -sectionTitle 'Tests'
-    PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
+    PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements' -Compress
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
 
     Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${$LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
-function PrintChangeLog($clSection, $sectionTitle) {
+function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
     if ($clSection.Count -gt 0) {
         "### $sectionTitle`n"
-        $clSection | ForEach-Object -MemberName ChangeLogMessage
+
+        if ($Compress) {
+            $items = $clSection.ChangeLogMessage -join "`n"
+
+            "<details>`n"
+            $items | ConvertFrom-Markdown | Select-Object -ExpandProperty Html
+            "</details>"
+        }
+        else {
+            $clSection | ForEach-Object -MemberName ChangeLogMessage
+        }
         ""
     }
 }
