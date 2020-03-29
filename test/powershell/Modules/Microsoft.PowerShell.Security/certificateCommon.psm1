@@ -259,7 +259,7 @@ Import-PfxCertificate $script:certServerLocation -CertStoreLocation cert:\Curren
 Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | ForEach-Object PSPath
 "@
         $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
-        $certPaths.Count | Should -Be 2 | Out-Null
+        $certPaths.Count | Should -Be 3 | Out-Null
 
         $script:importedCert = Get-ChildItem $certPaths[0]
         $script:importedServerCert = Get-ChildItem $certPaths[1]
