@@ -863,7 +863,7 @@ namespace System.Management.Automation.PSTasks
                     }
 
                     task.StateChanged -= HandleTaskStateChangedDelegate;
-                    if (!_stopping)
+                    if (!_stopping || stateInfo.State != PSInvocationState.Stopped)
                     {
                         // StopAll disposes tasks.
                         task.Dispose();
