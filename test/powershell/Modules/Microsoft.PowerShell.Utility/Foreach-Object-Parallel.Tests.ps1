@@ -104,6 +104,20 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $parallelScriptLocation = 1..1 | ForEach-Object -Parallel { $PWD }
         $parallelScriptLocation.Path | Should -BeExactly $PWD.Path
     }
+
+    It 'Verifies no terminating error if current working drive is not found' {
+        $oldLocation = Get-Location
+        try
+        {
+            New-PSDrive -Name ZZ -PSProvider FileSystem -Root $TestDrive
+            Set-Location -Path 'ZZ:'
+            { 1..1 | ForEach-Object -Parallel { $_ } } | Should -Not -Throw
+        }
+        finally
+        {
+            Set-Location -Path $oldLocation
+        }
+    }
 }
 
 Describe 'ForEach-Object -Parallel common parameters' -Tags 'CI' {
