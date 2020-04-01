@@ -1,11 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# Module removed due to #4272
-# disabling tests
-
-return
-
 function IsWin10OrHigher
 {
     $version = [system.environment]::osversion.version

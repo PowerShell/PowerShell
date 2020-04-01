@@ -2377,6 +2377,7 @@ function Start-CrossGen {
             "Microsoft.PowerShell.CoreCLR.Eventing.dll",
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
+            "Microsoft.PowerShell.LocalAccounts.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",
             "Microsoft.PowerShell.GraphicalHost.dll",
             "Microsoft.Management.Infrastructure.CimCmdlets.dll"
