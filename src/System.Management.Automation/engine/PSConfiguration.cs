@@ -51,6 +51,7 @@ namespace System.Management.Automation.Configuration
         private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
         private const string DisableImplicitWinCompatKey = "DisableImplicitWinCompat";
         private const string WindowsPowerShellCompatibilityModuleDenyListKey = "WindowsPowerShellCompatibilityModuleDenyList";
+        private const string WindowsPowerShellCompatibilityNoClobberModuleListKey = "WindowsPowerShellCompatibilityNoClobberModuleList";
 
         // Provide a singleton
         internal static readonly PowerShellConfig Instance = new PowerShellConfig();
@@ -235,6 +236,18 @@ namespace System.Management.Automation.Configuration
             {
                 // if the setting is not mentioned in configuration files, then the default WindowsPowerShellCompatibilityModuleDenyList value is null
                 settingValue = ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
+            }
+
+            return settingValue;
+        }
+
+        internal List<string> GetWindowsPowerShellCompatibilityNoClobberModuleList()
+        {
+            List<string> settingValue = ReadValueFromFile<List<string>>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey);
+            if (settingValue == null)
+            {
+                // if the setting is not mentioned in configuration files, then the default WindowsPowerShellCompatibilityNoClobberModuleList value is null
+                settingValue = ReadValueFromFile<List<string>>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
             }
 
             return settingValue;

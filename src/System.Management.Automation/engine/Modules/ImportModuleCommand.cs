@@ -591,6 +591,27 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private PSModuleInfo ImportModule_LocallyViaName_Wrapper(ImportModuleOptions importModuleOptions, string name)
+        {
+            PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
+            if (foundModule != null)
+            {
+                SetModuleBaseForEngineModules(foundModule.Name, this.Context);
+
+                // report loading of the module in telemetry
+                // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
+                if (!foundModule.IsWindowsPowerShellCompatModule)
+                {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
+#if LEGACYTELEMETRY
+                    TelemetryAPI.ReportModuleLoad(foundModule);
+#endif
+                }
+            }
+
+            return foundModule;
+        }
+
         private PSModuleInfo ImportModule_LocallyViaName(ImportModuleOptions importModuleOptions, string name)
         {
             try
@@ -820,6 +841,23 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
+        private PSModuleInfo ImportModule_LocallyViaFQName(ImportModuleOptions importModuleOptions, ModuleSpecification modulespec)
+        {
+            RequiredVersion = modulespec.RequiredVersion;
+            MinimumVersion = modulespec.Version;
+            MaximumVersion = modulespec.MaximumVersion;
+            BaseGuid = modulespec.Guid;
+
+            PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
+            if (foundModule != null)
+            {
+                SetModuleBaseForEngineModules(foundModule.Name, this.Context);
+            }
+
+            return foundModule;
+        }
+
         #endregion Local import
 
         #region Remote import
@@ -1024,7 +1062,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     powerShell.AddCommand("Export-PSSession");
                     powerShell.AddParameter("OutputModule", wildcardEscapedPath);
-                    powerShell.AddParameter("AllowClobber", true);
+                    if (!importModuleOptions.NoClobberExportPSSession)
+                    {
+                        powerShell.AddParameter("AllowClobber", true);
+                    }
                     powerShell.AddParameter("Module", remoteModuleName); // remoteModulePath is currently unsupported by Get-Command and implicit remoting
                     powerShell.AddParameter("Force", true);
                     powerShell.AddParameter("FormatTypeName", "*");
@@ -1816,21 +1857,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string name in Name)
                 {
-                    PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
-                    if (foundModule != null)
-                    {
-                        SetModuleBaseForEngineModules(foundModule.Name, this.Context);
-
-                        // report loading of the module in telemetry
-                        // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
-                        if (!foundModule.IsWindowsPowerShellCompatModule)
-                        {
-                            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
-#if LEGACYTELEMETRY
-                            TelemetryAPI.ReportModuleLoad(foundModule);
-#endif
-                        }
-                    }
+                    ImportModule_LocallyViaName_Wrapper(importModuleOptions, name);
                 }
             }
             else if (this.ParameterSetName.Equals(ParameterSet_ViaPsrpSession, StringComparison.OrdinalIgnoreCase))
@@ -1845,17 +1872,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var modulespec in FullyQualifiedName)
                 {
-                    RequiredVersion = modulespec.RequiredVersion;
-                    MinimumVersion = modulespec.Version;
-                    MaximumVersion = modulespec.MaximumVersion;
-                    BaseGuid = modulespec.Guid;
-
-                    PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
-                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
-                    if (foundModule != null)
-                    {
-                        SetModuleBaseForEngineModules(foundModule.Name, this.Context);
-                    }
+                    ImportModule_LocallyViaFQName(importModuleOptions, modulespec);
                 }
             }
             else if (this.ParameterSetName.Equals(ParameterSet_FQName_ViaPsrpSession, StringComparison.OrdinalIgnoreCase))
@@ -1966,6 +1983,34 @@ namespace Microsoft.PowerShell.Commands
             if (WindowsPowerShellCompatRemotingSession == null)
             {
                 return new List<PSModuleInfo>();
+            }
+
+            List<string> NoClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+
+            if (filteredModuleNames != null)
+            {
+                foreach(var moduleName in filteredModuleNames)
+                {
+                    // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
+                    var exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
+                    if (InitialSessionState.IsEngineModule(exactModuleName) || ((NoClobberModuleList != null) && NoClobberModuleList.Contains(exactModuleName, StringComparer.OrdinalIgnoreCase)))
+                    {
+                        ImportModule_LocallyViaName_Wrapper(importModuleOptions, exactModuleName);
+                        importModuleOptions.NoClobberExportPSSession = true;
+                    }
+                }
+            }
+
+            if (filteredModuleFullyQualifiedNames != null)
+            {
+                foreach(var modulespec in filteredModuleFullyQualifiedNames)
+                {
+                    if (InitialSessionState.IsEngineModule(modulespec.Name) || ((NoClobberModuleList != null) && NoClobberModuleList.Contains(modulespec.Name, StringComparer.OrdinalIgnoreCase)))
+                    {
+                        ImportModule_LocallyViaFQName(importModuleOptions, modulespec);
+                        importModuleOptions.NoClobberExportPSSession = true;
+                    }
+                }
             }
 
             moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, filteredModuleNames, filteredModuleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
