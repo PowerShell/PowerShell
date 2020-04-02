@@ -730,6 +730,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             try
             {
                 groupPrincipal.Members.Add(principal);
+                groupPrincipal.Save();
             }
             catch (PrincipalExistsException exc)
             {
@@ -784,6 +785,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             try
             {
                 groupPrincipal.Members.Add(principal);
+                groupPrincipal.Save();
             }
             catch (PrincipalExistsException exc)
             {
@@ -910,6 +912,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             try
             {
                 groupPrincipal.Members.Remove(principal);
+                groupPrincipal.Save();
             }
             catch (PrincipalExistsException exc)
             {
@@ -964,6 +967,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             try
             {
                 groupPrincipal.Members.Remove(principal);
+                groupPrincipal.Save();
             }
             catch (PrincipalExistsException exc)
             {
@@ -1025,7 +1029,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             if (userPrincipal is null)
             {
-                throw new GroupNotFoundException(identityValue, identityValue);
+                throw new UserNotFoundException(identityValue, identityValue);
             }
 
             return MakeLocalUserObject(userPrincipal);
@@ -1151,8 +1155,26 @@ namespace System.Management.Automation.SecurityAccountsManager
                 throw new UserNotFoundException(identityValue, identityValue);
             }
 
-            userPrincipal.Name = newName;
-            userPrincipal.Save();
+            var entry = (System.DirectoryServices.DirectoryEntry)userPrincipal.GetUnderlyingObject();
+            entry.Rename(newName);
+            try
+            {
+                entry.CommitChanges();
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                if (!newName.Equals(userPrincipal.Name, StringComparison.Ordinal))
+                {
+                    // newName format for local SAM is simply new name string.
+                    // For Active Directory the format should be "CN=newname"
+                    // but simple string works too althought returns COMException exception
+                    // So the workaround is to check a result and
+                    // if group has successfully renamed we don't throw.
+                    //
+                    // TODO: test this in domain environment. I expect 'userPrincipal.Name' will re-read from AD but not sure.
+                    throw;
+                }
+            }
         }
 
         /// <summary>
