@@ -1955,6 +1955,14 @@
             <File Id="fil6B026F6D5210498B99E5F14386F4F90B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\ThreadJob\Microsoft.PowerShell.ThreadJob.dll" />
           </Component>
         </Directory>
+        <Directory Name="Microsoft.PowerShell.LocalAccounts" Id="dir4FC7DE8F864B4DCD9CA88F00873BDDAD">
+          <Component Id="cmpBC07462968844A9CB56EBCC3FFF3D9CA" Guid="{f04c6ea0-b9ab-4d26-8a98-c06ef6eb9381}">
+            <File Id="fil8D0DF0A1B6854FB487FB42A648B55EFF" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.LocalAccounts\LocalAccounts.format.ps1xml" />
+          </Component>
+          <Component Id="cmp46D410DAB3AC460F89E11902071D3054" Guid="{4b9cdced-42e7-4f53-bf38-ed410fbb2e17}">
+            <File Id="fil53A5BF7966704D01AE41171D2DB4B22B" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\Microsoft.PowerShell.LocalAccounts\Microsoft.PowerShell.LocalAccounts.psd1" />
+          </Component>
+        </Directory>
       </Directory>
       <Directory Id="dir20D076755BAF7EA1D1A980368C4F81A2" Name="assets">
       </Directory>
@@ -3097,6 +3105,11 @@
       </Component>
       <Component Id="cmpBB705B2570064C99A71B6FA65CDF9DC8" Guid="{51c00292-f61c-4524-92a8-6b6171403839}">
         <File Id="fil0F66F2502CDC47FF8C8626941746DF84" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Windows.Forms.Design.Editors.dll" />
+      <Component Id="cmpC868C110EEC2474F9A8CCC115B186E13" Guid="{074cd23c-3e74-4eb1-acbd-b13f7a8b2086}">
+        <File Id="filC222F396D86F4CD9B83F78F1BD6A926C" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.LocalAccounts.dll" />
+      </Component>
+      <Component Id="cmpAC878C76CC65492381A90EEC3B9B6F86" Guid="{00fdb5ab-224e-4413-83bd-a106ee2a91fe}">
+        <File Id="fil7978871E6BAA4FE1B0E58EB6319FCAF4" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.LocalAccounts.xml" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4096,6 +4109,10 @@
       <ComponentRef Id="cmp57D197B18F1F4A6AAB704B28CF61B535" />
       <ComponentRef Id="cmp26F240CCDE054124A0DD455D7C97AA8B" />
       <ComponentRef Id="cmpBB705B2570064C99A71B6FA65CDF9DC8" />
+      <ComponentRef Id="cmpBC07462968844A9CB56EBCC3FFF3D9CA" />
+      <ComponentRef Id="cmpC868C110EEC2474F9A8CCC115B186E13" />
+      <ComponentRef Id="cmp46D410DAB3AC460F89E11902071D3054" />
+      <ComponentRef Id="cmpAC878C76CC65492381A90EEC3B9B6F86" />
     </ComponentGroup>
   </Fragment>
 </Wix>
