@@ -1965,7 +1965,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
             LocalUser user = new LocalUser()
             {
-                PrincipalSource = 0, // TODO: sre.ContextType.ToString(),
+                PrincipalSource = 1, // TODO: sre.ContextType.ToString(),
                 SID = sre.Sid,
                 Name = sre.Name,
                 Description = sre.Description,
