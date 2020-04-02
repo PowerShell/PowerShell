@@ -501,7 +501,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 throw new GroupNotFoundException(group.Name, group.Name);
             }
 
-            groupPrincipal.Description = group.Description;
+            groupPrincipal.Description = changed.Description;
 
             groupPrincipal.Save();
         }
@@ -584,8 +584,26 @@ namespace System.Management.Automation.SecurityAccountsManager
                 throw new GroupNotFoundException(identityValue, identityValue);
             }
 
-            groupPrincipal.Name = newName;
-            groupPrincipal.Save();
+            var entry = (System.DirectoryServices.DirectoryEntry)groupPrincipal.GetUnderlyingObject();
+            entry.Rename(newName);
+            try
+            {
+                entry.CommitChanges();
+            }
+            catch (System.Runtime.InteropServices.COMException)
+            {
+                if (!newName.Equals(groupPrincipal.Name, StringComparison.Ordinal))
+                {
+                    // newName format for local SAM is simply new name string.
+                    // For Active Directory the format should be "CN=newname"
+                    // but simple string works too althought returns COMException exception
+                    // So the workaround is to check a result and
+                    // if group has successfully renamed we don't throw.
+                    //
+                    // TODO: test this in domain environment. I expect 'groupPrincipal.Name' will re-read from AD but not sure.
+                    throw;
+                }
+            }
         }
 
         /// <summary>
@@ -1046,7 +1064,11 @@ namespace System.Management.Automation.SecurityAccountsManager
             };
 
             userPrincipal.Save();
-            userPrincipal.SetPassword(password.AsString());
+
+            if (password != null)
+            {
+                userPrincipal.SetPassword(password.AsString());
+            }
 
             return MakeLocalUserObject(userPrincipal);
         }
