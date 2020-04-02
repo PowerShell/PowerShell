@@ -469,7 +469,27 @@ namespace System.Management.Automation.SecurityAccountsManager
                 Description = group.Description,
             };
 
-            groupPrincipal.Save();
+            try
+            {
+                groupPrincipal.Save();
+            }
+            catch (PrincipalOperationException exc)
+            {
+                if (exc.ErrorCode == -2147023517)
+                {
+                    // COMException (0x80070563): The specified local group already exists.
+                    throw new GroupExistsException(exc, group.Name);
+                }
+
+                if (exc.ErrorCode == -2147022694)
+                {
+                    // COMException (‭0x8007089A‬): The specified username is invalid.
+                    throw new InvalidNameException(exc, group.Name);
+                }
+
+                throw;
+            }
+
             return MakeLocalGroupObject(groupPrincipal);
         }
 
@@ -584,26 +604,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 throw new GroupNotFoundException(identityValue, identityValue);
             }
 
-            var entry = (System.DirectoryServices.DirectoryEntry)groupPrincipal.GetUnderlyingObject();
-            entry.Rename(newName);
-            try
-            {
-                entry.CommitChanges();
-            }
-            catch (System.Runtime.InteropServices.COMException)
-            {
-                if (!newName.Equals(groupPrincipal.Name, StringComparison.Ordinal))
-                {
-                    // newName format for local SAM is simply new name string.
-                    // For Active Directory the format should be "CN=newname"
-                    // but simple string works too althought returns COMException exception
-                    // So the workaround is to check a result and
-                    // if group has successfully renamed we don't throw.
-                    //
-                    // TODO: test this in domain environment. I expect 'groupPrincipal.Name' will re-read from AD but not sure.
-                    throw;
-                }
-            }
+            RenameLocalGroup(groupPrincipal, newName);
         }
 
         /// <summary>
@@ -632,12 +633,56 @@ namespace System.Management.Automation.SecurityAccountsManager
                     throw new GroupNotFoundException(group.Name, group.Name);
                 }
 
-                groupPrincipal.Name = newName;
-                groupPrincipal.Save();
+                RenameLocalGroup(groupPrincipal, newName);
                 return;
             }
 
             RenameLocalGroup(sid, newName);
+        }
+
+        private static void RenameLocalGroup(GroupPrincipal groupPrincipal, string newName)
+        {
+            var entry = (System.DirectoryServices.DirectoryEntry)groupPrincipal.GetUnderlyingObject();
+            try
+            {
+                entry.Rename(newName);
+                entry.CommitChanges();
+            }
+            catch (COMException exc)
+            {
+                if (exc.HResult == -2147022672)
+                {
+                    // Remove ???
+                    // COMException (0x800708B0): The directory property cannot be found in the cache.
+                    throw new NameInUseException(exc, newName);
+                }
+
+                if (exc.HResult == -2147023517)
+                {
+                    // COMException (0x80070563): The specified local group already exists.
+                    throw new NameInUseException(exc, newName);
+                }
+
+                if (exc.HResult == -2147022694)
+                {
+                    // COMException (0x8007089A): The specified username is invalid.
+                    throw new InvalidNameException(exc, newName);
+                }
+
+                if (newName.Equals(groupPrincipal.Name, StringComparison.Ordinal))
+                {
+                    // newName format for local SAM is simply new name string.
+                    // For Active Directory the format should be "CN=newname"
+                    // but simple string works too althought returns COMException exception
+                    // So the workaround is to check a result and
+                    // if group has successfully renamed we don't throw.
+                    //
+                    // TODO: test this in domain environment. I expect 'groupPrincipal.Name' will re-read from AD but not sure.
+                    return;
+                }
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -734,12 +779,12 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
             catch (PrincipalExistsException exc)
             {
-                return exc;
+                return new MemberExistsException(exc, principal.Name, group.Name);
             }
             catch (Exception exc)
             {
                 // TODO: perhaps we could make more userful exception.
-                return new Exception(null, exc);
+                return exc;
             }
 
             return null;
@@ -911,7 +956,11 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             try
             {
-                groupPrincipal.Members.Remove(principal);
+                if (!groupPrincipal.Members.Remove(principal))
+                {
+                    return new MemberNotFoundException(principal.Name, groupPrincipal.Name);
+                }
+
                 groupPrincipal.Save();
             }
             catch (PrincipalExistsException exc)
@@ -1002,7 +1051,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             if (userPrincipal is null)
             {
-                throw new GroupNotFoundException(userName, userName);
+                throw new UserNotFoundException(userName, userName);
             }
 
             return MakeLocalUserObject(userPrincipal);
@@ -1067,7 +1116,30 @@ namespace System.Management.Automation.SecurityAccountsManager
                 // TODO: what properties should we assign?
             };
 
-            userPrincipal.Save();
+            try
+            {
+                userPrincipal.Save();
+            }
+            catch (PrincipalExistsException exc)
+            {
+                throw new UserExistsException(exc, user.Name);
+            }
+            catch (PrincipalOperationException exc)
+            {
+                //if (exc.ErrorCode == -2147023517)
+                //{
+                //    // COMException (0x80070563): The specified local group already exists.
+                //    throw new UserExistsException(exc, user.Name);
+                //}
+
+                if (exc.ErrorCode == -2147022694)
+                {
+                    // COMException (‭0x8007089A‬): The specified username is invalid.
+                    throw new InvalidNameException(exc, user.Name);
+                }
+
+                throw;
+            }
 
             if (password != null)
             {
@@ -1155,26 +1227,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 throw new UserNotFoundException(identityValue, identityValue);
             }
 
-            var entry = (System.DirectoryServices.DirectoryEntry)userPrincipal.GetUnderlyingObject();
-            entry.Rename(newName);
-            try
-            {
-                entry.CommitChanges();
-            }
-            catch (System.Runtime.InteropServices.COMException)
-            {
-                if (!newName.Equals(userPrincipal.Name, StringComparison.Ordinal))
-                {
-                    // newName format for local SAM is simply new name string.
-                    // For Active Directory the format should be "CN=newname"
-                    // but simple string works too althought returns COMException exception
-                    // So the workaround is to check a result and
-                    // if group has successfully renamed we don't throw.
-                    //
-                    // TODO: test this in domain environment. I expect 'userPrincipal.Name' will re-read from AD but not sure.
-                    throw;
-                }
-            }
+            RenameLocalUser(userPrincipal, newName);
         }
 
         /// <summary>
@@ -1203,12 +1256,43 @@ namespace System.Management.Automation.SecurityAccountsManager
                     throw new UserNotFoundException(user.Name, user.Name);
                 }
 
-                userPrincipal.Name = newName;
-                userPrincipal.Save();
+                RenameLocalUser(userPrincipal, newName);
                 return;
             }
 
             RenameLocalUser(sid, newName);
+        }
+
+        private static void RenameLocalUser(UserPrincipal userPrincipal, string newName)
+        {
+            var entry = (System.DirectoryServices.DirectoryEntry)userPrincipal.GetUnderlyingObject();
+            try
+            {
+                entry.Rename(newName);
+                entry.CommitChanges();
+            }
+            catch (COMException exc)
+            {
+                if (exc.HResult == -2147022672)
+                {
+                    // COMException (0x800708B0): The directory property cannot be found in the cache.
+                    throw new NameInUseException(exc, newName);
+                }
+
+                if (newName.Equals(userPrincipal.Name, StringComparison.Ordinal))
+                {
+                    // newName format for local SAM is simply new name string.
+                    // For Active Directory the format should be "CN=newname"
+                    // but simple string works too althought returns COMException exception
+                    // So the workaround is to check a result and
+                    // if group has successfully renamed we don't throw.
+                    //
+                    // TODO: test this in domain environment. I expect 'userPrincipal.Name' will re-read from AD but not sure.
+                    return;
+                }
+
+                throw;
+            }
         }
 
         /// <summary>
@@ -1302,47 +1386,75 @@ namespace System.Management.Automation.SecurityAccountsManager
                     throw new UserNotFoundException(user.Name, user.Name);
                 }
 
-                if (user.Enabled != changed.Enabled)
-                {
-                    userPrincipal.Enabled = changed.Enabled;
-                }
-                if (user.Name != changed.Name)
-                {
-                    userPrincipal.Name = changed.Name;
-                }
-                if (user.AccountExpires != changed.AccountExpires)
-                {
-                    userPrincipal.AccountExpirationDate = changed.AccountExpires;
-                }
-                if (user.Description != changed.Description)
-                {
-                    userPrincipal.Description = changed.Description;
-                }
-                if (user.FullName != changed.FullName)
-                {
-                    // TODO: userPrincipal.FullName = changed.FullName;
-                }
-                if (setPasswordNeverExpires.HasValue)
-                {
-                    userPrincipal.PasswordNeverExpires = setPasswordNeverExpires.Value;
-                }
-                if (user.UserMayChangePassword != changed.UserMayChangePassword)
-                {
-                    userPrincipal.UserCannotChangePassword = !changed.UserMayChangePassword;
-                }
-                if (user.PasswordRequired != changed.PasswordRequired)
-                {
-                    userPrincipal.PasswordNotRequired = !changed.PasswordRequired;
-                }
+                SetProperties(user, changed, userPrincipal, setPasswordNeverExpires);
 
                 userPrincipal.Save();
-                userPrincipal.SetPassword(password.AsString());
+
+                if (password != null)
+                {
+                    userPrincipal.SetPassword(password.AsString());
+                }
+
                 return;
             }
+            else
+            {
+                using var ctx = new PrincipalContext(ContextType.Machine);
+                var identityValue = user.SID.ToString();
+                using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
 
-            context = new Context(ContextOperation.Set, ContextObjectType.User, user.Name, user);
+                if (userPrincipal is null)
+                {
+                    throw new UserNotFoundException(identityValue, identityValue);
+                }
 
-            UpdateUser(user, changed, password, PasswordExpiredState.Unchanged, setPasswordNeverExpires);
+                SetProperties(user, changed, userPrincipal, setPasswordNeverExpires);
+
+                userPrincipal.Save();
+
+                if (password != null)
+                {
+                    userPrincipal.SetPassword(password.AsString());
+                }
+
+                return;
+            }
+        }
+
+        private static void SetProperties(LocalUser user, LocalUser changed, UserPrincipal userPrincipal, bool? setPasswordNeverExpires)
+        {
+            if (user.Enabled != changed.Enabled)
+            {
+                userPrincipal.Enabled = changed.Enabled;
+            }
+            if (user.Name != changed.Name)
+            {
+                userPrincipal.Name = changed.Name;
+            }
+            if (user.AccountExpires != changed.AccountExpires)
+            {
+                userPrincipal.AccountExpirationDate = changed.AccountExpires;
+            }
+            if (user.Description != changed.Description)
+            {
+                userPrincipal.Description = changed.Description;
+            }
+            if (user.FullName != changed.FullName)
+            {
+                // TODO: userPrincipal.FullName = changed.FullName;
+            }
+            if (setPasswordNeverExpires.HasValue)
+            {
+                userPrincipal.PasswordNeverExpires = setPasswordNeverExpires.Value;
+            }
+            if (user.UserMayChangePassword != changed.UserMayChangePassword)
+            {
+                userPrincipal.UserCannotChangePassword = !changed.UserMayChangePassword;
+            }
+            if (user.PasswordRequired != changed.PasswordRequired)
+            {
+                userPrincipal.PasswordNotRequired = !changed.PasswordRequired;
+            }
         }
 
         /// <summary>
@@ -1971,7 +2083,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 Description = sre.Description,
                 Enabled = sre.Enabled.GetValueOrDefault(),
                 AccountExpires = sre.AccountExpirationDate,
-                // TODO: PasswordExpires = ???,
+                PasswordExpires = GetPasswordExpirationDate(sre),
                 UserMayChangePassword = !sre.UserCannotChangePassword,
                 PasswordRequired = !sre.PasswordNotRequired,
                 LastLogon = sre.LastLogon,
@@ -1979,6 +2091,15 @@ namespace System.Management.Automation.SecurityAccountsManager
             };
 
             return user;
+        }
+
+        private static DateTime? GetPasswordExpirationDate(UserPrincipal sre)
+        {
+            var a = (System.DirectoryServices.DirectoryEntry)sre.GetUnderlyingObject();
+            var passwordAge = (int)a.Properties["PasswordAge"][0];
+            var maxPasswordAge = (int)a.Properties["MaxPasswordAge"][0];
+            var age = maxPasswordAge - passwordAge;
+            return sre.PasswordNeverExpires ? (DateTime?)null : DateTime.Now.AddSeconds(age);
         }
 
         /// <summary>

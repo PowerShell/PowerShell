@@ -332,6 +332,11 @@ namespace Microsoft.PowerShell.Commands
         {
         }
 
+        internal InvalidNameException(Exception exc, string name)
+            : base(StringUtil.Format(Strings.InvalidName, name), exc)
+        {
+        }
+
         /// <summary>
         /// Compliance Constructor.
         /// </summary>
@@ -362,6 +367,11 @@ namespace Microsoft.PowerShell.Commands
     {
         internal NameInUseException(string name, object target)
             : base(StringUtil.Format(Strings.NameInUse, name), target, ErrorCategory.InvalidArgument)
+        {
+        }
+
+        internal NameInUseException(Exception exc, string name)
+            : base(StringUtil.Format(Strings.NameInUse, name), exc)
         {
         }
 
@@ -598,6 +608,11 @@ namespace Microsoft.PowerShell.Commands
         {
         }
 
+        internal GroupExistsException(Exception exc, string group)
+            : base(StringUtil.Format(Strings.GroupExists, group), exc)
+        {
+        }
+
         /// <summary>
         /// Compliance Constructor.
         /// </summary>
@@ -631,6 +646,11 @@ namespace Microsoft.PowerShell.Commands
         {
         }
 
+        internal UserExistsException(Exception exc, string user)
+            : base(StringUtil.Format(Strings.UserExists, user), exc)
+        {
+        }
+
         /// <summary>
         /// Compliance Constructor.
         /// </summary>
@@ -661,6 +681,11 @@ namespace Microsoft.PowerShell.Commands
     {
         internal MemberExistsException(string member, string group, object target)
             : base(StringUtil.Format(Strings.MemberExists, member, group), target)
+        {
+        }
+
+        internal MemberExistsException(Exception exc, string member, string group)
+            : base(StringUtil.Format(Strings.MemberExists, member, group), exc)
         {
         }
 

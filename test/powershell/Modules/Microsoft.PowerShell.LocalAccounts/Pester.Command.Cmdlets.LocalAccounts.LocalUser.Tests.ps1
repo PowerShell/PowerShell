@@ -702,19 +702,22 @@ try {
             VerifyFailingTest $sb "InvalidParameters,Microsoft.PowerShell.Commands.SetLocalUserCommand"
         }
 
-        It "Can set user description to empty string" {
+        It "Can set user description to empty string" -Pending {
+            # AccountManagement.UsePrincipal returns null if Description is empty string
             Set-LocalUser -Name TestUserSet1 -Description ""
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Description | Should -BeExactly ""
         }
 
+<#      Dupplicate previous test - remove
         It "Can set empty string for Description" {
             Set-LocalUser -Name TestUserSet1 -Description ""
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Description | Should -BeExactly ""
         }
+#>
 
         It "Can set string for Description at max 48" {
             Set-LocalUser TestUserSet1 -Description ("A"*48)
@@ -726,7 +729,8 @@ try {
             $result.ObjectClass | Should -Be User
         }
 
-        It "Can set empty string for FullName" {
+        It "Can set empty string for FullName" -Pending {
+            # AccountManagement.UsePrincipal returns null if Description is empty string
             Set-LocalUser -Name TestUserSet1 -FullName ""
             $result = Get-LocalUser -Name TestUserSet1
 

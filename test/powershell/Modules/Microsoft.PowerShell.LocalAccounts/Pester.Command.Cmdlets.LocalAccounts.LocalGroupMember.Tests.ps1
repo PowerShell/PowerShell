@@ -154,6 +154,7 @@ try {
         }
 
         It "Errors on adding group to group" {
+            # Now it works - remove the test?
             $sb = {
                 Add-LocalGroupMember TestGroup1 TestGroup2
             }
@@ -509,7 +510,7 @@ try {
 
         It "Errors on remove group members by array of name" {
             $sb = {
-                Remove-LocalGroupMember TestGroupRemove2 -Member TestUserRemove2
+                Remove-LocalGroupMember TestGroupRemove2 -Member TestUserRemove1,TestUserRemove2
                 Get-LocalGroupMember TestGroupRemove1
             }
             VerifyFailingTest $sb "MemberNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
@@ -567,15 +568,15 @@ try {
             }
             VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
 
-            $result = Get-LocalGroupMember TestGroupRemove2
+            $result = Get-LocalGroupMember TestGroupRemove1
             $result | Should -Be $null
         }
 
         It "Errors on remove user from nonexistent group" {
             $sb = {
-                Remove-LocalGroupMember TestGroupRemove1 -Member TestGroupRemove2 -ErrorAction Stop
+                Remove-LocalGroupMember nonexistentgroup -Member TestGroupRemove2 -ErrorAction Stop
             }
-            VerifyFailingTest $sb "MemberNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
+            VerifyFailingTest $sb "GroupNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
         }
 
         It "Can respond to -ErrorAction Stop" {
