@@ -434,7 +434,7 @@ try {
         }
     }
 
-    Describe "Validate Remove-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Remove-LocalGroupMember cmdlet" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeEach {
             if ($IsNotSkipped) {
@@ -563,10 +563,8 @@ try {
         #TODO: 16.A valid user attempts to remove a user/group from a group to which they don’t have access
 
         It "Can remove array of existent and nonexistent users names from group" {
-            $sb = {
-                Remove-LocalGroupMember TestGroupRemove1 -Member @("TestUserRemove1", "TestNonexistentUser", "TestUserRemove2")
-            }
-            VerifyFailingTest $sb "PrincipalNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
+            Remove-LocalGroupMember TestGroupRemove1 -Member @("TestUserRemove1", "TestNonexistentUser", "TestUserRemove2") -ErrorVariable err
+            $err.FullyQualifiedErrorId | Should -Be "PrincipalNotFound,Microsoft.PowerShell.Commands.RemoveLocalGroupMemberCommand"
 
             $result = Get-LocalGroupMember TestGroupRemove1
             $result | Should -Be $null
