@@ -409,7 +409,13 @@ namespace System.Management.Automation.SecurityAccountsManager
         internal LocalGroup GetLocalGroup(string groupName)
         {
             using var ctx = new PrincipalContext(ContextType.Machine);
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, groupName);
+            using var groupPattern = new GroupPrincipal(ctx)
+            {
+                Name = groupName
+            };
+            using var searcher = new PrincipalSearcher(groupPattern);
+            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, groupName);
 
             if (groupPrincipal is null)
             {
@@ -514,7 +520,13 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             using var ctx = new PrincipalContext(ContextType.Machine);
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name);
+            using var groupPattern = new GroupPrincipal(ctx)
+            {
+                Name = group.Name
+            };
+            using var searcher = new PrincipalSearcher(groupPattern);
+            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name);
 
             if (groupPrincipal is null)
             {
@@ -626,7 +638,13 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (sid is null)
             {
                 using var ctx = new PrincipalContext(ContextType.Machine);
-                using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name);
+                using var groupPattern = new GroupPrincipal(ctx)
+                {
+                    Name = group.Name
+                };
+                using var searcher = new PrincipalSearcher(groupPattern);
+                using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+                //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name);
 
                 if (groupPrincipal is null)
                 {
@@ -1208,7 +1226,13 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (sid is null)
             {
                 using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, user.Name);
+                using var userPattern = new UserPrincipal(ctx)
+                {
+                    Name = user.Name
+                };
+                using var searcher = new PrincipalSearcher(userPattern);
+                using var userPrincipal = (UserPrincipal)searcher.FindOne();
+                //using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, user.Name);
 
                 if (userPrincipal is null)
                 {
@@ -1361,7 +1385,13 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (sid is null)
             {
                 using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, user.Name);
+                using var userPattern = new UserPrincipal(ctx)
+                {
+                    Name = user.Name
+                };
+                using var searcher = new PrincipalSearcher(userPattern);
+                using var userPrincipal = (UserPrincipal)searcher.FindOne();
+                //using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, user.Name);
 
                 if (userPrincipal is null)
                 {
@@ -1404,7 +1434,13 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (sid is null)
             {
                 using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, user.Name);
+                using var userPattern = new UserPrincipal(ctx)
+                {
+                    Name = user.Name
+                };
+                using var searcher = new PrincipalSearcher(userPattern);
+                using var userPrincipal = (UserPrincipal)searcher.FindOne();
+                //using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, user.Name);
 
                 if (userPrincipal is null)
                 {
