@@ -388,6 +388,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="sessionId"></param>
         /// <param name="instanceId"></param>
         /// <param name="name"></param>
+        /// <param name="computerName"></param>
+        /// <param name="protocol"></param>
         /// <returns></returns>
         internal PSObject AddObjectToCache(
             CimSession session,
@@ -562,7 +564,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="ids"></param>
         /// <returns>List of session wrapper objects.</returns>
-        internal IEnumerable<PSObject> QuerySession(IEnumerable<uint> ids,
+        internal IEnumerable<PSObject> QuerySession(
+            IEnumerable<uint> ids,
             out IEnumerable<ErrorRecord> errorRecords)
         {
             HashSet<PSObject> sessions = new HashSet<PSObject>();
@@ -594,7 +597,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="instanceIds"></param>
         /// <returns>List of session wrapper objects.</returns>
-        internal IEnumerable<PSObject> QuerySession(IEnumerable<Guid> instanceIds,
+        internal IEnumerable<PSObject> QuerySession(
+            IEnumerable<Guid> instanceIds,
             out IEnumerable<ErrorRecord> errorRecords)
         {
             HashSet<PSObject> sessions = new HashSet<PSObject>();
