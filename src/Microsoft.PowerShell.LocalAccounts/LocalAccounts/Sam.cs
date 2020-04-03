@@ -1298,6 +1298,12 @@ namespace System.Management.Automation.SecurityAccountsManager
                     throw new NameInUseException(exc, newName);
                 }
 
+                if (exc.HResult == -2147022694)
+                {
+                    // COMException (0x8007089A): The specified username is invalid.
+                    throw new InvalidNameException(exc, newName);
+                }
+
                 if (newName.Equals(userPrincipal.Name, StringComparison.Ordinal))
                 {
                     // newName format for local SAM is simply new name string.
