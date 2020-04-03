@@ -221,10 +221,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// session counter bound to current runspace.
+        /// Session counter bound to current runspace.
         /// </para>
         /// </summary>
-        private UInt32 sessionNameCounter;
+        private uint sessionNameCounter;
 
         /// <summary>
         /// <para>
@@ -252,7 +252,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Dictionary used to holds all CimSessions in current runspace by session id.
         /// </para>
         /// </summary>
-        private Dictionary<UInt32, CimSessionWrapper> curCimSessionsById;
+        private Dictionary<uint, CimSessionWrapper> curCimSessionsById;
 
         /// <summary>
         /// <para>
@@ -265,7 +265,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// constructor
+        /// The constructor.
         /// </para>
         /// </summary>
         internal CimSessionState()
@@ -297,7 +297,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns>Unique session id under current runspace.</returns>
-        internal UInt32 GenerateSessionId()
+        internal uint GenerateSessionId()
         {
             return this.sessionNameCounter++;
         }
@@ -305,7 +305,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Indicates whether this object was disposed or not
+        /// Indicates whether this object was disposed or not.
         /// </para>
         /// </summary>
         private bool _disposed;
@@ -381,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Add new CimSession object to cache
+        /// Add new CimSession object to cache.
         /// </para>
         /// </summary>
         /// <param name="session"></param>
@@ -391,7 +391,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <returns></returns>
         internal PSObject AddObjectToCache(
             CimSession session,
-            UInt32 sessionId,
+            uint sessionId,
             Guid instanceId,
             string name,
             string computerName,
@@ -434,11 +434,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string message = string.Empty;
             if (psObject.BaseObject is CimSession)
             {
-                UInt32 id = 0x0;
+                uint id = 0x0;
                 Guid instanceId = Guid.Empty;
                 string name = string.Empty;
                 string computerName = string.Empty;
-                if (psObject.Properties[idPropName].Value is UInt32)
+                if (psObject.Properties[idPropName].Value is uint)
                 {
                     id = Convert.ToUInt32(psObject.Properties[idPropName].Value, null);
                 }
@@ -466,7 +466,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Remove given <see cref="PSObject"/> object from cache
+        /// Remove given <see cref="PSObject"/> object from cache.
         /// </para>
         /// </summary>
         /// <param name="psObject"></param>
@@ -482,7 +482,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Remove given <see cref="CimSession"/> object from cache
+        /// Remove given <see cref="CimSession"/> object from cache.
         /// </para>
         /// </summary>
         /// <param name="session"></param>
@@ -562,7 +562,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="ids"></param>
         /// <returns>List of session wrapper objects.</returns>
-        internal IEnumerable<PSObject> QuerySession(IEnumerable<UInt32> ids,
+        internal IEnumerable<PSObject> QuerySession(IEnumerable<uint> ids,
             out IEnumerable<ErrorRecord> errorRecords)
         {
             HashSet<PSObject> sessions = new HashSet<PSObject>();
@@ -570,7 +570,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             List<ErrorRecord> errRecords = new List<ErrorRecord>();
             errorRecords = errRecords;
             // NOTES: use template function to implement this will save duplicate code
-            foreach (UInt32 id in ids)
+            foreach (uint id in ids)
             {
                 if (this.curCimSessionsById.ContainsKey(id))
                 {
@@ -781,7 +781,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region constructor
 
         /// <summary>
-        /// Constructor.
+        /// The constructor.
         /// </summary>
         public CimSessionBase()
         {
@@ -814,7 +814,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Default runspace id
+        /// Default runspace ID.
         /// </para>
         /// </summary>
         internal static Guid defaultRunspaceId = Guid.Empty;
@@ -855,7 +855,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// clean up the dictionaries if the runspace is closed or broken.
+        /// Clean up the dictionaries if the runspace is closed or broken.
         /// </para>
         /// </summary>
         /// <param name="sender">Runspace.</param>
@@ -905,7 +905,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             /// <summary>
             /// <para>
-            /// Constructor
+            /// The constructor.
             /// </para>
             /// </summary>
             /// <param name="theProxy"></param>
@@ -920,7 +920,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             /// <summary>
-            /// <para>namespace</para>
+            /// <para>Namespace</para>
             /// </summary>
             internal CimSessionWrapper CimSessionWrapper
             {
@@ -935,7 +935,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// constructor
+        /// The constructor.
         /// </para>
         /// </summary>
         internal CimNewSession() : base()
@@ -988,7 +988,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Add session to global cache
+        /// Add session to global cache,
         /// </para>
         /// </summary>
         /// <param name="cimSession"></param>
@@ -999,7 +999,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
 
             CimTestCimSessionContext testCimSessionContext = context as CimTestCimSessionContext;
-            UInt32 sessionId = this.sessionState.GenerateSessionId();
+            uint sessionId = this.sessionState.GenerateSessionId();
             string originalSessionName = testCimSessionContext.CimSessionWrapper.Name;
             string sessionName = (originalSessionName != null) ? originalSessionName : string.Format(CultureInfo.CurrentUICulture, @"{0}{1}", CimSessionState.CimSessionClassName, sessionId);
 
@@ -1017,11 +1017,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// process all actions in the action queue
+        /// Process all actions in the action queue.
         /// </para>
         /// </summary>
         /// <param name="cmdletOperation">
-        /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details
+        /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
         public void ProcessActions(CmdletOperationBase cmdletOperation)
         {
@@ -1030,12 +1030,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// process remaining actions until all operations are completed or
-        /// current cmdlet is terminated by user
+        /// Process remaining actions until all operations are completed or
+        /// current cmdlet is terminated by user.
         /// </para>
         /// </summary>
         /// <param name="cmdletOperation">
-        /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details
+        /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
         public void ProcessRemainActions(CmdletOperationBase cmdletOperation)
         {
@@ -1055,7 +1055,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Indicates whether this object was disposed or not
+        /// Indicates whether this object was disposed or not.
         /// </para>
         /// </summary>
         protected bool Disposed
@@ -1120,13 +1120,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// Get CimSession based on given id/instanceid/computername/name
+    /// Get CimSession based on given id/instanceid/computername/name.
     /// </para>
     /// </summary>
     internal class CimGetSession : CimSessionBase
     {
         /// <summary>
-        /// Constructor.
+        /// The constructor.
         /// </summary>
         public CimGetSession() : base()
         {
@@ -1197,7 +1197,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// <para>
-    /// Get CimSession based on given id/instanceid/computername/name
+    /// Get CimSession based on given id/instanceid/computername/name.
     /// </para>
     /// </summary>
     internal class CimRemoveSession : CimSessionBase

@@ -27,7 +27,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Constructor
 
         /// <summary>
-        /// Constructor.
+        /// The constructor.
         /// </summary>
         public CimAsyncOperation()
         {
@@ -126,7 +126,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdletOperation">
-        /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
+        /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
         public void ProcessActions(CmdletOperationBase cmdletOperation)
         {
@@ -146,12 +146,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// process remaining actions until all operations are completed or
+        /// Process remaining actions until all operations are completed or
         /// current cmdlet is terminated by user.
         /// </para>
         /// </summary>
         /// <param name="cmdletOperation">
-        /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
+        /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
         public void ProcessRemainActions(CmdletOperationBase cmdletOperation)
         {
@@ -202,7 +202,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Add temporary <seealso cref="CimSessionProxy"/> object to cache.
         /// </para>
         /// </summary>
-        /// <param name="computerName">Computer name of the cimsession.</param>
         /// <param name="sessionproxy">Cimsession wrapper object.</param>
         protected void AddCimSessionProxy(CimSessionProxy sessionproxy)
         {
@@ -382,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="value"></param>
         /// <param name="referenceType">Output the cimtype of the value, either Reference or ReferenceArray.</param>
-        /// <returns></returns>
+        /// <returns>The object.</returns>
         protected object GetReferenceOrReferenceArrayObject(object value, ref CimType referenceType)
         {
             PSReference cimReference = value as PSReference;
@@ -496,7 +495,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Clean up managed resources
+        /// Clean up managed resources.
         /// </para>
         /// </summary>
         private void Cleanup()
@@ -585,7 +584,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region protected members
         /// <summary>
         /// Event to notify ps thread that either a ACK message sent back
-        /// or a error happened. Currently only used by class
+        /// or a error happened. Currently only used by
         /// <see cref="CimRegisterCimIndication"/>.
         /// </summary>
         protected ManualResetEventSlim ackedEvent;
