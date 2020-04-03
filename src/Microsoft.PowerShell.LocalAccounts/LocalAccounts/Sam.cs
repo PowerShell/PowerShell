@@ -1110,9 +1110,14 @@ namespace System.Management.Automation.SecurityAccountsManager
             using var ctx = new PrincipalContext(ContextType.Machine);
             using var userPrincipal = new UserPrincipal(ctx)
             {
-                Name = user.Name,
+                AccountExpirationDate = user.AccountExpires,
+                Enabled = user.Enabled,
                 Description = user.Description,
+                DisplayName = user.FullName,
+                Name = user.Name,
+                PasswordNotRequired = !user.PasswordRequired,
                 PasswordNeverExpires = setPasswordNeverExpires,
+                UserCannotChangePassword = !user.UserMayChangePassword,
                 // TODO: what properties should we assign?
             };
 
@@ -1143,7 +1148,15 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             if (password != null)
             {
-                userPrincipal.SetPassword(password.AsString());
+                try
+                {
+                    userPrincipal.SetPassword(password.AsString());
+                }
+                catch (PasswordException)
+                {
+                    userPrincipal.Delete();
+                    throw new InvalidPasswordException();
+                }
             }
 
             return MakeLocalUserObject(userPrincipal);
@@ -1392,7 +1405,14 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 if (password != null)
                 {
-                    userPrincipal.SetPassword(password.AsString());
+                    try
+                    {
+                        userPrincipal.SetPassword(password.AsString());
+                    }
+                    catch (PasswordException)
+                    {
+                        throw new InvalidPasswordException();
+                    }
                 }
 
                 return;
@@ -1414,7 +1434,14 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 if (password != null)
                 {
-                    userPrincipal.SetPassword(password.AsString());
+                    try
+                    {
+                        userPrincipal.SetPassword(password.AsString());
+                    }
+                    catch (PasswordException)
+                    {
+                        throw new InvalidPasswordException();
+                    }
                 }
 
                 return;
@@ -1427,10 +1454,10 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 userPrincipal.Enabled = changed.Enabled;
             }
-            if (user.Name != changed.Name)
-            {
-                userPrincipal.Name = changed.Name;
-            }
+            //if (user.Name != changed.Name)
+            //{
+            //    userPrincipal.Name = changed.Name;
+            //}
             if (user.AccountExpires != changed.AccountExpires)
             {
                 userPrincipal.AccountExpirationDate = changed.AccountExpires;
@@ -1441,7 +1468,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
             if (user.FullName != changed.FullName)
             {
-                // TODO: userPrincipal.FullName = changed.FullName;
+                userPrincipal.DisplayName = changed.FullName;
             }
             if (setPasswordNeverExpires.HasValue)
             {
@@ -2079,15 +2106,16 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 PrincipalSource = PrincipalSource.Local, // TODO: sre.ContextType.ToString(),
                 SID = sre.Sid,
-                Name = sre.Name,
+                AccountExpires = sre.AccountExpirationDate,
                 Description = sre.Description,
                 Enabled = sre.Enabled.GetValueOrDefault(),
-                AccountExpires = sre.AccountExpirationDate,
-                PasswordExpires = GetPasswordExpirationDate(sre),
-                UserMayChangePassword = !sre.UserCannotChangePassword,
-                PasswordRequired = !sre.PasswordNotRequired,
+                FullName = sre.DisplayName,
                 LastLogon = sre.LastLogon,
-                PasswordLastSet = sre.LastPasswordSet,
+                Name = sre.Name,
+                PasswordExpires = GetPasswordExpirationDate(sre),
+                PasswordLastSet = GetLastPasswordSetDate(sre),
+                PasswordRequired = !sre.PasswordNotRequired,
+                UserMayChangePassword = !sre.UserCannotChangePassword,
             };
 
             return user;
@@ -2100,6 +2128,11 @@ namespace System.Management.Automation.SecurityAccountsManager
             var maxPasswordAge = (int)a.Properties["MaxPasswordAge"][0];
             var age = maxPasswordAge - passwordAge;
             return sre.PasswordNeverExpires ? (DateTime?)null : DateTime.Now.AddSeconds(age);
+        }
+
+        private static DateTime? GetLastPasswordSetDate(UserPrincipal sre)
+        {
+            return sre.LastPasswordSet.HasValue ? sre.LastPasswordSet.Value.ToLocalTime() : sre.LastPasswordSet;
         }
 
         /// <summary>

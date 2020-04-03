@@ -339,7 +339,8 @@ try {
             $result.ObjectClass | Should -Be User
         }
 
-        It "Errors when Password over max 257" {
+        It "Errors when Password over max 257" -Pending {
+            # Duplicate next test - remove?
             $sb = {
                 New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString ("A"*257) -AsPlainText -Force)
             }
@@ -710,14 +711,13 @@ try {
             $result.Description | Should -BeExactly ""
         }
 
-<#      Dupplicate previous test - remove
-        It "Can set empty string for Description" {
+        It "Can set empty string for Description" -Pending {
+            # Dupplicate previous test - remove?
             Set-LocalUser -Name TestUserSet1 -Description ""
             $result = Get-LocalUser -Name TestUserSet1
 
             $result.Description | Should -BeExactly ""
         }
-#>
 
         It "Can set string for Description at max 48" {
             Set-LocalUser TestUserSet1 -Description ("A"*48)

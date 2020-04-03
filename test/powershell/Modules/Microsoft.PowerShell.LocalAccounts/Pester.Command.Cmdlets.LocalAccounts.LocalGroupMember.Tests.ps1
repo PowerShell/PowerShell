@@ -153,7 +153,7 @@ try {
             VerifyFailingTest $sb "MissingArgument,Microsoft.PowerShell.Commands.AddLocalGroupMemberCommand"
         }
 
-        It "Errors on adding group to group" {
+        It "Errors on adding group to group" -Pending {
             # Now it works - remove the test?
             $sb = {
                 Add-LocalGroupMember TestGroup1 TestGroup2
