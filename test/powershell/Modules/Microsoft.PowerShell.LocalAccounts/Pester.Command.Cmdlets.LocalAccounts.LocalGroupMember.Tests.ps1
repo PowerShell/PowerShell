@@ -273,7 +273,7 @@ try {
         }
     }
 
-    Describe "Validate Get-LocalGroupMember cmdlet" -Tags @('Feature', 'RequireAdminOnWindows') {
+    Describe "Validate Get-LocalGroupMember cmdlet" -Tags @('CI', 'RequireAdminOnWindows') {
 
         BeforeAll {
             $OptDomainPrefix="(.+\\)?"
