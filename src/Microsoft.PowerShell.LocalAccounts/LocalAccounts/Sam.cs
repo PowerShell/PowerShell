@@ -1047,7 +1047,13 @@ namespace System.Management.Automation.SecurityAccountsManager
         internal LocalUser GetLocalUser(string userName)
         {
             using var ctx = new PrincipalContext(ContextType.Machine);
-            using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, userName);
+            using var userPattern = new UserPrincipal(ctx)
+            {
+                Name = userName
+            };
+            using var searcher = new PrincipalSearcher(userPattern);
+            using var userPrincipal = (UserPrincipal)searcher.FindOne();
+            //using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, userName);
 
             if (userPrincipal is null)
             {
