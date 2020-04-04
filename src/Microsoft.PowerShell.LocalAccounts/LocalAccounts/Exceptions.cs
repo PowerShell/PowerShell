@@ -475,6 +475,11 @@ namespace Microsoft.PowerShell.Commands
         {
         }
 
+        internal GroupNotFoundException(Exception exc, string group)
+            : base(StringUtil.Format(Strings.GroupNotFound, group), exc)
+        {
+        }
+
         /// <summary>
         /// Compliance Constructor.
         /// </summary>
@@ -505,6 +510,11 @@ namespace Microsoft.PowerShell.Commands
     {
         internal UserNotFoundException(string user, object target)
             : base(StringUtil.Format(Strings.UserNotFound, user), target)
+        {
+        }
+
+        internal UserNotFoundException(Exception exc, string user)
+            : base(StringUtil.Format(Strings.UserNotFound, user), exc)
         {
         }
 

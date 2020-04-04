@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Runtime.InteropServices;
 using System.Security.AccessControl;
@@ -440,16 +441,15 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal LocalGroup GetLocalGroup(SecurityIdentifier sid)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            var identityValue = sid.ToString();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
-
-            if (groupPrincipal is null)
+            try
             {
-                throw new GroupNotFoundException(identityValue, identityValue);
+                NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                return GetLocalGroup(account.Value);
             }
-
-            return MakeLocalGroupObject(groupPrincipal);
+            catch (IdentityNotMappedException exc)
+            {
+                throw new GroupNotFoundException(exc, sid.ToString());
+            }
         }
 
         /// <summary>
@@ -660,7 +660,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
         private static void RenameLocalGroup(GroupPrincipal groupPrincipal, string newName)
         {
-            var entry = (System.DirectoryServices.DirectoryEntry)groupPrincipal.GetUnderlyingObject();
+            var entry = (DirectoryEntry)groupPrincipal.GetUnderlyingObject();
             try
             {
                 entry.Rename(newName);
@@ -889,12 +889,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             foreach(Principal p in groupPrincipal.Members)
             {
-                yield return p switch
-                {
-                    UserPrincipal user => MakeLocalUserObject(user),
-                    GroupPrincipal grp => MakeLocalGroupObject(grp),
-                    _ => null
-                };
+                yield return MakeLocalPrincipalObject(p);
             }
         }
 
@@ -1096,16 +1091,15 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal LocalUser GetLocalUser(SecurityIdentifier sid)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            var identityValue = sid.ToString();
-            using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
-
-            if (userPrincipal is null)
+            try
             {
-                throw new UserNotFoundException(identityValue, identityValue);
+                NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                return GetLocalUser(account.Value);
             }
-
-            return MakeLocalUserObject(userPrincipal);
+            catch (IdentityNotMappedException exc)
+            {
+                throw new UserNotFoundException(exc, sid.ToString());
+            }
         }
 
         /// <summary>
@@ -1308,7 +1302,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
         private static void RenameLocalUser(UserPrincipal userPrincipal, string newName)
         {
-            var entry = (System.DirectoryServices.DirectoryEntry)userPrincipal.GetUnderlyingObject();
+            var entry = (DirectoryEntry)userPrincipal.GetUnderlyingObject();
             try
             {
                 entry.Rename(newName);
@@ -2152,7 +2146,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
             LocalUser user = new LocalUser()
             {
-                PrincipalSource = PrincipalSource.Local, // TODO: sre.ContextType.ToString(),
+                PrincipalSource = GetPrincipalSource(sre.Sid),
                 SID = sre.Sid,
                 AccountExpires = sre.AccountExpirationDate,
                 Description = sre.Description,
@@ -2171,7 +2165,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
         private static DateTime? GetPasswordExpirationDate(UserPrincipal sre)
         {
-            var a = (System.DirectoryServices.DirectoryEntry)sre.GetUnderlyingObject();
+            var a = (DirectoryEntry)sre.GetUnderlyingObject();
             var passwordAge = (int)a.Properties["PasswordAge"][0];
             var maxPasswordAge = (int)a.Properties["MaxPasswordAge"][0];
             var age = maxPasswordAge - passwordAge;
@@ -3458,6 +3452,31 @@ namespace System.Management.Automation.SecurityAccountsManager
                     rv.ObjectClass = Strings.ObjectClassOther;
                     break;
             }
+
+            return rv;
+        }
+
+        private LocalPrincipal MakeLocalPrincipalObject(Principal info)
+        {
+            if (info == null)
+            {
+                return null;    // this is a legitimate case - TODO: remove?
+            }
+
+            NTAccount account = (NTAccount)info.Sid.Translate(typeof(NTAccount));
+
+            var rv = new LocalPrincipal(account.ToString())
+            {
+                SID = info.Sid,
+                PrincipalSource = GetPrincipalSource(info.Sid),
+
+                ObjectClass = info switch
+                {
+                    UserPrincipal _ => Strings.ObjectClassUser,
+                    GroupPrincipal _ => Strings.ObjectClassGroup,
+                    _ => Strings.ObjectClassOther
+                }
+            };
 
             return rv;
         }
