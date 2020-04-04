@@ -1,15 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#region Using directives
 using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
-#endregion
+using System.Security.Principal;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -25,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetLocalUserCommand : Cmdlet
     {
         #region Instance Data
-        private Sam sam = null;
+        private Sam _sam = null;
         #endregion Instance Data
 
         #region Parameter Properties
@@ -42,12 +39,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
-            get { return this.name; }
-
-            set { this.name = value; }
+            get;
+            set;
         }
-
-        private string[] name;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -59,14 +53,12 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public System.Security.Principal.SecurityIdentifier[] SID
+        public SecurityIdentifier[] SID
         {
-            get { return this.sid; }
-
-            set { this.sid = value; }
+            get;
+            set;
         }
 
-        private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -75,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            sam = new Sam();
+            _sam = new Sam();
         }
 
         /// <summary>
@@ -85,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Name == null && SID == null)
             {
-                foreach (var user in sam.GetAllLocalUsers())
+                foreach (LocalUser user in _sam.GetAllLocalUsers())
                     WriteObject(user);
 
                 return;
@@ -100,10 +92,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (_sam != null)
             {
-                sam.Dispose();
-                sam = null;
+                _sam.Dispose();
+                _sam = null;
             }
         }
         #endregion Cmdlet Overrides
@@ -130,12 +122,12 @@ namespace Microsoft.PowerShell.Commands
                             var pattern = new WildcardPattern(nm, WildcardOptions.Compiled
                                                                 | WildcardOptions.IgnoreCase);
 
-                            foreach (var user in sam.GetMatchingLocalUsers(n => pattern.IsMatch(n)))
+                            foreach (LocalUser user in _sam.GetMatchingLocalUsers(n => pattern.IsMatch(n)))
                                 WriteObject(user);
                         }
                         else
                         {
-                            WriteObject(sam.GetLocalUser(nm));
+                            WriteObject(_sam.GetLocalUser(nm));
                         }
                     }
                     catch (Exception ex)
@@ -153,11 +145,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (SID != null)
             {
-                foreach (var s in SID)
+                foreach (SecurityIdentifier s in SID)
                 {
                     try
                     {
-                        WriteObject(sam.GetLocalUser(s));
+                        WriteObject(_sam.GetLocalUser(s));
                     }
                     catch (Exception ex)
                     {
@@ -168,6 +160,4 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
-

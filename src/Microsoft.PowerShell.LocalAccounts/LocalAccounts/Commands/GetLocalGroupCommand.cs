@@ -1,15 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#region Using directives
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using System.Security.Principal;
-
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
-using System.Diagnostics.CodeAnalysis;
-#endregion
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -24,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetLocalGroupCommand : Cmdlet
     {
         #region Instance Data
-        private Sam sam = null;
+        private Sam _sam = null;
         #endregion Instance Data
 
         #region Parameter Properties
@@ -40,12 +36,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Name
         {
-            get { return this.name; }
-
-            set { this.name = value; }
+            get;
+            set;
         }
-
-        private string[] name;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -59,12 +52,10 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public System.Security.Principal.SecurityIdentifier[] SID
         {
-            get { return this.sid;}
-
-            set { this.sid = value; }
+            get;
+            set;
         }
 
-        private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -73,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            sam = new Sam();
+            _sam = new Sam();
         }
 
         /// <summary>
@@ -83,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Name == null && SID == null)
             {
-                foreach (var group in sam.GetAllLocalGroups())
+                foreach (LocalGroup group in _sam.GetAllLocalGroups())
                     WriteObject(group);
 
                 return;
@@ -98,10 +89,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (_sam != null)
             {
-                sam.Dispose();
-                sam = null;
+                _sam.Dispose();
+                _sam = null;
             }
         }
         #endregion Cmdlet Overrides
@@ -128,12 +119,12 @@ namespace Microsoft.PowerShell.Commands
                             var pattern = new WildcardPattern(name, WildcardOptions.Compiled
                                                                 | WildcardOptions.IgnoreCase);
 
-                            foreach (var group in sam.GetMatchingLocalGroups(n => pattern.IsMatch(n)))
+                            foreach (LocalGroup group in _sam.GetMatchingLocalGroups(n => pattern.IsMatch(n)))
                                 WriteObject(group);
                         }
                         else
                         {
-                            WriteObject(sam.GetLocalGroup(name));
+                            WriteObject(_sam.GetLocalGroup(name));
                         }
                     }
                     catch (Exception ex)
@@ -151,11 +142,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (SID != null)
             {
-                foreach (var sid in SID)
+                foreach (System.Security.Principal.SecurityIdentifier sid in SID)
                 {
                     try
                     {
-                        WriteObject(sam.GetLocalGroup(sid));
+                        WriteObject(_sam.GetLocalGroup(sid));
                     }
                     catch (Exception ex)
                     {
@@ -166,6 +157,4 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
-

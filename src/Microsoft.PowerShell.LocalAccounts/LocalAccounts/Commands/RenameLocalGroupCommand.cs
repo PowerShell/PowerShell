@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#region Using directives
 using System;
 using System.Management.Automation;
 
@@ -9,7 +8,6 @@ using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
 
 using Microsoft.PowerShell.LocalAccounts;
-#endregion
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -24,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     public class RenameLocalGroupCommand : Cmdlet
     {
         #region Instance Data
-        private Sam sam = null;
+        private Sam _sam = null;
         #endregion Instance Data
 
         #region Parameter Properties
@@ -41,12 +39,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public Microsoft.PowerShell.Commands.LocalGroup InputObject
         {
-            get { return this.inputobject;}
-
-            set { this.inputobject = value; }
+            get;
+            set;
         }
-
-        private Microsoft.PowerShell.Commands.LocalGroup inputobject;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -61,12 +56,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Name
         {
-            get { return this.name;}
-
-            set { this.name = value; }
+            get;
+            set;
         }
-
-        private string name;
 
         /// <summary>
         /// The following is the definition of the input parameter "NewName".
@@ -78,12 +70,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string NewName
         {
-            get { return this.newname;}
-
-            set { this.newname = value; }
+            get;
+            set;
         }
-
-        private string newname;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -97,12 +86,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
-
-            set { this.sid = value; }
+            get;
+            set;
         }
 
-        private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -111,7 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            sam = new Sam();
+            _sam = new Sam();
         }
 
         /// <summary>
@@ -136,10 +123,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (_sam != null)
             {
-                sam.Dispose();
-                sam = null;
+                _sam.Dispose();
+                _sam = null;
             }
         }
         #endregion Cmdlet Overrides
@@ -159,7 +146,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(Name, NewName))
-                        sam.RenameLocalGroup(sam.GetLocalGroup(Name), NewName);
+                        _sam.RenameLocalGroup(_sam.GetLocalGroup(Name), NewName);
                 }
                 catch (Exception ex)
                 {
@@ -178,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(SID.ToString(), NewName))
-                        sam.RenameLocalGroup(SID, NewName);
+                        _sam.RenameLocalGroup(SID, NewName);
                 }
                 catch (Exception ex)
                 {
@@ -197,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(InputObject.Name, NewName))
-                        sam.RenameLocalGroup(InputObject, NewName);
+                        _sam.RenameLocalGroup(InputObject, NewName);
                 }
                 catch (Exception ex)
                 {
@@ -228,6 +215,4 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
-

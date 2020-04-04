@@ -1,18 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#region Using directives
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using System.Security.Principal;
-
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
+using System.Security.Principal;
 
 using Microsoft.PowerShell.LocalAccounts;
-using System.Diagnostics.CodeAnalysis;
-#endregion
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -27,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     public class AddLocalGroupMemberCommand : PSCmdlet
     {
         #region Instance Data
-        private Sam sam = null;
+        private Sam _sam = null;
         #endregion Instance Data
 
         #region Parameter Properties
@@ -41,12 +37,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Microsoft.PowerShell.Commands.LocalGroup Group
         {
-            get { return this.group;}
-
-            set { this.group = value; }
+            get;
+            set;
         }
-
-        private Microsoft.PowerShell.Commands.LocalGroup group;
 
         /// <summary>
         /// The following is the definition of the input parameter "Member".
@@ -62,12 +55,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Microsoft.PowerShell.Commands.LocalPrincipal[] Member
         {
-            get { return this.member;}
-
-            set { this.member = value; }
+            get;
+            set;
         }
-
-        private Microsoft.PowerShell.Commands.LocalPrincipal[] member;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -79,12 +69,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Name
         {
-            get { return this.name;}
-
-            set { this.name = value; }
+            get;
+            set;
         }
-
-        private string name;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -96,12 +83,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
-
-            set { this.sid = value; }
+            get;
+            set;
         }
 
-        private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -110,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            sam = new Sam();
+            _sam = new Sam();
         }
 
         /// <summary>
@@ -125,11 +110,11 @@ namespace Microsoft.PowerShell.Commands
                     LocalGroup resolvedGroup;
                     if (Group.SID is null)
                     {
-                        resolvedGroup = sam.GetLocalGroup(Group.Name);
+                        resolvedGroup = _sam.GetLocalGroup(Group.Name);
                     }
                     else
                     {
-                        resolvedGroup = sam.GetLocalGroup(Group.SID);
+                        resolvedGroup = _sam.GetLocalGroup(Group.SID);
                     }
 
                     ProcessGroup(resolvedGroup);
@@ -150,10 +135,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (_sam != null)
             {
-                sam.Dispose();
-                sam = null;
+                _sam.Dispose();
+                _sam = null;
             }
         }
         #endregion Cmdlet Overrides
@@ -197,18 +182,18 @@ namespace Microsoft.PowerShell.Commands
         {
             LocalPrincipal principal = null;
             string memberName = null;
-            SecurityIdentifier sid = member.SID;
+            SecurityIdentifier secureId = member.SID;
 
-            if (sid != null)
+            if (secureId != null)
             {
                 try
                 {
-                    NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                    NTAccount account = (NTAccount)secureId.Translate(typeof(NTAccount));
                     memberName = account.Value;
                 }
                 catch (IdentityNotMappedException exc)
                 {
-                    var exception = new PrincipalNotFoundException(exc, sid.ToString());
+                    var exception = new PrincipalNotFoundException(exc, secureId.ToString());
                     WriteError(exception.MakeErrorRecord());
                     return null;
                 }
@@ -221,20 +206,20 @@ namespace Microsoft.PowerShell.Commands
                 return null;
             }
 
-            sid = memberName is null ? this.TrySid(member.Name) : null;
+            secureId = memberName is null ? this.TrySid(member.Name) : null;
 
-            if (sid != null)
+            if (secureId != null)
             {
                 try
                 {
-                    NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                    NTAccount account = (NTAccount)secureId.Translate(typeof(NTAccount));
                     memberName = account.Value;
                 }
                 catch (IdentityNotMappedException)
                 {
                 }
 
-                member.SID = sid;
+                member.SID = secureId;
                 member.Name = memberName;   // TODO: breaking change? - remove?
                 principal = member;
             }
@@ -242,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    principal = sam.LookupAccount(member.Name);
+                    principal = _sam.LookupAccount(member.Name);
                 }
                 catch (Exception ex)
                 {
@@ -251,7 +236,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (CheckShouldProcess(principal, group))
+            {
                 return principal;
+            }
 
             return null;
         }
@@ -271,7 +258,9 @@ namespace Microsoft.PowerShell.Commands
         private bool CheckShouldProcess(LocalPrincipal principal, LocalGroup group)
         {
             if (principal == null)
+            {
                 return false;
+            }
 
             string msg = StringUtil.Format(Strings.ActionAddGroupMember, principal.ToString());
             string target = StringUtil.Format("{0} ({1})", group.Name, group.SID.ToString());
@@ -288,12 +277,12 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessGroup(LocalGroup group)
         {
-            foreach (LocalPrincipal member in Member)
+            foreach (LocalPrincipal localPrincipal in Member)
             {
-                LocalPrincipal principal = MakePrincipal(group, member);
+                LocalPrincipal principal = MakePrincipal(group, localPrincipal);
                 if (principal != null)
                 {
-                    Exception ex = sam.AddLocalGroupMember(group, principal);
+                    Exception ex = _sam.AddLocalGroupMember(group, principal);
                     if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
@@ -310,7 +299,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessName(string name)
         {
-            ProcessGroup(sam.GetLocalGroup(name));
+            ProcessGroup(_sam.GetLocalGroup(name));
         }
 
         /// <summary>
@@ -322,11 +311,9 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessSid(SecurityIdentifier groupSid)
         {
-            ProcessGroup(sam.GetLocalGroup(groupSid));
+            ProcessGroup(_sam.GetLocalGroup(groupSid));
         }
 
         #endregion Private Methods
     }
-
 }
-

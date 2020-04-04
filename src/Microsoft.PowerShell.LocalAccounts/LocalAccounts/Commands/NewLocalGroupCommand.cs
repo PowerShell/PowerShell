@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#region Using directives
 using System;
 using System.Management.Automation;
 
@@ -9,7 +8,6 @@ using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
 
 using Microsoft.PowerShell.LocalAccounts;
-#endregion
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -24,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     public class NewLocalGroupCommand : Cmdlet
     {
         #region Instance Data
-        private Sam sam = null;
+        private Sam _sam = null;
         #endregion Instance Data
 
         #region Parameter Properties
@@ -36,12 +34,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string Description
         {
-            get { return this.description;}
-
-            set { this.description = value; }
+            get;
+            set;
         }
-
-        private string description;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -55,12 +50,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateLength(1, 256)]
         public string Name
         {
-            get { return this.name;}
-
-            set { this.name = value; }
+            get;
+            set;
         }
 
-        private string name;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -69,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            sam = new Sam();
+            _sam = new Sam();
         }
 
         /// <summary>
@@ -81,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (CheckShouldProcess(Name))
                 {
-                    var group = sam.CreateLocalGroup(new LocalGroup
+                    LocalGroup group = _sam.CreateLocalGroup(new LocalGroup
                                                         {
                                                             Description = Description,
                                                             Name = Name
@@ -101,10 +94,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (_sam != null)
             {
-                sam.Dispose();
-                sam = null;
+                _sam.Dispose();
+                _sam = null;
             }
         }
         #endregion Cmdlet Overrides
@@ -116,6 +109,4 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
-

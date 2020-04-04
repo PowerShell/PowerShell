@@ -1,15 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#region Using directives
 using System;
 using System.Collections.Generic;
 using System.Management.Automation;
-using System.Security.Principal;
-
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
-#endregion
+using System.Security.Principal;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -23,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetLocalGroupMemberCommand : Cmdlet
     {
         #region Instance Data
-        private Sam sam = null;
+        private Sam _sam = null;
         #endregion Instance Data
 
         #region Parameter Properties
@@ -39,12 +36,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Microsoft.PowerShell.Commands.LocalGroup Group
         {
-            get { return this.group;}
-
-            set { this.group = value; }
+            get;
+            set;
         }
-
-        private Microsoft.PowerShell.Commands.LocalGroup group;
 
         /// <summary>
         /// The following is the definition of the input parameter "Member".
@@ -56,12 +50,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Member
         {
-            get { return this.member;}
-
-            set { this.member = value; }
+            get;
+            set;
         }
-
-        private string member;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -75,12 +66,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Name
         {
-            get { return this.name;}
-
-            set { this.name = value; }
+            get;
+            set;
         }
-
-        private string name;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -94,12 +82,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
-
-            set { this.sid = value; }
+            get;
+            set;
         }
 
-        private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -108,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            sam = new Sam();
+            _sam = new Sam();
         }
 
         /// <summary>
@@ -125,11 +111,11 @@ namespace Microsoft.PowerShell.Commands
                     LocalGroup resolvedGroup;
                     if (Group.SID is null)
                     {
-                        resolvedGroup = sam.GetLocalGroup(group.Name);
+                        resolvedGroup = _sam.GetLocalGroup(Group.Name);
                     }
                     else
                     {
-                        resolvedGroup = sam.GetLocalGroup(group.SID);
+                        resolvedGroup = _sam.GetLocalGroup(Group.SID);
                     }
 
                     principals = ProcessGroup(resolvedGroup);
@@ -153,10 +139,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (_sam != null)
             {
-                sam.Dispose();
-                sam = null;
+                _sam.Dispose();
+                _sam = null;
             }
         }
         #endregion Cmdlet Overrides
@@ -182,19 +168,19 @@ namespace Microsoft.PowerShell.Commands
                     var pattern = new WildcardPattern(Member, WildcardOptions.Compiled
                                                                 | WildcardOptions.IgnoreCase);
 
-                    foreach (var m in membership)
-                        if (pattern.IsMatch(sam.StripMachineName(m.Name)))
+                    foreach (LocalPrincipal m in membership)
+                        if (pattern.IsMatch(_sam.StripMachineName(m.Name)))
                             rv.Add(m);
                 }
                 else
                 {
-                    var sid = this.TrySid(Member);
+                    SecurityIdentifier secureId = this.TrySid(Member);
 
-                    if (sid != null)
+                    if (secureId != null)
                     {
-                        foreach (var m in membership)
+                        foreach (LocalPrincipal m in membership)
                         {
-                            if (m.SID == sid)
+                            if (m.SID == secureId)
                             {
                                 rv.Add(m);
                                 break;
@@ -203,9 +189,9 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        foreach (var m in membership)
+                        foreach (LocalPrincipal m in membership)
                         {
-                            if (sam.StripMachineName(m.Name).Equals(Member, StringComparison.CurrentCultureIgnoreCase))
+                            if (_sam.StripMachineName(m.Name).Equals(Member, StringComparison.CurrentCultureIgnoreCase))
                             {
                                 rv.Add(m);
                                 break;
@@ -215,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (rv.Count == 0)
                     {
-                        var ex = new PrincipalNotFoundException(member, member);
+                        var ex = new PrincipalNotFoundException(Member, Member);
                         WriteError(ex.MakeErrorRecord());
                     }
                 }
@@ -229,20 +215,18 @@ namespace Microsoft.PowerShell.Commands
 
         private IEnumerable<LocalPrincipal> ProcessGroup(LocalGroup group)
         {
-            return ProcessesMembership(sam.GetLocalGroupMembers(group));
+            return ProcessesMembership(_sam.GetLocalGroupMembers(group));
         }
 
         private IEnumerable<LocalPrincipal> ProcessName(string name)
         {
-            return ProcessGroup(sam.GetLocalGroup(name));
+            return ProcessGroup(_sam.GetLocalGroup(name));
         }
 
         private IEnumerable<LocalPrincipal> ProcessSid(SecurityIdentifier groupSid)
         {
-            return ProcessGroup(sam.GetLocalGroup(groupSid));
+            return ProcessGroup(_sam.GetLocalGroup(groupSid));
         }
         #endregion Private Methods
     }
-
 }
-

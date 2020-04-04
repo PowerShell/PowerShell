@@ -1,18 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#region Using directives
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
-using System.Security.Principal;
-
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
+using System.Security.Principal;
 
 using Microsoft.PowerShell.LocalAccounts;
-using System.Diagnostics.CodeAnalysis;
-#endregion
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -27,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     public class RemoveLocalGroupMemberCommand : PSCmdlet
     {
         #region Instance Data
-        private Sam sam = null;
+        private Sam _sam = null;
         #endregion Instance Data
 
         #region Parameter Properties
@@ -41,12 +37,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Microsoft.PowerShell.Commands.LocalGroup Group
         {
-            get { return this.group;}
-
-            set { this.group = value; }
+            get;
+            set;
         }
-
-        private Microsoft.PowerShell.Commands.LocalGroup group;
 
         /// <summary>
         /// The following is the definition of the input parameter "Member".
@@ -62,12 +55,9 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Microsoft.PowerShell.Commands.LocalPrincipal[] Member
         {
-            get { return this.member;}
-
-            set { this.member = value; }
+            get;
+            set;
         }
-
-        private Microsoft.PowerShell.Commands.LocalPrincipal[] member;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -79,12 +69,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Name
         {
-            get { return this.name;}
-
-            set { this.name = value; }
+            get;
+            set;
         }
-
-        private string name;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -96,12 +83,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
-
-            set { this.sid = value; }
+            get;
+            set;
         }
 
-        private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -110,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            sam = new Sam();
+            _sam = new Sam();
         }
 
         /// <summary>
@@ -138,10 +123,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (_sam != null)
             {
-                sam.Dispose();
-                sam = null;
+                _sam.Dispose();
+                _sam = null;
             }
         }
         #endregion Cmdlet Overrides
@@ -201,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         try
                         {
-                            principal = sam.LookupAccount(member.Name);
+                            principal = _sam.LookupAccount(member.Name);
                         }
                         catch (Exception ex)
                         {
@@ -248,12 +233,12 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessGroup(LocalGroup group)
         {
             string groupId = group.Name ?? group.SID.ToString();
-            foreach (var member in this.Member)
+            foreach (LocalPrincipal member in Member)
             {
                 LocalPrincipal principal = MakePrincipal(groupId, member);
                 if (principal != null)
                 {
-                    var ex = sam.RemoveLocalGroupMember(group, principal);
+                    Exception ex = _sam.RemoveLocalGroupMember(group, principal);
                     if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
@@ -270,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessName(string name)
         {
-            ProcessGroup(sam.GetLocalGroup(name));
+            ProcessGroup(_sam.GetLocalGroup(name));
         }
 
         /// <summary>
@@ -287,7 +272,7 @@ namespace Microsoft.PowerShell.Commands
                 LocalPrincipal principal = MakePrincipal(groupSid.ToString(), member);
                 if (principal != null)
                 {
-                    var ex = sam.RemoveLocalGroupMember(groupSid, principal);
+                    Exception ex = _sam.RemoveLocalGroupMember(groupSid, principal);
                     if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
@@ -297,6 +282,4 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
-

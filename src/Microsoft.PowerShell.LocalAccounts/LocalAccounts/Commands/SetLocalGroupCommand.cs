@@ -1,15 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#region Using directives
 using System;
 using System.Management.Automation;
-
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
 
 using Microsoft.PowerShell.LocalAccounts;
-#endregion
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -24,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
     public class SetLocalGroupCommand : Cmdlet
     {
         #region Instance Data
-        private Sam sam = null;
+        private Sam _sam = null;
         #endregion Instance Data
 
         #region Parameter Properties
@@ -36,12 +33,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string Description
         {
-            get { return this.description;}
-
-            set { this.description = value; }
+            get;
+            set;
         }
-
-        private string description;
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -56,12 +50,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public Microsoft.PowerShell.Commands.LocalGroup InputObject
         {
-            get { return this.inputobject;}
-
-            set { this.inputobject = value; }
+            get;
+            set;
         }
-
-        private Microsoft.PowerShell.Commands.LocalGroup inputobject;
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -76,12 +67,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public string Name
         {
-            get { return this.name;}
-
-            set { this.name = value; }
+            get;
+            set;
         }
-
-        private string name;
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -95,12 +83,10 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public System.Security.Principal.SecurityIdentifier SID
         {
-            get { return this.sid;}
-
-            set { this.sid = value; }
+            get;
+            set;
         }
 
-        private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 
         #region Cmdlet Overrides
@@ -109,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
-            sam = new Sam();
+            _sam = new Sam();
         }
 
         /// <summary>
@@ -128,14 +114,14 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (Name != null)
                 {
-                    group = sam.GetLocalGroup(Name);
+                    group = _sam.GetLocalGroup(Name);
 
                     if (!CheckShouldProcess(Name))
                         group = null;
                 }
                 else if (SID != null)
                 {
-                    group = sam.GetLocalGroup(SID);
+                    group = _sam.GetLocalGroup(SID);
 
                     if (!CheckShouldProcess(SID.ToString()))
                         group = null;
@@ -143,10 +129,10 @@ namespace Microsoft.PowerShell.Commands
 
                 if (group != null)
                 {
-                    var delta = group.Clone();
+                    LocalGroup delta = group.Clone();
 
                     delta.Description = Description;
-                    sam.UpdateLocalGroup(group, delta);
+                    _sam.UpdateLocalGroup(group, delta);
                 }
             }
             catch (Exception ex)
@@ -160,10 +146,10 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            if (sam != null)
+            if (_sam != null)
             {
-                sam.Dispose();
-                sam = null;
+                _sam.Dispose();
+                _sam = null;
             }
         }
         #endregion Cmdlet Overrides
@@ -175,6 +161,4 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
-
