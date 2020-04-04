@@ -442,6 +442,11 @@ namespace Microsoft.PowerShell.Commands
         {
         }
 
+        internal PrincipalNotFoundException(Exception exc, string principal)
+            : base(StringUtil.Format(Strings.PrincipalNotFound, principal), exc)
+        {
+        }
+
         /// <summary>
         /// Compliance Constructor.
         /// </summary>

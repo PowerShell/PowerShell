@@ -121,7 +121,19 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (Group != null)
-                    ProcessGroup(Group);
+                {
+                    LocalGroup resolvedGroup;
+                    if (Group.SID is null)
+                    {
+                        resolvedGroup = sam.GetLocalGroup(Group.Name);
+                    }
+                    else
+                    {
+                        resolvedGroup = sam.GetLocalGroup(Group.SID);
+                    }
+
+                    ProcessGroup(resolvedGroup);
+                }
                 else if (Name != null)
                     ProcessName(Name);
                 else if (SID != null)
@@ -152,8 +164,8 @@ namespace Microsoft.PowerShell.Commands
         /// Creates a list of <see cref="LocalPrincipal"/> objects
         /// ready to be processed by the cmdlet.
         /// </summary>
-        /// <param name="groupId">
-        /// Name or SID (as a string) of the group we'll be adding to.
+        /// <param name="group">
+        /// Group we'll be adding to.
         /// This string is used primarily for specifying the target
         /// in WhatIf scenarios.
         /// </param>
@@ -181,37 +193,64 @@ namespace Microsoft.PowerShell.Commands
         /// that object will not be included in the returned List.
         /// </para>
         /// </remarks>
-        private LocalPrincipal MakePrincipal(string groupId, LocalPrincipal member)
+        private LocalPrincipal MakePrincipal(LocalGroup group, LocalPrincipal member)
         {
             LocalPrincipal principal = null;
-            // if the member has a SID, we can use it directly
-            if (member.SID != null)
+            string memberName = null;
+            SecurityIdentifier sid = member.SID;
+
+            if (sid != null)
             {
+                try
+                {
+                    NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                    memberName = account.Value;
+                }
+                catch (IdentityNotMappedException exc)
+                {
+                    var exception = new PrincipalNotFoundException(exc, sid.ToString());
+                    WriteError(exception.MakeErrorRecord());
+                    return null;
+                }
+            }
+
+            if (member.Name is null)
+            {
+                var exception = new PrincipalNotFoundException();
+                WriteError(exception.MakeErrorRecord());
+                return null;
+            }
+
+            sid = memberName is null ? this.TrySid(member.Name) : null;
+
+            if (sid != null)
+            {
+                try
+                {
+                    NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                    memberName = account.Value;
+                }
+                catch (IdentityNotMappedException)
+                {
+                }
+
+                member.SID = sid;
+                member.Name = memberName;   // TODO: breaking change? - remove?
                 principal = member;
             }
-            else    // otherwise it must have been constructed by name
+            else
             {
-                SecurityIdentifier sid = this.TrySid(member.Name);
-
-                if (sid != null)
+                try
                 {
-                    member.SID = sid;
-                    principal = member;
+                    principal = sam.LookupAccount(member.Name);
                 }
-                else
+                catch (Exception ex)
                 {
-                    try
-                    {
-                        principal = sam.LookupAccount(member.Name);
-                    }
-                    catch (Exception ex)
-                    {
-                        WriteError(ex.MakeErrorRecord());
-                    }
+                    WriteError(ex.MakeErrorRecord());
                 }
             }
 
-            if (CheckShouldProcess(principal, groupId))
+            if (CheckShouldProcess(principal, group))
                 return principal;
 
             return null;
@@ -223,20 +262,21 @@ namespace Microsoft.PowerShell.Commands
         /// formatting.
         /// </summary>
         /// <param name="principal">Name of the principal to be added.</param>
-        /// <param name="groupName">
-        /// Name of the group to which the members will be added.
+        /// <param name="group">
+        /// Group to which the members will be added.
         /// </param>
         /// <returns>
         /// True if the principal should be processed, false otherwise.
         /// </returns>
-        private bool CheckShouldProcess(LocalPrincipal principal, string groupName)
+        private bool CheckShouldProcess(LocalPrincipal principal, LocalGroup group)
         {
             if (principal == null)
                 return false;
 
             string msg = StringUtil.Format(Strings.ActionAddGroupMember, principal.ToString());
+            string target = StringUtil.Format("{0} ({1})", group.Name, group.SID.ToString());
 
-            return ShouldProcess(groupName, msg);
+            return ShouldProcess(target, msg);
         }
 
         /// <summary>
@@ -248,13 +288,12 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessGroup(LocalGroup group)
         {
-            string groupId = group.Name ?? group.SID.ToString();
-            foreach (var member in this.Member)
+            foreach (LocalPrincipal member in Member)
             {
-                LocalPrincipal principal = MakePrincipal(groupId, member);
+                LocalPrincipal principal = MakePrincipal(group, member);
                 if (principal != null)
                 {
-                    var ex = sam.AddLocalGroupMember(group, principal);
+                    Exception ex = sam.AddLocalGroupMember(group, principal);
                     if (ex != null)
                     {
                         WriteError(ex.MakeErrorRecord());
@@ -283,18 +322,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessSid(SecurityIdentifier groupSid)
         {
-            foreach (var member in this.Member)
-            {
-                LocalPrincipal principal = MakePrincipal(groupSid.ToString(), member);
-                if (principal != null)
-                {
-                    var ex = sam.AddLocalGroupMember(groupSid, principal);
-                    if (ex != null)
-                    {
-                        WriteError(ex.MakeErrorRecord());
-                    }
-                }
-            }
+            ProcessGroup(sam.GetLocalGroup(groupSid));
         }
 
         #endregion Private Methods

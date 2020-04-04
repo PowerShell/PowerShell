@@ -409,6 +409,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal LocalGroup GetLocalGroup(string groupName)
         {
+            // TODO: groupName == null - exception?
+
             using var ctx = new PrincipalContext(ContextType.Machine);
             using var groupPattern = new GroupPrincipal(ctx)
             {
@@ -550,16 +552,15 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal void RemoveLocalGroup(SecurityIdentifier sid)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            var identityValue = sid.ToString();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
-
-            if (groupPrincipal is null)
+            try
             {
-                throw new GroupNotFoundException(identityValue, identityValue);
+                NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                RemoveLocalGroup(account.Value);
             }
-
-            groupPrincipal.Delete();
+            catch (IdentityNotMappedException exc)
+            {
+                throw new GroupNotFoundException(exc, sid.ToString());
+            }
         }
 
         /// <summary>
@@ -577,19 +578,30 @@ namespace System.Management.Automation.SecurityAccountsManager
             SecurityIdentifier sid = group.SID;
             if (sid is null)
             {
-                using var ctx = new PrincipalContext(ContextType.Machine);
-                using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name);
-
-                if (groupPrincipal is null)
-                {
-                    throw new GroupNotFoundException(group.Name, group.Name);
-                }
-
-                groupPrincipal.Delete();
+                RemoveLocalGroup(group.Name);
                 return;
             }
 
             RemoveLocalGroup(sid);
+        }
+
+        private void RemoveLocalGroup(string groupName)
+        {
+            using var ctx = new PrincipalContext(ContextType.Machine);
+            using var groupPattern = new GroupPrincipal(ctx)
+            {
+                Name = groupName
+            };
+            using var searcher = new PrincipalSearcher(groupPattern);
+            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, groupName);
+
+            if (groupPrincipal is null)
+            {
+                throw new GroupNotFoundException(groupName, groupName);
+            }
+
+            groupPrincipal.Delete();
         }
 
         /// <summary>
@@ -605,18 +617,23 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// <exception cref="GroupNotFoundException">
         /// Thrown when the specified group cannot be found.
         /// </exception>
+        /// <exception cref="NameInUseException">
+        /// Thrown when the specified target local group already exists.
+        /// </exception>
+        /// <exception cref="InvalidNameException">
+        /// Thrown when The specified target local group name is invalid.
+        /// </exception>
         internal void RenameLocalGroup(SecurityIdentifier sid, string newName)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            var identityValue = sid.ToString();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
-
-            if (groupPrincipal is null)
+            try
             {
-                throw new GroupNotFoundException(identityValue, identityValue);
+                NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                RenameLocalGroup(account.Value, newName);
             }
-
-            RenameLocalGroup(groupPrincipal, newName);
+            catch (IdentityNotMappedException exc)
+            {
+                throw new GroupNotFoundException(exc, sid.ToString());
+            }
         }
 
         /// <summary>
@@ -632,35 +649,42 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// <exception cref="GroupNotFoundException">
         /// Thrown when the specified group cannot be found.
         /// </exception>
+        /// <exception cref="NameInUseException">
+        /// Thrown when the specified target local group already exists.
+        /// </exception>
+        /// <exception cref="InvalidNameException">
+        /// Thrown when The specified target local group name is invalid.
+        /// </exception>
         internal void RenameLocalGroup(LocalGroup group, string newName)
         {
             SecurityIdentifier sid = group.SID;
             if (sid is null)
             {
-                using var ctx = new PrincipalContext(ContextType.Machine);
-                using var groupPattern = new GroupPrincipal(ctx)
-                {
-                    Name = group.Name
-                };
-                using var searcher = new PrincipalSearcher(groupPattern);
-                using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
-                //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name);
-
-                if (groupPrincipal is null)
-                {
-                    throw new GroupNotFoundException(group.Name, group.Name);
-                }
-
-                RenameLocalGroup(groupPrincipal, newName);
+                RenameLocalGroup(group.Name, newName);
                 return;
             }
 
             RenameLocalGroup(sid, newName);
         }
 
-        private static void RenameLocalGroup(GroupPrincipal groupPrincipal, string newName)
+        private static void RenameLocalGroup(string groupName, string newName)
         {
+            using var ctx = new PrincipalContext(ContextType.Machine);
+            using var groupPattern = new GroupPrincipal(ctx)
+            {
+                Name = groupName
+            };
+            using var searcher = new PrincipalSearcher(groupPattern);
+            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, groupName);
+
+            if (groupPrincipal is null)
+            {
+                throw new GroupNotFoundException(groupName, groupName);
+            }
+
             var entry = (DirectoryEntry)groupPrincipal.GetUnderlyingObject();
+
             try
             {
                 entry.Rename(newName);
@@ -768,15 +792,34 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal Exception AddLocalGroupMember(LocalGroup group, LocalPrincipal member)
         {
+            string groupName = group.Name;
+            SecurityIdentifier sid = group.SID;
+
+            if (!(sid is null))
+            {
+                try
+                {
+                    NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                    groupName = account.Value;
+                }
+                catch (IdentityNotMappedException exc)
+                {
+                    throw new GroupNotFoundException(exc, sid.ToString());
+                }
+            }
+
             using var ctx = new PrincipalContext(ContextType.Machine);
-            using GroupPrincipal groupPrincipal = group.SID is null ?
-                GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name)
-                : GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, group.SID.ToString());
+            using GroupPrincipal groupPattern = new GroupPrincipal(ctx)
+            {
+                Name = groupName
+            };
+            using var searcher = new PrincipalSearcher(groupPattern);
+            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, groupName);
 
             if (groupPrincipal is null)
             {
-                var name = group.SID is null ? group.Name : group.SID.ToString();
-                return new GroupNotFoundException(name, name);
+                throw new GroupNotFoundException(groupName, groupName);
             }
 
             using Principal principal = member.SID is null ?
@@ -809,61 +852,6 @@ namespace System.Management.Automation.SecurityAccountsManager
         }
 
         /// <summary>
-        /// Add members to a local group.
-        /// </summary>
-        /// <param name="groupSid">
-        /// A <see cref="SecurityIdentifier"/> object identifying the group to
-        /// which to add members.
-        /// </param>
-        /// <param name="member">
-        /// An object of type <see cref="LocalPrincipal"/> identifying
-        /// the member to be added.
-        /// </param>
-        /// <returns>
-        /// An Exception object indicating any errors encountered.
-        /// </returns>
-        /// <exception cref="GroupNotFoundException">
-        /// Thrown if the group could not be found.
-        /// </exception>
-        internal Exception AddLocalGroupMember(SecurityIdentifier groupSid, LocalPrincipal member)
-        {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            var groupSidString = groupSid.ToString();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, groupSidString);
-
-            if (groupPrincipal is null)
-            {
-                return new GroupNotFoundException(groupSidString, groupSidString);
-            }
-
-            using Principal principal = member.SID is null ?
-                Principal.FindByIdentity(ctx, IdentityType.Name, member.Name)
-                : Principal.FindByIdentity(ctx, IdentityType.Sid, member.SID.ToString());
-
-            if (principal is null)
-            {
-                return new PrincipalNotFoundException(member.SID is null ? member.Name : member.SID.ToString(), groupSidString);
-            }
-
-            try
-            {
-                groupPrincipal.Members.Add(principal);
-                groupPrincipal.Save();
-            }
-            catch (PrincipalExistsException exc)
-            {
-                return exc;
-            }
-            catch (Exception exc)
-            {
-                // TODO: perhaps we could make more userful exception.
-                return new Exception(null, exc);
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Retrieve members of a Local group.
         /// </summary>
         /// <param name="group">
@@ -877,14 +865,17 @@ namespace System.Management.Automation.SecurityAccountsManager
         internal IEnumerable<LocalPrincipal> GetLocalGroupMembers(LocalGroup group)
         {
             using var ctx = new PrincipalContext(ContextType.Machine);
-            using GroupPrincipal groupPrincipal = group.SID is null ?
-                GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name)
-                : GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, group.SID.ToString());
+            using var groupPattern = new GroupPrincipal(ctx)
+            {
+                Name = group.Name
+            };
+            using var searcher = new PrincipalSearcher(groupPattern);
+            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, groupName);
 
             if (groupPrincipal is null)
             {
-                var name = group.SID is null ? group.Name : group.SID.ToString();
-                throw new GroupNotFoundException(name, name);
+                throw new GroupNotFoundException(group.Name, group.Name);
             }
 
             foreach(Principal p in groupPrincipal.Members)
@@ -1496,10 +1487,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 userPrincipal.Enabled = changed.Enabled;
             }
-            //if (user.Name != changed.Name)
-            //{
-            //    userPrincipal.Name = changed.Name;
-            //}
             if (user.AccountExpires != changed.AccountExpires)
             {
                 userPrincipal.AccountExpirationDate = changed.AccountExpires;

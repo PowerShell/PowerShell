@@ -121,7 +121,19 @@ namespace Microsoft.PowerShell.Commands
                 IEnumerable<LocalPrincipal> principals = null;
 
                 if (Group != null)
-                    principals = ProcessGroup(Group);
+                {
+                    LocalGroup resolvedGroup;
+                    if (Group.SID is null)
+                    {
+                        resolvedGroup = sam.GetLocalGroup(group.Name);
+                    }
+                    else
+                    {
+                        resolvedGroup = sam.GetLocalGroup(group.SID);
+                    }
+
+                    principals = ProcessGroup(resolvedGroup);
+                }
                 else if (Name != null)
                     principals = ProcessName(Name);
                 else if (SID != null)
@@ -227,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
 
         private IEnumerable<LocalPrincipal> ProcessSid(SecurityIdentifier groupSid)
         {
-            return ProcessesMembership(sam.GetLocalGroupMembers(groupSid));
+            return ProcessGroup(sam.GetLocalGroup(groupSid));
         }
         #endregion Private Methods
     }
