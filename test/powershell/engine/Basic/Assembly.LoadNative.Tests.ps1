@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Can load a native assembly" -Tags "CI" {
@@ -23,7 +23,7 @@ Describe "Can load a native assembly" -Tags "CI" {
             $arch = "linux-" + $processArch
             $nativeDllName = "nativedll.so"
             $sourceDllName = "libhostpolicy.so"
-        } elseif ($IsMacOs) {
+        } elseif ($IsMacOS) {
             $arch = "osx-" + $processArch
             $nativeDllName = "nativedll.dylib"
             $sourceDllName = "libhostpolicy.dylib"

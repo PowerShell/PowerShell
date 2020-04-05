@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -971,7 +971,7 @@ namespace System.Management.Automation.Runspaces
                 // If we have no running pipeline, or if the currently running pipeline is
                 // the same as the current thread, then execute the action.
                 var pipelineRunning = _currentlyRunningPipeline as PipelineBase;
-                return pipelineRunning == null || 
+                return pipelineRunning == null ||
                     Thread.CurrentThread == pipelineRunning.NestedPipelineExecutionThread;
             }
         }

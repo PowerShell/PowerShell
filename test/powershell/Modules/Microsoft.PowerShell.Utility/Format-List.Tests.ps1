@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-List" -Tags "CI" {
     $nl = [Environment]::NewLine
@@ -176,7 +176,10 @@ dbda : KM
 
 
 "@
+        $expected = $expected -replace "`r`n", "`n"
 
-        $obj | Format-List | Out-String | Should -BeExactly $expected
+        $actual = $obj | Format-List | Out-String
+        $actual = $actual -replace "`r`n", "`n"
+        $actual | Should -BeExactly $expected
     }
 }

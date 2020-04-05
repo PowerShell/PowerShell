@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         BeforeAll {
@@ -30,7 +30,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
 
         It 'Check union of default + one allowed variables' {
 
-            { { 2 + $a }.CheckRestrictedLanguage($null, (list a), $false) }| Should -Not -Throw  # succeed
+            { { 2 + $a }.CheckRestrictedLanguage($null, (list a), $false) } | Should -Not -Throw  # succeed
         }
 
         It 'Check union of default + two allowed variables' {
@@ -40,7 +40,7 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
 
         It 'Check union of default + allowed variables' {
 
-            { { $PSCulture, $PSUICulture, $true, $false, $null,  $a, $b}.CheckRestrictedLanguage($null, (list a b), $false) }| Should -Not -Throw
+            { { $PSCulture, $PSUICulture, $true, $false, $null,  $a, $b}.CheckRestrictedLanguage($null, (list a b), $false) } | Should -Not -Throw
         }
 
         It 'Check union of default + one disallowed variables' {
@@ -70,6 +70,6 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
             { { get-process | where name -Match $pattern | foreach $prop }.CheckRestrictedLanguage(
                 (list get-process where foreach),
                 (list prop pattern)
-                , $false) }| Should -Not -Throw
+                , $false) } | Should -Not -Throw
         }
 }

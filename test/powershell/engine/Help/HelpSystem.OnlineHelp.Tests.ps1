@@ -1,6 +1,7 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe 'Online help tests for PowerShell Cmdlets' -Tags "CI" {
+
+Describe 'Online help tests for PowerShell Cmdlets' -Tags "Feature" {
 
     # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.
     # The HelpURI is part of the cmdlet metadata, and when the user runs 'get-help <cmdletName> -online'
@@ -70,7 +71,7 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
             {
                 if (-not (Test-Path 'HKCR:\'))
                 {
-                    New-PSDrive -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR | Should NotBeNullOrEmpty
+                    New-PSDrive -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR | Should -Not -BeNullOrEmpty
                 }
                 $browserExe = ((Get-ItemProperty "HKCR:\$progId\shell\open\command")."(default)" -replace '"', '') -split " "
                 if ($browserExe.count -ge 1)

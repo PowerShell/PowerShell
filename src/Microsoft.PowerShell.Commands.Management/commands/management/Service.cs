@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX // Not built on Unix
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
         {
             var rawSecurityDescriptor = new RawSecurityDescriptor(securityDescriptorSddl);
             RawAcl rawDiscretionaryAcl = rawSecurityDescriptor.DiscretionaryAcl;
-            var discretionaryAcl = new DiscretionaryAcl (false, false, rawDiscretionaryAcl);
+            var discretionaryAcl = new DiscretionaryAcl(false, false, rawDiscretionaryAcl);
 
             byte[] rawDacl = new byte[discretionaryAcl.BinaryLength];
             discretionaryAcl.GetBinaryForm(rawDacl, 0);
@@ -1087,17 +1087,9 @@ namespace Microsoft.PowerShell.Commands
         /// True if all dependent services are stopped
         /// False if not all dependent services are stopped
         /// </returns>
-        private bool HaveAllDependentServicesStopped(ICollection<ServiceController> dependentServices)
+        private bool HaveAllDependentServicesStopped(ServiceController[] dependentServices)
         {
-            foreach (ServiceController service in dependentServices)
-            {
-                if (service.Status != ServiceControllerStatus.Stopped)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            return Array.TrueForAll(dependentServices, service => service.Status == ServiceControllerStatus.Stopped);
         }
 
         /// <summary>
@@ -1106,14 +1098,10 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="services">A list of services.</param>
         internal void RemoveNotStoppedServices(List<ServiceController> services)
         {
-            foreach (ServiceController service in services)
-            {
-                if (service.Status != ServiceControllerStatus.Stopped &&
-                    service.Status != ServiceControllerStatus.StopPending)
-                {
-                    services.Remove(service);
-                }
-            }
+            // You shall not modify a collection during enumeration.
+            services.RemoveAll(service =>
+                service.Status != ServiceControllerStatus.Stopped &&
+                service.Status != ServiceControllerStatus.StopPending);
         }
 
         /// <summary>
@@ -1920,7 +1908,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    if(!string.IsNullOrEmpty(SecurityDescriptorSddl))
+                    if (!string.IsNullOrEmpty(SecurityDescriptorSddl))
                     {
                         SetServiceSecurityDescriptor(service, SecurityDescriptorSddl, hService);
                     }
@@ -2473,7 +2461,7 @@ namespace Microsoft.PowerShell.Commands
                             service,
                             exception,
                             "CouldNotRemoveService",
-                            ServiceResources.CouldNotSetService,
+                            ServiceResources.CouldNotRemoveService,
                             ErrorCategory.PermissionDenied);
                         return;
                     }
@@ -2640,7 +2628,7 @@ namespace Microsoft.PowerShell.Commands
         internal const DWORD SERVICE_CONFIG_DELAYED_AUTO_START_INFO = 3;
         internal const DWORD SERVICE_CONFIG_SERVICE_SID_INFO = 5;
         internal const DWORD WRITE_DAC = 262144;
-        internal const DWORD WRITE_OWNER =524288;
+        internal const DWORD WRITE_OWNER = 524288;
         internal const DWORD SERVICE_WIN32_OWN_PROCESS = 0x10;
         internal const DWORD SERVICE_ERROR_NORMAL = 1;
 

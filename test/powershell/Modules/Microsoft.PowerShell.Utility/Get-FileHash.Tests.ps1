@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-FileHash" -Tags "CI" {
 
@@ -24,9 +24,16 @@ Describe "Get-FileHash" -Tags "CI" {
         }
 
         It "Should write non-terminating error if argument is a folder" {
-            $result = $pshome, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
+            $result = $PSHOME, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
             $result.Count | Should -Be 1
             $errorVariable.FullyQualifiedErrorId | Should -BeExactly "UnauthorizedAccessError,Microsoft.PowerShell.Commands.GetFileHashCommand"
+        }
+
+        It "Should write non-terminating error if a file is locked" -Skip:(-not $IsWindows) {
+            $pagefilePath = (Get-CimInstance -ClassName Win32_PageFileusage).Name
+            $result = $pagefilePath, "${pshome}\pwsh.dll" | Get-FileHash -ErrorVariable errorVariable
+            $result.Count | Should -Be 1
+            $errorVariable.FullyQualifiedErrorId | Should -BeExactly "FileReadError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
     }
 

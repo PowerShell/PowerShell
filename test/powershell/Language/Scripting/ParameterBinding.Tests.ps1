@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tests for parameter binding" -Tags "CI" {
     Context 'Test of Mandatory parameters' {
@@ -379,7 +379,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-fooe| Should -Be 55
+            get-fooe | Should -Be 55
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set on the parameter" {
@@ -390,7 +390,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            get-foof| Should -Be 55
+            get-foof | Should -Be 55
         }
 
         It "Validation attributes should not run on default values" {
@@ -400,7 +400,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            { get-foog } | Should -Not -throw
+            { get-foog } | Should -Not -Throw
         }
 
         It "Validation attributes should not run on default values when CmdletBinding is set" {
@@ -411,7 +411,7 @@ Describe "Tests for parameter binding" -Tags "CI" {
                 $p
             }
 
-            { get-fooh } | Should -Not -throw
+            { get-fooh } | Should -Not -Throw
         }
 
         It "ValidateScript can use custom ErrorMessage" {

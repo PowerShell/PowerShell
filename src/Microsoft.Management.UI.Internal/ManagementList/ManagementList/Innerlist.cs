@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -146,7 +146,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
-                (DispatcherOperationCallback)delegate(object arg)
+                (DispatcherOperationCallback)((arg) =>
                 {
                     if (this.IsLoaded)
                     {
@@ -154,7 +154,7 @@ namespace Microsoft.Management.UI.Internal
                     }
 
                     return null;
-                },
+                }),
                 item);
         }
 

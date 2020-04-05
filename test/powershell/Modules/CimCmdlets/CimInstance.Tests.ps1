@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "CimInstance cmdlet tests" -Tag @("CI") {
@@ -25,7 +25,7 @@ Describe "CimInstance cmdlet tests" -Tag @("CI") {
     }
 
     It "GetCimSessionInstanceId method invocation should return data" -Pending:(-not $IsWindows) {
-        $instance.GetCimSessionInstanceId() | Should -BeOfType "Guid"
+        $instance.GetCimSessionInstanceId() | Should -BeOfType Guid
     }
 
     It "should produce an error for a non-existing classname" -Pending:(-not $IsWindows) {

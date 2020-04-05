@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -391,10 +391,7 @@ namespace Microsoft.PowerShell.Commands
                     Dictionary<string, string[]> counterInstanceMapping = new Dictionary<string, string[]>();
                     foreach (string counter in counterSetCounters)
                     {
-                        if (!counterInstanceMapping.ContainsKey(counter))
-                        {
-                            counterInstanceMapping.Add(counter, instanceArray);
-                        }
+                        counterInstanceMapping.TryAdd(counter, instanceArray);
                     }
 
                     PerformanceCounterCategoryType categoryType = PerformanceCounterCategoryType.Unknown;

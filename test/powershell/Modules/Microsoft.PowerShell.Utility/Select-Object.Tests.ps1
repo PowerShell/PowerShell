@@ -1,5 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 Add-TestDynamicType
 
@@ -346,7 +347,28 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
 	}
 
     It "Select-Object with ExpandProperty and Property don't skip processing ExcludeProperty" {
-		$p = Get-Process -Id $pid | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
+		$p = Get-Process -Id $PID | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
 		$p[0].psobject.Properties.Item("ProcessorAffinity") | Should -BeNullOrEmpty
+    }
+
+    It "Select-Object add 'Selected.*' type only once" {
+        $obj = [PSCustomObject]@{ Name = 1 }
+
+        $obj.psobject.TypeNames.Count | Should -Be 2
+        $obj.psobject.TypeNames | Should -Not -BeLike "Selected*"
+
+        $obj = $obj | Select-Object
+
+        $obj.psobject.TypeNames.Count | Should -Be 3
+        $obj.psobject.TypeNames[0] | Should -BeLike "Selected*"
+        $obj.psobject.TypeNames[1] | Should -Not -BeLike "Selected*"
+        $obj.psobject.TypeNames[2] | Should -Not -BeLike "Selected*"
+
+        $obj = $obj | Select-Object
+
+        $obj.psobject.TypeNames.Count | Should -Be 3
+        $obj.psobject.TypeNames[0] | Should -BeLike "Selected*"
+        $obj.psobject.TypeNames[1] | Should -Not -BeLike "Selected*"
+        $obj.psobject.TypeNames[2] | Should -Not -BeLike "Selected*"
     }
 }

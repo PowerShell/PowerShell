@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 function Test-Elevated {
@@ -28,7 +28,7 @@ function Invoke-Msiexec {
         [HashTable] $Properties
 
     )
-    $action = "$($PsCmdlet.ParameterSetName)ing"
+    $action = "$($PSCmdlet.ParameterSetName)ing"
     if ($Install.IsPresent) {
         $switch = '/I'
     } else {
@@ -70,10 +70,10 @@ Describe -Name "Windows MSI" -Fixture {
         $uploadedLog = $false
     }
     BeforeEach {
-        $Error.Clear()
+        $error.Clear()
     }
     AfterEach {
-        if ($Error.Count -ne 0 -and !$uploadedLog) {
+        if ($error.Count -ne 0 -and !$uploadedLog) {
             Copy-Item -Path $msiLog -Destination $env:temp -Force
             Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
             $uploadedLog = $true

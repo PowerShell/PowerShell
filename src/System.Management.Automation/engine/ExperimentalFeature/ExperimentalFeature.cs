@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsEngineFeatureName(string featureName)
         {
-            return featureName.Length > 2 && featureName.IndexOf('.') == -1 && featureName.StartsWith("PS", StringComparison.Ordinal);
+            return featureName.Length > 2 && !featureName.Contains('.') && featureName.StartsWith("PS", StringComparison.Ordinal);
         }
 
         /// <summary>

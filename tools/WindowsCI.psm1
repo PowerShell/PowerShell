@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 if($PSVersionTable.PSEdition -ne 'Desktop')
@@ -65,7 +65,7 @@ function Add-UserToGroup
 
   $userAD = [ADSI] "WinNT://$env:computername/${username},user"
 
-  if($PsCmdlet.ParameterSetName -eq "SID")
+  if($PSCmdlet.ParameterSetName -eq "SID")
   {
     $ntAccount=ConvertTo-NtAccount $groupSid
     $group =$ntAccount.Split("\\")[1]

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Basic Alias Provider Tests" -Tags "CI" {
     BeforeAll {
@@ -52,7 +52,7 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
 
     It "Test executing the new alias" {
         $result = Invoke-Expression $testAliasName
-        $result | Should -BeOfType [DateTime]
+        $result | Should -BeOfType DateTime
     }
 }
 

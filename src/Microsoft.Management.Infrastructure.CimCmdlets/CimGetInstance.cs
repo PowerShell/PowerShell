@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -385,7 +385,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 proxy.KeyOnly = getCimInstance.KeyOnly;
                 proxy.Shallow = getCimInstance.Shallow;
                 proxy.OperationTimeout = getCimInstance.OperationTimeoutSec;
-                if(getCimInstance.ResourceUri != null )
+                if (getCimInstance.ResourceUri != null)
                 {
                     proxy.ResourceUri = getCimInstance.ResourceUri;
                 }
@@ -394,7 +394,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 RemoveCimInstanceCommand removeCimInstance = cmdlet as RemoveCimInstanceCommand;
                 proxy.OperationTimeout = removeCimInstance.OperationTimeoutSec;
-                if(removeCimInstance.ResourceUri != null )
+                if (removeCimInstance.ResourceUri != null)
                 {
                     proxy.ResourceUri = removeCimInstance.ResourceUri;
                 }
@@ -408,7 +408,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 SetCimInstanceCommand setCimInstance = cmdlet as SetCimInstanceCommand;
                 proxy.OperationTimeout = setCimInstance.OperationTimeoutSec;
-                if(setCimInstance.ResourceUri != null )
+                if (setCimInstance.ResourceUri != null)
                 {
                     proxy.ResourceUri = setCimInstance.ResourceUri;
                 }

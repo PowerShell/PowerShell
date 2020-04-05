@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 [cmdletbinding(DefaultParameterSetName='default')]
 # PowerShell Script to clone, build and package PowerShell from specified fork and branch
@@ -7,7 +7,7 @@ param (
 
     [string] $branch = 'master',
 
-    [string] $location = "$pwd\powershell",
+    [string] $location = "$PWD\powershell",
 
     [string] $destination = "$env:WORKSPACE",
 
@@ -136,6 +136,12 @@ try{
 
     if (!$ComponentRegistration.IsPresent -and $Runtime -notlike 'fxdependent*')
     {
+        if (!$Symbols.IsPresent) {
+            $pspackageParams['Type'] = 'zip-pdb'
+            Write-Verbose "Starting powershell symbols packaging(zip)..." -verbose
+            Start-PSPackage @pspackageParams @releaseTagParam
+        }
+
         $pspackageParams['Type']='zip'
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
         Write-Verbose "Starting powershell packaging(zip)..." -verbose

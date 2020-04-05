@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 #####################################################################################################
@@ -26,7 +26,7 @@ param
     $PowerShellHome
 )
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 if (! ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {
@@ -123,7 +123,7 @@ function Install-PluginEndpoint {
     # Install the plugin #
     #                    #
     ######################
-    
+
     if (-not [String]::IsNullOrEmpty($PowerShellHome))
     {
         $targetPsHome = $PowerShellHome

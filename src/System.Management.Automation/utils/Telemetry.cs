@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Telemetry
         /// will be reported, otherwise it will be "anonymous".
         /// </summary>
         ModuleLoad,
-        
+
         /// <summary>
         /// Send telemetry when we load a module using Windows compatibility feature, only module names in the s_knownModules list
         /// will be reported, otherwise it will be "anonymous".
@@ -87,6 +87,9 @@ namespace Microsoft.PowerShell.Telemetry
         // the session identifier
         private static string s_sessionId { get; set; }
 
+        // private semaphore to determine whether we sent the startup telemetry event
+        private static int s_startupEventSent = 0;
+
         /// Use a hashset for quick lookups.
         /// We send telemetry only a known set of modules.
         /// If it's not in the list (initialized in the static constructor), then we report anonymous.
@@ -121,21 +124,21 @@ namespace Microsoft.PowerShell.Telemetry
                 s_knownModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
                     {
                         "AADRM",
-                        "activedirectory",   
+                        "activedirectory",
                         "adcsadministration",
-                        "adcsdeployment",    
+                        "adcsdeployment",
                         "addsadministration",
-                        "addsdeployment",    
+                        "addsdeployment",
                         "adfs",
                         "adrms",
-                        "adrmsadmin",        
+                        "adrmsadmin",
                         "agpm",
-                        "appbackgroundtask", 
+                        "appbackgroundtask",
                         "applocker",
                         "appv",
-                        "appvclient",    
-                        "appvsequencer", 
-                        "appvserver",    
+                        "appvclient",
+                        "appvsequencer",
+                        "appvserver",
                         "appx",
                         "assignedaccess",
                         "Az",
@@ -446,6 +449,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "pkiclient",
                         "platformidentifier",
                         "pnpdevice",
+                        "PowerShellEditorServices",
                         "PowerShellGet",
                         "powershellwebaccess",
                         "printmanagement",
@@ -455,6 +459,7 @@ namespace Microsoft.PowerShell.Telemetry
                         "PSDiagnostics",
                         "PSReadLine",
                         "PSScheduledJob",
+                        "PSScriptAnalyzer",
                         "PSWorkflow",
                         "PSWorkflowUtility",
                         "RemoteAccess",
@@ -581,6 +586,8 @@ namespace Microsoft.PowerShell.Telemetry
                 return;
             }
 
+            SendPSCoreStartupTelemetry("hosted");
+
             string metricName = metricId.ToString();
             try
             {
@@ -643,6 +650,12 @@ namespace Microsoft.PowerShell.Telemetry
         /// <param name="mode">The "mode" of the startup.</param>
         internal static void SendPSCoreStartupTelemetry(string mode)
         {
+            // Check if we already sent startup telemetry
+            if (Interlocked.CompareExchange(ref s_startupEventSent, 1, 0) == 1)
+            {
+                return;
+            }
+
             if (!CanSendTelemetry)
             {
                 return;

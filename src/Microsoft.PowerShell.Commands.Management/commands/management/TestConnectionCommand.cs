@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #nullable enable
@@ -58,13 +58,11 @@ namespace Microsoft.PowerShell.Commands
 
         private static byte[]? s_DefaultSendBuffer;
 
+        private readonly CancellationTokenSource _dnsLookupCancel = new CancellationTokenSource();
+
         private bool _disposed;
 
         private Ping? _sender;
-
-        private readonly ManualResetEventSlim _pingComplete = new ManualResetEventSlim();
-
-        private PingCompletedEventArgs? _pingCompleteArgs;
 
         #endregion
 
@@ -279,6 +277,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             _sender?.SendAsyncCancel();
+            _dnsLookupCancel.Cancel();
         }
 
         #region ConnectionTest
@@ -287,6 +286,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -338,6 +342,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (!Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -475,6 +484,11 @@ namespace Microsoft.PowerShell.Commands
             PingReply? reply, replyResult = null;
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(-1);
+                }
+
                 return;
             }
 
@@ -578,6 +592,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -671,7 +690,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ResolveDestination)
                 {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
+                    hostEntry = GetCancellableHostEntry(targetNameOrAddress);
                     resolvedTargetName = hostEntry.HostName;
                 }
                 else
@@ -683,27 +702,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
+                    hostEntry = GetCancellableHostEntry(targetNameOrAddress);
 
                     if (ResolveDestination)
                     {
                         resolvedTargetName = hostEntry.HostName;
-                        hostEntry = Dns.GetHostEntry(hostEntry.HostName);
+                        hostEntry = GetCancellableHostEntry(hostEntry.HostName);
                     }
+                }
+                catch (PipelineStoppedException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    string message = StringUtil.Format(
-                        TestConnectionResources.NoPingResult,
-                        resolvedTargetName,
-                        TestConnectionResources.CannotResolveTargetName);
-                    Exception pingException = new PingException(message, ex);
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        pingException,
-                        TestConnectionExceptionId,
-                        ErrorCategory.ResourceUnavailable,
-                        resolvedTargetName);
-                    WriteError(errorRecord);
+                    if (!Quiet.IsPresent)
+                    {
+                        string message = StringUtil.Format(
+                            TestConnectionResources.NoPingResult,
+                            resolvedTargetName,
+                            TestConnectionResources.CannotResolveTargetName);
+                        Exception pingException = new PingException(message, ex);
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            pingException,
+                            TestConnectionExceptionId,
+                            ErrorCategory.ResourceUnavailable,
+                            resolvedTargetName);
+                        WriteError(errorRecord);
+                    }
+
                     return false;
                 }
 
@@ -734,6 +761,20 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return true;
+        }
+
+        private IPHostEntry GetCancellableHostEntry(string targetNameOrAddress)
+        {
+            var task = Dns.GetHostEntryAsync(targetNameOrAddress);
+            var waitHandles = new[] { ((IAsyncResult)task).AsyncWaitHandle, _dnsLookupCancel.Token.WaitHandle };
+
+            // WaitAny() returns the index of the first signal it gets; 1 is our cancellation token.
+            if (WaitHandle.WaitAny(waitHandles) == 1)
+            {
+                throw new PipelineStoppedException();
+            }
+
+            return task.GetAwaiter().GetResult();
         }
 
         private IPAddress? GetHostAddress(IPHostEntry hostEntry)
@@ -797,7 +838,6 @@ namespace Microsoft.PowerShell.Commands
                 if (disposing)
                 {
                     _sender?.Dispose();
-                    _pingComplete?.Dispose();
                 }
 
                 _disposed = true;
@@ -815,48 +855,24 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 _sender = new Ping();
-                _sender.PingCompleted += OnPingComplete;
 
                 timer?.Start();
-                _sender.SendAsync(targetAddress, timeout, buffer, pingOptions, this);
-                _pingComplete.Wait();
-                timer?.Stop();
-                _pingComplete.Reset();
-
-                if (_pingCompleteArgs == null)
-                {
-                    throw new PingException(string.Format(
-                        TestConnectionResources.NoPingResult,
-                        targetAddress,
-                        IPStatus.Unknown));
-                }
-
-                if (_pingCompleteArgs.Cancelled)
-                {
-                    // The only cancellation we have implemented is on pipeline stops via StopProcessing().
-                    throw new PipelineStoppedException();
-                }
-
-                if (_pingCompleteArgs.Error != null)
-                {
-                    throw new PingException(_pingCompleteArgs.Error.Message, _pingCompleteArgs.Error);
-                }
-
-                return _pingCompleteArgs.Reply;
+                // 'SendPingAsync' always uses the default synchronization context (threadpool).
+                // This is what we want to avoid the deadlock resulted by async work being scheduled back to the
+                // pipeline thread due to a change of the current synchronization context of the pipeline thread.
+                return _sender.SendPingAsync(targetAddress, timeout, buffer, pingOptions).GetAwaiter().GetResult();
+            }
+            catch (PingException ex) when (ex.InnerException is TaskCanceledException)
+            {
+                // The only cancellation we have implemented is on pipeline stops via StopProcessing().
+                throw new PipelineStoppedException();
             }
             finally
             {
+                timer?.Stop();
                 _sender?.Dispose();
                 _sender = null;
             }
-        }
-
-        // This event is triggered when the ping is completed, and passes along the eventargs so that we know
-        // if the ping was cancelled, or an exception was thrown.
-        private static void OnPingComplete(object sender, PingCompletedEventArgs e)
-        {
-            ((TestConnectionCommand)e.UserState)._pingCompleteArgs = e;
-            ((TestConnectionCommand)e.UserState)._pingComplete.Set();
         }
 
         /// <summary>

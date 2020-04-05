@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
@@ -468,7 +468,7 @@ Describe "Type inference Tests" -tags "CI" {
                 }}.Ast)
         $res.Count | Should -Be 1
         $res[0].GetType().Name | Should -Be "PSSyntheticTypeName"
-        $res.Members.Count  | Should Be 2
+        $res.Members.Count  | Should -Be 2
         $res[0].Name | Should -Be "MyType#A:B"
         $res[0].Members[0].Name | Should -Be "A"
         $res[0].Members[0].PSTypeName | Should -Be "System.Int32"

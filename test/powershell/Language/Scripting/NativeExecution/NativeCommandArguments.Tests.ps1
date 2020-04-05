@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Native Command Arguments" -tags "CI" {
     # When passing arguments to native commands, quoted segments that contain

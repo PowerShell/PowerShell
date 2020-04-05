@@ -1,12 +1,12 @@
 parameters:
-  pool: 'Hosted VS2017'
+  pool: 'vs2017-win2016'
   jobName: 'win_build'
   displayName: Windows Build
 
 jobs:
 - job: ${{ parameters.jobName }}
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: ${{ parameters.displayName }}
 

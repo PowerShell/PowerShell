@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -457,10 +457,7 @@ namespace System.Management.Automation
                 {
                     // Let exceptions propagate.
                     RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(_configurationName, _remoteHost);
-
-                    _remoteHost.AllowPushRunspace = true;
                     _remoteHost.PropagatePop = true;
-
                     _remoteHost.PushRunspace(remoteRunspace);
                 }
             }
@@ -791,7 +788,7 @@ namespace System.Management.Automation
                 catch (Exception ex)
                 {
                     terminateImmediate = true;
-                    
+
                     preProcessOutput.Add(
                         PSObject.AsPSObject(ex));
                 }
@@ -893,8 +890,8 @@ namespace System.Management.Automation
                     }
                     else if (powershell.Commands.Commands.Count == 1 &&
                              !powershell.Commands.Commands[0].IsScript &&
-                             ((powershell.Commands.Commands[0].CommandText.IndexOf("Get-PSDebuggerStopArgs", StringComparison.OrdinalIgnoreCase) != -1) ||
-                              (powershell.Commands.Commands[0].CommandText.IndexOf("Set-PSDebuggerAction", StringComparison.OrdinalIgnoreCase) != -1)))
+                             (powershell.Commands.Commands[0].CommandText.Contains("Get-PSDebuggerStopArgs", StringComparison.OrdinalIgnoreCase) ||
+                              powershell.Commands.Commands[0].CommandText.Contains("Set-PSDebuggerAction", StringComparison.OrdinalIgnoreCase)))
                     {
                         // We do not want to invoke debugger commands in the steppable pipeline.
                         // Consider adding IsSteppable message to PSRP to handle this.
@@ -1426,7 +1423,7 @@ namespace System.Management.Automation
                 TryGetParameter<int?>(command, "RunspaceId", out int? runspaceId);
                 if (TryGetParameter<int>(command, "Id", out int breakpointId))
                 {
-                     preProcessOutput.Add(serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId));
+                    preProcessOutput.Add(serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId));
                 }
                 else
                 {
@@ -1477,7 +1474,7 @@ namespace System.Management.Automation
                 }
 
                 serverRemoteDebugger.SetBreakpoints(bps, runspaceId);
-                
+
                 foreach (var bp in bps)
                 {
                     preProcessOutput.Add(bp);
@@ -1497,7 +1494,7 @@ namespace System.Management.Automation
 
                 Breakpoint breakpoint = serverRemoteDebugger.GetBreakpoint(breakpointId, runspaceId);
                 preProcessOutput.Add(
-                    breakpoint == null 
+                    breakpoint == null
                         ? false
                         : serverRemoteDebugger.RemoveBreakpoint(breakpoint, runspaceId));
 
@@ -1518,7 +1515,7 @@ namespace System.Management.Automation
                 {
                     preProcessOutput.Add(serverRemoteDebugger.EnableBreakpoint(bp, runspaceId));
                 }
-                
+
                 result = PreProcessCommandResult.BreakpointManagement;
             }
             else if (commandText.Equals(RemoteDebuggingCommands.DisableBreakpoint, StringComparison.OrdinalIgnoreCase))
@@ -1536,7 +1533,7 @@ namespace System.Management.Automation
                 {
                     preProcessOutput.Add(serverRemoteDebugger.DisableBreakpoint(bp, runspaceId));
                 }
-                
+
                 result = PreProcessCommandResult.BreakpointManagement;
             }
 
@@ -1578,7 +1575,7 @@ namespace System.Management.Automation
                 value = GetParameter<T>(command, parameterName);
                 return true;
             }
-            catch (Exception ex) when(
+            catch (Exception ex) when (
                 ex is PSArgumentException ||
                 ex is InvalidCastException ||
                 ex is PSInvalidCastException)
@@ -1889,87 +1886,87 @@ namespace System.Management.Automation
         /// Adds the provided set of breakpoints to the debugger.
         /// </summary>
         /// <param name="breakpoints">List of breakpoints.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
-        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId = null) =>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
+        public override void SetBreakpoints(IEnumerable<Breakpoint> breakpoints, int? runspaceId) =>
             _wrappedDebugger.Value.SetBreakpoints(breakpoints, runspaceId);
 
         /// <summary>
         /// Get a breakpoint by id, primarily for Enable/Disable/Remove-PSBreakpoint cmdlets.
         /// </summary>
         /// <param name="id">Id of the breakpoint you want.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The breakpoint with the specified id.</returns>
-        public override Breakpoint GetBreakpoint(int id, int? runspaceId = null) =>
+        public override Breakpoint GetBreakpoint(int id, int? runspaceId) =>
             _wrappedDebugger.Value.GetBreakpoint(id, runspaceId);
 
         /// <summary>
         /// Returns breakpoints on a runspace.
         /// </summary>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>A list of breakpoints in a runspace.</returns>
-        public override List<Breakpoint> GetBreakpoints(int? runspaceId = null) =>
+        public override List<Breakpoint> GetBreakpoints(int? runspaceId) =>
             _wrappedDebugger.Value.GetBreakpoints(runspaceId);
 
         /// <summary>
         /// Sets a command breakpoint in the debugger.
         /// </summary>
-        /// <param name="command">The name of the command that will trigger the breakpoint. This value is required and may not be null.</param>
+        /// <param name="command">The name of the command that will trigger the breakpoint. This value may not be null.</param>
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the command is invoked.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The command breakpoint that was set.</returns>
-        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action = null, string path = null, int? runspaceId = null) =>
+        public override CommandBreakpoint SetCommandBreakpoint(string command, ScriptBlock action, string path, int? runspaceId) =>
             _wrappedDebugger.Value.SetCommandBreakpoint(command, action, path, runspaceId);
 
         /// <summary>
         /// Sets a line breakpoint in the debugger.
         /// </summary>
-        /// <param name="path">The path to the script file where the breakpoint may be hit. This value is required and may not be null.</param>
-        /// <param name="line">The line in the script file where the breakpoint may be hit. This value is required and must be greater than or equal to 1.</param>
+        /// <param name="path">The path to the script file where the breakpoint may be hit. This value may not be null.</param>
+        /// <param name="line">The line in the script file where the breakpoint may be hit. This value must be greater than or equal to 1.</param>
         /// <param name="column">The column in the script file where the breakpoint may be hit. If 0, the breakpoint will trigger on any statement on the line.</param>
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The line breakpoint that was set.</returns>
-        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column = 0, ScriptBlock action = null, int? runspaceId = null) =>
+        public override LineBreakpoint SetLineBreakpoint(string path, int line, int column, ScriptBlock action, int? runspaceId) =>
             _wrappedDebugger.Value.SetLineBreakpoint(path, line, column, action, runspaceId);
 
         /// <summary>
         /// Sets a variable breakpoint in the debugger.
         /// </summary>
-        /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value is required and may not be null.</param>
-        /// <param name="accessMode">The variable access mode that will trigger the breakpoint. By default variable breakpoints will trigger only when the variable is updated.</param>
+        /// <param name="variableName">The name of the variable that will trigger the breakpoint. This value may not be null.</param>
+        /// <param name="accessMode">The variable access mode that will trigger the breakpoint.</param>
         /// <param name="action">The action to take when the breakpoint is hit. If null, PowerShell will break into the debugger when the breakpoint is hit.</param>
         /// <param name="path">The path to the script file where the breakpoint may be hit. If null, the breakpoint may be hit anywhere the variable is accessed using the specified access mode.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The variable breakpoint that was set.</returns>
-        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode = VariableAccessMode.Write, ScriptBlock action = null, string path = null, int? runspaceId = null) =>
+        public override VariableBreakpoint SetVariableBreakpoint(string variableName, VariableAccessMode accessMode, ScriptBlock action, string path, int? runspaceId) =>
             _wrappedDebugger.Value.SetVariableBreakpoint(variableName, accessMode, action, path, runspaceId);
 
         /// <summary>
         /// Removes a breakpoint from the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to remove from the debugger. This value is required and may not be null.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="breakpoint">The breakpoint to remove from the debugger. This value may not be null.</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>True if the breakpoint was removed from the debugger; false otherwise.</returns>
-        public override bool RemoveBreakpoint(Breakpoint breakpoint, int? runspaceId = null) =>
+        public override bool RemoveBreakpoint(Breakpoint breakpoint, int? runspaceId) =>
             _wrappedDebugger.Value.RemoveBreakpoint(breakpoint, runspaceId);
 
         /// <summary>
         /// Enables a breakpoint in the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value is required and may not be null.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value may not be null.</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The updated breakpoint if it was found; null if the breakpoint was not found in the debugger.</returns>
-        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint, int? runspaceId = null) =>
+        public override Breakpoint EnableBreakpoint(Breakpoint breakpoint, int? runspaceId) =>
             _wrappedDebugger.Value.EnableBreakpoint(breakpoint, runspaceId);
 
         /// <summary>
         /// Disables a breakpoint in the debugger.
         /// </summary>
-        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value is required and may not be null.</param>
-        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. Defaults to null (current runspace).</param>
+        /// <param name="breakpoint">The breakpoint to enable in the debugger. This value may not be null.</param>
+        /// <param name="runspaceId">The runspace id of the runspace you want to interact with. A null value will use the current runspace.</param>
         /// <returns>The updated breakpoint if it was found; null if the breakpoint was not found in the debugger.</returns>
-        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint, int? runspaceId = null) =>
+        public override Breakpoint DisableBreakpoint(Breakpoint breakpoint, int? runspaceId) =>
             _wrappedDebugger.Value.DisableBreakpoint(breakpoint, runspaceId);
 
         /// <summary>

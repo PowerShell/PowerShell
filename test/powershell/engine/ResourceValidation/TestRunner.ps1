@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 function Test-ResourceStrings
 {
@@ -6,7 +6,7 @@ function Test-ResourceStrings
 
     # determine the needed resource directory. If these tests are moved
     # this logic will need to change
-    $repoBase = (Resolve-Path (Join-Path $psScriptRoot ../../../..)).Path
+    $repoBase = (Resolve-Path (Join-Path $PSScriptRoot ../../../..)).Path
     $asmBase = Join-Path $repoBase "src/$AssemblyName"
     $resourceDir = Join-Path $asmBase resources
     $resourceFiles = Get-ChildItem $resourceDir -Filter *.resx -ErrorAction stop |

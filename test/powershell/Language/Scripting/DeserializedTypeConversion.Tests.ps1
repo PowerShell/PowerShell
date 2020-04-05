@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
     BeforeAll {
@@ -94,7 +94,7 @@ Describe "Tests conversion of deserialized types to original type using object p
         }
 
         It 'Type casts should succeed.' {
-            { $tc1 = [test1]$dst1 }| Should -Not -Throw
+            { $tc1 = [test1]$dst1 } | Should -Not -Throw
         }
 
         It 'Parameter bindings should succeed.' {

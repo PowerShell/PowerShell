@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-ChildItem" -Tags "CI" {
 
@@ -142,10 +142,10 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should return items recursively when using 'Include' or 'Exclude' parameters with -LiteralPath" {
-            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Exclude *).Count | Should Be 0
-            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count
-            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should Be 1
-            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should Be 5
+            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Exclude *).Count | Should -Be 0
+            (Get-ChildItem -LiteralPath $TestDrive -Recurse -Include *.dll).Count | Should -Be (Get-ChildItem $TestDrive -Recurse -Include *.dll).Count
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Include $item_G).Count | Should -Be 1
+            (Get-ChildItem -LiteralPath $TestDrive -Depth 1 -Exclude $item_a).Count | Should -Be 5
         }
 
         It "get-childitem path wildcard - <title>" -TestCases $PathWildCardTestCases {
@@ -171,9 +171,9 @@ Describe "Get-ChildItem" -Tags "CI" {
         It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Pending {
             # Don't remove!!! It is special test for hidden and opened file with exclusive lock.
             $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
-            $file | Should not be $null
-            $file.Count | Should be 1
-            $file.Name | Should be "pagefile.sys"
+            $file | Should -Not -Be $null
+            $file.Count | Should -Be 1
+            $file.Name | Should -Be "pagefile.sys"
         }
 
         It "-Filter *. finds extension-less files" {
@@ -214,16 +214,16 @@ Describe "Get-ChildItem" -Tags "CI" {
         It 'can handle mixed case in Env variables' {
             try
             {
-                $env:__FOOBAR = 'foo'
-                $env:__foobar = 'bar'
+                $env:__FOODBAR = 'food'
+                $env:__foodbar = 'bar'
 
-                $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
+                $foodbar = Get-Childitem env: | Where-Object {$_.Name -eq '__foodbar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
-                ($foobar | Measure-Object).Count | Should -Be $count
+                ($foodbar | Measure-Object).Count | Should -Be $count
             }
             catch
             {
-                Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
+                Get-ChildItem env: | Where-Object {$_.Name -eq '__foodbar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
     }
@@ -281,7 +281,7 @@ Describe 'FileSystem Provider Formatting' -Tag "CI","RequireAdminOnWindows" {
             New-Item -Path $modeTestDir -Name $itemName -ItemType $itemType
         }
 
-        $item | Should -BeOfType "System.IO.FileSystemInfo"
+        $item | Should -BeOfType System.IO.FileSystemInfo
 
         $actualMode = [Microsoft.PowerShell.Commands.FileSystemProvider]::Mode($item)
         $actualMode | Should -BeExactly $expectedMode

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.IO;
@@ -132,12 +132,8 @@ namespace System.Management.Automation.Remoting
             _senderInfo = senderInfo;
             _configProviderId = configurationProviderId;
             _initParameters = initializationParameters;
-#if !UNIX
             _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
             _cryptoHelper.Session = this;
-#else
-            _cryptoHelper = null;
-#endif
 
             Context = new ServerRemoteSessionContext();
             SessionDataStructureHandler = new ServerRemoteSessionDSHandlerImpl(this, transportManager);
@@ -680,9 +676,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // we currently dont support adjusting runspace count on a connect operation.
-            // there is a potential race here where in the runspace pool driver is still yet to process a queued
+            // there is a potential conflict here where in the runspace pool driver is still yet to process a queued
             // setMax or setMinrunspaces request.
-            // TODO: resolve this race.. probably by letting the runspace pool consume all messages before we execute this.
+            // TODO: resolve this.. probably by letting the runspace pool consume all messages before we execute this.
             if (clientRequestedRunspaceCount
                 && (_runspacePoolDriver.RunspacePool.GetMaxRunspaces() != clientRequestedMaxRunspaces)
                 && (_runspacePoolDriver.RunspacePool.GetMinRunspaces() != clientRequestedMinRunspaces))

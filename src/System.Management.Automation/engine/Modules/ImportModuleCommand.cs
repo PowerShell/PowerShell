@@ -1,14 +1,16 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
@@ -1749,10 +1751,10 @@ namespace Microsoft.PowerShell.Commands
         ///     c:\temp\mdir\mdir       # resolve by using extensions. mdir is a directory, mdir.xxx is a file.
         ///     c:\temp\mdir            # load default module if mdir is directory
         ///     module                  # $PSScriptRoot/module/module.psd1 (ps1,psm1,dll)
-        ///     module/foobar.psm1      # $PSScriptRoot/module/module.psm1
-        ///     module/foobar           # $PSScriptRoot/module/foobar.XXX if foobar is not a directory...
-        ///     module/foobar           # $PSScriptRoot/module/foobar is a directory and $PSScriptRoot/module/foobar/foobar.XXX exists
-        ///     module/foobar/foobar.XXX
+        ///     module/examplemodule.psm1      # $PSScriptRoot/module/module.psm1
+        ///     module/examplemodule           # $PSScriptRoot/module/examplemodule.XXX if examplemodule is not a directory...
+        ///     module/examplemodule           # $PSScriptRoot/module/examplemodule is a directory and $PSScriptRoot/module/examplemodule/examplemodule.XXX exists
+        ///     module/examplemodule/examplemodule.XXX
         /// </remarks>
         protected override void ProcessRecord()
         {
@@ -1878,10 +1880,81 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private bool IsModuleInDenyList(string[] moduleDenyList, string moduleName, ModuleSpecification moduleSpec)
+        {
+            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
+
+            var exactModuleName = string.Empty;
+            bool match = false;
+
+            if (!string.IsNullOrEmpty(moduleName))
+            {
+                // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
+                exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
+            }
+            else if (moduleSpec != null)
+            {
+                exactModuleName = moduleSpec.Name;
+            }
+            
+            foreach (var deniedModuleName in moduleDenyList)
+            {
+                // use case-insensitive module name comparison
+                match = exactModuleName.Equals(deniedModuleName, StringComparison.InvariantCultureIgnoreCase);
+                if (match)
+                {
+                    string errorMessage = string.Format(CultureInfo.InvariantCulture, Modules.WinCompatModuleInDenyList, exactModuleName);
+                    InvalidOperationException exception = new InvalidOperationException(errorMessage);
+                    ErrorRecord er = new ErrorRecord(exception, "Modules_ModuleInWinCompatDenyList", ErrorCategory.ResourceUnavailable, exactModuleName);
+                    WriteError(er);
+                    break;
+                }
+            }
+            
+            return match;
+        }
+
+        private List<T> FilterModuleCollection<T>(IEnumerable<T> moduleCollection)
+        {
+            List<T> filteredModuleCollection = null;
+            if (moduleCollection != null)
+            {
+                // the ModuleDeny list is cached in PowerShellConfig object
+                string[] moduleDenyList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityModuleDenyList();
+                if (moduleDenyList?.Any() != true)
+                {
+                    filteredModuleCollection = new List<T>(moduleCollection);
+                }
+                else
+                {
+                    filteredModuleCollection = new List<T>();
+                    foreach (var module in moduleCollection)
+                    {
+                        if (!IsModuleInDenyList(moduleDenyList, module as string, module as ModuleSpecification))
+                        {
+                            filteredModuleCollection.Add(module);
+                        }
+                    }
+                }
+            }
+
+            return filteredModuleCollection;
+        }
+
         internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
         {
             IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
 #if !UNIX
+            // one of the two parameters can be passed: either ModuleNames (most of the time) or ModuleSpecifications (they are used in different parameter sets)
+            List<string> filteredModuleNames = FilterModuleCollection(moduleNames);
+            List<ModuleSpecification> filteredModuleFullyQualifiedNames = FilterModuleCollection(moduleFullyQualifiedNames);
+
+            // do not setup WinCompat resources if we have no modules to import
+            if ((filteredModuleNames?.Any() != true) && (filteredModuleFullyQualifiedNames?.Any() != true))
+            {
+                return moduleProxyList;
+            }
+
             var winPSVersionString = Utils.GetWindowsPowerShellVersionFromRegistry();
             if (!winPSVersionString.StartsWith("5.1", StringComparison.OrdinalIgnoreCase))
             {
@@ -1895,14 +1968,31 @@ namespace Microsoft.PowerShell.Commands
                 return new List<PSModuleInfo>();
             }
 
-            moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, moduleNames, moduleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
-            foreach(PSModuleInfo moduleProxy in moduleProxyList)
+            moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, filteredModuleNames, filteredModuleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
+
+            foreach (PSModuleInfo moduleProxy in moduleProxyList)
             {
                 moduleProxy.IsWindowsPowerShellCompatModule = true;
                 System.Threading.Interlocked.Increment(ref s_WindowsPowerShellCompatUsageCounter);
 
                 string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
                 WriteWarning(message);
+            }
+
+            // register LocationChanged handler so that $PWD in Windows PS process mirrors local $PWD changes
+            if (moduleProxyList.Count > 0)
+            {
+                // make sure that we add registration only once to a multicast delegate
+                SyncCurrentLocationDelegate ??= SyncCurrentLocationHandler;
+                var alreadyregistered = this.SessionState.InvokeCommand.LocationChangedAction?.GetInvocationList().Contains(SyncCurrentLocationDelegate);
+
+                if (!alreadyregistered ?? true)
+                {
+                    this.SessionState.InvokeCommand.LocationChangedAction += SyncCurrentLocationDelegate;
+
+                    // first sync has to be triggered manually
+                    SyncCurrentLocationHandler(sender: this, args: new LocationChangedEventArgs(sessionState: null, oldPath: null, newPath: this.SessionState.Path.CurrentLocation));
+                }
             }
 #endif
             return moduleProxyList;

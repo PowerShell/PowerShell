@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 set-strictmode -v 2
 
@@ -401,10 +401,10 @@ Describe "Ternary Operator parsing" -Tags CI {
         $tks[0].Text | Should -BeExactly $Script
 
         if ($TokenKind -eq "Variable") {
-            $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType 'System.Management.Automation.Language.VariableExpressionAst'
+            $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType System.Management.Automation.Language.VariableExpressionAst
             $result.EndBlock.Statements[0].PipelineElements[0].Expression.Extent.Text | Should -BeExactly $Script
         } else {
-            $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0] | Should -BeOfType 'System.Management.Automation.Language.StringConstantExpressionAst'
+            $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0] | Should -BeOfType System.Management.Automation.Language.StringConstantExpressionAst
             $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0].Extent.Text | Should -BeExactly $Script
         }
     }
@@ -441,9 +441,9 @@ Describe "Ternary Operator parsing" -Tags CI {
         $ers[1].ErrorId | Should -BeExactly 'ExpectedValueExpression'
 
         $expr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
-        $expr | Should -BeOfType 'System.Management.Automation.Language.TernaryExpressionAst'
-        $expr.IfTrue | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
-        $expr.IfFalse | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
+        $expr | Should -BeOfType System.Management.Automation.Language.TernaryExpressionAst
+        $expr.IfTrue | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
+        $expr.IfFalse | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
     }
 
     It "Generate ternary AST when operands are missing - '`$true ? : 3'" {
@@ -454,8 +454,28 @@ Describe "Ternary Operator parsing" -Tags CI {
         $ers.IncompleteInput | Should -BeFalse
         $ers.ErrorId | Should -BeExactly "ExpectedValueExpression"
         $expr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
-        $expr | Should -BeOfType 'System.Management.Automation.Language.TernaryExpressionAst'
-        $expr.IfTrue | Should -BeOfType 'System.Management.Automation.Language.ErrorExpressionAst'
-        $expr.IfFalse | Should -BeOfType 'System.Management.Automation.Language.ConstantExpressionAst'
+        $expr | Should -BeOfType System.Management.Automation.Language.TernaryExpressionAst
+        $expr.IfTrue | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
+        $expr.IfFalse | Should -BeOfType System.Management.Automation.Language.ConstantExpressionAst
+    }
+}
+
+Describe "ParserError type tests" -Tag CI {
+    # This test was added because there use to be a hardcoded newline in the ToString() method of
+    # the ParseError class. This makes sure the proper newlines are used.
+    It "Should use consistant newline depending on OS" {
+        $ers = $null
+        [System.Management.Automation.Language.Parser]::ParseInput('$x =', [ref]$null, [ref]$ers) | Out-Null
+        $measureResult = $ers[0].ToString() -split [System.Environment]::NewLine | Measure-Object
+
+        # We expect the string to have 4 lines. That means that if we split by NewLine for that platform,
+        # We should have 4 as the count.
+        $measureResult.Count | Should -BeExactly 4
+
+        # Just checking the above is not enough. We should also make sure that on non-Windows, there are no
+        # `r`n
+        if (!$IsWindows) {
+            $measureResult = $ers[0].ToString() | Should -Not -Contain "`r`n"
+        }
     }
 }

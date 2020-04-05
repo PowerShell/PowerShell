@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1250,7 +1250,7 @@ namespace System.Management.Automation
             }
 
             // PowerShell specific paths including if set in powershell.config.json file we want to exclude
-            var excludeModulePaths = new HashSet<string> {
+            var excludeModulePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
                 GetPersonalModulePath(),
                 GetSharedModulePath(),
                 GetPSHomeModulePath(),

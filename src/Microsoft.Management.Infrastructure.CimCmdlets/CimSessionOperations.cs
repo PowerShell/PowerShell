@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -787,7 +787,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.sessionState = cimSessions.GetOrAdd(
                 CurrentRunspaceId,
-                delegate(Guid instanceId)
+                delegate (Guid instanceId)
                 {
                     if (Runspace.DefaultRunspace != null)
                     {
@@ -974,7 +974,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimTestCimSessionContext context = new CimTestCimSessionContext(proxy, wrapper);
                 proxy.ContextObject = context;
                 // Skip test the connection if user intend to
-                if(cmdlet.SkipTestConnection.IsPresent)
+                if (cmdlet.SkipTestConnection.IsPresent)
                 {
                     AddSessionToCache(proxy.CimSession, context, new CmdletOperationBase(cmdlet));
                 }
@@ -1171,7 +1171,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             if (sessionToGet != null)
             {
-                foreach(PSObject psobject in sessionToGet)
+                foreach (PSObject psobject in sessionToGet)
                 {
                     cmdlet.WriteObject(psobject);
                 }

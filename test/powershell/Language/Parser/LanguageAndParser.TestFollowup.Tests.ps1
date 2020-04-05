@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 $powershellexe = (get-process -id $PID).mainmodule.filename
 
@@ -137,7 +137,7 @@ Describe "Assign automatic variables" -Tags "CI" {
         & { [object]$this = 1; $this } | Should -Be 1
         & { [object]$input = 1; $input } | Should -Be 1
         # Can't test PSCmdlet or PSBoundParameters, they use an internal type
-        & { [System.Management.Automation.InvocationInfo]$myInvocation = $myInvocation; $myInvocation.Line } | Should -Match Automation.InvocationInfo
+        & { [System.Management.Automation.InvocationInfo]$MyInvocation = $MyInvocation; $MyInvocation.Line } | Should -Match Automation.InvocationInfo
         & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should -BeExactly 'abc'
         & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should -BeExactly 'abc'
     }

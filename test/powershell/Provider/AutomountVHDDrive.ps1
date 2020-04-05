@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # Precondition: start from fresh PS session, do not have the media mounted
@@ -10,7 +10,7 @@ function CreateVHD ($VHDPath, $Size)
               Mount-VHD -Passthru |  `
               get-disk -number {$_.DiskNumber} | `
               Initialize-Disk -PartitionStyle MBR -PassThru | `
-              New-Partition -UseMaximumSize -AssignDriveLetter:$False -MbrType IFS | `
+              New-Partition -UseMaximumSize -AssignDriveLetter:$false -MbrType IFS | `
               Format-Volume -Confirm:$false -FileSystem NTFS -force | `
               get-partition | `
               Add-PartitionAccessPath -AssignDriveLetter -PassThru | `

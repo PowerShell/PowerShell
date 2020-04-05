@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Trace-Command" -tags "Feature" {
 
@@ -76,7 +76,7 @@ Describe "Trace-Command" -tags "Feature" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ProcessID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should -Be $pid }
+            $results | ForEach-Object { $_ | Should -Be $PID }
         }
     }
 }

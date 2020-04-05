@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Class WebListener
@@ -13,7 +13,7 @@ Class WebListener
 
     [String] GetStatus()
     {
-        return $This.Job.JobStateInfo.State
+        return $this.Job.JobStateInfo.State
     }
 }
 

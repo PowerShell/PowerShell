@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
@@ -17,7 +17,7 @@ Describe '$env:__SuppressAnsiEscapeSequences tests' -Tag CI {
         }
 
         It 'Select-String emits VT' {
-            "select this string" | Select-String 'this' | Out-String |Should -BeLikeExactly "*`e*"
+            "select this string" | Select-String 'this' | Out-String | Should -BeLikeExactly "*`e*"
         }
 
         It 'ConciseView emits VT' {

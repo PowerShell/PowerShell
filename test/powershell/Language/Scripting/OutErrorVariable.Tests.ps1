@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tests OutVariable only" -Tags "CI" {
     BeforeAll {
@@ -16,7 +16,7 @@ Describe "Tests OutVariable only" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            $pscmdlet.writeobject("foo")
+            $PSCmdlet.writeobject("foo")
         }
 
         function get-bar
@@ -35,7 +35,7 @@ Describe "Tests OutVariable only" -Tags "CI" {
                         OutVariable = 'a';
                         Expected = 'foo'
                         },
-                    @{ Name = 'Updating OutVariable Case 2: $pscmdlet.writeobject';
+                    @{ Name = 'Updating OutVariable Case 2: $PSCmdlet.writeobject';
                         Command = "get-foo2";
                         OutVariable = 'a';
                         Expected = 'foo'
@@ -46,7 +46,7 @@ Describe "Tests OutVariable only" -Tags "CI" {
                         PreSet = 'a','b';
                         Expected = @("a", "b", "foo")
                         },
-                    @{ Name = 'Appending OutVariable Case 2: $pscmdlet.writeobject';
+                    @{ Name = 'Appending OutVariable Case 2: $PSCmdlet.writeobject';
                         Command = "get-foo2";
                         OutVariable = 'a';
                         PreSet = 'a','b';
@@ -92,7 +92,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            $pscmdlet.WriteError($script:foo[0])
+            $PSCmdlet.WriteError($script:foo[0])
         }
 
         function get-bar
@@ -111,7 +111,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
                        ErrorVariable = 'a';
                        Expected = 'foo'
                      },
-                     @{ Name = 'Updating ErrorVariable Case 2: $pscmdlet.WriteError';
+                     @{ Name = 'Updating ErrorVariable Case 2: $PSCmdlet.WriteError';
                        Command = "get-foo1";
                        ErrorVariable = 'a';
                        Expected = 'foo'
@@ -140,7 +140,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
         $a | Should -BeExactly $Expected
     }
 
-    It 'Appending ErrorVariable Case 2: $pscmdlet.writeerror' {
+    It 'Appending ErrorVariable Case 2: $PSCmdlet.writeerror' {
         write-error "foo" -errorVariable script:foo 2> $null
         $a = 'a','b'
 
@@ -193,7 +193,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
             [CmdletBinding()]
             param()
 
-            $pscmdlet.WriteError($script:foo[0])
+            $PSCmdlet.WriteError($script:foo[0])
         }
 
         function get-bar
@@ -303,7 +303,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
         It '$get_item_err.count and $get_item_err[0].exception' {
             $get_item_err.count | Should -Be 1
             $get_item_err[0].exception | Should -Not -BeNullOrEmpty
-            $get_item_err[0].exception | Should -BeOftype 'System.Management.Automation.ItemNotFoundException'
+            $get_item_err[0].exception | Should -BeOfType System.Management.Automation.ItemNotFoundException
         }
     }
 

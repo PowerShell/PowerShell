@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "File encoding tests" -Tag CI {
 
@@ -49,21 +49,21 @@ Describe "File encoding tests" -Tag CI {
             param ( $Command, $parameters, $Expected, $Operator)
             & $command @parameters
             $bytes = Get-FileBytes $outputFile
-            $bytes -join "-" | should ${Operator} ($Expected -join "-")
+            $bytes -join "-" | Should ${Operator} ($Expected -join "-")
         }
 
         It "Export-CSV creates file with UTF-8 encoding without BOM" {
             [pscustomobject]@{ Key = $testStr } | Export-Csv $outputFile
             $bytes = Get-FileBytes $outputFile
-            $bytes[0,1,2] -join "-" | should -Not -Be ($utf8Preamble -join "-")
-            $bytes -join "-" | should -Match ($utf8bytes -join "-")
+            $bytes[0,1,2] -join "-" | Should -Not -Be ($utf8Preamble -join "-")
+            $bytes -join "-" | Should -Match ($utf8bytes -join "-")
         }
 
         It "Export-CliXml creates file with UTF-8 encoding without BOM" {
             [pscustomobject]@{ Key = $testStr } | Export-Clixml $outputFile
             $bytes = Get-FileBytes $outputFile
-            $bytes[0,1,2] -join "-" | should -Not -Be ($utf8Preamble -join "-")
-            $bytes -join "-" | should -Match ($utf8bytes -join "-")
+            $bytes[0,1,2] -join "-" | Should -Not -Be ($utf8Preamble -join "-")
+            $bytes -join "-" | Should -Match ($utf8bytes -join "-")
         }
 
         It "Appends correctly on non-Windows systems" -Skip:$IsWindows {
@@ -71,7 +71,7 @@ Describe "File encoding tests" -Tag CI {
             ${testStr} >> $outputFile
             $bytes = Get-FileBytes $outputFile
             $Expected = $( $ExpectedWithNewline; $ExpectedWithNewline )
-            $bytes -join "-" | should -Be ($Expected -join "-")
+            $bytes -join "-" | Should -Be ($Expected -join "-")
         }
     }
 

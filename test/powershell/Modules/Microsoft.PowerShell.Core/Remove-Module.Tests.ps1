@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
@@ -329,7 +329,7 @@ Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
 Describe "Remove-Module : module provides the PSDrive for current PS Session" -Tags "CI" {
     It "Remove-Module : module provides the PSDrive for current PS Session" {
 
-        $module = Get-Module (Join-Path $PSHome "System.Management.Automation.dll") -ListAvailable
+        $module = Get-Module (Join-Path $PSHOME "System.Management.Automation.dll") -ListAvailable
         { Remove-Module $module -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RemoveModuleCommand"
     }
 }

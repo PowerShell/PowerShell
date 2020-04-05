@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
@@ -3784,7 +3784,8 @@ namespace System.Management.Automation
                                     name: propertyEntry.member.Name,
                                     adapter: this,
                                     baseObject: obj,
-                                    adapterData: propertyEntry) { IsHidden = propertyEntry.IsHidden } as T);
+                                    adapterData: propertyEntry)
+                                { IsHidden = propertyEntry.IsHidden } as T);
                         }
                     }
                 }

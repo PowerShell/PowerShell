@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Remoting
                     _state == RemoteSessionState.EstablishedAndKeyReceived ||   // TODO - Client session would never get into this state... to be removed
                     _state == RemoteSessionState.EstablishedAndKeySent ||
                     _state == RemoteSessionState.Disconnecting ||               // There can be input data until disconnect has been completed
-                    _state == RemoteSessionState.Disconnected)                  // Data can arrive while state machine is transitioning to disconnected, in a race.
+                    _state == RemoteSessionState.Disconnected)                  // Data can arrive while state machine is transitioning to disconnected
                 {
                     return true;
                 }

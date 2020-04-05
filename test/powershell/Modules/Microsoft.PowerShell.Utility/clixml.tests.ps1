@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "CliXml test" -Tags "CI" {
 
@@ -178,7 +178,7 @@ Describe "CliXml test" -Tags "CI" {
             $cred | Export-Clixml -Path $path
             $cred = Import-Clixml -Path $path
             $cred.UserName | Should -BeExactly "Foo"
-            $cred.Password | Should -BeOfType "System.Security.SecureString"
+            $cred.Password | Should -BeOfType System.Security.SecureString
         }
     }
 }

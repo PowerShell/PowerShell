@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-FormatData" -Tags "CI" {
 
@@ -6,7 +6,7 @@ Describe "Get-FormatData" -Tags "CI" {
 
         It "Should return an object[] as the return type" {
             $result = Get-FormatData
-            ,$result | Should -BeOfType "System.Object[]"
+            ,$result | Should -BeOfType System.Object[]
         }
     }
 

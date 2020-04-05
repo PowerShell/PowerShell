@@ -1,8 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 try {
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
     Describe 'Basic COM Tests' -Tags "CI" {
@@ -47,6 +47,13 @@ try {
             $element = $drives | Select-Object -First 1
             [System.Object]::ReferenceEquals($element, $drives) | Should -BeFalse
             $element | Should -Be $drives.Item($element.DriveLetter)
+        }
+
+        It "Should be able to enumerate 'IADsMembers' object" {
+            $group = [ADSI]"WinNT://./Users,Group"
+            $members = $group.Invoke('Members')
+            $names = $members | ForEach-Object { $_.GetType().InvokeMember('Name', 'GetProperty', $null, $_, $null) }
+            $names | Should -Contain 'INTERACTIVE'
         }
 
         It "ToString() should return method paramter names" {

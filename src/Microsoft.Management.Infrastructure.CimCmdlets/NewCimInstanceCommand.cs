@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -306,10 +306,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return clientOnly; }
 
-            set {
+            set
+            {
                 clientOnly = value;
                 base.SetParameter(value, nameClientOnly);
-                }
+            }
         }
 
         private SwitchParameter clientOnly;

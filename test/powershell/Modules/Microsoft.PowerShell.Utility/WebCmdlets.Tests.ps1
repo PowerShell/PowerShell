@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a Pester test suite which validate the Web cmdlets.
@@ -447,6 +447,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $jsonContent.headers.Host | Should -Be $Uri.Authority
     }
 
+    It "Invoke-WebRequest with blank ContentType succeeds" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-WebRequest -Uri '$uri' -ContentType ''"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        ValidateResponse -response $result
+    }
+
     It "Validate Invoke-WebRequest -DisableKeepAlive" {
         # Operation options
         $uri = Get-WebListenerUrl -Test 'Get'
@@ -688,7 +698,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
 
         $result.Error.ErrorDetails.Message | Should -Be $query.body
-        $result.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $result.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
@@ -881,7 +891,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
             $response = ExecuteWebCommand -command $command
 
-            $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+            $response.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
             $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
             $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
         }
@@ -1054,7 +1064,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when newlines are encountered in the element." {
@@ -1068,7 +1078,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when the attribute value is unquoted." {
@@ -1082,7 +1092,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value when the ContentType header does not define it." {
@@ -1096,7 +1106,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value newlines are encountered in the element." {
@@ -1110,7 +1120,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest ignores meta charset value when Content-Type header defines it." {
@@ -1125,7 +1135,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" {
@@ -1140,7 +1150,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
@@ -1154,7 +1164,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
@@ -1168,7 +1178,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest defaults to UTF8 on application/json when no charset is present" {
@@ -1183,7 +1193,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
             $response.Output.Content | Should -BeExactly $query.body
         }
     }
@@ -1890,8 +1900,21 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
     }
 
+    Context "Regex Parsing" {
+
+        It 'correctly parses an image with id, class, and src attributes' {
+            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
+                dosType = 'img-attribute'
+            }
+
+            $response = Invoke-WebRequest -Uri $dosUri
+            $response.Images | Should -Not -BeNullOrEmpty
+        }
+    }
+
     Context "Denial of service" -Tag 'DOS' {
         It "Image Parsing" {
+            Set-ItResult -Pending -Because "The pathological regex runs fast due to https://github.com/dotnet/runtime/issues/33399.  Fixed in .NET 5 preview.2"
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='img'
                 dosLength='5000'
@@ -1903,7 +1926,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
                 $response.Images | out-null
             }
 
-            $script:content | should -Not -BeNullOrEmpty
+            $script:content | Should -Not -BeNullOrEmpty
 
             # pathological regex
             $regex = [RegEx]::new('<img\s+[^>]*>')
@@ -1918,8 +1941,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # dosLength 4,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 12
             # dosLength 5,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 21
             # dosLength 10,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 75
-            $pathologicalRatio | Should -BeGreaterThan 10
+            # in some cases we will be running in a Docker container with modest resources
+            $pathologicalRatio | Should -BeGreaterThan 5
         }
+
         It "Charset Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='charset'
@@ -1934,7 +1959,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # Pathological regex
             $regex = [RegEx]::new('<meta\s[.\n]*[^><]*charset\s*=\s*["''\n]?(?<charset>[A-Za-z].[^\s"''\n<>]*)[\s"''\n>]')
 
-            $script:content | should -Not -BeNullOrEmpty
+            $script:content | Should -Not -BeNullOrEmpty
 
             [TimeSpan] $pathologicalTimeSpan = Measure-Command {
                 $regex.Match($content)
@@ -1946,7 +1971,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # dosLength 2,750 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 13
             # dosLength 2,850 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 22
             # dosLength 3,000 on my 3.5 GHz 6-Core Intel Xeon E5 macpro produced a ratio of 31
-            $pathologicalRatio | Should -BeGreaterThan 10
+            # in some cases we will be running in a Docker container with modest resources
+            $pathologicalRatio | Should -BeGreaterThan 5
         }
     }
 }
@@ -1993,6 +2019,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
         # Validate response
         $result.Output.headers.'User-Agent' | Should -MatchExactly '.*\(Windows NT \d+\.\d*;.*\) PowerShell\/\d+\.\d+\.\d+.*'
+    }
+
+    It "Invoke-RestMethod with blank ContentType succeeds" {
+        $uri = Get-WebListenerUrl -Test 'Get'
+        $command = "Invoke-RestMethod -Uri '$uri' -ContentType ''"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        $result.Error | Should -BeNullOrEmpty
     }
 
     It "Invoke-RestMethod returns headers dictionary" {
@@ -2228,7 +2264,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
 
         $result.Error.ErrorDetails.Message | Should -Be $query.body
-        $result.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $result.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
@@ -2429,7 +2465,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -Headers @{Authorization = 'foo'}"
         $response = ExecuteWebCommand -command $command
 
-        $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $response.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
     }
@@ -3319,7 +3355,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
-            $outFileHash.Hash | Should BeExactly $referenceFileHash.Hash
+            $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $referenceFileSize
             $Headers.'X-WebListener-Has-Range'[0] | Should -BeExactly 'true'
             $Headers.'X-WebListener-Request-Range'[0] | Should -BeExactly "bytes=$bytes-"
@@ -3475,5 +3511,20 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI", "RequireAdmi
         $uri = Get-WebListenerUrl -Test 'Response' -Query $query
         $result = Invoke-RestMethod $uri
         $result.Hello | Should -Be "world"
+    }
+
+    It "Web cmdlets ignore headers with null value" {
+        $query = @{
+            body        = "hello"
+            contenttype = 'text/plain'
+        }
+        $uri = Get-WebListenerUrl -Test 'Response' -Query $query
+
+        # Core throws if a header has null value.
+        # We ignore such headers so no exception is expected.
+        { Invoke-WebRequest -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
+        { Invoke-WebRequest -Uri $uri -ContentType $null } | Should -Not -Throw
+        { Invoke-RestMethod -Uri $uri -Headers @{ "Location" = $null } } | Should -Not -Throw
+        { Invoke-RestMethod -Uri $uri -ContentType $null } | Should -Not -Throw
     }
 }

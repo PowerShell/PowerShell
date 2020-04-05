@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Windows Installer" -Tags "Scenario" {
 
@@ -15,7 +15,7 @@ Describe "Windows Installer" -Tags "Scenario" {
 
     It "WiX (Windows Installer XML) file contains pre-requisites link $preRequisitesLink" -skip:$skipTest {
         $wixProductFile = Join-Path -Path $PSScriptRoot -ChildPath "..\..\..\assets\Product.wxs"
-        (Get-Content $wixProductFile -Raw).Contains($preRequisitesLink) | Should Be $true
+        (Get-Content $wixProductFile -Raw).Contains($preRequisitesLink) | Should -BeTrue
     }
 
     ## Running 'Invoke-WebRequest' with WMF download URLs has been failing intermittently,

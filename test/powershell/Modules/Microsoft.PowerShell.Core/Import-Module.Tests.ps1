@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Import-Module" -Tags "CI" {
     $moduleName = "Microsoft.PowerShell.Security"
@@ -257,18 +257,18 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         Copy-Item $gacAssemblyPath -Destination $destPath -Force
 
         # Use a different pwsh so that we do not have the PSScheduledJob module already loaded.
-        $loadedAssemblyLocation = pwsh -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
+        $loadedAssemblyLocation = & "$PSHOME/pwsh" -noprofile -c "Import-Module $destPath -Force; [Microsoft.PowerShell.ScheduledJob.AddJobTriggerCommand].Assembly.Location"
         $loadedAssemblyLocation | Should -BeLike "$TestDrive*\Microsoft.PowerShell.ScheduledJob.dll"
     }
 }
 
 Describe "Import-Module should be case insensitive" -Tags 'CI' {
     BeforeAll {
-        $defaultPSModuleAutoloadingPreference = $PSModuleAutoloadingPreference
+        $defaultPSModuleAutoloadingPreference = $PSModuleAutoLoadingPreference
         $originalPSModulePath = $env:PSModulePath.Clone()
         $modulesPath = "$TestDrive\Modules"
         $env:PSModulePath += [System.IO.Path]::PathSeparator + $modulesPath
-        $PSModuleAutoloadingPreference = "none"
+        $PSModuleAutoLoadingPreference = "none"
     }
 
     AfterAll {
@@ -293,7 +293,7 @@ Describe "Import-Module should be case insensitive" -Tags 'CI' {
         Set-Content -Path "$modulesPath/$modulePath/TESTMODULE.psm1" -Value "function mytest { 'hello' }"
         Import-Module testMODULE
         $m = Get-Module TESTmodule
-        $m | Should -BeOfType "System.Management.Automation.PSModuleInfo"
+        $m | Should -BeOfType System.Management.Automation.PSModuleInfo
         $m.Name | Should -BeIn "TESTMODULE"
         mytest | Should -BeExactly "hello"
         Remove-Module TestModule

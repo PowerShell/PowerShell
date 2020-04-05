@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Get-Command Feature tests" -Tag Feature {
@@ -35,7 +35,7 @@ Describe "Get-Command Feature tests" -Tag Feature {
         }
 
         It "Can return multiple results relying on auto module loading" {
-            $results = pwsh -outputformat xml -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
+            $results = & "$PSHOME/pwsh" -outputformat xml -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
             $results | Should -HaveCount 2
             $results.Name | Should -Contain "Invoke-FooZedZed"
             $results.Name | Should -Contain "Import-FooZedZed"
@@ -75,9 +75,9 @@ Describe "Get-Command Feature tests" -Tag Feature {
             $manifestPath = Join-Path $testdrive "test.psd1"
             $modulePath = Join-Path $testdrive "test.psm1"
 
-            New-ModuleManifest -Path $manifestPath -FunctionsToExport "Get-FooBar","Get-FB" -RootModule test.psm1
+            New-ModuleManifest -Path $manifestPath -FunctionsToExport "Get-FoodBar","Get-FB" -RootModule test.psm1
             @"
-            function Get-FooBar { "foobar" }
+            function Get-FoodBar { "foodbar" }
             function Get-FB { "fb" }
 "@ > $modulePath
 
@@ -85,8 +85,8 @@ Describe "Get-Command Feature tests" -Tag Feature {
                 Import-Module $manifestPath
                 $results = Get-Command g-fb -UseAbbreviationExpansion
                 $results | Should -HaveCount 2
-                $results[0].Name | Should -BeIn "Get-FB","Get-FooBar"
-                $results[1].Name | Should -BeIn "Get-FB","Get-FooBar"
+                $results[0].Name | Should -BeIn "Get-FB","Get-FoodBar"
+                $results[1].Name | Should -BeIn "Get-FB","Get-FoodBar"
                 $results[0].Name | Should -Not -Be $results[1].Name
             }
             finally {

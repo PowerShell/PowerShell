@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
@@ -31,7 +31,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should work correctly when used with full path name" {
@@ -39,7 +39,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with FilePath argument" {
@@ -47,7 +47,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with Path alias argument" {
@@ -66,7 +66,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should handle stderr redirection without error" {
@@ -74,7 +74,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should handle stdout redirection without error" {

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
@@ -101,8 +101,22 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
     }
 
     It 'Verifies that the current working directory is preserved' {
-        $parallelScriptLocation = 1..1 | ForEach-Object -Parallel { $pwd }
-        $parallelScriptLocation.Path | Should -BeExactly $pwd.Path
+        $parallelScriptLocation = 1..1 | ForEach-Object -Parallel { $PWD }
+        $parallelScriptLocation.Path | Should -BeExactly $PWD.Path
+    }
+
+    It 'Verifies no terminating error if current working drive is not found' {
+        $oldLocation = Get-Location
+        try
+        {
+            New-PSDrive -Name ZZ -PSProvider FileSystem -Root $TestDrive
+            Set-Location -Path 'ZZ:'
+            { 1..1 | ForEach-Object -Parallel { $_ } } | Should -Not -Throw
+        }
+        finally
+        {
+            Set-Location -Path $oldLocation
+        }
     }
 }
 
@@ -307,10 +321,27 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
     }
 
     It 'Verifies that the current working directory is preserved' {
-        $job = 1..1 | ForEach-Object -AsJob -Parallel { $pwd }
+        $job = 1..1 | ForEach-Object -AsJob -Parallel { $PWD }
         $parallelScriptLocation = $job | Wait-Job | Receive-Job
         $job | Remove-Job
-        $parallelScriptLocation.Path | Should -BeExactly $pwd.Path
+        $parallelScriptLocation.Path | Should -BeExactly $PWD.Path
+    }
+}
+
+Describe 'ForEach-Object -Parallel runspace pool tests' -Tags 'CI' {
+
+    It "Verifies job allocated runspace count is limited to pool size" {
+
+        $job = 1..4 | ForEach-Object -Parallel { Start-Sleep 1 } -AsJob -ThrottleLimit 2 | Wait-Job
+        $job.AllocatedRunspaceCount | Should -BeExactly 2
+        $job | Remove-Job
+    }
+
+    It "Verifies job with -UseNewRunspace switch allocates one runspace per iteration" {
+
+        $job = 1..10 | ForEach-Object -Parallel { $_ } -AsJob -ThrottleLimit 2 -UseNewRunspace | Wait-Job
+        $job.AllocatedRunspaceCount | Should -BeExactly 10
+        $job | Remove-Job
     }
 }
 
@@ -362,6 +393,6 @@ Describe 'ForEach-Object -Parallel Functional Tests' -Tags 'Feature' {
         $results.Count | Should -BeExactly 2
         $results[0] | Should -BeExactly 'Output 1'
         $results[1].FullyQualifiedErrorId | Should -BeExactly 'PSTaskException'
-        $results[1].Exception | Should -BeOfType [System.Management.Automation.PipelineStoppedException]
+        $results[1].Exception | Should -BeOfType System.Management.Automation.PipelineStoppedException
     }
 }

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Get-WinEvent' -Tags "CI" {
     BeforeAll {
@@ -19,7 +19,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             $result | Should -Not -BeNullOrEmpty
         }
         It 'Get-WinEvent can get a provider by name' {
-            $providers = Get-WinEvent -listprovider * -erroraction ignore
+            $providers = Get-WinEvent -listprovider MSI* -erroraction ignore
             $result = Get-WinEvent -listprovider ($providers[0].name)
             $result | Should -Not -BeNullOrEmpty
         }

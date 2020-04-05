@@ -3,6 +3,7 @@ parameters:
   version: 6.2.0
   msi: yes
   msix: yes
+  pdb: no
 
 steps:
 - template: upload-final-results.yml
@@ -11,7 +12,7 @@ steps:
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi
     condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
-- task: AzureFileCopy@1
+- task: AzureFileCopy@3
   displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi'
@@ -26,7 +27,7 @@ steps:
     artifactPath: $(System.ArtifactsDirectory)\signed
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip
 
-- task: AzureFileCopy@1
+- task: AzureFileCopy@3
   displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
@@ -36,13 +37,23 @@ steps:
     ContainerName: '$(AzureVersion)'
   condition: succeeded()
 
+- task: AzureFileCopy@3
+  displayName: 'upload pbd zip to Azure - ${{ parameters.architecture }}'
+  inputs:
+    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-Symbols-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
+    azureSubscription: '$(AzureFileCopySubscription)'
+    Destination: AzureBlob
+    storage: '$(StorageAccount)'
+    ContainerName: '$(AzureVersion)'
+  condition: and(succeeded(), eq('${{ parameters.pdb }}', 'yes'))
+
 - template: upload-final-results.yml
   parameters:
     artifactPath: $(Build.StagingDirectory)\signedPackages
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix
     condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'))
 
-- task: AzureFileCopy@1
+- task: AzureFileCopy@3
   displayName: 'upload signed msix to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix'

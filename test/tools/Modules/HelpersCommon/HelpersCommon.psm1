@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 function Wait-UntilTrue
 {
@@ -37,7 +37,7 @@ function Wait-FileToBePresent
 
 function Test-IsElevated
 {
-    $IsElevated = $False
+    $IsElevated = $false
     if ( $IsWindows ) {
         # on Windows we can determine whether we're executing in an
         # elevated context
@@ -209,7 +209,7 @@ function Send-VstsLogFile {
         $Path
     )
 
-    $logFolder = Join-Path -path $pwd -ChildPath 'logfile'
+    $logFolder = Join-Path -path $PWD -ChildPath 'logfile'
     if(!(Test-Path -Path $logFolder))
     {
         $null = New-Item -Path $logFolder -ItemType Directory
@@ -330,7 +330,7 @@ function Test-CanWriteToPsHome
     $script:CanWriteToPsHome = $true
 
     try {
-        $testFileName = Join-Path $PSHome (New-Guid).Guid
+        $testFileName = Join-Path $PSHOME (New-Guid).Guid
         $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
     }
     catch [System.UnauthorizedAccessException] {
@@ -365,18 +365,26 @@ function New-ComplexPassword
 }
 
 # return a specific string with regard to platform information
-function Get-PlatformInfo
-{
+function Get-PlatformInfo {
     if ( $IsWindows ) {
-        return "windows"
+        return @{Platform = "windows"; Version = '' }
     }
     if ( $IsMacOS ) {
-        return "macos"
+        return @{Platform = "macos"; Version = '' }
     }
     if ( $IsLinux ) {
         $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
         if ( -not [string]::IsNullOrEmpty($osrelease.ID) ) {
-            return $osrelease.ID
+
+            $versionId = if (-not $osrelease.Version_ID ) {
+                ''
+            } else {
+                $osrelease.Version_ID.trim('"')
+            }
+
+            $platform = $osrelease.ID.trim('"')
+
+            return @{Platform = $platform; Version = $versionId }
         }
         return "unknown"
     }

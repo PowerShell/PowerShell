@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -528,8 +528,8 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
                 catch (IndexOutOfRangeException)
@@ -908,8 +908,8 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         // in the format http(s)://server[:port/applicationname]
-                        string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                        string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                        string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
                     }
                     catch (IndexOutOfRangeException)
@@ -1202,8 +1202,8 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         // in the format http(s)://server[:port/applicationname]
-                        string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                        string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                        string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
                     }
                     catch (IndexOutOfRangeException)
@@ -1491,8 +1491,8 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
                 catch (IndexOutOfRangeException)

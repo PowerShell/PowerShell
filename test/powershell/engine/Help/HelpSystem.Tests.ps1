@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
@@ -59,7 +59,7 @@ Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') 
 
         $help = & {
             # run in nested scope to keep strict mode from affecting other tests
-            Set-StrictMode -Version Latest
+            Set-StrictMode -Version 3.0
             Help
         }
         # the help function renders the help content as text so just verify that there is content
@@ -92,8 +92,8 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
             param($cmdletName)
             $help = get-help -name $cmdletName
-            $help.Description | Out-String | Should Match $cmdletName
-            $help.Examples | Out-String | Should Match $cmdletName
+            $help.Description | Out-String | Should -Match $cmdletName
+            $help.Examples | Out-String | Should -Match $cmdletName
         }
     }
 }
@@ -136,8 +136,8 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
             $help = get-help -name $cmdletName
-            $help.Description | Out-String | Should Match $cmdletName
-            $help.Examples | Out-String | Should Match $cmdletName
+            $help.Description | Out-String | Should -Match $cmdletName
+            $help.Examples | Out-String | Should -Match $cmdletName
         }
     }
 }
@@ -217,7 +217,7 @@ Describe "Validate that get-help works for provider specific help" -Tags @('CI')
 
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI', 'RequireAdminOnWindows', 'RequireSudoOnUnix') {
     BeforeAll {
-        $modulePath = "$pshome\Modules\Test"
+        $modulePath = "$PSHOME\Modules\Test"
         if (Test-CanWriteToPsHome) {
             $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
             New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
@@ -241,7 +241,7 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         Get-ChildItem -Path $aboutHelpPath -Include @('about_*.txt', "*help.xml") -Recurse | Remove-Item -Force -ErrorAction SilentlyContinue
     }
 
-    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" -Skip:(!(Test-CanWriteToPsHome)) {
+    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$PSHOME path" -Skip:(!(Test-CanWriteToPsHome)) {
 
         $help = Get-Help about_testhelp
         $help.count | Should -Be 1
@@ -273,7 +273,7 @@ Describe "About help files can be found in AllUsers scope" -Tags @('Feature', 'R
 
     It "Get-Help for about_Variable should return only one help object" -Skip:(!(Test-CanWriteToPsHome)) {
         $help = Get-Help about_Variables
-        $help.count | Should Be 1
+        $help.count | Should -Be 1
     }
 }
 
@@ -574,7 +574,7 @@ Describe "Help failure cases" -Tags Feature {
     ) {
         param($command)
 
-        { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+        { & $command DoesNotExist -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }
 

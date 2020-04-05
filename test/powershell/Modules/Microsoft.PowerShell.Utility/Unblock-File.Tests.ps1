@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Unblock-File" -Tags "CI" {
@@ -75,7 +75,7 @@ Describe "Unblock-File" -Tags "CI" {
         It "Write an error if a file is read only" {
             $TestFile = Join-Path $TestDrive "testfileunlock.ps1"
             Block-File -Path $TestFile
-            Set-ItemProperty -Path $TestFile -Name IsReadOnly -Value $True
+            Set-ItemProperty -Path $TestFile -Name IsReadOnly -Value $true
 
             $TestFileCreated = Get-ChildItem $TestFile
             $TestFileCreated.IsReadOnly | Should -BeTrue

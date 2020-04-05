@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "ConvertTo-Csv DRT Unit Tests" -Tags "CI" {
     $inputObject = [pscustomobject]@{ First = 1; Second = 2 }
@@ -48,7 +48,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
     It "Should output an array of objects" {
         $result = $testObject | ConvertTo-Csv
-        ,$result | Should -BeOfType "System.Array"
+        ,$result | Should -BeOfType System.Array
     }
 
     It "Should return the type of data in the first element of the output array" {

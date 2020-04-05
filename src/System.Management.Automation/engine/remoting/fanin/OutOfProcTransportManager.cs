@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 /*
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     // Object already disposed.
                 }
-                
+
                 _commandMessageQueue.Dispose();
             }
         }
@@ -741,41 +741,26 @@ namespace System.Management.Automation.Remoting.Client
             }
         }
 
-        private const string GUIDTAG = "PSGuid='";
-        private const int GUID_STR_LEN = 36;        // GUID string: 32 digits plus 4 dashes
-
-        private Guid GetMessageGuid(string data)
-        {
-            // Perform quick scan for data packet for a GUID, ignoring any errors.
-            var iTag = data.IndexOf(GUIDTAG, StringComparison.OrdinalIgnoreCase);
-            if (iTag > -1)
-            {
-                try
-                {
-                    var psGuidString = data.Substring(iTag + GUIDTAG.Length, GUID_STR_LEN);
-                    return new Guid(psGuidString);
-                }
-                catch 
-                {
-                    // Ignore any malformed packet errors here and return an empty Guid.
-                    // Packet errors will be reported later during message processing.
-                }
-            }
-
-            return Guid.Empty;
-        }
-
         #endregion
 
         #region Event Handlers
 
+        private const string SESSIONDMESSAGETAG = "PSGuid='00000000-0000-0000-0000-000000000000'";
+
         protected void HandleOutputDataReceived(string data)
         {
+            if (string.IsNullOrEmpty(data))
+            {
+                // A null/empty data string indicates a problem in the transport,
+                // e.g., named pipe emitting a null packet because it closed or some reason.
+                // In this case we simply ignore the packet.
+                return;
+            }
+
             try
             {
                 // Route protocol message based on whether it is a session or command message.
-                // Session messages have empty Guid values.
-                if (Guid.Equals(GetMessageGuid(data), Guid.Empty))
+                if (data.Contains(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase))
                 {
                     // Session message
                     _sessionMessageQueue.Add(data);
@@ -1113,7 +1098,6 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     _processCreated = false;
                 }
-                // _processInstance.Start();
             }
 
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell, PSOpcode.Connect,
@@ -1138,28 +1122,10 @@ namespace System.Management.Automation.Remoting.Client
                         _processInstance.RunspacePool.Dispose();
                     }
 
-                    stdInWriter = _processInstance.StdInWriter;
-                    // if (stdInWriter == null)
-                    {
-                        _serverProcess.OutputDataReceived += new DataReceivedEventHandler(OnOutputDataReceived);
-                        _serverProcess.ErrorDataReceived += new DataReceivedEventHandler(OnErrorDataReceived);
-                    }
-
                     _serverProcess.Exited += new EventHandler(OnExited);
-
-                    // serverProcess.Start();
                     _processInstance.Start();
 
-                    if (stdInWriter != null)
-                    {
-                        _serverProcess.CancelErrorRead();
-                        _serverProcess.CancelOutputRead();
-                    }
-
-                    // Start asynchronous reading of output/errors
-                    _serverProcess.BeginOutputReadLine();
-                    _serverProcess.BeginErrorReadLine();
-
+                    StartRedirectionReaderThreads(_serverProcess);
                     stdInWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
                     _processInstance.StdInWriter = stdInWriter;
                 }
@@ -1185,6 +1151,86 @@ namespace System.Management.Automation.Remoting.Client
 
             // Send one fragment
             SendOneItem();
+        }
+
+        private void StartRedirectionReaderThreads(Process serverProcess)
+        {
+            Thread outputThread = new Thread(ProcessOutputData);
+            outputThread.IsBackground = true;
+            outputThread.Name = "Out-of-Proc Job Output Thread";
+
+            Thread errorThread = new Thread(ProcessErrorData);
+            errorThread.IsBackground = true;
+            errorThread.Name = "Out-of-Proc Job Error Thread";
+
+            outputThread.Start(serverProcess.StandardOutput);
+            errorThread.Start(serverProcess.StandardError);
+        }
+
+        private void ProcessOutputData(object arg)
+        {
+            if (arg is StreamReader reader)
+            {
+                try
+                {
+                    string data = reader.ReadLine();
+                    while (data != null)
+                    {
+                        HandleOutputDataReceived(data);
+                        data = reader.ReadLine();
+                    }
+                }
+                catch (IOException)
+                {
+                    // Treat this as EOF, the same as what 'Process.BeginOutputReadLine()' does.
+                }
+                catch (Exception e)
+                {
+                    _tracer.WriteMessage(
+                        "OutOfProcessClientSessionTransportManager",
+                        "ProcessOutputThread",
+                        Guid.Empty,
+                        "Transport manager output reader thread ended with error: {0}",
+                        e.Message ?? string.Empty);
+                }
+            }
+            else
+            {
+                Dbg.Assert(false, "Invalid argument. Expecting a StreamReader object.");
+            }
+        }
+
+        private void ProcessErrorData(object arg)
+        {
+            if (arg is StreamReader reader)
+            {
+                try
+                {
+                    string data = reader.ReadLine();
+                    while (data != null)
+                    {
+                        HandleErrorDataReceived(data);
+                        data = reader.ReadLine();
+                    }
+                }
+                catch (IOException)
+                {
+                    // Treat this as EOF, the same as what 'Process.BeginErrorReadLine()' does.
+                }
+                catch (Exception e)
+                {
+                    _tracer.WriteMessage(
+                        "OutOfProcessClientSessionTransportManager",
+                        "ProcessErrorThread",
+                        Guid.Empty,
+                        "Transport manager error reader thread ended with error: {0}",
+                        e.Message ?? string.Empty);
+                }
+            }
+            else
+            {
+                Dbg.Assert(false, "Invalid argument. Expecting a StreamReader object.");
+            }
         }
 
         /// <summary>
@@ -1213,20 +1259,6 @@ namespace System.Management.Automation.Remoting.Client
 
         #endregion
 
-        #region Event Handlers
-
-        private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            HandleOutputDataReceived(e.Data);
-        }
-
-        private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            HandleErrorDataReceived(e.Data);
-        }
-
-        #endregion
-
         #region Helper Methods
 
         private void KillServerProcess()
@@ -1245,13 +1277,8 @@ namespace System.Management.Automation.Remoting.Client
 
                     if (_processCreated)
                     {
-                        _serverProcess.CancelOutputRead();
-                        _serverProcess.CancelErrorRead();
                         _serverProcess.Kill();
                     }
-
-                    _serverProcess.OutputDataReceived -= new DataReceivedEventHandler(OnOutputDataReceived);
-                    _serverProcess.ErrorDataReceived -= new DataReceivedEventHandler(OnErrorDataReceived);
                 }
             }
             catch (System.ComponentModel.Win32Exception)
@@ -1723,7 +1750,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             if ((error.Length == 0) ||
-                error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1)
+                error.Contains("WARNING:", StringComparison.OrdinalIgnoreCase))
             {
                 // Handle as interactive warning message
                 Console.WriteLine(error);

@@ -58,9 +58,10 @@ function New-BuildInfoJson {
 $branchOnly = $Branch -replace '^refs/heads/';
 $branchOnly = $branchOnly -replace '[_\-]'
 
+$isDaily = $false
+
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 {
-    $isDaily = $false
     # Branch is named release-<semver>
     if($Branch -match '^.*(release[-/])')
     {

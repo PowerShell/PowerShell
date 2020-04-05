@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "DSC MOF Compilation" -tags "CI" {
 
@@ -7,7 +7,12 @@ Describe "DSC MOF Compilation" -tags "CI" {
     }
 
     BeforeAll {
-        $IsAlpine = (Get-PlatformInfo) -eq "alpine"
+        $platformInfo = Get-PlatformInfo
+        $SkipAdditionalPlatforms =
+            ($platformInfo.Platform -match "alpine|raspbian") -or
+            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
+            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
+
         Import-Module PSDesiredStateConfiguration
         $dscModule = Get-Module PSDesiredStateConfiguration
         $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'
@@ -21,7 +26,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         $env:PSModulePath = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
     }
 
-    It "Should be able to compile a MOF from a basic configuration" -Skip:($IsMacOS -or $IsWindows -or $IsAlpine) {
+    It "Should be able to compile a MOF from a basic configuration" -Skip:($IsMacOS -or $IsWindows -or $SkipAdditionalPlatforms) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -40,7 +45,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         "TestDrive:\DscTestConfig1\localhost.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from another basic configuration" -Skip:($IsMacOS -or $IsWindows -or $IsAlpine) {
+    It "Should be able to compile a MOF from another basic configuration" -Skip:($IsMacOS -or $IsWindows -or $SkipAdditionalPlatforms) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -62,7 +67,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         "TestDrive:\DscTestConfig2\localhost.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from a complex configuration" -Skip:($IsMacOS -or $IsWindows -or $IsAlpine) {
+    It "Should be able to compile a MOF from a complex configuration" -Skip:($IsMacOS -or $IsWindows -or $SkipAdditionalPlatforms) {
         [Scriptblock]::Create(@"
     Configuration WordPressServer{
 
@@ -171,7 +176,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         "TestDrive:\DscTestConfig3\CentOS.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from a basic configuration on Windows" -Skip:($IsMacOS -or $IsLinux -or $IsAlpine) {
+    It "Should be able to compile a MOF from a basic configuration on Windows" -Skip:($IsMacOS -or $IsLinux -or $SkipAdditionalPlatforms) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {
@@ -191,7 +196,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         "TestDrive:\DscTestConfig4\localhost.mof" | Should -Exist
     }
 
-    It "Should be able to compile a MOF from a configuration with multiple resources on Windows" -Skip:($IsMacOS -or $IsLinux -or $IsAlpine) {
+    It "Should be able to compile a MOF from a configuration with multiple resources on Windows" -Skip:($IsMacOS -or $IsLinux -or $SkipAdditionalPlatforms) {
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {

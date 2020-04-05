@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -124,7 +124,7 @@ namespace PSTests.Parallel
             PSObject pso = new PSObject();
             pso.AddOrSetProperty("IsReadOnly", false);
             fileSystemProvider.SetProperty(testPath, pso);
-            fileSystemProvider.GetProperty(testPath, new Collection<string>(){ "IsReadOnly" });
+            fileSystemProvider.GetProperty(testPath, new Collection<string>() { "IsReadOnly" });
             FileInfo fileSystemObject1 = new FileInfo(testPath);
             PSObject psobject1 = PSObject.AsPSObject(fileSystemObject1);
             PSPropertyInfo property = psobject1.Properties["IsReadOnly"];
@@ -138,7 +138,7 @@ namespace PSTests.Parallel
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-            fileSystemProvider.GetProperty(testPath, new Collection<string>(){ "Name" });
+            fileSystemProvider.GetProperty(testPath, new Collection<string>() { "Name" });
             FileInfo fileSystemObject1 = new FileInfo(testPath);
             PSObject psobject1 = PSObject.AsPSObject(fileSystemObject1);
             PSPropertyInfo property = psobject1.Properties["FullName"];
@@ -153,7 +153,7 @@ namespace PSTests.Parallel
             ProviderInfo providerInfoToSet = GetProvider();
             fileSystemProvider.SetProviderInformation(providerInfoToSet);
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-            fileSystemProvider.ClearProperty(testPath, new Collection<string>(){ "Attributes" });
+            fileSystemProvider.ClearProperty(testPath, new Collection<string>() { "Attributes" });
         }
 
         [Fact]
@@ -178,7 +178,7 @@ namespace PSTests.Parallel
             fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
 
             IContentWriter contentWriter = fileSystemProvider.GetContentWriter(testPath);
-            contentWriter.Write(new List<string>(){ "contentWriterTestContent" });
+            contentWriter.Write(new List<string>() { "contentWriterTestContent" });
             contentWriter.Close();
             Assert.Equal(File.ReadAllText(testPath), testContent + @"contentWriterTestContent" + System.Environment.NewLine);
         }

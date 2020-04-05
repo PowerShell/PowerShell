@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "String cmdlets" -Tags "CI" {
     Context "Select-String" {
@@ -69,11 +69,11 @@ Describe "String cmdlets" -Tags "CI" {
         It "match object supports RelativePath method" {
             $file = "Modules${sep}Microsoft.PowerShell.Utility${sep}Microsoft.PowerShell.Utility.psd1"
 
-            $match = Select-String CmdletsToExport $pshome/$file
+            $match = Select-String CmdletsToExport $PSHOME/$file
 
-            $match.RelativePath($pshome) | Should -Be $file
-            $match.RelativePath($pshome.ToLower()) | Should -Be $file
-            $match.RelativePath($pshome.ToUpper()) | Should -Be $file
+            $match.RelativePath($PSHOME) | Should -Be $file
+            $match.RelativePath($PSHOME.ToLower()) | Should -Be $file
+            $match.RelativePath($PSHOME.ToUpper()) | Should -Be $file
         }
     }
 }

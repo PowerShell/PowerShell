@@ -1,14 +1,14 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 <############################################################################################
  # File: Export-Counter.Tests.ps1
  # Provides Pester tests for the Export-Counter cmdlet.
  ############################################################################################>
- 
+
  # Counter CmdLets are removed see issue #4272
  # Tests are disabled
  return
- 
+
 $cmdletName = "Export-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"

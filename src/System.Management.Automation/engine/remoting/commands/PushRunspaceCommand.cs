@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -241,25 +241,6 @@ namespace Microsoft.PowerShell.Commands
                     new ErrorRecord(
                         new ArgumentException(GetMessage(RemotingErrorIdStrings.HostDoesNotSupportPushRunspace)),
                         PSRemotingErrorId.HostDoesNotSupportPushRunspace.ToString(),
-                        ErrorCategory.InvalidArgument,
-                        null));
-                return;
-            }
-
-            // Check if current host is remote host.  Enter-PSSession on remote host is not
-            // currently supported.
-            if (!IsParameterSetForVM() &&
-                !IsParameterSetForContainer() &&
-                !IsParameterSetForVMContainerSession() &&
-                this.Context != null &&
-                this.Context.EngineHostInterface != null &&
-                this.Context.EngineHostInterface.ExternalHost != null &&
-                this.Context.EngineHostInterface.ExternalHost is System.Management.Automation.Remoting.ServerRemoteHost)
-            {
-                WriteError(
-                    new ErrorRecord(
-                        new ArgumentException(GetMessage(RemotingErrorIdStrings.RemoteHostDoesNotSupportPushRunspace)),
-                        PSRemotingErrorId.RemoteHostDoesNotSupportPushRunspace.ToString(),
                         ErrorCategory.InvalidArgument,
                         null));
                 return;

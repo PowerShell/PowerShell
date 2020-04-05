@@ -1,10 +1,19 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Basic debugger command tests' -tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
+
+        function NormalizeLineEnd
+        {
+            param (
+                [string] $string
+            )
+
+            $string -replace "`r`n", "`n"
+        }
     }
 
     AfterAll {
@@ -76,6 +85,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
     7:                  }
     8:
 '@
+            $testScriptList = NormalizeLineEnd -string $testScriptList
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l','list')
             $result = @{
@@ -99,7 +109,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should show the entire script listing with the current position on line 5' {
-            $result['l'] | Should -BeExactly $testScriptList
+            (NormalizeLineEnd -string $result['l']) | Should -BeExactly $testScriptList
         }
     }
 
@@ -121,6 +131,8 @@ Describe 'Basic debugger command tests' -tag 'CI' {
     7:                  }
     8:
 '@
+
+            $testScriptList = NormalizeLineEnd -string $testScriptList
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l 4','list 4')
             $result = @{
@@ -144,7 +156,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should show a partial script listing starting on line 4 with the current position on line 5' {
-            $result['l 4'] | Should -BeExactly $testScriptList
+            (NormalizeLineEnd -string $result['l 4']) | Should -BeExactly $testScriptList
         }
     }
 
@@ -163,6 +175,8 @@ Describe 'Basic debugger command tests' -tag 'CI' {
     3:                      $bp = Set-PSBreakpoint -Command Get-Process
     4:*                     Get-Process -Id $PID > $null
 '@
+
+            $testScriptList = NormalizeLineEnd -string $testScriptList
 
             $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'l 3 2','list 3 2')
             $result = @{
@@ -186,7 +200,7 @@ Describe 'Basic debugger command tests' -tag 'CI' {
         }
 
         It 'Should show a partial script listing showing 3 lines starting on line 4 with the current position on line 5' {
-            $result['l 3 2'] | Should -BeExactly $testScriptList
+            (NormalizeLineEnd -string $result['l 3 2']) | Should -BeExactly $testScriptList
         }
     }
 

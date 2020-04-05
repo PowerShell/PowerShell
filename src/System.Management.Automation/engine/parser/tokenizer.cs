@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -543,7 +543,7 @@ namespace System.Management.Automation.Language
         Decimal = 0x10,
 
         /// <summary>
-        /// Indicates 'I' suffix for BigInteger (arbitrarily large integer) numerals.
+        /// Indicates 'N' suffix for BigInteger (arbitrarily large integer) numerals.
         /// </summary>
         BigInteger = 0x20
     }
@@ -885,9 +885,9 @@ namespace System.Management.Automation.Language
 
         internal void SkipNewlines(bool skipSemis)
         {
-            // We normally don't create any tokens in a Skip method, but the
-            // V2 tokenizer api returns newline, semi-colon, and line
-            // continuation tokens so we create them as they are encountered.
+        // We normally don't create any tokens in a Skip method, but the
+        // V2 tokenizer api returns newline, semi-colon, and line
+        // continuation tokens so we create them as they are encountered.
         again:
             char c = GetChar();
             switch (c)

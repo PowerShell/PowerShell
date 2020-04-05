@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 using namespace System.Diagnostics
 
@@ -303,7 +303,7 @@ Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
                 Start-Sleep -Milliseconds 100
                 if (([Datetime]::Now - $startTime) -ge [timespan]"00:00:05") { throw "Timeout exception" }
             }
-        } | Should -Not -throw
+        } | Should -Not -Throw
     }
 
     It "Should start a file without error on Windows full SKUs" -Skip:(-not $isFullWin) {

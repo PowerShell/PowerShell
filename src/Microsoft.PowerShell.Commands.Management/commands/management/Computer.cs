@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -1181,7 +1181,7 @@ $result
         /// </summary>
         public void Dispose()
         {
-             _cancel.Dispose();
+            _cancel.Dispose();
         }
 
         #endregion "IDisposable Members"

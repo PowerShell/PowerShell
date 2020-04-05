@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 <#
@@ -172,17 +172,17 @@ function Enable-PSWSManCombinedTrace
     $traceFileName = [string][Guid]::NewGuid()
     if ($DoNotOverwriteExistingTrace) {
         $fileName = [string][guid]::newguid()
-        $logfile = $pshome + "\\Traces\\PSTrace_$fileName.etl"
+        $logfile = $PSHOME + "\\Traces\\PSTrace_$fileName.etl"
     } else {
-        $logfile = $pshome + "\\Traces\\PSTrace.etl"
+        $logfile = $PSHOME + "\\Traces\\PSTrace.etl"
     }
 
     "Microsoft-Windows-PowerShell 0 5" | out-file $provfile -encoding ascii
     "Microsoft-Windows-WinRM 0 5" | out-file $provfile -encoding ascii -append
 
-    if (!(Test-Path $pshome\Traces))
+    if (!(Test-Path $PSHOME\Traces))
     {
-        New-Item -ItemType Directory -Force $pshome\Traces | out-null
+        New-Item -ItemType Directory -Force $PSHOME\Traces | out-null
     }
 
     if (Test-Path $logfile)

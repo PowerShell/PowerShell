@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -260,6 +260,14 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public SwitchParameter AsJob { get; set; }
 
+        /// <summary>
+        /// Gets or sets a flag so that a new runspace object is created for each loop iteration, instead of reusing objects
+        /// from the runspace pool.
+        /// By default, runspaces are reused from a runspace pool.
+        /// </summary>
+        [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
+        public SwitchParameter UseNewRunspace { get; set; }
+
         #endregion
 
         #region Overrides
@@ -437,7 +445,8 @@ namespace Microsoft.PowerShell.Commands
 
                 _taskJob = new PSTaskJob(
                     Parallel.ToString(),
-                    ThrottleLimit);
+                    ThrottleLimit,
+                    UseNewRunspace);
 
                 return;
             }
@@ -445,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
             // Set up for synchronous processing and data streaming.
             _taskCollection = new PSDataCollection<System.Management.Automation.PSTasks.PSTask>();
             _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
-            _taskPool = new PSTaskPool(ThrottleLimit);
+            _taskPool = new PSTaskPool(ThrottleLimit, UseNewRunspace);
             _taskPool.PoolComplete += (sender, args) =>
             {
                 _taskDataStreamWriter.Close();

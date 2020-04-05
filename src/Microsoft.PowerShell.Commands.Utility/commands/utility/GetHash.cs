@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -153,6 +153,15 @@ namespace Microsoft.PowerShell.Commands
                         ex,
                         "UnauthorizedAccessError",
                         ErrorCategory.InvalidData,
+                        path);
+                    WriteError(errorRecord);
+                }
+                catch (IOException ioException)
+                {
+                    var errorRecord = new ErrorRecord(
+                        ioException,
+                        "FileReadError",
+                        ErrorCategory.ReadError,
                         path);
                     WriteError(errorRecord);
                 }

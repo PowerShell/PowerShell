@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Verify Markdown Links" {
@@ -97,8 +97,10 @@ Describe "Verify Markdown Links" {
 
                         # there could be multiple reasons why a failure is ok
                         # check against the allowed failures
-                        # 503 = service temporarily unavailable
-                        $allowedFailures = @( 503 )
+                        $allowedFailures = [System.Net.HttpStatusCode[]](
+                            503, # Service Unavailable
+                            504  # Gateway Timeout
+                        )
 
                         $prefix = $url.Substring(0,7)
 
@@ -111,10 +113,10 @@ Describe "Verify Markdown Links" {
                             {
                                 $null = Invoke-WebRequest -uri $url -RetryIntervalSec 10 -MaximumRetryCount 6
                             }
-                            catch
+                            catch [Microsoft.PowerShell.Commands.HttpResponseException]
                             {
                                 if ( $allowedFailures -notcontains $_.Exception.Response.StatusCode )  {
-                                    throw "retry of URL failed with error: $($_.Exception.Message)"
+                                    throw "Failed to complete request to `"$url`". $($_.Exception.Message)"
                                 }
                             }
                         }

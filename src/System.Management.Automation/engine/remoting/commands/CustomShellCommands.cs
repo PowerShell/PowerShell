@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -1120,11 +1120,6 @@ else
                 architectureParameter = string.Format(CultureInfo.InvariantCulture,
                     architectureAttribFormat,
                     tempValue);
-            }
-
-            if (!isUseSharedProcessSpecified)
-            {
-                UseSharedProcess = true;
             }
 
             string sharedHostParameter = string.Empty;

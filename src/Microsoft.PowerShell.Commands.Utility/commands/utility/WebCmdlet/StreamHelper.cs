@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -9,6 +9,8 @@ using System.Management.Automation.Internal;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -99,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="bufferSize"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override System.Threading.Tasks.Task CopyToAsync(Stream destination, int bufferSize, System.Threading.CancellationToken cancellationToken)
+        public override Task CopyToAsync(Stream destination, int bufferSize, CancellationToken cancellationToken)
         {
             Initialize();
             return base.CopyToAsync(destination, bufferSize, cancellationToken);
@@ -124,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="count"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override System.Threading.Tasks.Task<int> ReadAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken)
+        public override Task<int> ReadAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             Initialize();
             return base.ReadAsync(buffer, offset, count, cancellationToken);
@@ -175,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="count"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        public override System.Threading.Tasks.Task WriteAsync(byte[] buffer, int offset, int count, System.Threading.CancellationToken cancellationToken)
+        public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             Initialize();
             return base.WriteAsync(buffer, offset, count, cancellationToken);
@@ -273,73 +275,55 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Methods
 
-        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet)
+        internal static void WriteToStream(Stream input, Stream output, PSCmdlet cmdlet, CancellationToken cancellationToken)
         {
-            byte[] data = new byte[ChunkSize];
-
-            int read = 0;
-            long totalWritten = 0;
-            do
+            if (cmdlet == null)
             {
-                if (cmdlet != null)
-                {
-                    ProgressRecord record = new ProgressRecord(ActivityId,
-                        WebCmdletStrings.WriteRequestProgressActivity,
-                        StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, totalWritten));
-                    cmdlet.WriteProgress(record);
-                }
-
-                read = input.Read(data, 0, ChunkSize);
-
-                if (0 < read)
-                {
-                    output.Write(data, 0, read);
-                    totalWritten += read;
-                }
-            } while (read != 0);
-
-            if (cmdlet != null)
-            {
-                ProgressRecord record = new ProgressRecord(ActivityId,
-                    WebCmdletStrings.WriteRequestProgressActivity,
-                    StringUtil.Format(WebCmdletStrings.WriteRequestComplete, totalWritten));
-                record.RecordType = ProgressRecordType.Completed;
-                cmdlet.WriteProgress(record);
+                throw new ArgumentNullException(nameof(cmdlet));
             }
 
-            output.Flush();
-        }
+            Task copyTask = input.CopyToAsync(output, cancellationToken);
 
-        internal static void WriteToStream(byte[] input, Stream output)
-        {
-            output.Write(input, 0, input.Length);
-            output.Flush();
+            ProgressRecord record = new ProgressRecord(
+                ActivityId,
+                WebCmdletStrings.WriteRequestProgressActivity,
+                WebCmdletStrings.WriteRequestProgressStatus);
+            try
+            {
+                do
+                {
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestProgressStatus, output.Position);
+                    cmdlet.WriteProgress(record);
+
+                    Task.Delay(1000).Wait(cancellationToken);
+                }
+                while (!copyTask.IsCompleted && !cancellationToken.IsCancellationRequested);
+
+                if (copyTask.IsCompleted)
+                {
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.WriteRequestComplete, output.Position);
+                    cmdlet.WriteProgress(record);
+                }
+            }
+            catch (OperationCanceledException)
+            {
+            }
         }
 
         /// <summary>
         /// Saves content from stream into filePath.
         /// Caller need to ensure <paramref name="stream"/> position is properly set.
         /// </summary>
-        /// <param name="stream"></param>
-        /// <param name="filePath"></param>
-        /// <param name="cmdlet"></param>
-        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet)
+        /// <param name="stream">Input stream.</param>
+        /// <param name="filePath">Output file name.</param>
+        /// <param name="cmdlet">Current cmdlet (Invoke-WebRequest or Invoke-RestMethod).</param>
+        /// <param name="cancellationToken">CancellationToken to track the cmdlet cancellation.</param>
+        internal static void SaveStreamToFile(Stream stream, string filePath, PSCmdlet cmdlet, CancellationToken cancellationToken)
         {
             // If the web cmdlet should resume, append the file instead of overwriting.
-            if (cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume)
-            {
-                using (FileStream output = new FileStream(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
-                {
-                    WriteToStream(stream, output, cmdlet);
-                }
-            }
-            else
-            {
-                using (FileStream output = File.Create(filePath))
-                {
-                    WriteToStream(stream, output, cmdlet);
-                }
-            }
+            FileMode fileMode = cmdlet is WebRequestPSCmdlet webCmdlet && webCmdlet.ShouldResume ? FileMode.Append : FileMode.Create;
+            using FileStream output = new FileStream(filePath, fileMode, FileAccess.Write, FileShare.Read);
+            WriteToStream(stream, output, cmdlet, cancellationToken);
         }
 
         private static string StreamToString(Stream stream, Encoding encoding)

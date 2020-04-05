@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 $imageName = "remotetestimage"
 Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
@@ -41,7 +41,7 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
 
         # capture the versions of full and core PowerShell
         write-verbose -verbose "getting powershell full version"
-        $fullVersion = docker exec $client powershell -c "`$psversiontable.psversion.tostring()"
+        $fullVersion = docker exec $client powershell -c "`$PSVersionTable.psversion.tostring()"
         if ( ! $fullVersion )
         {
             $pending = $true
@@ -50,7 +50,7 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
         }
 
         write-verbose -verbose "getting powershell version"
-        $coreVersion = docker exec $client "$powershellcorepath" -c "`$psversiontable.psversion.tostring()"
+        $coreVersion = docker exec $client "$powershellcorepath" -c "`$PSVersionTable.psversion.tostring()"
         if ( ! $coreVersion )
         {
             $pending = $true
@@ -68,22 +68,22 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
     }
 
     It "Full powershell can get correct remote powershell version" -pending:$pending {
-        $result = docker exec $client powershell -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname $powershellcoreConfiguration -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
-        $result | should be $coreVersion
+        $result = docker exec $client powershell -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname $powershellcoreConfiguration -auth basic -credential `$c; invoke-command -session `$ses { `$PSVersionTable.psversion.tostring() }"
+        $result | Should -Be $coreVersion
     }
 
     It "Full powershell can get correct remote powershell full version" -pending:$pending {
-        $result = docker exec $client powershell -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
-        $result | should be $fullVersion
+        $result = docker exec $client powershell -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -auth basic -credential `$c; invoke-command -session `$ses { `$PSVersionTable.psversion.tostring() }"
+        $result | Should -Be $fullVersion
     }
 
     It "Core powershell can get correct remote powershell version" -pending:$pending {
-        $result = docker exec $client "$powershellcorepath" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname $powershellcoreConfiguration -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
-        $result | should be $coreVersion
+        $result = docker exec $client "$powershellcorepath" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname $powershellcoreConfiguration -auth basic -credential `$c; invoke-command -session `$ses { `$PSVersionTable.psversion.tostring() }"
+        $result | Should -Be $coreVersion
     }
 
     It "Core powershell can get correct remote powershell full version" -pending:$pending {
-        $result = docker exec $client "$powershellcorepath" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
-        $result | should be $fullVersion
+        $result = docker exec $client "$powershellcorepath" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | ForEach-Object { `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -auth basic -credential `$c; invoke-command -session `$ses { `$PSVersionTable.psversion.tostring() }"
+        $result | Should -Be $fullVersion
     }
 }

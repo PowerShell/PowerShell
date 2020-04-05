@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Update-FormatData" -Tags "CI" {
 
@@ -9,7 +9,7 @@ Describe "Update-FormatData" -Tags "CI" {
     Context "Validate Update-FormatData update correctly" {
 
         It "Should not throw upon reloading previous formatting file" {
-            { Update-FormatData } | Should -Not -throw
+            { Update-FormatData } | Should -Not -Throw
         }
 
         It "Should validly load formatting data" {

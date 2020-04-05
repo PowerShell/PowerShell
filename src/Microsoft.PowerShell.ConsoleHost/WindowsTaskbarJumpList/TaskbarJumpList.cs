@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -42,8 +42,16 @@ namespace Microsoft.PowerShell
                     Debug.Fail($"Creating 'Run as Administrator' JumpList failed. {exception}");
                 }
             });
-            thread.SetApartmentState(ApartmentState.STA);
-            thread.Start();
+
+            try
+            {
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+            }
+            catch (System.Threading.ThreadStartException)
+            {
+                // STA may not be supported on some platforms
+            }
         }
 
         private static void CreateElevatedEntry(string title)

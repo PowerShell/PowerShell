@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.ComponentModel;
@@ -93,13 +93,16 @@ namespace System.Management.Automation.Runspaces
                 LoadUserProfile = true,
 #endif
             };
-
+#if !UNIX
             if (startingWindowsPowerShell51)
             {
                 _startInfo.ArgumentList.Add("-Version");
                 _startInfo.ArgumentList.Add("5.1");
-            }
 
+                // if starting Windows PowerShell, need to remove PowerShell specific segments of PSModulePath
+                _startInfo.Environment["PSModulePath"] = ModuleIntrinsics.GetWindowsPowerShellModulePath();
+            }
+#endif
             _startInfo.ArgumentList.Add("-s");
             _startInfo.ArgumentList.Add("-NoLogo");
             _startInfo.ArgumentList.Add("-NoProfile");

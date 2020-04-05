@@ -1,11 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell.
 
 try {
     #skip all tests on non-windows platform
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
 $script:catalogPath = ""

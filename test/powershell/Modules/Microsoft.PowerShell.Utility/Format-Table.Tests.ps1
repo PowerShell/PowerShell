@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
         It "Should call format table on piped input without error" {
@@ -134,8 +134,8 @@ Describe "Format-Table" -Tags "CI" {
             @{ testName = "array"      ; testString = "line1","line2"      }
         ) {
             param ($testString)
-            $result = $testString | Format-Table -Property "foo","bar" -Force | Out-String
-            $result.Replace(" ","").Replace([Environment]::NewLine,"") | Should -BeExactly "foobar------"
+            $result = $testString | Format-Table -Property "fox","bar" -Force | Out-String
+            $result.Replace(" ","").Replace([Environment]::NewLine,"") | Should -BeExactly "foxbar------"
         }
 
         It "Format-Table with complex object for End-To-End should work" {
@@ -829,6 +829,7 @@ A Name                                  B
 
 "@
 
-            $obj | Format-Table | Out-String | Should -BeExactly $expected
+            $actual = $obj | Format-Table | Out-String
+            ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
     }

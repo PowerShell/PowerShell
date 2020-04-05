@@ -45,7 +45,7 @@ resources:
 jobs:
 - template: templates/ci-build.yml
   parameters:
-    pool: Hosted macOS
+    pool: macOS-latest
     jobName: mac_build
     displayName: macOS Build
 
@@ -79,7 +79,7 @@ jobs:
 
 - template: templates/verify-xunit.yml
   parameters:
-    pool: 'Hosted macOS'
+    pool: macOS-latest
     parentJobs:
       - mac_build
 
