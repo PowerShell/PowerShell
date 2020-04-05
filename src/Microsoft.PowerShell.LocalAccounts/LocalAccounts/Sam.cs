@@ -372,6 +372,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         private IntPtr builtinDomainHandle = IntPtr.Zero;
         private Context context = null;
         private string machineName = string.Empty;
+        private static readonly PrincipalContext s_ctx = new PrincipalContext(ContextType.Machine);
 #endregion Instance Data
 
 #region Construction
@@ -411,8 +412,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         {
             // TODO: groupName == null - exception?
 
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using var groupPattern = new GroupPrincipal(ctx)
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var groupPattern = new GroupPrincipal(s_ctx)
             {
                 Name = groupName
             };
@@ -470,8 +471,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal LocalGroup CreateLocalGroup(LocalGroup group)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using var groupPrincipal = new GroupPrincipal(ctx)
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var groupPrincipal = new GroupPrincipal(s_ctx)
             {
                 Name = group.Name,
                 Description = group.Description,
@@ -521,8 +522,8 @@ namespace System.Management.Automation.SecurityAccountsManager
                 return;
             }
 
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using var groupPattern = new GroupPrincipal(ctx)
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var groupPattern = new GroupPrincipal(s_ctx)
             {
                 Name = group.Name
             };
@@ -587,8 +588,8 @@ namespace System.Management.Automation.SecurityAccountsManager
 
         private void RemoveLocalGroup(string groupName)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using var groupPattern = new GroupPrincipal(ctx)
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var groupPattern = new GroupPrincipal(s_ctx)
             {
                 Name = groupName
             };
@@ -739,8 +740,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </returns>
         internal IEnumerable<LocalGroup> GetMatchingLocalGroups(Predicate<string> pred)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using GroupPrincipal groupPattern = new GroupPrincipal(ctx);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using GroupPrincipal groupPattern = new GroupPrincipal(s_ctx);
             using var seacher = new PrincipalSearcher(groupPattern);
             using PrincipalSearchResult<Principal> fr = seacher.FindAll();
 
@@ -762,8 +763,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </returns>
         internal IEnumerable<LocalGroup> GetAllLocalGroups()
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using GroupPrincipal groupPattern = new GroupPrincipal(ctx);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using GroupPrincipal groupPattern = new GroupPrincipal(s_ctx);
             using var seacher = new PrincipalSearcher(groupPattern);
             using PrincipalSearchResult<Principal> fr = seacher.FindAll();
 
@@ -792,46 +793,15 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal Exception AddLocalGroupMember(LocalGroup group, LocalPrincipal member)
         {
-            string groupName = group.Name;
-            SecurityIdentifier sid = group.SID;
-
-            if (!(sid is null))
-            {
-                try
-                {
-                    NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
-                    groupName = account.Value;
-                }
-                catch (IdentityNotMappedException exc)
-                {
-                    throw new GroupNotFoundException(exc, sid.ToString());
-                }
-            }
-
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using GroupPrincipal groupPattern = new GroupPrincipal(ctx)
-            {
-                Name = groupName
-            };
-            using var searcher = new PrincipalSearcher(groupPattern);
-            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
-            //using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, groupName);
-
-            if (groupPrincipal is null)
-            {
-                throw new GroupNotFoundException(groupName, groupName);
-            }
-
-            using Principal principal = member.SID is null ?
-                Principal.FindByIdentity(ctx, IdentityType.Name, member.Name)
-                : Principal.FindByIdentity(ctx, IdentityType.Sid, member.SID.ToString());
-
-            if (principal is null)
-            {
-                return new PrincipalNotFoundException(
-                    member.SID is null ? member.Name : member.SID.ToString(),
-                    group.SID is null ? group.Name : group.SID.ToString());
-            }
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            //using var groupPattern = new GroupPrincipal(ctx)
+            //{
+            //    Name = group.Name
+            //};
+            //using var searcher = new PrincipalSearcher(groupPattern);
+            //using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, group.SID.ToString());
+            using var principal = Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
 
             try
             {
@@ -864,8 +834,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </returns>
         internal IEnumerable<LocalPrincipal> GetLocalGroupMembers(LocalGroup group)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using var groupPattern = new GroupPrincipal(ctx)
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var groupPattern = new GroupPrincipal(s_ctx)
             {
                 Name = group.Name
             };
@@ -897,9 +867,9 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </returns>
         internal IEnumerable<LocalPrincipal> GetLocalGroupMembers(SecurityIdentifier groupSid)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
             var groupSidString = groupSid.ToString();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, groupSidString);
+            using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, groupSidString);
 
             if (groupPrincipal is null)
             {
@@ -936,10 +906,10 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal Exception RemoveLocalGroupMember(LocalGroup group, LocalPrincipal member)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
             using GroupPrincipal groupPrincipal = group.SID is null ?
-                GroupPrincipal.FindByIdentity(ctx, IdentityType.Name, group.Name)
-                : GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, group.SID.ToString());
+                GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Name, group.Name)
+                : GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, group.SID.ToString());
 
             if (groupPrincipal is null)
             {
@@ -948,8 +918,8 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             using Principal principal = member.SID is null ?
-                Principal.FindByIdentity(ctx, IdentityType.Name, member.Name)
-                : Principal.FindByIdentity(ctx, IdentityType.Sid, member.SID.ToString());
+                Principal.FindByIdentity(s_ctx, IdentityType.Name, member.Name)
+                : Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
 
             if (principal is null)
             {
@@ -999,9 +969,9 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal Exception RemoveLocalGroupMember(SecurityIdentifier groupSid, LocalPrincipal member)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
             var groupSidString = groupSid.ToString();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(ctx, IdentityType.Sid, groupSidString);
+            using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, groupSidString);
 
             if (groupPrincipal is null)
             {
@@ -1009,8 +979,8 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
 
             using Principal principal = member.SID is null ?
-                Principal.FindByIdentity(ctx, IdentityType.Name, member.Name)
-                : Principal.FindByIdentity(ctx, IdentityType.Sid, member.SID.ToString());
+                Principal.FindByIdentity(s_ctx, IdentityType.Name, member.Name)
+                : Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
 
             if (principal is null)
             {
@@ -1050,8 +1020,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal LocalUser GetLocalUser(string userName)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using var userPattern = new UserPrincipal(ctx)
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var userPattern = new UserPrincipal(s_ctx)
             {
                 Name = userName
             };
@@ -1116,8 +1086,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal LocalUser CreateLocalUser(LocalUser user, System.Security.SecureString password, bool setPasswordNeverExpires)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using var userPrincipal = new UserPrincipal(ctx)
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var userPrincipal = new UserPrincipal(s_ctx)
             {
                 AccountExpirationDate = user.AccountExpires,
                 Enabled = user.Enabled,
@@ -1183,9 +1153,9 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal void RemoveLocalUser(SecurityIdentifier sid)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
             var identityValue = sid.ToString();
-            using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
+            using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
 
             if (userPrincipal is null)
             {
@@ -1210,8 +1180,8 @@ namespace System.Management.Automation.SecurityAccountsManager
             SecurityIdentifier sid = user.SID;
             if (sid is null)
             {
-                using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPattern = new UserPrincipal(ctx)
+                //using var ctx = new PrincipalContext(ContextType.Machine);
+                using var userPattern = new UserPrincipal(s_ctx)
                 {
                     Name = user.Name
                 };
@@ -1246,9 +1216,9 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal void RenameLocalUser(SecurityIdentifier sid, string newName)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
             var identityValue = sid.ToString();
-            using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
+            using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
 
             if (userPrincipal is null)
             {
@@ -1276,8 +1246,8 @@ namespace System.Management.Automation.SecurityAccountsManager
             SecurityIdentifier sid = user.SID;
             if (sid is null)
             {
-                using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, user.Name);
+                //using var ctx = new PrincipalContext(ContextType.Machine);
+                using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Name, user.Name);
 
                 if (userPrincipal is null)
                 {
@@ -1341,9 +1311,9 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </param>
         internal void EnableLocalUser(SecurityIdentifier sid, Enabling enable)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
             var identityValue = sid.ToString();
-            using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
+            using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
 
             if (userPrincipal is null)
             {
@@ -1369,8 +1339,8 @@ namespace System.Management.Automation.SecurityAccountsManager
             SecurityIdentifier sid = user.SID;
             if (sid is null)
             {
-                using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPattern = new UserPrincipal(ctx)
+                //using var ctx = new PrincipalContext(ContextType.Machine);
+                using var userPattern = new UserPrincipal(s_ctx)
                 {
                     Name = user.Name
                 };
@@ -1418,8 +1388,8 @@ namespace System.Management.Automation.SecurityAccountsManager
             SecurityIdentifier sid = user.SID;
             if (sid is null)
             {
-                using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPattern = new UserPrincipal(ctx)
+                //using var ctx = new PrincipalContext(ContextType.Machine);
+                using var userPattern = new UserPrincipal(s_ctx)
                 {
                     Name = user.Name
                 };
@@ -1452,9 +1422,9 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
             else
             {
-                using var ctx = new PrincipalContext(ContextType.Machine);
+                //using var ctx = new PrincipalContext(ContextType.Machine);
                 var identityValue = user.SID.ToString();
-                using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Sid, identityValue);
+                using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
 
                 if (userPrincipal is null)
                 {
@@ -1525,8 +1495,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </returns>
         internal IEnumerable<LocalUser> GetMatchingLocalUsers(Predicate<string> pred)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using UserPrincipal userPattern = new UserPrincipal(ctx);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using UserPrincipal userPattern = new UserPrincipal(s_ctx);
             using var seacher = new PrincipalSearcher(userPattern);
             using PrincipalSearchResult<Principal> fr = seacher.FindAll();
 
@@ -1548,8 +1518,8 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </returns>
         internal IEnumerable<LocalUser> GetAllLocalUsers()
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using UserPrincipal userPattern = new UserPrincipal(ctx);
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using UserPrincipal userPattern = new UserPrincipal(s_ctx);
             using var seacher = new PrincipalSearcher(userPattern);
             using PrincipalSearchResult<Principal> fr = seacher.FindAll();
 
