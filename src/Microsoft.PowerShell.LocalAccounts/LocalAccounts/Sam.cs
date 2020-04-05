@@ -2,7 +2,6 @@
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
@@ -183,9 +182,6 @@ namespace System.Management.Automation.SecurityAccountsManager
 #endregion Internal Classes
 
 #region Instance Data
-        private IntPtr samHandle = IntPtr.Zero;
-        private IntPtr localDomainHandle = IntPtr.Zero;
-        private IntPtr builtinDomainHandle = IntPtr.Zero;
         private Context context = null;
         private string machineName = string.Empty;
         private static readonly PrincipalContext s_ctx = new PrincipalContext(ContextType.Machine);
@@ -194,8 +190,6 @@ namespace System.Management.Automation.SecurityAccountsManager
 #region Construction
         internal Sam()
         {
-            OpenHandles();
-
             // CoreCLR does not have Environment.MachineName,
             // so we'll use this instead.
             machineName = System.Net.Dns.GetHostName();
@@ -683,39 +677,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             foreach(Principal p in groupPrincipal.Members)
             {
                 yield return MakeLocalPrincipalObject(p);
-            }
-        }
-
-        /// <summary>
-        /// Retrieve members of a Local group.
-        /// </summary>
-        /// <param name="groupSid">
-        /// A <see cref="SecurityIdentifier"/> object identifying the group whose members
-        /// are requested.
-        /// </param>
-        /// <returns>
-        /// An IEnumerable of <see cref="LocalPrincipal"/> objects containing the group's
-        /// members.
-        /// </returns>
-        internal IEnumerable<LocalPrincipal> GetLocalGroupMembers(SecurityIdentifier groupSid)
-        {
-            //using var ctx = new PrincipalContext(ContextType.Machine);
-            var groupSidString = groupSid.ToString();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, groupSidString);
-
-            if (groupPrincipal is null)
-            {
-                throw new GroupNotFoundException(groupSidString, groupSidString);
-            }
-
-            foreach(Principal p in groupPrincipal.Members)
-            {
-                yield return p switch
-                {
-                    UserPrincipal user => MakeLocalUserObject(user),
-                    GroupPrincipal grp => MakeLocalGroupObject(grp),
-                    _ => null
-                };
             }
         }
 
@@ -1388,66 +1349,6 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// <summary>
         /// Open the handles stored by Sam instances.
         /// </summary>
-        private void OpenHandles()
-        {
-            var systemName = new UNICODE_STRING();
-            var oa = new OBJECT_ATTRIBUTES();
-            IntPtr pInfo = IntPtr.Zero;
-            IntPtr pSid = IntPtr.Zero;
-            IntPtr lsaHandle = IntPtr.Zero;
-            UInt32 status = 0;
-
-            try
-            {
-                status = Win32.LsaOpenPolicy(ref systemName, ref oa, (UInt32)LSA_AccessPolicy.POLICY_VIEW_LOCAL_INFORMATION, out lsaHandle);
-                ThrowOnFailure(status);
-
-                POLICY_PRIMARY_DOMAIN_INFO domainInfo;
-
-                status = Win32.LsaQueryInformationPolicy(lsaHandle,
-                                                         POLICY_INFORMATION_CLASS.PolicyAccountDomainInformation,
-                                                         out pInfo);
-                ThrowOnFailure(status);
-                status = Win32.LsaClose(lsaHandle);
-                ThrowOnFailure(status);
-
-                lsaHandle = IntPtr.Zero;
-
-                domainInfo = Marshal.PtrToStructure<POLICY_PRIMARY_DOMAIN_INFO>(pInfo);
-
-                status = SamApi.SamConnect(ref systemName, out samHandle, SamApi.SAM_SERVER_LOOKUP_DOMAIN, ref oa);
-                ThrowOnFailure(status);
-
-                // Open the local domain
-                status = SamApi.SamOpenDomain(samHandle, Win32.MAXIMUM_ALLOWED, domainInfo.Sid, out localDomainHandle);
-                ThrowOnFailure(status);
-
-                // Open the "BuiltIn" domain
-                SecurityIdentifier sid = new SecurityIdentifier("S-1-5-32");
-                byte[] bSid = new byte[sid.BinaryLength];
-                int size = Marshal.SizeOf<byte>() * bSid.Length;
-
-                pSid = Marshal.AllocHGlobal(size);
-
-                sid.GetBinaryForm(bSid, 0);
-                Marshal.Copy(bSid, 0, pSid, bSid.Length);
-
-                status = SamApi.SamOpenDomain(samHandle, Win32.MAXIMUM_ALLOWED, pSid, out builtinDomainHandle);
-
-                ThrowOnFailure(status);
-            }
-            finally
-            {
-                if (pInfo != IntPtr.Zero)
-                    status = Win32.LsaFreeMemory(pInfo);
-
-                Marshal.FreeHGlobal(pSid);
-
-                if (lsaHandle != IntPtr.Zero)
-                    status = Win32.LsaClose(lsaHandle);
-            }
-        }
-
         private LocalUser MakeLocalUserObject(UserPrincipal sre)
         {
             LocalUser user = new LocalUser()
@@ -1870,12 +1771,6 @@ namespace System.Management.Automation.SecurityAccountsManager
                 if (disposing)
                 {
                     // no managed objects need disposing.
-                }
-
-                if (samHandle != IntPtr.Zero)
-                {
-                    status = SamApi.SamCloseHandle(samHandle);
-                    samHandle = IntPtr.Zero;
                 }
 
                 if (NtStatus.IsError(status))
