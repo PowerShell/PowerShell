@@ -25,12 +25,12 @@ namespace Microsoft.PowerShell.Commands
         // Switch parameters don't need to be included.
         private static string[] parameterNames = new string[]
             {
-                "AccountExpires",
-                "Description",
-                "Disabled",
-                "FullName",
-                "Password",
-                "UserMayNotChangePassword"
+                nameof(AccountExpires),
+                nameof(Description),
+                nameof(Disabled),
+                nameof(FullName),
+                nameof(Password),
+                nameof(UserMayNotChangePassword)
             };
         #endregion Static Data
 
@@ -44,11 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies when the user account will expire.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public System.DateTime AccountExpires
-        {
-            get;
-            set;
-        }
+        public DateTime AccountExpires { get; set; }
 
         // This parameter added by hand (copied from SetLocalUserCommand), not by Cmdlet Designer
         /// <summary>
@@ -56,11 +52,7 @@ namespace Microsoft.PowerShell.Commands
         /// Specifies that the account will not expire.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public System.Management.Automation.SwitchParameter AccountNeverExpires
-        {
-            get;
-            set;
-        }
+        public SwitchParameter AccountNeverExpires { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Description".
@@ -68,22 +60,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNull]
-        public string Description
-        {
-            get;
-            set;
-        }
+        public string Description { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Disabled".
         /// Specifies whether this user account is enabled or disabled.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public System.Management.Automation.SwitchParameter Disabled
-        {
-            get;
-            set;
-        }
+        public SwitchParameter Disabled { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "FullName".
@@ -92,11 +76,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNull]
-        public string FullName
-        {
-            get;
-            set;
-        }
+        public string FullName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -109,11 +89,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [ValidateLength(1, 20)]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Password".
@@ -124,11 +100,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "Password",
                    ValueFromPipelineByPropertyName = true)]
         [ValidateNotNull]
-        public System.Security.SecureString Password
-        {
-            get;
-            set;
-        }
+        public System.Security.SecureString Password { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "PasswordChangeableDate".
@@ -137,11 +109,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true,
                    ParameterSetName = "NoPassword",
                    ValueFromPipelineByPropertyName = true)]
-        public System.Management.Automation.SwitchParameter NoPassword
-        {
-            get;
-            set;
-        }
+        public SwitchParameter NoPassword { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "PasswordNeverExpires".
@@ -149,11 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Password",
                    ValueFromPipelineByPropertyName = true)]
-        public System.Management.Automation.SwitchParameter PasswordNeverExpires
-        {
-            get;
-            set;
-        }
+        public SwitchParameter PasswordNeverExpires { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "UserMayNotChangePassword".
@@ -161,11 +125,7 @@ namespace Microsoft.PowerShell.Commands
         /// account. The default value is True.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
-        public System.Management.Automation.SwitchParameter UserMayNotChangePassword
-        {
-            get;
-            set;
-        }
+        public SwitchParameter UserMayNotChangePassword { get; set; }
 
         #endregion Parameter Properties
 
@@ -208,15 +168,15 @@ namespace Microsoft.PowerShell.Commands
                         {
                             switch (paramName)
                             {
-                                case "AccountExpires":
+                                case nameof(AccountExpires):
                                     user.AccountExpires = AccountExpires;
                                     break;
 
-                                case "Disabled":
+                                case nameof(Disabled):
                                     user.Enabled = !Disabled;
                                     break;
 
-                                case "UserMayNotChangePassword":
+                                case nameof(UserMayNotChangePassword):
                                     user.UserMayChangePassword = !UserMayNotChangePassword;
                                     break;
                             }

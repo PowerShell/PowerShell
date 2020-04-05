@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
+using System.Security.Principal;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -34,11 +35,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "Default")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Name
-        {
-            get;
-            set;
-        }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -50,11 +47,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public System.Security.Principal.SecurityIdentifier[] SID
-        {
-            get;
-            set;
-        }
+        public SecurityIdentifier[] SID { get; set; }
 
         #endregion Parameter Properties
 
@@ -118,8 +111,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (WildcardPattern.ContainsWildcardCharacters(name))
                         {
-                            var pattern = new WildcardPattern(name, WildcardOptions.Compiled
-                                                                | WildcardOptions.IgnoreCase);
+                            var pattern = new WildcardPattern(
+                                name,
+                                WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
 
                             foreach (LocalGroup group in _sam.GetMatchingLocalGroups(n => pattern.IsMatch(n)))
                             {
@@ -146,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (SID != null)
             {
-                foreach (System.Security.Principal.SecurityIdentifier sid in SID)
+                foreach (SecurityIdentifier sid in SID)
                 {
                     try
                     {

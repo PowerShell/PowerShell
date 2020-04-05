@@ -6,6 +6,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
+using System.Security.Principal;
 
 using Microsoft.PowerShell.LocalAccounts;
 
@@ -43,11 +44,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "InputObject")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Microsoft.PowerShell.Commands.LocalUser[] InputObject
-        {
-            get;
-            set;
-        }
+        public LocalUser[] InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -61,11 +58,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "Default")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Name
-        {
-            get;
-            set;
-        }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -79,11 +72,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public System.Security.Principal.SecurityIdentifier[] SID
-        {
-            get;
-            set;
-        }
+        public SecurityIdentifier[] SID { get; set; }
 
         #endregion Parameter Properties
 
@@ -143,7 +132,9 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         if (CheckShouldProcess(name))
+                        {
                             _sam.EnableLocalUser(_sam.GetLocalUser(name), Enable);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -160,12 +151,14 @@ namespace Microsoft.PowerShell.Commands
         {
             if (SID != null)
             {
-                foreach (System.Security.Principal.SecurityIdentifier sid in SID)
+                foreach (SecurityIdentifier sid in SID)
                 {
                     try
                     {
                         if (CheckShouldProcess(sid.ToString()))
+                        {
                             _sam.EnableLocalUser(sid, Enable);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -187,7 +180,9 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         if (CheckShouldProcess(user.Name))
+                        {
                             _sam.EnableLocalUser(user, Enable);
+                        }
                     }
                     catch (Exception ex)
                     {

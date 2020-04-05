@@ -35,11 +35,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0,
                    ParameterSetName = "Group")]
         [ValidateNotNull]
-        public Microsoft.PowerShell.Commands.LocalGroup Group
-        {
-            get;
-            set;
-        }
+        public LocalGroup Group { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Member".
@@ -53,11 +49,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Microsoft.PowerShell.Commands.LocalPrincipal[] Member
-        {
-            get;
-            set;
-        }
+        public LocalPrincipal[] Member { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -67,11 +59,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0,
                    ParameterSetName = "Default")]
         [ValidateNotNullOrEmpty]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -81,11 +69,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0,
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNull]
-        public System.Security.Principal.SecurityIdentifier SID
-        {
-            get;
-            set;
-        }
+        public SecurityIdentifier SID { get; set; }
 
         #endregion Parameter Properties
 
@@ -120,9 +104,13 @@ namespace Microsoft.PowerShell.Commands
                     ProcessGroup(resolvedGroup);
                 }
                 else if (Name != null)
+                {
                     ProcessName(Name);
+                }
                 else if (SID != null)
+                {
                     ProcessSid(SID);
+                }
             }
             catch (GroupNotFoundException ex)
             {

@@ -36,11 +36,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "InputObject")]
         [ValidateNotNull]
-        public Microsoft.PowerShell.Commands.LocalUser InputObject
-        {
-            get;
-            set;
-        }
+        public LocalUser InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -53,11 +49,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Default")]
         [ValidateNotNullOrEmpty]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "NewName".
@@ -67,11 +59,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true,
                    Position = 1)]
         [ValidateNotNullOrEmpty]
-        public string NewName
-        {
-            get;
-            set;
-        }
+        public string NewName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -83,11 +71,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNull]
-        public System.Security.Principal.SecurityIdentifier SID
-        {
-            get;
-            set;
-        }
+        public System.Security.Principal.SecurityIdentifier SID { get; set; }
 
         #endregion Parameter Properties
 
@@ -145,7 +129,9 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(Name, NewName))
+                    {
                         _sam.RenameLocalUser(_sam.GetLocalUser(Name), NewName);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -164,7 +150,9 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(SID.ToString(), NewName))
+                    {
                         _sam.RenameLocalUser(SID, NewName);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -183,7 +171,9 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(InputObject.Name, NewName))
+                    {
                         _sam.RenameLocalUser(InputObject, NewName);
+                    }
                 }
                 catch (Exception ex)
                 {

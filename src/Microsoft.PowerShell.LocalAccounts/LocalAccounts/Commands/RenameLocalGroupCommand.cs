@@ -3,7 +3,6 @@
 
 using System;
 using System.Management.Automation;
-
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
 
@@ -37,11 +36,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "InputObject")]
         [ValidateNotNullOrEmpty]
-        public Microsoft.PowerShell.Commands.LocalGroup InputObject
-        {
-            get;
-            set;
-        }
+        public LocalGroup InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -54,11 +49,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Default")]
         [ValidateNotNullOrEmpty]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "NewName".
@@ -68,11 +59,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Mandatory = true,
                    Position = 1)]
         [ValidateNotNullOrEmpty]
-        public string NewName
-        {
-            get;
-            set;
-        }
+        public string NewName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -84,11 +71,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNullOrEmpty]
-        public System.Security.Principal.SecurityIdentifier SID
-        {
-            get;
-            set;
-        }
+        public System.Security.Principal.SecurityIdentifier SID { get; set; }
 
         #endregion Parameter Properties
 

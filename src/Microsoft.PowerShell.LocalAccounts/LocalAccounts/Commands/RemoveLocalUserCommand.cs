@@ -38,11 +38,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "InputObject")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Microsoft.PowerShell.Commands.LocalUser[] InputObject
-        {
-            get;
-            set;
-        }
+        public LocalUser[] InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -56,11 +52,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "Default")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Name
-        {
-            get;
-            set;
-        }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -74,11 +66,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public System.Security.Principal.SecurityIdentifier[] SID
-        {
-            get;
-            set;
-        }
+        public System.Security.Principal.SecurityIdentifier[] SID { get; set; }
 
         #endregion Parameter Properties
 

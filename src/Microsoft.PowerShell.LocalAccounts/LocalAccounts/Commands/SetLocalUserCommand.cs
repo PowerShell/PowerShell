@@ -27,12 +27,12 @@ namespace Microsoft.PowerShell.Commands
         // Switch parameters don't need to be included.
         private static readonly string[] s_parameterNames = new string[]
             {
-                "AccountExpires",
-                "Description",
-                "FullName",
-                "Password",
-                "UserMayChangePassword",
-                "PasswordNeverExpires"
+                nameof(AccountExpires),
+                nameof(Description),
+                nameof(FullName),
+                nameof(Password),
+                nameof(UserMayChangePassword),
+                nameof(PasswordNeverExpires)
             };
         #endregion Static Data
 
@@ -48,22 +48,14 @@ namespace Microsoft.PowerShell.Commands
         /// expires).
         /// </summary>
         [Parameter]
-        public System.DateTime AccountExpires
-        {
-            get;
-            set;
-        }
+        public DateTime AccountExpires { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "AccountNeverExpires".
         /// Specifies that the account will not expire.
         /// </summary>
         [Parameter]
-        public System.Management.Automation.SwitchParameter AccountNeverExpires
-        {
-            get;
-            set;
-        }
+        public SwitchParameter AccountNeverExpires { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Description".
@@ -71,11 +63,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public string Description
-        {
-            get;
-            set;
-        }
+        public string Description { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "FullName".
@@ -84,11 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public string FullName
-        {
-            get;
-            set;
-        }
+        public string FullName { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -101,11 +85,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "InputObject")]
         [ValidateNotNull]
-        public Microsoft.PowerShell.Commands.LocalUser InputObject
-        {
-            get;
-            set;
-        }
+        public LocalUser InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -117,11 +97,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Name")]
         [ValidateNotNullOrEmpty]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Password".
@@ -129,23 +105,14 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNull]
-        public System.Security.SecureString Password
-        {
-            get;
-            set;
-        }
+        public System.Security.SecureString Password { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "PasswordNeverExpires".
         /// Specifies that the password will not expire.
         /// </summary>
         [Parameter]
-        public bool PasswordNeverExpires
-        {
-            get;
-            set;
-        }
-
+        public bool PasswordNeverExpires { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -157,11 +124,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNull]
-        public System.Security.Principal.SecurityIdentifier SID
-        {
-            get;
-            set;
-        }
+        public System.Security.Principal.SecurityIdentifier SID { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "UserMayChangePassword".
@@ -169,11 +132,7 @@ namespace Microsoft.PowerShell.Commands
         /// account. The default value is True.
         /// </summary>
         [Parameter]
-        public bool UserMayChangePassword
-        {
-            get;
-            set;
-        }
+        public bool UserMayChangePassword { get; set; }
 
         #endregion Parameter Properties
 
@@ -204,25 +163,33 @@ namespace Microsoft.PowerShell.Commands
                 if (InputObject != null)
                 {
                     if (CheckShouldProcess(InputObject.ToString()))
+                    {
                         user = InputObject;
+                    }
                 }
                 else if (Name != null)
                 {
                     user = _sam.GetLocalUser(Name);
 
                     if (!CheckShouldProcess(Name))
+                    {
                         user = null;
+                    }
                 }
                 else if (SID != null)
                 {
                     user = _sam.GetLocalUser(SID);
 
                     if (!CheckShouldProcess(SID.ToString()))
+                    {
                         user = null;
+                    }
                 }
 
                 if (user == null)
+                {
                     return;
+                }
 
                 // We start with what already exists
                 LocalUser delta = user.Clone();
@@ -234,23 +201,23 @@ namespace Microsoft.PowerShell.Commands
                     {
                         switch (paramName)
                         {
-                            case "AccountExpires":
+                            case nameof(AccountExpires):
                                 delta.AccountExpires = AccountExpires;
                                 break;
 
-                            case "Description":
+                            case nameof(Description):
                                 delta.Description = Description;
                                 break;
 
-                            case "FullName":
+                            case nameof(FullName):
                                 delta.FullName = FullName;
                                 break;
 
-                            case "UserMayChangePassword":
+                            case nameof(UserMayChangePassword):
                                 delta.UserMayChangePassword = UserMayChangePassword;
                                 break;
 
-                            case "PasswordNeverExpires":
+                            case nameof(PasswordNeverExpires):
                                 passwordNeverExpires = PasswordNeverExpires;
                                 break;
                         }
@@ -258,7 +225,9 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 if (AccountNeverExpires.IsPresent)
+                {
                     delta.AccountExpires = null;
+                }
 
                 _sam.UpdateLocalUser(user, delta, Password, passwordNeverExpires);
             }
@@ -288,6 +257,4 @@ namespace Microsoft.PowerShell.Commands
         }
         #endregion Private Methods
     }
-
 }
-

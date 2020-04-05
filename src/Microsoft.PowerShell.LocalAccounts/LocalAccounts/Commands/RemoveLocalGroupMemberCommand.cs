@@ -35,11 +35,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0,
                    ParameterSetName = "Group")]
         [ValidateNotNull]
-        public Microsoft.PowerShell.Commands.LocalGroup Group
-        {
-            get;
-            set;
-        }
+        public LocalGroup Group { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Member".
@@ -53,11 +49,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public Microsoft.PowerShell.Commands.LocalPrincipal[] Member
-        {
-            get;
-            set;
-        }
+        public LocalPrincipal[] Member { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -67,11 +59,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0,
                    ParameterSetName = "Default")]
         [ValidateNotNullOrEmpty]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -81,11 +69,7 @@ namespace Microsoft.PowerShell.Commands
                    Position = 0,
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNull]
-        public System.Security.Principal.SecurityIdentifier SID
-        {
-            get;
-            set;
-        }
+        public SecurityIdentifier SID { get; set; }
 
         #endregion Parameter Properties
 
@@ -106,11 +90,17 @@ namespace Microsoft.PowerShell.Commands
             try
             {
                 if (Group != null)
+                {
                     ProcessGroup(Group);
+                }
                 else if (Name != null)
+                {
                     ProcessName(Name);
+                }
                 else if (SID != null)
+                {
                     ProcessSid(SID);
+                }
             }
             catch (GroupNotFoundException ex)
             {
@@ -152,7 +142,8 @@ namespace Microsoft.PowerShell.Commands
         /// <para>
         /// LocalPrincipal object in the Member parameter may not be complete,
         /// particularly those created from a name or a SID string given to the
-        /// Member cmdlet parameter. The object returned from this method contains at the very least, contain a valid SID.
+        /// Member cmdlet parameter.
+        /// The object returned from this method contains at the very least, contain a valid SID.
         /// </para>
         /// <para>
         /// Any Member object provided by name or SID string will be looked up

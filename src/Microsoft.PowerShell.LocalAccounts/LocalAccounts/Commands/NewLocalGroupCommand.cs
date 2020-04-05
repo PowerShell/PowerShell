@@ -3,7 +3,6 @@
 
 using System;
 using System.Management.Automation;
-
 using System.Management.Automation.SecurityAccountsManager;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
 
@@ -32,11 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [ValidateNotNull]
-        public string Description
-        {
-            get;
-            set;
-        }
+        public string Description { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -48,11 +43,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [ValidateLength(1, 256)]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         #endregion Parameter Properties
 
@@ -74,11 +65,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (CheckShouldProcess(Name))
                 {
-                    LocalGroup group = _sam.CreateLocalGroup(new LocalGroup
-                                                        {
-                                                            Description = Description,
-                                                            Name = Name
-                                                        });
+                    LocalGroup group = _sam.CreateLocalGroup(
+                        new LocalGroup
+                        {
+                            Description = Description,
+                            Name = Name
+                        });
 
                     WriteObject(group);
                 }

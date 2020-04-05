@@ -31,11 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true)]
         [ValidateNotNull]
-        public string Description
-        {
-            get;
-            set;
-        }
+        public string Description { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
@@ -48,11 +44,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "InputObject")]
         [ValidateNotNull]
-        public Microsoft.PowerShell.Commands.LocalGroup InputObject
-        {
-            get;
-            set;
-        }
+        public LocalGroup InputObject { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
@@ -65,11 +57,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Default")]
         [ValidateNotNull]
-        public string Name
-        {
-            get;
-            set;
-        }
+        public string Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -81,11 +69,7 @@ namespace Microsoft.PowerShell.Commands
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNull]
-        public System.Security.Principal.SecurityIdentifier SID
-        {
-            get;
-            set;
-        }
+        public System.Security.Principal.SecurityIdentifier SID { get; set; }
 
         #endregion Parameter Properties
 
@@ -110,21 +94,27 @@ namespace Microsoft.PowerShell.Commands
                 if (InputObject != null)
                 {
                     if (CheckShouldProcess(InputObject.ToString()))
+                    {
                         group = InputObject;
+                    }
                 }
                 else if (Name != null)
                 {
                     group = _sam.GetLocalGroup(Name);
 
                     if (!CheckShouldProcess(Name))
+                    {
                         group = null;
+                    }
                 }
                 else if (SID != null)
                 {
                     group = _sam.GetLocalGroup(SID);
 
                     if (!CheckShouldProcess(SID.ToString()))
+                    {
                         group = null;
+                    }
                 }
 
                 if (group != null)

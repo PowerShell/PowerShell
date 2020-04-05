@@ -37,11 +37,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "Default")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public string[] Name
-        {
-            get;
-            set;
-        }
+        public string[] Name { get; set; }
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
@@ -53,11 +49,7 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = "SecurityIdentifier")]
         [ValidateNotNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        public SecurityIdentifier[] SID
-        {
-            get;
-            set;
-        }
+        public SecurityIdentifier[] SID { get; set; }
 
         #endregion Parameter Properties
 
@@ -115,14 +107,15 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Name != null)
             {
-                foreach (var nm in Name)
+                foreach (var userName in Name)
                 {
                     try
                     {
-                        if (WildcardPattern.ContainsWildcardCharacters(nm))
+                        if (WildcardPattern.ContainsWildcardCharacters(userName))
                         {
-                            var pattern = new WildcardPattern(nm, WildcardOptions.Compiled
-                                                                | WildcardOptions.IgnoreCase);
+                            var pattern = new WildcardPattern(
+                                userName,
+                                WildcardOptions.Compiled | WildcardOptions.IgnoreCase);
 
                             foreach (LocalUser user in _sam.GetMatchingLocalUsers(n => pattern.IsMatch(n)))
                             {
@@ -131,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            WriteObject(_sam.GetLocalUser(nm));
+                            WriteObject(_sam.GetLocalUser(userName));
                         }
                     }
                     catch (Exception ex)
