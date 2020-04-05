@@ -801,14 +801,14 @@ namespace System.Management.Automation.SecurityAccountsManager
             using var searcher = new PrincipalSearcher(groupPattern);
             using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
             //using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, group.SID.ToString());
-            using Principal principalPattern = member switch
+            using Principal principalPattern = member.ObjectClass switch
             {
-                LocalUser _ =>
+                "User" =>
                     new UserPrincipal(s_ctx)
                     {
                         Name = member.Name
                     },
-                LocalGroup _ =>
+                "Group" =>
                     new GroupPrincipal(s_ctx)
                     {
                         Name = member.Name
@@ -816,7 +816,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 _ => null
             };
             using var searcherPrincipal = new PrincipalSearcher(principalPattern);
-            using var principal = (GroupPrincipal)searcherPrincipal.FindOne();
+            using Principal principal = searcherPrincipal.FindOne();
             //using var principal = Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
 
             try
@@ -930,14 +930,14 @@ namespace System.Management.Automation.SecurityAccountsManager
             using var searcher = new PrincipalSearcher(groupPattern);
             using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
             //using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, group.SID.ToString());
-            using Principal principalPattern = member switch
+            using Principal principalPattern = member.ObjectClass switch
             {
-                LocalUser _ =>
+                "User" =>
                     new UserPrincipal(s_ctx)
                     {
                         Name = member.Name
                     },
-                LocalGroup _ =>
+                "Group" =>
                     new GroupPrincipal(s_ctx)
                     {
                         Name = member.Name
@@ -945,7 +945,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 _ => null
             };
             using var searcherPrincipal = new PrincipalSearcher(principalPattern);
-            using var principal = (GroupPrincipal)searcherPrincipal.FindOne();
+            using Principal principal = searcherPrincipal.FindOne();
             //using var principal = Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
 
             try
