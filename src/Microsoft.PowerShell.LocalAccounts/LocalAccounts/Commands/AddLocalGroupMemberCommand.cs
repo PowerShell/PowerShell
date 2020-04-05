@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         /// in WhatIf scenarios.
         /// </param>
         /// <param name="member">
-        /// LocalPrincipal object to be processed
+        /// LocalPrincipal object to be processed.
         /// </param>
         /// <returns>
         /// A LocalPrincipal Object to be added to the group.
@@ -221,18 +221,15 @@ namespace Microsoft.PowerShell.Commands
 
                 member.SID = secureId;
                 member.Name = memberName;   // TODO: breaking change? - remove?
-                principal = member;
             }
-            else
+
+            try
             {
-                try
-                {
-                    principal = _sam.LookupAccount(member.Name);
-                }
-                catch (Exception ex)
-                {
-                    WriteError(ex.MakeErrorRecord());
-                }
+                principal = _sam.LookupAccount(member.Name);
+            }
+            catch (Exception ex)
+            {
+                WriteError(ex.MakeErrorRecord());
             }
 
             if (CheckShouldProcess(principal, group))

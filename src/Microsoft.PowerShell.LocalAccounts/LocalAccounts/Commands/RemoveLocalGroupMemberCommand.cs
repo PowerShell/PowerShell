@@ -137,16 +137,16 @@ namespace Microsoft.PowerShell.Commands
         /// Creates a list of <see cref="LocalPrincipal"/> objects
         /// ready to be processed by the cmdlet.
         /// </summary>
-        /// <param name="groupId">
-        /// Name or SID (as a string) of the group we'll be removing from.
+        /// <param name="group">
+        /// Group we'll be removing from.
         /// This string is used primarily for specifying the target
         /// in WhatIf scenarios.
         /// </param>
         /// <param name="member">
-        /// LocalPrincipal object to be processed
+        /// LocalPrincipal object to be processed.
         /// </param>
         /// <returns>
-        /// LocalPrincipal object processed and ready to be removed
+        /// LocalPrincipal object processed and ready to be removed.
         /// </returns>
         /// <remarks>
         /// <para>
@@ -157,46 +157,71 @@ namespace Microsoft.PowerShell.Commands
         /// <para>
         /// Any Member object provided by name or SID string will be looked up
         /// to ensure that such an object exists. If an object is not found,
-        /// an error message is displayed by PowerShell and null will be returned from this method
+        /// an error message is displayed by PowerShell and null will be returned from this method.
         /// </para>
         /// <para>
         /// This method also handles the WhatIf scenario. If the Cmdlet's
-        /// <b>ShouldProcess</b> method returns false on any Member object
+        /// <b>ShouldProcess</b> method returns false on any Member object.
         /// </para>
         /// </remarks>
-        private LocalPrincipal MakePrincipal(string groupId, LocalPrincipal member)
+        private LocalPrincipal MakePrincipal(LocalGroup group, LocalPrincipal member)
         {
-               LocalPrincipal principal = null;
+            LocalPrincipal principal = null;
+            string memberName = null;
+            SecurityIdentifier secureId = member.SID;
 
-                // if the member has a SID, we can use it directly
-                if (member.SID != null)
+            if (secureId != null)
+            {
+                try
                 {
-                    principal = member;
+                    NTAccount account = (NTAccount)secureId.Translate(typeof(NTAccount));
+                    memberName = account.Value;
                 }
-                else    // otherwise it must have been constructed by name
+                catch (IdentityNotMappedException exc)
                 {
-                    SecurityIdentifier sid = this.TrySid(member.Name);
+                    var exception = new PrincipalNotFoundException(exc, secureId.ToString());
+                    WriteError(exception.MakeErrorRecord());
+                    return null;
+                }
+            }
 
-                    if (sid != null)
-                    {
-                        member.SID = sid;
-                        principal = member;
-                    }
-                    else
-                    {
-                        try
-                        {
-                            principal = _sam.LookupAccount(member.Name);
-                        }
-                        catch (Exception ex)
-                        {
-                            WriteError(ex.MakeErrorRecord());
-                        }
-                    }
+            if (member.Name is null)
+            {
+                var exception = new PrincipalNotFoundException();
+                WriteError(exception.MakeErrorRecord());
+                return null;
+            }
+
+            secureId = memberName is null ? this.TrySid(member.Name) : null;
+
+            if (secureId != null)
+            {
+                try
+                {
+                    NTAccount account = (NTAccount)secureId.Translate(typeof(NTAccount));
+                    memberName = account.Value;
+                }
+                catch (IdentityNotMappedException)
+                {
                 }
 
-            if (CheckShouldProcess(principal, groupId))
+                member.SID = secureId;
+                member.Name = memberName;   // TODO: breaking change? - remove?
+            }
+
+            try
+            {
+                principal = _sam.LookupAccount(member.Name);
+            }
+            catch (Exception ex)
+            {
+                WriteError(ex.MakeErrorRecord());
+            }
+
+            if (CheckShouldProcess(principal, group))
+            {
                 return principal;
+            }
 
             return null;
         }
@@ -207,20 +232,23 @@ namespace Microsoft.PowerShell.Commands
         /// formatting.
         /// </summary>
         /// <param name="principal">Name of the principal to be removed.</param>
-        /// <param name="groupName">
-        /// Name of the group from which the members will be removed.
+        /// <param name="group">
+        /// Group from which the members will be removed.
         /// </param>
         /// <returns>
         /// True if the principal should be processed, false otherwise.
         /// </returns>
-        private bool CheckShouldProcess(LocalPrincipal principal, string groupName)
+        private bool CheckShouldProcess(LocalPrincipal principal, LocalGroup group)
         {
             if (principal == null)
+            {
                 return false;
+            }
 
-            string msg = StringUtil.Format(Strings.ActionRemoveGroupMember, principal.ToString());
+            string msg = StringUtil.Format(Strings.ActionAddGroupMember, principal.ToString());
+            string target = StringUtil.Format("{0} ({1})", group.Name, group.SID.ToString());
 
-            return ShouldProcess(groupName, msg);
+            return ShouldProcess(target, msg);
         }
 
         /// <summary>
@@ -232,10 +260,9 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessGroup(LocalGroup group)
         {
-            string groupId = group.Name ?? group.SID.ToString();
             foreach (LocalPrincipal member in Member)
             {
-                LocalPrincipal principal = MakePrincipal(groupId, member);
+                LocalPrincipal principal = MakePrincipal(group, member);
                 if (principal != null)
                 {
                     Exception ex = _sam.RemoveLocalGroupMember(group, principal);
@@ -267,18 +294,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessSid(SecurityIdentifier groupSid)
         {
-            foreach (var member in this.Member)
-            {
-                LocalPrincipal principal = MakePrincipal(groupSid.ToString(), member);
-                if (principal != null)
-                {
-                    Exception ex = _sam.RemoveLocalGroupMember(groupSid, principal);
-                    if (ex != null)
-                    {
-                        WriteError(ex.MakeErrorRecord());
-                    }
-                }
-            }
+            ProcessGroup(_sam.GetLocalGroup(groupSid));
         }
         #endregion Private Methods
     }
