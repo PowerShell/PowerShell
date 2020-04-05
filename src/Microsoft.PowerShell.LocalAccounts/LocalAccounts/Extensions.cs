@@ -72,10 +72,10 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
         /// </returns>
         internal static bool HasParameter(this PSCmdlet cmdlet, string parameterName)
         {
-            var invocation = cmdlet.MyInvocation;
+            InvocationInfo invocation = cmdlet.MyInvocation;
             if (invocation != null)
             {
-                var parameters = invocation.BoundParameters;
+                Collections.Generic.Dictionary<string, object> parameters = invocation.BoundParameters;
 
                 if (parameters != null)
                 {
@@ -102,7 +102,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
         /// <returns>
         /// A UInt32 value containing the Relative ID in the SecurityIdentifier.
         /// </returns>
-        internal static UInt32 GetRid(this SecurityIdentifier sid)
+        internal static uint GetRid(this SecurityIdentifier sid)
         {
             byte[] sidBinary = new byte[sid.BinaryLength];
             sid.GetBinaryForm(sidBinary, 0);
@@ -187,9 +187,8 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
         {
             // This part is somewhat less than beautiful, but it prevents
             // having to have multiple exception handlers in every cmdlet command.
-            var exTemp = ex as LocalAccountsException;
 
-            if (exTemp != null)
+            if (ex is LocalAccountsException exTemp)
                 return MakeErrorRecord(exTemp, target ?? exTemp.Target);
 
             return new ErrorRecord(ex,

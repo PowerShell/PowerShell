@@ -47,7 +47,7 @@ namespace System.Management.Automation.SecurityAccountsManager
         internal static string FormatMessage(uint messageId, string[] args)
         {
             var message = new System.Text.StringBuilder(256);
-            UInt32 flags = Win32.FORMAT_MESSAGE_FROM_SYSTEM;
+            uint flags = Win32.FORMAT_MESSAGE_FROM_SYSTEM;
 
             if (args == null)
                 flags |= Win32.FORMAT_MESSAGE_IGNORE_INSERTS;

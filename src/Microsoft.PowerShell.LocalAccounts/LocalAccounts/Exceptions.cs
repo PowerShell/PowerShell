@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         }
 #endregion Public Properties
 
-        internal InternalException(UInt32 ntStatus,
+        internal InternalException(uint ntStatus,
                                    string message,
                                    object target,
                                    ErrorCategory errorCategory = ErrorCategory.NotSpecified)
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
             StatusCode = ntStatus;
         }
 
-        internal InternalException(UInt32 ntStatus,
+        internal InternalException(uint ntStatus,
                                    object target,
                                    ErrorCategory errorCategory = ErrorCategory.NotSpecified)
             : this(ntStatus,
