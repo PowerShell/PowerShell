@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
         /// LocalPrincipal object to be processed
         /// </param>
         /// <returns>
-        /// A LocalPrincipal Object to be added to the group
+        /// A LocalPrincipal Object to be added to the group.
         /// </returns>
         /// <remarks>
         /// <para>
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
         /// <para>
         /// Any Member objects provided by name or SID string will be looked up
         /// to ensure that such an object exists. If an object is not found,
-        /// an error message is displayed by PowerShell and null will be returned
+        /// an error message is displayed by PowerShell and null will be returned.
         /// </para>
         /// <para>
         /// This method also handles the WhatIf scenario. If the Cmdlet's

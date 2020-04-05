@@ -794,14 +794,30 @@ namespace System.Management.Automation.SecurityAccountsManager
         internal Exception AddLocalGroupMember(LocalGroup group, LocalPrincipal member)
         {
             //using var ctx = new PrincipalContext(ContextType.Machine);
-            //using var groupPattern = new GroupPrincipal(ctx)
-            //{
-            //    Name = group.Name
-            //};
-            //using var searcher = new PrincipalSearcher(groupPattern);
-            //using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, group.SID.ToString());
-            using var principal = Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
+            using var groupPattern = new GroupPrincipal(s_ctx)
+            {
+                Name = group.Name
+            };
+            using var searcher = new PrincipalSearcher(groupPattern);
+            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            //using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, group.SID.ToString());
+            using Principal principalPattern = member switch
+            {
+                LocalUser _ =>
+                    new UserPrincipal(s_ctx)
+                    {
+                        Name = member.Name
+                    },
+                LocalGroup _ =>
+                    new GroupPrincipal(s_ctx)
+                    {
+                        Name = member.Name
+                    },
+                _ => null
+            };
+            using var searcherPrincipal = new PrincipalSearcher(principalPattern);
+            using var principal = (GroupPrincipal)searcherPrincipal.FindOne();
+            //using var principal = Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
 
             try
             {
@@ -907,26 +923,30 @@ namespace System.Management.Automation.SecurityAccountsManager
         internal Exception RemoveLocalGroupMember(LocalGroup group, LocalPrincipal member)
         {
             //using var ctx = new PrincipalContext(ContextType.Machine);
-            using GroupPrincipal groupPrincipal = group.SID is null ?
-                GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Name, group.Name)
-                : GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, group.SID.ToString());
-
-            if (groupPrincipal is null)
+            using var groupPattern = new GroupPrincipal(s_ctx)
             {
-                var name = group.SID is null ? group.Name : group.SID.ToString();
-                return new GroupNotFoundException(name, name);
-            }
-
-            using Principal principal = member.SID is null ?
-                Principal.FindByIdentity(s_ctx, IdentityType.Name, member.Name)
-                : Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
-
-            if (principal is null)
+                Name = group.Name
+            };
+            using var searcher = new PrincipalSearcher(groupPattern);
+            using var groupPrincipal = (GroupPrincipal)searcher.FindOne();
+            //using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, group.SID.ToString());
+            using Principal principalPattern = member switch
             {
-                return new PrincipalNotFoundException(
-                    member.SID is null ? member.Name : member.SID.ToString(),
-                    group.SID is null ? group.Name : group.SID.ToString());
-            }
+                LocalUser _ =>
+                    new UserPrincipal(s_ctx)
+                    {
+                        Name = member.Name
+                    },
+                LocalGroup _ =>
+                    new GroupPrincipal(s_ctx)
+                    {
+                        Name = member.Name
+                    },
+                _ => null
+            };
+            using var searcherPrincipal = new PrincipalSearcher(principalPattern);
+            using var principal = (GroupPrincipal)searcherPrincipal.FindOne();
+            //using var principal = Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
 
             try
             {
