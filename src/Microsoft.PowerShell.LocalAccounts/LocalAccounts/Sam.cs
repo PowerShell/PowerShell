@@ -1180,7 +1180,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
             catch (IdentityNotMappedException exc)
             {
-                throw new GroupNotFoundException(exc, sid.ToString());
+                throw new UserNotFoundException(exc, sid.ToString());
             }
         }
 
