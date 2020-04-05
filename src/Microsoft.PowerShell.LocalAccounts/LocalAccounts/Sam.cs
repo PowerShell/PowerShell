@@ -7,7 +7,6 @@ using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Management.Automation.SecurityAccountsManager.Extensions;
 using System.Management.Automation.SecurityAccountsManager.Native;
-using System.Management.Automation.SecurityAccountsManager.Native.NtSam;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
@@ -24,130 +23,7 @@ namespace System.Management.Automation.SecurityAccountsManager
     /// </summary>
     internal class Sam : IDisposable
     {
-#region Enums
-         /// <summary>
-        /// The operation under way. Used in the <see cref="Context"/> class.
-        /// </summary>
-        private enum ContextOperation
-        {
-            New = 1,
-            Enable,
-            Disable,
-            Get,
-            Remove,
-            Rename,
-            Set,
-            AddMember,
-            GetMember,
-            RemoveMember
-        }
-
-        /// <summary>
-        /// The type of object currently operating with.
-        /// used in the <see cref="Context"/> class.
-        /// </summary>
-        private enum ContextObjectType
-        {
-            User = 1,
-            Group
-        }
-#endregion Enums
-
 #region Internal Classes
-        /// <summary>
-        /// Holds information about the underway operation.
-        /// </summary>
-        /// <remarks>
-        /// Used primarily by the private ThrowOnFailure method when building
-        /// Exception objects to throw.
-        /// </remarks>
-        private class Context
-        {
-            public ContextOperation operation;
-            public ContextObjectType type;
-            public object target;
-            public string objectId;
-            public string memberId;
-
-            /// <summary>
-            /// Initialize a new Context object.
-            /// </summary>
-            /// <param name="operation">
-            /// One of the <see cref="ContextOperation"/> enumerations indicating
-            /// the type of operation under way.
-            /// </param>
-            /// <param name="objectType">
-            /// One of the <see cref="ContextObjectType"/> enumerations indicating
-            /// the type of object (user or group) being used.
-            /// </param>
-            /// <param name="objectIdentifier">
-            /// A string containing the name of the object. This may be either a
-            /// user/group name or a string representation of a SID.
-            /// </param>
-            /// <param name="target">
-            /// The target being operated on.
-            /// </param>
-            /// <param name="memberIdentifier">
-            /// A string containing the name of the member being added or removed
-            /// from a group. Used only in such cases.
-            /// </param>
-            public Context(ContextOperation operation,
-                           ContextObjectType objectType,
-                           string objectIdentifier,
-                           object target,
-                           string memberIdentifier = null)
-            {
-                this.operation = operation;
-                this.type = objectType;
-                this.objectId = objectIdentifier;
-                this.target = target;
-                this.memberId = memberIdentifier;
-            }
-
-            /// <summary>
-            /// Default constructor.
-            /// </summary>
-            public Context()
-            {
-            }
-            /// <summary>
-            /// Gets a string containing the type of operation under way.
-            /// </summary>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            public string OperationName
-            {
-                get { return operation.ToString(); }
-            }
-
-            /// <summary>
-            /// Gets a string containing the type of object ("User" or "Group")
-            /// being used.
-            /// </summary>
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-            public string TypeNamne
-            {
-                get { return type.ToString(); }
-            }
-
-            /// <summary>
-            /// Gets a string containing the name of the object being used.
-            /// </summary>
-            public string ObjectName
-            {
-                get { return objectId; }
-            }
-
-            /// <summary>
-            /// Gets a string containing the name of the member being added to
-            /// or removed from a group. Returns null if the operation does not
-            /// involve group members.
-            /// </summary>
-            public string MemberName
-            {
-                get { return memberId; }
-            }
-        }
-
         /// <summary>
         /// Contains basic information about an Account.
         /// </summary>
@@ -173,24 +49,20 @@ namespace System.Management.Automation.SecurityAccountsManager
 #endregion Internal Classes
 
 #region Instance Data
-        private Context context = null;
-        private string machineName = string.Empty;
+        private static readonly string s_machineName = System.Net.Dns.GetHostName();
         private static readonly PrincipalContext s_ctx = new PrincipalContext(ContextType.Machine);
 #endregion Instance Data
 
 #region Construction
         internal Sam()
         {
-            // CoreCLR does not have Environment.MachineName,
-            // so we'll use this instead.
-            machineName = System.Net.Dns.GetHostName();
         }
 #endregion Construction
 
 #region Public (Internal) Methods
         public string StripMachineName(string name)
         {
-            var mn = machineName + '\\';
+            var mn = s_machineName + '\\';
 
             if (name.StartsWith(mn, StringComparison.CurrentCultureIgnoreCase))
                 return name.Substring(mn.Length);
@@ -1222,38 +1094,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             }
         }
 
-        private static void SetProperties(LocalUser user, LocalUser changed, UserPrincipal userPrincipal, bool? setPasswordNeverExpires)
-        {
-            if (user.Enabled != changed.Enabled)
-            {
-                userPrincipal.Enabled = changed.Enabled;
-            }
-            if (user.AccountExpires != changed.AccountExpires)
-            {
-                userPrincipal.AccountExpirationDate = changed.AccountExpires;
-            }
-            if (user.Description != changed.Description)
-            {
-                userPrincipal.Description = changed.Description;
-            }
-            if (user.FullName != changed.FullName)
-            {
-                userPrincipal.DisplayName = changed.FullName;
-            }
-            if (setPasswordNeverExpires.HasValue)
-            {
-                userPrincipal.PasswordNeverExpires = setPasswordNeverExpires.Value;
-            }
-            if (user.UserMayChangePassword != changed.UserMayChangePassword)
-            {
-                userPrincipal.UserCannotChangePassword = !changed.UserMayChangePassword;
-            }
-            if (user.PasswordRequired != changed.PasswordRequired)
-            {
-                userPrincipal.PasswordNotRequired = !changed.PasswordRequired;
-            }
-        }
-
         /// <summary>
         /// Get all local users whose names satisfy the specified predicate.
         /// </summary>
@@ -1304,7 +1144,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 #region Local Principals
         internal LocalPrincipal LookupAccount(string name)
         {
-            var info = LookupAccountInfo(name);
+            AccountInfo info = LookupAccountInfo(name);
 
             if (info == null)
                 throw new PrincipalNotFoundException(name, name);
@@ -1315,6 +1155,38 @@ namespace System.Management.Automation.SecurityAccountsManager
 #endregion Public (Internal) Methods
 
 #region Private Methods
+        private static void SetProperties(LocalUser user, LocalUser changed, UserPrincipal userPrincipal, bool? setPasswordNeverExpires)
+        {
+            if (user.Enabled != changed.Enabled)
+            {
+                userPrincipal.Enabled = changed.Enabled;
+            }
+            if (user.AccountExpires != changed.AccountExpires)
+            {
+                userPrincipal.AccountExpirationDate = changed.AccountExpires;
+            }
+            if (user.Description != changed.Description)
+            {
+                userPrincipal.Description = changed.Description;
+            }
+            if (user.FullName != changed.FullName)
+            {
+                userPrincipal.DisplayName = changed.FullName;
+            }
+            if (setPasswordNeverExpires.HasValue)
+            {
+                userPrincipal.PasswordNeverExpires = setPasswordNeverExpires.Value;
+            }
+            if (user.UserMayChangePassword != changed.UserMayChangePassword)
+            {
+                userPrincipal.UserCannotChangePassword = !changed.UserMayChangePassword;
+            }
+            if (user.PasswordRequired != changed.PasswordRequired)
+            {
+                userPrincipal.PasswordNotRequired = !changed.PasswordRequired;
+            }
+        }
+
         /// <summary>
         /// Open the handles stored by Sam instances.
         /// </summary>
@@ -1438,9 +1310,9 @@ namespace System.Management.Automation.SecurityAccountsManager
             else if (error == Win32.ERROR_NONE_MAPPED)
                 return null;
             else if (error == Win32.ERROR_ACCESS_DENIED)
-                throw new AccessDeniedException(context.target);
+                throw new AccessDeniedException(accountName);
             else
-                throw new Win32InternalException(error, context.target);
+                throw new Win32InternalException(error, accountName);
         }
 
         /// <summary>
@@ -1461,9 +1333,11 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (info == null)
                 return null;    // this is a legitimate case
 
-            var rv = new LocalPrincipal(info.ToString());
-            rv.SID = info.Sid;
-            rv.PrincipalSource = GetPrincipalSource(info);
+            var rv = new LocalPrincipal(info.ToString())
+            {
+                SID = info.Sid,
+                PrincipalSource = GetPrincipalSource(info)
+            };
 
             switch (info.Use)
             {
@@ -1508,139 +1382,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             };
 
             return rv;
-        }
-
-        /// <summary>
-        /// Helper to throw an exception if the provided Status code
-        /// represents a failure.
-        /// </summary>
-        /// <param name="ntStatus">
-        /// One of the NTSTATUS code values indicating the error, if any.
-        /// </param>
-        /// <param name="context">
-        /// A <see cref="Context"/> object containing information about the
-        /// current operation. If this parameter is null, the class's context
-        /// is used.
-        /// </param>
-        private void ThrowOnFailure(UInt32 ntStatus, Context context = null)
-        {
-            if (NtStatus.IsError(ntStatus))
-            {
-                var ex = MakeException(ntStatus, context);
-
-                if (ex != null)
-                    throw ex;
-            }
-        }
-
-        /// <summary>
-        /// Create an appropriate exception from the specified status code.
-        /// </summary>
-        /// <param name="ntStatus">
-        /// One of the NTSTATUS code values indicating the error, if any.
-        /// </param>
-        /// <param name="context">
-        /// A <see cref="Context"/> object containing information about the
-        /// current operation. If this parameter is null, the class's context
-        /// is used.
-        /// </param>
-        /// <returns>
-        /// An <see cref="Exception"/> object, or an object derived from Exception,
-        /// appropriate to the error. If <paramref name="ntStatus"/> does not
-        /// indicate an error, the method returns null.
-        /// </returns>
-        private Exception MakeException(UInt32 ntStatus, Context context = null)
-        {
-            if (!NtStatus.IsError(ntStatus))
-                return null;
-
-            if (context == null)
-                context = this.context;
-
-            switch (ntStatus)
-            {
-                case NtStatus.STATUS_ACCESS_DENIED:
-                    return new AccessDeniedException(context.target);
-
-                case NtStatus.STATUS_INVALID_ACCOUNT_NAME:
-                    return new InvalidNameException(context.ObjectName, context.target);
-
-                case NtStatus.STATUS_USER_EXISTS:
-                    if (context.operation == ContextOperation.New &&
-                        context.type == ContextObjectType.User)
-                    {
-                        return new UserExistsException(context.ObjectName, context.target);
-                    }
-                    else
-                    {
-                        return new NameInUseException(context.ObjectName, context.target);
-                    }
-
-                case NtStatus.STATUS_ALIAS_EXISTS:
-                    if (context.operation == ContextOperation.New &&
-                        context.type == ContextObjectType.Group)
-                    {
-                        return new GroupExistsException(context.ObjectName, context.target);
-                    }
-                    else
-                    {
-                        return new NameInUseException(context.ObjectName, context.target);
-                    }
-
-                case NtStatus.STATUS_GROUP_EXISTS:
-                    return new NameInUseException(context.ObjectName, context.target);
-
-                case NtStatus.STATUS_NO_SUCH_ALIAS:
-                case NtStatus.STATUS_NO_SUCH_GROUP:
-                    return new GroupNotFoundException(context.ObjectName, context.target);
-
-                case NtStatus.STATUS_NO_SUCH_USER:
-                    return new UserNotFoundException(context.ObjectName, context.target);
-
-                case NtStatus.STATUS_SPECIAL_GROUP:     // The group specified is a special group and cannot be operated on in the requested fashion.
-                // case NtStatus.STATUS_SPECIAL_ALIAS: // referred to in source for SAM api, but not in ntstatus.h!!!
-
-                    return new InvalidOperationException(StringUtil.Format(Strings.InvalidForGroup, context.ObjectName));
-
-                case NtStatus.STATUS_SPECIAL_USER:  // The user specified is a special user and cannot be operated on in the requested fashion.
-                    return new InvalidOperationException(StringUtil.Format(Strings.InvalidForUser, context.ObjectName));
-
-                case NtStatus.STATUS_NO_SUCH_MEMBER:
-                    return new MemberNotFoundException(context.MemberName, context.ObjectName);
-
-                case NtStatus.STATUS_MEMBER_IN_ALIAS:
-                case NtStatus.STATUS_MEMBER_IN_GROUP:
-                    if (context.operation == ContextOperation.Remove &&
-                        context.type == ContextObjectType.Group)
-                    {
-                        return new InvalidOperationException(StringUtil.Format(Strings.GroupHasMembers, context.ObjectName));
-                    }
-                    else
-                    {
-                        return new MemberExistsException(context.MemberName, context.ObjectName, context.target);
-                    }
-
-                case NtStatus.STATUS_MEMBER_NOT_IN_ALIAS:
-                case NtStatus.STATUS_MEMBER_NOT_IN_GROUP:
-                    return new MemberNotFoundException(context.MemberName, context.ObjectName);
-
-                case NtStatus.STATUS_MEMBERS_PRIMARY_GROUP:
-                    return new InvalidOperationException(StringUtil.Format(Strings.MembersPrimaryGroup, context.ObjectName));
-
-                case NtStatus.STATUS_LAST_ADMIN:    // Cannot delete the last administrator.
-                    return new InvalidOperationException(Strings.LastAdmin);
-
-                case NtStatus.STATUS_ILL_FORMED_PASSWORD:
-                case NtStatus.STATUS_PASSWORD_RESTRICTION:
-                    return new InvalidPasswordException(Native.Win32.RtlNtStatusToDosError(ntStatus));
-
-                // TODO: do we want to handle these?
-                //      they appear to be returned only in functions we are not calling
-                case NtStatus.STATUS_INVALID_SID:       // member sid is corrupted
-                case NtStatus.STATUS_INVALID_MEMBER:    // member has wrong account type
-                default:
-                    return new InternalException(ntStatus, context.target);
-            }
         }
 
         /// <summary>
@@ -1729,11 +1470,11 @@ namespace System.Management.Automation.SecurityAccountsManager
 #endregion Private Methods
 
 #region IDisposable Support
-        private bool disposedValue = false; // To detect redundant calls
+        private bool _disposedValue = false; // To detect redundant calls
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!disposedValue)
+            if (!_disposedValue)
             {
                 UInt32 status = 0;
 
@@ -1747,7 +1488,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     // Do nothing to satisfy CA1806: Do not ignore method results. We want the dispose to proceed regardless of the handle close status.
                 }
 
-                disposedValue = true;
+                _disposedValue = true;
             }
         }
 

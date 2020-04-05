@@ -8,40 +8,6 @@ using System.Text;
 namespace System.Management.Automation.SecurityAccountsManager.Native
 {
     #region Enums
-    internal enum POLICY_INFORMATION_CLASS
-    {
-        PolicyAuditLogInformation        = 1,
-        PolicyAuditEventsInformation,
-        PolicyPrimaryDomainInformation,
-        PolicyPdAccountInformation,
-        PolicyAccountDomainInformation,
-        PolicyLsaServerRoleInformation,
-        PolicyReplicaSourceInformation,
-        PolicyDefaultQuotaInformation,
-        PolicyModificationInformation,
-        PolicyAuditFullSetInformation,
-        PolicyAuditFullQueryInformation,
-        PolicyDnsDomainInformation
-    }
-
-    [Flags]
-    internal enum LSA_AccessPolicy : long
-    {
-        POLICY_VIEW_LOCAL_INFORMATION   = 0x00000001L,
-        POLICY_VIEW_AUDIT_INFORMATION   = 0x00000002L,
-        POLICY_GET_PRIVATE_INFORMATION  = 0x00000004L,
-        POLICY_TRUST_ADMIN              = 0x00000008L,
-        POLICY_CREATE_ACCOUNT           = 0x00000010L,
-        POLICY_CREATE_SECRET            = 0x00000020L,
-        POLICY_CREATE_PRIVILEGE         = 0x00000040L,
-        POLICY_SET_DEFAULT_QUOTA_LIMITS = 0x00000080L,
-        POLICY_SET_AUDIT_REQUIREMENTS   = 0x00000100L,
-        POLICY_AUDIT_LOG_ADMIN          = 0x00000200L,
-        POLICY_SERVER_ADMIN             = 0x00000400L,
-        POLICY_LOOKUP_NAMES             = 0x00000800L,
-        POLICY_NOTIFICATION             = 0x00001000L
-    }
-
     internal enum SID_NAME_USE
     {
         SidTypeUser             = 1,
@@ -71,47 +37,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
     #endregion Enums
 
     #region Structures
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct SECURITY_DESCRIPTOR
-    {
-        public byte Revision;
-        public byte Sbz1;
-        public UInt16 Control;  // SECURITY_DESCRIPTOR_CONTROL
-        public IntPtr Owner;
-        public IntPtr Group;
-        public IntPtr Sacl;
-        public IntPtr Dacl;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct ACL
-    {
-        public byte AclRevision;
-        public byte Sbz1;
-        public UInt16 AclSize;
-        public UInt16 AceCount;
-        public UInt16 Sbz2;
-    }
-
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
-    internal struct USER_INFO_1
-    {
-        public string name;
-        public string password;
-        public int password_age;
-        public int priv;
-        public string home_dir;
-        public string comment;
-        public uint flags;
-        public string script_path;
-    }
-
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct USER_INFO_1008
-    {
-        public uint flags;
-    }
-
     /// <summary>
     /// The UNICODE_STRING structure is passed to a number of the SAM and LSA
     /// API functions. This adds cleanup and managed-string conversion behaviors.
@@ -142,43 +67,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         }
     }
 
-    [StructLayout(LayoutKind.Sequential)]
-    internal struct OBJECT_ATTRIBUTES : IDisposable
-    {
-        public int Length;
-        public IntPtr RootDirectory;
-        public uint Attributes;
-        public IntPtr SecurityDescriptor;
-        public IntPtr SecurityQualityOfService;
-
-        private IntPtr objectName;
-        public UNICODE_STRING ObjectName;
-
-        public void Dispose()
-        {
-            if (objectName != IntPtr.Zero)
-            {
-                Marshal.DestroyStructure<UNICODE_STRING>(objectName);
-                Marshal.FreeHGlobal(objectName);
-                objectName = IntPtr.Zero;
-            }
-        }
-    }
-
-// These structures are filled in by Marshalling, so fields will be initialized
-// invisibly to the C# compiler, and some fields will not be used in C# code.
-#pragma warning disable 0649, 0169
-    [StructLayout(LayoutKind.Explicit, Size = 8)]
-    struct LARGE_INTEGER
-    {
-        [FieldOffset(0)]
-        public Int64 QuadPart;
-        [FieldOffset(0)]
-        public UInt32 LowPart;
-        [FieldOffset(4)]
-        public Int32 HighPart;
-    }
-#pragma warning restore 0649, 0169
     #endregion Structures
 
     internal static class Win32
@@ -335,14 +223,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         internal const int NERR_LastAdmin               = NERR_BASE + 352;  // This operation is not allowed on the last administrative account.
         #endregion Win32 Error Codes
 
-        #region SECURITY_DESCRIPTOR Control Flags
-        internal const UInt16 SE_DACL_PRESENT           = 0x0004;
-        internal const UInt16 SE_SELF_RELATIVE          = 0x8000;
-        #endregion SECURITY_DESCRIPTOR Control Flags
-
-        #region SECURITY_INFORMATION Values
-        internal const int DACL_SECURITY_INFORMATION    = 0x00000004;
-        #endregion SECURITY_INFORMATION Values
         #endregion Constants
 
         #region Win32 Functions
@@ -367,24 +247,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
                                                       ref uint domainNameLength,
                                                       out SID_NAME_USE peUse);
 
-        [DllImport(PInvokeDllNames.GetSecurityDescriptorDaclDllName, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool GetSecurityDescriptorDacl(IntPtr pSecurityDescriptor,
-                                                              [MarshalAs(UnmanagedType.Bool)]
-                                                              out bool bDaclPresent,
-                                                              out IntPtr pDacl,
-                                                              [MarshalAs(UnmanagedType.Bool)]
-                                                              out bool bDaclDefaulted);
-
-        [DllImport(PInvokeDllNames.SetSecurityDescriptorDaclDllName, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool SetSecurityDescriptorDacl(IntPtr pSecurityDescriptor,
-                                                              [MarshalAs(UnmanagedType.Bool)]
-                                                              bool bDaclPresent,
-                                                              IntPtr pDacl,
-                                                              [MarshalAs(UnmanagedType.Bool)]
-                                                              bool bDaclDefaulted);
-
         [DllImport(PInvokeDllNames.FormatMessageDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern uint FormatMessage(uint dwFlags,
                                                   IntPtr lpSource,
@@ -399,23 +261,6 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         #endregion Win32 Functions
 
         #region LSA Functions
-        [DllImport(PInvokeDllNames.LsaOpenPolicyDllName, CharSet = CharSet.Unicode)]
-        internal static extern UInt32 LsaOpenPolicy(ref UNICODE_STRING SystemName,
-                                                    ref OBJECT_ATTRIBUTES ObjectAttributes,
-                                                    uint DesiredAccess,
-                                                    out IntPtr PolicyHandle);
-
-        [DllImport(PInvokeDllNames.LsaQueryInformationPolicyDllName, CharSet = CharSet.Unicode)]
-        internal static extern UInt32 LsaQueryInformationPolicy(IntPtr lsaHandle,
-                                                                POLICY_INFORMATION_CLASS infoClass,
-                                                                out IntPtr buffer);
-
-        [DllImport(PInvokeDllNames.LsaFreeMemoryDllName)]
-        internal static extern UInt32 LsaFreeMemory(IntPtr buffer);
-
-        [DllImport(PInvokeDllNames.LsaCloseDllName)]
-        internal static extern UInt32 LsaClose(IntPtr handle);
-
         [DllImport("api-ms-win-security-lsalookup-l1-1-2.dll")]
         internal static extern UInt32 LsaLookupUserAccountType([MarshalAs(UnmanagedType.LPArray)] byte[] Sid,
                                                                out LSA_USER_ACCOUNT_TYPE accountType);
