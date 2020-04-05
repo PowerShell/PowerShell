@@ -169,8 +169,12 @@ namespace Microsoft.PowerShell.Commands
                                                                 | WildcardOptions.IgnoreCase);
 
                     foreach (LocalPrincipal m in membership)
+                    {
                         if (pattern.IsMatch(_sam.StripMachineName(m.Name)))
+                        {
                             rv.Add(m);
+                        }
+                    }
                 }
                 else
                 {

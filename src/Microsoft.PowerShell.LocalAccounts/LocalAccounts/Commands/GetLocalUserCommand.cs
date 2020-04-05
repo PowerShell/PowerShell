@@ -78,7 +78,9 @@ namespace Microsoft.PowerShell.Commands
             if (Name == null && SID == null)
             {
                 foreach (LocalUser user in _sam.GetAllLocalUsers())
+                {
                     WriteObject(user);
+                }
 
                 return;
             }
@@ -123,7 +125,9 @@ namespace Microsoft.PowerShell.Commands
                                                                 | WildcardOptions.IgnoreCase);
 
                             foreach (LocalUser user in _sam.GetMatchingLocalUsers(n => pattern.IsMatch(n)))
+                            {
                                 WriteObject(user);
+                            }
                         }
                         else
                         {

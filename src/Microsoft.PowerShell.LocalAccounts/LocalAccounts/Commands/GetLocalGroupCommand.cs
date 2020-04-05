@@ -75,7 +75,9 @@ namespace Microsoft.PowerShell.Commands
             if (Name == null && SID == null)
             {
                 foreach (LocalGroup group in _sam.GetAllLocalGroups())
+                {
                     WriteObject(group);
+                }
 
                 return;
             }
@@ -120,7 +122,9 @@ namespace Microsoft.PowerShell.Commands
                                                                 | WildcardOptions.IgnoreCase);
 
                             foreach (LocalGroup group in _sam.GetMatchingLocalGroups(n => pattern.IsMatch(n)))
+                            {
                                 WriteObject(group);
+                            }
                         }
                         else
                         {
