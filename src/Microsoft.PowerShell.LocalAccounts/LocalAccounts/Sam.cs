@@ -1050,12 +1050,29 @@ namespace System.Management.Automation.SecurityAccountsManager
         internal void EnableLocalUser(SecurityIdentifier sid, bool enable)
         {
             //using var ctx = new PrincipalContext(ContextType.Machine);
-            var identityValue = sid.ToString();
-            using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
+            //var identityValue = sid.ToString();
+            //using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
+            string userName;
+            try
+            {
+                NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                userName = account.Value;
+            }
+            catch (IdentityNotMappedException exc)
+            {
+                throw new UserNotFoundException(exc, sid.ToString());
+            }
+
+            using var userPattern = new UserPrincipal(s_ctx)
+            {
+                Name = userName
+            };
+            using var searcher = new PrincipalSearcher(userPattern);
+            using var userPrincipal = (UserPrincipal)searcher.FindOne();
 
             if (userPrincipal is null)
             {
-                throw new UserNotFoundException(identityValue, identityValue);
+                throw new UserNotFoundException(userName, userName);
             }
 
             userPrincipal.Enabled = enable;
@@ -1160,12 +1177,29 @@ namespace System.Management.Automation.SecurityAccountsManager
             else
             {
                 //using var ctx = new PrincipalContext(ContextType.Machine);
-                var identityValue = user.SID.ToString();
-                using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
+                //var identityValue = user.SID.ToString();
+                //using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
+                string userName;
+                try
+                {
+                    NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                    userName = account.Value;
+                }
+                catch (IdentityNotMappedException exc)
+                {
+                    throw new UserNotFoundException(exc, sid.ToString());
+                }
+
+                using var userPattern = new UserPrincipal(s_ctx)
+                {
+                    Name = userName
+                };
+                using var searcher = new PrincipalSearcher(userPattern);
+                using var userPrincipal = (UserPrincipal)searcher.FindOne();
 
                 if (userPrincipal is null)
                 {
-                    throw new UserNotFoundException(identityValue, identityValue);
+                    throw new UserNotFoundException(userName, userName);
                 }
 
                 SetProperties(user, changed, userPrincipal, setPasswordNeverExpires);
