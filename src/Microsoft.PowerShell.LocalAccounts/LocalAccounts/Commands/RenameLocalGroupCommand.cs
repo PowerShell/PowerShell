@@ -146,7 +146,9 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(Name, NewName))
-                        _sam.RenameLocalGroup(_sam.GetLocalGroup(Name), NewName);
+                    {
+                        _sam.RenameLocalGroup(Name, NewName);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -165,7 +167,9 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(SID.ToString(), NewName))
+                    {
                         _sam.RenameLocalGroup(SID, NewName);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -184,7 +188,9 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     if (CheckShouldProcess(InputObject.Name, NewName))
+                    {
                         _sam.RenameLocalGroup(InputObject, NewName);
+                    }
                 }
                 catch (Exception ex)
                 {

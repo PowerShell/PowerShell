@@ -138,7 +138,9 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         if (CheckShouldProcess(name))
-                            _sam.RemoveLocalUser(_sam.GetLocalUser(name));
+                        {
+                            _sam.RemoveLocalUser(name);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -160,7 +162,9 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         if (CheckShouldProcess(sid.ToString()))
+                        {
                             _sam.RemoveLocalUser(sid);
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -182,7 +186,9 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         if (CheckShouldProcess(user.Name))
+                        {
                             _sam.RemoveLocalUser(user);
+                        }
                     }
                     catch (Exception ex)
                     {

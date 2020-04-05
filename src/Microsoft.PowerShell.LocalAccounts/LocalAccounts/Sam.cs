@@ -668,10 +668,10 @@ namespace System.Management.Automation.SecurityAccountsManager
             RenameLocalGroup(sid, newName);
         }
 
-        private static void RenameLocalGroup(string groupName, string newName)
+        internal void RenameLocalGroup(string groupName, string newName)
         {
-            using var ctx = new PrincipalContext(ContextType.Machine);
-            using var groupPattern = new GroupPrincipal(ctx)
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var groupPattern = new GroupPrincipal(s_ctx)
             {
                 Name = groupName
             };
@@ -1173,16 +1173,15 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal void RemoveLocalUser(SecurityIdentifier sid)
         {
-            //using var ctx = new PrincipalContext(ContextType.Machine);
-            var identityValue = sid.ToString();
-            using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
-
-            if (userPrincipal is null)
+            try
             {
-                throw new UserNotFoundException(identityValue, identityValue);
+                NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                RemoveLocalUser(account.Value);
             }
-
-            userPrincipal.Delete();
+            catch (IdentityNotMappedException exc)
+            {
+                throw new GroupNotFoundException(exc, sid.ToString());
+            }
         }
 
         /// <summary>
@@ -1200,26 +1199,32 @@ namespace System.Management.Automation.SecurityAccountsManager
             SecurityIdentifier sid = user.SID;
             if (sid is null)
             {
-                //using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPattern = new UserPrincipal(s_ctx)
-                {
-                    Name = user.Name
-                };
-                using var searcher = new PrincipalSearcher(userPattern);
-                using var userPrincipal = (UserPrincipal)searcher.FindOne();
-                //using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, user.Name);
-
-                if (userPrincipal is null)
-                {
-                    throw new UserNotFoundException(user.Name, user.Name);
-                }
-
-                userPrincipal.Delete();
+                RemoveLocalUser(user.Name);
                 return;
             }
 
             RemoveLocalUser(sid);
         }
+
+        internal void RemoveLocalUser(string userName)
+        {
+            //using var ctx = new PrincipalContext(ContextType.Machine);
+            using var userPattern = new UserPrincipal(s_ctx)
+            {
+                Name = userName
+            };
+            using var searcher = new PrincipalSearcher(userPattern);
+            using var userPrincipal = (UserPrincipal)searcher.FindOne();
+            //using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, userName);
+
+            if (userPrincipal is null)
+            {
+                throw new UserNotFoundException(userName, userName);
+            }
+
+            userPrincipal.Delete();
+        }
+
 
         /// <summary>
         /// Rename a local user.
