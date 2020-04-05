@@ -91,7 +91,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (Group != null)
                 {
-                    ProcessGroup(Group);
+                    LocalGroup resolvedGroup;
+                    if (Group.SID is null)
+                    {
+                        resolvedGroup = _sam.GetLocalGroup(Group.Name);
+                    }
+                    else
+                    {
+                        resolvedGroup = _sam.GetLocalGroup(Group.SID);
+                    }
+
+                    ProcessGroup(resolvedGroup);
                 }
                 else if (Name != null)
                 {

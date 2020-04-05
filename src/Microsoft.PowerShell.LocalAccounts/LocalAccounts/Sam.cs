@@ -20,15 +20,6 @@ using Microsoft.PowerShell.LocalAccounts;
 namespace System.Management.Automation.SecurityAccountsManager
 {
     /// <summary>
-    /// Defines enumeration constants for enabling and disabling something.
-    /// </summary>
-    internal enum Enabling
-    {
-        Disable = 0,
-        Enable
-    }
-
-    /// <summary>
     /// Provides methods for manipulating local Users and Groups.
     /// </summary>
     internal class Sam : IDisposable
@@ -747,60 +738,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             return null;
         }
 
-        /// <summary>
-        /// Remove members from a local group.
-        /// </summary>
-        /// <param name="groupSid">
-        /// A <see cref="SecurityIdentifier"/> object identifying the group from
-        /// which to remove members
-        /// </param>
-        /// <param name="member">
-        /// An Object of type <see cref="LocalPrincipal"/> identifying
-        /// the member to be removed.
-        /// </param>
-        /// <returns>
-        /// An Exception object indicating any errors encountered.
-        /// </returns>
-        /// <exception cref="GroupNotFoundException">
-        /// Thrown if the group could not be found.
-        /// </exception>
-        internal Exception RemoveLocalGroupMember(SecurityIdentifier groupSid, LocalPrincipal member)
-        {
-            //using var ctx = new PrincipalContext(ContextType.Machine);
-            var groupSidString = groupSid.ToString();
-            using var groupPrincipal = GroupPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, groupSidString);
-
-            if (groupPrincipal is null)
-            {
-                return new GroupNotFoundException(groupSidString, groupSidString);
-            }
-
-            using Principal principal = member.SID is null ?
-                Principal.FindByIdentity(s_ctx, IdentityType.Name, member.Name)
-                : Principal.FindByIdentity(s_ctx, IdentityType.Sid, member.SID.ToString());
-
-            if (principal is null)
-            {
-                return new PrincipalNotFoundException(member.SID is null ? member.Name : member.SID.ToString(), groupSidString);
-            }
-
-            try
-            {
-                groupPrincipal.Members.Remove(principal);
-                groupPrincipal.Save();
-            }
-            catch (PrincipalExistsException exc)
-            {
-                return exc;
-            }
-            catch (Exception exc)
-            {
-                // TODO: perhaps we could make more userful exception.
-                return new Exception(null, exc);
-            }
-
-            return null;
-        }
 #endregion Local Groups
 
 #region Local Users
@@ -1108,10 +1045,9 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// A <see cref="SecurityIdentifier"/> object identifying the user to enable or disable.
         /// </param>
         /// <param name="enable">
-        /// One of the <see cref="Enabling"/> enumeration values, indicating whether to
-        /// enable or disable the user.
+        /// Indicating whether to enable or disable the user.
         /// </param>
-        internal void EnableLocalUser(SecurityIdentifier sid, Enabling enable)
+        internal void EnableLocalUser(SecurityIdentifier sid, bool enable)
         {
             //using var ctx = new PrincipalContext(ContextType.Machine);
             var identityValue = sid.ToString();
@@ -1122,7 +1058,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 throw new UserNotFoundException(identityValue, identityValue);
             }
 
-            userPrincipal.Enabled = enable.HasFlag(Enabling.Enable) ? true : false;
+            userPrincipal.Enabled = enable;
             userPrincipal.Save();
         }
 
@@ -1133,10 +1069,9 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// A <see cref="LocalUser"/> object representing the user to enable or disable.
         /// </param>
         /// <param name="enable">
-        /// One of the <see cref="Enabling"/> enumeration values, indicating whether to
-        /// enable or disable the user.
+        /// Indicating whether to enable or disable the user.
         /// </param>
-        internal void EnableLocalUser(LocalUser user, Enabling enable)
+        internal void EnableLocalUser(LocalUser user, bool enable)
         {
             SecurityIdentifier sid = user.SID;
             if (sid is null)
@@ -1155,7 +1090,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     throw new UserNotFoundException(user.Name, user.Name);
                 }
 
-                userPrincipal.Enabled = enable.HasFlag(Enabling.Enable) ? true : false;
+                userPrincipal.Enabled = enable;
                 userPrincipal.Save();
                 return;
             }

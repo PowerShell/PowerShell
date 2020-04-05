@@ -23,10 +23,6 @@ namespace Microsoft.PowerShell.Commands
     [Alias("elu")]
     public class EnableLocalUserCommand : Cmdlet
     {
-        #region Constants
-        private const Enabling Enable = Enabling.Enable;
-        #endregion Constants
-
         #region Instance Data
         private Sam _sam = null;
         #endregion Instance Data
@@ -133,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (CheckShouldProcess(name))
                         {
-                            _sam.EnableLocalUser(_sam.GetLocalUser(name), Enable);
+                            _sam.EnableLocalUser(_sam.GetLocalUser(name), enable: true);
                         }
                     }
                     catch (Exception ex)
@@ -157,7 +153,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (CheckShouldProcess(sid.ToString()))
                         {
-                            _sam.EnableLocalUser(sid, Enable);
+                            _sam.EnableLocalUser(sid, enable: true);
                         }
                     }
                     catch (Exception ex)
@@ -181,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (CheckShouldProcess(user.Name))
                         {
-                            _sam.EnableLocalUser(user, Enable);
+                            _sam.EnableLocalUser(user, enable: true);
                         }
                     }
                     catch (Exception ex)
