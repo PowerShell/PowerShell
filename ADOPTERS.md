@@ -33,4 +33,3 @@ This is a list of adopters of using PowerShell in production or in their product
 * [Azure Pipelines Hosted Agents](https://docs.microsoft.com/azure/devops/pipelines/agents/hosted?view=azure-devops) Windows, Ubuntu, and MacOS Agents used by Azure Pipelines customers have PowerShell pre-installed so that customers can make use of it for all their CI/CD needs.
 * [GitHub Actions Virtual-Environments for Hosted Runners](https://help.github.com/actions/reference/virtual-environments-for-github-hosted-runners) Windows, Ubuntu, and MacOS virtual environments used by customers of GitHub Actions include Powershell out of the box.
 * [Windows 10 IoT Core](https://docs.microsoft.com/windows/iot-core/windows-iot-core) is a small form factor Windows edition for IoT devices and now you can easily include the [PowerShell package](https://github.com/ms-iot/iot-adk-addonkit/blob/master/Tools/IoTCoreImaging/Docs/Import-PSCoreRelease.md#Import-PSCoreRelease) in your imaging process.
-
