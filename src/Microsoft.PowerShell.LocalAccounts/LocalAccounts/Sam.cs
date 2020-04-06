@@ -811,7 +811,6 @@ namespace System.Management.Automation.SecurityAccountsManager
             userPrincipal.Delete();
         }
 
-
         /// <summary>
         /// Rename a local user.
         /// </summary>
@@ -827,13 +826,31 @@ namespace System.Management.Automation.SecurityAccountsManager
         /// </exception>
         internal void RenameLocalUser(SecurityIdentifier sid, string newName)
         {
+            try
+            {
+                NTAccount account = (NTAccount)sid.Translate(typeof(NTAccount));
+                RenameLocalUser(account.Value, newName);
+            }
+            catch (IdentityNotMappedException exc)
+            {
+                throw new UserNotFoundException(exc, sid.ToString());
+            }
+        }
+
+        internal void RenameLocalUser(string userName, string newName)
+        {
             //using var ctx = new PrincipalContext(ContextType.Machine);
-            var identityValue = sid.ToString();
-            using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Sid, identityValue);
+            using var userPattern = new UserPrincipal(s_ctx)
+            {
+                Name = userName
+            };
+            using var searcher = new PrincipalSearcher(userPattern);
+            using var userPrincipal = (UserPrincipal)searcher.FindOne();
+            //using var userPrincipal = UserPrincipal.FindByIdentity(ctx, IdentityType.Name, userName);
 
             if (userPrincipal is null)
             {
-                throw new UserNotFoundException(identityValue, identityValue);
+                throw new UserNotFoundException(userName, userName);
             }
 
             RenameLocalUser(userPrincipal, newName);
@@ -857,15 +874,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             SecurityIdentifier sid = user.SID;
             if (sid is null)
             {
-                //using var ctx = new PrincipalContext(ContextType.Machine);
-                using var userPrincipal = UserPrincipal.FindByIdentity(s_ctx, IdentityType.Name, user.Name);
-
-                if (userPrincipal is null)
-                {
-                    throw new UserNotFoundException(user.Name, user.Name);
-                }
-
-                RenameLocalUser(userPrincipal, newName);
+                RenameLocalUser(user.Name, newName);
                 return;
             }
 

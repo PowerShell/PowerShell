@@ -130,7 +130,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (CheckShouldProcess(Name, NewName))
                     {
-                        _sam.RenameLocalUser(_sam.GetLocalUser(Name), NewName);
+                        _sam.RenameLocalUser(Name, NewName);
                     }
                 }
                 catch (Exception ex)
