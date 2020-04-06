@@ -818,7 +818,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Default runspace ID.
+        /// Default runspace Id.
         /// </para>
         /// </summary>
         internal static Guid defaultRunspaceId = Guid.Empty;
