@@ -584,6 +584,11 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
 
+            "PSModulePath="+$env:PSModulePath | Write-Verbose -Verbose
+            "PSModulePath(Process)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Process) | Write-Verbose -Verbose
+            "PSModulePath(User)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::User) | Write-Verbose -Verbose
+            "PSModulePath(Machine)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Machine) | Write-Verbose -Verbose
+
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
             $modules = Get-Module -Name Microsoft.PowerShell.Management
             $modules.Count | Should -Be 2
@@ -719,6 +724,12 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
         }
 
         It "Allows PowerShell subprocesses to call core modules" {
+
+            "PSModulePath="+$env:PSModulePath | Write-Verbose -Verbose
+            "PSModulePath(Process)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Process) | Write-Verbose -Verbose
+            "PSModulePath(User)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::User) | Write-Verbose -Verbose
+            "PSModulePath(Machine)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Machine) | Write-Verbose -Verbose
+
             $errors = & $pwsh -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
             $errors | Should -Be $null
         }
