@@ -25,14 +25,25 @@ function Update-PackageVersion {
         }
     }
 
+    $skipModules = @(
+        "NJsonSchema"
+        "Markdig.Signed"
+        "PowerShellHelpFiles"
+        "Newtonsoft.Json"
+        "Microsoft.ApplicationInsights"
+        "Microsoft.Management.Infrastructure"
+        "Microsoft.PowerShell.Native"
+        "Microsoft.NETCore.Windows.ApiSets"
+    )
+
     $packages = [System.Collections.Generic.Dictionary[[string], [PkgVer]]]::new()
 
-    Get-ChildItem -Path "$PSScriptRoot\src\" -Recurse -Filter "*.csproj" | ForEach-Object {
+    Get-ChildItem -Path "$PSScriptRoot\src\" -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj' | ForEach-Object {
         $prj = [xml] (Get-Content $_.FullName -Raw)
         $pkgRef = $prj.Project.ItemGroup.PackageReference
 
         foreach ($p in $pkgRef) {
-            if ($null -ne $p) {
+            if ($null -ne $p -and -not $skipModules.Contains($p.Include)) {
                 if (-not $packages.ContainsKey($p.Include)) {
                     $packages.Add($p.Include, [PkgVer]::new($p.Include, $p.Version, $null, $_.FullName))
                 }
