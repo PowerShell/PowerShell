@@ -680,7 +680,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $winpsPaths =  & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "Import-Module $ModuleName2 -UseWindowsPowerShell -WarningAction Ignore;`$s = Get-PSSession -Name WinPSCompatSession;Invoke-Command -Session `$s -ScriptBlock {`$env:psmodulepath}"
             $winpsPaths | Should -Not -BeLike "*MyTestDir*"
         }
-    }#>
+    }
 }
 
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
