@@ -589,7 +589,11 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             "PSModulePath(User)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::User) | Write-Verbose -Verbose
             "PSModulePath(Machine)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Machine) | Write-Verbose -Verbose
 
-            $env:PSModulePath -split ';' | % {"Modules in '$_'";(dir $_).Name} | Write-Verbose -Verbose
+            #$env:PSModulePath -split ';' | % {"Modules in '$_'";(dir $_).Name} | Write-Verbose -Verbose
+
+            "Filtering PSModulePath..." | Write-Verbose -Verbose
+            $env:PSModulePath = ($env:PSModulePath.split(";")|?{-not $_.EndsWith('7\Modules', [StringComparison]::InvariantCultureIgnoreCase)}) -join ';'
+            "PSModulePath="+$env:PSModulePath | Write-Verbose -Verbose
 
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
 
