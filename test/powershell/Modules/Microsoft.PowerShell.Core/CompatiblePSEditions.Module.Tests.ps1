@@ -589,7 +589,13 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             "PSModulePath(User)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::User) | Write-Verbose -Verbose
             "PSModulePath(Machine)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Machine) | Write-Verbose -Verbose
 
+            $env:PSModulePath -split ';' | % {"Modules in '$_'";(dir $_).Name} | Write-Verbose -Verbose
+
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
+
+            $s = gsn -Name WinPSCompatSession
+            icm $s {$PSVersionTable.PSEdition + ".PSModulePath: " +$env:PSModulePath} | Write-Verbose -Verbose
+
             $modules = Get-Module -Name Microsoft.PowerShell.Management
             $modules.Count | Should -Be 2
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
