@@ -8,7 +8,11 @@ queue:
   name: Hosted VS2017
 steps:
   - pwsh: |
-      Install-Module -Name PowerShellGet -MinimumVersion 2.0.1 -Force
+      $minVer = [version]::new("2.2.3")
+      $curVer = Get-Module PowerShellGet -ListAvailable | Select-Object -First 1 | ForEach-Object Version
+      if (-not $curVer -or $curVer -lt $minVer) {
+        Install-Module -Name PowerShellGet -MinimumVersion 2.2.3 -Force
+      }
     displayName: Update PSGet and PackageManagement
     condition: succeededOrFailed()
 
