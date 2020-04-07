@@ -98,6 +98,7 @@ Describe "Get-Content" -Tags "CI" {
         @{EncodingName = 'OEM'},
         @{EncodingName = 'Unicode'},
         @{EncodingName = 'BigEndianUnicode'},
+        @{EncodingName = 'BigEndianUTF32'},
         @{EncodingName = 'UTF8'},
         @{EncodingName = 'UTF8BOM'},
         @{EncodingName = 'UTF8NoBOM'},
