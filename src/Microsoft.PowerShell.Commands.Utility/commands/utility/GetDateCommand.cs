@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    dateToUse = DateTime.SpecifyKind(Date, DateTimeKind.Utc);
+                    dateToUse = Date;
                 }
             }
 
