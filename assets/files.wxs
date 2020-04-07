@@ -1957,18 +1957,6 @@
         </Directory>
       </Directory>
       <Directory Id="dir20D076755BAF7EA1D1A980368C4F81A2" Name="assets">
-        <Component Id="cmpD468FBF8258A4C108A36A35497F20530" Guid="{87668338-821f-4cfc-a3da-6ec41eb80d81}">
-          <File Id="filB0F1E9DD8BC642CEBE242B73411361DF" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_av_colors.ico" />
-        </Component>
-        <Component Id="cmpAAC0E5920FFC4FE5B84C94AA81AF88AD" Guid="{1952dc2c-a70c-4e51-a17d-6e832412b2eb}">
-          <File Id="fil05E39CF0FCFA4C59AA182A6D722A9E7A" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_avatar.ico" />
-        </Component>
-        <Component Id="cmp282AE5E5A5DA4A50BC475919D4FE7E50" Guid="{d3e71662-33b0-4bfb-b2d0-00de2988e112}">
-          <File Id="fil34BF56D5D4D2464184F914C605E10CD7" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\ps_black_32x32.ico" />
-        </Component>
-        <Component Id="cmp710371EC80D64D16B692CE36297C3C16" Guid="{847bf995-6eab-4582-ae18-6abc22b1ae7d}">
-          <File Id="fil281C323B2995417EA77489367988F4DB" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_black.ico" />
-        </Component>
       </Directory>
       <Directory Id="dirC93D10F1DE914404E3248A7E28901CDC" Name="cs">
         <Component Id="cmp8CAF71174AEF09BEBBC46FBC901FF5DD" Guid="{29FD7D9F-CB72-4DF5-B1BC-5DDD110E35BB}">
@@ -4108,10 +4096,6 @@
       <ComponentRef Id="cmp57D197B18F1F4A6AAB704B28CF61B535" />
       <ComponentRef Id="cmp26F240CCDE054124A0DD455D7C97AA8B" />
       <ComponentRef Id="cmpBB705B2570064C99A71B6FA65CDF9DC8" />
-      <ComponentRef Id="cmpD468FBF8258A4C108A36A35497F20530" />
-      <ComponentRef Id="cmpAAC0E5920FFC4FE5B84C94AA81AF88AD" />
-      <ComponentRef Id="cmp282AE5E5A5DA4A50BC475919D4FE7E50" />
-      <ComponentRef Id="cmp710371EC80D64D16B692CE36297C3C16" />
     </ComponentGroup>
   </Fragment>
 </Wix>
