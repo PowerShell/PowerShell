@@ -377,6 +377,7 @@ namespace Microsoft.PowerShell.Commands
             finally
             {
                 _mSmtpClient.Dispose();
+                
                 // If we don't dispose the attachments, the sender can't modify or use the files sent.
                 _mMailMessage.Attachments.Dispose();
             }
