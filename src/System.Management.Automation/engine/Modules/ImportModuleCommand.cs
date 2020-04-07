@@ -1907,7 +1907,11 @@ namespace Microsoft.PowerShell.Commands
             if (!string.IsNullOrEmpty(moduleName))
             {
                 // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-                exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
+                exactModuleName = moduleName;
+                if (Path.IsPathRooted(moduleName))
+                {
+                    exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
+                }
             }
             else if (moduleSpec != null)
             {
@@ -1992,7 +1996,12 @@ namespace Microsoft.PowerShell.Commands
                 foreach(var moduleName in filteredModuleNames)
                 {
                     // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-                    var exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
+                    var exactModuleName = moduleName;
+                    if (Path.IsPathRooted(moduleName))
+                    {
+                        exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
+                    }
+
                     if (InitialSessionState.IsEngineModule(exactModuleName) || ((NoClobberModuleList != null) && NoClobberModuleList.Contains(exactModuleName, StringComparer.OrdinalIgnoreCase)))
                     {
                         ImportModule_LocallyViaName_Wrapper(importModuleOptions, exactModuleName);
