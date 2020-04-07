@@ -40,6 +40,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Gets or sets whether to treat a numeric input as ticks, or unix time.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter FromUnixTime;
+
         private DateTime _date;
         private bool _dateSpecified;
 
@@ -237,7 +243,14 @@ namespace Microsoft.PowerShell.Commands
             // use passed date object if specified
             if (_dateSpecified)
             {
-                dateToUse = Date;
+                if (FromUnixTime.IsPresent)
+                {
+                    dateToUse = DateTimeOffset.FromUnixTimeSeconds(Date.Ticks).UtcDateTime;
+                }
+                else
+                {
+                    dateToUse = Date;
+                }
             }
 
             // use passed year if specified
