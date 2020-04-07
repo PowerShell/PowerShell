@@ -1665,7 +1665,16 @@ function Install-Dotnet {
     } elseif ($environment.IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
         $installScript = "dotnet-install.ps1"
-        Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
+        try
+        {
+            $oldSecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol
+            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls13
+            Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
+        }
+        finally
+        {
+            [System.Net.ServicePointManager]::SecurityProtocol = $oldSecurityProtocol
+        }
 
         if (-not $environment.IsCoreCLR) {
             & ./$installScript -Channel $Channel -Version $Version
