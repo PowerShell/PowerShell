@@ -66,8 +66,8 @@ function SyncGalleryToAzArtifacts {
         }
 
         # Check if Az package version is less that gallery version
-        $pkgOnAzVersion = [System.Management.Automation.SemanticVersion]::new($foundPackageOnAz.Version)
-        $pkgOnGalleryVersion = [System.Management.Automation.SemanticVersion]::new($foundPackageOnGallery.Version)
+        $pkgOnAzVersion = [semver]::new($foundPackageOnAz.Version)
+        $pkgOnGalleryVersion = [semver]::new($foundPackageOnGallery.Version)
 
         if ($pkgOnAzVersion -lt $pkgOnGalleryVersion) {
             Write-Verbose -Verbose "Module needs to be updated $($package.Name) - $($foundPackageOnGallery.Version)"
