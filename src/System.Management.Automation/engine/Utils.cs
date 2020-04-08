@@ -14,6 +14,7 @@ using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Numerics;
@@ -2097,6 +2098,25 @@ namespace System.Management.Automation.Internal
         public static bool TestImplicitRemotingBatching(string commandPipeline, System.Management.Automation.Runspaces.Runspace runspace)
         {
             return Utils.TryRunAsImplicitBatch(commandPipeline, runspace);
+        }
+
+        /// <summary>
+        /// Constructs a custom PSSenderInfo instance that can be assigned to $PSSenderInfo
+        /// in order to simulate a remoting session with respect to the $PSSenderInfo.ConnectionString (connection URL)
+        /// and $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion (the remoting client's PowerShell version).
+        /// See Get-FormatDataTest.ps1.
+        /// </summary>
+        /// <param name="url">The connection URL to reflect in the returned instance's ConnectionString property.</param>
+        /// <param name="clientVersion">The version number to report as the remoting client's PowerShell version.</param>
+        /// <returns>The newly constructed custom PSSenderInfo instance.</returns>
+        public static PSSenderInfo GetCustomPSSenderInfo(string url, Version clientVersion)
+        {
+            var dummyPrincipal = new PSPrincipal(new PSIdentity("none", true, "someuser", null), null);
+            var pssi = new PSSenderInfo(dummyPrincipal, url);
+            pssi.ApplicationArguments = new PSPrimitiveDictionary();
+            pssi.ApplicationArguments.Add("PSVersionTable", new PSObject(new PSPrimitiveDictionary()));
+            ((PSPrimitiveDictionary)PSObject.Base(pssi.ApplicationArguments["PSVersionTable"])).Add("PSVersion", new PSObject(clientVersion));
+            return pssi;
         }
     }
 

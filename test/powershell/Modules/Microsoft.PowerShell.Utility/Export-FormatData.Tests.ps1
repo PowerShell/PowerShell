@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 Describe "Export-FormatData" -Tags "CI" {
     BeforeAll {
-        $fd = Get-FormatData
+        $clientVersion = '5.0' # Preliminarily preserve the original test semantics in place before https://github.com/PowerShell/PowerShell/pull/11270
+        $fd = Get-FormatData -PowerShellVersion $clientVersion
         $testOutput = Join-Path -Path $TestDrive -ChildPath "outputfile"
     }
 
@@ -23,7 +24,7 @@ Describe "Export-FormatData" -Tags "CI" {
             $runspace.Open()
 
             $runspace.CreatePipeline("Update-FormatData -AppendPath $TESTDRIVE\allformat.ps1xml").Invoke()
-            $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -TypeName *").Invoke()
+            $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -PowerShellVersion $clientVersion").Invoke()
 
             $fd.Count | Should -Be $actualAllFormat.Count
             Compare-Object $fd $actualAllFormat | Should -Be $null
