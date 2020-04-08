@@ -1266,13 +1266,15 @@ namespace System.Management.Automation
                 {
                     // make sure this module path is Not part of other PS Core installation
                     var possiblePwshDir = Path.GetDirectoryName(trimmedPath);
-                    if (string.IsNullOrEmpty(possiblePwshDir)) // i.e. module dir is in the drive root
+
+                    if (string.IsNullOrEmpty(possiblePwshDir))
                     {
+                        // i.e. module dir is in the drive root
                         modulePathList.Add(trimmedPath);
                     }
                     else
                     {
-                        if (! File.Exists(Path.Combine(possiblePwshDir, "pwsh.exe")))
+                        if (!File.Exists(Path.Combine(possiblePwshDir, "pwsh.exe")))
                         {
                             modulePathList.Add(trimmedPath);
                         }
