@@ -1274,7 +1274,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        if (!File.Exists(Path.Combine(possiblePwshDir, "pwsh.exe")))
+                        if (!File.Exists(Path.Combine(possiblePwshDir, "pwsh.dll")))
                         {
                             modulePathList.Add(trimmedPath);
                         }
