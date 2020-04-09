@@ -93,7 +93,7 @@ Describe "Get-Process" -Tags "CI" {
     It "Should return CommandLine property" -Skip:($IsMacOS)  {
         $command = "(Get-Process -Id `$pid).CommandLine"
         $result = & "$PSHOME/pwsh" -NoProfile -NonInteractive -Command $command
-        $result | Should -BeLike "*`"$command`""
+        $result | Should -BeLike "*$command*"
     }
 }
 
