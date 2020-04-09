@@ -3,7 +3,7 @@ param (
 )
 
 function Update-GlobalJson([string] $Version) {
-    $psGlobalJsonPath = "$PSScriptRoot/global.json"
+    $psGlobalJsonPath = Resolve-Path "$PSScriptRoot/../global.json"
     $psGlobalJson = Get-Content -Path $psGlobalJsonPath -Raw | ConvertFrom-Json
     $psGlobalJson.sdk.version = $Version
     $psGlobalJson | ConvertTo-Json | Out-File -FilePath $psGlobalJsonPath -Force
@@ -38,7 +38,7 @@ function Update-PackageVersion {
 
     $packages = [System.Collections.Generic.Dictionary[[string], [PkgVer]]]::new()
 
-    Get-ChildItem -Path "$PSScriptRoot\src\" -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj' | ForEach-Object {
+    Get-ChildItem -Path "$PSScriptRoot/../src/" -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj' | ForEach-Object {
         $prj = [xml] (Get-Content $_.FullName -Raw)
         $pkgRef = $prj.Project.ItemGroup.PackageReference
 
@@ -51,7 +51,7 @@ function Update-PackageVersion {
         }
     }
 
-    $versionPattern = (Get-Content "$PSScriptRoot\DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.packageVersionPattern
+    $versionPattern = (Get-Content "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.packageVersionPattern
 
     $packages.GetEnumerator() | ForEach-Object {
         $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPreReleaseVersions -Source 'dotnet5'
@@ -94,13 +94,13 @@ function Update-CsprojFile([string] $path, $values) {
     }
 }
 
-$dotnetMetadataPath = "$PSScriptRoot/DotnetRuntimeMetadata.json"
+$dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
 $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
 
 # Channel is like: $Channel = "5.0.1xx-preview2"
 $Channel = $dotnetMetadataJson.sdk.channel
 
-Import-Module "$PSScriptRoot/build.psm1" -Force
+Import-Module "$PSScriptRoot/../build.psm1" -Force
 
 Find-Dotnet
 
