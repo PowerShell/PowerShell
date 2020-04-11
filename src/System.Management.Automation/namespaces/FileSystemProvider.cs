@@ -158,6 +158,11 @@ namespace Microsoft.PowerShell.Commands
                         // This handles short path names
                         exactPath += StringLiterals.DefaultPathSeparator + item;
                     }
+                    else if (item.IndexOfAny(new char[] { '*', '?' }) >= 0)
+                    {
+                        // This handles literal wildcard characters that could resolve erroneously
+                        exactPath += StringLiterals.DefaultPathSeparator + item;
+                    }
                     else
                     {
                         // Use GetFileSystemEntries to get the correct casing of this element
