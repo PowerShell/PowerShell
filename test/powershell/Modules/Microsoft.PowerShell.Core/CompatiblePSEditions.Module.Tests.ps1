@@ -735,14 +735,14 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
 
         It "Allows PowerShell subprocesses to call core modules" {
 
-            "PSModulePath="+$env:PSModulePath | Write-Verbose -Verbose
-            "PSModulePath(Process)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Process) | Write-Verbose -Verbose
-            "PSModulePath(User)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::User) | Write-Verbose -Verbose
-            "PSModulePath(Machine)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Machine) | Write-Verbose -Verbose
+            "CurrentProcessPath-PSModulePath="+$env:PSModulePath | Write-Verbose -Verbose
 
-            $errors = & $pwsh -Command "`$env:PSModulePath;Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
-            $errors | Out-String | Write-Verbose -Verbose
-            $errors | Should -Be $null
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+            '{"WindowsPowerShellCompatibilityModuleDenyList": ["Microsoft.PowerShell.Management"]}' | Out-File -Force $ConfigPath
+
+            & $pwsh -settingsFile $ConfigPath -Command "Get-ChildItem | Out-Null; (Get-Command Get-ChildItem).Module.Path"  | Should -Not -BeLike "*system32*"
+            #$errors | Out-String | Write-Verbose -Verbose
+            #$errors | Should -Be $null
         }
     }
 
