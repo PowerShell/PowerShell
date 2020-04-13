@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                 e is SecurityException
             )
             {
-                Exception exception = new Exception("JSON schema file open failure", e); // TODO: Add resource string
+                Exception exception = new Exception(TestJsonCmdletStrings.JsonSchemaFileOpenFailure, e);
                 ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, null));
             }
             catch (Exception e)
