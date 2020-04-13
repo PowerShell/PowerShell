@@ -740,7 +740,8 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
             "PSModulePath(User)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::User) | Write-Verbose -Verbose
             "PSModulePath(Machine)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Machine) | Write-Verbose -Verbose
 
-            $errors = & $pwsh -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+            $errors = & $pwsh -Command "`$env:PSModulePath;Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+            $errors | Out-String | Write-Verbose -Verbose
             $errors | Should -Be $null
         }
     }
