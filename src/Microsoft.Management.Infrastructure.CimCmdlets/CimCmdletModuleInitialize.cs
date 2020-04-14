@@ -25,7 +25,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     {
         /// <summary>
         /// <para>
-        /// constructor
+        /// The constructor.
         /// </para>
         /// </summary>
         public CimCmdletsAssemblyInitializer()
@@ -56,18 +56,18 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// CimCmdlet alias entry
+        /// CimCmdlet alias entry.
         /// </para>
         /// </summary>
         internal sealed class CimCmdletAliasEntry
         {
             /// <summary>
             /// <para>
-            /// Constructor
+            /// The constructor.
             /// </para>
             /// </summary>
-            /// <param name="name"></param>
-            /// <param name="value"></param>
+            /// <param name="name">The entry name.</param>
+            /// <param name="value">The entry value.</param>
             internal CimCmdletAliasEntry(string name, string value)
             {
                 this._name = name;
