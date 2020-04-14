@@ -646,6 +646,10 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
             $errors | Should -Be $null
         }
 
+        It "Allows Windows PowerShell subprocesses to load WinPS version of `$PSHOME modules" {
+            powershell.exe -Command "Get-ChildItem | Out-Null;(Get-Module Microsoft.PowerShell.Management).Path" | Should -BeLike "*system32*"
+        }
+
         It "Allows PowerShell subprocesses to call core modules" {
             $errors = & $pwsh -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
             $errors | Should -Be $null
