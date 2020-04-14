@@ -1696,4 +1696,7 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="RemoteDebuggerError" xml:space="preserve">
     <value>Remote debugger exception: {0}, error message: {1}</value>
   </data>
+  <data name="WindowsPowerShellNotPresent" xml:space="preserve">
+    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
+  </data>
 </root>
