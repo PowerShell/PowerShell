@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" ToolsVersion="15.0" InitialTargets = "Resources">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>Assembly containing WPF code for Out-GridView, HelpWindow, and Show-Command</Description>
@@ -11,6 +11,55 @@
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <StronglyTypedOutputFolder>gen</StronglyTypedOutputFolder>
+  </PropertyGroup>
+
+  <Target Name = "CreateDirectories" BeforeTargets = "Resources">
+    <MakeDir
+       Directories = "$(StronglyTypedOutputFolder)"/>
+  </Target>
+
+  <ItemGroup>
+    <PSEmbeddedResource Include = "resources/*.resx">
+      <!-- PSEmbeddedResource Update = "resources/*.resx" ManifestResourceName = "Microsoft.PowerShell.CoreCLR.Eventing" -->
+      <!-- ManifestResourceName>qqq</ManifestResourceName -->
+      <!-- <StronglyTypedManifestPrefix>$(MSBuildProjectName).resources</StronglyTypedManifestPrefix> -->
+      <!-- StronglyTypedFileName>$(IntermediateOutputPath)%(Filename).cs</StronglyTypedFileName -->
+      <Generator>ResXFileCodeGenerator</Generator>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+
+      <StronglyTypedFileName>$(StronglyTypedOutputFolder)/%(Filename).cs</StronglyTypedFileName>
+      <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
+      <ManifestResourceName>$(MSBuildProjectName).resources.%(PSEmbeddedResource.StronglyTypedClassName)</ManifestResourceName>
+
+      <PublicClass>$([System.String]::new('%(Filename)').StartsWith('Public', System.StringComparison.OrdinalIgnoreCase))</PublicClass>
+
+      <StronglyTypedFileName Condition = "'%(PublicClass)' == 'true'">$(StronglyTypedOutputFolder)/$([System.String]::Copy('%(Filename)').Substring(7)).cs</StronglyTypedFileName>
+      <StronglyTypedClassName Condition = "'%(PublicClass)' == 'true'">$([System.String]::Copy('%(Filename)').Substring(7))</StronglyTypedClassName>
+      <ManifestResourceName Condition = "'%(PublicClass)' == 'true'">$(MSBuildProjectName).resources.public.%(PSEmbeddedResource.StronglyTypedClassName)</ManifestResourceName>
+   </PSEmbeddedResource>
+</ItemGroup>
+
+  <Target Name="Resources">
+    <GenerateResource
+      Sources="@(PSEmbeddedResource)"
+      UseSourcePath="true"
+      StateFile="$(StronglyTypedOutputFolder)/$(MSBuildProjectFile).GenerateResource.cache"
+      StronglyTypedClassName="%(PSEmbeddedResource.StronglyTypedClassName)"
+      StronglyTypedFileName="%(PSEmbeddedResource.StronglyTypedFileName)"
+      StronglyTypedLanguage="%(PSEmbeddedResource.StronglyTypedLanguage)"
+      StronglyTypedNamespace="%(PSEmbeddedResource.StronglyTypedNamespace)"
+      StronglyTypedManifestPrefix="%(PSEmbeddedResource.StronglyTypedManifestPrefix)"
+      PublicClass="%(PSEmbeddedResource.PublicClass)"
+      OutputResources="@(PSEmbeddedResource->'$(StronglyTypedOutputFolder)/%(ManifestResourceName).resources')"
+      ExecuteAsTool="false"
+      MSBuildRuntime="$(GenerateResourceMSBuildRuntime)"
+      MSBuildArchitecture="$(GenerateResourceMSBuildArchitecture)">
+
+    </GenerateResource>
+  </Target>
 
   <ItemGroup>
     <Resource Include="resources\Graphics\Add16.png" />

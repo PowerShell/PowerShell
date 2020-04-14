@@ -1,0 +1,53 @@
+<Project ToolsVersion="15.0" DefaultTargets = "Resources">
+
+  <PropertyGroup>
+    <StronglyTypedOutputFolder>gen</StronglyTypedOutputFolder>
+  </PropertyGroup>
+
+  <Target Name = "CreateDirectories" BeforeTargets = "Resources">
+    <MakeDir
+       Directories = "$(StronglyTypedOutputFolder)"/>
+  </Target>
+
+    <ItemGroup>
+      <EmbeddedResource Include = "resources/*.resx">
+        <!-- EmbeddedResource Update = "resources/*.resx" ManifestResourceName = "Microsoft.PowerShell.CoreCLR.Eventing" -->
+        <!-- ManifestResourceName>qqq</ManifestResourceName -->
+        <!-- StronglyTypedFileName>$(IntermediateOutputPath)%(Filename).cs</StronglyTypedFileName -->
+        <Generator>ResXFileCodeGenerator</Generator>
+        <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+
+        <StronglyTypedFileName>$(StronglyTypedOutputFolder)/%(Filename).cs</StronglyTypedFileName>
+        <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+        <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
+
+        <PublicClass>$([System.String]::new('%(Filename)').StartsWith('Public', System.StringComparison.OrdinalIgnoreCase))</PublicClass>
+
+        <StronglyTypedManifestPrefix>$(MSBuildProjectName).resources</StronglyTypedManifestPrefix>
+        <StronglyTypedManifestPrefix Condition = "'%(PublicClass)' == 'true'">Microsoft.Management.UI.Internal.resources.public</StronglyTypedManifestPrefix>
+
+        <StronglyTypedFileName Condition = "'%(PublicClass)' == 'true'">$(StronglyTypedOutputFolder)/$([System.String]::Copy('%(Filename)').Substring(7)).cs</StronglyTypedFileName>
+        <StronglyTypedClassName Condition = "'%(PublicClass)' == 'true'">$([System.String]::Copy('%(Filename)').Substring(7))</StronglyTypedClassName>
+      </EmbeddedResource>
+    </ItemGroup>
+
+
+  <Target Name="Resources">
+    <GenerateResource
+      Sources="@(EmbeddedResource)"
+      UseSourcePath="true"
+      StateFile="$(StronglyTypedOutputFolder)/$(MSBuildProjectFile).GenerateResource.cache"
+      StronglyTypedClassName="%(EmbeddedResource.StronglyTypedClassName)"
+      StronglyTypedFileName="%(EmbeddedResource.StronglyTypedFileName)"
+      StronglyTypedLanguage="%(EmbeddedResource.StronglyTypedLanguage)"
+      StronglyTypedNamespace="%(EmbeddedResource.StronglyTypedNamespace)"
+      StronglyTypedManifestPrefix="%(EmbeddedResource.StronglyTypedManifestPrefix)"
+      PublicClass="%(EmbeddedResource.PublicClass)"
+      OutputResources="@(EmbeddedResource->'$(StronglyTypedOutputFolder)/Microsoft.Management.UI.Internal.resources.%(Filename).resources')"
+      ExecuteAsTool="false"
+      MSBuildRuntime="$(GenerateResourceMSBuildRuntime)"
+      MSBuildArchitecture="$(GenerateResourceMSBuildArchitecture)">
+
+    </GenerateResource>
+  </Target>
+</Project>
