@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Reflection;
@@ -73,6 +74,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            string resolvedpath = string.Empty;
+
             try
             {
                 if (Schema != null)
@@ -92,7 +95,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        string resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
+                        resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(SchemaFile);
                         _jschema = JsonSchema.FromFileAsync(resolvedpath).Result;
                     }
                     catch (AggregateException ae)
@@ -110,7 +113,10 @@ namespace Microsoft.PowerShell.Commands
                 e is SecurityException
             )
             {
-                Exception exception = new Exception(TestJsonCmdletStrings.JsonSchemaFileOpenFailure, e);
+                Exception exception = new Exception(string.Format(
+                    CultureInfo.CurrentUICulture,
+                    TestJsonCmdletStrings.JsonSchemaFileOpenFailure,
+                    resolvedpath), e);
                 ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, null));
             }
             catch (Exception e)
