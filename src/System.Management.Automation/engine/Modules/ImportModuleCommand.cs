@@ -849,7 +849,7 @@ namespace Microsoft.PowerShell.Commands
             BaseGuid = modulespec.Guid;
 
             PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
-            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
             if (foundModule != null)
             {
                 SetModuleBaseForEngineModules(foundModule.Name, this.Context);
@@ -1962,6 +1962,56 @@ namespace Microsoft.PowerShell.Commands
             return filteredModuleCollection;
         }
 
+        private void PrepareNoClobberWinCompatModuleImport(string moduleName, ModuleSpecification moduleSpec, ref ImportModuleOptions importModuleOptions)
+        {
+            List<string> NoClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+
+            // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
+            var coreModuleToLoad = moduleName;
+            if (moduleSpec != null)
+            {
+                coreModuleToLoad = moduleSpec.Name;
+            }
+            else if (Path.IsPathRooted(moduleName))
+            {
+                coreModuleToLoad = Path.GetFileNameWithoutExtension(moduleName);
+            }
+
+            var coreModuleToLoadIsEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
+            if (coreModuleToLoadIsEngineModule || ((NoClobberModuleList != null) && NoClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))
+            {
+                // if it is one of engine modules - first try to load it from $PSHOME\Modules
+                // otherwise rely on $env:PSModulePath (in which WinPS module location has to go after CorePS module location)
+                if (coreModuleToLoadIsEngineModule)
+                {
+                    var expectedCoreModulePath = Path.Combine(ModuleIntrinsics.GetPSHomeModulePath(), coreModuleToLoad);
+                    if (Directory.Exists(expectedCoreModulePath))
+                    {
+                        coreModuleToLoad = expectedCoreModulePath;
+                    }
+                }
+
+                if (moduleSpec == null)
+                {
+                    ImportModule_LocallyViaName_Wrapper(importModuleOptions, coreModuleToLoad);
+                }
+                else
+                {
+                    ModuleSpecification tmpModuleSpec = new ModuleSpecification()
+                        {
+                            Guid = moduleSpec.Guid,
+                            MaximumVersion = moduleSpec.MaximumVersion,
+                            Version = moduleSpec.Version,
+                            RequiredVersion = moduleSpec.RequiredVersion,
+                            Name = coreModuleToLoad
+                        };
+                    ImportModule_LocallyViaFQName(importModuleOptions, tmpModuleSpec);
+                }
+
+                importModuleOptions.NoClobberExportPSSession = true;
+            }
+        }
+
         internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
         {
             IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
@@ -1989,39 +2039,24 @@ namespace Microsoft.PowerShell.Commands
                 return new List<PSModuleInfo>();
             }
 
-            List<string> NoClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
-
+            // perform necessary preparations if module has to be imported with NoClobber mode
             if (filteredModuleNames != null)
             {
                 foreach(var moduleName in filteredModuleNames)
                 {
-                    // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-                    var exactModuleName = moduleName;
-                    if (Path.IsPathRooted(moduleName))
-                    {
-                        exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
-                    }
-
-                    if (InitialSessionState.IsEngineModule(exactModuleName) || ((NoClobberModuleList != null) && NoClobberModuleList.Contains(exactModuleName, StringComparer.OrdinalIgnoreCase)))
-                    {
-                        ImportModule_LocallyViaName_Wrapper(importModuleOptions, exactModuleName);
-                        importModuleOptions.NoClobberExportPSSession = true;
-                    }
+                    PrepareNoClobberWinCompatModuleImport(moduleName, null, ref importModuleOptions);
                 }
             }
 
             if (filteredModuleFullyQualifiedNames != null)
             {
-                foreach(var modulespec in filteredModuleFullyQualifiedNames)
+                foreach(var moduleSpec in filteredModuleFullyQualifiedNames)
                 {
-                    if (InitialSessionState.IsEngineModule(modulespec.Name) || ((NoClobberModuleList != null) && NoClobberModuleList.Contains(modulespec.Name, StringComparer.OrdinalIgnoreCase)))
-                    {
-                        ImportModule_LocallyViaFQName(importModuleOptions, modulespec);
-                        importModuleOptions.NoClobberExportPSSession = true;
-                    }
+                    PrepareNoClobberWinCompatModuleImport(null, moduleSpec, ref importModuleOptions);
                 }
             }
 
+            // perform the module import / proxy generation
             moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, filteredModuleNames, filteredModuleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
 
             foreach (PSModuleInfo moduleProxy in moduleProxyList)
