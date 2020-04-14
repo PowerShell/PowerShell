@@ -4696,6 +4696,7 @@ end {
                     new SessionStateAliasEntry("dnsn", "Disconnect-PSSession", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("ogv", "Out-GridView", string.Empty, ReadOnly),
                     new SessionStateAliasEntry("shcm", "Show-Command", string.Empty, ReadOnly),
+                    new SessionStateAliasEntry("which", "Get-Command", string.Empty, ReadOnly),
 #endif
                     // Bash built-ins we purposefully keep even if they override native commands
                     new SessionStateAliasEntry("cd", "Set-Location", string.Empty, AllScope),

@@ -181,6 +181,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Alias",        "type",                             "Get-Content",                      $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "wget",                             "Invoke-WebRequest",                $($FullCLR                               ),     "ReadOnly",             "",                     ""
 "Alias",        "where",                            "Where-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix),     "ReadOnly",             "AllScope",             ""
+"Alias",        "which",                            "Get-Command",                      $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
 "Alias",        "wjb",                              "Wait-Job",                         $($FullCLR -or $CoreWindows -or $CoreUnix),     "",                     "",                     ""
 "Alias",        "write",                            "Write-Output",                     $($FullCLR -or $CoreWindows              ),     "ReadOnly",             "",                     ""
 "Cmdlet",       "Add-Computer",                     "",                                 $($FullCLR                               ),     "",                     "",                     ""
