@@ -33,7 +33,8 @@ phases:
     displayName: Capture environment
     condition: succeededOrFailed()
 
-  - powershell:  Install-module pester -Scope CurrentUser -Force -SkipPublisherCheck
+  - powershell: |
+      Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
     displayName: Install Pester
     condition: succeededOrFailed()
 

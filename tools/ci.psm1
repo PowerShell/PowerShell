@@ -491,8 +491,9 @@ function Invoke-CIFinish
         $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
 
         # Install the latest Pester and import it
-        Install-Module Pester -Force -SkipPublisherCheck
-        Import-Module Pester -Force
+        $maximumPesterVersion = '4.99'
+        Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
+        Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
 
         # start the packaging tests and get the results
         $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru
