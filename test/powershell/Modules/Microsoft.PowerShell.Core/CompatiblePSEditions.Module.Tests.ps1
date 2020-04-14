@@ -584,21 +584,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
 
         It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
 
-            "PSModulePath="+$env:PSModulePath | Write-Verbose -Verbose
-            "PSModulePath(Process)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Process) | Write-Verbose -Verbose
-            "PSModulePath(User)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::User) | Write-Verbose -Verbose
-            "PSModulePath(Machine)="+[Environment]::GetEnvironmentVariable("PSModulePath", [EnvironmentVariableTarget]::Machine) | Write-Verbose -Verbose
-
-            #$env:PSModulePath -split ';' | % {"Modules in '$_'";(dir $_).Name} | Write-Verbose -Verbose
-
-            "Filtering PSModulePath..." | Write-Verbose -Verbose
-            $env:PSModulePath = ($env:PSModulePath.split(";")|?{-not $_.EndsWith('7\Modules', [StringComparison]::InvariantCultureIgnoreCase)}) -join ';'
-            "PSModulePath="+$env:PSModulePath | Write-Verbose -Verbose
-
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
-
-            $s = gsn -Name WinPSCompatSession
-            icm $s {$PSVersionTable.PSEdition + ".PSModulePath: " +$env:PSModulePath} | Write-Verbose -Verbose
 
             $modules = Get-Module -Name Microsoft.PowerShell.Management
             $modules.Count | Should -Be 2
@@ -734,15 +720,8 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
         }
 
         It "Allows PowerShell subprocesses to call core modules" {
-
-            "CurrentProcessPath-PSModulePath="+$env:PSModulePath | Write-Verbose -Verbose
-
-            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
-            '{"WindowsPowerShellCompatibilityModuleDenyList": ["Microsoft.PowerShell.Management"]}' | Out-File -Force $ConfigPath
-
-            & $pwsh -settingsFile $ConfigPath -Command "Get-ChildItem | Out-Null; (Get-Command Get-ChildItem).Module.Path"  | Should -Not -BeLike "*system32*"
-            #$errors | Out-String | Write-Verbose -Verbose
-            #$errors | Should -Be $null
+            $errors = & $pwsh -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
+            $errors | Should -Be $null
         }
     }
 
