@@ -1,7 +1,13 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 [CmdletBinding()]
 param (
 )
 
+<#
+ .DESCRIPTION Update the global.json with the new SDK version to be used.
+#>
 function Update-GlobalJson([string] $Version) {
     $psGlobalJsonPath = Resolve-Path "$PSScriptRoot/../global.json"
     $psGlobalJson = Get-Content -Path $psGlobalJsonPath -Raw | ConvertFrom-Json
@@ -9,6 +15,9 @@ function Update-GlobalJson([string] $Version) {
     $psGlobalJson | ConvertTo-Json | Out-File -FilePath $psGlobalJsonPath -Force
 }
 
+<#
+ .DESCRIPTION Iterate through all the csproj to find all the packages that need to be updated
+#>
 function Update-PackageVersion {
 
     class PkgVer {
@@ -75,6 +84,9 @@ function Update-PackageVersion {
     }
 }
 
+<#
+ .DESCRIPTION Update package versions to the latest as per the pattern mentioned in DotnetRuntimeMetadata.json
+#>
 function Update-CsprojFile([string] $path, $values) {
     $fileContent = Get-Content $path -raw
     $updated = $false
