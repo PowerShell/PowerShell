@@ -379,11 +379,6 @@ namespace Microsoft.PowerShell.Commands
         {
             if (ExcludeDifferent)
             {
-                if (_isIncludeEqualSpecified == false)
-                {
-                    return;
-                }
-
                 if (_isIncludeEqualSpecified && !_includeEqual)
                 {
                     return;
