@@ -76,10 +76,10 @@ Describe "Compare-Object" -Tags "CI" {
 	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $anonexistentvariable } | Should -Throw
     }
 
-    It "Should give a 0 array when using excludedifferent switch without also using the includeequal switch" {
-	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -ExcludeDifferent
+    It "Should only display equal lines when excludeDifferent switch is used without the includeequal switch" {
+    $actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -ExcludeDifferent
 
-	$actualOutput.Length | Should -Be 0
+    $actualOutput.Length | Should -Be 2
     }
 
     It "Should only display equal lines when excludeDifferent switch is used alongside the includeequal switch" {
