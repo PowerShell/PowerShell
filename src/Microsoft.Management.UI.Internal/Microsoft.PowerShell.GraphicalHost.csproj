@@ -24,25 +24,22 @@
 
   <ItemGroup>
     <PSEmbeddedResource Include = "resources/*.resx" Condition = "'$(SkipWPFcsproj)' == 'false'">
-      <!-- PSEmbeddedResource Update = "resources/*.resx" ManifestResourceName = "Microsoft.PowerShell.CoreCLR.Eventing" -->
-      <!-- ManifestResourceName>qqq</ManifestResourceName -->
-      <!-- <StronglyTypedManifestPrefix>$(MSBuildProjectName).resources</StronglyTypedManifestPrefix> -->
-      <!-- StronglyTypedFileName>$(IntermediateOutputPath)%(Filename).cs</StronglyTypedFileName -->
       <Generator>ResXFileCodeGenerator</Generator>
       <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
 
-      <StronglyTypedFileName>$(StronglyTypedOutputFolder)/%(Filename).cs</StronglyTypedFileName>
-      <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
-      <ManifestResourceName>Microsoft.PowerShell.GraphicalHost.resources.%(PSEmbeddedResource.StronglyTypedClassName)</ManifestResourceName>
-
       <PublicClass>$([System.String]::new('%(Filename)').StartsWith('Public', System.StringComparison.OrdinalIgnoreCase))</PublicClass>
 
-      <StronglyTypedManifestPrefix>$(MSBuildProjectName).resources</StronglyTypedManifestPrefix>
-      <StronglyTypedManifestPrefix Condition = "'%(PublicClass)' == 'true'">Microsoft.Management.UI.Internal.resources.public</StronglyTypedManifestPrefix>
+      <StronglyTypedManifestPrefix>$(RootNamespace).resources</StronglyTypedManifestPrefix>
+      <StronglyTypedManifestPrefix Condition = "'%(PublicClass)' == 'true'">$(RootNamespace).resources.public</StronglyTypedManifestPrefix>
 
+      <StronglyTypedFileName>$(StronglyTypedOutputFolder)/%(Filename).cs</StronglyTypedFileName>
       <StronglyTypedFileName Condition = "'%(PublicClass)' == 'true'">$(StronglyTypedOutputFolder)/$([System.String]::Copy('%(Filename)').Substring(7)).cs</StronglyTypedFileName>
+
+      <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
       <StronglyTypedClassName Condition = "'%(PublicClass)' == 'true'">$([System.String]::Copy('%(Filename)').Substring(7))</StronglyTypedClassName>
-      <ManifestResourceName Condition = "'%(PublicClass)' == 'true'">Microsoft.PowerShell.GraphicalHost.resources.public.%(PSEmbeddedResource.StronglyTypedClassName)</ManifestResourceName>
+
+      <ManifestResourceName>$(RootNamespace).resources.%(PSEmbeddedResource.StronglyTypedClassName)</ManifestResourceName>
+      <ManifestResourceName Condition = "'%(PublicClass)' == 'true'">$(RootNamespace).resources.public.%(PSEmbeddedResource.StronglyTypedClassName)</ManifestResourceName>
     </PSEmbeddedResource>
   </ItemGroup>
 
