@@ -88,6 +88,12 @@ Describe "Compare-Object" -Tags "CI" {
 	$actualOutput.Length | Should -Be 2
     }
 
+    It "Should give a 0 array when using excludedifferent switch when also setting the includeequal switch to false" {
+	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -ExcludeDifferent -IncludeEqual:$false
+
+	$actualOutput.Length | Should -Be 0
+    }
+
     It "Should be able to pass objects to pipeline using the passthru switch" {
 	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -Passthru | Format-Wide } | Should -Not -Throw
     }
