@@ -591,7 +591,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private PSModuleInfo ImportModule_LocallyViaName_Wrapper(ImportModuleOptions importModuleOptions, string name)
+        private PSModuleInfo ImportModule_LocallyViaName_WithTelemetry(ImportModuleOptions importModuleOptions, string name)
         {
             PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
             if (foundModule != null)
@@ -849,9 +849,10 @@ namespace Microsoft.PowerShell.Commands
             BaseGuid = modulespec.Guid;
 
             PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
-            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
+
             if (foundModule != null)
             {
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
                 SetModuleBaseForEngineModules(foundModule.Name, this.Context);
             }
 
@@ -1857,7 +1858,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string name in Name)
                 {
-                    ImportModule_LocallyViaName_Wrapper(importModuleOptions, name);
+                    ImportModule_LocallyViaName_WithTelemetry(importModuleOptions, name);
                 }
             }
             else if (this.ParameterSetName.Equals(ParameterSet_ViaPsrpSession, StringComparison.OrdinalIgnoreCase))
@@ -1901,23 +1902,10 @@ namespace Microsoft.PowerShell.Commands
         {
             Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
 
-            var exactModuleName = string.Empty;
+            // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
+            string exactModuleName = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
             bool match = false;
 
-            if (!string.IsNullOrEmpty(moduleName))
-            {
-                // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-                exactModuleName = moduleName;
-                if (Path.IsPathRooted(moduleName))
-                {
-                    exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
-                }
-            }
-            else if (moduleSpec != null)
-            {
-                exactModuleName = moduleSpec.Name;
-            }
-            
             foreach (var deniedModuleName in moduleDenyList)
             {
                 // use case-insensitive module name comparison
@@ -1964,27 +1952,20 @@ namespace Microsoft.PowerShell.Commands
 
         private void PrepareNoClobberWinCompatModuleImport(string moduleName, ModuleSpecification moduleSpec, ref ImportModuleOptions importModuleOptions)
         {
-            List<string> NoClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
 
             // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-            var coreModuleToLoad = moduleName;
-            if (moduleSpec != null)
-            {
-                coreModuleToLoad = moduleSpec.Name;
-            }
-            else if (Path.IsPathRooted(moduleName))
-            {
-                coreModuleToLoad = Path.GetFileNameWithoutExtension(moduleName);
-            }
-
-            var coreModuleToLoadIsEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
-            if (coreModuleToLoadIsEngineModule || ((NoClobberModuleList != null) && NoClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))
+            string coreModuleToLoad = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
+            
+            var isModuleToLoadEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
+            List<string> noClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+            if (isModuleToLoadEngineModule || ((noClobberModuleList != null) && noClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))
             {
                 // if it is one of engine modules - first try to load it from $PSHOME\Modules
                 // otherwise rely on $env:PSModulePath (in which WinPS module location has to go after CorePS module location)
-                if (coreModuleToLoadIsEngineModule)
+                if (isModuleToLoadEngineModule)
                 {
-                    var expectedCoreModulePath = Path.Combine(ModuleIntrinsics.GetPSHomeModulePath(), coreModuleToLoad);
+                    string expectedCoreModulePath = Path.Combine(ModuleIntrinsics.GetPSHomeModulePath(), coreModuleToLoad);
                     if (Directory.Exists(expectedCoreModulePath))
                     {
                         coreModuleToLoad = expectedCoreModulePath;
@@ -1993,18 +1974,18 @@ namespace Microsoft.PowerShell.Commands
 
                 if (moduleSpec == null)
                 {
-                    ImportModule_LocallyViaName_Wrapper(importModuleOptions, coreModuleToLoad);
+                    ImportModule_LocallyViaName_WithTelemetry(importModuleOptions, coreModuleToLoad);
                 }
                 else
                 {
                     ModuleSpecification tmpModuleSpec = new ModuleSpecification()
-                        {
-                            Guid = moduleSpec.Guid,
-                            MaximumVersion = moduleSpec.MaximumVersion,
-                            Version = moduleSpec.Version,
-                            RequiredVersion = moduleSpec.RequiredVersion,
-                            Name = coreModuleToLoad
-                        };
+                    {
+                        Guid = moduleSpec.Guid,
+                        MaximumVersion = moduleSpec.MaximumVersion,
+                        Version = moduleSpec.Version,
+                        RequiredVersion = moduleSpec.RequiredVersion,
+                        Name = coreModuleToLoad
+                    };
                     ImportModule_LocallyViaFQName(importModuleOptions, tmpModuleSpec);
                 }
 
@@ -2042,7 +2023,7 @@ namespace Microsoft.PowerShell.Commands
             // perform necessary preparations if module has to be imported with NoClobber mode
             if (filteredModuleNames != null)
             {
-                foreach(var moduleName in filteredModuleNames)
+                foreach(string moduleName in filteredModuleNames)
                 {
                     PrepareNoClobberWinCompatModuleImport(moduleName, null, ref importModuleOptions);
                 }

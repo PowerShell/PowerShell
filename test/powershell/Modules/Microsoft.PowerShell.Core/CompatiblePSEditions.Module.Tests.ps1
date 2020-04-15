@@ -573,11 +573,11 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
             $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
 
-            $proxyModule.ExportedCommands.Keys | Should Contain "ConvertFrom-String"
-            $proxyModule.ExportedCommands.Keys | Should Not Contain "Get-Date"
+            $proxyModule.ExportedCommands.Keys | Should -Contain "ConvertFrom-String"
+            $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Date"
 
-            $coreModule.ExportedCommands.Keys | Should Contain "Get-Date"
-            $coreModule.ExportedCommands.Keys | Should Not Contain "ConvertFrom-String"
+            $coreModule.ExportedCommands.Keys | Should -Contain "Get-Date"
+            $coreModule.ExportedCommands.Keys | Should -Not -Contain "ConvertFrom-String"
 
             $proxyModule | Remove-Module -Force
         }
@@ -591,11 +591,11 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
             $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
 
-            $proxyModule.ExportedCommands.Keys | Should Contain "Get-WmiObject"
-            $proxyModule.ExportedCommands.Keys | Should Not Contain "Get-Item"
+            $proxyModule.ExportedCommands.Keys | Should -Contain "Get-WmiObject"
+            $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Item"
 
-            $coreModule.ExportedCommands.Keys | Should Contain "Get-Item"
-            $coreModule.ExportedCommands.Keys | Should Not Contain "Get-WmiObject"
+            $coreModule.ExportedCommands.Keys | Should -Contain "Get-Item"
+            $coreModule.ExportedCommands.Keys | Should -Not -Contain "Get-WmiObject"
 
             $proxyModule | Remove-Module -Force
         }
