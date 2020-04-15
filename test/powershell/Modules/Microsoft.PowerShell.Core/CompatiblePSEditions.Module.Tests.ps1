@@ -600,6 +600,24 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $proxyModule | Remove-Module -Force
         }
 
+        It "NoClobber WinCompat import works with ModuleSpecifications" {
+
+            Import-Module -UseWindowsPowerShell -FullyQualifiedName @{ModuleName='Microsoft.PowerShell.Utility';ModuleVersion='0.0'}
+
+            $modules = Get-Module -Name Microsoft.PowerShell.Utility
+            $modules.Count | Should -Be 2
+            $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
+            $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
+
+            $proxyModule.ExportedCommands.Keys | Should -Contain "ConvertFrom-String"
+            $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Date"
+
+            $coreModule.ExportedCommands.Keys | Should -Contain "Get-Date"
+            $coreModule.ExportedCommands.Keys | Should -Not -Contain "ConvertFrom-String"
+
+            $proxyModule | Remove-Module -Force
+        }
+
         It "NoClobber WinCompat list in powershell.config is missing " {
             '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
             & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
