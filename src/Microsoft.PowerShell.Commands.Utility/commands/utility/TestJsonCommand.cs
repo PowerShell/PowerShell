@@ -117,12 +117,12 @@ namespace Microsoft.PowerShell.Commands
                     CultureInfo.CurrentUICulture,
                     TestJsonCmdletStrings.JsonSchemaFileOpenFailure,
                     resolvedpath), e);
-                ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, null));
+                ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, resolvedpath));
             }
             catch (Exception e)
             {
                 Exception exception = new Exception(TestJsonCmdletStrings.InvalidJsonSchema, e);
-                ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, null));
+                ThrowTerminatingError(new ErrorRecord(exception, "InvalidJsonSchema", ErrorCategory.InvalidData, resolvedpath));
             }
         }
 
