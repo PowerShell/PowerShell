@@ -99,6 +99,12 @@ namespace Microsoft.PowerShell.Commands
             /// This will be allowed when the manifest explicitly exports functions which will limit all visible module functions.
             /// </summary>
             internal bool AllowNestedModuleFunctionsToExport;
+
+            /// <summary>
+            /// Flag that controls Export-PSSession -AllowClobber parameter in generating proxy modules from remote sessions.
+            /// Historically -AllowClobber in these scenarios was set as True.
+            /// </summary>
+            internal bool NoClobberExportPSSession;
         }
 
         /// <summary>
