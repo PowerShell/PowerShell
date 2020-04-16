@@ -1958,7 +1958,7 @@ namespace Microsoft.PowerShell.Commands
             string coreModuleToLoad = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
             
             var isModuleToLoadEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
-            List<string> noClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+            string[] noClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
             if (isModuleToLoadEngineModule || ((noClobberModuleList != null) && noClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))
             {
                 // if it is one of engine modules - first try to load it from $PSHOME\Modules
