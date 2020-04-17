@@ -403,9 +403,6 @@
       <Component Id="cmp04AC57A0E3245015D9DFB332698F3E26" Guid="{7C114DE5-9F1E-444C-B006-7960FAEB41D1}">
         <File Id="filD484411B6AE3B42F2DABD1739690E702" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Net.HttpListener.dll" />
       </Component>
-      <Component Id="cmp0F357D94252A1FB7D62206CE323D9140" Guid="{496BA278-8E4C-4F95-AC8B-F06ACBF3B285}">
-        <File Id="fil19787014F20A95670C67789A7C94ED40" KeyPath="yes" Source="$(env.ProductSourcePath)\mscorrc.debug.dll" />
-      </Component>
       <Component Id="cmp1E29A0D7860190642C2D8504982890F9" Guid="{30484938-6644-4F53-BB06-2BB1999AD637}">
         <File Id="filDAAF9305BBAD857AA9CAB6751F36659B" KeyPath="yes" Source="$(env.ProductSourcePath)\clrjit.dll" />
       </Component>
@@ -3089,14 +3086,17 @@
       <Component Id="cmp2E32A6E773F543F0A150B972F8D3E23A" Guid="{a43d0117-1193-4316-a0f6-fef892870f38}">
         <File Id="fil66411B8941CA492E93BF262EA72C6BE6" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.GraphicalHost.xml" />
       </Component>
-      <Component Id="cmp0535678883A44B4D81A04C8BA7B2068C" Guid="{9253aa88-ab71-4f6c-98c1-b305af57c18f}">
-        <File Id="fil3D9B499EC41D4B4D9C7139B86D8CC398" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.12005.dll" />
-      </Component>
       <Component Id="cmp874F51885AE34AD9AA37DC46A44B3194" Guid="{77932153-0935-4689-8b48-6d2e21ae4824}">
         <File Id="fil16005153CF144E458123E5989CCB3A0E" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Windows.Forms.Primitives.dll" />
       </Component>
       <Component Id="cmp798A4EE6784541FE9B13582E52C5A818" Guid="{ec646ea5-c60e-41d5-9fd0-36fb14b1fc28}">
         <File Id="fil8A6290BE106E416CB35FB2BEA982C3B8" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.VisualBasic.Forms.dll" />
+      </Component>
+      <Component Id="cmp26F240CCDE054124A0DD455D7C97AA8B" Guid="{189dbe82-d5a7-4cf9-9f9c-2cfe62976a08}">
+        <File Id="fil63934499FF974EEEA1D37A9F5D16C470" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.16006.dll" />
+      </Component>
+      <Component Id="cmpBB705B2570064C99A71B6FA65CDF9DC8" Guid="{51c00292-f61c-4524-92a8-6b6171403839}">
+        <File Id="fil0F66F2502CDC47FF8C8626941746DF84" KeyPath="yes" Source="$(env.ProductSourcePath)\System.Windows.Forms.Design.Editors.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3235,7 +3235,6 @@
       <ComponentRef Id="cmp67AFE3748590F117178E5617E219F1F8" />
       <ComponentRef Id="cmp734102C1EBBE0D4417B67AA90D416EC4" />
       <ComponentRef Id="cmp04AC57A0E3245015D9DFB332698F3E26" />
-      <ComponentRef Id="cmp0F357D94252A1FB7D62206CE323D9140" />
       <ComponentRef Id="cmp1E29A0D7860190642C2D8504982890F9" />
       <ComponentRef Id="cmp2FB548B56B09B010468883CA4073600D" />
       <ComponentRef Id="cmp4D3236B49B126CF9FFC5234678B3B302" />
@@ -4077,7 +4076,6 @@
       <ComponentRef Id="cmp0DA1B3EF85234C7BBA6DE35BBD1B45D2" />
       <ComponentRef Id="cmpA34D56794B9144A2BE67E7CDABCF5B4E" />
       <ComponentRef Id="cmpF4093A1E8AB94B43AB0F852EB647CE7F" />
-      <ComponentRef Id="cmp0535678883A44B4D81A04C8BA7B2068C" />
       <ComponentRef Id="cmp4CCDE73A2A9E4D7B90065639D9433178" />
       <ComponentRef Id="cmp874F51885AE34AD9AA37DC46A44B3194" />
       <ComponentRef Id="cmp5359C8369744482FBB5D56CDF3FA0DB0" />
@@ -4096,6 +4094,8 @@
       <ComponentRef Id="cmp38D8A48C68FB4CB399A0A7677FA428E4" />
       <ComponentRef Id="cmp26335B5D1FE94E87A6B6EBD56A22C2B9" />
       <ComponentRef Id="cmp57D197B18F1F4A6AAB704B28CF61B535" />
+      <ComponentRef Id="cmp26F240CCDE054124A0DD455D7C97AA8B" />
+      <ComponentRef Id="cmpBB705B2570064C99A71B6FA65CDF9DC8" />
     </ComponentGroup>
   </Fragment>
 </Wix>

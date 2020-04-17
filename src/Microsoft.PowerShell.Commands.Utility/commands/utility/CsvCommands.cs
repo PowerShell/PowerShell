@@ -1013,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
                                 AppendStringWithEscapeAlways(_outputString, value);
                                 break;
                             case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                                if (value.Contains(_delimiter))
+                                if (value != null && value.Contains(_delimiter))
                                 {
                                     AppendStringWithEscapeAlways(_outputString, value);
                                 }

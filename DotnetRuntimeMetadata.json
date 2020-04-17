@@ -1,0 +1,6 @@
+{
+  "sdk": {
+    "channel": "release",
+    "packageVersionPattern": "5.0.0-preview.2"
+  }
+}

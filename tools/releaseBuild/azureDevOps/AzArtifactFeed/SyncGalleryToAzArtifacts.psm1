@@ -66,17 +66,20 @@ function SyncGalleryToAzArtifacts {
         }
 
         # Check if Az package version is less that gallery version
-        if (CompareVersions -lt -ReferencePackage $foundPackageOnAz -DifferencePackage $foundPackageOnGallery) {
+        $pkgOnAzVersion = [semver]::new($foundPackageOnAz.Version)
+        $pkgOnGalleryVersion = [semver]::new($foundPackageOnGallery.Version)
+
+        if ($pkgOnAzVersion -lt $pkgOnGalleryVersion) {
             Write-Verbose -Verbose "Module needs to be updated $($package.Name) - $($foundPackageOnGallery.Version)"
             $modulesToUpdate += $foundPackageOnGallery
-        } elseif (CompareVersions -lt -ReferencePackage $foundPackageOnGallery -DifferencePackage $foundPackageOnAz) {
+        } elseif ($pkgOnGalleryVersion -lt $pkgOnAzVersion) {
             Write-Warning "Newer version found on Az Artifacts - $($foundPackageOnAz.Name) - $($foundPackageOnAz.Version)"
         } else {
             Write-Verbose -Verbose "Module is in sync - $($package.Name)"
         }
     }
 
-    "Gallery Packages:`n"
+    "`nGallery Packages:"
     $galleryPackages
 
     "`nAz Artifacts Packages:`n"
@@ -90,65 +93,41 @@ function SyncGalleryToAzArtifacts {
         Save-Package -Provider NuGet -Source $galleryUrl -Name $package.Name -RequiredVersion $package.Version -Path $Destination
     }
 
-    # Remove dependent packages downloaded by Save-Module if there are already present in AzArtifacts feed.
-    try {
-        $null = Register-PackageSource -Name local -Location $Destination -ProviderName NuGet -Force
-        $packageNamesToKeep = @()
-        $savedPackages = Find-Package -Source local -AllVersions -AllowPreReleaseVersion
+    if ($modulesToUpdate.Length -gt 0)
+    {
+        # Remove dependent packages downloaded by Save-Package if there are already present in AzArtifacts feed.
+        try {
+            $null = Register-PackageSource -Name local -Location $Destination -ProviderName NuGet -Force
+            $packageNamesToKeep = @()
+            $savedPackages = Find-Package -Source local -AllVersions -AllowPreReleaseVersion
 
-        Write-Verbose -Verbose "Saved packages:"
-        $savedPackages | Out-String | Write-Verbose -Verbose
+            Write-Verbose -Verbose "Saved packages:"
+            $savedPackages | Out-String | Write-Verbose -Verbose
 
-        foreach($package in $savedPackages) {
-            $pkgVersion = NormalizeVersion -version $package.Version
-            $foundMatch = $azArtifactsPackages | Where-Object { $_.Name -eq $package.Name -and (NormalizeVersion -version $_.Version) -eq $pkgVersion }
+            foreach($package in $savedPackages) {
+                $pkgVersion = NormalizeVersion -version $package.Version
+                $foundMatch = $azArtifactsPackages | Where-Object { $_.Name -eq $package.Name -and (NormalizeVersion -version $_.Version) -eq $pkgVersion }
 
-            if(-not $foundMatch) {
-                Write-Verbose "Keeping package $($package.PackageFileName)" -Verbose
-                $packageNamesToKeep += "{0}*.nupkg" -f $package.Name
+                if(-not $foundMatch) {
+                    Write-Verbose "Keeping package $($package.PackageFileName)" -Verbose
+                    $packageNamesToKeep += "{0}*.nupkg" -f $package.Name
+                }
             }
+
+            if ($packageNamesToKeep.Length -gt 0) {
+                ## Removing only if we do have some packages to keep,
+                ## otherwise the '$Destination' folder will be removed.
+                Remove-Item -Path $Destination -Exclude $packageNamesToKeep -Recurse -Force -Verbose
+            }
+
+            Write-Verbose -Verbose "Packages kept for upload"
+            Get-ChildItem $Destination | Out-String | Write-Verbose -Verbose
         }
-
-        Remove-Item -Path $Destination -Exclude $packageNamesToKeep -Recurse -Force -Verbose
-
-        Write-Verbose -Verbose "Packages kept for upload"
-        Get-ChildItem $Destination | Out-String | Write-Verbose -Verbose
-    }
-    finally {
-        Unregister-PackageSource -Name local -Force -ErrorAction SilentlyContinue
-    }
-
-}
-
-Function CompareVersions {
-    param (
-        [Microsoft.PackageManagement.Packaging.SoftwareIdentity]
-        $ReferencePackage,
-        [Microsoft.PackageManagement.Packaging.SoftwareIdentity]
-        $DifferencePackage,
-        [Parameter(Mandatory = $true, ParameterSetName='lt')]
-        [switch]
-        $lt,
-        [Parameter(Mandatory = $true, ParameterSetName='gt')]
-        [switch]
-        $gt
-    )
-
-    if ($ReferencePackage.Version -eq $DifferencePackage.Version) {
-        return $false
-    }
-
-    $latest = SortPackage -p @($ReferencePackage,$DifferencePackage) | Select-Object -First 1
-
-    if ($gt.IsPresent) {
-        return $ReferencePackage -eq $latest
-    } elseif ($lt.IsPresent) {
-        return $DifferencePackage -eq $latest
-    } else {
-        throw "Unknown parameter set"
+        finally {
+            Unregister-PackageSource -Name local -Force -ErrorAction SilentlyContinue
+        }
     }
 }
-
 
 Function SortPackage {
     param(

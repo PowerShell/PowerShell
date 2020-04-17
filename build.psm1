@@ -8,7 +8,7 @@ Set-StrictMode -Version 3.0
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $script:Options = $null
 
-$dotnetCLIChannel = 'release'
+$dotnetCLIChannel = $(Get-Content $PSScriptRoot/DotnetRuntimeMetadata.json | ConvertFrom-Json).Sdk.Channel
 $dotnetCLIRequiredVersion = $(Get-Content $PSScriptRoot/global.json | ConvertFrom-Json).Sdk.Version
 
 # Track if tags have been sync'ed
@@ -689,7 +689,7 @@ function Restore-PSPester
         [ValidateNotNullOrEmpty()]
         [string] $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
     )
-    Save-Module -Name Pester -Path $Destination -Repository PSGallery -RequiredVersion "4.8.0"
+    Save-Module -Name Pester -Path $Destination -Repository PSGallery -MaximumVersion 4.99
 }
 
 function Compress-TestContent {
