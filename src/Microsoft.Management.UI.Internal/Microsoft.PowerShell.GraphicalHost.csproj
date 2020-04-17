@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" ToolsVersion="15.0" InitialTargets = "Resources">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop" ToolsVersion="15.0" InitialTargets = "PSResources">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>Assembly containing WPF code for Out-GridView, HelpWindow, and Show-Command</Description>
@@ -17,12 +17,22 @@
     <SkipWPFcsproj>$([System.String]::Copy('$(MSBuildProjectFile)').Contains('wpftmp'))</SkipWPFcsproj>
   </PropertyGroup>
 
-  <Target Name = "CreateDirectories" BeforeTargets = "Resources">
+  <Target Name = "CreateDirectories" BeforeTargets = "PSResources">
     <MakeDir
        Directories = "$(StronglyTypedOutputFolder)"/>
   </Target>
 
   <ItemGroup>
+    <!-- We have to use the workaround for the WPF project.
+        .Net 5 Preview.2 has some issues with WPF projects:
+          - Strong typed resources does not work as expected out of box.
+            (Really they are not generated at all.)
+            So we assign items in 'PSEmbeddedResource' to expected format
+            and explicitly call 'GenerateResource' task from custom 'PSResources' target.
+          - .Net 5 Preview.2 generates a temporory csproj file
+            that duplicates call our custom 'PSResources' target.
+            To avoid this we skip a project with 'wpftmp' in name.
+    -->
     <PSEmbeddedResource Include = "resources/*.resx" Condition = "'$(SkipWPFcsproj)' == 'false'">
       <Generator>ResXFileCodeGenerator</Generator>
       <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
@@ -43,7 +53,7 @@
     </PSEmbeddedResource>
   </ItemGroup>
 
-  <Target Name="Resources" Condition = "'$(SkipWPFcsproj)' == 'false'">
+  <Target Name="PSResources" Condition = "'$(SkipWPFcsproj)' == 'false'">
     <GenerateResource
       Sources="@(PSEmbeddedResource)"
       UseSourcePath="true"

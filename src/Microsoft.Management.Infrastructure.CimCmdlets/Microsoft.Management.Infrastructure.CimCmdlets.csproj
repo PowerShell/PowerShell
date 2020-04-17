@@ -6,6 +6,14 @@
     <AssemblyName>Microsoft.Management.Infrastructure.CimCmdlets</AssemblyName>
   </PropertyGroup>
 
+   <ItemGroup>
+    <EmbeddedResource Update="resources/*.resx">
+      <StronglyTypedClassName>Strings</StronglyTypedClassName>
+      <StronglyTypedNamespace>Microsoft.Management.Infrastructure.CimCmdlets</StronglyTypedNamespace>
+      <ManifestResourceName>$(RootNamespace).resources.%(EmbeddedResource.StronglyTypedClassName)</ManifestResourceName>
+    </EmbeddedResource>
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>

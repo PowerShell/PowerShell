@@ -112,6 +112,25 @@
   </PropertyGroup>
 
   <PropertyGroup>
+    <StronglyTypedOutputFolder>gen</StronglyTypedOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- We skip this for Microsoft.Management.UI.Internal because we have to use a workaround for WPF project. -->
+    <EmbeddedResource Update = "resources/*.resx" Condition = "'$(MSBuildProjectName)' != 'Microsoft.Management.UI.Internal'">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
+
+      <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
+      <StronglyTypedManifestPrefix>$(RootNamespace).resources</StronglyTypedManifestPrefix>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <PublishReadyToRun>true</PublishReadyToRun>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
     <IsWindows Condition="'$(IsWindows)' =='true' or ( '$(IsWindows)' == '' and '$(OS)' == 'Windows_NT')">true</IsWindows>
   </PropertyGroup>
