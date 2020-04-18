@@ -8,7 +8,6 @@ using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
-
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
 
@@ -38,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         /// the cmdlet parses the schema doing implicitly check the schema too.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaStringParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string Schema { get; set; }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// This is optional parameter.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public string SchemaFile { get; set; }
 
         private JsonSchema _jschema;
@@ -56,6 +55,8 @@ namespace Microsoft.PowerShell.Commands
         /// Unwrap TargetInvocationException if any and
         /// rethrow inner exception without losing the stack trace.
         /// </summary>
+        /// <param name="e">AggregateException to be unwrapped.</param>
+        /// <returns>Return value is unreachable since we always rethrow.</returns>
         private static bool UnwrapException(Exception e)
         {
             if (e is TargetInvocationException)
@@ -84,10 +85,11 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _jschema = JsonSchema.FromJsonAsync(Schema).Result;
                     }
-                    // Even if only one exception is thrown, it is still wrapped in an AggregateException exception
-                    // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
                     catch (AggregateException ae)
                     {
+                        // Even if only one exception is thrown, it is still wrapped in an AggregateException exception
+                        // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
+
                         ae.Handle(UnwrapException);
                     }
                 }
@@ -104,19 +106,23 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            // Handle exceptions related to file access to provide more specific error message
-            // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
             catch (Exception e) when (
+                // Handle exceptions related to file access to provide more specific error message
+                // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
+
                 e is IOException ||
                 e is UnauthorizedAccessException ||
                 e is NotSupportedException ||
                 e is SecurityException
             )
             {
-                Exception exception = new Exception(string.Format(
-                    CultureInfo.CurrentUICulture,
-                    TestJsonCmdletStrings.JsonSchemaFileOpenFailure,
-                    resolvedpath), e);
+                Exception exception = new Exception(
+                    string.Format(
+                        CultureInfo.CurrentUICulture,
+                        TestJsonCmdletStrings.JsonSchemaFileOpenFailure,
+                        resolvedpath),
+                    e
+                );
                 ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, resolvedpath));
             }
             catch (Exception e)
