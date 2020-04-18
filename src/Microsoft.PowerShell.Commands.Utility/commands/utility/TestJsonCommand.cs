@@ -89,7 +89,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // Even if only one exception is thrown, it is still wrapped in an AggregateException exception
                         // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
-
                         ae.Handle(UnwrapException);
                     }
                 }
@@ -109,7 +108,6 @@ namespace Microsoft.PowerShell.Commands
             catch (Exception e) when (
                 // Handle exceptions related to file access to provide more specific error message
                 // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
-
                 e is IOException ||
                 e is UnauthorizedAccessException ||
                 e is NotSupportedException ||
@@ -121,8 +119,7 @@ namespace Microsoft.PowerShell.Commands
                         CultureInfo.CurrentUICulture,
                         TestJsonCmdletStrings.JsonSchemaFileOpenFailure,
                         resolvedpath),
-                    e
-                );
+                    e);
                 ThrowTerminatingError(new ErrorRecord(exception, "JsonSchemaFileOpenFailure", ErrorCategory.OpenError, resolvedpath));
             }
             catch (Exception e)
