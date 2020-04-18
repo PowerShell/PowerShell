@@ -67,6 +67,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ExceptionDispatchInfo.Capture(e).Throw();
             }
+
             return true;
         }
 
