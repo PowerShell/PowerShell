@@ -414,11 +414,10 @@ Fix steps:
 
     # handle ResGen
     # Heuristic to run ResGen on the fresh machine
-    # TODO: remove Start-ResGen after testing ReadyToRun
-    #if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen")) {
-    #    Write-Log "Run ResGen (generating C# bindings for resx files)"
-    #    Start-ResGen
-    #}
+    if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen")) {
+        Write-Log "Run ResGen (generating C# bindings for resx files)"
+        Start-ResGen
+    }
 
     # Handle TypeGen
     # .inc file name must be different for Windows and Linux to allow build on Windows and WSL.
