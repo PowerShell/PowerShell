@@ -64,3 +64,73 @@ Describe "Native Command Arguments" -tags "CI" {
         }
     }
 }
+
+Describe 'PSPath to native commands' {
+    BeforeAll {
+        $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
+
+        if ($IsWindows) {
+            $cmd = "cmd"
+            $cmdArg1 = "/c"
+            $cmdArg2 = "type"
+            $dir = "cmd"
+            $dirArg1 = "/c"
+            $dirArg2 = "dir"
+        }
+        else {
+            $cmd = "cat"
+            $dir = "ls"
+        }
+
+        Set-Content -Path testdrive:/test.txt -Value 'Hello'
+        Set-Content -Path "testdrive:/test file.txt" -Value 'Hello'
+        Set-Content -Path "env:/test var" -Value 'Hello'
+        $filePath = Join-Path -Path ~ -ChildPath (New-Guid)
+        Set-Content -Path $filePath -Value 'Home'
+    }
+
+    AfterAll {
+        Remove-Item -Path "env:/test var"
+        Remove-Item -Path $filePath
+    }
+
+    It 'PSPath with ~/path works' -Skip:(-not $featureEnabled) {
+        $out = & $cmd $cmdArg1 $cmdArg2 "$filePath"
+        $LASTEXITCODE | Should -Be 0
+        $out | Should -BeExactly 'Home'
+    }
+
+    It 'PSPath with ~ works' -Skip:(-not $featureEnabled) {
+        $out = & $dir $dirArg1 $dirArg2 ~
+        $LASTEXITCODE | Should -Be 0
+        $out | Should -Not -BeNullOrEmpty
+    }
+
+    It 'PSPath that is file system path works with native commands: <path>' -Skip:(-not $featureEnabled) -TestCases @(
+        @{ path = "testdrive:/test.txt" }
+        @{ path = "testdrive:/test file.txt" }
+    ){
+        param($path)
+
+        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
+        $LASTEXITCODE | Should -Be 0
+        $out | Should -BeExactly 'Hello'
+    }
+
+    It 'PSPath passed with single quotes should be treated as literal' -Skip:(-not $featureEnabled) {
+        $out = & $cmd $cmdArg1 $cmdArg2 'testdrive:/test.txt'
+        $LASTEXITCODE | Should -Not -Be 0
+        $out | Should -BeNullOrEmpty
+    }
+
+    It 'PSPath that is not a file system path fails with native commands: <path>' -Skip:(-not $featureEnabled) -TestCases @(
+        @{ path = "env:/PSModulePath" }
+        @{ path = "env:/test var" }
+    ){
+        param($path)
+
+        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
+        $LASTEXITCODE | Should -Not -Be 0
+        $out | Should -BeNullOrEmpty
+    }
+}

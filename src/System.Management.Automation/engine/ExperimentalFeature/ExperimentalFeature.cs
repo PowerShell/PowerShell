@@ -121,8 +121,8 @@ namespace System.Management.Automation
                     name: "PSCultureInvariantReplaceOperator",
                     description: "Use culture invariant to-string convertor for lval in replace operator"),
                 new ExperimentalFeature(
-                    name: "NativePSDrive",
-                    description: "Convert PSDrive path to filesystem path for native commands"),
+                    name: "PSNativePSPathResolution",
+                    description: "Convert PSPath to filesystem path, if possible, for native commands"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
