@@ -380,6 +380,16 @@ namespace System.Management.Automation
 #endif
                 if (context.SessionState.Path.IsPSAbsolute(path, out driveName))
                 {
+#if !UNIX
+                    // check if the driveName is an actual disk drive on Windows, if so, no expansion
+                    foreach (var drive in DriveInfo.GetDrives())
+                    {
+                        if (drive.Name.StartsWith(driveName))
+                        {
+                            return path;
+                        }
+                    }
+#endif
                     try
                     {
                         ProviderInfo provider;
