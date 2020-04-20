@@ -226,7 +226,7 @@ namespace System.Management.Automation
 
                             if (stringConstantType == StringConstantType.DoubleQuoted)
                             {
-                                _arguments.Append(ResolvePath(arg));
+                                _arguments.Append(ResolvePath(arg, Context));
                             }
                             else
                             {
@@ -343,7 +343,7 @@ namespace System.Management.Automation
             // Check if the start of the path is a filesystem drive
             if (stringConstantType != StringConstantType.SingleQuoted)
             {
-                arg = ResolvePath(arg);
+                arg = ResolvePath(arg, Context);
             }
 
             if (!argExpanded)
@@ -355,9 +355,10 @@ namespace System.Management.Automation
         /// <summary>
         /// Check if string is prefixed by psdrive, if so, expand it if filesystem path.
         /// </summary>
-        /// <param name="path">The potential PSPath to resolve.static</param>
+        /// <param name="path">The potential PSPath to resolve.</param>
+        /// <param name="context">The current ExecutionContext.</param>
         /// <returns>Resolved PSPath if applicable otherwise the original path</returns>
-        internal string ResolvePath(string path)
+        internal static string ResolvePath(string path, ExecutionContext context)
         {
             if (ExperimentalFeature.IsEnabled("PSNativePSPathResolution"))
             {
@@ -367,7 +368,7 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        ProviderInfo fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
+                        ProviderInfo fileSystemProvider = context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
                         return (fileSystemProvider.Home + path.Substring(1)).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                     }
                     catch
@@ -377,12 +378,12 @@ namespace System.Management.Automation
                 }
                 else
 #endif
-                if (Context.SessionState.Path.IsPSAbsolute(path, out driveName))
+                if (context.SessionState.Path.IsPSAbsolute(path, out driveName))
                 {
                     try
                     {
                         ProviderInfo provider;
-                        Collection<string> paths = Context.SessionState.Path.GetResolvedProviderPathFromPSPath($"{driveName}:", out provider);
+                        Collection<string> paths = context.SessionState.Path.GetResolvedProviderPathFromPSPath($"{driveName}:", out provider);
                         if (paths.Count == 1 && provider.Name.Equals(FileSystemProvider.ProviderName))
                         {
                             // + 2 to replace the colon and the trailing slash which is part of the returned pspath
