@@ -364,7 +364,7 @@ namespace System.Management.Automation
             {
                 string driveName;
 #if !UNIX
-                if (path.Equals("~") || path.StartsWith("~" + Path.DirectorySeparatorChar) || path.StartsWith("~" + Path.AltDirectorySeparatorChar))
+                if (string.Equals(path, "~") || path.StartsWith("~" + Path.DirectorySeparatorChar) || path.StartsWith("~" + Path.AltDirectorySeparatorChar))
                 {
                     try
                     {
@@ -394,7 +394,7 @@ namespace System.Management.Automation
                     {
                         ProviderInfo provider;
                         Collection<string> paths = context.SessionState.Path.GetResolvedProviderPathFromPSPath($"{driveName}:", out provider);
-                        if (paths.Count == 1 && provider.Name.Equals(FileSystemProvider.ProviderName))
+                        if (paths.Count == 1 && string.Equals(provider.Name, FileSystemProvider.ProviderName))
                         {
                             // + 2 to replace the colon and the trailing slash which is part of the returned pspath
                             return (paths[0] + path.Substring(driveName.Length + 2)).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
