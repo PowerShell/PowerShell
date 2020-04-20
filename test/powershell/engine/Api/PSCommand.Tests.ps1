@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
 Describe "PSCommand API tests" -Tag "CI" {
     BeforeAll {
         $shell = [PowerShell]::Create()
