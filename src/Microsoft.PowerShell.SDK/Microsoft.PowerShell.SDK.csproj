@@ -19,7 +19,7 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
     <PackageReference Include="System.IO.Packaging" Version="5.0.0-preview.4.20217.4" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="5.0.0-preview.3.20214.6" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="5.0.0-preview.4.20220.6" />
     <PackageReference Include="System.Text.Encodings.Web" Version="5.0.0-preview.3.20214.6" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
     <PackageReference Include="System.ServiceModel.Duplex" Version="4.7.0" />
