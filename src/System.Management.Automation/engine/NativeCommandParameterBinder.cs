@@ -130,8 +130,7 @@ namespace System.Management.Automation
                             stringConstantType = StringConstantType.DoubleQuoted;
                         }
 
-                        appendOneNativeArgument(Context, argValue,
-                            arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
+                        AppendOneNativeArgument(Context, argValue, arrayLiteralAst, sawVerbatimArgumentMarker, stringConstantType);
                     }
                 }
             }
@@ -166,13 +165,11 @@ namespace System.Management.Automation
         /// <param name="argArrayAst">If the argument was an array literal, the Ast, otherwise null.</param>
         /// <param name="sawVerbatimArgumentMarker">True if the argument occurs after --%.</param>
         /// <param name="stringConstantType">Bare, SingleQuoted, or DoubleQuoted.</param>
-        private void appendOneNativeArgument(ExecutionContext context, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, StringConstantType stringConstantType)
+        private void AppendOneNativeArgument(ExecutionContext context, object obj, ArrayLiteralAst argArrayAst, bool sawVerbatimArgumentMarker, StringConstantType stringConstantType)
         {
             IEnumerator list = LanguagePrimitives.GetEnumerator(obj);
 
-            Diagnostics.Assert(argArrayAst == null
-                || obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count,
-                "array argument and ArrayLiteralAst differ in number of elements");
+            Diagnostics.Assert((argArrayAst == null) || obj is object[] && ((object[])obj).Length == argArrayAst.Elements.Count, "array argument and ArrayLiteralAst differ in number of elements");
 
             int currentElement = -1;
             string separator = string.Empty;
@@ -251,7 +248,8 @@ namespace System.Management.Automation
                         }
                     }
                 }
-            } while (list != null);
+            }
+            while (list != null);
         }
 
         /// <summary>
@@ -357,6 +355,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Check if string is prefixed by psdrive, if so, expand it if filesystem path.
         /// </summary>
+        /// <param name="path">The potential PSPath to resolve.static</param>
+        /// <returns>Resolved PSPath if applicable otherwise the original path</returns>
         internal string ResolvePath(string path)
         {
             if (ExperimentalFeature.IsEnabled("PSNativePSPathResolution"))
