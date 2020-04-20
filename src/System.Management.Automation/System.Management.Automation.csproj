@@ -20,7 +20,7 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="System.DirectoryServices" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-preview.3.20214.6" />
-    <PackageReference Include="System.Management" Version="5.0.0-preview.3.20214.6" />
+    <PackageReference Include="System.Management" Version="5.0.0-preview.4.20220.6" />
     <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="System.Security.AccessControl" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="5.0.0-preview.3.20214.6" />
