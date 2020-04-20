@@ -95,7 +95,7 @@ Describe 'PSPath to native commands' {
     }
 
     It 'PSPath with ~/path works' -Skip:(-not $featureEnabled) {
-        $out = & $cmd $cmdArg1 $cmdArg2 "$filePath"
+        $out = & $cmd $cmdArg1 $cmdArg2 $filePath
         $LASTEXITCODE | Should -Be 0
         $out | Should -BeExactly 'Home'
     }

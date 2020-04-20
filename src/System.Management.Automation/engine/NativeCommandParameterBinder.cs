@@ -266,7 +266,7 @@ namespace System.Management.Automation
             // On UNIX systems, we expand arguments containing wildcard expressions against
             // the file system just like bash, etc.
 
-            if (stringConstantType != StringConstantType.SingleQuoted && WildcardPattern.ContainsWildcardCharacters(arg))
+            if (stringConstantType == StringConstantType.BareWord && WildcardPattern.ContainsWildcardCharacters(arg))
             {
                 // See if the current working directory is a filesystem provider location
                 // We won't do the expansion if it isn't since native commands can only access the file system.
@@ -320,7 +320,7 @@ namespace System.Management.Automation
                     }
                 }
             }
-            else if (stringConstantType != StringConstantType.SingleQuoted)
+            else if (stringConstantType == StringConstantType.BareWord)
             {
                 // Even if there are no wildcards, we still need to possibly
                 // expand ~ into the filesystem provider home directory path
@@ -367,11 +367,8 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        Collection<PathInfo> paths = Context.SessionState.Path.GetResolvedPSPathFromPSPath("~");
-                        if (paths.Count == 1)
-                        {
-                            return (paths[0].Path + path.Substring(1)).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-                        }
+                        ProviderInfo fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
+                        return (fileSystemProvider.Home + path.Substring(1)).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
                     }
                     catch
                     {
@@ -386,7 +383,7 @@ namespace System.Management.Automation
                     {
                         ProviderInfo provider;
                         Collection<string> paths = Context.SessionState.Path.GetResolvedProviderPathFromPSPath($"{driveName}:", out provider);
-                        if (paths.Count == 1 && provider.Name.Equals("FileSystem", StringComparison.InvariantCultureIgnoreCase))
+                        if (paths.Count == 1 && provider.Name.Equals(FileSystemProvider.ProviderName))
                         {
                             // + 2 to replace the colon and the trailing slash which is part of the returned pspath
                             return (paths[0] + path.Substring(driveName.Length + 2)).Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
