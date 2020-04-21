@@ -45,16 +45,27 @@ function Update-PackageVersion {
         "Microsoft.NETCore.Windows.ApiSets"
     )
 
-    $packages = [System.Collections.Generic.Dictionary[[string], [PkgVer]]]::new()
+    $packages = [System.Collections.Generic.Dictionary[[string], [PkgVer[]] ]]::new()
 
-    Get-ChildItem -Path "$PSScriptRoot/../src/" -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj' | ForEach-Object {
+    $paths = @(
+        "$PSScriptRoot/packaging/projects/reference/Microsoft.PowerShell.Commands.Utility/Microsoft.PowerShell.Commands.Utility.csproj"
+        "$PSScriptRoot/packaging/projects/reference/System.Management.Automation/System.Management.Automation.csproj"
+        "$PSScriptRoot/../src/"
+        "$PSScriptRoot/../test/tools/"
+    )
+
+    Get-ChildItem -Path $paths -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj','PSGalleryTestModules.csproj' | ForEach-Object {
+        Write-Verbose -Message "Reading - $($_.FullName)" -Verbose
         $prj = [xml] (Get-Content $_.FullName -Raw)
         $pkgRef = $prj.Project.ItemGroup.PackageReference
 
         foreach ($p in $pkgRef) {
             if ($null -ne $p -and -not $skipModules.Contains($p.Include)) {
                 if (-not $packages.ContainsKey($p.Include)) {
-                    $packages.Add($p.Include, [PkgVer]::new($p.Include, $p.Version, $null, $_.FullName))
+                    $packages.Add($p.Include, @([PkgVer]::new($p.Include, $p.Version, $null, $_.FullName)))
+                }
+                else {
+                    $packages[$p.Include] += [PkgVer]::new($p.Include, $p.Version, $null, $_.FullName)
                 }
             }
         }
@@ -65,19 +76,22 @@ function Update-PackageVersion {
     $packages.GetEnumerator() | ForEach-Object {
         $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPreReleaseVersions -Source 'dotnet5'
 
-        $version = $_.Value.Version
+        foreach ($v in $_.Value) {
+            $version = $v.Version
 
-        foreach ($p in $pkgs) {
-            if ($p.Version -like "$versionPattern*") {
-                if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
-                    $_.Value.NewVersion = $p.Version
-                    break
+            foreach ($p in $pkgs) {
+                if ($p.Version -like "$versionPattern*") {
+                    if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
+                        $v.NewVersion = $p.Version
+                        break
+                    }
                 }
             }
         }
     }
 
-    $pkgsByPath = $packages.Values | Group-Object -Property Path
+    # we need a ForEach-Object below to unravel each of the items in 'Values' which is an array of PkgVer
+    $pkgsByPath = $packages.Values | ForEach-Object { $_ } | Group-Object -Property Path
 
     $pkgsByPath | ForEach-Object {
         Update-CsprojFile -Path $_.Name -Values $_.Group
