@@ -364,7 +364,7 @@ namespace System.Management.Automation
             {
                 string driveName;
 #if !UNIX
-                if (string.Equals(path, "~") || path.StartsWith("~" + Path.DirectorySeparatorChar) || path.StartsWith("~" + Path.AltDirectorySeparatorChar))
+                if (string.Equals(path, "~", StringComparison.Ordinal) || path.StartsWith("~" + Path.DirectorySeparatorChar, StringComparison.Ordinal) || path.StartsWith("~" + Path.AltDirectorySeparatorChar, StringComparison.Ordinal))
                 {
                     try
                     {
