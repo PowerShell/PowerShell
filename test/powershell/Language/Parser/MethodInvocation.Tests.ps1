@@ -81,3 +81,82 @@ namespace MSFT_716893
         ([MSFT_716893.IInterface1]$proxy).BaseOperation(22) | Should -Be "3 - 22"
     }
 }
+
+Describe 'Generic Method invocation' {
+
+    BeforeAll {
+        $EmptyArrayCases = @(
+            @{
+                Script       = '[Array]::Empty[string]()'
+                ExpectedType = [string[]]
+            }
+            @{
+                Script       = '[Array]::Empty[System.Collections.Generic.Dictionary[System.Numerics.BigInteger, System.Collections.Generic.List[string[,]]]]()'
+                ExpectedType = [System.Collections.Generic.Dictionary[System.Numerics.BigInteger, System.Collections.Generic.List[string[, ]]][]]
+            }
+            @{
+                Script       = '[Array]::$("Empty")[[System.Collections.Generic.Dictionary[[System.String, System.Private.CoreLib],[System.Numerics.BigInteger, System.Runtime.Numerics]], System.Private.CoreLib]]()'
+                ExpectedType = [System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib], [System.Numerics.BigInteger, System.Runtime.Numerics]][], System.Private.CoreLib]
+            }
+        )
+    }
+
+    It 'does not throw a parse error for "<Script>"' -TestCases $EmptyArrayCases {
+        param($Script)
+
+        { [scriptblock]::Create($script) } | Should -Not -Throw
+    }
+
+    It 'can call a generic method "<Script>" with no arguments' -TestCases $EmptyArrayCases {
+        param($Script, $ExpectedType)
+
+        $Result = & [scriptblock]::Create($Script)
+        $Result.GetType() | Should -Be $ExpectedType
+
+        $Result.Length | Should -Be 0
+    }
+
+    It 'can call generic instance methods' {
+        $dictionary = [System.Collections.Concurrent.ConcurrentDictionary[string, int]]::new()
+
+        $addEntryScript = {
+            param($key, $float)
+
+            if ($float -gt 0.5) {
+                return 10
+            }
+            else {
+                return 1
+            }
+        }
+
+        $updateEntryScript = {
+            param($key, $currentValue, $float)
+
+            if ($currentValue / $float -gt 2) {
+                return 5
+            }
+            else {
+                return 0
+            }
+        }
+
+        $FloatValue = 0.4
+        $Key = 'Test'
+
+        # Add entry
+        $dictionary.AddOrUpdate[float]($Key, $addEntryScript, $updateEntryScript, $FloatValue)
+        $dictionary.$Key | Should -Be 1
+
+        # Update entry
+        $dictionary.AddOrUpdate[float]($Key, $addEntryScript, $updateEntryScript, $FloatValue)
+        $dictionary.$Key | Should -Be 5
+    }
+
+    It 'can call generic static methods with arguments' {
+        [System.Linq.Enumerable]::Select[int, int](
+            [int[]](0..10),
+            [func[int, int]]{ $args[0] + 2 }
+        ) | Should -Be @(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+    }
+}
