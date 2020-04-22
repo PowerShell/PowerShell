@@ -2233,8 +2233,6 @@ function Start-CrossGen {
             $CrossgenPath
         )
 
-        # TODO: remove Start-CrossGen after testing ReadyToRun.
-        return
 
         $platformAssembliesPath = Split-Path $AssemblyPath -Parent
         $crossgenFolder = Split-Path $CrossgenPath
