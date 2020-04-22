@@ -1909,9 +1909,18 @@ namespace System.Management.Automation
         internal PSMethodInvocationConstraints(
             Type methodTargetType,
             Type[] parameterTypes)
+            : this(methodTargetType, genericTypeParameters: null, parameterTypes)
         {
-            this.MethodTargetType = methodTargetType;
+        }
+
+        internal PSMethodInvocationConstraints(
+            Type methodTargetType,
+            Type[] genericTypeParameters,
+            Type[] parameterTypes)
+        {
+            MethodTargetType = methodTargetType;
             _parameterTypes = parameterTypes;
+            GenericTypeParameters = genericTypeParameters?.ToArray() ?? Array.Empty<Type>();
         }
 
         /// <remarks>
@@ -1925,6 +1934,11 @@ namespace System.Management.Automation
         public IEnumerable<Type> ParameterTypes => _parameterTypes;
 
         private readonly Type[] _parameterTypes;
+
+        /// <summary>
+        /// Gets the generic type parameters for the method invocation.
+        /// </summary>
+        public Type[] GenericTypeParameters { get; private set; }
 
         internal static bool EqualsForCollection<T>(ICollection<T> xs, ICollection<T> ys)
         {
@@ -1946,8 +1960,6 @@ namespace System.Management.Automation
             return xs.SequenceEqual(ys);
         }
 
-        // TODO: IEnumerable<Type> genericTypeParameters { get; private set; }
-
         public bool Equals(PSMethodInvocationConstraints other)
         {
             if (other is null)
@@ -1966,6 +1978,11 @@ namespace System.Management.Automation
             }
 
             if (!EqualsForCollection(_parameterTypes, other._parameterTypes))
+            {
+                return false;
+            }
+
+            if (!EqualsForCollection(GenericTypeParameters, other.GenericTypeParameters))
             {
                 return false;
             }
@@ -2002,6 +2019,7 @@ namespace System.Management.Automation
 
                 result = result * 397 + (MethodTargetType != null ? MethodTargetType.GetHashCode() : 0);
                 result = result * 397 + ParameterTypes.SequenceGetHashCode();
+                result = result * 397 + GenericTypeParameters.SequenceGetHashCode();
 
                 return result;
             }
@@ -2015,6 +2033,22 @@ namespace System.Management.Automation
             {
                 sb.Append("this: ");
                 sb.Append(ToStringCodeMethods.Type(MethodTargetType, dropNamespaces: true));
+                separator = " ";
+            }
+
+            if (GenericTypeParameters.Length != 0)
+            {
+                sb.Append(separator);
+                sb.Append("genericTypeParams: ");
+
+                separator = string.Empty;
+                foreach (Type parameter in GenericTypeParameters)
+                {
+                    sb.Append(separator);
+                    sb.Append(ToStringCodeMethods.Type(parameter, dropNamespaces: true));
+                    separator = ", ";
+                }
+
                 separator = " ";
             }
 

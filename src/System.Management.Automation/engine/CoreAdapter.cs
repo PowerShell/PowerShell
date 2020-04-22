@@ -1394,32 +1394,37 @@ namespace System.Management.Automation
             // be turned into an array.
             // We also skip the optimization if the number of arguments and parameters is different
             // so we let the loop deal with possible optional parameters.
-            if ((methods.Length == 1) &&
-                (!methods[0].hasVarArgs) &&
-                (!methods[0].isGeneric) &&
-                (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition)) &&
+            if (methods.Length == 1
+                && !methods[0].hasVarArgs
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
-                (methods[0].parameters.Length == arguments.Length))
+                && !methods[0].isGeneric
+                && (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition))
+                && methods[0].parameters.Length == arguments.Length)
             {
                 return methods[0];
             }
 
             Type[] argumentTypes = arguments.Select(EffectiveArgumentType).ToArray();
+            Type[] genericParameters = invocationConstraints?.GenericTypeParameters ?? Array.Empty<Type>();
             List<OverloadCandidate> candidates = new List<OverloadCandidate>();
             for (int i = 0; i < methods.Length; i++)
             {
                 MethodInformation method = methods[i];
 
-                if (method.method != null && method.method.DeclaringType.IsGenericTypeDefinition)
+                if (method.method != null && method.method.DeclaringType.IsGenericTypeDefinition
+                    || !method.isGeneric && genericParameters.Length > 0)
                 {
-                    continue; // skip methods defined by an *open* generic type
+                    // If method is defined by an *open* generic type, or
+                    // if generic parameters were provided and this method isn't generic, skip it.
+                    continue;
                 }
 
                 if (method.isGeneric)
                 {
                     Type[] argumentTypesForTypeInference = new Type[argumentTypes.Length];
                     Array.Copy(argumentTypes, argumentTypesForTypeInference, argumentTypes.Length);
-                    if (invocationConstraints != null && invocationConstraints.ParameterTypes != null)
+
+                    if (invocationConstraints?.ParameterTypes != null)
                     {
                         int parameterIndex = 0;
                         foreach (Type typeConstraintFromCallSite in invocationConstraints.ParameterTypes)
@@ -1430,6 +1435,22 @@ namespace System.Management.Automation
                             }
 
                             parameterIndex++;
+                        }
+                    }
+
+                    if (genericParameters?.Length > 0 && method.method is MethodInfo originalMethod)
+                    {
+                        try
+                        {
+                            method = new MethodInformation(
+                                originalMethod.MakeGenericMethod(genericParameters),
+                                parametersToIgnore: 0);
+                        }
+                        catch (ArgumentException)
+                        {
+                            // Just skip this possibility if the generic type parameters can't be used to make
+                            // a valid generic method here.
+                            continue;
                         }
                     }
 
