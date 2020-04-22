@@ -12,6 +12,7 @@ class CommitNode {
     [string] $Body
     [string] $PullRequest
     [string] $ChangeLogMessage
+    [string] $ThankYouMessage
     [bool] $IsBreakingChange
 
     CommitNode($hash, $parents, $name, $email, $subject, $body) {
@@ -266,6 +267,7 @@ function Get-ChangeLog
                 }
             }
             $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commit.Subject), $commit.AuthorGitHubLogin)
+            $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
         }
 
         if ($commit.IsBreakingChange) {
@@ -358,8 +360,13 @@ function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
 
         if ($Compress) {
             $items = $clSection.ChangeLogMessage -join "`n"
+            $thankYou = "We thank the following contributors!`n`n"
+            $thankYou += ($clSection.ThankYouMessage | Where-Object { if($_) { return $true} return $false}) -join ", "
 
             "<details>`n"
+            "<summary>`n"
+            $thankYou | ConvertFrom-Markdown | Select-Object -ExpandProperty Html
+            "</summary>`n"
             $items | ConvertFrom-Markdown | Select-Object -ExpandProperty Html
             "</details>"
         }
