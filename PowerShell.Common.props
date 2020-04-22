@@ -97,6 +97,7 @@
 
     <TargetFramework>netcoreapp5.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
+    <PublishReadyToRun>true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

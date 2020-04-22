@@ -2233,6 +2233,7 @@ function Start-CrossGen {
             $CrossgenPath
         )
 
+
         $platformAssembliesPath = Split-Path $AssemblyPath -Parent
         $crossgenFolder = Split-Path $CrossgenPath
 
@@ -2361,29 +2362,7 @@ function Start-CrossGen {
         "Microsoft.ApplicationInsights.dll"
     )
 
-    # Common PowerShell libraries to crossgen
-    $psCoreAssemblyList = @(
-        "pwsh.dll",
-        "Microsoft.PowerShell.Commands.Utility.dll",
-        "Microsoft.PowerShell.Commands.Management.dll",
-        "Microsoft.PowerShell.Security.dll",
-        "Microsoft.PowerShell.ConsoleHost.dll",
-        "System.Management.Automation.dll"
-    )
-
-    # Add Windows specific libraries
-    if ($environment.IsWindows) {
-        $psCoreAssemblyList += @(
-            "Microsoft.PowerShell.CoreCLR.Eventing.dll",
-            "Microsoft.WSMan.Management.dll",
-            "Microsoft.WSMan.Runtime.dll",
-            "Microsoft.PowerShell.Commands.Diagnostics.dll",
-            "Microsoft.PowerShell.GraphicalHost.dll",
-            "Microsoft.Management.Infrastructure.CimCmdlets.dll"
-        )
-    }
-
-    $fullAssemblyList = $commonAssembliesForAddType + $psCoreAssemblyList
+    $fullAssemblyList = $commonAssembliesForAddType
 
     foreach ($assemblyName in $fullAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
