@@ -25,7 +25,7 @@
     <PackageReference Include="System.Security.AccessControl" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="System.Security.Permissions" Version="5.0.0-preview.3.20214.6" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0-preview.3.20214.6" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0-preview.5.20223.4" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.0.0" />
