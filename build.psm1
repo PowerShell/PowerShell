@@ -391,6 +391,10 @@ Fix steps:
         $Arguments += "/property:IsWindows=false"
     }
 
+    if($Options.Runtime -like 'fxdependent*') {
+        $Arguments += "/property:PublishReadyToRun=false"
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
