@@ -1626,7 +1626,8 @@ function Install-Dotnet {
     param(
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
-        [switch]$NoSudo
+        [switch]$NoSudo,
+        [string]$InstallDir
     )
 
     # This allows sudo install to be optional; needed when running in containers / as root
@@ -1660,7 +1661,12 @@ function Install-Dotnet {
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
             & $curl -sO $installObtainUrl/$installScript
-            bash ./$installScript -c $Channel -v $Version
+
+            if (-not $InstallDir) {
+                bash ./$installScript -c $Channel -v $Version
+            } else {
+                bash ./$installScript -c $Channel -v $Version -i $InstallDir
+            }
         }
     } elseif ($environment.IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
@@ -1668,12 +1674,22 @@ function Install-Dotnet {
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
 
         if (-not $environment.IsCoreCLR) {
-            & ./$installScript -Channel $Channel -Version $Version
+            if (-not $InstallDir) {
+                & ./$installScript -Channel $Channel -Version $Version
+            } else {
+                & ./$installScript -Channel $Channel -Version $Version -InstallDir $InstallDir
+            }
         } else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
             $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
-            Start-NativeExecution { & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version }
+            Start-NativeExecution {
+                if (-not $InstallDir) {
+                    & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version
+                } else {
+                    & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version  -InstallDir $InstallDir
+                }
+            }
         }
     }
 }
