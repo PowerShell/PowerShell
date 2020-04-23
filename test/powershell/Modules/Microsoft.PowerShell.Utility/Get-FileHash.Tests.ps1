@@ -77,4 +77,10 @@ Describe "Get-FileHash" -Tags "CI" {
             $result.Path | Should -Be $testDocument
         }
     }
+    
+    Context "Close file before writing hash details to pipeline" {
+        It "Should not hold the file open unnecessarily" {
+            {Get-FileHash $testDocument | Rename-Item -NewName {$_.Hash}} | Should -Not -Throw
+        }
+    }
 }
