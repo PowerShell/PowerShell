@@ -128,14 +128,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 byte[] bytehash = null;
                 string hash = null;
-                Stream openfilestream = null;
 
                 try
                 {
-                    openfilestream = File.OpenRead(path);
-                    bytehash = hasher.ComputeHash(openfilestream);
-
-                    hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
+                    using (Stream openfilestream = File.OpenRead(path))
+                    {
+                        bytehash = hasher.ComputeHash(openfilestream);
+                        hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
+                    }
+                    
                     WriteHashResult(Algorithm, hash, path);
                 }
                 catch (FileNotFoundException ex)
@@ -164,10 +165,6 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ReadError,
                         path);
                     WriteError(errorRecord);
-                }
-                finally
-                {
-                    openfilestream?.Dispose();
                 }
             }
         }
