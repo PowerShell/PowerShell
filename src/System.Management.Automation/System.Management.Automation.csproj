@@ -16,7 +16,7 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.13.1" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="5.0.0-preview.3.20214.6" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="5.0.0-preview.5.20223.4" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="System.DirectoryServices" Version="5.0.0-preview.3.20214.6" />
     <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-preview.3.20214.6" />
