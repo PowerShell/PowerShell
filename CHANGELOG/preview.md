@@ -1,5 +1,106 @@
 # Current preview release
 
+## [7.1.0-preview.2] - 2020-04-23
+
+### Breaking Changes
+
+- On Windows, `Start-Process` creates a process environment with
+  all the environment variables from current session,
+  using `-UseNewEnvironment` creates a new default process environment (#10830) (Thanks @iSazonov!)
+- Do not wrap return result to `PSObject` when converting ScriptBlock to delegate (#10619)
+
+### Engine Updates and Fixes
+
+- Allow case insensitive paths for determining `PSModulePath` (#12192)
+- Add PowerShell version 7.0 to compatible version list (#12184)
+- Discover assemblies loaded by `Assembly.Load(byte[])` and `Assembly.LoadFile` (#12203)
+
+### General Cmdlet Updates and Fixes
+
+- Fix `WinCompat` module loading to treat PowerShell 7 modules with higher priority (#12269)
+- Implement `ForEach-Object -Parallel` runspace reuse (#12122)
+- Fix `Get-Service` to not modify collection while enumerating it (#11851) (Thanks @NextTurn!)
+- Clean up the IPC named pipe on PowerShell exit (#12187)
+- Fix `<img />` detection regex in web cmdlets (#12099) (Thanks @vexx32!)
+- Allow shorter signed hex literals with appropriate type suffixes (#11844) (Thanks @vexx32!)
+- Update `UseNewEnvironment` parameter behavior of `Start-Process` cmdlet on Windows (#10830) (Thanks @iSazonov!)
+- Add `-Shuffle` switch to `Get-Random` command (#11093) (Thanks @eugenesmlv!)
+- Make `GetWindowsPowerShellModulePath` compatible with multiple PS installations (#12280)
+- Fix `Start-Job` to work on systems that don't have Windows PowerShell registered as default shell (#12296)
+- Specifying an alias and `-Syntax` to `Get-Command` returns the aliased commands syntax (#10784) (Thanks @ChrisLGardner!)
+- Make CSV cmdlets work when using `-AsNeeded` and there is an incomplete row (#12281) (Thanks @iSazonov!)
+- In local invocations, do not require `-PowerShellVersion 5.1` for `Get-FormatData` in order to see all format data. (#11270) (Thanks @mklement0!)
+- Added Support For Big Endian `UTF-32` (#11947) (Thanks @NoMoreFood!)
+- Fix possible race that leaks PowerShell object dispose in `ForEach-Object -Parallel` (#12227)
+- Add `-FromUnixTime` to `Get-Date` to allow Unix time input (#12179) (Thanks @jackdcasey!)
+- Change default progress foreground and background colors to provide improved contrast (#11455) (Thanks @rkeithhill!)
+- Fix `foreach -parallel` when current drive is not available (#12197)
+- Do not wrap return result to `PSObject` when converting `ScriptBlock` to `delegate` (#10619)
+- Don't write DNS resolution errors on `Test-Connection -Quiet` (#12204) (Thanks @vexx32!)
+- Use dedicated threads to read the redirected output and error streams from the child process for out-of-proc jobs (#11713)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@ShaydeNofziger, @RDIL</p>
+
+</summary>
+
+<ul>
+<li>Fix erroneous comment in <code>tokenizer.cs</code> (#12206) (Thanks @ShaydeNofziger!)</li>
+<li>Fix terms checker issues (#12189)</li>
+<li>Update copyright notice to latest guidance (#12190)</li>
+<li>CodeFactor cleanup (#12251) (Thanks @RDIL!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Update .NET dependency update script to include test `csproj` files (#12372)
+- Scripts to update to .NET prerelease version (#12284)
+
+### Tests
+
+- Pin major Pester version to 4 to prevent breaking changes caused by upcoming release of v5 (#12262) (Thanks @bergmeister!)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@rkitover, @bergmeister</p>
+
+</summary>
+
+<ul>
+<li>Add the <code>nuget.config</code> from root to the temporary build folder (#12394)</li>
+<li>Bump System.IO.Packaging (#12365)</li>
+<li>Bump Markdig.Signed from 0.18.3 to 0.20.0 (#12379)</li>
+<li>Bump to .NET 5 Preview 3 pre-release (#12353)</li>
+<li>Bump PowerShellGet from 2.2.3 to 2.2.4 (#12342)</li>
+<li>Linux: Initial support for Gentoo installations. (#11429) (Thanks @rkitover!)</li>
+<li>Upgrade to .NET 5 Preview 2 (#12250) (Thanks @bergmeister!)</li>
+<li>Fix the <code>Sync PSGalleryModules to Artifacts</code> build (#12277)</li>
+<li>Bump PSReadLine from 2.0.0 to 2.0.1 (#12243)</li>
+<li>Bump <code>NJsonSchema</code> from <code>10.1.11</code> to <code>10.1.12</code> (#12230)</li>
+<li>Update change log generation script to support collapsible sections (#12214)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add documentation for `WebResponseObject` and `BasicHtmlWebResponseObject` properties (#11876) (Thanks @kevinoid!)
+- Add Windows 10 IoT Core reference in `Adopters.md` (#12266) (Thanks @parameshbabu!)
+- Update `README.md` and `metadata.json` for `7.1.0-preview.1` (#12211)
+
 ## 7.1.0-preview.1 - 2020-03-26
 
 ### Breaking Changes
@@ -22,7 +123,7 @@
 - Use asynchronous streams in `Invoke-RestMethod` (#11095) (Thanks @iSazonov!)
 - Address UTF-8 Detection In `Get-Content -Tail` (#11899) (Thanks @NoMoreFood!)
 - Handle the `IOException` in `Get-FileHash` (#11944) (Thanks @iSazonov!)
-- Change 'PowerShell Core' to 'PowerShell' in a resource string (#11928) (Thanks @alexandair!)
+- Change `PowerShell Core` to `PowerShell` in a resource string (#11928) (Thanks @alexandair!)
 - Bring back `MainWindowTitle` in `PSHostProcessInfo` (#11885) (Thanks @iSazonov!)
 - Miscellaneous minor updates to Windows Compatibility (#11980)
 - Fix `ConciseView` to split `PositionMessage` using `[Environment]::NewLine` (#12010)
@@ -41,7 +142,7 @@
 - Update `PSPath` in `certificate_format_ps1.xml` (#11603) (Thanks @xtqqczze!)
 - Change regular expression to match relation-types without quotes in Link header (#11711) (Thanks @Marusyk!)
 - Fix error message during symbolic link deletion (#11331)
-- Add custom 'Selected.*' type to `PSCustomObject` in `Select-Object` only once (#11548) (Thanks @iSazonov!)
+- Add custom `Selected.*` type to `PSCustomObject` in `Select-Object` only once (#11548) (Thanks @iSazonov!)
 - Add `-AsUTC` to the `Get-Date` cmdlet (#11611)
 - Fix grouping behavior with Boolean values in `Format-Hex` (#11587) (Thanks @vexx32!)
 - Make `Test-Connection` always use the default synchronization context for sending ping requests (#11517)
@@ -71,7 +172,7 @@
 <li>Fix Typo in <code>Get-ComputerInfo</code> cmdlet description (#11321) (Thanks @doctordns!)</li>
 <li>Fix typo in description for <code>Get-ExperimentalFeature</code> <code>PSWindowsPowerShellCompatibility</code> (#11282) (Thanks @alvarodelvalle!)</li>
 <li>Cleanups in command discovery (#10815) (Thanks @iSazonov!)</li>
-<li>Review <code>currentculture</code> (#11044) (Thanks @iSazonov!)</li>
+<li>Review <code>CurrentCulture</code> (#11044) (Thanks @iSazonov!)</li>
 </ul>
 
 </details>
@@ -146,7 +247,7 @@
 - Update `Adopters.md` to include info on Azure Pipelines and GitHub Actions (#11888) (Thanks @alepauly!)
 - Add information about how Amazon AWS uses PowerShell. (#11365) (Thanks @bpayette!)
 - Add link to .NET CLI version in build documentation (#11725) (Thanks @joeltankam!)
-- Added info about DeploymentScripts in ADOPTERS.md (#11703)
+- Added info about `DeploymentScripts` in `ADOPTERS.md` (#11703)
 - Update `CHANGELOG.md` for `6.2.4` release (#11699)
 - Update `README.md` and `metadata.json` for next release (#11597)
 - Update the breaking change definition (#11516)
@@ -159,3 +260,5 @@
 - Update `Readme.md` for `preview.6` release (#11108)
 - Update `SUPPORT.md` (#11101) (Thanks @mklement0!)
 - Update `README.md` (#11100) (Thanks @mklement0!)
+
+[7.1.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.1...v7.1.0-preview.2
