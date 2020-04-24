@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
                 byte[] bytehash = null;
                 string hash = null;
                 
-                if (ComputeFileHash(Algorithm, path, out hash))
+                if (ComputeFileHash(path, out hash))
                 {
                     WriteHashResult(Algorithm, hash, path);
                 }                
@@ -155,9 +155,12 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Read the file and calculate the hash
+        /// Read the file and calculate the hash.
         /// </summary>
-        private bool ComputeFileHash(string Algorithm, string path, out string hash)
+        /// <param name="path"></param>
+        /// <param name="hash"></param>
+        /// <returns>Boolean value indicating whether the hash calculation succeeded or failed.</returns>
+        private bool ComputeFileHash(string path, out string hash)
         {
             Stream openfilestream = null;
         
@@ -204,7 +207,6 @@ namespace Microsoft.PowerShell.Commands
             
             return false;
         }
-
 
         /// <summary>
         /// Create FileHashInfo object and output it.
