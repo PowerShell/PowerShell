@@ -123,49 +123,16 @@ namespace Microsoft.PowerShell.Commands
 
                     break;
             }
-
+            
             foreach (string path in pathsToProcess)
             {
                 byte[] bytehash = null;
                 string hash = null;
-
-                try
+                
+                if (ComputeFileHash(Algorithm, path, out hash))
                 {
-                    using (Stream openfilestream = File.OpenRead(path))
-                    {
-                        bytehash = hasher.ComputeHash(openfilestream);
-                        hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
-                    }
-                    
                     WriteHashResult(Algorithm, hash, path);
-                }
-                catch (FileNotFoundException ex)
-                {
-                    var errorRecord = new ErrorRecord(
-                        ex,
-                        "FileNotFound",
-                        ErrorCategory.ObjectNotFound,
-                        path);
-                    WriteError(errorRecord);
-                }
-                catch (UnauthorizedAccessException ex)
-                {
-                    var errorRecord = new ErrorRecord(
-                        ex,
-                        "UnauthorizedAccessError",
-                        ErrorCategory.InvalidData,
-                        path);
-                    WriteError(errorRecord);
-                }
-                catch (IOException ioException)
-                {
-                    var errorRecord = new ErrorRecord(
-                        ioException,
-                        "FileReadError",
-                        ErrorCategory.ReadError,
-                        path);
-                    WriteError(errorRecord);
-                }
+                }                
             }
         }
 
@@ -186,6 +153,58 @@ namespace Microsoft.PowerShell.Commands
                 WriteHashResult(Algorithm, hash, string.Empty);
             }
         }
+
+        /// <summary>
+        /// Read the file and calculate the hash
+        /// </summary>
+        private bool ComputeFileHash(string Algorithm, string path, out string hash)
+        {
+            Stream openfilestream = null;
+        
+            try
+            {
+                openfilestream = File.OpenRead(path);
+            
+                bytehash = hasher.ComputeHash(openfilestream);
+                hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);                    
+                
+                return true;
+            }
+            catch (FileNotFoundException ex)
+            {
+                var errorRecord = new ErrorRecord(
+                    ex,
+                    "FileNotFound",
+                    ErrorCategory.ObjectNotFound,
+                    path);
+                WriteError(errorRecord);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                var errorRecord = new ErrorRecord(
+                    ex,
+                    "UnauthorizedAccessError",
+                    ErrorCategory.InvalidData,
+                    path);
+                WriteError(errorRecord);
+            }
+            catch (IOException ioException)
+            {
+                var errorRecord = new ErrorRecord(
+                    ioException,
+                    "FileReadError",
+                    ErrorCategory.ReadError,
+                    path);
+                WriteError(errorRecord);
+            }
+            finally
+            {
+                openfilestream?.Dispose();
+            }
+            
+            return false;
+        }
+
 
         /// <summary>
         /// Create FileHashInfo object and output it.
