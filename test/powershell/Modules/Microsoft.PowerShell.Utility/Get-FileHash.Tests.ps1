@@ -87,7 +87,7 @@ Describe "Get-FileHash" -Tags "CI" {
             Copy-Item -Path $testdocument -Destination $testDocumentCopy
 
             $newPath = Get-FileHash -Path $testDocumentCopy | Rename-Item -NewName {$_.Hash} -PassThru
-            Test-Path -Path $newPath.FullName | Should -BeTrue
+            $newPath.FullName | Should -Exist
 
             Remove-Item -Path $testDocumentCopy -Force
         }
