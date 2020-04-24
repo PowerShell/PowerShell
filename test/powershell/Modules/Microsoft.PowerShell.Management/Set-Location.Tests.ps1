@@ -262,7 +262,7 @@ Describe "Set-Location: Name with special/wildcards characters" -Tags "CI" {
         # is quite broken in many powershell cmdlets
         if ($Name.Contains('\')) 
         {
-            Set-ItResult -Skipped -Because "path elements with backslashes are not fully supported in PowerShell on this operating system."
+            Set-ItResult -Pending -Because "path elements with backslashes are not fully supported in PowerShell on MacOs/Linux."
             return
         }
 

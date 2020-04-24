@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
                         // This handles short path names
                         exactPath += StringLiterals.DefaultPathSeparator + item;
                     }
-                    else if (item.IndexOfAny(new char[] { '*', '?' }) >= 0)
+                    else if (item.IndexOfAny(Utils.Separators.StarOrQuestion) >= 0)
                     {
                         // This handles literal wildcard characters that could resolve erroneously
                         exactPath += StringLiterals.DefaultPathSeparator + item;
