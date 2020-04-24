@@ -172,7 +172,6 @@ namespace Microsoft.PowerShell.Commands
 
                 bytehash = hasher.ComputeHash(openfilestream);
                 hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
-
             }
             catch (FileNotFoundException ex)
             {
