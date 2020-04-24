@@ -126,7 +126,6 @@ namespace Microsoft.PowerShell.Commands
             
             foreach (string path in pathsToProcess)
             {
-                byte[] bytehash = null;
                 string hash = null;
                 
                 if (ComputeFileHash(path, out hash))
@@ -162,16 +161,20 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Boolean value indicating whether the hash calculation succeeded or failed.</returns>
         private bool ComputeFileHash(string path, out string hash)
         {
+            bool hashComputedSuccessfully = false;
+            byte[] bytehash = null;
             Stream openfilestream = null;
-        
+
+            hash = null;
+            
             try
             {
                 openfilestream = File.OpenRead(path);
             
                 bytehash = hasher.ComputeHash(openfilestream);
-                hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);                    
+                hash = BitConverter.ToString(bytehash).Replace("-", string.Empty);
                 
-                return true;
+                hashComputedSuccessfully = true;
             }
             catch (FileNotFoundException ex)
             {
@@ -205,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
                 openfilestream?.Dispose();
             }
             
-            return false;
+            return hashComputedSuccessfully;
         }
 
         /// <summary>
