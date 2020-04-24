@@ -80,7 +80,7 @@ Describe "Get-FileHash" -Tags "CI" {
     
     Context "Close file before writing hash details to pipeline" {
         It "Should not hold the file open unnecessarily" {
-            # make a copy of the test document first
+            # Make a copy of the test document first,
             # because this test will rename it.
             $testDocumentCopy = "${testDocument}-copy"
             Copy-Item -Path $testdocument -Destination $testDocumentCopy
