@@ -343,8 +343,7 @@ namespace System.Management.Automation
             }
 #endif // UNIX
 
-            // Check if the start of the path is a filesystem drive
-            if (stringConstantType != StringConstantType.SingleQuoted)
+            if (arg.Contains(':') && stringConstantType != StringConstantType.SingleQuoted)
             {
                 arg = ResolvePath(arg, Context);
             }
@@ -365,8 +364,8 @@ namespace System.Management.Automation
         {
             if (ExperimentalFeature.IsEnabled("PSNativePSPathResolution"))
             {
-                string driveName;
 #if !UNIX
+                // on Windows, we need to expand ~ to point to user's home path
                 if (string.Equals(path, "~", StringComparison.Ordinal) || path.StartsWith(TildeDirectorySeparator, StringComparison.Ordinal) || path.StartsWith(TildeAltDirectorySeparator, StringComparison.Ordinal))
                 {
                     try
@@ -382,39 +381,23 @@ namespace System.Management.Automation
                         return path;
                     }
                 }
-                else
 #endif
-                if (context.SessionState.Path.IsPSAbsolute(path, out driveName))
+
+                LocationGlobber globber = new LocationGlobber(context.SessionState);
+                try
                 {
-#if !UNIX
-                    // check if the driveName is an actual disk drive on Windows, if so, no expansion
-                    foreach (var drive in DriveInfo.GetDrives())
+                    ProviderInfo providerInfo;
+
+                    // replace the argument with resolved path if it's a filesystem path
+                    string pspath = globber.GetProviderPath(path, out providerInfo);
+                    if (string.Equals(providerInfo.Name, FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (drive.Name.StartsWith(driveName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            return path;
-                        }
+                        path = pspath;
                     }
-#endif
-                    try
-                    {
-                        ProviderInfo provider;
-                        Collection<string> paths = context.SessionState.Path.GetResolvedProviderPathFromPSPath($"{driveName}:", out provider);
-                        if (paths.Count == 1 && string.Equals(provider.Name, FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            // + 2 to replace the colon and the trailing slash which is part of the returned pspath
-                            return new StringBuilder(paths[0])
-                                .Append(path.Substring(driveName.Length + 2))
-#if !UNIX
-                                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar)
-#endif
-                                .ToString();
-                        }
-                    }
-                    catch
-                    {
-                        return path;
-                    }
+                }
+                catch
+                {
+                    // if it's not a provider path, do nothing
                 }
             }
 
