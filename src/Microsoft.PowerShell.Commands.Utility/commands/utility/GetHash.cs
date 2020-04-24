@@ -126,9 +126,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in pathsToProcess)
             {
-                string hash = null;
-
-                if (ComputeFileHash(path, out hash))
+                if (ComputeFileHash(path, out string hash))
                 {
                     WriteHashResult(Algorithm, hash, path);
                 }
