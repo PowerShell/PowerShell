@@ -80,7 +80,14 @@ Describe "Get-FileHash" -Tags "CI" {
     
     Context "Close file before writing hash details to pipeline" {
         It "Should not hold the file open unnecessarily" {
-            {Get-FileHash $testDocument | Rename-Item -NewName {$_.Hash}} | Should -Not -Throw
+            # make a copy of the test document first
+            # because this test will rename it.
+            $testDocumentCopy = "${testDocument}-copy"
+            Copy-Item -Path $testdocument -Destination $testDocumentCopy
+            
+            {Get-FileHash -Path $testDocumentCopy | Rename-Item -NewName {$_.Hash} -ErrorAction Stop} | Should -Not -Throw
+            
+            Remove-Item -Path $testDocumentCopy
         }
     }
 }
