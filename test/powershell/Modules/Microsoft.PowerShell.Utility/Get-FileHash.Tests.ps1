@@ -86,10 +86,10 @@ Describe "Get-FileHash" -Tags "CI" {
             $testDocumentCopy = "${testDocument}-copy"
             Copy-Item -Path $testdocument -Destination $testDocumentCopy
 
-            $newPath = Get-FileHash -Path $testDocumentCopy | Rename-Item -NewName {$_.Hash} -PassThru -ErrorAction SilentlyContinue
-            Test-Path -Path $newPath.FullName -ErrorAction SilentlyContinue | Should -Be $true
+            $newPath = Get-FileHash -Path $testDocumentCopy | Rename-Item -NewName {$_.Hash} -PassThru
+            Test-Path -Path $newPath.FullName | Should -BeTrue
 
-            Remove-Item -Path $testDocumentCopy -ErrorAction SilentlyContinue
+            Remove-Item -Path $testDocumentCopy -Force
         }
     }
 }
