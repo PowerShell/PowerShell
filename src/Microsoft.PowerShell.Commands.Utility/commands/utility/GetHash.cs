@@ -157,8 +157,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Read the file and calculate the hash.
         /// </summary>
-        /// <param name="path"></param>
-        /// <param name="hash"></param>
+        /// <param name="path">Path to file which will be hashed.</param>
+        /// <param name="hash">Will contain the hash of the file content.</param>
         /// <returns>Boolean value indicating whether the hash calculation succeeded or failed.</returns>
         private bool ComputeFileHash(string path, out string hash)
         {
