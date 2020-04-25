@@ -719,8 +719,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp5.0")]
-        [string]$Framework = "netcoreapp5.0",
+        [ValidateSet("net5.0")]
+        [string]$Framework = "net5.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -794,11 +794,6 @@ function New-PSOptions {
 
     $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
     Write-Verbose "Top project directory is $Top"
-
-    if (-not $Framework) {
-        $Framework = "netcoreapp2.1"
-        Write-Verbose "Using framework '$Framework'"
-    }
 
     $Executable = if ($Runtime -like 'fxdependent*') {
         "pwsh.dll"
@@ -2306,7 +2301,7 @@ function Start-CrossGen {
         throw "crossgen is not available for this platform"
     }
 
-    $dotnetRuntimeVersion = $script:Options.Framework -replace 'netcoreapp'
+    $dotnetRuntimeVersion = $script:Options.Framework -replace 'net'
 
     # Get the CrossGen.exe for the correct runtime with the latest version
     $crossGenPath = Get-ChildItem $script:Environment.nugetPackagesRoot $crossGenExe -Recurse | `
