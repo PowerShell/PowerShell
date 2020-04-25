@@ -77,9 +77,17 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                return _fullName ?? (_fullName = GetFullName(Name, PSSnapInName, ModuleName));
+                if (_fullName != null && ModuleName.Equals(_cachedModuleName, StringComparison.Ordinal))
+                {
+                    return _fullName;
+                }
+
+                _cachedModuleName = ModuleName;
+                return (_fullName = GetFullName(Name, PSSnapInName, ModuleName));
             }
         }
+
+        private string _cachedModuleName = null;
 
         /// <summary>
         /// Gets the Snap-in in which the provider is implemented.
