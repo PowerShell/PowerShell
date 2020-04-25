@@ -383,21 +383,24 @@ namespace System.Management.Automation
                 }
 #endif
 
-                LocationGlobber globber = new LocationGlobber(context.SessionState);
-                try
+                if (path.Contains(':'))
                 {
-                    ProviderInfo providerInfo;
-
-                    // replace the argument with resolved path if it's a filesystem path
-                    string pspath = globber.GetProviderPath(path, out providerInfo);
-                    if (string.Equals(providerInfo.Name, FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
+                    LocationGlobber globber = new LocationGlobber(context.SessionState);
+                    try
                     {
-                        path = pspath;
+                        ProviderInfo providerInfo;
+
+                        // replace the argument with resolved path if it's a filesystem path
+                        string pspath = globber.GetProviderPath(path, out providerInfo);
+                        if (string.Equals(providerInfo.Name, FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
+                        {
+                            path = pspath;
+                        }
                     }
-                }
-                catch
-                {
-                    // if it's not a provider path, do nothing
+                    catch
+                    {
+                        // if it's not a provider path, do nothing
+                    }
                 }
             }
 
