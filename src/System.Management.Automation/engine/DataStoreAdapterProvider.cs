@@ -83,7 +83,7 @@ namespace System.Management.Automation
                 }
 
                 _cachedModuleName = ModuleName;
-                return (_fullName = GetFullName(Name, PSSnapInName, ModuleName));
+                return _fullName = GetFullName(Name, PSSnapInName, ModuleName);
             }
         }
 
