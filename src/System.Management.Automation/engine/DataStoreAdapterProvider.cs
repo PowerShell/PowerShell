@@ -37,6 +37,7 @@ namespace System.Management.Automation
         private SessionState _sessionState;
 
         private string _fullName;
+        private string _cachedModuleName;
 
         /// <summary>
         /// Gets the name of the provider.
@@ -86,8 +87,6 @@ namespace System.Management.Automation
                 return _fullName = GetFullName(Name, PSSnapInName, ModuleName);
             }
         }
-
-        private string _cachedModuleName = null;
 
         /// <summary>
         /// Gets the Snap-in in which the provider is implemented.
