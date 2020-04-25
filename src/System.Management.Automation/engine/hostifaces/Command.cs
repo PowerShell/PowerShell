@@ -73,6 +73,12 @@ namespace System.Management.Automation.Runspaces
             _useLocalScope = useLocalScope;
         }
 
+        internal Command(string script, string scriptPath, bool? useLocalScope)
+            : this(script, true, useLocalScope)
+        {
+            ScriptPath = scriptPath;
+        }
+
         internal Command(string command, bool isScript, bool? useLocalScope, bool mergeUnclaimedPreviousErrorResults)
             : this(command, isScript, useLocalScope)
         {
@@ -144,6 +150,11 @@ namespace System.Management.Automation.Runspaces
         /// Access the value indicating if this <see cref="Command"/> represents a script.
         /// </summary>
         public bool IsScript { get; }
+        
+        /// <summary>
+        /// Access path to the script file if this <see cref="Command"/> represents a script loaded from file.
+        /// </summary>
+        public string ScriptPath { get; }
 
         /// <summary>
         /// Access the value indicating if LocalScope is to be used for running
@@ -466,7 +477,7 @@ namespace System.Management.Automation.Runspaces
                         null, "ScriptsNotAllowed", ParserStrings.ScriptsNotAllowed);
                 }
 
-                ScriptBlock scriptBlock = executionContext.Engine.ParseScriptBlock(CommandText, addToHistory);
+                ScriptBlock scriptBlock = executionContext.Engine.ParseScriptBlock(CommandText, ScriptPath, addToHistory);
                 if (origin == Automation.CommandOrigin.Internal)
                 {
                     scriptBlock.LanguageMode = PSLanguageMode.FullLanguage;

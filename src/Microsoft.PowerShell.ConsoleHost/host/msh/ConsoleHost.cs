@@ -1841,7 +1841,7 @@ namespace Microsoft.PowerShell
                 if (!Path.GetExtension(filePath).Equals(".ps1", StringComparison.OrdinalIgnoreCase))
                 {
                     string script = File.ReadAllText(filePath);
-                    c = new Command(script, isScript: true, useLocalScope: false);
+                    c = new Command(script, scriptPath: filePath, useLocalScope: false);
                 }
                 else
                 {
