@@ -343,7 +343,7 @@ namespace System.Management.Automation
             }
 #endif // UNIX
 
-            if (arg.Contains(':') && stringConstantType != StringConstantType.SingleQuoted)
+            if (stringConstantType != StringConstantType.SingleQuoted)
             {
                 arg = ResolvePath(arg, Context);
             }
@@ -379,6 +379,18 @@ namespace System.Management.Automation
                     catch
                     {
                         return path;
+                    }
+                }
+
+                // check if the driveName is an actual disk drive on Windows, if so, no expansion
+                if (path.Length >= 2 && path[1] == ':')
+                {
+                    foreach (var drive in DriveInfo.GetDrives())
+                    {
+                        if (drive.Name.StartsWith(new string(path[0], 1), StringComparison.OrdinalIgnoreCase))
+                        {
+                            return path;
+                        }
                     }
                 }
 #endif
