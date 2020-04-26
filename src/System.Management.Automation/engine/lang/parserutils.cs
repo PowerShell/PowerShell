@@ -927,7 +927,7 @@ namespace System.Management.Automation
                 {
                     // only allow 1 or 2 arguments to -replace
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException), errorPosition,
-                        "BadReplaceArgument", ParserStrings.BadReplaceArgument, ignoreCase ? "-replace/-ireplace" : "-creplace", rList.Count);
+                        "BadReplaceArgument", ParserStrings.BadReplaceArgument, errorPosition.Text, rList.Count);
                 }
 
                 if (rList.Count > 0)
