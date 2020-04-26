@@ -526,11 +526,11 @@ using module FooForPaths
 
         It 'can be accessed by relative path with ./' {
             $name = 'relative-forward-slash-paths'
-            "function Get-Foo { ""hi from $name.psm1"" }" | Set-Content "TestDrive:\modules\$name.psm1"
+            'function Get-TestString { "Worked" }' | Set-Content "TestDrive:\modules\$name.psm1"
 
-            "using module ./$name.psm1; Get-Foo" | Set-Content "TestDrive:\modules\$name.ps1"
+            "using module ./$name.psm1; Get-TestString" | Set-Content "TestDrive:\modules\$name.ps1"
 
-            { & "TestDrive:\modules\$name.ps1" } | Should -Not -Throw
+            & "TestDrive:\modules\$name.ps1" | Should -EQ "Worked"
         }
     }
 

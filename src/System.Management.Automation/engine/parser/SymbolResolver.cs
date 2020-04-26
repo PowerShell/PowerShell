@@ -499,7 +499,7 @@ namespace System.Management.Automation.Language
                 }
 
                 // case 1: relative path. Relative for file in the same folder should include .\ or ./
-                bool isPath = fullyQualifiedNameStr.Contains(@"\") || fullyQualifiedNameStr.Contains("/");
+                bool isPath = fullyQualifiedNameStr.Contains('\\') || fullyQualifiedNameStr.Contains('/');
                 if (isPath && !LocationGlobber.IsAbsolutePath(fullyQualifiedNameStr))
                 {
                     string rootPath = Path.GetDirectoryName(_parser._fileName);
