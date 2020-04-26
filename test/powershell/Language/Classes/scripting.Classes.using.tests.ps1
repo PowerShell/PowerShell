@@ -339,7 +339,7 @@ using module Foo
         }
     }
 
-        Context 'Side by side' {
+    Context 'Side by side' {
         BeforeAll {
             # Add side-by-side module
             $newVersion = '3.4.5'
@@ -522,6 +522,15 @@ using module FooForPaths
             } finally {
                 Pop-Location
             }
+        }
+
+        It 'can be accessed by relative path with ./' {
+            $name = 'relative-forward-slash-paths'
+            "function Get-Foo { ""hi from $name.psm1"" }" | Set-Content "TestDrive:\modules\$name.psm1"
+
+            "using module ./$name.psm1; Get-Foo" | Set-Content "TestDrive:\modules\$name.ps1"
+
+            { & "TestDrive:\modules\$name.ps1" } | Should -Not -Throw
         }
     }
 
