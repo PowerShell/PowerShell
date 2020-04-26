@@ -1356,9 +1356,6 @@ namespace System.Management.Automation
         /// <returns>
         /// True if the path is a provider path, false otherwise.
         /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// If <paramref name="path"/> is null.
-        /// </exception>
         internal static bool IsProviderQualifiedPath(ReadOnlySpan<char> path, out ReadOnlySpan<char> providerId)
         {
             providerId = ReadOnlySpan<char>.Empty;
@@ -1443,9 +1440,6 @@ namespace System.Management.Automation
         /// <returns>
         /// True if the path is an absolute path, false otherwise.
         /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// If <paramref name="path"/> is null.
-        /// </exception>
         internal static bool IsAbsolutePath(ReadOnlySpan<char> path)
         {
             bool result = false;
@@ -4472,9 +4466,6 @@ namespace System.Management.Automation
         /// True if the path contains a ~ at the beginning of the path or immediately
         /// following a provider designator ("provider::")
         /// </returns>
-        /// <exception cref="ArgumentNullException">
-        /// Is <paramref name="path"/> is null.
-        /// </exception>
         internal static bool IsHomePath(ReadOnlySpan<char> path)
         {
             bool result = false;
