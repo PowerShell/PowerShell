@@ -532,6 +532,15 @@ using module FooForPaths
 
             & "TestDrive:\modules\$name.ps1" | Should -EQ "Worked"
         }
+
+        It 'can be accessed by relative path with .\' {
+            $name = 'relative-backslash-paths'
+            'function Get-TestString { "Worked" }' | Set-Content "TestDrive:\modules\$name.psm1"
+
+            "using module .\$name.psm1; Get-TestString" | Set-Content "TestDrive:\modules\$name.ps1"
+
+            & "TestDrive:\modules\$name.ps1" | Should -EQ "Worked"
+        }
     }
 
     Context "module has non-terminating error handled with 'SilentlyContinue'" {
