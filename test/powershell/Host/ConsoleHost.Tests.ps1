@@ -257,6 +257,39 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             & $powershell -noprofile -c ' ' | Should -BeNullOrEmpty
             $LASTEXITCODE | Should -Be 0
         }
+
+        It "MyInvocation.MyCommand.Name should contain script file name when executing script with -File argument" -TestCases @(
+            @{Filename = "test.ps1"},
+            @{Filename = "test-no-ext"}
+        ) {
+            param($Filename)
+            $testFilePath = Join-Path $testdrive $Filename
+            Set-Content -Path $testFilePath -Value '$MyInvocation.MyCommand.Name'
+            $observed = & $powershell -File $testFilePath -NoProfile -NoLogo
+            $observed | Should -Be $Filename
+        }
+
+        It "MyInvocation.InvocationName should contain script file path when executing script with -File argument" -TestCases @(
+            @{Filename = "test.ps1"},
+            @{Filename = "test-no-ext"}
+        ) {
+            param($Filename)
+            $testFilePath = Join-Path $testdrive $Filename
+            Set-Content -Path $testFilePath -Value '$MyInvocation.InvocationName'
+            $observed = & $powershell -File $testFilePath -NoProfile -NoLogo
+            $observed | Should -Be $testFilePath
+        }
+
+        It "PSScriptRoot should contain script directory path when executing script with -File argument" -TestCases @(
+            @{Filename = "test.ps1"},
+            @{Filename = "test-no-ext"}
+        ) {
+            param($Filename)
+            $testFilePath = Join-Path $testdrive $Filename
+            Set-Content -Path $testFilePath -Value '$PSScriptRoot'
+            $observed = & $powershell -File $testFilePath -NoProfile -NoLogo
+            $observed | Should -Be ( Split-Path $testFilePath )
+        }
     }
 
     Context "-Login pwsh switch" {
