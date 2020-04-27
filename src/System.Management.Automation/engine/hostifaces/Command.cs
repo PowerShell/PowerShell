@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Management.Automation.Internal;
 
 using Microsoft.Management.Infrastructure;
@@ -507,6 +508,16 @@ namespace System.Management.Automation.Runspaces
                     FunctionInfo functionInfo = new FunctionInfo(string.Empty, scriptBlock, executionContext);
                     commandProcessorBase = new CommandProcessor(functionInfo, executionContext,
                                                                 _useLocalScope ?? false, fromScriptFile: false, sessionState: executionContext.EngineSessionState);
+                }
+                else if (ScriptPath != null)
+                {
+                    var scriptName = Path.GetFileName(ScriptPath);
+                    var scriptInfo = new ExternalScriptInfo( scriptName, ScriptPath, executionContext);
+                    commandProcessorBase = new DlrScriptCommandProcessor( scriptInfo, 
+                        executionContext,_useLocalScope ?? false,
+                        executionContext.EngineSessionState);
+
+                    commandProcessorBase.Command.MyInvocation.InvocationName = ScriptPath;
                 }
                 else
                 {
