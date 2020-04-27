@@ -181,7 +181,6 @@ jobs:
       storage: '$(GlobalToolStorageAccount)'
       ContainerName: 'tool'
       blobPrefix: '$(Version)'
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'
