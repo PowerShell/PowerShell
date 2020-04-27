@@ -77,8 +77,8 @@ Describe "Test-Connection" -tags "CI" {
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
-        # In VSTS, address is 0.0.0.0
-        It "Force IPv4 with implicit PingOptions" {
+        # In VSTS, address is 0.0.0.0. Making pending due to instability in Az DevOps.
+        It "Force IPv4 with implicit PingOptions" -Pending:($IsMacOS) {
             $result = Test-Connection $hostName -Count 1 -IPv4
 
             $result[0].Address | Should -BeExactly $realAddress
@@ -249,7 +249,8 @@ Describe "Test-Connection" -tags "CI" {
     }
 
     Context "TraceRoute" {
-        It "TraceRoute works" {
+        # Mark it as pending due to instability in Az DevOps
+        It "TraceRoute works" -Pending:($IsMacOS) {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $hostName -TraceRoute -IPv4
 
