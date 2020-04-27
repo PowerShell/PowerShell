@@ -26,7 +26,7 @@ namespace System.Management.Automation.Runspaces
         /// <param name="command">Name of the command or script contents.</param>
         /// <exception cref="ArgumentNullException">Command is null.</exception>
         public Command(string command)
-            : this(command, false, null)
+            : this(command, isScript: false, null)
         {
         }
 
@@ -75,7 +75,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         internal Command(string script, string scriptPath, bool? useLocalScope)
-            : this(script, true, useLocalScope)
+            : this(script, isScript: true, useLocalScope)
         {
             ScriptPath = scriptPath;
         }
@@ -90,7 +90,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         internal Command(CommandInfo commandInfo)
-            : this(commandInfo, false)
+            : this(commandInfo, isScript: false)
         {
         }
 
@@ -136,29 +136,29 @@ namespace System.Management.Automation.Runspaces
         public CommandParameterCollection Parameters { get; } = new CommandParameterCollection();
 
         /// <summary>
-        /// Access the command string.
+        /// Gets the command string.
         /// </summary>
         /// <value>The command name, if <see cref="Command.IsScript"/> is false; otherwise; the script contents</value>
         public string CommandText { get; } = string.Empty;
 
         /// <summary>
-        /// Access the commandInfo.
+        /// Gets the commandInfo.
         /// </summary>
         /// <value>The command info object</value>
         internal CommandInfo CommandInfo { get; }
 
         /// <summary>
-        /// Access the value indicating if this <see cref="Command"/> represents a script.
+        /// Gets the value indicating if this <see cref="Command"/> represents a script.
         /// </summary>
         public bool IsScript { get; }
         
         /// <summary>
-        /// Access path to the script file if this <see cref="Command"/> represents a script loaded from file.
+        /// Gets path to the script file if this <see cref="Command"/> represents a script loaded from file.
         /// </summary>
         public string ScriptPath { get; }
 
         /// <summary>
-        /// Access the value indicating if LocalScope is to be used for running
+        /// Gets the value indicating if LocalScope is to be used for running
         /// this script command.
         /// </summary>
         /// <value>True if this command is a script and localScope is
@@ -177,7 +177,7 @@ namespace System.Management.Automation.Runspaces
         public CommandOrigin CommandOrigin { get; set; } = CommandOrigin.Runspace;
 
         /// <summary>
-        /// Access the actual value indicating if LocalScope is to be used for running
+        /// Gets the actual value indicating if LocalScope is to be used for running
         /// this script command.  Needed for serialization in remoting.
         /// </summary>
         internal bool? UseLocalScopeNullable
@@ -512,20 +512,24 @@ namespace System.Management.Automation.Runspaces
                 else if (ScriptPath != null)
                 {
                     var scriptName = Path.GetFileName(ScriptPath);
-                    var scriptInfo = new ExternalScriptInfo( scriptName, ScriptPath, executionContext);
-                    commandProcessorBase = new DlrScriptCommandProcessor( scriptInfo, 
-                        executionContext,_useLocalScope ?? false,
+                    var scriptInfo = new ExternalScriptInfo(scriptName, ScriptPath, executionContext);
+                    commandProcessorBase = new DlrScriptCommandProcessor(
+                        scriptInfo,
+                        executionContext,
+                        _useLocalScope ?? false,
                         executionContext.EngineSessionState);
 
                     commandProcessorBase.Command.MyInvocation.InvocationName = ScriptPath;
                 }
                 else
                 {
-                    commandProcessorBase = new DlrScriptCommandProcessor(scriptBlock,
-                                                                         executionContext, _useLocalScope ?? false,
-                                                                         origin,
-                                                                         executionContext.EngineSessionState,
-                                                                         DollarUnderbar);
+                    commandProcessorBase = new DlrScriptCommandProcessor(
+                        scriptBlock,
+                        executionContext,
+                        _useLocalScope ?? false,
+                        origin,
+                        executionContext.EngineSessionState,
+                        DollarUnderbar);
                 }
             }
             else
@@ -921,4 +925,3 @@ namespace System.Management.Automation.Runspaces
         }
     }
 }
-
