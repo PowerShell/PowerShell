@@ -64,3 +64,98 @@ Describe "Native Command Arguments" -tags "CI" {
         }
     }
 }
+
+Describe 'PSPath to native commands' {
+    BeforeAll {
+        $featureEnabled = $EnabledExperimentalFeatures.Contains('PSNativePSPathResolution')
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+
+        $PSDefaultParameterValues["it:skip"] = (-not $featureEnabled)
+
+        if ($IsWindows) {
+            $cmd = "cmd"
+            $cmdArg1 = "/c"
+            $cmdArg2 = "type"
+            $dir = "cmd"
+            $dirArg1 = "/c"
+            $dirArg2 = "dir"
+        }
+        else {
+            $cmd = "cat"
+            $dir = "ls"
+        }
+
+        Set-Content -Path testdrive:/test.txt -Value 'Hello'
+        Set-Content -Path "testdrive:/test file.txt" -Value 'Hello'
+        Set-Content -Path "env:/test var" -Value 'Hello'
+        $filePath = Join-Path -Path ~ -ChildPath (New-Guid)
+        Set-Content -Path $filePath -Value 'Home'
+        $complexDriveName = 'My test! ;+drive'
+        New-PSDrive -Name $complexDriveName -Root $testdrive -PSProvider FileSystem
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+
+        Remove-Item -Path "env:/test var"
+        Remove-Item -Path $filePath
+        Remove-PSDrive -Name $complexDriveName
+    }
+
+    It 'PSPath with ~/path works' {
+        $out = & $cmd $cmdArg1 $cmdArg2 $filePath
+        $LASTEXITCODE | Should -Be 0
+        $out | Should -BeExactly 'Home'
+    }
+
+    It 'PSPath with ~ works' {
+        $out = & $dir $dirArg1 $dirArg2 ~
+        $LASTEXITCODE | Should -Be 0
+        $out | Should -Not -BeNullOrEmpty
+    }
+
+    It 'PSPath that is file system path works with native commands: <path>' -TestCases @(
+        @{ path = "testdrive:/test.txt" }
+        @{ path = "testdrive:/test file.txt" }
+    ){
+        param($path)
+
+        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
+        $LASTEXITCODE | Should -Be 0
+        $out | Should -BeExactly 'Hello'
+    }
+
+    It 'PSPath passed with single quotes should be treated as literal' {
+        $out = & $cmd $cmdArg1 $cmdArg2 'testdrive:/test.txt'
+        $LASTEXITCODE | Should -Not -Be 0
+        $out | Should -BeNullOrEmpty
+    }
+
+    It 'PSPath that is not a file system path fails with native commands: <path>' -TestCases @(
+        @{ path = "env:/PSModulePath" }
+        @{ path = "env:/test var" }
+    ){
+        param($path)
+
+        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
+        $LASTEXITCODE | Should -Not -Be 0
+        $out | Should -BeNullOrEmpty
+    }
+
+    It 'Relative PSPath works' {
+        New-Item -Path $testdrive -Name TestFolder -ItemType Directory -ErrorAction Stop
+        $pwd = Get-Location
+        Set-Content -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder' -AdditionalChildPath 'test.txt') -Value 'hello'
+        Set-Location -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder')
+        Set-Location -Path $pwd
+        $out = & $cmd $cmdArg1 $cmdArg2 "TestDrive:test.txt"
+        $LASTEXITCODE | Should -Be 0
+        $out | Should -BeExactly 'Hello'
+    }
+
+    It 'Complex PSDrive name works' {
+        $out = & $cmd $cmdArg1 $cmdArg2 "${complexDriveName}:/test.txt"
+        $LASTEXITCODE | Should -Be 0
+        $out | Should -BeExactly 'Hello'
+    }
+}
