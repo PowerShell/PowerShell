@@ -3,6 +3,8 @@
 
 [CmdletBinding()]
 param (
+    [Parameter()]
+    [string]$SDKVersionOverride
 )
 
 <#
@@ -139,7 +141,9 @@ if(-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
 
 ## Install latest version from the channel
 
-Install-Dotnet -Channel "$Channel" -Version 'latest'
+$sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { "latest" }
+
+Install-Dotnet -Channel "$Channel" -Version $sdkVersion
 
 Write-Verbose -Message "Installing .NET SDK completed." -Verbose
 
