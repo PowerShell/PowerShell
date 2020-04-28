@@ -1823,9 +1823,6 @@
           <Component Id="cmpE48B7EDF48A04D1C82A32EDBCD2E8E07" Guid="{637acb8e-5ed5-4b03-8442-9f9ec0c83106}">
             <File Id="filD267FC3422004444A1D7A446CC13ABAE" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.psd1" />
           </Component>
-          <Component Id="cmpD495CAB0DC4146199E0475F16EFCBE66" Guid="{1f3d41d9-ec3e-4480-93a0-5eead90681fc}">
-            <File Id="fil79DFD803DEF74E17BAF56B187959025D" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PackageManagement\PackageManagement.cat" />
-          </Component>
         </Directory>
         <Directory Name="Microsoft.PowerShell.Archive" Id="dirD041DEE4F67848958E0D4AF104E4088C">
           <Component Id="cmp27E5DBB49A7A4962BD6C74C79276DAA5" Guid="{2c3ef1f6-4448-49bb-a8e4-4c2d0deb5217}">
@@ -3698,7 +3695,6 @@
       <ComponentRef Id="cmpE9DB812405C44652B6BEF707AFDC345E" />
       <ComponentRef Id="cmp988678E2987C440F828A11DC2BDC7BFB" />
       <ComponentRef Id="cmpE48B7EDF48A04D1C82A32EDBCD2E8E07" />
-      <ComponentRef Id="cmpD495CAB0DC4146199E0475F16EFCBE66" />
       <ComponentRef Id="cmp27E5DBB49A7A4962BD6C74C79276DAA5" />
       <ComponentRef Id="cmpBCEF6DF1461C426BB07539392C7299E1" />
       <ComponentRef Id="cmpF26771D0C4AC49DDB2A5231B9DD191E8" />
