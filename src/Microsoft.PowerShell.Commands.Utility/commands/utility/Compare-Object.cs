@@ -111,8 +111,8 @@ namespace Microsoft.PowerShell.Commands
         // These are programmatic strings, not subject to INTL
         private const string SideIndicatorPropertyName = "SideIndicator";
         private const string SideIndicatorMatch = "==";
-        private const string SideIndicatorReference = "<=";
-        private const string SideIndicatorDifference = "=>";
+        private const string SideIndicatorReference = "<-";
+        private const string SideIndicatorDifference = "->";
         private const string InputObjectPropertyName = "InputObject";
 
         /// <summary>

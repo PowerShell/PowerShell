@@ -35,13 +35,13 @@ Describe "Compare-Object" -Tags "CI" {
     It "Should indicate data that exists only in the reference dataset" {
 	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4)
 
-	$actualOutput[1].SideIndicator | Should -BeExactly "<="
+	$actualOutput[1].SideIndicator | Should -BeExactly "<-"
     }
 
     It "Should indicate data that exists only in the difference dataset" {
 	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4)
 
-	$actualOutput[1].SideIndicator | Should -BeExactly "<="
+	$actualOutput[1].SideIndicator | Should -BeExactly "<-"
     }
 
     It "Should indicate data that exists in both datasets when the includeEqual switch is used" {
@@ -115,10 +115,10 @@ Describe "Compare-Object" -Tags "CI" {
 	$actualOutput[2].InputObject | Should -Be 1
 	$actualOutput[3].InputObject | Should -Be 15
 
-	$actualOutput[0].SideIndicator | Should -BeExactly "=>"
-	$actualOutput[1].SideIndicator | Should -BeExactly "<="
-	$actualOutput[2].SideIndicator | Should -BeExactly "=>"
-	$actualOutput[3].SideIndicator | Should -BeExactly "<="
+	$actualOutput[0].SideIndicator | Should -BeExactly "->"
+	$actualOutput[1].SideIndicator | Should -BeExactly "<-"
+	$actualOutput[2].SideIndicator | Should -BeExactly "->"
+	$actualOutput[3].SideIndicator | Should -BeExactly "<-"
     }
 }
 
@@ -240,8 +240,8 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 						{
 							$result[0].InputObject | Should -Be $empsDifference
 							$result[1].InputObject | Should -Be $empsReference
-							$result[0].SideIndicator | Should -BeExactly "=>"
-							$result[1].SideIndicator | Should -BeExactly "<="
+							$result[0].SideIndicator | Should -BeExactly "->"
+							$result[1].SideIndicator | Should -BeExactly "<-"
 						}
 					}
 					else
@@ -279,7 +279,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 								$result[0].InputObject | Should -Be $empsReference[0]
 								$result[1].InputObject | Should -Be $empsReference[1]
 								$result[0].SideIndicator | Should -BeExactly "=="
-								$result[1].SideIndicator | Should -BeExactly "<="
+								$result[1].SideIndicator | Should -BeExactly "<-"
 							}
 						}
 						else
@@ -306,7 +306,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							else
 							{
 								$result.InputObject | Should -Be $empsReference[1]
-								$result.SideIndicator | Should -BeExactly "<="
+								$result.SideIndicator | Should -BeExactly "<-"
 							}
 						}
 						else
@@ -345,7 +345,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 								$result[0].InputObject | Should -Be $empsReference
 								$result[1].InputObject | Should -Be $empsDifference[1]
 								$result[0].SideIndicator | Should -BeExactly "=="
-								$result[1].SideIndicator | Should -BeExactly "=>"
+								$result[1].SideIndicator | Should -BeExactly "->"
 							}
 						}
 						else
@@ -372,7 +372,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 							else
 							{
 								$result.InputObject | Should -Be $empsDifference[1]
-								$result.SideIndicator | Should -BeExactly "=>"
+								$result.SideIndicator | Should -BeExactly "->"
 							}
 						}
 						else
@@ -434,10 +434,10 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 		$result = Compare-Object $a $b -IncludeEqual -Property {$_.Major},{$_.Minor}
 		$result[0] | Select-Object -ExpandProperty "*Major" | Should -Be 5
 		$result[0] | Select-Object -ExpandProperty "*Minor" | Should -Be 6
-		$result[0].SideIndicator | Should -BeExactly "=>"
+		$result[0].SideIndicator | Should -BeExactly "->"
 		$result[1] | Select-Object -ExpandProperty "*Major" | Should -Be 1
 		$result[1] | Select-Object -ExpandProperty "*Minor" | Should -Be 2
-		$result[1].SideIndicator | Should -BeExactly "<="
+		$result[1].SideIndicator | Should -BeExactly "<-"
 	}
 
 	It "Compare-Object with no ReferenceObject nor DifferenceObject: output nothing, no error and should work"{
@@ -448,12 +448,12 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 	It "Compare-Object with no DifferenceObject should work"{
 		$result = Compare-Object @() @("diffObject")
 		$result.InputObject | Should -BeExactly "diffObject"
-		$result.SideIndicator | Should -BeExactly "=>"
+		$result.SideIndicator | Should -BeExactly "->"
 	}
 
 	It "Compare-Object with no ReferenceObject should work"{
 		$result = Compare-Object @("refObject") @()
 		$result.InputObject | Should -BeExactly "refObject"
-		$result.SideIndicator | Should -BeExactly "<="
+		$result.SideIndicator | Should -BeExactly "<-"
 	}
 }
