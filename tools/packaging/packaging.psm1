@@ -1820,7 +1820,7 @@ function New-ILNugetPackage
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/$script:netCoreRuntime') -ItemType Directory -Force
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
             CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
