@@ -530,7 +530,7 @@ using module FooForPaths
 
             "using module ./$name.psm1; Get-TestString" | Set-Content "TestDrive:\modules\$name.ps1"
 
-            & "TestDrive:\modules\$name.ps1" | Should -EQ "Worked"
+            & "TestDrive:\modules\$name.ps1" | Should -BeExactly "Worked"
         }
 
         It 'can be accessed by relative path with .\' {
@@ -539,7 +539,7 @@ using module FooForPaths
 
             "using module .\$name.psm1; Get-TestString" | Set-Content "TestDrive:\modules\$name.ps1"
 
-            & "TestDrive:\modules\$name.ps1" | Should -EQ "Worked"
+            & "TestDrive:\modules\$name.ps1" | Should -BeExactly "Worked"
         }
     }
 
