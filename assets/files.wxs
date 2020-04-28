@@ -1892,9 +1892,6 @@
           <Component Id="cmpA3A50C81E1704ABF9022F6ECE265165E" Guid="{cc4abf21-d396-400c-aec3-a7ba03320bf8}">
             <File Id="fil08AD7407549745D196FA8B37C8D2507F" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PSGet.Resource.psd1" />
           </Component>
-          <Component Id="cmpFB8B96A05278462A97061B8C5FE3C92E" Guid="{a977e452-4f7d-446c-beb3-3e5ace52f9eb}">
-            <File Id="fil31F5B43EF5C248EB878EB1D25D292ECC" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\PowerShellGet.cat" />
-          </Component>
           <Directory Name="DSCResources" Id="dirAB16AE2D3D8B4288AE7576FDEC086E52">
             <Directory Name="MSFT_PSRepository" Id="dirDD4171A90E3249BAAE0CBA188ACFAEA9">
               <Component Id="cmp0744A0E2DA694EFB97172A770E654F92" Guid="{05bcef22-d7b0-4ca6-94dd-327356079096}">
@@ -1946,6 +1943,24 @@
               </Component>
             </Directory>
           </Directory>
+          <Component Id="cmp2B8B3CB9A0AD450889EABF758C4A60E5" Guid="{2d335789-bbd5-4a58-8bc8-ff7b7c6c63d9}">
+            <File Id="fil85F1E6E0EA2443258984DC0DC9600430" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Metadata_20200422202439.json" />
+          </Component>
+          <Component Id="cmpEBE3946C58A14C85B66420B1E76B4259" Guid="{0a6d1cad-9618-4c40-86a4-c2a728915556}">
+            <File Id="fil820E9211FCD042828C7ECADA1AEF6DE8" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Log_20200422202439.log" />
+          </Component>
+          <Component Id="cmp9DB5C71180B44B748FF4C22640F1115C" Guid="{455e0b01-9c1d-487e-a8e5-8ef6f94bdc85}">
+            <File Id="fil70D01DCE33624C7CBC9EE297994A57E0" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Log_20200422202549.log" />
+          </Component>
+          <Component Id="cmpA082D8E6B2EC490E9142A0B45EDB9511" Guid="{a1dcded2-0074-409e-bd10-9eb75db41686}">
+            <File Id="fil980DE5ADEFEE460B85E0F5E394B0E1C7" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Manifest_20200422202439.json" />
+          </Component>
+          <Component Id="cmp3B240F76028248A39E23FD70BC198FE3" Guid="{d55e353a-40cd-4970-9948-387928224f12}">
+            <File Id="fil139A5F08A1A64079A179C7C53278C7FE" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Manifest_20200422202549.json" />
+          </Component>
+          <Component Id="cmp5A6215ED9BCC4E9982F95DCB93252BB4" Guid="{2ee37678-8b8d-4596-b1d4-fd569cc20eb7}">
+            <File Id="fil2600872FCB8E41029E7949BA94DD385A" KeyPath="yes" Source="$(env.ProductSourcePath)\Modules\PowerShellGet\GovCompDisc_Metadata_20200422202549.json" />
+          </Component>
         </Directory>
         <Directory Name="ThreadJob" Id="dir507D08FD3D324A449516FEFAFCC90874">
           <Component Id="cmpD84D3B43B60040C8BF73D30F89F14AA5" Guid="{4ba93428-ae32-4a1d-9f84-0989a2da8eab}">
@@ -3714,7 +3729,6 @@
       <ComponentRef Id="cmpDCFC0B0822274CA2A1C954DF2E407911" />
       <ComponentRef Id="cmpE773C5B7686C496DAD2111AF1950D73E" />
       <ComponentRef Id="cmpA3A50C81E1704ABF9022F6ECE265165E" />
-      <ComponentRef Id="cmpFB8B96A05278462A97061B8C5FE3C92E" />
       <ComponentRef Id="cmp0744A0E2DA694EFB97172A770E654F92" />
       <ComponentRef Id="cmpFD06F9A229864F5790E63806319F83AD" />
       <ComponentRef Id="cmp15C7696A8C674672B37E17B47362007E" />
@@ -4100,6 +4114,12 @@
       <ComponentRef Id="cmpDBF82E0B595545C691EFDEA6D0A55EC2" />
       <ComponentRef Id="cmp13515D4829AC4B15B5F88CDF4E8A945F" />
       <ComponentRef Id="cmp70A5A090C6B94E8F8FC9B4AE5EC2969B" />
+      <ComponentRef Id="cmp2B8B3CB9A0AD450889EABF758C4A60E5" />
+      <ComponentRef Id="cmpEBE3946C58A14C85B66420B1E76B4259" />
+      <ComponentRef Id="cmp9DB5C71180B44B748FF4C22640F1115C" />
+      <ComponentRef Id="cmpA082D8E6B2EC490E9142A0B45EDB9511" />
+      <ComponentRef Id="cmp3B240F76028248A39E23FD70BC198FE3" />
+      <ComponentRef Id="cmp5A6215ED9BCC4E9982F95DCB93252BB4" />
     </ComponentGroup>
   </Fragment>
 </Wix>
