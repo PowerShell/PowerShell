@@ -71,6 +71,7 @@ Describe "Validate start of console host" -Tag CI {
                 'System.Management.dll'
                 'System.Security.Claims.dll'
                 'System.Security.Cryptography.Primitives.dll'
+                'System.Security.Principal.dll'
                 'System.Threading.Overlapped.dll'
             )
         }

@@ -3088,7 +3088,7 @@ namespace Microsoft.PowerShell.Commands
                 // In that case, the nested module will first be loaded with a different session state, and then when trying to load the RootModule via 'LoadModuleNamedInManifest',
                 // the same loaded nested module will be reused for the RootModule by 'LoadModuleNamedInManifest'.
 
-                // Change the module name to match the manifest name, not the original name
+                // Change the module name to match the manifest name, not the original name.
                 newManifestInfo.SetName(manifestInfo.Name);
 
                 // Copy in any nested modules...
