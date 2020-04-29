@@ -524,20 +524,12 @@ using module FooForPaths
             }
         }
 
-        It 'can be accessed by relative path with ./' {
-            $name = 'relative-forward-slash-paths'
+        It 'can be accessed by relative path with .<Separator>' -TestCases @{Separator = '\'}, @{Separator = '/'} {
+            param([string]$Separator)
+            $name = 'relative-slash-paths'
             'function Get-TestString { "Worked" }' | Set-Content "TestDrive:\modules\$name.psm1"
 
-            "using module ./$name.psm1; Get-TestString" | Set-Content "TestDrive:\modules\$name.ps1"
-
-            & "TestDrive:\modules\$name.ps1" | Should -BeExactly "Worked"
-        }
-
-        It 'can be accessed by relative path with .\' {
-            $name = 'relative-backslash-paths'
-            'function Get-TestString { "Worked" }' | Set-Content "TestDrive:\modules\$name.psm1"
-
-            "using module .\$name.psm1; Get-TestString" | Set-Content "TestDrive:\modules\$name.ps1"
+            "using module .$Separator$name.psm1; Get-TestString" | Set-Content "TestDrive:\modules\$name.ps1"
 
             & "TestDrive:\modules\$name.ps1" | Should -BeExactly "Worked"
         }
