@@ -123,7 +123,7 @@ function Update-CsprojFile([string] $path, $values) {
     }
 
     if ($updated) {
-        $fileContent | Out-File -FilePath $path -Force
+        ($fileContent).TrimEnd() | Out-File -FilePath $path -Force
     }
 }
 
