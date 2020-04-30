@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using System;
 using System.Globalization;
 using System.IO;
@@ -11,8 +13,6 @@ using System.Security;
 using System.Text.Json;
 
 using NJsonSchema;
-
-#nullable enable
 
 namespace Microsoft.PowerShell.Commands
 {
