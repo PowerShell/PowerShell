@@ -339,7 +339,7 @@ using module Foo
         }
     }
 
-        Context 'Side by side' {
+    Context 'Side by side' {
         BeforeAll {
             # Add side-by-side module
             $newVersion = '3.4.5'
@@ -523,6 +523,19 @@ using module FooForPaths
                 Pop-Location
             }
         }
+
+        It 'can be accessed by relative path with .<Separator>' -TestCases @(
+            @{ Separator = '\' },
+            @{ Separator = '/' }
+        ) {
+            param([string]$Separator)
+            $name = 'relative-slash-paths'
+            'function Get-TestString { "Worked" }' | Set-Content "TestDrive:\modules\$name.psm1"
+
+            "using module .$Separator$name.psm1; Get-TestString" | Set-Content "TestDrive:\modules\$name.ps1"
+
+            & "TestDrive:\modules\$name.ps1" | Should -BeExactly "Worked"
+        }
     }
 
     Context "module has non-terminating error handled with 'SilentlyContinue'" {
@@ -547,4 +560,3 @@ using module $testFile
         }
     }
 }
-
