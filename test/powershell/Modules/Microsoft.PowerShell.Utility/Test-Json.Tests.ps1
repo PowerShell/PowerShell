@@ -156,8 +156,11 @@ Describe "Test-Json" -Tags "CI" {
     It "Test-Json recognizes primitives: <name>" -TestCases @(
         @{ name = 'number'; value = 1 }
         @{ name = '"true"'; value = '"true"' }
+        @{ name = 'true'; value = 'true' }
         @{ name = '"false"'; value = '"false"' }
+        @{ name = 'false'; value = 'false' }
         @{ name = '"null"'; value = '"null"' }
+        @{ name = 'null'; value = 'null' }
         @{ name = 'string'; value = '"abc"' }
         @{ name = 'array'; value = '[ 1, 2 ]' }
     ) {
