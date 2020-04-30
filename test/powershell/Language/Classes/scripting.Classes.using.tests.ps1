@@ -524,7 +524,10 @@ using module FooForPaths
             }
         }
 
-        It 'can be accessed by relative path with .<Separator>' -TestCases @{Separator = '\'}, @{Separator = '/'} {
+        It 'can be accessed by relative path with .<Separator>' -TestCases @(
+            @{ Separator = '\' },
+            @{ Separator = '/' }
+        ) {
             param([string]$Separator)
             $name = 'relative-slash-paths'
             'function Get-TestString { "Worked" }' | Set-Content "TestDrive:\modules\$name.psm1"
@@ -557,4 +560,3 @@ using module $testFile
         }
     }
 }
-
