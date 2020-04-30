@@ -13,6 +13,11 @@ param (
 function Update-GlobalJson([string] $Version) {
     $psGlobalJsonPath = Resolve-Path "$PSScriptRoot/../global.json"
     $psGlobalJson = Get-Content -Path $psGlobalJsonPath -Raw | ConvertFrom-Json
+
+    if ($psGlobalJson.sdk.version -eq $Version) {
+        throw '.NET SDK version is not updated'
+    }
+
     $psGlobalJson.sdk.version = $Version
     $psGlobalJson | ConvertTo-Json | Out-File -FilePath $psGlobalJsonPath -Force
 }
@@ -118,7 +123,7 @@ function Update-CsprojFile([string] $path, $values) {
     }
 
     if ($updated) {
-        $fileContent | Out-File -FilePath $path -Force
+        ($fileContent).TrimEnd() | Out-File -FilePath $path -Force
     }
 }
 
@@ -146,6 +151,16 @@ $sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { "latest" }
 Install-Dotnet -Channel "$Channel" -Version $sdkVersion
 
 Write-Verbose -Message "Installing .NET SDK completed." -Verbose
+
+$isWindowsEnv = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
+
+$dotnetPath = if ($IsWindowsEnv) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+
+$pathSep = [System.IO.Path]::PathSeparator
+
+if (-not (($ENV:PATH -split $pathSep) -contains "$dotnetPath")) {
+    $env:PATH = "$dotnetPath" + $pathSep + "$ENV:PATH"
+}
 
 $latestSdkVersion = (dotnet --list-sdks | Select-Object -Last 1 ).Split() | Select-Object -First 1
 
