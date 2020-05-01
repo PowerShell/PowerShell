@@ -61,6 +61,24 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             Remove-Item -Path * -Recurse -Force -ErrorAction SilentlyContinue
         }
 
+
+        It "Get-Content on Unix succeeds with folder and file with colon: <path>" -Skip:($IsWindows)
+        {
+            try {
+                $path = ":bar"
+                $testPath = "$testdrive/hello:world"
+                New-Item -Path "$testPath" -ItemType Directory > $null
+                Set-Content -Path "$testPath$path" -Value "Hello"
+                $files = Get-ChildItem "$testPath"
+                $files.Count | Should -Be 1
+                $files.Name | Should -BeExactly $path.Substring(1,$path.Length-1)
+                $files | Get-Content | Should -BeExactly "Hello"
+            }
+            finally {
+                Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue
+            }
+        }
+
         It "Verify New-Item for directory" {
             $newDir = New-Item -Path $newTestDir -ItemType Directory
             $directoryExists = Test-Path $newTestDir
@@ -242,8 +260,8 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 Set-Content -Path "$testPath$path" -Value "Hello"
                 $files = Get-ChildItem "$testPath"
                 $files.Count | Should -Be 1
-                $files[0].Name | Should -BeExactly $path.Substring(1,$path.Length-1)
-                $files[0] | Get-Content | Should -BeExactly "Hello"
+                $files.Name | Should -BeExactly $path.Substring(1,$path.Length-1)
+                $files | Get-Content | Should -BeExactly "Hello"
             }
             finally {
                 Remove-Item -Path $testPath -Recurse -Force -ErrorAction SilentlyContinue

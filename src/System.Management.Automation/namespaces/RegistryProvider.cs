@@ -140,23 +140,11 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override Collection<PSDriveInfo> InitializeDefaultDrives()
         {
-            Collection<PSDriveInfo> drives = new Collection<PSDriveInfo>();
-
-            drives.Add(
-                new PSDriveInfo(
-                    "HKLM",
-                    ProviderInfo,
-                    "HKEY_LOCAL_MACHINE",
-                    RegistryProviderStrings.HKLMDriveDescription,
-                    null));
-
-            drives.Add(
-                new PSDriveInfo(
-                    "HKCU",
-                    ProviderInfo,
-                    "HKEY_CURRENT_USER",
-                    RegistryProviderStrings.HKCUDriveDescription,
-                    null));
+            var drives = new Collection<PSDriveInfo>
+            {
+                new PSDriveInfo("HKLM", ProviderInfo, "HKEY_LOCAL_MACHINE", RegistryProviderStrings.HKLMDriveDescription, credential: null),
+                new PSDriveInfo("HKCU", ProviderInfo, "HKEY_CURRENT_USER", RegistryProviderStrings.HKCUDriveDescription, credential: null)
+            };
 
             return drives;
         }
@@ -4181,13 +4169,13 @@ namespace Microsoft.PowerShell.Commands
             }
 
             [PSExtensionMember]
-            public string PSParentPath => _parentPath ?? (_parentPath = _provider.GetParentPath(_key.Name, _driveInfo.Root));
+            public string PSParentPath => _parentPath ??= _provider.GetParentPath(_key.Name, _driveInfo.Root);
 
             [PSExtensionMember]
-            public string PSPath => _path ?? (_path = LocationGlobber.GetProviderQualifiedPath(_key.Name, _provider.ProviderInfo));
+            public string PSPath => _path ??= LocationGlobber.GetProviderQualifiedPath(_key.Name, _provider.ProviderInfo);
 
             [PSExtensionMember]
-            public string PSChildName => _name ?? (_name =_provider.GetChildName(_key.Name));
+            public string PSChildName => _name ??= _provider.GetChildName(_key.Name);
 
             [PSExtensionMember]
             public bool PSIsContainer => true;

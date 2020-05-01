@@ -2,6 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": ".NET Core Launch (console)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/bin/Debug/<target-framework>/<project-name.dll>",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopAtEntry": false,
+            "console": "internalConsole"
+        },
+        {
             "name": ".NET Core Launch",
             "type": "coreclr",
             "request": "launch",
@@ -36,6 +47,28 @@
                 "${command:SpecifyScriptArgs}"
             ],
             "cwd": "${file}"
+        },
+        {
+            "name": "PWSH .NET Core WSL Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "/home/staffan/.dotnet/dotnet",
+            "args": [
+                "/mnt/d/repos/PowerShell/src/powershell-unix/bin/Debug/netcoreapp3.1/linux-x64/pwsh.dll",
+                "-file",
+                "/mnt/d/repos/PowerShell/TestDir/test.ps1"
+            ],
+            "cwd": "/mnt/d/repos/PowerShell/src/powershell-unix/bin/Debug/netcoreapp3.1/linux-x64/",
+            "stopAtEntry": false,
+            "console": "internalConsole",
+            "pipeTransport": {
+                "pipeCwd": "${workspaceRoot}",
+                "pipeProgram": "bash.exe",
+                "pipeArgs": [
+                    "-c"
+                ],
+                "debuggerPath": "~/vsdbg/vsdbg"
+            }
         }
     ]
 }

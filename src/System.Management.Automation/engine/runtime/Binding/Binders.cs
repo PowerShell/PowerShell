@@ -5678,7 +5678,7 @@ namespace System.Management.Automation.Language
                 memberInfo = adapterSet.DotNetAdapter.BaseGetMember<PSMemberInfo>(value, Name);
             }
 
-            if (memberInfo == null && target.Value is IPSObjectExtendedMemberInfo psMemberInfo)
+            if (memberInfo == null && psobj is IPSObjectExtendedMemberInfo psMemberInfo)
             {
                 memberInfo = psMemberInfo.GetMember<PSMemberInfo>(Name);
                 canOptimize = true;

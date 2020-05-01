@@ -1764,7 +1764,7 @@ namespace System.Management.Automation.Provider
             object item,
             string path)
         {
-            PSObject result = WrapOutputInPSObject(item, path, null);
+            PSObject result = WrapOutputInPSObject(item, path, isContainer: null);
 
             Diagnostics.Assert(
                 Context != null,

@@ -7329,10 +7329,10 @@ namespace Microsoft.PowerShell.Commands
             private FileSystemInfo ObjAsFileSystemInfo => (FileSystemInfo) ImmediateBaseObject;
 
             [PSExtensionMember]
-            public string PSParentPath => _parentPath ?? (_parentPath = GetParentPath());
+            public string PSParentPath => _parentPath ??= GetParentPath();
 
             [PSExtensionMember]
-            public string PSPath => _path ?? (_path = LocationGlobber.GetProviderQualifiedPath(ObjAsFileSystemInfo.FullName, _provider.ProviderInfo));
+            public string PSPath => _path ??= LocationGlobber.GetProviderQualifiedPath(ObjAsFileSystemInfo.FullName, _provider.ProviderInfo);
 
             [PSExtensionMember]
             public string PSChildName => ObjAsFileSystemInfo.Name;

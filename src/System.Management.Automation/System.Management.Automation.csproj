@@ -4,6 +4,7 @@
     <Description>PowerShell's System.Management.Automation project</Description>
     <NoWarn>$(NoWarn);CS1570;CS1734</NoWarn>
     <AssemblyName>System.Management.Automation</AssemblyName>
+    <UseResharper Condition="'$(UseResharper)' != 'true'">false</UseResharper>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
@@ -29,10 +30,12 @@
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0-preview.2" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.0.0-preview.3" />
+    <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" Condition="'$(UseResharper)'=='true'" />
   </ItemGroup>
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+    <DefineConstants Condition="'$(UseResharper)' == 'true'">$(DefineConstants);RESHARPER_ATTRIBUTES</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
