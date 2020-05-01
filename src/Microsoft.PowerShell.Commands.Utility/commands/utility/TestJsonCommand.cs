@@ -23,13 +23,13 @@ namespace Microsoft.PowerShell.Commands
         private const string SchemaStringParameterSet = "SchemaString";
 
         /// <summary>
-        /// A JSON string to be validated.
+        /// Gets or sets JSON string to be validated.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true)]
         public string Json { get; set; }
 
         /// <summary>
-        /// A schema to validate the JSON against.
+        /// Gets or sets schema to validate the JSON against.
         /// This is optional parameter.
         /// If the parameter is absent the cmdlet only attempts to parse the JSON string.
         /// If the parameter present the cmdlet attempts to parse the JSON string and
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         public string Schema { get; set; }
 
         /// <summary>
-        /// A path to the file containg schema to validate the JSON string against.
+        /// Gets or sets path to the file containg schema to validate the JSON string against.
         /// This is optional parameter.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = SchemaFileParameterSet)]
