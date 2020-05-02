@@ -447,7 +447,7 @@ namespace System.Management.Automation.PSTasks
                 try
                 {
                     Runspace.DefaultRunspace = runspace;
-                    runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath);
+                    runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath, new CmdletProviderContext(runspace.ExecutionContext){ SuppressWildcardExpansion = true });
                 }
                 catch (DriveNotFoundException)
                 {
