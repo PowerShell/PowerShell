@@ -20,25 +20,25 @@ This repository is **ONLY** for PowerShell Core 6 and PowerShell 7+ issues.
 
 -->
 
-# Steps to reproduce
+## Steps to reproduce
 
 ```powershell
 
 ```
 
-# Expected behavior
+## Expected behavior
 
 ```none
 
 ```
 
-# Actual behavior
+## Actual behavior
 
 ```none
 
 ```
 
-# Environment data
+## Environment data
 
 <!-- provide the output of $PSVersionTable -->
 

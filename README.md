@@ -144,6 +144,7 @@ We have a Gitter Room which you can join below.
 [![Join the chat](https://img.shields.io/static/v1.svg?label=chat&message=on%20gitter&color=informational&logo=gitter)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 There is also the community driven PowerShell Virtual User Group, which you can join on:
+
 * [Slack](https://aka.ms/psslack)
 * [Discord](https://aka.ms/psdiscord)
 
