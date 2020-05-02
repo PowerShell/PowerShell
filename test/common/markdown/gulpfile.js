@@ -1,4 +1,4 @@
-function RunTest() {
+function runTest() {
     "use strict";
     var gulp = require("gulp");
     var concat = require("gulp-concat");
@@ -15,32 +15,29 @@ function RunTest() {
             rootpath = process.argv[j + 1];
         }
 
-        if(rootpath == null)
-        {
-            throw "--rootpath <repoRoot> must be specified before all other parameters"
+        if (rootpath === null) {
+            throw "--rootpath <repoRoot> must be specified before all other parameters";
         }
 
         // parse --filter into paths.  --rootpath must be specified first.
-        var j = process.argv.indexOf("--filter");
+        j = process.argv.indexOf("--filter");
         if (j > -1) {
             var filters = process.argv[j + 1].split(",");
-            filters.forEach(function (filter) {
+            filters.forEach(function(filter) {
                 paths.push(rootpath + "/" + filter);
             }, this);
         }
 
-        if(paths.length == 0)
-        {
-            throw "--filter <filter relative to repoRoot> must be specified"
+        if (paths.length === 0) {
+            throw "--filter <filter relative to repoRoot> must be specified";
         }
 
-        var rootJsonFile = rootpath + "/.markdownlint.json"
-        var fs = require('fs');
-        fs.appendFileSync('markdownissues.txt', '--EMPTY--\r\n');
+        var rootJsonFile = rootpath + "/.markdownlint.json";
+        var fs = require("fs");
+        fs.appendFileSync("markdownissues.txt", "--EMPTY--\r\n");
         return gulp.src(paths, { "read": false })
             .pipe(through2.obj(function obj(file, enc, next) {
-                markdownlint(
-                    {
+                markdownlint({
                         "files": [file.path],
                         "config": require(rootJsonFile)
                     },
@@ -57,4 +54,4 @@ function RunTest() {
     });
 }
 
-RunTest();
+runTest();
