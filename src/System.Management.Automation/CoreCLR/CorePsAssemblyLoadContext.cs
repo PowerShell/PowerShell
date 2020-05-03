@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
@@ -71,7 +71,7 @@ namespace System.Management.Automation
             }
             else
             {
-                _probingPaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                _probingPaths = basePaths.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < _probingPaths.Length; i++)
                 {
                     string basePath = _probingPaths[i];

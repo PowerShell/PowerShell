@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -243,9 +243,6 @@ namespace System.Management.Automation.Remoting
             readerSettings.IgnoreProcessingInstructions = true;
             readerSettings.MaxCharactersInDocument = 10000;
             readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
-            readerSettings.XmlResolver = null;
-#endif
 
             using (XmlReader reader = XmlReader.Create(new StringReader(initializationParameters), readerSettings))
             {
@@ -1899,7 +1896,7 @@ namespace System.Management.Automation.Remoting
         private string GetRoleCapabilityPath(string roleCapability)
         {
             string moduleName = "*";
-            if (roleCapability.IndexOf('\\') != -1)
+            if (roleCapability.Contains('\\'))
             {
                 string[] components = roleCapability.Split(Utils.Separators.Backslash, 2);
                 moduleName = components[0];

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 //
@@ -1238,7 +1238,7 @@ namespace System.Management.Automation.Language
                     string varSign = varAst.Splatted ? "@" : "$";
                     string newVarName = varSign + UsingExpressionAst.UsingPrefix + varName;
 
-                    newScript.Append(script.Substring(startOffset, astStartOffset - startOffset));
+                    newScript.Append(script.AsSpan(startOffset, astStartOffset - startOffset));
                     newScript.Append(newVarName);
                     startOffset = astEndOffset;
                 }
@@ -1259,13 +1259,13 @@ namespace System.Management.Automation.Language
                         newParams += ",\n";
                     }
 
-                    newScript.Append(script.Substring(startOffset, currentOffset - startOffset));
+                    newScript.Append(script.AsSpan(startOffset, currentOffset - startOffset));
                     newScript.Append(newParams);
                     startOffset = currentOffset;
                 }
             }
 
-            newScript.Append(script.Substring(startOffset, endOffset - startOffset));
+            newScript.Append(script.AsSpan(startOffset, endOffset - startOffset));
             string result = newScript.ToString();
 
             if (Parent != null && initialStartOffset == this.Extent.StartOffset && initialEndOffset == this.Extent.EndOffset)
@@ -2304,7 +2304,7 @@ namespace System.Management.Automation.Language
                 string varSign = varAst.Splatted ? "@" : "$";
                 string newVarName = varSign + UsingExpressionAst.UsingPrefix + varName;
 
-                newParamText.Append(paramText.Substring(startOffset, astStartOffset - startOffset));
+                newParamText.Append(paramText.AsSpan(startOffset, astStartOffset - startOffset));
                 newParamText.Append(newVarName);
                 startOffset = astEndOffset;
             } while (orderedUsingVar.MoveNext());
@@ -2315,7 +2315,7 @@ namespace System.Management.Automation.Language
                 return paramText;
             }
 
-            newParamText.Append(paramText.Substring(startOffset, endOffset - startOffset));
+            newParamText.Append(paramText.AsSpan(startOffset, endOffset - startOffset));
             return newParamText.ToString();
         }
 
@@ -6643,17 +6643,17 @@ namespace System.Management.Automation.Language
                 string paramName = entry.Key;
                 var paramValue = entry.Value;
 
-                if ((paramName.Length <= nameParam.Length) && (paramName.Equals(nameParam.Substring(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
+                if ((paramName.Length <= nameParam.Length) && (paramName.AsSpan().Equals(nameParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
                 {
                     resourceNames = paramValue;
                 }
                 // Since both parameters -ModuleName and -ModuleVersion has same start string i.e. Module so we will try to resolve it to -ModuleName
                 // if user specifies like -Module
-                if ((paramName.Length <= moduleNameParam.Length) && (paramName.Equals(moduleNameParam.Substring(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
+                if ((paramName.Length <= moduleNameParam.Length) && (paramName.AsSpan().Equals(moduleNameParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
                 {
                     moduleNames = paramValue;
                 }
-                else if ((paramName.Length <= moduleVersionParam.Length) && (paramName.Equals(moduleVersionParam.Substring(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
+                else if ((paramName.Length <= moduleVersionParam.Length) && (paramName.AsSpan().Equals(moduleVersionParam.AsSpan(0, paramName.Length), StringComparison.OrdinalIgnoreCase)))
                 {
                     moduleVersion = paramValue;
                 }
@@ -8401,7 +8401,7 @@ namespace System.Management.Automation.Language
             int lastDotIndex = fullTypeName.LastIndexOf('.');
             if (lastDotIndex >= 0)
             {
-                return fullTypeName.Substring(lastDotIndex + 1).Equals(Name, StringComparison.OrdinalIgnoreCase);
+                return fullTypeName.AsSpan(lastDotIndex + 1).Equals(Name, StringComparison.OrdinalIgnoreCase);
             }
 
             return false;

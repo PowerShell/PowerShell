@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a Pester test suite which validate the Web cmdlets.
@@ -1900,8 +1900,21 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
     }
 
+    Context "Regex Parsing" {
+
+        It 'correctly parses an image with id, class, and src attributes' {
+            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
+                dosType = 'img-attribute'
+            }
+
+            $response = Invoke-WebRequest -Uri $dosUri
+            $response.Images | Should -Not -BeNullOrEmpty
+        }
+    }
+
     Context "Denial of service" -Tag 'DOS' {
         It "Image Parsing" {
+            Set-ItResult -Pending -Because "The pathological regex runs fast due to https://github.com/dotnet/runtime/issues/33399.  Fixed in .NET 5 preview.2"
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='img'
                 dosLength='5000'
@@ -1931,6 +1944,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # in some cases we will be running in a Docker container with modest resources
             $pathologicalRatio | Should -BeGreaterThan 5
         }
+
         It "Charset Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='charset'

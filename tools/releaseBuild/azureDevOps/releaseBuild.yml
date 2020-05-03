@@ -39,42 +39,69 @@ jobs:
 
 - template: templates/mac.yml
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: x64
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: x86
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: arm
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: arm64
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: fxdependent
 
-- template: templates/windows-build.yml
+- template: templates/windows-hosted-build.yml
   parameters:
     Architecture: fxdependentWinDesktop
 
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: x64
+    parentJob: build_windows_x64
 
-- template: templates/windows-component-governance.yml
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: x86
+    parentJob: build_windows_x86
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: arm
+    parentJob: build_windows_arm
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: arm64
+    parentJob: build_windows_arm64
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: fxdependent
+    parentJob: build_windows_fxdependent
+
+- template: templates/windows-packaging.yml
+  parameters:
+    Architecture: fxdependentWinDesktop
+    parentJob: build_windows_fxdependentWinDesktop
 
 - template: templates/windows-package-signing.yml
   parameters:
     parentJobs:
-      - build_windows_x64
-      - build_windows_x86
-      - build_windows_arm
-      - build_windows_arm64
-      - build_windows_fxdependent
-      - build_windows_fxdependentWinDesktop
+      - sign_windows_x64
+      - sign_windows_x86
+      - sign_windows_arm
+      - sign_windows_arm64
+      - sign_windows_fxdependent
+      - sign_windows_fxdependentWinDesktop
 
 - template: templates/mac-package-signing.yml
 
@@ -108,13 +135,17 @@ jobs:
 
 - job: release_json
   displayName: Create and Upload release.json
+  pool:
+    vmImage: 'windows-latest'
   steps:
   - template: templates/SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
 
   - powershell: |
-      @{ ReleaseVersion = "$(Version)" } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
+      $metadata = Get-Content '$(Build.SourcesDirectory)/tools/metadata.json' -Raw | ConvertFrom-Json
+      $LTS = $metadata.LTSRelease
+      @{ ReleaseVersion = "$(Version)"; LTSRelease = $LTS } | ConvertTo-Json | Out-File "$(Build.StagingDirectory)\release.json"
       Get-Content "$(Build.StagingDirectory)\release.json"
       Write-Host "##vso[artifact.upload containerfolder=metadata;artifactname=metadata]$(Build.StagingDirectory)\release.json"
     displayName: Create and upload release.json file to build artifact

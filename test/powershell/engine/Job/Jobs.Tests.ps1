@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Basic Job Tests' -Tags 'Feature' {
@@ -336,6 +336,60 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $splat = @{ $property = $jobToStop.$property }
             Stop-Job @splat
             ValidateJobInfo -job $jobToStop -state 'Stopped' -hasMoreData $false
+        }
+    }
+
+    Context 'Background pwsh process should terminate after job is done' {
+        It "Can clean up background pwsh process after job is done" {
+            $job = Start-Job { $pid }
+            $processId = Receive-Job $job -Wait
+
+            try {
+                $process = Get-Process -Id $processId -ErrorAction Stop
+                Wait-UntilTrue { $process.HasExited } -IntervalInMilliseconds 300 | Should -BeTrue
+            } catch {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+            }
+
+            Remove-Job $job -Force
+        }
+
+        It "Can clean up background pwsh process when job is stopped" {
+            $job = Start-Job { $pid; Start-Sleep -Second 10 }
+
+            # Wait for the pid to be received.
+            Wait-UntilTrue { [bool](Receive-Job $job -Keep) } | Should -BeTrue
+            $processId = Receive-Job $job
+
+            # Stop the job and wait for the cleanup to finish.
+            Stop-Job $job
+
+            try {
+                $process = Get-Process -Id $processId -ErrorAction Stop
+                Wait-UntilTrue { $process.HasExited } -IntervalInMilliseconds 300 | Should -BeTrue
+            } catch {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+            }
+
+            Remove-Job $job -Force
+        }
+
+        It "Can clean up background pwsh process when job is removed" {
+            $job = Start-Job { $pid; Start-Sleep -Second 10 }
+
+            # Wait for the pid to be received.
+            Wait-UntilTrue { [bool](Receive-Job $job -Keep) } | Should -BeTrue
+            $processId = Receive-Job $job
+
+            # Remove the job and wait for the cleanup to finish.
+            Remove-Job $job -Force
+
+            try {
+                $process = Get-Process -Id $processId -ErrorAction Stop
+                Wait-UntilTrue { $process.HasExited } -IntervalInMilliseconds 300 | Should -BeTrue
+            } catch {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+            }
         }
     }
 }

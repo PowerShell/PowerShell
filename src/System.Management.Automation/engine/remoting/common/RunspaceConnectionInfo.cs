@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -1439,7 +1439,7 @@ namespace System.Management.Automation.Runspaces
                 return (EnableNetworkAccess &&                                                              // Interactive token requested
                         (Credential == null &&                                                              // No credential provided
                          (ComputerName.Equals(DefaultComputerName, StringComparison.OrdinalIgnoreCase) ||   // Localhost computer name
-                          ComputerName.IndexOf('.') == -1)));                                               // Not FQDN computer name
+                          !ComputerName.Contains('.'))));                                                    // Not FQDN computer name
             }
         }
 
@@ -2548,7 +2548,12 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-                var cmdLine = string.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
+                // Create process start command line with filename and argument list.
+                var cmdLine = string.Format(
+                    CultureInfo.InvariantCulture, 
+                    @"""{0}"" {1}", 
+                    startInfo.FileName,
+                    string.Join(' ', startInfo.ArgumentList));
 
                 lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
                 lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);

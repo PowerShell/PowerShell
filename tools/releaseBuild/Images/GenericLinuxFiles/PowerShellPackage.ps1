@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # PowerShell Script to build and package PowerShell from specified form and branch
@@ -32,12 +32,11 @@ if ($ReleaseTag)
 $version = $ReleaseTag -replace '^v'
 $semVersion = [System.Management.Automation.SemanticVersion] $version
 
-## All even minor versions are LTS
-$LTS = if ( $semVersion.PreReleaseLabel -eq $null -and $semVersion.Minor % 2 -eq 0) {
-    $true
-} else {
-    $false
-}
+$metadata = Get-Content "$location/tools/metadata.json" -Raw | ConvertFrom-Json
+
+$LTS = $metadata.LTSRelease
+
+Write-Verbose -Verbose -Message "LTS is set to: $LTS"
 
 function BuildPackages {
     param(

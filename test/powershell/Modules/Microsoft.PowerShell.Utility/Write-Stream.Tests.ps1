@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Stream writer tests" -Tags "CI" {
     $targetfile = Join-Path -Path $TestDrive -ChildPath "writeoutput.txt"

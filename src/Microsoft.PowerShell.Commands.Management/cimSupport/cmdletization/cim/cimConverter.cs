@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -459,8 +459,8 @@ namespace Microsoft.PowerShell.Cim
                 return exceptionSafeReturn(delegate
                                                {
                                                    int indexOfLastColon = cimIntrinsicValue.LastIndexOf(':');
-                                                   int port = int.Parse(cimIntrinsicValue.Substring(indexOfLastColon + 1), NumberStyles.Integer, CultureInfo.InvariantCulture);
-                                                   IPAddress address = IPAddress.Parse(cimIntrinsicValue.Substring(0, indexOfLastColon));
+                                                   int port = int.Parse(cimIntrinsicValue.AsSpan(indexOfLastColon + 1), NumberStyles.Integer, CultureInfo.InvariantCulture);
+                                                   IPAddress address = IPAddress.Parse(cimIntrinsicValue.AsSpan(0, indexOfLastColon));
                                                    return new IPEndPoint(address, port);
                                                });
             }

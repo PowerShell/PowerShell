@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -808,7 +808,7 @@ namespace System.Management.Automation.Security
             internal uint cbStruct;
 
             /// GUID->_GUID
-            internal GUID gSubject;
+            internal Guid gSubject;
 
             /// LPCWSTR->WCHAR*
             [MarshalAsAttribute(UnmanagedType.LPWStr)]
@@ -825,23 +825,6 @@ namespace System.Management.Automation.Security
 
             /// BYTE*
             internal System.IntPtr pbMemSignedMsg;
-        }
-
-        [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        internal struct GUID
-        {
-            /// unsigned int
-            internal uint Data1;
-
-            /// unsigned short
-            internal ushort Data2;
-
-            /// unsigned short
-            internal ushort Data3;
-
-            /// unsigned char[8]
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            internal byte[] Data4;
         }
 
         [ArchitectureSensitive]
@@ -864,11 +847,7 @@ namespace System.Management.Automation.Security
             byte[] contentBytes = System.Text.Encoding.Unicode.GetBytes(content);
 
             // The GUID of the PowerShell SIP
-            bi.gSubject.Data1 = 0x603bcc1f;
-            bi.gSubject.Data2 = 0x4b59;
-            bi.gSubject.Data3 = 0x4e08;
-            bi.gSubject.Data4 = new byte[] { 0xb7, 0x24, 0xd2, 0xc6, 0x29, 0x7e, 0xf3, 0x51 };
-
+            bi.gSubject = new Guid(0x603bcc1f, 0x4b59, 0x4e08, new byte[] { 0xb7, 0x24, 0xd2, 0xc6, 0x29, 0x7e, 0xf3, 0x51 });
             bi.cbStruct = (DWORD)Marshal.SizeOf(bi);
             bi.pcwszDisplayName = fileName;
             bi.cbMemObject = (uint)contentBytes.Length;
@@ -1988,7 +1967,7 @@ namespace System.Management.Automation.Security
             internal string pwszReferenceTag;
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszFileName;
-            internal GUID gSubjectType;
+            internal Guid gSubjectType;
             internal DWORD fdwMemberFlags;
             internal IntPtr pIndirectData;
             internal DWORD dwCertVersion;

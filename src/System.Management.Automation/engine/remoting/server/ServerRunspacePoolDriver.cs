@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -457,10 +457,7 @@ namespace System.Management.Automation
                 {
                     // Let exceptions propagate.
                     RemoteRunspace remoteRunspace = HostUtilities.CreateConfiguredRunspace(_configurationName, _remoteHost);
-
-                    _remoteHost.AllowPushRunspace = true;
                     _remoteHost.PropagatePop = true;
-
                     _remoteHost.PushRunspace(remoteRunspace);
                 }
             }
@@ -893,8 +890,8 @@ namespace System.Management.Automation
                     }
                     else if (powershell.Commands.Commands.Count == 1 &&
                              !powershell.Commands.Commands[0].IsScript &&
-                             ((powershell.Commands.Commands[0].CommandText.IndexOf("Get-PSDebuggerStopArgs", StringComparison.OrdinalIgnoreCase) != -1) ||
-                              (powershell.Commands.Commands[0].CommandText.IndexOf("Set-PSDebuggerAction", StringComparison.OrdinalIgnoreCase) != -1)))
+                             (powershell.Commands.Commands[0].CommandText.Contains("Get-PSDebuggerStopArgs", StringComparison.OrdinalIgnoreCase) ||
+                              powershell.Commands.Commands[0].CommandText.Contains("Set-PSDebuggerAction", StringComparison.OrdinalIgnoreCase)))
                     {
                         // We do not want to invoke debugger commands in the steppable pipeline.
                         // Consider adding IsSteppable message to PSRP to handle this.

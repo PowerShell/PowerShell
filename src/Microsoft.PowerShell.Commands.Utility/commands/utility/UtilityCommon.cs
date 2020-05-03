@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -43,6 +43,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         BigEndianUnicode,
 
+        /// <summary>
+        /// Big Endian UTF32 encoding.
+        /// </summary>
+        BigEndianUTF32,
+        
         /// <summary>
         /// UTF8 encoding.
         /// </summary>

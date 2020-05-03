@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
     It 'New-Object - Property Parameter Must take IDictionary' {

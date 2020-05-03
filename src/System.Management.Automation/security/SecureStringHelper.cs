@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell
             {
                 for (int i = 0; i < dataLen; i++)
                 {
-                    data[i] = byte.Parse(s.Substring(2 * i, 2),
+                    data[i] = byte.Parse(s.AsSpan(2 * i, 2),
                                          NumberStyles.AllowHexSpecifier,
                                          System.Globalization.CultureInfo.InvariantCulture);
                 }

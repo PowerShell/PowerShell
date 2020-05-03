@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -1233,8 +1233,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
-                throw new ArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (schemaValidationOption < (int)Microsoft.Management.Infrastructure.Serialization.MofDeserializerSchemaValidationOption.Default ||
@@ -4073,4 +4072,3 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     ";
     }
 }
-

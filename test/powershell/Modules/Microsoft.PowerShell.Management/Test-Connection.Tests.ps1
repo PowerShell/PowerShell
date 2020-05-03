@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -59,25 +59,26 @@ Describe "Test-Connection" -tags "CI" {
             $result2 | Should -BeFalse
         }
 
-        It "Ping fake host" {
+        It 'returns false without errors for an unresolvable address when using -Quiet' {
+            Test-Connection -Quiet -ErrorAction Stop -Count 1 -TargetName "fakeHost" | Should -BeFalse
+        }
 
-            { $result = Test-Connection "fakeHost" -Count 1 -Quiet -ErrorAction Stop } |
+        It "Ping fake host" {
+            { Test-Connection "fakeHost" -Count 1 -ErrorAction Stop } |
                 Should -Throw -ErrorId "TestConnectionException,Microsoft.PowerShell.Commands.TestConnectionCommand"
             # Error code = 11001 - Host not found.
-            if ((Get-PlatformInfo) -match "raspbian") {
+            if ((Get-PlatformInfo).Platform -match "raspbian") {
                 $code = 11
-            }
-            elseif (!$IsWindows) {
+            } elseif (!$IsWindows) {
                 $code = -131073
-            }
-            else {
+            } else {
                 $code = 11001
             }
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
-        # In VSTS, address is 0.0.0.0
-        It "Force IPv4 with implicit PingOptions" {
+        # In VSTS, address is 0.0.0.0. Making pending due to instability in Az DevOps.
+        It "Force IPv4 with implicit PingOptions" -Pending:($IsMacOS) {
             $result = Test-Connection $hostName -Count 1 -IPv4
 
             $result[0].Address | Should -BeExactly $realAddress
@@ -248,7 +249,8 @@ Describe "Test-Connection" -tags "CI" {
     }
 
     Context "TraceRoute" {
-        It "TraceRoute works" {
+        # Mark it as pending due to instability in Az DevOps
+        It "TraceRoute works" -Pending:($IsMacOS) {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $hostName -TraceRoute -IPv4
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (key.Length < normalizedKey.Length)
             {
                 // shorter, could be an abbreviation
-                if (string.Equals(key, normalizedKey.Substring(0, key.Length), StringComparison.OrdinalIgnoreCase))
+                if (key.AsSpan().Equals(normalizedKey.AsSpan(0, key.Length), StringComparison.OrdinalIgnoreCase))
                 {
                     // found abbreviation
                     return true;

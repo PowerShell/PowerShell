@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "DSC MOF Compilation" -tags "CI" {
 
@@ -7,7 +7,12 @@ Describe "DSC MOF Compilation" -tags "CI" {
     }
 
     BeforeAll {
-        $SkipAdditionalPlatforms = (Get-PlatformInfo) -match "alpine|raspbian"
+        $platformInfo = Get-PlatformInfo
+        $SkipAdditionalPlatforms =
+            ($platformInfo.Platform -match "alpine|raspbian") -or
+            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
+            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
+
         Import-Module PSDesiredStateConfiguration
         $dscModule = Get-Module PSDesiredStateConfiguration
         $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -498,8 +498,8 @@ namespace System.Management.Automation.Language
                     return null;
                 }
 
-                // case 1: relative path. Relative for file in the same folder should include .\
-                bool isPath = fullyQualifiedNameStr.Contains(@"\");
+                // case 1: relative path. Relative for file in the same folder should include .\ or ./
+                bool isPath = fullyQualifiedNameStr.Contains('\\') || fullyQualifiedNameStr.Contains('/');
                 if (isPath && !LocationGlobber.IsAbsolutePath(fullyQualifiedNameStr))
                 {
                     string rootPath = Path.GetDirectoryName(_parser._fileName);

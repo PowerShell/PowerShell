@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation.Language
             public bool Equals(PSInvokeDynamicMemberBinderKeyType x, PSInvokeDynamicMemberBinderKeyType y)
             {
                 return x.Item1.Equals(y.Item1) &&
-                       x.Item2 == null ? y.Item2 == null : x.Item2.Equals(y.Item2) &&
+                       ((x.Item2 == null) ? y.Item2 == null : x.Item2.Equals(y.Item2)) &&
                        x.Item3 == y.Item3 &&
                        x.Item4 == y.Item4 &&
                        x.Item5 == y.Item5;
@@ -5246,7 +5246,7 @@ namespace System.Management.Automation.Language
 
                         if (adapterData.member.DeclaringType.IsGenericTypeDefinition || adapterData.propertyType.IsByRefLike)
                         {
-                            // This is kinda lame - we really should throw an error, but accessing property getter
+                            // We really should throw an error, but accessing property getter
                             // doesn't throw error in PowerShell since V2, even in strict mode.
                             expr = ExpressionCache.NullConstant;
                         }

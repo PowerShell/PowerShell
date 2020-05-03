@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Tests for $ErrorView' -Tag CI {
@@ -86,6 +86,24 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e | Should -BeLike "*${testScriptPath}:2*"
             # validate line number is shown
             $e | Should -BeLike '* 2 *'
+        }
+
+        It "Long exception message gets rendered" {
+
+            $msg = "1234567890"
+            while ($msg.Length -le $Host.UI.RawUI.WindowSize.Width)
+            {
+                $msg += $msg
+            }
+
+            $e = { throw "$msg" } | Should -Throw $msg -PassThru | Out-String
+            $e | Should -BeLike "*$msg*"
+        }
+
+        It "Position message does not contain line information" {
+
+            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" | Out-String
+            $e | Should -Not -BeLike "*At line*"
         }
     }
 

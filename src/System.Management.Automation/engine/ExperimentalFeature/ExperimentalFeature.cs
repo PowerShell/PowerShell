@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -121,6 +121,9 @@ namespace System.Management.Automation
                     name: "PSCultureInvariantReplaceOperator",
                     description: "Use culture invariant to-string convertor for lval in replace operator"),
                 new ExperimentalFeature(
+                    name: "PSNativePSPathResolution",
+                    description: "Convert PSPath to filesystem path, if possible, for native commands"),
+                new ExperimentalFeature(
                     name: "PSGeneralizedSplatting",
                     description: "Preliminary support for generalized splatting, currently only inline splatting"),
             };
@@ -211,7 +214,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsEngineFeatureName(string featureName)
         {
-            return featureName.Length > 2 && featureName.IndexOf('.') == -1 && featureName.StartsWith("PS", StringComparison.Ordinal);
+            return featureName.Length > 2 && !featureName.Contains('.') && featureName.StartsWith("PS", StringComparison.Ordinal);
         }
 
         /// <summary>

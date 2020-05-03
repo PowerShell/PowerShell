@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
 

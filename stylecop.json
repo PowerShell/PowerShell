@@ -38,7 +38,7 @@
             "allowConsecutiveUsings" : false
         },
         "documentationRules" : {
-            "copyrightText" : "Copyright (c) Microsoft Corporation. All rights reserved.\nLicensed under the MIT License.",
+            "copyrightText" : "Copyright (c) Microsoft Corporation.\nLicensed under the MIT License.",
             "xmlHeader" : false,
             "documentInterfaces" : true,
             "documentExposedElements" : true,

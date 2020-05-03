@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 function Wait-UntilTrue
 {
@@ -365,18 +365,26 @@ function New-ComplexPassword
 }
 
 # return a specific string with regard to platform information
-function Get-PlatformInfo
-{
+function Get-PlatformInfo {
     if ( $IsWindows ) {
-        return "windows"
+        return @{Platform = "windows"; Version = '' }
     }
     if ( $IsMacOS ) {
-        return "macos"
+        return @{Platform = "macos"; Version = '' }
     }
     if ( $IsLinux ) {
         $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
         if ( -not [string]::IsNullOrEmpty($osrelease.ID) ) {
-            return $osrelease.ID
+
+            $versionId = if (-not $osrelease.Version_ID ) {
+                ''
+            } else {
+                $osrelease.Version_ID.trim('"')
+            }
+
+            $platform = $osrelease.ID.trim('"')
+
+            return @{Platform = $platform; Version = $versionId }
         }
         return "unknown"
     }

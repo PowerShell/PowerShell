@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -12,9 +12,6 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-#if !CORECLR
-using Microsoft.CodeAnalysis;
-#endif
 
 namespace System.Management.Automation.Language
 {
@@ -71,7 +68,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             if (!string.IsNullOrEmpty(fileName) && fileName.Length > scriptSchemaExtension.Length && fileName.EndsWith(scriptSchemaExtension, StringComparison.OrdinalIgnoreCase))
             {
-                parser._keywordModuleName = Path.GetFileName(fileName.Substring(0, fileName.Length - scriptSchemaExtension.Length));
+                parser._keywordModuleName = Path.GetFileName(fileName.AsSpan(0, fileName.Length - scriptSchemaExtension.Length)).ToString();
                 parseDscResource = true;
             }
 
@@ -4890,7 +4887,7 @@ namespace System.Management.Automation.Language
             {
                 case TokenKind.EndOfInput:
                 case TokenKind.NewLine:
-                // Example: 'using module ,FooBar'
+                // Example: 'using module ,exampleModuleName'
                 // GetCommandArgument will successfully return an argument for a unary array argument
                 // but we don't want to allow that syntax with a using statement.
                 case TokenKind.Comma:
@@ -8125,7 +8122,7 @@ namespace System.Management.Automation.Language
 
         internal static string GetFileOrScript(string fileName, string input)
         {
-            return fileName ?? input.Substring(0, Math.Min(256, input.Length)).Trim();
+            return fileName ?? input.AsSpan(0, Math.Min(256, input.Length)).Trim().ToString();
         }
     }
 }

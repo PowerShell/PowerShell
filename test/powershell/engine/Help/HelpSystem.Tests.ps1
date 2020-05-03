@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
 # Validates Get-Help for cmdlets in Microsoft.PowerShell.Core.
@@ -574,7 +574,7 @@ Describe "Help failure cases" -Tags Feature {
     ) {
         param($command)
 
-        { & $command foobar -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
+        { & $command DoesNotExist -ErrorAction Stop } | Should -Throw -ErrorId "HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }
 

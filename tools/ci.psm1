@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Set-StrictMode -Version 3.0
@@ -441,7 +441,7 @@ function Invoke-CIFinish
         [string] $NuGetKey
     )
 
-    if($IsLinux -or $IsMacOS)
+    if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
         return New-LinuxPackage -NugetKey $NugetKey
     }
@@ -464,7 +464,7 @@ function Invoke-CIFinish
         Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean
 
         # Build packages
-        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $preReleaseVersion -SkipReleaseChecks
+        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -492,8 +492,9 @@ function Invoke-CIFinish
         $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
 
         # Install the latest Pester and import it
-        Install-Module Pester -Force -SkipPublisherCheck
-        Import-Module Pester -Force
+        $maximumPesterVersion = '4.99'
+        Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
+        Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
 
         # start the packaging tests and get the results
         $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru

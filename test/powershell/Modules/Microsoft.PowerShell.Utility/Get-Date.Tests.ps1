@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Get-Date DRT Unit Tests" -Tags "CI" {
@@ -35,7 +35,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         $seconds | Should -Be "1577836800"
         if ($IsLinux) {
             $dateString = "01/01/2020 UTC"
-            if ( (Get-PlatformInfo) -eq "alpine" ) {
+            if ( (Get-PlatformInfo).Platform -eq "alpine" ) {
                 $dateString = "2020-01-01"
             }
             $expected = date --date=${dateString} +%s
@@ -191,6 +191,15 @@ Describe "Get-Date" -Tags "CI" {
         $timeDifference.Minutes      | Should -Be 0
         $timeDifference.Milliseconds | Should -BeLessThan 1
         $timeDifference.Ticks        | Should -BeLessThan 10000
+    }
+
+    It "-FromUnixTime works" {
+
+        # Test conversion of arbitrary date in Unix time: 2020-01-01​T00:00:00.000Z
+        Get-Date -Date 1577836800 -FromUnixTime | Should -Be (Get-Date -Date 637134336000000000 -AsUTC)
+
+        # Test converstion of Unix time start date: 1970-01-01​T00:00:00.000Z
+        Get-Date -Date 0 -FromUnixTime | Should -Be (Get-Date -Date 621355968000000000 -AsUTC)
     }
 }
 

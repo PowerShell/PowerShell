@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -50,7 +50,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Export-Alias with Invalid Scope will throw PSArgumentException" {
-		{ Export-Alias $fulltestpath -scope foobar } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
+		{ Export-Alias $fulltestpath -scope foodbar } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
 	}
 
 	It "Export-Alias for Default"{

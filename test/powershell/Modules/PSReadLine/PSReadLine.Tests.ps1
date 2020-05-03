@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "PSReadLine" -tags "CI" {
     BeforeAll {
@@ -12,13 +12,13 @@ Describe "PSReadLine" -tags "CI" {
         Import-Module PSReadLine
         $module = Get-Module PSReadLine
         $module.Name | Should -BeExactly 'PSReadLine'
-        $module.Version | Should -BeExactly '2.0.0'
+        $module.Version | Should -BeExactly '2.0.1'
     }
 
     It "Should be installed to `$PSHOME" {
         $module = Get-Module (Join-Path -Path $PSHOME -ChildPath "Modules" -AdditionalChildPath "PSReadLine") -ListAvailable
         $module.Name | Should -BeExactly 'PSReadLine'
-        $module.Version | Should -BeExactly '2.0.0'
+        $module.Version | Should -BeExactly '2.0.1'
         $module.Path | Should -Be (Join-Path -Path $PSHOME -ChildPath "Modules/PSReadLine/PSReadLine.psd1")
     }
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -785,7 +785,7 @@ namespace System.Management.Automation
                         return username;
                     }
 
-                    // Get and add the user name to the cache so we don't need to 
+                    // Get and add the user name to the cache so we don't need to
                     // have a pinvoke for each file.
                     username = NativeMethods.GetPwUid(UserId);
                     usernameCache.Add(UserId, username);
@@ -805,7 +805,7 @@ namespace System.Management.Automation
                         return groupname;
                     }
 
-                    // Get and add the group name to the cache so we don't need to 
+                    // Get and add the group name to the cache so we don't need to
                     // have a pinvoke for each file.
                     groupname = NativeMethods.GetGrGid(GroupId);
                     groupnameCache.Add(GroupId, groupname);
@@ -976,7 +976,7 @@ namespace System.Management.Automation
                 try
                 {
                     var stat = System.IO.File.ReadAllText(path);
-                    var parts = stat.Split(new[] { ' ' }, 5);
+                    var parts = stat.Split(' ', 5);
                     if (parts.Length < 5)
                     {
                         return invalidPid;
@@ -1092,8 +1092,8 @@ namespace System.Management.Automation
 
                 /// <summary>
                 /// This is a struct from getcommonstat.h in the native library.
-                /// It presents each member of the stat structure as the largest type of that member across 
-                /// all stat structures on the platforms we support. This allows us to present a common 
+                /// It presents each member of the stat structure as the largest type of that member across
+                /// all stat structures on the platforms we support. This allows us to present a common
                 /// stat structure for all our platforms.
                 /// </summary>
                 [StructLayout(LayoutKind.Sequential)]

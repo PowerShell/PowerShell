@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
 # TEST SPECIFIC HELPER METHODS FOR TESTING Get-ComputerInfo cmdlet

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 using namespace System.Diagnostics
 
@@ -1007,5 +1007,12 @@ Describe 'Pwsh startup and PATH' -Tag CI {
         Remove-Item Env:\PATH
         $path = & $pwsh -noprofile -command '$env:PATH'
         $path | Should -BeExactly ($PSHOME + [System.IO.Path]::PathSeparator)
+    }
+}
+
+Describe 'Console host name' -Tag CI {
+    It 'Name is pwsh' -Pending {
+        # waiting on https://github.com/dotnet/runtime/issues/33673
+        (Get-Process -id $PID).Name | Should -BeExactly 'pwsh'
     }
 }

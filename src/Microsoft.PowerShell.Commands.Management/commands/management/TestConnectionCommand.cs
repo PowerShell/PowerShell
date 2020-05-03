@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #nullable enable
@@ -57,6 +57,8 @@ namespace Microsoft.PowerShell.Commands
         #region Private Fields
 
         private static byte[]? s_DefaultSendBuffer;
+
+        private readonly CancellationTokenSource _dnsLookupCancel = new CancellationTokenSource();
 
         private bool _disposed;
 
@@ -275,6 +277,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void StopProcessing()
         {
             _sender?.SendAsyncCancel();
+            _dnsLookupCancel.Cancel();
         }
 
         #region ConnectionTest
@@ -283,6 +286,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -334,6 +342,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (!Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -471,6 +484,11 @@ namespace Microsoft.PowerShell.Commands
             PingReply? reply, replyResult = null;
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(-1);
+                }
+
                 return;
             }
 
@@ -574,6 +592,11 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -667,7 +690,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (ResolveDestination)
                 {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
+                    hostEntry = GetCancellableHostEntry(targetNameOrAddress);
                     resolvedTargetName = hostEntry.HostName;
                 }
                 else
@@ -679,27 +702,35 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
+                    hostEntry = GetCancellableHostEntry(targetNameOrAddress);
 
                     if (ResolveDestination)
                     {
                         resolvedTargetName = hostEntry.HostName;
-                        hostEntry = Dns.GetHostEntry(hostEntry.HostName);
+                        hostEntry = GetCancellableHostEntry(hostEntry.HostName);
                     }
+                }
+                catch (PipelineStoppedException)
+                {
+                    throw;
                 }
                 catch (Exception ex)
                 {
-                    string message = StringUtil.Format(
-                        TestConnectionResources.NoPingResult,
-                        resolvedTargetName,
-                        TestConnectionResources.CannotResolveTargetName);
-                    Exception pingException = new PingException(message, ex);
-                    ErrorRecord errorRecord = new ErrorRecord(
-                        pingException,
-                        TestConnectionExceptionId,
-                        ErrorCategory.ResourceUnavailable,
-                        resolvedTargetName);
-                    WriteError(errorRecord);
+                    if (!Quiet.IsPresent)
+                    {
+                        string message = StringUtil.Format(
+                            TestConnectionResources.NoPingResult,
+                            resolvedTargetName,
+                            TestConnectionResources.CannotResolveTargetName);
+                        Exception pingException = new PingException(message, ex);
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            pingException,
+                            TestConnectionExceptionId,
+                            ErrorCategory.ResourceUnavailable,
+                            resolvedTargetName);
+                        WriteError(errorRecord);
+                    }
+
                     return false;
                 }
 
@@ -730,6 +761,20 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return true;
+        }
+
+        private IPHostEntry GetCancellableHostEntry(string targetNameOrAddress)
+        {
+            var task = Dns.GetHostEntryAsync(targetNameOrAddress);
+            var waitHandles = new[] { ((IAsyncResult)task).AsyncWaitHandle, _dnsLookupCancel.Token.WaitHandle };
+
+            // WaitAny() returns the index of the first signal it gets; 1 is our cancellation token.
+            if (WaitHandle.WaitAny(waitHandles) == 1)
+            {
+                throw new PipelineStoppedException();
+            }
+
+            return task.GetAwaiter().GetResult();
         }
 
         private IPAddress? GetHostAddress(IPHostEntry hostEntry)

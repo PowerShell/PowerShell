@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
                 if (trimmedValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
                 {
                     if ((trimmedValue.Length > 2) &&
-                        int.TryParse(trimmedValue.Substring(2), NumberStyles.AllowHexSpecifier,
+                        int.TryParse(trimmedValue.AsSpan(2), NumberStyles.AllowHexSpecifier,
                                   CultureInfo.CurrentCulture, out cultureNumber))
                     {
                         _cultureInfo = new CultureInfo(cultureNumber);
