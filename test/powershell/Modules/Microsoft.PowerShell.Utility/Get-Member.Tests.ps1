@@ -43,9 +43,11 @@ Describe "Get-Member" -Tags "CI" {
 
     It "Should be able to be called on IntPtr" {
         $results = [System.IntPtr] | Get-Member -Type Property -Static | Sort-Object -Property Name
-        $results.Count | Should -BeExactly 2
-        $results[0].Name | Should -BeExactly 'Size'
-        $results[1].Name | Should -BeExactly 'Zero'
+        $results.Count | Should -BeExactly 4
+        $results[0].Name | Should -BeExactly 'MaxValue'
+        $results[1].Name | Should -BeExactly 'MinValue'
+        $results[2].Name | Should -BeExactly 'Size'
+        $results[3].Name | Should -BeExactly 'Zero'
     }
 
     It "Should work with incomplete parameter '-i'" {

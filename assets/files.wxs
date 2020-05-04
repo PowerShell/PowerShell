@@ -1628,6 +1628,15 @@
         <Component Id="cmp70A5A090C6B94E8F8FC9B4AE5EC2969B" Guid="{5cf8209b-8488-4893-a0f3-980efa86fdf3}">
           <File Id="filEA22911E047A40639E7956721F71EF20" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Net.Http.Json.dll" />
         </Component>
+        <Component Id="cmpD5CAB799D1E7463A92559D3D8E71172C" Guid="{59360882-1e56-4d42-8827-94e717dc8e59}">
+          <File Id="filC2A0FD15EBA746A1947C30890680DFBC" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Text.Encodings.Web.dll" />
+        </Component>
+        <Component Id="cmp10A3BA8FB6304CDE98FA8E6D57223EEF" Guid="{20cb4c09-186a-47e8-9de4-f8e6a4645f5e}">
+          <File Id="fil18191ACBB726400787A4ACA7622EA6D0" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Runtime.CompilerServices.Unsafe.dll" />
+        </Component>
+        <Component Id="cmpA57645B04E5F4D66AC598512C95AA1B9" Guid="{34a47e3e-1994-4d3c-832f-3a4565f86d09}">
+          <File Id="fil2315EFD6FCA7485FA63DCD66B0505E20" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Text.Encoding.CodePages.dll" />
+        </Component>
       </Directory>
       <Directory Id="dirC72EEAF9434D4AD066E0F4D20D8E816C" Name="en-US">
         <Component Id="cmpDC2EF4541FA5A2E63F36A8CD6C5FA51B" Guid="{CE8DDB7C-A16E-4A1E-80D5-9937D07A1723}">
@@ -3089,8 +3098,8 @@
       <Component Id="cmpDBF82E0B595545C691EFDEA6D0A55EC2" Guid="{04a2d230-ce2e-4957-bc6d-e7794b88fae3}">
         <File Id="filCE6DF8BB560F4785A4111E43CD9C14D7" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-console-l1-2-0.dll" />
       </Component>
-      <Component Id="cmp13515D4829AC4B15B5F88CDF4E8A945F" Guid="{106c3e0d-1e08-4495-8d36-97a61d49042c}">
-        <File Id="fil86E7BBB3A3B449A794C6CC1F989F6E35" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.21406.dll" />
+      <Component Id="cmp5D77F9D45B004ABE86B4740264F52117" Guid="{a64ec3c7-7097-48dc-88d8-1ba099716d74}">
+        <File Id="fil349DD627B88248BCADD4736536C35A5F" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.22709.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4086,8 +4095,11 @@
       <ComponentRef Id="cmpBB705B2570064C99A71B6FA65CDF9DC8" />
       <ComponentRef Id="cmp34136CBBA4D04B638DA510C5BB521625" />
       <ComponentRef Id="cmpDBF82E0B595545C691EFDEA6D0A55EC2" />
-      <ComponentRef Id="cmp13515D4829AC4B15B5F88CDF4E8A945F" />
       <ComponentRef Id="cmp70A5A090C6B94E8F8FC9B4AE5EC2969B" />
+      <ComponentRef Id="cmpD5CAB799D1E7463A92559D3D8E71172C" />
+      <ComponentRef Id="cmp10A3BA8FB6304CDE98FA8E6D57223EEF" />
+      <ComponentRef Id="cmp5D77F9D45B004ABE86B4740264F52117" />
+      <ComponentRef Id="cmpA57645B04E5F4D66AC598512C95AA1B9" />
     </ComponentGroup>
   </Fragment>
 </Wix>
