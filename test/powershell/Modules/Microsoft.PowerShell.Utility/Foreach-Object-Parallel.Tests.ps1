@@ -120,8 +120,8 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         finally
         {
             Set-Location -Path $oldLocation
-            if($drive -is [System.IO.DirectoryInfo]){
-                $drive |Remove-Item -Force
+            if ($drive -is [System.IO.DirectoryInfo]) {
+                $drive | Remove-Item -Force
             }
         }
     }
