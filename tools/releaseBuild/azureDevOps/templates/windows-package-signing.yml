@@ -47,7 +47,7 @@ jobs:
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
       )
 
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml" -MsixCertType $env:MSIX_TYPE -MsixFiles
+      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml" -MsixCertType $env:MSIX_TYPE -MsixFiles $msixFiles
     displayName: 'Generate Package Signing Xml'
 
   - powershell: |
