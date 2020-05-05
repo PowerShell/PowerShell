@@ -124,12 +124,10 @@ jobs:
       signConfigXml: '$(Build.SourcesDirectory)\tools\releaseBuild\signing.xml'
       inPathRoot: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
        New-Item -ItemType Directory -Path $(System.ArtifactsDirectory)\signed -Force
     displayName: 'Create empty signed folder'
-    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -143,7 +141,6 @@ jobs:
       $missingSignatures = $signatures | Where-Object { $_.status -eq 'notsigned'}| select-object -ExpandProperty Path
       tools/releaseBuild/generatePackgeSigning.ps1 -ThirdPartyFiles $missingSignatures -path "$(System.ArtifactsDirectory)\thirtdparty.xml"
     displayName: Create ThirdParty Signing Xml
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - task: PkgESCodeSign@10
     displayName: 'CodeSign ThirdParty $(Architecture)'
@@ -153,12 +150,10 @@ jobs:
       signConfigXml: '$(System.ArtifactsDirectory)\thirtdparty.xml'
       inPathRoot: '$(System.ArtifactsDirectory)\$(SymbolsFolder)'
       outPathRoot: '$(System.ArtifactsDirectory)\signedThirdParty'
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
       Get-ChildItem '$(System.ArtifactsDirectory)\signedThirdParty\*'
     displayName: Captrue ThirdParty Signed files
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
@@ -168,7 +163,6 @@ jobs:
 
       Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
     displayName: Merge ThirdParty signed files with Build
-    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
       Import-Module $(PowerShellRoot)/build.psm1 -Force
