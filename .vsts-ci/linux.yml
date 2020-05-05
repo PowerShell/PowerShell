@@ -11,7 +11,6 @@ trigger:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
@@ -25,7 +24,8 @@ pr:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
+    - /tools/releaseBuild/*
+    - /tools/releaseBuild/azureDevOps/templates/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
