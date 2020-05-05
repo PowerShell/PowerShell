@@ -8,7 +8,7 @@ param(
     [string[]] $NuPkgFiles,
     [string[]] $MacDeveloperFiles,
     [string[]] $LinuxFiles,
-    [string[]] $ThirtPartyFiles
+    [string[]] $ThirdPartyFiles
 )
 
 if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and
@@ -91,7 +91,7 @@ foreach ($file in $LinuxFiles) {
     New-FileElement -File $file -SignType 'LinuxPack' -XmlDoc $signingXml -Job $job
 }
 
-foreach ($file in $ThirtPartyFiles) {
+foreach ($file in $ThirdPartyFiles) {
     New-FileElement -File $file -SignType 'ThirdParty' -XmlDoc $signingXml -Job $job
 }
 
