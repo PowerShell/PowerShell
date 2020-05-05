@@ -38,12 +38,16 @@ jobs:
       $authenticodefiles = @(
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msi"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msi"
+      )
+
+      $msixFiles = @(
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x86.msix"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-x64.msix"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm32.msix"
         "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-arm64.msix"
       )
-      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
+
+      tools/releaseBuild/generatePackgeSigning.ps1 -AuthenticodeFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml" -MsixCertType $env:MSIX_TYPE -MsixFiles
     displayName: 'Generate Package Signing Xml'
 
   - powershell: |

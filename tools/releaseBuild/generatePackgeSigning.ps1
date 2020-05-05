@@ -8,7 +8,10 @@ param(
     [string[]] $NuPkgFiles,
     [string[]] $MacDeveloperFiles,
     [string[]] $LinuxFiles,
-    [string[]] $ThirdPartyFiles
+    [string[]] $ThirdPartyFiles,
+    [string[]] $MsixFiles,
+    [ValidateSet('release','preview')]
+    [string]  $MsixCertType = 'preview'
 )
 
 if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and
@@ -93,6 +96,23 @@ foreach ($file in $LinuxFiles) {
 
 foreach ($file in $ThirdPartyFiles) {
     New-FileElement -File $file -SignType 'ThirdParty' -XmlDoc $signingXml -Job $job
+}
+
+foreach ($file in $MsixFiles) {
+    switch($MsixCertType)
+    {
+        'release' {
+            $signType = 'CP-459155'
+        }
+        'preview' {
+            $signType = 'CP-459155'
+        }
+        default {
+            throw "Unknow Cert Type: $MsixCertType"
+        }
+    }
+
+    New-FileElement -File $file -SignType $signType -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)
