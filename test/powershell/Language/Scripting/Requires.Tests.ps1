@@ -4,13 +4,13 @@ Describe "Requires tests" -Tags "CI" {
     Context "Parser error" {
 
         $testcases = @(
-                        @{command = "#requiresappID`r`n`$foo = 1; `$foo" ; testname = "appId with newline"}
-                        @{command = "#requires -version A `r`n`$foo = 1; `$foo" ; testname = "version as character"}
-                        @{command = "#requires -version 2b `r`n`$foo = 1; `$foo" ; testname = "alphanumeric version"}
-                        @{command = "#requires -version 1. `r`n`$foo = 1; `$foo" ; testname = "version with dot"}
-                        @{command = "#requires -version '' `r`n`$foo = 1; `$foo" ; testname = "empty version"}
-                        @{command = "#requires -version 1.0. `r`n`$foo = 1; `$foo" ; testname = "version with two dots"}
-                        @{command = "#requires -version 1.A `r`n`$foo = 1; `$foo" ; testname = "alphanumeric version with dots"}
+                        @{command = "#RequiresappID`r`n`$foo = 1; `$foo" ; testname = "appId with newline"}
+                        @{command = "#Requires -Version A `r`n`$foo = 1; `$foo" ; testname = "version as character"}
+                        @{command = "#Requires -Version 2b `r`n`$foo = 1; `$foo" ; testname = "alphanumeric version"}
+                        @{command = "#Requires -Version 1. `r`n`$foo = 1; `$foo" ; testname = "version with dot"}
+                        @{command = "#Requires -Version '' `r`n`$foo = 1; `$foo" ; testname = "empty version"}
+                        @{command = "#Requires -Version 1.0. `r`n`$foo = 1; `$foo" ; testname = "version with two dots"}
+                        @{command = "#Requires -Version 1.A `r`n`$foo = 1; `$foo" ; testname = "alphanumeric version with dots"}
                     )
 
         It "throws ParserException - <testname>" -TestCases $testcases {
@@ -29,11 +29,11 @@ Describe "Requires tests" -Tags "CI" {
             $ps.Dispose()
         }
 
-        It "Successfully does nothing when given '#requires' interactively" {
+        It "Successfully does nothing when given '#Requires' interactively" {
             $settings = [System.Management.Automation.PSInvocationSettings]::new()
             $settings.AddToHistory = $true
 
-            { $ps.AddScript("#requires").Invoke(@(), $settings) } | Should -Not -Throw
+            { $ps.AddScript("#Requires").Invoke(@(), $settings) } | Should -Not -Throw
         }
     }
 
@@ -48,7 +48,7 @@ Describe "Requires tests" -Tags "CI" {
 
             foreach ($version in ($powerShellVersions + $nonExistingMinor + $nonExistingMajor)) {
                 $filePath = Join-Path -Path $TestDrive -ChildPath "$version.ps1"
-                $null = New-Item -Path $filePath -Value "#requires -version $version"
+                $null = New-Item -Path $filePath -Value "#Requires -Version $version"
             }
 
             $filesSuccessTestCase = foreach ($version in $powerShellVersions) {
@@ -92,7 +92,7 @@ Describe "Requires tests" -Tags "CI" {
     }
 }
 
-Describe "#requires -Modules" -Tags "CI" {
+Describe "#Requires -Modules" -Tags "CI" {
     BeforeAll {
         $success = 'SUCCESS'
 
@@ -129,7 +129,7 @@ Describe "#requires -Modules" -Tags "CI" {
         It "Fails parsing a script that requires module by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario)
 
-            $script = "#requires -Modules $ModuleRequirement`n`nWrite-Output 'failed'"
+            $script = "#Requires -Modules $ModuleRequirement`n`nWrite-Output 'failed'"
             $null = New-Item -Path $scriptPath -Value $script -Force
 
             { & $scriptPath } | Should -Throw -ErrorId 'ScriptRequiresMissingModules'
@@ -156,7 +156,7 @@ Describe "#requires -Modules" -Tags "CI" {
         It "Successfully runs a script requiring a loaded module by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario)
 
-            $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
+            $script = "#Requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
             [scriptblock]::Create($script).Invoke() | Should -BeExactly $success
         }
     }
@@ -183,7 +183,7 @@ Describe "#requires -Modules" -Tags "CI" {
         It "Successfully runs a script requiring a module on the module path by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario)
 
-            $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
+            $script = "#Requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
 
             $null = New-Item -Path $scriptPath -Value $script -Force
 
@@ -204,7 +204,7 @@ Describe "#requires -Modules" -Tags "CI" {
         It "Successfully runs a script requiring a module by absolute path by <Scenario>" -TestCases $testCases {
             param([string]$ModuleRequirement, [string]$Scenario)
 
-            $script = "#requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
+            $script = "#Requires -Modules $ModuleRequirement`n`nTest-RequiredModule"
 
             $null = New-Item -Path $scriptPath -Value $script -Force
 

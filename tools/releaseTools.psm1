@@ -1,4 +1,4 @@
-#requires -Version 6.0
+#Requires -Version 6.0
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 

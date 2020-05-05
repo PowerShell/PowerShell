@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Cmdletization
         #region psm1
 
         private const string HeaderTemplate = @"
-#requires -version 3.0
+#Requires -Version 3.0
 
 try {{ Microsoft.PowerShell.Core\Set-StrictMode -Off }} catch {{ }}
 

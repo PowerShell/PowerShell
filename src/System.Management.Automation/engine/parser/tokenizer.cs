@@ -1610,7 +1610,7 @@ namespace System.Management.Automation.Language
             // comments that look confusingly similar to the actual signature block (mapping to lowercase,
             // and ignoring spaces).
             //
-            // At the same time, we also want to match #requires.  We do this with a simple state machine,
+            // At the same time, we also want to match #Requires.  We do this with a simple state machine,
             // incrementing the state as we continue to match, or set requiresMatchState to -1 if we failed to match.
 
             var commentLine = GetStringBuilder();
@@ -1891,7 +1891,7 @@ namespace System.Management.Automation.Language
             if (RequiresTokens == null)
                 return null;
 
-            // Make sure a nested scan of the #requires lines don't affect our processing here.
+            // Make sure a nested scan of the #Requires lines don't affect our processing here.
             var requiresTokens = RequiresTokens.ToArray();
             RequiresTokens = null;
 

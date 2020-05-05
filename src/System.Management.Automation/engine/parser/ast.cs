@@ -702,52 +702,52 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The application id this script requires, specified like:
-        ///     <code>#requires -Shellid Shell</code>
+        ///     <code>#Requires -ShellId Shell</code>
         /// If no application id has been specified, this property is null.
         /// </summary>
         public string RequiredApplicationId { get; internal set; }
 
         /// <summary>
         /// The PowerShell version this script requires, specified like:
-        ///     <code>#requires -Version 3</code>
+        ///     <code>#Requires -Version 3</code>
         /// If no version has been specified, this property is null.
         /// </summary>
         public Version RequiredPSVersion { get; internal set; }
 
         /// <summary>
         /// The PowerShell Edition this script requires, specified like:
-        ///     <code>#requires -PSEdition Desktop</code>
+        ///     <code>#Requires -PSEdition Desktop</code>
         /// If no PSEdition has been specified, this property is an empty collection.
         /// </summary>
         public ReadOnlyCollection<string> RequiredPSEditions { get; internal set; }
 
         /// <summary>
         /// The modules this script requires, specified like:
-        ///     <code>#requires -Module NetAdapter</code>
-        ///     <code>#requires -Module @{Name="NetAdapter"; Version="1.0.0.0"}</code>
+        ///     <code>#Requires -Module NetAdapter</code>
+        ///     <code>#Requires -Module @{Name="NetAdapter"; Version="1.0.0.0"}</code>
         /// If no modules are required, this property is an empty collection.
         /// </summary>
         public ReadOnlyCollection<ModuleSpecification> RequiredModules { get; internal set; }
 
         /// <summary>
         /// The snapins this script requires, specified like:
-        ///     <code>#requires -PSSnapin Snapin</code>
-        ///     <code>#requires -PSSnapin Snapin -Version 2</code>
+        ///     <code>#Requires -PSSnapin Snapin</code>
+        ///     <code>#Requires -PSSnapin Snapin -Version 2</code>
         /// If no snapins are required, this property is an empty collection.
         /// </summary>
         public ReadOnlyCollection<PSSnapInSpecification> RequiresPSSnapIns { get; internal set; }
 
         /// <summary>
         /// The assemblies this script requires, specified like:
-        ///     <code>#requires -Assembly path\to\foo.dll</code>
-        ///     <code>#requires -Assembly "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"</code>
+        ///     <code>#Requires -Assembly path\to\foo.dll</code>
+        ///     <code>#Requires -Assembly "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35"</code>
         /// If no assemblies are required, this property is an empty collection.
         /// </summary>
         public ReadOnlyCollection<string> RequiredAssemblies { get; internal set; }
 
         /// <summary>
         /// Specifies if this script requires elevated privileges, specified like:
-        ///     <code>#requires -RunAsAdministrator</code>
+        ///     <code>#Requires -RunAsAdministrator</code>
         /// If nothing is specified, this property is false.
         /// </summary>
         public bool IsElevationRequired { get; internal set; }
@@ -1095,7 +1095,7 @@ namespace System.Management.Automation.Language
         public NamedBlockAst DynamicParamBlock { get; private set; }
 
         /// <summary>
-        /// All of the parsed information from any #requires in the script, or null if #requires was not used.
+        /// All of the parsed information from any #Requires in the script, or null if #Requires was not used.
         /// This property is only set for the top level script block (where <see cref="Ast.Parent"/>) is null.
         /// </summary>
         public ScriptRequirements ScriptRequirements { get; internal set; }

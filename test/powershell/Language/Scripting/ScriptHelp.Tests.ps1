@@ -329,7 +329,7 @@ Describe 'get-help other tests' -Tags "CI" {
         #
         ###########################################
 
-        #requires -version 2.0
+        #Requires -Version 2.0
 
         #
         # .Synopsis

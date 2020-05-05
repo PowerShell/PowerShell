@@ -1314,7 +1314,7 @@ foo``u{2195}abc
         $err.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly "MissingEndCurlyBrace"
     }
 
-    Context "#requires nested scan tokenizer tests" {
+    Context "#Requires nested scan tokenizer tests" {
         BeforeAll {
             $settings = [System.Management.Automation.PSInvocationSettings]::new()
             $settings.AddToHistory = $true
@@ -1331,10 +1331,10 @@ foo``u{2195}abc
         }
 
         $TokenResetTests = @(
-            @{ script = "#requires"; firstToken = $null; lastToken = $null },
-            @{ script = "#requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
-            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
-            @{ script = "Write-Host 'Hello'`n#requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "Hello" }
+            @{ script = "#Requires"; firstToken = $null; lastToken = $null },
+            @{ script = "#Requires -Version 5.0`n10"; firstToken = "10"; lastToken = "10" },
+            @{ script = "Write-Host 'Hello'`n#Requires -Version 5.0`n7"; firstToken = "Write-Host"; lastToken = "7" },
+            @{ script = "Write-Host 'Hello'`n#Requires -Version 5.0"; firstToken = "Write-Host"; lastToken = "Hello" }
         )
 
         It "Correctly resets the first and last tokens in the tokenizer after nested scan in script" -TestCases $TokenResetTests {

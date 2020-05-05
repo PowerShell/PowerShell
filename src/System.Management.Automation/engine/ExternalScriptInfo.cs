@@ -574,7 +574,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Thrown when fail to parse #requires statements. Caught by CommandDiscovery.
+    /// Thrown when fail to parse #Requires statements. Caught by CommandDiscovery.
     /// </summary>
     internal class ScriptRequiresSyntaxException : ScriptRequiresException
     {

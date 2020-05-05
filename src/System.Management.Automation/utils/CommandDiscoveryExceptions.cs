@@ -180,7 +180,7 @@ namespace System.Management.Automation
         #endregion Private
     }
     /// <summary>
-    /// Defines the exception thrown when a script's requirements to run specified by the #requires
+    /// Defines the exception thrown when a script's requirements to run specified by the #Requires
     /// statements are not met.
     /// </summary>
     [Serializable]
@@ -188,16 +188,16 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for
-        /// #requires -shellId MyShellId.
+        /// #Requires -ShellId MyShellId.
         /// </summary>
         /// <param name="commandName">
-        /// The name of the script containing the #requires statement.
+        /// The name of the script containing the #Requires statement.
         /// </param>
         /// <param name="requiresShellId">
         /// The ID of the shell that is incompatible with the current shell.
         /// </param>
         /// <param name="requiresShellPath">
-        /// The path to the shell specified in the #requires -shellId statement.
+        /// The path to the shell specified in the #Requires -ShellId statement.
         /// </param>
         /// <param name="errorId">
         /// The error id for this exception.
@@ -220,10 +220,10 @@ namespace System.Management.Automation
         }
         /// <summary>
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for
-        /// #requires -version N.
+        /// #Requires -Version N.
         /// </summary>
         /// <param name="commandName">
-        /// The name of the script containing the #requires statement.
+        /// The name of the script containing the #Requires statement.
         /// </param>
         /// <param name="requiresPSVersion">
         /// The Msh version that the script requires.
@@ -253,10 +253,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for the
-        /// #requires -PSSnapin MyPSSnapIn statement.
+        /// #Requires -PSSnapin MyPSSnapIn statement.
         /// </summary>
         /// <param name="commandName">
-        /// The name of the script containing the #requires statement.
+        /// The name of the script containing the #Requires statement.
         /// </param>
         /// <param name="missingItems">
         /// The missing snap-ins/modules that the script requires.
@@ -278,10 +278,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for the
-        /// #requires -PSSnapin MyPSSnapIn statement.
+        /// #Requires -PSSnapin MyPSSnapIn statement.
         /// </summary>
         /// <param name="commandName">
-        /// The name of the script containing the #requires statement.
+        /// The name of the script containing the #Requires statement.
         /// </param>
         /// <param name="missingItems">
         /// The missing snap-ins/modules that the script requires.
@@ -315,10 +315,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructs an ScriptRequiresException. Recommended constructor for the class for
-        /// #requires -RunAsAdministrator statement.
+        /// #Requires -RunAsAdministrator statement.
         /// </summary>
         /// <param name="commandName">
-        /// The name of the script containing the #requires statement.
+        /// The name of the script containing the #Requires statement.
         /// </param>
         /// <param name="errorId">
         /// The error id for this exception.
@@ -409,7 +409,7 @@ namespace System.Management.Automation
         #region Properties
 
         /// <summary>
-        /// Gets the name of the script that contained the #requires statement.
+        /// Gets the name of the script that contained the #Requires statement.
         /// </summary>
         public string CommandName
         {

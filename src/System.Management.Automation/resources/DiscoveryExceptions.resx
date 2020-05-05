@@ -161,35 +161,35 @@ Check the spelling of the name, or if a path was included, verify that the path 
     <value>A script named '{0}' already exists. Scripts must have unique names.</value>
   </data>
   <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
-    <value>Cannot process the #requires statement because it is not in the correct format.
-The #requires statement must be in one of the following formats:
- "#requires -shellid &lt;shellID&gt;"
- "#requires -version &lt;major.minor&gt;"
- "#requires -psedition &lt;edition&gt;"
- "#requires -pssnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]"
- "#requires -modules &lt;ModuleSpecification&gt;"
- "#requires -runasadministrator"</value>
+    <value>Cannot process the #Requires statement because it is not in the correct format.
+The #Requires statement must be in one of the following formats:
+ "#Requires -ShellId &lt;shellID&gt;"
+ "#Requires -Version &lt;major.minor&gt;"
+ "#Requires -PSEdition &lt;edition&gt;"
+ "#Requires -PSSnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]"
+ "#Requires -Modules &lt;ModuleSpecification&gt;"
+ "#Requires -RunAsAdministrator"</value>
   </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
+    <value>The script '{0}' cannot be run because it contained a "#Requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
   </data>
   <data name="RequiresInterpreterNotCompatibleNoPath" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell.</value>
+    <value>The script '{0}' cannot be run because it contained a "#Requires" statement with a shell ID of {1} that is incompatible with the current shell.</value>
   </data>
   <data name="RequiresPSVersionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell {1}. The version of PowerShell that is required by the script does not match the currently running version of PowerShell {2}.</value>
+    <value>The script '{0}' cannot be run because it contained a "#Requires" statement for PowerShell {1}. The version of PowerShell that is required by the script does not match the currently running version of PowerShell {2}.</value>
   </data>
   <data name="RequiresPSEditionNotCompatible" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contained a "#requires" statement for PowerShell editions '{1}'. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
+    <value>The script '{0}' cannot be run because it contained a "#Requires" statement for PowerShell editions '{1}'. The edition of PowerShell that is required by the script does not match the currently running PowerShell {2} edition.</value>
   </data>
   <data name="RequiresMissingPSSnapIns" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following snap-ins that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>The script '{0}' cannot be run because the following snap-ins that are specified by the "#Requires" statements of the script are missing: {1}.</value>
   </data>
   <data name="RequiresShellIDInvalidForSingleShell" xml:space="preserve">
-    <value>A #requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
+    <value>A #Requires statement has specified only a shellID. #Requires statements must specify a required PowerShell snap-in when running in PowerShell.</value>
   </data>
   <data name="RequiresElevation" xml:space="preserve">
-    <value>The script '{0}' cannot be run because it contains a "#requires" statement for running as Administrator. The current PowerShell session is not running as Administrator. Start PowerShell by using the Run as Administrator option, and then try running the script again.</value>
+    <value>The script '{0}' cannot be run because it contains a "#Requires" statement for running as Administrator. The current PowerShell session is not running as Administrator. Start PowerShell by using the Run as Administrator option, and then try running the script again.</value>
   </data>
   <data name="PSSnapInNameVersion" xml:space="preserve">
     <value>{0} (Version {1})</value>
@@ -201,7 +201,7 @@ The #requires statement must be in one of the following formats:
     <value>The parameter name "{0}" is reserved for future use.</value>
   </data>
   <data name="RequiresMissingModules" xml:space="preserve">
-    <value>The script '{0}' cannot be run because the following modules that are specified by the "#requires" statements of the script are missing: {1}.</value>
+    <value>The script '{0}' cannot be run because the following modules that are specified by the "#Requires" statements of the script are missing: {1}.</value>
   </data>
   <data name="CouldNotAutoImportMatchingModule" xml:space="preserve">
     <value>The '{0}' command was found in the module '{1}', but the module could not be loaded. For more information, run 'Import-Module {1}'.</value>
