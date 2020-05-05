@@ -1,6 +1,7 @@
-#Requires -Version 6.0
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+#Requires -Version 6.0
 
 class CommitNode {
     [string] $Hash
