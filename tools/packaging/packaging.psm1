@@ -553,20 +553,27 @@ function New-PSSignedBuildZip
         [string]$VstsVariableName
     )
 
-    # Replace unsigned binaries with signed
-    $signedFilesFilter = Join-Path -Path $signedFilesPath -ChildPath '*'
-    Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
-        $relativePath = $_.ToLowerInvariant().Replace($signedFilesPath.ToLowerInvariant(),'')
-        $destination = Join-Path -Path $buildPath -ChildPath $relativePath
-        Write-Log "replacing $destination with $_"
-        Copy-Item -Path $_ -Destination $destination -force
-    }
+    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
 
     # Remove '$signedFilesPath' now that signed binaries are copied
     if (Test-Path $signedFilesPath)
     {
         Remove-Item -Recurse -Force -Path $signedFilesPath
     }
+
+    New-PSBuildZip -BuildPath $BuildPath -DestinationFolder $DestinationFolder -VstsVariableName $VstsVariableName
+}
+
+function New-PSBuildZip
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$BuildPath,
+        [Parameter(Mandatory)]
+        [string]$DestinationFolder,
+        [parameter(HelpMessage='VSTS variable to set for path to zip')]
+        [string]$VstsVariableName
+    )
 
     $name = split-path -Path $BuildPath -Leaf
     $zipLocationPath = Join-Path -Path $DestinationFolder -ChildPath "$name-signed.zip"
@@ -582,6 +589,27 @@ function New-PSSignedBuildZip
         return $zipLocationPath
     }
 }
+
+
+function Update-PSSignedBuildFolder
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$BuildPath,
+        [Parameter(Mandatory)]
+        [string]$SignedFilesPath
+    )
+
+    # Replace unsigned binaries with signed
+    $signedFilesFilter = Join-Path -Path $SignedFilesPath -ChildPath '*'
+    Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
+        $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPath.ToLowerInvariant(),'')
+        $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
+        Write-Log "replacing $destination with $_"
+        Copy-Item -Path $_ -Destination $destination -force
+    }
+}
+
 
 function Expand-PSSignedBuild
 {

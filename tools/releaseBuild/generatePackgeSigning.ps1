@@ -7,14 +7,16 @@ param(
     [string[]] $AuthenticodeFiles,
     [string[]] $NuPkgFiles,
     [string[]] $MacDeveloperFiles,
-    [string[]] $LinuxFiles
+    [string[]] $LinuxFiles,
+    [string[]] $ThirdPartyFiles
 )
 
 if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and
     (!$AuthenticodeFiles -or $AuthenticodeFiles.Count -eq 0) -and
     (!$NuPkgFiles -or $NuPkgFiles.Count -eq 0) -and
     (!$MacDeveloperFiles -or $MacDeveloperFiles.Count -eq 0) -and
-    (!$LinuxFiles -or $LinuxFiles.Count -eq 0))
+    (!$LinuxFiles -or $LinuxFiles.Count -eq 0) -and
+    (!$ThirdPartyFiles -or $ThirdPartyFiles.Count -eq 0))
 {
     throw "At least one file must be specified"
 }
@@ -87,6 +89,10 @@ foreach ($file in $MacDeveloperFiles) {
 
 foreach ($file in $LinuxFiles) {
     New-FileElement -File $file -SignType 'LinuxPack' -XmlDoc $signingXml -Job $job
+}
+
+foreach ($file in $ThirdPartyFiles) {
+    New-FileElement -File $file -SignType 'ThirdParty' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)
