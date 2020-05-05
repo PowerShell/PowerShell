@@ -63,6 +63,7 @@ jobs:
       outPathRoot: '$(Build.StagingDirectory)\signedPackages'
       binVersion: $(SigingVersion)
       binVersionOverride: $(SigningVersionOverride)
+      targetMachine: 'pkgescsndwkr00'
     condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
