@@ -24,8 +24,8 @@ pr:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/*
-    - /tools/releaseBuild/azureDevOps/templates/*
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
