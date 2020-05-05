@@ -214,8 +214,8 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
             1..3 |
             ForEach-Object { $_ } | sort-object |
             get-unique'
-            $a = New-Object -ComObject Scripting.FileSystemObject
-            $f = $a.GetFile($scriptPath1)
+            $a = New-Object -ComObject Scripting.FileSystemObject
+            $f = $a.GetFile($scriptPath1)
             $scriptPath2 = $f.ShortPath
 
             $breakpoints = Set-PSBreakpoint $scriptPath2 1,2,3 -Action { continue }

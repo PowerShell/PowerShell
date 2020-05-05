@@ -1068,17 +1068,17 @@ function Wait-PSWinEvent
         $All
     )
 
-    $startTime = [DateTime]::Now
+    $startTime = [DateTime]::Now
     $lastFoundCount = 0;
 
-    do
-    {
-        Start-Sleep -Seconds $pause
+    do
+    {
+        Start-Sleep -Seconds $pause
 
         $recordsToReturn = @()
 
-        foreach ($thisRecord in (Get-WinEvent -FilterHashtable $filterHashtable -Oldest 2> $null))
-        {
+        foreach ($thisRecord in (Get-WinEvent -FilterHashtable $filterHashtable -Oldest 2> $null))
+        {
             if($PSCmdlet.ParameterSetName -eq "ByPropertyName")
             {
                 if ($thisRecord."$propertyName" -like "*$propertyValue*")
@@ -1108,7 +1108,7 @@ function Wait-PSWinEvent
                     }
                 }
             }
-        }
+        }
 
         if($recordsToReturn.Count -gt 0)
         {
@@ -1119,7 +1119,7 @@ function Wait-PSWinEvent
 
             $lastFoundCount = $recordsToReturn.Count
         }
-    } while (([DateTime]::Now - $startTime).TotalSeconds -lt $timeout)
+    } while (([DateTime]::Now - $startTime).TotalSeconds -lt $timeout)
 }
 #endregion eventlog support
 
