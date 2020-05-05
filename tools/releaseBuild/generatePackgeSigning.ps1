@@ -106,7 +106,7 @@ foreach ($file in $MsixFiles) {
             $signType = 'CP-459155'
         }
         'preview' {
-            $signType = 'CP-459155'
+            $signType = 'CP-459156'
         }
         default {
             throw "Unknow Cert Type: $MsixCertType"
