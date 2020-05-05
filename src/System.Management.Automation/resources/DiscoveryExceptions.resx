@@ -163,12 +163,14 @@ Check the spelling of the name, or if a path was included, verify that the path 
   <data name="ScriptRequiresInvalidFormat" xml:space="preserve">
     <value>Cannot process the #Requires statement because it is not in the correct format.
 The #Requires statement must be in one of the following formats:
- "#Requires -ShellId &lt;shellID&gt;"
- "#Requires -Version &lt;major.minor&gt;"
- "#Requires -PSEdition &lt;edition&gt;"
- "#Requires -PSSnapin &lt;psSnapInName&gt; [-version &lt;major.minor&gt;]"
- "#Requires -Modules &lt;ModuleSpecification&gt;"
- "#Requires -RunAsAdministrator"</value>
+ "#Requires -Assembly { &lt;Path to .dll&gt; | &lt;.NET assembly specification&gt; }"
+ "#Requires -Modules { &lt;Module-Name&gt; | &lt;Hashtable&gt; }"
+ "#Requires -PSEdition &lt;PSEdition-Name&gt;"
+ "#Requires -PSSnapin &lt;PSSnapin-Name&gt; [-Version &lt;N&gt;[.&lt;n&gt;]]"
+ "#Requires -RunAsAdministrator"
+ "#Requires -ShellId &lt;ShellId&gt; -PSSnapin &lt;PSSnapin-Name&gt; [-Version &lt;N&gt;[.&lt;n&gt;]]"
+ "#Requires -Version &lt;N&gt;[.&lt;n&gt;]"</value>
+
   </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
     <value>The script '{0}' cannot be run because it contained a "#Requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
