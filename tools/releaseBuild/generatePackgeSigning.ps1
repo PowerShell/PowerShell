@@ -19,6 +19,7 @@ if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and
     (!$NuPkgFiles -or $NuPkgFiles.Count -eq 0) -and
     (!$MacDeveloperFiles -or $MacDeveloperFiles.Count -eq 0) -and
     (!$LinuxFiles -or $LinuxFiles.Count -eq 0) -and
+    (!$MsixFiles -or $MsixFiles.Count -eq 0) -and
     (!$ThirdPartyFiles -or $ThirdPartyFiles.Count -eq 0))
 {
     throw "At least one file must be specified"
