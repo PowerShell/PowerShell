@@ -1871,7 +1871,7 @@ function Start-PSBootstrap {
                 Write-Log "dotnet not present.  Installing dotnet."
             }
             else {
-                Write-Log "dotnet out of date ($dotNetVersion).  Updating dotnet."
+                Write-Log "dotnet version $dotNetVersion does not match required version.  Installing dotnet."
             }
 
             $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
