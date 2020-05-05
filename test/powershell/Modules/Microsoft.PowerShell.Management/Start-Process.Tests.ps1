@@ -80,14 +80,14 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
     It "Should handle stdout redirection without error" {
         $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
-        $dirEntry = get-childitem $tempFile
+        $dirEntry = Get-ChildItem $tempFile
         $dirEntry.Length | Should -BeGreaterThan 0
     }
 
     # Marking this test 'pending' to unblock daily builds. Filed issue : https://github.com/PowerShell/PowerShell/issues/2396
     It "Should handle stdin redirection without error" -Pending {
         $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile  @extraArgs
-        $dirEntry = get-childitem $tempFile
+        $dirEntry = Get-ChildItem $tempFile
         $dirEntry.Length | Should -BeGreaterThan 0
     }
 

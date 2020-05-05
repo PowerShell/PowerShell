@@ -3,7 +3,7 @@
 
 Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM host process" -Tags "CI" {
 
-    It -skip "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
+    It -Skip "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
     return
 
     try

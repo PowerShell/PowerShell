@@ -116,7 +116,7 @@ Describe "Join-String" -Tags "CI" {
 
     It "Should tabcomplete InputObject properties" {
         $cmd = '[io.fileinfo]::new("c:\temp") | Join-String -Property '
-        $res = tabexpansion2 $cmd $cmd.length
+        $res = TabExpansion2 $cmd $cmd.length
         $completionTexts = $res.CompletionMatches.CompletionText
         $Properties = [io.fileinfo]::new($PSScriptRoot).psobject.properties.Name
         foreach ($n in $Properties) {

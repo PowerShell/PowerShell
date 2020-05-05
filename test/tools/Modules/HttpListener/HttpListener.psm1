@@ -319,7 +319,7 @@ Function Start-HTTPListener {
             }
             catch
             {
-                $errormsg = $_ | convertto-json
+                $errormsg = $_ | ConvertTo-Json
                 Write-Error $errormsg
             }
             finally

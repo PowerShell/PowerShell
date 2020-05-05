@@ -14,15 +14,15 @@ Describe 'using module' -Tags "CI" {
             )
 
             if ($manifest) {
-                new-item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name\$Version" > $null
+                New-Item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name\$Version" > $null
                 Set-Content -Path "${TestDrive}\$ModulePathPrefix\$Name\$Version\$Name.psm1" -Value $Content
                 New-ModuleManifest -RootModule "$Name.psm1" -Path "${TestDrive}\$ModulePathPrefix\$Name\$Version\$Name.psd1" -ModuleVersion $Version
             } else {
-                new-item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name" > $null
+                New-Item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name" > $null
                 Set-Content -Path "${TestDrive}\$ModulePathPrefix\$Name\$Name.psm1" -Value $Content
             }
 
-            $resolvedTestDrivePath = Split-Path ((get-childitem "${TestDrive}\$ModulePathPrefix")[0].FullName)
+            $resolvedTestDrivePath = Split-Path ((Get-ChildItem "${TestDrive}\$ModulePathPrefix")[0].FullName)
             if (-not ($env:PSModulePath -like "*$resolvedTestDrivePath*")) {
                 $env:PSModulePath += "$([System.IO.Path]::PathSeparator)$resolvedTestDrivePath"
             }
@@ -416,7 +416,7 @@ function foo()
 }
 '@
             # resolve name to absolute path
-            $scriptToProcessPath = (get-childitem $scriptToProcessPath).FullName
+            $scriptToProcessPath = (Get-ChildItem $scriptToProcessPath).FullName
             $iss = [System.Management.Automation.Runspaces.initialsessionstate]::CreateDefault()
             $iss.StartupScripts.Add($scriptToProcessPath)
 
@@ -442,7 +442,7 @@ function foo()
             New-TestModule -Name FooForPaths -Content 'class Foo { [string] GetModuleName() { return "FooForPaths" } }'
             $env:PSModulePath = $originalPSModulePath
 
-            new-item -type directory -Force TestDrive:\FooRelativeConsumer
+            New-Item -type directory -Force TestDrive:\FooRelativeConsumer
             Set-Content -Path "${TestDrive}\FooRelativeConsumer\FooRelativeConsumer.ps1" -Value @'
 using module ..\modules\FooForPaths
 class Bar : Foo {}
@@ -471,7 +471,7 @@ class Bar : Foo {}
         }
 
         It "can be accessed by absolute path" {
-            $resolvedTestDrivePath = Split-Path ((get-childitem TestDrive:\modules)[0].FullName)
+            $resolvedTestDrivePath = Split-Path ((Get-ChildItem TestDrive:\modules)[0].FullName)
             $s = @"
 using module $resolvedTestDrivePath\FooForPaths
 [Foo]::new()
@@ -483,7 +483,7 @@ using module $resolvedTestDrivePath\FooForPaths
         }
 
         It "can be accessed by absolute path with file extension" {
-            $resolvedTestDrivePath = Split-Path ((get-childitem TestDrive:\modules)[0].FullName)
+            $resolvedTestDrivePath = Split-Path ((Get-ChildItem TestDrive:\modules)[0].FullName)
             $barObject = [scriptblock]::Create(@"
 using module $resolvedTestDrivePath\FooForPaths\FooForPaths.psm1
 [Foo]::new()

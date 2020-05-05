@@ -44,7 +44,7 @@ Configuration ApacheServer{
 
         nxFile vHostDirectory{
             DestinationPath = $VhostDir
-            Type = "Directory"
+            type = "Directory"
             Ensure = "Present"
             Owner = "root"
             Mode = "744"
@@ -69,7 +69,7 @@ Configuration ApacheServer{
         #Ensure website is defined
         nxFile DefaultSiteDir{
             DestinationPath = "/var/www/html/defaultsite"
-            Type = "Directory"
+            type = "Directory"
             Owner = "root"
             Mode = "744"
             Ensure = "Present"

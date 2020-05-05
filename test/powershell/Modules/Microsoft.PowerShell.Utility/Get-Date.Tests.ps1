@@ -16,21 +16,21 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -displayhint produces the correct output" {
-        $d = Get-date -Date:"Jan 1, 2020"  -DisplayHint Date | Out-String
+        $d = Get-Date -Date:"Jan 1, 2020"  -DisplayHint Date | Out-String
         $d.Trim() | Should -Be "Wednesday, January 1, 2020"
     }
 
     It "using -format produces the correct output" {
-        Get-date -Date:"Jan 1, 2020"  -Format:"MMM-dd-yy" | Should -Be "Jan-01-20"
+        Get-Date -Date:"Jan 1, 2020"  -Format:"MMM-dd-yy" | Should -Be "Jan-01-20"
     }
 
     It "using -AsUTC produces the correct output" {
-        (Get-date -Date:"2020-01-01T00:00:00").Kind | Should -Be Unspecified
-        (Get-date -Date:"2020-01-01T00:00:00" -AsUTC).Kind | Should -Be Utc
+        (Get-Date -Date:"2020-01-01T00:00:00").Kind | Should -Be Unspecified
+        (Get-Date -Date:"2020-01-01T00:00:00" -AsUTC).Kind | Should -Be Utc
     }
 
     It "using -uformat %s produces the correct output" {
-        $seconds = Get-date -Date:"Jan 1, 2020Z" -UFormat:"%s"
+        $seconds = Get-Date -Date:"Jan 1, 2020Z" -UFormat:"%s"
 
         $seconds | Should -Be "1577836800"
         if ($IsLinux) {
@@ -44,15 +44,15 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -uformat 'ymdH' produces the correct output" {
-        Get-date -Date 0030-01-01T00:00:00 -uformat %y/%m/%d-%H | Should -Be "30/01/01-00"
+        Get-Date -Date 0030-01-01T00:00:00 -UFormat %y/%m/%d-%H | Should -Be "30/01/01-00"
     }
 
     It "using -uformat 'aAbBcCdDehHIkljmMpr' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat "%a%A%b%B%c%C%d%D%e%h%H%I%k%l%j%m%M%p%r" | Should -Be "TueTuesdayJanJanuaryTue 01 Jan 0030 00:00:0000101/01/30 1Jan0012 0120010100AM12:00:00 AM"
+        Get-Date -Date 1/1/0030 -UFormat "%a%A%b%B%c%C%d%D%e%h%H%I%k%l%j%m%M%p%r" | Should -Be "TueTuesdayJanJanuaryTue 01 Jan 0030 00:00:0000101/01/30 1Jan0012 0120010100AM12:00:00 AM"
     }
 
     It "using -uformat 'sStTuUVwWxXyYZ' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:00202001/01/3000:00:00300030%"
+        Get-Date -Date 1/1/0030 -UFormat %S%T%u%U%w%W%x%X%y%Y%% | Should -Be "0000:00:00202001/01/3000:00:00300030%"
     }
 
     # The 'week of year' test cases is from https://en.wikipedia.org/wiki/ISO_week_date
@@ -94,7 +94,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         @{date="2031-01-03"; week = "01"}
     ) {
         param($date, $week)
-        Get-date -Date $date -uformat %V | Should -BeExactly $week
+        Get-Date -Date $date -UFormat %V | Should -BeExactly $week
     }
 
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
@@ -102,14 +102,14 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         @{ name = "empty string"; value = "" }
     ) {
         param($value)
-        { Get-date -Date 1/1/1970 -uformat $value -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
+        { Get-Date -Date 1/1/1970 -UFormat $value -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
     }
 
     It "Get-date works with pipeline input" {
-        $x = new-object System.Management.Automation.PSObject
-        $x | add-member NoteProperty Date ([DateTime]::Now)
+        $x = New-Object System.Management.Automation.PSObject
+        $x | Add-Member NoteProperty Date ([DateTime]::Now)
         $y = @($x,$x)
-        ($y | Get-date).Length | Should -Be 2
+        ($y | Get-Date).Length | Should -Be 2
     }
 
     It "the LastWriteTime alias works with pipeline input" {
@@ -129,8 +129,8 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
         }
 
-        $result1 = get-childitem -path $pathString | get-date
-        $result2 = get-childitem -path $pathString | get-date
+        $result1 = Get-ChildItem -Path $pathString | Get-Date
+        $result2 = Get-ChildItem -Path $pathString | Get-Date
 
         $result1.Length | Should -Be 10
         $result1.Length -eq $result2.Length | Should -BeTrue
@@ -148,19 +148,19 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
 
 Describe "Get-Date" -Tags "CI" {
     It "-Format FileDate works" {
-        Get-date -Date 0030-01-01T01:02:03.0004 -Format FileDate | Should -Be "00300101"
+        Get-Date -Date 0030-01-01T01:02:03.0004 -Format FileDate | Should -Be "00300101"
     }
 
     It "-Format FileDateTime works" {
-        Get-date -Date 0030-01-01T01:02:03.0004 -Format FileDateTime | Should -Be "00300101T0102030004"
+        Get-Date -Date 0030-01-01T01:02:03.0004 -Format FileDateTime | Should -Be "00300101T0102030004"
     }
 
     It "-Format FileDateTimeUniversal works" {
-        Get-date -Date 0030-01-01T01:02:03.0004z -Format FileDateTimeUniversal | Should -Be "00300101T0102030004Z"
+        Get-Date -Date 0030-01-01T01:02:03.0004z -Format FileDateTimeUniversal | Should -Be "00300101T0102030004Z"
     }
 
     It "-Format FileDateTimeUniversal works" {
-        Get-date -Date 0030-01-01T01:02:03.0004z -Format FileDateUniversal | Should -Be "00300101Z"
+        Get-Date -Date 0030-01-01T01:02:03.0004z -Format FileDateUniversal | Should -Be "00300101Z"
     }
 
     It "Should have colons when ToString method is used" {
@@ -205,9 +205,9 @@ Describe "Get-Date" -Tags "CI" {
 
 Describe "Get-Date -UFormat tests" -Tags "CI" {
     BeforeAll {
-        $date1 = Get-date -Date "2030-4-5 1:2:3.09"
-        $date2 = Get-date -Date "2030-4-15 13:2:3"
-        $date3 = Get-date -Date "2030-4-15 21:2:3"
+        $date1 = Get-Date -Date "2030-4-5 1:2:3.09"
+        $date2 = Get-Date -Date "2030-4-15 13:2:3"
+        $date3 = Get-Date -Date "2030-4-15 21:2:3"
 
         # 5 come from $date1 - 2030-4-5 is Friday - 5th day (the enum starts with 0 - Sunday)
         $shortDay1 = [System.Globalization.CultureInfo]::CurrentCulture.DateTimeFormat.AbbreviatedDayNames[5]

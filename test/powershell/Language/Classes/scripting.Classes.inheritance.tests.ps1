@@ -103,7 +103,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
                 [void]ExitNestedPrompt(){ throw "Unsupported" }
                 [void]NotifyBeginApplication() { }
                 [void]NotifyEndApplication() { }
-                [string]get_Name() { return $this.myName; write-host "MyName" }
+                [string]get_Name() { return $this.myName; Write-Host "MyName" }
                 [version]get_Version() { return $this.myVersion }
                 [System.Globalization.CultureInfo]get_CurrentCulture() { return $this.myCurrentCulture }
                 [System.Globalization.CultureInfo]get_CurrentUICulture() { return $this.myCurrentUICulture }

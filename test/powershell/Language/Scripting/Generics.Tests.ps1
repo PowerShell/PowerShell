@@ -50,7 +50,7 @@ Describe "Generics support" -Tags "CI" {
         $x = [dictionary[dictionary[list[int],string], stack[double]]]::new()
         $x.gettype().fullname | Should -Match "double"
 
-        $y = new-object "dictionary[dictionary[list[int],string], stack[double]]"
+        $y = New-Object "dictionary[dictionary[list[int],string], stack[double]]"
         $y.gettype().fullname | Should -Match "double"
     }
 
@@ -65,7 +65,7 @@ Describe "Generics support" -Tags "CI" {
         $e | Should -Match "\[T\]"
     }
 
-    It 'Array type works properly' -skip:$IsCoreCLR{
+    It 'Array type works properly' -Skip:$IsCoreCLR{
         $x = [system.array]::ConvertAll.OverloadDefinitions
         $x | Should -Match "static\s+TOutput\[\]\s+ConvertAll\[TInput,\s+TOutput\]\("
     }

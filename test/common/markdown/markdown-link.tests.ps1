@@ -17,12 +17,12 @@ Describe "Verify Markdown Links" {
         }
 
         # Cleanup jobs for reliability
-        get-job | remove-job -force
+        Get-Job | Remove-Job -Force
     }
 
     AfterAll {
         # Cleanup jobs to leave the process the same
-        get-job | remove-job -force
+        Get-Job | Remove-Job -Force
     }
 
     $groups = Get-ChildItem -Path "$PSScriptRoot\..\..\..\*.md" -Recurse | Where-Object {$_.DirectoryName -notlike '*node_modules*'} | Group-Object -Property directory
@@ -31,7 +31,7 @@ Describe "Verify Markdown Links" {
     # start all link verification in parallel
     Foreach($group in $groups)
     {
-        Write-Verbose -verbose "starting jobs for $($group.Name) ..."
+        Write-Verbose -Verbose "starting jobs for $($group.Name) ..."
         $job = Start-ThreadJob {
             param([object] $group)
             foreach($file in $group.Group)
@@ -46,13 +46,13 @@ Describe "Verify Markdown Links" {
         $jobs.add($group.name,$job)
     }
 
-    Write-Verbose -verbose "Getting results ..."
+    Write-Verbose -Verbose "Getting results ..."
     # Get the results and verify
     foreach($key in $jobs.keys)
     {
         $job = $jobs.$key
         $results = Receive-Job -Job $job -Wait
-        Remove-job -job $Job
+        Remove-Job -Job $Job
         foreach($jobResult in $results)
         {
             $file = $jobResult.file
@@ -85,14 +85,14 @@ Describe "Verify Markdown Links" {
 
                 if($passes)
                 {
-                    it "<url> should work" -TestCases $passes {
+                    It "<url> should work" -TestCases $passes {
                         noop
                     }
                 }
 
                 if($trueFailures)
                 {
-                    it "<url> should work" -TestCases $trueFailures  {
+                    It "<url> should work" -TestCases $trueFailures  {
                         param($url)
 
                         # there could be multiple reasons why a failure is ok
@@ -111,7 +111,7 @@ Describe "Verify Markdown Links" {
                             # If invoke-WebRequest can handle the URL, re-verify, with 6 retries
                             try
                             {
-                                $null = Invoke-WebRequest -uri $url -RetryIntervalSec 10 -MaximumRetryCount 6
+                                $null = Invoke-WebRequest -Uri $url -RetryIntervalSec 10 -MaximumRetryCount 6
                             }
                             catch [Microsoft.PowerShell.Commands.HttpResponseException]
                             {
@@ -128,7 +128,7 @@ Describe "Verify Markdown Links" {
 
                 if($verifyFailures)
                 {
-                    it "<url> should work" -TestCases $verifyFailures -Pending  {
+                    It "<url> should work" -TestCases $verifyFailures -Pending  {
                     }
                 }
 

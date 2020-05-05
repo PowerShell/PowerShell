@@ -65,7 +65,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
     }
 
     # we could suppress the WhatIf output here if we use the testhost, but it's not necessary
-    It "The filesystem provider supports should process" -skip:(!$IsWindows) {
+    It "The filesystem provider supports should process" -Skip:(!$IsWindows) {
       Clear-Content -Path TestDrive:\$file2 -WhatIf
       "TestDrive:\$file2" | Should -FileContentMatch "This is content"
     }
@@ -75,7 +75,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       $cci.SupportsShouldProcess | Should -BeTrue
     }
 
-    It "Alternate streams should be cleared with clear-content" -skip:(!$IsWindows) {
+    It "Alternate streams should be cleared with clear-content" -Skip:(!$IsWindows) {
       # make sure that the content is correct
       # this is here rather than BeforeAll because only windows can write to an alternate stream
       Set-Content -Path "TestDrive:/$file3" -Stream $streamName -Value $streamContent

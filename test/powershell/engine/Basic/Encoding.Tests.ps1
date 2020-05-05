@@ -45,7 +45,7 @@ Describe "File encoding tests" -Tag CI {
             }
         }
 
-        It "<command> produces correct content '<Expected>'" -Testcases $simpleTestCases {
+        It "<command> produces correct content '<Expected>'" -TestCases $simpleTestCases {
             param ( $Command, $parameters, $Expected, $Operator)
             & $command @parameters
             $bytes = Get-FileBytes $outputFile

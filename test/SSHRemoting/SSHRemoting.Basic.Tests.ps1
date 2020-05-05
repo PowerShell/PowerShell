@@ -23,8 +23,8 @@ Describe "SSHRemoting Basic Tests" -tags CI {
     Context "New-PSSession Tests" {
 
         AfterEach {
-            if ($script:session -ne $null) { Remove-PSSession -session $script:session }
-            if ($script:sessions -ne $null) { Remove-PSSession -session $script:sessions }
+            if ($script:session -ne $null) { Remove-PSSession -Session $script:session }
+            if ($script:sessions -ne $null) { Remove-PSSession -Session $script:sessions }
         }
 
         It "Verifies new connection with implicit current User" {
