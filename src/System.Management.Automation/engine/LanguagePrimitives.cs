@@ -697,12 +697,18 @@ namespace System.Management.Automation
                 }
             }
 
-            if (typeof(IEquatable<>).MakeGenericType(firstType).IsAssignableFrom(firstType))
+            bool isGenericEquatable = typeof(IEquatable<>).MakeGenericType(firstType).IsAssignableFrom(firstType);
+            if (isGenericEquatable && firstType == secondType)
             {
                 // We assume the class is implemented correctly
                 // and both object.Equals() and IEquatable<T>.Equals()
                 // work the same way so that we simply return object.Equals()
                 return firstEquals;
+            }
+
+            if (isGenericEquatable && TryConvertTo(second, firstType, culture, out object secondIEquatableConverted))
+            {
+                return first.Equals(secondIEquatableConverted);
             }
 
             if (first is IComparable firstComparable && TryConvertTo(second, firstType, culture, out object secondConverted))
