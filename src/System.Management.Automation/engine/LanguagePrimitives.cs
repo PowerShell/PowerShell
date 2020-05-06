@@ -665,7 +665,11 @@ namespace System.Management.Automation
                                                     ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0);
             }
 
-            if (first.Equals(second)) return true;
+            var firstEquals =  first.Equals(second);
+            if (firstEquals)
+            {
+                return true;
+            }
 
             Type firstType = first.GetType();
             Type secondType = second.GetType();
@@ -693,22 +697,34 @@ namespace System.Management.Automation
                 }
             }
 
-            try
+            if (typeof(IEquatable<>).MakeGenericType(firstType).IsAssignableFrom(firstType))
             {
-                object secondConverted = LanguagePrimitives.ConvertTo(second, firstType, culture);
-
-                if (first is IComparable firstComparable)
-                {
-                    return firstComparable.CompareTo(secondConverted) == 0;
-                }
-
-                return first.Equals(secondConverted);
-            }
-            catch (InvalidCastException)
-            {
+                // We assume the class is implemented correctly
+                // and both object.Equals() and IEquatable<T>.Equals()
+                // work the same way so that we simply return object.Equals()
+                return firstEquals;
             }
 
-            return false;
+            if (first is IComparable firstComparable && TryConvertTo(second, firstType, culture, out object secondConverted))
+            {
+                return firstComparable.CompareTo(secondConverted) == 0;
+            }
+
+            if (typeof(IComparable<>).MakeGenericType(firstType).IsAssignableFrom(firstType) && TryConvertTo(second, firstType, culture, out object secondGenericConverted))
+            {
+                var genericType = typeof(IComparable<>).MakeGenericType(firstType);
+                var method = genericType.GetMethod("CompareTo");
+                var result = (int)method.Invoke(first, new object[] { secondGenericConverted });
+                return result == 0;
+            }
+
+            // Note that this will occur if the first object does not support
+            // IComparable, IComparable<T> and IEquatable<T>.
+            // We fall back to comparing as strings.
+            firstString = PSObject.AsPSObject(first).ToString();
+            secondString = PSObject.AsPSObject(second).ToString();
+
+            return culture.CompareInfo.Compare(firstString, secondString, ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0;
         }
 
         /// <summary>

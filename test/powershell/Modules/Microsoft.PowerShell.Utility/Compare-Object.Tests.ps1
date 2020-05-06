@@ -473,6 +473,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
                     public bool Equals(TestIEquatableClass other) { return Bar == other.Bar; }
                     public override bool Equals(object o) { return o is TestIEquatableClass && Equals((TestIEquatableClass) o); }
                     public override int GetHashCode() { return Bar; }
+                    public override string ToString() { return string.Format("TestIEquatableClass_Bar{0}", Bar); }
                 }
 '@
         }
