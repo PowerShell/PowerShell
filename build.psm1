@@ -356,7 +356,9 @@ function Start-PSBuild {
         Write-Warning @"
 The currently installed .NET Command Line Tools is not the required version.
 
-Installed version: $dotnetCLIInstalledVersion
+Installed version(s):
+$($dotnetCLIInstalledVersion -join [Environment]::Newline)
+
 Required version: $dotnetCLIRequiredVersion
 
 Fix steps:

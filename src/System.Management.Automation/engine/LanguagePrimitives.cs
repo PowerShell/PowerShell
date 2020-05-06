@@ -696,6 +696,12 @@ namespace System.Management.Automation
             try
             {
                 object secondConverted = LanguagePrimitives.ConvertTo(second, firstType, culture);
+
+                if (first is IComparable firstComparable)
+                {
+                    return firstComparable.CompareTo(secondConverted) == 0;
+                }
+
                 return first.Equals(secondConverted);
             }
             catch (InvalidCastException)

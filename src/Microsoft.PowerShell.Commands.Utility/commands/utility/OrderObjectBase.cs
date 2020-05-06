@@ -663,6 +663,26 @@ namespace Microsoft.PowerShell.Commands
             return order;
         }
 
+        public bool Equals(OrderByPropertyEntry firstEntry, OrderByPropertyEntry secondEntry)
+        {
+            // we have to take into consideration that some vectors
+            // might be shorter than others
+            for (int k = 0; k < _propertyComparers.Length; k++)
+            {
+                ObjectCommandPropertyValue firstValue = (k < firstEntry.orderValues.Count) ?
+                    firstEntry.orderValues[k] : ObjectCommandPropertyValue.NonExistingProperty;
+                ObjectCommandPropertyValue secondValue = (k < secondEntry.orderValues.Count) ?
+                    secondEntry.orderValues[k] : ObjectCommandPropertyValue.NonExistingProperty;
+
+                if (!_propertyComparers[k].Equals(firstValue, secondValue))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         internal static OrderByPropertyComparer CreateComparer(List<OrderByPropertyEntry> orderMatrix, bool ascendingFlag, bool?[] ascendingOverrides, CultureInfo cultureInfo, bool caseSensitive)
         {
             if (orderMatrix.Count == 0)

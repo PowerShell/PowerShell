@@ -179,6 +179,16 @@ namespace Microsoft.PowerShell.Commands
             return 0;
         }
 
+        internal bool Equals(ObjectCommandPropertyValue first, ObjectCommandPropertyValue second)
+        {
+            if (first.IsExistingProperty && second.IsExistingProperty)
+            {
+                return Equals(first.PropertyValue, second.PropertyValue);
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Main method that will compare first and second by their keys considering case and order.
         /// </summary>
@@ -223,6 +233,28 @@ namespace Microsoft.PowerShell.Commands
             string secondString = PSObject.AsPSObject(second).ToString();
 
             return _cultureInfo.CompareInfo.Compare(firstString, secondString, _caseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase) * (_ascendingOrder ? 1 : -1);
+        }
+
+        internal new bool Equals(object first, object second)
+        {
+            // This method will never throw exceptions, two null
+            // objects are considered the same
+            if (IsValueNull(first) && IsValueNull(second))
+            {
+                return true;
+            }
+
+            if (first is PSObject firstMsh)
+            {
+                first = firstMsh.BaseObject;
+            }
+
+            if (second is PSObject secondMsh)
+            {
+                second = secondMsh.BaseObject;
+            }
+
+            return LanguagePrimitives.Equals(first, second, !_caseSensitive, _cultureInfo);
         }
 
         private CultureInfo _cultureInfo = null;

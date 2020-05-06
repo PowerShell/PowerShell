@@ -462,4 +462,28 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 		$result.InputObject | Should -BeExactly "refObject"
 		$result.SideIndicator | Should -BeExactly "<="
 	}
+
+    It "Compare-Object should work with types implementing IEquatable"{
+        if(-not ([System.Management.Automation.PSTypeName]'TestIEquatableClass').Type)
+        {
+            Add-Type @'
+                public class TestIEquatableClass : System.IEquatable<TestIEquatableClass>
+                {
+                    public int Bar = 0;
+                    public bool Equals(TestIEquatableClass other) { return Bar == other.Bar; }
+                    public override bool Equals(object o) { return o is TestIEquatableClass && Equals((TestIEquatableClass) o); }
+                    public override int GetHashCode() { return Bar; }
+                }
+'@
+        }
+
+        $object1 = [TestIEquatableClass]::new();
+        $object1.Bar = 1
+        $object2 = [TestIEquatableClass]::new();
+        $object2.Bar = 2
+
+        $object1.Equals($object2) | Should -BeFalse
+
+        Compare-Object $object1 $object2 | Should -Not -BeNullOrEmpty
+    }
 }
