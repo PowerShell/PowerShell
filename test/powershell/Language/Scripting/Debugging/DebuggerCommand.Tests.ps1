@@ -81,7 +81,7 @@ Describe 'Basic debugger command tests' -Tag 'CI' {
     3:                      $bp = Set-PSBreakpoint -Command Get-Process
     4:*                     Get-Process -Id $PID > $null
     5:                  } finally {
-    6:                      Remove-PSBreakPoint -Breakpoint $bp
+    6:                      Remove-PSBreakpoint -Breakpoint $bp
     7:                  }
     8:
 '@
