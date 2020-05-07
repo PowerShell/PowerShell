@@ -41,6 +41,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="ArgumentCompletionsAttribute"/> class.
+        /// This constructor is used by derived attributes implementing IArgumentCompleterFactory.
+        /// </summary>
+        protected ArgumentCompleterAttribute()
+        {
+            if (GetType().GetInterfaces().All(t => t != typeof(IArgumentCompleterFactory)))
+            {
+                throw PSTraceSource.NewInvalidOperationException();
+            }
+        }
+
+        /// <summary>
         /// This constructor is used primarily via PowerShell scripts.
         /// </summary>
         /// <param name="scriptBlock"></param>
