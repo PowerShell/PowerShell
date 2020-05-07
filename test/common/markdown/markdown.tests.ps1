@@ -5,7 +5,7 @@ Import-Module HelpersCommon
 $moduleRootFilePath = Split-Path -Path $PSScriptRoot -Parent
 
 # Identify the repository root path of the resource module
-$repoRootPath = (Resolve-Path -LiteralPath (Join-path $moduleRootFilePath "../..")).ProviderPath
+$repoRootPath = (Resolve-Path -LiteralPath (Join-Path $moduleRootFilePath "../..")).ProviderPath
 $repoRootPathFound = $false
 
 Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
@@ -48,8 +48,8 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         Pop-Location
     }
 
-    It "Should not have errors in any markdown files" -skip:$skip {
-        $NpmInstalled | should BeExactly "Installed"
+    It "Should not have errors in any markdown files" -Skip:$skip {
+        $NpmInstalled | Should -BeExactly "Installed"
         $mdErrors = 0
         Push-Location -Path $PSScriptRoot
         try
