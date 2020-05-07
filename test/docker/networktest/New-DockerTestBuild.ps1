@@ -16,7 +16,7 @@ $script:Constants =  @{
 
 #### DOCKER OPS #####
 # is docker installed?
-$dockerExe = get-command docker -ea silentlycontinue
+$dockerExe = Get-Command docker -ea silentlycontinue
 if ( $dockerExe.name -ne "docker.exe" ) {
     throw "Cannot find docker, is it installed?"
 }
@@ -43,7 +43,7 @@ if ( $TestImage -eq $Constants.TestImageName)
 
 #### MSI CHECKS ####
 # check to see if the MSI is present
-$MsiExists = test-path $Constants.MsiName
+$MsiExists = Test-Path $Constants.MsiName
 $msg = "{0} exists, use -Force to remove or -UseExistingMsi to use" -f $Constants.MsiName
 if ( $MsiExists -and ! ($force -or $useExistingMsi))
 {
@@ -53,7 +53,7 @@ if ( $MsiExists -and ! ($force -or $useExistingMsi))
 # remove the msi
 if ( $MsiExists -and $Force -and ! $UseExistingMsi )
 {
-    Remove-Item -force $Constants.MsiName
+    Remove-Item -Force $Constants.MsiName
     $MsiExists = $false
 }
 
@@ -70,7 +70,7 @@ elseif ( $MsiExists -and ! $UseExistingMsi )
 }
 
 # last check before bulding the image
-if ( ! (test-path $Constants.MsiName) )
+if ( ! (Test-Path $Constants.MsiName) )
 {
     throw ("{0} does not exist, giving up" -f $Constants.MsiName)
 }

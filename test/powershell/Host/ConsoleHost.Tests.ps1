@@ -351,12 +351,12 @@ export $envVarName='$guid'
         # must use an explicit scope of LocalMachine to ensure the setting is written to the expected file.
         # Skip the tests on Unix platforms because *-ExecutionPolicy cmdlets don't work by design.
 
-        It "Verifies PowerShell reads from the custom -settingsFile" -skip:(!$IsWindows) {
+        It "Verifies PowerShell reads from the custom -settingsFile" -Skip:(!$IsWindows) {
             $actualValue = & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {(Get-ExecutionPolicy -Scope LocalMachine).ToString()}
             $actualValue  | Should -Be $DefaultExecutionPolicy
         }
 
-        It "Verifies PowerShell writes to the custom -settingsFile" -skip:(!$IsWindows) {
+        It "Verifies PowerShell writes to the custom -settingsFile" -Skip:(!$IsWindows) {
             $expectedValue = 'AllSigned'
 
             # Update the execution policy; this should update the settings file.
@@ -371,7 +371,7 @@ export $envVarName='$guid'
             $actualValue  | Should -Be $expectedValue
         }
 
-        It "Verify PowerShell removes a setting from the custom -settingsFile" -skip:(!$IsWindows) {
+        It "Verify PowerShell removes a setting from the custom -settingsFile" -Skip:(!$IsWindows) {
             # Remove the LocalMachine execution policy; this should update the settings file.
             & $powershell -NoProfile -SettingsFile $CustomSettingsFile -Command {Set-ExecutionPolicy -ExecutionPolicy Undefined -Scope LocalMachine }
 
@@ -385,8 +385,8 @@ export $envVarName='$guid'
         $p = [PSCustomObject]@{X=10;Y=20}
 
         It "xml input" {
-            $p | & $powershell -noprofile { $input | Foreach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } } | Should -Be 30
-            $p | & $powershell -noprofile -inputFormat xml { $input | Foreach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } } | Should -Be 30
+            $p | & $powershell -noprofile { $input | ForEach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } } | Should -Be 30
+            $p | & $powershell -noprofile -inputFormat xml { $input | ForEach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } } | Should -Be 30
         }
 
         It "text input" {
@@ -395,8 +395,8 @@ export $envVarName='$guid'
         }
 
         It "xml output" {
-            & $powershell -noprofile { [PSCustomObject]@{X=10;Y=20} } | Foreach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } | Should -Be 30
-            & $powershell -noprofile -outputFormat xml { [PSCustomObject]@{X=10;Y=20} } | Foreach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } | Should -Be 30
+            & $powershell -noprofile { [PSCustomObject]@{X=10;Y=20} } | ForEach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } | Should -Be 30
+            & $powershell -noprofile -outputFormat xml { [PSCustomObject]@{X=10;Y=20} } | ForEach-Object {$a = 0} { $a += $_.X + $_.Y } { $a } | Should -Be 30
         }
 
         It "text output" {
@@ -638,17 +638,17 @@ namespace StackTest {
             $env:XDG_CONFIG_HOME = $XDG_CONFIG_HOME
         }
 
-        It "Should start if Data, Config, and Cache location is not accessible" -skip:($IsWindows) {
+        It "Should start if Data, Config, and Cache location is not accessible" -Skip:($IsWindows) {
             $env:XDG_CACHE_HOME = "/dev/cpu"
             $env:XDG_DATA_HOME = "/dev/cpu"
             $env:XDG_CONFIG_HOME = "/dev/cpu"
-            $output = & $powershell -noprofile -Command { (get-command).count }
+            $output = & $powershell -noprofile -Command { (Get-Command).count }
             [int]$output | Should -BeGreaterThan 0
         }
     }
 
     Context "HOME environment variable" {
-        It "Should start if HOME is not defined" -skip:($IsWindows) {
+        It "Should start if HOME is not defined" -Skip:($IsWindows) {
             bash -c "unset HOME;$powershell -c '1+1'" | Should -BeExactly 2
         }
     }
@@ -769,7 +769,7 @@ namespace StackTest {
     Context "ApartmentState WPF tests" -Tag Slow {
 
         It "WPF requires STA and will work" -Skip:(!$IsWindows -or [System.Management.Automation.Platform]::IsNanoServer) {
-            add-type -AssemblyName presentationframework
+            Add-Type -AssemblyName presentationframework
 
             $xaml = [xml]@"
             <Window
@@ -970,12 +970,12 @@ Describe 'Pwsh startup in directories that contain wild cards' -Tag CI {
         $dirnames = "[T]est","[Test","T][est","Test"
         $testcases = @()
         foreach ( $d in $dirnames ) {
-            $null = New-Item -type Directory -path "${TESTDRIVE}/$d"
+            $null = New-Item -type Directory -Path "${TESTDRIVE}/$d"
             $testcases += @{ Dirname = $d }
         }
     }
 
-    It "pwsh can startup in a directory named <dirname>" -testcases $testcases {
+    It "pwsh can startup in a directory named <dirname>" -TestCases $testcases {
         param ( $dirname )
         try {
             Push-Location -LiteralPath "${TESTDRIVE}/${dirname}"
@@ -1013,6 +1013,6 @@ Describe 'Pwsh startup and PATH' -Tag CI {
 Describe 'Console host name' -Tag CI {
     It 'Name is pwsh' -Pending {
         # waiting on https://github.com/dotnet/runtime/issues/33673
-        (Get-Process -id $PID).Name | Should -BeExactly 'pwsh'
+        (Get-Process -Id $PID).Name | Should -BeExactly 'pwsh'
     }
 }

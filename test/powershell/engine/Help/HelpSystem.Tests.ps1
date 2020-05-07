@@ -60,7 +60,7 @@ Describe "Validate that the Help function can Run in strict mode" -Tags @('CI') 
         $help = & {
             # run in nested scope to keep strict mode from affecting other tests
             Set-StrictMode -Version 3.0
-            Help
+            help
         }
         # the help function renders the help content as text so just verify that there is content
         $help | Should -Not -BeNullOrEmpty
@@ -91,7 +91,7 @@ Describe "Validate that get-help works for CurrentUserScope" -Tags @('CI') {
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases {
             param($cmdletName)
-            $help = get-help -name $cmdletName
+            $help = Get-Help -Name $cmdletName
             $help.Description | Out-String | Should -Match $cmdletName
             $help.Examples | Out-String | Should -Match $cmdletName
         }
@@ -135,7 +135,7 @@ Describe "Validate that get-help works for AllUsers Scope" -Tags @('Feature', 'R
 
         It "Validate -Description and -Examples sections in help content. Run 'Get-help -name <cmdletName>" -TestCases $testCases -Skip:(!(Test-CanWriteToPsHome)) {
             param($cmdletName)
-            $help = get-help -name $cmdletName
+            $help = Get-Help -Name $cmdletName
             $help.Description | Out-String | Should -Match $cmdletName
             $help.Examples | Out-String | Should -Match $cmdletName
         }

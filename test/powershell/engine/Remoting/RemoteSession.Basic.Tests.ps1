@@ -21,7 +21,7 @@ Describe "New-PSSession basic test" -Tag @("CI") {
 }
 
 Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
-    It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -skip:($IsWindows) {
+    It "New-PSSession should throw when specifying Basic Auth over HTTP on Unix" -Skip:($IsWindows) {
         $platformInfo = Get-PlatformInfo
         if (
             ($platformInfo.Platform -match "alpine|raspbian") -or
@@ -42,7 +42,7 @@ Describe "Basic Auth over HTTP not allowed on Unix" -Tag @("CI") {
         $err.Exception.ErrorCode | Should -Be 801
     }
 
-    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -skip:($IsWindows) {
+    It "New-PSSession should NOT throw a ConnectFailed exception when specifying Basic Auth over HTTPS on Unix" -Skip:($IsWindows) {
         $platformInfo = Get-PlatformInfo
         if (
             ($platformInfo.Platform -match "alpine|raspbian") -or

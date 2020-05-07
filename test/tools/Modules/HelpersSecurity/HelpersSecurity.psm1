@@ -50,7 +50,7 @@ if ($IsWindows)
     if (-not (Get-Command Invoke-LanguageModeTestingSupportCmdlet -ErrorAction Ignore))
     {
         $moduleName = Get-RandomFileName
-        $moduleDirectory = join-path $TestDrive\Modules $moduleName
+        $moduleDirectory = Join-Path $TestDrive\Modules $moduleName
         if (-not (Test-Path $moduleDirectory))
         {
             $null = New-Item -ItemType Directory $moduleDirectory -Force

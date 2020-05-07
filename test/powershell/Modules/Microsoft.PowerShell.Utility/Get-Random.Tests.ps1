@@ -90,8 +90,8 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     }
 
     It "Tests for setting the seed" {
-        $result1 = (get-random -SetSeed 123), (get-random)
-        $result2 = (get-random -SetSeed 123), (get-random)
+        $result1 = (Get-Random -SetSeed 123), (Get-Random)
+        $result2 = (Get-Random -SetSeed 123), (Get-Random)
         $result1 | Should -Be $result2
     }
 }

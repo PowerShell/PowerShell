@@ -24,21 +24,21 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable -Name foo -Value bar0
 
 		Set-Variable -Name foo -Value bar -Scope "1"
-		$var1=Get-Variable -Name foo -scope "1"
+		$var1=Get-Variable -Name foo -Scope "1"
 		$var1.Name | Should -BeExactly "foo"
 		$var1.Value | Should -BeExactly "bar"
 		$var1.Options | Should -BeExactly "None"
 		$var1.Description | Should -BeNullOrEmpty
 
 		Set-Variable -Name foo -Value newValue -Scope "local"
-		$var1=Get-Variable -Name foo -scope "local"
+		$var1=Get-Variable -Name foo -Scope "local"
 		$var1.Name | Should -BeExactly "foo"
 		$var1.Value | Should -BeExactly "newValue"
 		$var1.Options | Should -BeExactly "None"
 		$var1.Description | Should -BeNullOrEmpty
 
 		Set-Variable -Name foo -Value newValue2 -Scope "script"
-		$var1=Get-Variable -Name foo -scope "script"
+		$var1=Get-Variable -Name foo -Scope "script"
 		$var1.Name | Should -BeExactly "foo"
 		$var1.Value | Should -BeExactly "newValue2"
 		$var1.Options | Should -BeExactly "None"
@@ -126,7 +126,7 @@ Describe "Set-Variable DRT Unit Tests" -Tags "CI" {
 	}
 
 	It "Set-Variable of ReadOnly variable with private scope should work"{
-		Set-Variable foo bar -Description "new description" -Option ReadOnly -scope "private"
+		Set-Variable foo bar -Description "new description" -Option ReadOnly -Scope "private"
 		$var1=Get-Variable -Name foo
 		$var1.Name | Should -BeExactly "foo"
 		$var1.Value | Should -BeExactly "bar"

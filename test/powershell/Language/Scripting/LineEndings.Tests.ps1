@@ -130,8 +130,8 @@ Describe 'Line endings' -Tags "CI" {
         # wrap the content in the specified begin and end quoting characters.
         $content = "$($Begin)$($expected)$($End)"
         # BUG: Set-Content is failing on linux if the file does not exit.
-        $null = New-item -path TESTDRIVE:$fileName -force
-        $content | Set-content -NoNewline -Encoding ascii -Path TESTDRIVE:\$fileName
+        $null = New-Item -Path TESTDRIVE:$fileName -Force
+        $content | Set-Content -NoNewline -Encoding ascii -Path TESTDRIVE:\$fileName
         $actual = &( "TESTDRIVE:\$fileName")
 
         # $actual should be the content string ($expected) without the begin and end quoting characters.

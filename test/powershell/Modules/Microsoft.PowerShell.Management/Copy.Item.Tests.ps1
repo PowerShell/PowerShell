@@ -550,7 +550,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         BeforeAll {
             # Create test file.
             $testFilePath = Join-Path "TestDrive:" "testfile.txt"
-            if (test-path $testFilePath)
+            if (Test-Path $testFilePath)
             {
                 Remove-Item $testFilePath -Force -ErrorAction SilentlyContinue
             }

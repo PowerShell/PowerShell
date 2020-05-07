@@ -34,15 +34,15 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
     }
 
     It "Test wildcard with relative directory path" {
-        push-location $TestDrive
+        Push-Location $TestDrive
         $result = Get-Command -Name .\WildCardCommandA*
-        pop-location
+        Pop-Location
         $result | Should -Not -BeNullOrEmpty
         $result | Should -Be WildCardCommandA.exe
     }
 
     It "Test with PowerShell wildcard and relative path" {
-        push-location $TestDrive
+        Push-Location $TestDrive
 
         # This should use the wildcard to find WildCardCommandA.exe
         $result = Get-Command -Name .\WildCardCommand[A].exe
@@ -59,7 +59,7 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
 
     It "Get-Command -ShowCommandInfo property field test" {
         $properties = ($commandInfo | Get-Member -MemberType NoteProperty)
-        $propertiesAsString =  $properties.name | out-string
+        $propertiesAsString =  $properties.name | Out-String
         $propertiesAsString | Should -MatchExactly 'CommandType'
         $propertiesAsString | Should -MatchExactly 'Definition'
         $propertiesAsString | Should -MatchExactly 'Module'
@@ -86,7 +86,7 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
 
     It "Get-Command -ShowCommandInfo ParameterSets property field test" {
         $properties = ($commandInfo.ParameterSets[0] | Get-Member -MemberType NoteProperty)
-        $propertiesAsString =  $properties.name | out-string
+        $propertiesAsString =  $properties.name | Out-String
         $propertiesAsString | Should -MatchExactly 'IsDefault'
         $propertiesAsString | Should -MatchExactly 'Name'
         $propertiesAsString | Should -MatchExactly 'Parameters'
@@ -94,7 +94,7 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
 
     It "Get-Command -ShowCommandInfo Parameters property field test" {
         $properties = ($commandInfo.ParameterSets[0].Parameters | Get-Member -MemberType NoteProperty)
-        $propertiesAsString =  $properties.name | out-string
+        $propertiesAsString =  $properties.name | Out-String
         $propertiesAsString | Should -MatchExactly 'HasParameterSet'
         $propertiesAsString | Should -MatchExactly 'IsMandatory'
         $propertiesAsString | Should -MatchExactly 'Name'

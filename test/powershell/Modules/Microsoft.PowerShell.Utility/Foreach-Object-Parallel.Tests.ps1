@@ -223,7 +223,7 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
         $Var2 = "Goodbye"
         $Var3 = 105
         $Var4 = "One","Two","Three"
-        $job = 1..1 | Foreach-Object -AsJob -Parallel {
+        $job = 1..1 | ForEach-Object -AsJob -Parallel {
             Write-Output $using:Var1
             Write-Output $using:Var2
             Write-Output $using:Var3
