@@ -70,7 +70,9 @@ namespace System.Management.Automation
         {
             return Type != null
                 ? Activator.CreateInstance(Type) as IArgumentCompleter
-                : this is IArgumentCompleterFactory factory ? factory.Create() : null;
+                : this is IArgumentCompleterFactory factory 
+                    ? factory.Create() 
+                    : null;
         }
     }
 
