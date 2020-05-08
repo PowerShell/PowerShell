@@ -41,7 +41,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ArgumentCompletionsAttribute"/> class.
+        /// Initializes a new instance of the <see cref="ArgumentCompleterAttribute"/> class.
         /// This constructor is used by derived attributes implementing IArgumentCompleterFactory.
         /// </summary>
         protected ArgumentCompleterAttribute()
@@ -93,6 +93,21 @@ namespace System.Management.Automation
             string wordToComplete,
             CommandAst commandAst,
             IDictionary fakeBoundParameters);
+    }
+
+    /// <summary>
+    /// Creates a new argument completer.
+    /// If an attributes that derives from ArgumentCompleterAttribute implements this interface,
+    /// it will be used to create the IArgumentCompleter, thus giving a way to parameterize a completer.
+    /// The derived attribute can have properties or constructor arguments that are used when creating the completer.
+    /// </summary>
+    public interface IArgumentCompleterFactory
+    {
+        /// <summary>
+        /// Creates an instance of a class implementing the <see cref="IArgumentCompleter"/> interface.
+        /// </summary>
+        /// <returns>An IArgumentCompleter instance.</returns>
+        IArgumentCompleter Create();
     }
 
     /// <summary>
