@@ -65,6 +65,13 @@ namespace System.Management.Automation
 
             ScriptBlock = scriptBlock;
         }
+
+        internal IArgumentCompleter CreateArgumentCompleter()
+        {
+            return Type != null
+                ? Activator.CreateInstance(Type) as IArgumentCompleter
+                : this is IArgumentCompleterFactory factory ? factory.Create() : null;
+        }
     }
 
     /// <summary>

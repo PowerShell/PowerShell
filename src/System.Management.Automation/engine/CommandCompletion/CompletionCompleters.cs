@@ -2030,19 +2030,17 @@ namespace System.Management.Automation
             {
                 try
                 {
-                    if (argumentCompleterAttribute.Type != null)
+                    var completer = argumentCompleterAttribute.CreateArgumentCompleter();
+
+                    if (completer != null)
                     {
-                        var completer = Activator.CreateInstance(argumentCompleterAttribute.Type) as IArgumentCompleter;
-                        if (completer != null)
+                        var customResults = completer.CompleteArgument(commandName, parameterName,
+                            context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
+                        if (customResults != null)
                         {
-                            var customResults = completer.CompleteArgument(commandName, parameterName,
-                                context.WordToComplete, commandAst, GetBoundArgumentsAsHashtable(context));
-                            if (customResults != null)
-                            {
-                                result.AddRange(customResults);
-                                result.Add(CompletionResult.Null);
-                                return;
-                            }
+                            result.AddRange(customResults);
+                            result.Add(CompletionResult.Null);
+                            return;
                         }
                     }
                     else
