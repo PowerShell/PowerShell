@@ -202,8 +202,7 @@ class NumberCompleter : IArgumentCompleter
     {
         $resultList = [List[CompletionResult]]::new()
         $local:to = $this.To
-        $local:step = $this.Step -lt 1 ? 1 : $this.Step
-        for ($i = $this.From; $i -le $to; $i += $step) {
+        for ($i = $this.From; $i -le $to; $i += $this.Step) {
             if ($i.ToString().StartsWith($wordToComplete, [System.StringComparison]::Ordinal)) {
                 $num = $i.ToString()
                 $resultList.Add([CompletionResult]::new($num, $num, "ParameterValue", $num))
