@@ -42,7 +42,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ArgumentCompleterAttribute"/> class.
-        /// This constructor is used by derived attributes implementing IArgumentCompleterFactory.
+        /// This constructor is used by derived attributes implementing <see cref="IArgumentCompleterFactory"/>.
         /// </summary>
         protected ArgumentCompleterAttribute()
         {
@@ -104,10 +104,25 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Creates a new argument completer.
+    /// </summary>
+    /// <para>
     /// If an attributes that derives from ArgumentCompleterAttribute implements this interface,
     /// it will be used to create the IArgumentCompleter, thus giving a way to parameterize a completer.
     /// The derived attribute can have properties or constructor arguments that are used when creating the completer.
-    /// </summary>
+    /// </para>
+    /// <example>
+    /// public class NumberCompleterAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory {
+    ///    private readonly int _from;
+    ///    private readonly int _to;
+    ///    public NumberCompleterAttribute(int from, int to){
+    ///       _from = from;
+    ///       _to = to;
+    ///    }
+    ///
+    ///    // use the attribute parameters to create a parameterized completer
+    ///    IArgumentCompleter Create() => new NumberCompleter(_from, _to);
+    /// }
+    /// </example>
     public interface IArgumentCompleterFactory
     {
         /// <summary>
