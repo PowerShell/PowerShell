@@ -108,7 +108,7 @@ namespace System.Management.Automation
     /// Creates a new argument completer.
     /// </summary>
     /// <para>
-    /// If an attributes that derives from <see cref="ArgumentCompleterAttribute"/> implements this interface,
+    /// If an attribute that derives from <see cref="ArgumentCompleterAttribute"/> implements this interface,
     /// it will be used to create the <see cref="IArgumentCompleter"/>, thus giving a way to parameterize a completer.
     /// The derived attribute can have properties or constructor arguments that are used when creating the completer.
     /// </para>
