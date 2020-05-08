@@ -111,9 +111,12 @@ namespace System.Management.Automation
     /// The derived attribute can have properties or constructor arguments that are used when creating the completer.
     /// </para>
     /// <example>
+    /// This example shows the intended usage of IArgumentCompleterFactory.
+    /// <code>
     /// public class NumberCompleterAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory {
     ///    private readonly int _from;
     ///    private readonly int _to;
+    /// 
     ///    public NumberCompleterAttribute(int from, int to){
     ///       _from = from;
     ///       _to = to;
@@ -122,6 +125,24 @@ namespace System.Management.Automation
     ///    // use the attribute parameters to create a parameterized completer
     ///    IArgumentCompleter Create() => new NumberCompleter(_from, _to);
     /// }
+    ///
+    /// class NumberCompleter : IArgumentCompleter {
+    ///    private readonly int _from;
+    ///    private readonly int _to;
+    ///
+    ///    public NumberCompleter(int from, int to){
+    ///       _from = from;
+    ///       _to = to;
+    ///    }
+    /// 
+    ///    IEnumerable{CompletionResult} CompleteArgument(string commandName, string parameterName, string wordToComplete,
+    ///       CommandAst commandAst, IDictionary fakeBoundParameters) {
+    ///       for(int i = _from; i &lt; _to; i++) {
+    ///           yield return new CompletionResult(i.ToString());
+    ///       }
+    ///    }
+    /// }
+    /// </code>
     /// </example>
     public interface IArgumentCompleterFactory
     {
