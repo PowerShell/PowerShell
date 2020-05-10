@@ -15,6 +15,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// <summary>
     /// Enables the user to remove a CimInstance.
     /// </summary>
+    [Alias("rcim")]
     [Cmdlet(
         VerbsCommon.Remove,
         "CimInstance",

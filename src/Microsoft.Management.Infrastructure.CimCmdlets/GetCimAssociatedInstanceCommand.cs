@@ -22,6 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// Association parameter.
     /// </para>
     /// </summary>
+    [Alias("gcai")]
     [Cmdlet(VerbsCommon.Get,
         GetCimAssociatedInstanceCommand.Noun,
         DefaultParameterSetName = CimBaseCommand.ComputerSetName,
