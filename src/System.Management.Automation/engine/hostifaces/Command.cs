@@ -109,6 +109,7 @@ namespace System.Management.Automation.Runspaces
             MergeToResult = command.MergeToResult;
             _mergeUnclaimedPreviousCommandResults = command._mergeUnclaimedPreviousCommandResults;
             IsEndOfStatement = command.IsEndOfStatement;
+            CommandInfo = command.CommandInfo;
 
             foreach (CommandParameter param in command.Parameters)
             {
