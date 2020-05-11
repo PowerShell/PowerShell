@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Dynamic;
 using System.Globalization;
@@ -29,7 +28,7 @@ using System.Xml;
 using Microsoft.Management.Infrastructure;
 #if !UNIX
 using System.DirectoryServices;
-using System.Management;
+
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -660,8 +659,8 @@ namespace System.Management.Automation
         private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(DotNetInstanceAdapter, null);
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
         private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
-        private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
-            new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
+        private static readonly AdapterSet s_cimInstanceAdapter =
+            new AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.DotNetInstanceAdapter);
 #if !UNIX
@@ -2004,13 +2003,12 @@ namespace System.Management.Automation
             return !this.ImmediateBaseObjectIsEmpty;
         }
 
-        internal PSMemberInfoInternalCollection<PSPropertyInfo> GetAdaptedProperties()
+        internal PSMemberInfoInternalCollection<PSPropertyInfo>? GetAdaptedProperties()
         {
-            Diagnostics.Assert(AdaptedMembers != null, "Should be verified by callers.");
-            return GetProperties(this.AdaptedMembers!, this.InternalAdapter);
+            return GetProperties(this.AdaptedMembers, this.InternalAdapter);
         }
 
-        private PSMemberInfoInternalCollection<PSPropertyInfo> GetProperties(PSMemberInfoInternalCollection<PSPropertyInfo> serializedMembers, Adapter particularAdapter)
+        private PSMemberInfoInternalCollection<PSPropertyInfo>? GetProperties(PSMemberInfoInternalCollection<PSPropertyInfo>? serializedMembers, Adapter particularAdapter)
         {
             if (this.IsDeserialized)
             {
