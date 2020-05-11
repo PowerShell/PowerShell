@@ -3214,7 +3214,7 @@ function New-MSIXPackage
     }
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
-    $releasePublisher = 'CN=Microsoft Windows Store Publisher, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    $releasePublisher = 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
 
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
     $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)
