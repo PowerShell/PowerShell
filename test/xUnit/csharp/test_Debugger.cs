@@ -250,7 +250,7 @@ namespace PSTests.Sequential
                     string script = @"
                         $ErrorActionPreference = 'Stop'
 
-                        $job = Invoke-Command -ComputerName . { 1..100 | ForEach-Object { Start-Sleep -Milliseconds 100; $_ } } -AsJob
+                        $job = Invoke-Command -ComputerName localhost -ScriptBlock { 1..100 | ForEach-Object { Start-Sleep -Milliseconds 100; $_ } } -AsJob
 
                         # Wait for output to indicate job is running.
                         while (-not $job.HasMoreData -and $job.JobStateInfo.State -in @('NotStarted','Running'))
