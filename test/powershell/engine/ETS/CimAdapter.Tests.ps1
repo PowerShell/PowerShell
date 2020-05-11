@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 function getIndex
 {
@@ -20,7 +20,7 @@ try {
             if ( ! $IsWindows ) {
                 return
             }
-            $p = get-ciminstance win32_process |Select-object -first 1
+            $p = Get-CimInstance win32_process |Select-Object -First 1
 
             $indexOf_namespaceQualified_Win32Process            = getIndex $p.PSTypeNames "*root?cimv2?Win32_Process"
             $indexOf_namespaceQualified_CimProcess              = getIndex $p.PSTypeNames "*root?cimv2?CIM_Process"
@@ -36,7 +36,7 @@ try {
             $PSDefaultParameterValues.Remove("it:pending")
         }
 
-        It "Namespace-qualified Win32_Process is present" -skip:(!$IsWindows) {
+        It "Namespace-qualified Win32_Process is present" -Skip:(!$IsWindows) {
             $indexOf_namespaceQualified_Win32Process | Should -Not -Be (-1)
         }
         It "Namespace-qualified CIM_Process is present" {
@@ -49,7 +49,7 @@ try {
             $indexOf_namespaceQualified_CimManagedSystemElement | Should -Not -Be (-1)
         }
 
-        It "Classname of Win32_Process is present" -skip:(!$IsWindows) {
+        It "Classname of Win32_Process is present" -Skip:(!$IsWindows) {
             $indexOf_className_Win32Process | Should -Not -Be (-1)
         }
         It "Classname of CIM_Process is present" {
@@ -62,7 +62,7 @@ try {
             $indexOf_className_CimManagedSystemElement | Should -Not -Be (-1)
         }
 
-        It "Win32_Process comes after CIM_Process (namespace qualified)" -skip:(!$IsWindows) {
+        It "Win32_Process comes after CIM_Process (namespace qualified)" -Skip:(!$IsWindows) {
             $indexOf_namespaceQualified_Win32Process | Should -BeLessThan $indexOf_namespaceQualified_CimProcess
         }
         It "CIM_Process comes after CIM_LogicalElement (namespace qualified)" {
@@ -72,7 +72,7 @@ try {
             $indexOf_namespaceQualified_CimLogicalElement | Should -BeLessThan $indexOf_namespaceQualified_CimManagedSystemElement
         }
 
-        It "Win32_Process comes after CIM_Process (classname only)" -skip:(!$IsWindows) {
+        It "Win32_Process comes after CIM_Process (classname only)" -Skip:(!$IsWindows) {
             $indexOf_className_Win32Process | Should -BeLessThan $indexOf_className_CimProcess
         }
         It "CIM_Process comes after CIM_LogicalElement (classname only)" {
@@ -82,7 +82,7 @@ try {
             $indexOf_className_CimLogicalElement | Should -BeLessThan $indexOf_className_CimManagedSystemElement
         }
 
-        It "Namespace qualified PSTypenames comes after class-only PSTypeNames" -skip:(!$IsWindows) {
+        It "Namespace qualified PSTypenames comes after class-only PSTypeNames" -Skip:(!$IsWindows) {
             $indexOf_namespaceQualified_CimManagedSystemElement | Should -BeLessThan $indexOf_className_Win32Process
         }
     }

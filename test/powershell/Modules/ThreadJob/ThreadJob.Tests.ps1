@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # Helper function to wait for job to reach a running or completed state
@@ -79,7 +79,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     }
 
     AfterEach {
-        Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
+        Get-Job | Where-Object PSJobTypeName -EQ "ThreadJob" | Remove-Job -Force
     }
 
     It 'ThreadJob with ScriptBlock' {
@@ -241,7 +241,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         try
         {
             # Start four thread jobs with ThrottleLimit set to two
-            Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
+            Get-Job | Where-Object PSJobTypeName -EQ "ThreadJob" | Remove-Job -Force
             $job1 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 } -ThrottleLimit 2
             $job2 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
             $job3 = Start-ThreadJob -ScriptBlock { Start-Sleep -Seconds 60 }
@@ -255,10 +255,10 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         }
         finally
         {
-            Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
+            Get-Job | Where-Object PSJobTypeName -EQ "ThreadJob" | Remove-Job -Force
         }
 
-        Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Should -HaveCount 0
+        Get-Job | Where-Object PSJobTypeName -EQ "ThreadJob" | Should -HaveCount 0
     }
 
     It 'ThreadJob Runspaces should be cleaned up at completion' {
@@ -332,7 +332,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
     It 'ThreadJob jobs should work with Receive-Job -AutoRemoveJob' {
 
-        Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
+        Get-Job | Where-Object PSJobTypeName -EQ "ThreadJob" | Remove-Job -Force
 
         $job1 = Start-ThreadJob -ScriptBlock { 1..2 | ForEach-Object { Start-Sleep -Milliseconds 100; "Output $_" } } -ThrottleLimit 5
         $job2 = Start-ThreadJob -ScriptBlock { 1..2 | ForEach-Object { Start-Sleep -Milliseconds 100; "Output $_" } }
@@ -341,7 +341,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         $null = $job1,$job2,$job3,$job4 | Receive-Job -Wait -AutoRemoveJob
 
-        Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Should -HaveCount 0
+        Get-Job | Where-Object PSJobTypeName -EQ "ThreadJob" | Should -HaveCount 0
     }
 
     It 'ThreadJob jobs should run in FullLanguage mode by default' {
@@ -354,7 +354,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 Describe 'Job2 class API tests' -Tags 'CI' {
 
     AfterEach {
-        Get-Job | Where-Object PSJobTypeName -eq "ThreadJob" | Remove-Job -Force
+        Get-Job | Where-Object PSJobTypeName -EQ "ThreadJob" | Remove-Job -Force
     }
 
     It 'Verifies StopJob API' {

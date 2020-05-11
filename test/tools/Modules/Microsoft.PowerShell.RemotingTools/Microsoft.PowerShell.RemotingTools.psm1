@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 ##
@@ -32,7 +32,7 @@ function DetectPlatform
         [PlatformInfo] $PlatformInfo
     )
 
-    try 
+    try
     {
         $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
         $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
@@ -41,8 +41,8 @@ function DetectPlatform
         $platformInfo.isLinux = $Runtime::IsOSPlatform($OSPlatform::Linux)
         $platformInfo.isOSX = $Runtime::IsOSPlatform($OSPlatform::OSX)
         $platformInfo.isWindows = $Runtime::IsOSPlatform($OSPlatform::Windows)
-    } 
-    catch 
+    }
+    catch
     {
         $platformInfo.isCoreCLR = $false
         $platformInfo.isLinux = $false
@@ -286,7 +286,7 @@ $typeDef = @'
                     path: longPath,
                     shortPath: shortPath,
                     shortPathLength: shortPathLength);
-    
+
                 return shortPath.ToString();
             }
         }
@@ -298,7 +298,7 @@ $typeDef = @'
     Enables PowerShell SSH remoting endpoint on local system
 .Description
     This cmdlet will set up an SSH based remoting endpoint on the local system, based on
-    the PowerShell executable file path passed in. Or if no PowerShell file path is provided then 
+    the PowerShell executable file path passed in. Or if no PowerShell file path is provided then
     the currently running PowerShell file path is used.
     The end point is enabled by adding a 'powershell' subsystem entry to the SSHD configuration, using
     the provided or current PowerShell file path.
@@ -359,7 +359,7 @@ function Enable-SSHRemoting
                     $parameters += "'$value' "
                 }
             }
-            
+
             & sudo "$PSHOME/pwsh" -NoExit -c "Import-Module -Name $modFilePath; Enable-SSHRemoting $parameters"
             exit
         }
@@ -457,7 +457,7 @@ function Enable-SSHRemoting
                 throw "Converting long Windows file path resulted in an invalid path: ${PowerShellToUse}."
             }
         }
-        else 
+        else
         {
             throw "The PowerShell executable (pwsh) selected for hosting the remoting endpoint has a file path containing space characters, which cannot be used with SSHD configuration."
         }

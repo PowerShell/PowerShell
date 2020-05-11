@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Member" -Tags "CI" {
     It "Should be able to be called on string objects, ints, arrays, etc" {
@@ -43,9 +43,11 @@ Describe "Get-Member" -Tags "CI" {
 
     It "Should be able to be called on IntPtr" {
         $results = [System.IntPtr] | Get-Member -Type Property -Static | Sort-Object -Property Name
-        $results.Count | Should -BeExactly 2
-        $results[0].Name | Should -BeExactly 'Size'
-        $results[1].Name | Should -BeExactly 'Zero'
+        $results.Count | Should -BeExactly 4
+        $results[0].Name | Should -BeExactly 'MaxValue'
+        $results[1].Name | Should -BeExactly 'MinValue'
+        $results[2].Name | Should -BeExactly 'Size'
+        $results[3].Name | Should -BeExactly 'Zero'
     }
 
     It "Should work with incomplete parameter '-i'" {
@@ -245,14 +247,14 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
 
     Context "Verify Get-Member with other parameters" {
         It 'works with View Parameter' {
-            $results = [xml]'<a>some text</a>' | Get-Member -view adapted
-            $results | Where-Object Name -eq a | Should -Not -BeNullOrEmpty
-            $results | Where-Object Name -eq CreateElement | Should -Not -BeNullOrEmpty
-            $results | Where-Object Name -eq CreateNode | Should -Not -BeNullOrEmpty
+            $results = [xml]'<a>some text</a>' | Get-Member -View adapted
+            $results | Where-Object Name -EQ a | Should -Not -BeNullOrEmpty
+            $results | Where-Object Name -EQ CreateElement | Should -Not -BeNullOrEmpty
+            $results | Where-Object Name -EQ CreateNode | Should -Not -BeNullOrEmpty
         }
 
         It 'Get hidden members' {
-            $results = 'abc' | Get-Member -force
+            $results = 'abc' | Get-Member -Force
             $hiddenMembers = "psbase", "psextended", "psadapted", "pstypenames", "psobject"
             foreach ($member in $hiddenMembers) {
                 foreach ($result in $results) {
@@ -265,7 +267,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
         }
 
         It 'Get Set Property Accessors On PsBase' {
-            $results = ('abc').psbase | Get-Member -force get_*
+            $results = ('abc').psbase | Get-Member -Force get_*
             $expectedMembers = "get_Chars", "get_Length"
             foreach ($member in $expectedMembers) {
                 foreach ($result in $results) {

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Group-Object DRT Unit Tests" -Tags "CI" {
     It "Test for CaseSensitive switch" {
@@ -108,7 +108,7 @@ Describe "Group-Object" -Tags "CI" {
 
     It "Should be able to retrieve objects by key when using -AsHashTable without -AsString" {
         $testObject = [pscustomobject] @{a="one"; b=2}, [pscustomobject] @{a="two"; b=10}
-        $result = $testObject | Group-Object -AsHashtable -Property a
+        $result = $testObject | Group-Object -AsHashTable -Property a
         $result.one.b | Should -Be 2
         $result["two"].b | Should -Be 10
     }

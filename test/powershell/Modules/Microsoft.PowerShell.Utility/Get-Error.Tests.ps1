@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Get-Error tests' -Tag CI {
@@ -38,7 +38,7 @@ Describe 'Get-Error tests' -Tag CI {
         }
 
         try {
-            get-item (new-guid) -ErrorAction SilentlyContinue
+            Get-Item (New-Guid) -ErrorAction SilentlyContinue
         }
         catch {
         }

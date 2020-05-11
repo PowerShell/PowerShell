@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-$powershellexe = (get-process -id $PID).mainmodule.filename
+$powershellexe = (Get-Process -Id $PID).mainmodule.filename
 
 Describe "Clone array" -Tags "CI" {
     It "Cast in target expr" {
@@ -27,7 +27,7 @@ Describe "Set fields through PSMemberInfo" -Tags "CI" {
         ([AStruct]@{s = "abc" }).s | Should -BeExactly "abc"
     }
     It "via new-object" {
-        (new-object AStruct -prop @{s="abc"}).s | Should -BeExactly "abc"
+        (New-Object AStruct -prop @{s="abc"}).s | Should -BeExactly "abc"
     }
     It "via PSObject" {
         $x = [AStruct]::new()

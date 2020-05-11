@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Function Stop-HTTPListener {
     <#
@@ -319,7 +319,7 @@ Function Start-HTTPListener {
             }
             catch
             {
-                $errormsg = $_ | convertto-json
+                $errormsg = $_ | ConvertTo-Json
                 Write-Error $errormsg
             }
             finally

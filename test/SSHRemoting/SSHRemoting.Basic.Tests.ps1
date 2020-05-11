@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "SSHRemoting Basic Tests" -tags CI {
@@ -23,8 +23,8 @@ Describe "SSHRemoting Basic Tests" -tags CI {
     Context "New-PSSession Tests" {
 
         AfterEach {
-            if ($script:session -ne $null) { Remove-PSSession -session $script:session }
-            if ($script:sessions -ne $null) { Remove-PSSession -session $script:sessions }
+            if ($script:session -ne $null) { Remove-PSSession -Session $script:session }
+            if ($script:sessions -ne $null) { Remove-PSSession -Session $script:sessions }
         }
 
         It "Verifies new connection with implicit current User" {

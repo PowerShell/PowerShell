@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-ChildItem" -Tags "CI" {
 
@@ -83,7 +83,7 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should have all the proper fields and be populated" {
-            $var = Get-Childitem .
+            $var = Get-ChildItem .
 
             $var.Name.Length   | Should -BeGreaterThan 0
             $var.Mode.Length   | Should -BeGreaterThan 0
@@ -92,7 +92,7 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should have mode property populated for protected files on Windows" -Skip:(!$IsWindows) {
-            $files = Get-Childitem -Force ~\NT*
+            $files = Get-ChildItem -Force ~\NT*
             $files.Count | Should -BeGreaterThan 0
             foreach ($file in $files)
             {
@@ -110,14 +110,14 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
 
         It "Should list hidden files as well when 'Force' parameter is used" {
-            $files = Get-ChildItem -path $TestDrive -Force
+            $files = Get-ChildItem -Path $TestDrive -Force
             $files | Should -Not -BeNullOrEmpty
             $files.Count | Should -Be 6
             $files.Name.Contains($item_F) | Should -BeTrue
         }
 
         It "Should list only hidden files when 'Hidden' parameter is used" {
-            $files = Get-ChildItem -path $TestDrive -Hidden
+            $files = Get-ChildItem -Path $TestDrive -Hidden
             $files | Should -Not -BeNullOrEmpty
             $files.Count | Should -Be 1
             $files[0].Name | Should -BeExactly $item_F
@@ -170,7 +170,7 @@ Describe "Get-ChildItem" -Tags "CI" {
         # VSTS machines don't have a page file
         It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Pending {
             # Don't remove!!! It is special test for hidden and opened file with exclusive lock.
-            $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
+            $file = Get-ChildItem -Path "$env:SystemDrive\\pagefile.sys" -Hidden
             $file | Should -Not -Be $null
             $file.Count | Should -Be 1
             $file.Name | Should -Be "pagefile.sys"
@@ -214,16 +214,16 @@ Describe "Get-ChildItem" -Tags "CI" {
         It 'can handle mixed case in Env variables' {
             try
             {
-                $env:__FOOBAR = 'foo'
-                $env:__foobar = 'bar'
+                $env:__FOODBAR = 'food'
+                $env:__foodbar = 'bar'
 
-                $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
+                $foodbar = Get-ChildItem env: | Where-Object {$_.Name -eq '__foodbar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
-                ($foobar | Measure-Object).Count | Should -Be $count
+                ($foodbar | Measure-Object).Count | Should -Be $count
             }
             catch
             {
-                Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
+                Get-ChildItem env: | Where-Object {$_.Name -eq '__foodbar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
     }

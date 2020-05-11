@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -374,9 +374,13 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(ex, "AuthenticationException", ErrorCategory.InvalidOperation, _mSmtpClient);
                 WriteError(er);
             }
-
-            // If we don't dispose the attachments, the sender can't modify or use the files sent.
-            _mMailMessage.Attachments.Dispose();
+            finally
+            {
+                _mSmtpClient.Dispose();
+                
+                // If we don't dispose the attachments, the sender can't modify or use the files sent.
+                _mMailMessage.Attachments.Dispose();
+            }
         }
 
         #endregion

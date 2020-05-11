@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
@@ -7,16 +7,16 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 
     BeforeEach {
         New-Item -Path $testAliasDirectory -ItemType Directory -Force
-        remove-item alias:abcd* -force -ErrorAction SilentlyContinue
-        remove-item alias:ijkl* -force -ErrorAction SilentlyContinue
-        set-alias abcd01 efgh01
-        set-alias abcd02 efgh02
-        set-alias abcd03 efgh03
-        set-alias abcd04 efgh04
-        set-alias ijkl01 mnop01
-        set-alias ijkl02 mnop02
-        set-alias ijkl03 mnop03
-        set-alias ijkl04 mnop04
+        Remove-Item alias:abcd* -Force -ErrorAction SilentlyContinue
+        Remove-Item alias:ijkl* -Force -ErrorAction SilentlyContinue
+        Set-Alias abcd01 efgh01
+        Set-Alias abcd02 efgh02
+        Set-Alias abcd03 efgh03
+        Set-Alias abcd04 efgh04
+        Set-Alias ijkl01 mnop01
+        Set-Alias ijkl02 mnop02
+        Set-Alias ijkl03 mnop03
+        Set-Alias ijkl04 mnop04
     }
 
     AfterEach {
@@ -34,7 +34,7 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 
     It "Import-Alias Into Invalid Scope should throw PSArgumentException"{
         { Export-Alias  $fulltestpath abcd* } | Should -Not -Throw
-        { Import-Alias $fulltestpath -scope bogus } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
+        { Import-Alias $fulltestpath -Scope bogus } | Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
     }
 
     It "Import-Alias From Exported Alias File Aliases Already Exist using force should not throw"{

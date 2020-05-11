@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Verify approved aliases list" -Tags "CI" {
     BeforeAll {
@@ -531,7 +531,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
                 $currentCmdletList = & $getCommands $moduleList
             }
 
-            $commandList  = $commandString | ConvertFrom-CSV -Delimiter ","
+            $commandList  = $commandString | ConvertFrom-Csv -Delimiter ","
             $aliasFullList  = $commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias"  }
     }
 

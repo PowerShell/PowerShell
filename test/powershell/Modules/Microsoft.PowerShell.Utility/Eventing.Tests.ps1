@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Event Subscriber Tests" -Tags "Feature" {
@@ -12,25 +12,25 @@ Describe "Event Subscriber Tests" -Tags "Feature" {
     # can't let this case to work
     It "Register an event with no action, trigger it and wait for it to be raised." -Pending:$true{
         Get-EventSubscriber | Should -BeNullOrEmpty
-        $messageData = new-object psobject
+        $messageData = New-Object psobject
         $job = Start-Job { Start-Sleep -Seconds 5; 1..5 }
         $null = Register-ObjectEvent $job -EventName StateChanged -SourceIdentifier EventSIDTest -Action {} -MessageData $messageData
-        new-event EventSIDTest
+        New-Event EventSIDTest
 
-        wait-event EventSIDTest
-        $eventdata = get-event EventSIDTest
+        Wait-Event EventSIDTest
+        $eventdata = Get-Event EventSIDTest
         $eventdata.MessageData | Should -Be $messageData
-        remove-event EventSIDTest
+        Remove-Event EventSIDTest
         Unregister-Event EventSIDTest
         Get-EventSubscriber | Should -BeNullOrEmpty
     }
 
     It "Access a global variable from an event action." {
         Get-EventSubscriber | Should -BeNullOrEmpty
-        set-variable incomingGlobal -scope global -value globVarValue
-        $null = register-engineevent -SourceIdentifier foo -Action {set-variable -scope global -name aglobalvariable -value $incomingGlobal}
-        new-event foo
-        $getvar = get-variable aglobalvariable -scope global
+        Set-Variable incomingGlobal -Scope global -Value globVarValue
+        $null = Register-EngineEvent -SourceIdentifier foo -Action {Set-Variable -Scope global -Name aglobalvariable -Value $incomingGlobal}
+        New-Event foo
+        $getvar = Get-Variable aglobalvariable -Scope global
         $getvar.Name | Should -Be aglobalvariable
         $getvar.Value | Should -Be globVarValue
         Unregister-Event foo
@@ -44,7 +44,7 @@ Describe "Event Subscriber Tests" -Tags "Feature" {
             try{
                 try{} finally{}
             }
-            catch{ Write-Host "Exception" -Nonewline }
+            catch{ Write-Host "Exception" -NoNewline }
         }
         } | Out-String
 

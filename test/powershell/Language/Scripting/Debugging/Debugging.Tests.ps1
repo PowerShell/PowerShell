@@ -1,7 +1,7 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe 'Basic debugger tests' -tag 'CI' {
+Describe 'Basic debugger tests' -Tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -27,7 +27,7 @@ Describe 'Basic debugger tests' -tag 'CI' {
                 $global:DollarQuestionMarkResults = Test-DollarQuestionMark -ErrorAction Break
             }
 
-            $global:results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue '$?')
+            $global:results = @(Test-Debugger -Scriptblock $testScript -CommandQueue '$?')
         }
 
         AfterAll {
@@ -230,11 +230,11 @@ Describe "Breakpoints when set should be hit" -tag "CI" {
 'bbb'
 '@
             $path = Setup -PassThru -File BasicTest.ps1 -Content $script
-            $bps = 1..6 | ForEach-Object { set-psbreakpoint -script $path -line $_ -Action { continue } }
+            $bps = 1..6 | ForEach-Object { Set-PSBreakpoint -Script $path -Line $_ -Action { continue } }
         }
 
         AfterAll {
-            $bps | Remove-PSBreakPoint
+            $bps | Remove-PSBreakpoint
         }
 
         It "A redirected breakpoint is hit" {
@@ -500,7 +500,7 @@ elseif (Test-Path $PSCommandPath)
     }
 }
 
-Describe "It should be possible to reset runspace debugging" -tag "Feature" {
+Describe "It should be possible to reset runspace debugging" -Tag "Feature" {
     BeforeAll {
         $script = @'
 "line 1"

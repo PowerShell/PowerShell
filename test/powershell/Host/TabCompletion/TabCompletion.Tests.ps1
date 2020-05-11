@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "TabCompletion" -Tags CI {
     BeforeAll {
@@ -34,12 +34,12 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
     }
 
-    It 'Should complete dotnet method with null conditional operator' -skip:$nullConditionalFeatureDisabled {
+    It 'Should complete dotnet method with null conditional operator' -Skip:$nullConditionalFeatureDisabled {
         $res = TabExpansion2 -inputScript '(1)?.ToSt' -cursorColumn '(1)?.ToSt'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'ToString('
     }
 
-    It 'Should complete dotnet method with null conditional operator without first letter' -skip:$nullConditionalFeatureDisabled {
+    It 'Should complete dotnet method with null conditional operator without first letter' -Skip:$nullConditionalFeatureDisabled {
         $res = TabExpansion2 -inputScript '(1)?.' -cursorColumn '(1)?.'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'CompareTo('
     }
@@ -147,18 +147,18 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches.Count | Should -BeGreaterThan 0
     }
 
-    It 'Should complete keyword' -skip {
+    It 'Should complete keyword' -Skip {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly 'namespace'
     }
 
-    It 'Should first suggest -Full and then -Functionality when using Get-Help -Fu<tab>' -skip {
+    It 'Should first suggest -Full and then -Functionality when using Get-Help -Fu<tab>' -Skip {
         $res = TabExpansion2 -inputScript 'Get-Help -Fu' -cursorColumn 'Get-Help -Fu'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Full'
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
     }
 
-    It 'Should first suggest -Full and then -Functionality when using help -Fu<tab>' -skip {
+    It 'Should first suggest -Full and then -Functionality when using help -Fu<tab>' -Skip {
         $res = TabExpansion2 -inputScript 'help -Fu' -cursorColumn 'help -Fu'.Length
         $res.CompletionMatches[0].CompletionText | Should -BeExactly '-Full'
         $res.CompletionMatches[1].CompletionText | Should -BeExactly '-Functionality'
@@ -349,7 +349,7 @@ Describe "TabCompletion" -Tags CI {
                 }
             }
             $line = "$nativeCommand --f"
-            $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches.CompletionText | Should -BeExactly "--flag"
         }
@@ -365,7 +365,7 @@ Describe "TabCompletion" -Tags CI {
                 }
             }
             $line = "$nativeCommand -o"
-            $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
             $res.CompletionMatches | Should -HaveCount 1
             $res.CompletionMatches.CompletionText | Should -BeExactly "-option"
         }
@@ -380,8 +380,8 @@ Describe "TabCompletion" -Tags CI {
 
     Context "Script name completion" {
         BeforeAll {
-            setup -f 'install-powershell.ps1' -content ""
-            setup -f 'remove-powershell.ps1' -content ""
+            Setup -f 'install-powershell.ps1' -Content ""
+            Setup -f 'remove-powershell.ps1' -Content ""
 
             $scriptWithWildcardCases = @(
                 @{
@@ -415,7 +415,7 @@ Describe "TabCompletion" -Tags CI {
             Pop-Location
         }
 
-        it "Input <name> should successfully complete" -TestCases $scriptWithWildcardCases {
+        It "Input <name> should successfully complete" -TestCases $scriptWithWildcardCases {
             param($command, $expectedCommand)
             $res = TabExpansion2 -inputScript $command -cursorColumn $command.Length
             $res.CompletionMatches.Count | Should -BeGreaterThan 0
@@ -699,7 +699,7 @@ Describe "TabCompletion" -Tags CI {
                 ## if $PSHOME contains a space tabcompletion adds ' around the path
                 @{ inputStr = 'cd $PSHOME\Modu'; expected = if($PSHOME.Contains(' ')) { "'$(Join-Path $PSHOME 'Modules')'" } else { Join-Path $PSHOME 'Modules' }; setup = $null }
                 @{ inputStr = 'cd "$PSHOME\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
-                @{ inputStr = '$PSHOME\System.Management.Au'; expected = if($PSHOME.Contains(' ')) { "`& '$(Join-Path $PSHOME 'System.Management.Automation.dll')'" }  else { Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }}
+                @{ inputStr = '$PSHOME\System.Management.Au'; expected = if($PSHOME.Contains(' ')) { "`& '$(Join-Path $PSHOME 'System.Management.Automation.dll')'" }  else { Join-Path $PSHOME 'System.Management.Automation.dll'; Setup = $null }}
                 @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 @{ inputStr = '& "$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 ## tab completion AST-based tests

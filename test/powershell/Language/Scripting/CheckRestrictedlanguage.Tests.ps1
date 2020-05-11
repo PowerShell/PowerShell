@@ -1,8 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         BeforeAll {
-            set-strictmode -v 2
+            Set-StrictMode -v 2
             function list {
 
             $l = [System.Collections.Generic.List[String]]::new()
@@ -62,12 +62,12 @@ Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         }
 
         It 'Check for restricted commands' {
-            { {get-date}.CheckRestrictedLangauge($null, $null, $false) } | Should -Throw -ErrorId 'MethodNotFound'
+            { {Get-Date}.CheckRestrictedLangauge($null, $null, $false) } | Should -Throw -ErrorId 'MethodNotFound'
         }
 
         It 'Check for allowed commands and variables' {
 
-            { { get-process | where name -Match $pattern | foreach $prop }.CheckRestrictedLanguage(
+            { { Get-Process | where name -Match $pattern | foreach $prop }.CheckRestrictedLanguage(
                 (list get-process where foreach),
                 (list prop pattern)
                 , $false) } | Should -Not -Throw

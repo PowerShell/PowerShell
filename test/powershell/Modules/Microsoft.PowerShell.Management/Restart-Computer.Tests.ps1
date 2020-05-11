@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # the testhook for restart-computer is the same as for stop-computer
@@ -81,7 +81,7 @@ try
             }
 
             It "Should not support timeout on Unix" -Skip:($IsWindows) {
-                { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                { Restart-Computer -Timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
 
             It "Should not support Delay on Unix" -Skip:($IsWindows) {
@@ -90,12 +90,12 @@ try
 
             It "Should not support timeout on localhost" -Skip:(!$IsWindows) {
                 Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-                { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                { Restart-Computer -Timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
 
             It "Should not support timeout on localhost" -Skip:(!$IsWindows) {
                 Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-                { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                { Restart-Computer -Timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
         }
     }

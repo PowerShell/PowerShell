@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -58,9 +58,36 @@ namespace System.Management.Automation
         /// </param>
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
-            return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
-                   AssemblyLoadContext.Default.Assemblies.Where(a =>
-                       !a.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyFullNamePrefix, StringComparison.Ordinal));
+            return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ?? GetPSVisibleAssemblies();
+        }
+
+        /// <summary>
+        /// Return assemblies from the default load context and the 'individual' load contexts.
+        /// The 'individual' load contexts are the ones holding assemblies loaded via 'Assembly.Load(byte[])' and 'Assembly.LoadFile'.
+        /// Assemblies loaded in any custom load contexts are not consider visible to PowerShell to avoid type identity issues.
+        /// </summary>
+        private static IEnumerable<Assembly> GetPSVisibleAssemblies()
+        {
+            const string IndividualAssemblyLoadContext = "System.Runtime.Loader.IndividualAssemblyLoadContext";
+
+            foreach (Assembly assembly in AssemblyLoadContext.Default.Assemblies)
+            {
+                if (!assembly.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyFullNamePrefix, StringComparison.Ordinal))
+                {
+                    yield return assembly;
+                }
+            }
+
+            foreach (AssemblyLoadContext context in AssemblyLoadContext.All)
+            {
+                if (IndividualAssemblyLoadContext.Equals(context.GetType().FullName, StringComparison.Ordinal))
+                {
+                    foreach (Assembly assembly in context.Assemblies)
+                    {
+                        yield return assembly;
+                    }
+                }
+            }
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 #
@@ -60,12 +60,12 @@ Describe "SkipCACheck and SkipCNCheck PSSession options are required for New-PSS
         },
         @{
             Name = 'Verifies expected error when SkipCACheck option is missing'
-            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSl -SessionOption $soSkipCN }
+            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL -SessionOption $soSkipCN }
             ExpectedErrorCode = 825
         },
         @{
             Name = 'Verifies expected error when SkipCNCheck option is missing'
-            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSl -SessionOption $soSkipCA }
+            ScriptBlock = { New-PSSession -cn localhost -Credential $cred -Authentication Basic -UseSSL -SessionOption $soSkipCA }
             ExpectedErrorCode = 825
         }
     )

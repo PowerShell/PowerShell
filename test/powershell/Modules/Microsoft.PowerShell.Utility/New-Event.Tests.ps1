@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "New-Event" -Tags "CI" {
 
@@ -11,15 +11,15 @@ Describe "New-Event" -Tags "CI" {
 
     Context "Check New-Event can register an event"{
 	It "Should return PesterTestMessage as the MessageData" {
-	    (New-Event -sourceidentifier PesterTimer -sender Windows.timer -messagedata "PesterTestMessage")
+	    (New-Event -SourceIdentifier PesterTimer -Sender Windows.timer -MessageData "PesterTestMessage")
 	    (Get-Event -SourceIdentifier PesterTimer).MessageData  | Should -BeExactly "PesterTestMessage"
-	    Remove-Event -sourceidentifier PesterTimer
+	    Remove-Event -SourceIdentifier PesterTimer
 	}
 
 	It "Should return Sender as Windows.timer" {
-	    (New-Event -sourceidentifier PesterTimer -sender Windows.timer -messagedata "PesterTestMessage")
+	    (New-Event -SourceIdentifier PesterTimer -Sender Windows.timer -MessageData "PesterTestMessage")
 	    (Get-Event -SourceIdentifier PesterTimer).Sender  | Should -Be Windows.timer
-	    Remove-Event -sourceIdentifier PesterTimer
+	    Remove-Event -SourceIdentifier PesterTimer
 	}
     }
 }
