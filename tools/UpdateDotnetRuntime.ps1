@@ -4,7 +4,10 @@
 [CmdletBinding()]
 param (
     [Parameter()]
-    [string]$SDKVersionOverride
+    [string]$SDKVersionOverride,
+
+    [Parameter()]
+    [switch]$UpdateMSIPackaging
 )
 
 <#
@@ -173,3 +176,27 @@ Write-Verbose -Message "Updating global.json completed." -Verbose
 Update-PackageVersion
 
 Write-Verbose -Message "Updating project files completed." -Verbose
+
+if ($UpdateMSIPackaging) {
+    if (-not $IsWindows) {
+        throw "UpdateMSIPackaging can only be done on Windows"
+    }
+
+    Import-Module "$PSScriptRoot/../build.psm1" -Force
+    Import-Module "$PSScriptRoot/packaging" -Force
+    Start-PSBootstrap -Package
+    Start-PSBuild -Clean -Configuration Release -CrossGen
+
+    try {
+        Start-PSPackage -Type msi -SkipReleaseChecks -InformationVariable wxsData
+    }
+    catch {
+        if ($_.Exception.Message -like "Current files to not match *") {
+            Copy-Item -Path $($wxsData.MessageData.NewFile) -Destination ($wxsData.MessageData.FilesWxsPath)
+            Write-Verbose -Message "Updating files.wxs file completed." -Verbose
+        }
+        else {
+            throw $_
+        }
+    }
+}
