@@ -2502,34 +2502,34 @@ namespace Microsoft.PowerShell
             sb.Append(']');
         }
 
-        internal static string Type(Type type, bool dropNamespaces = false, string? key = null)
+        internal static string Type(Type typeToName, bool dropNamespaces = false, string? key = null)
         {
-            if (type == null)
+            if (typeToName == null)
             {
                 return string.Empty;
             }
 
             string result;
-            if (type.IsGenericType && !type.IsGenericTypeDefinition)
+            if (typeToName.IsGenericType && !typeToName.IsGenericTypeDefinition)
             {
-                string genericDefinition = Type(type.GetGenericTypeDefinition(), dropNamespaces);
+                string genericDefinition = Type(typeToName.GetGenericTypeDefinition(), dropNamespaces);
                 // For regular generic types, we find the backtick character, for example:
                 //      System.Collections.Generic.List`1[T] ->
                 //      System.Collections.Generic.List[string]
                 // For nested generic types, we find the left bracket character, for example:
                 //      System.Collections.Generic.Dictionary`2+Enumerator[TKey, TValue] ->
                 //      System.Collections.Generic.Dictionary`2+Enumerator[string,string]
-                int backtickOrLeftBracketIndex = genericDefinition.LastIndexOf(type.IsNested ? '[' : '`');
+                int backtickOrLeftBracketIndex = genericDefinition.LastIndexOf(typeToName.IsNested ? '[' : '`');
                 var sb = new StringBuilder(genericDefinition, 0, backtickOrLeftBracketIndex, 512);
-                AddGenericArguments(sb, type.GetGenericArguments(), dropNamespaces);
+                AddGenericArguments(sb, typeToName.GetGenericArguments(), dropNamespaces);
                 result = sb.ToString();
             }
-            else if (type.IsArray)
+            else if (typeToName.IsArray)
             {
-                string elementDefinition = Type(type.GetElementType()!, dropNamespaces);
+                string elementDefinition = Type(typeToName.GetElementType()!, dropNamespaces);
                 var sb = new StringBuilder(elementDefinition, elementDefinition.Length + 10);
                 sb.Append("[");
-                for (int i = 0; i < type.GetArrayRank() - 1; ++i)
+                for (int i = 0; i < typeToName.GetArrayRank() - 1; ++i)
                 {
                     sb.Append(",");
                 }
@@ -2539,48 +2539,48 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                result = TypeAccelerators.FindBuiltinAccelerator(type, key);
+                result = TypeAccelerators.FindBuiltinAccelerator(typeToName, key);
                 if (result == null)
                 {
-                    if (type == typeof(PSCustomObject))
+                    if (typeToName == typeof(PSCustomObject))
                     {
-                        return type.Name;
+                        return typeToName.Name;
                     }
 
                     if (dropNamespaces)
                     {
-                        if (type.IsNested)
+                        if (typeToName.IsNested)
                         {
                             // For nested types, we should return OuterType+InnerType. For example,
                             //  System.Environment+SpecialFolder ->  Environment+SpecialFolder
-                            string fullName = type.ToString();
-                            result = type.Namespace == null
+                            string fullName = typeToName.ToString();
+                            result = typeToName.Namespace == null
                                         ? fullName
-                                        : fullName.Substring(type.Namespace.Length + 1);
+                                        : fullName.Substring(typeToName.Namespace.Length + 1);
                         }
                         else
                         {
-                            result = type.Name;
+                            result = typeToName.Name;
                         }
                     }
                     else
                     {
-                        result = type.ToString();
+                        result = typeToName.ToString();
                     }
                 }
             }
 
             // We can't round trip anything with a generic parameter.
             // We also can't round trip if we're dropping the namespace.
-            if (!type.IsGenericParameter
-                && !type.ContainsGenericParameters
+            if (!typeToName.IsGenericParameter
+                && !typeToName.ContainsGenericParameters
                 && !dropNamespaces
-                && !type.Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
+                && !typeToName.Assembly.GetCustomAttributes(typeof(DynamicClassImplementationAssemblyAttribute)).Any())
             {
                 TypeResolver.TryResolveType(result, out Type roundTripType);
-                if (roundTripType != type)
+                if (roundTripType != typeToName)
                 {
-                    result = type.AssemblyQualifiedName!;
+                    result = typeToName.AssemblyQualifiedName!;
                 }
             }
 
