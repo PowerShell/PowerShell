@@ -1798,7 +1798,7 @@ namespace System.Management.Automation
                         if (coerceElementTypeIfNeeded)
                         {
                             bindingTracer.WriteLine(
-                                "Coercing scalar arg value to type {1}",
+                                "Coercing scalar arg value to type {0}",
                                 collectionElementType);
 
                             // Coerce the scalar type into the collection
