@@ -425,3 +425,44 @@ Describe "Custom type conversion in parameter binding" -Tags 'Feature' {
         }
     }
 }
+
+Describe 'Roundtrippable Conversions for Bare-string Numeric Literals passed to [string] Parameters' -Tags CI {
+
+    BeforeAll {
+        $TestValues = @(
+            @{ Argument = "34uy" }
+            @{ Argument = "48y" }
+            @{ Argument = "8s" }
+            @{ Argument = "49us" }
+            @{ Argument = "26" }
+            @{ Argument = "28u" }
+            @{ Argument = "24l" }
+            @{ Argument = "32ul" }
+            @{ Argument = "20d" }
+            @{ Argument = "6n" }
+        )
+
+        function Test-SimpleStringValue([string] $Value) { $Value }
+        function Test-AdvancedStringValue {
+            [CmdletBinding()]
+            param(
+                [string]
+                $Value
+            )
+
+            $Value
+        }
+    }
+
+    It 'should correctly convert <Argument> back to string in simple functions' -TestCases $TestValues {
+        param($Argument)
+
+        Invoke-Expression "Test-SimpleStringValue -Value $Argument" | Should -BeExactly $Argument
+    }
+
+    It 'should correctly convert <Argument> back to string in advanced functions' -TestCases $TestValues {
+        param($Argument)
+
+        Invoke-Expression "Test-AdvancedStringValue -Value $Argument" | Should -BeExactly $Argument
+    }
+}
