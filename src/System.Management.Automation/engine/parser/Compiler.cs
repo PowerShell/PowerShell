@@ -4171,7 +4171,9 @@ namespace System.Management.Automation.Language
         private Expression GetCommandArgumentExpression(CommandElementAst element)
         {
             var constElement = element as ConstantExpressionAst;
-            if (constElement != null && LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constElement.StaticType)))
+            if (constElement != null
+                && (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constElement.StaticType))
+                || constElement.StaticType == typeof(System.Numerics.BigInteger)))
             {
                 var commandArgumentText = constElement.Extent.Text;
                 if (!commandArgumentText.Equals(constElement.Value.ToString(), StringComparison.Ordinal))
