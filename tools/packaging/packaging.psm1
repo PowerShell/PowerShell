@@ -3214,16 +3214,10 @@ function New-MSIXPackage
     }
 
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
-    $previewPublisher = 'CN=Microsoft Windows Store Publisher (Flight Root)(Lifetime EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
     $releasePublisher = 'CN=Microsoft Windows Store Publisher, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
-    if ($isPreview) {
-        $publisher = $previewPublisher
-    } else {
-        $publisher = $releasePublisher
-    }
 
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
-    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $publisher)
+    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)
     Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
     # Necessary image assets need to be in source assets folder
     $assets = @(

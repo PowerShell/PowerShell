@@ -100,20 +100,7 @@ foreach ($file in $ThirdPartyFiles) {
 }
 
 foreach ($file in $MsixFiles) {
-    switch($MsixCertType)
-    {
-        'release' {
-            $signType = 'CP-459155'
-        }
-        'preview' {
-            $signType = 'CP-459156'
-        }
-        default {
-            throw "Unknow Cert Type: $MsixCertType"
-        }
-    }
-
-    New-FileElement -File $file -SignType $signType -XmlDoc $signingXml -Job $job
+    New-FileElement -File $file -SignType 'CP-459155' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)
