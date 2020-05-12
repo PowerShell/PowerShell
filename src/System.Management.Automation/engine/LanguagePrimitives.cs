@@ -4823,7 +4823,7 @@ namespace System.Management.Automation
         /// <returns>
         /// A two-element tuple indicating [errorId, errorMsg]
         /// </returns>
-        internal static Tuple<string, string> GetInvalidCastMessages(object valueToConvert, Type resultType)
+        internal static Tuple<string, string> GetInvalidCastMessages(object? valueToConvert, Type resultType)
         {
             string errorId, errorMsg;
             if (resultType.IsByRefLike)
@@ -4834,7 +4834,7 @@ namespace System.Management.Automation
                 return Tuple.Create(errorId, errorMsg);
             }
 
-            if (PSObject.Base(valueToConvert) == null)
+            if (valueToConvert == null || PSObject.Base(valueToConvert) == null)
             {
                 if (resultType.IsEnum)
                 {
@@ -4863,7 +4863,7 @@ namespace System.Management.Automation
         // Even though this never returns, expression trees expect non-void values in places, and so it's easier
         // to claim it returns object than to add extra expressions to keep the trees type safe.
         [DoesNotReturn]
-        internal static object ThrowInvalidCastException(object valueToConvert, Type resultType)
+        internal static object ThrowInvalidCastException(object? valueToConvert, Type resultType)
         {
             // Get exception messages (in order): errorId, errorMsg
             var errorMsgTuple = GetInvalidCastMessages(valueToConvert, resultType);
@@ -4873,7 +4873,7 @@ namespace System.Management.Automation
         // Even though this never returns, expression trees expect non-void values in places, and so it's easier
         // to claim it returns object than to add extra expressions to keep the trees type safe.
         [DoesNotReturn]
-        internal static object ThrowInvalidConversionException(object valueToConvert, Type resultType)
+        internal static object ThrowInvalidConversionException(object? valueToConvert, Type resultType)
         {
             typeConversion.WriteLine("Issuing an error message about not being able to convert to non-core type.");
             throw new PSInvalidCastException("ConversionSupportedOnlyToCoreTypes", null, ExtendedTypeSystem.InvalidCastExceptionNonCoreType, resultType.ToString());
