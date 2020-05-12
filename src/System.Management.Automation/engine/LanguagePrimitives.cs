@@ -4387,7 +4387,7 @@ namespace System.Management.Automation
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(sbyte), typeof(byte),
             typeof(Single), typeof(double), typeof(decimal),
-            typeof(System.Numerics.BigInteger)
+            typeof(BigInteger)
         };
 
         private static Type[] s_integerTypes = new Type[] {
@@ -4422,7 +4422,6 @@ namespace System.Management.Automation
                     CacheConversion<object>(typeofNull, type, LanguagePrimitives.ConvertNullToNumeric, ConversionRank.NullToValue);
                 }
 
-                CacheConversion<string>(typeof(BigInteger), typeofString, ConvertNumericToString, ConversionRank.NumericString);
                 CacheConversion<bool>(typeof(Int16), typeofBool, ConvertInt16ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Int32), typeofBool, ConvertInt32ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Int64), typeofBool, ConvertInt64ToBool, ConversionRank.Language);
