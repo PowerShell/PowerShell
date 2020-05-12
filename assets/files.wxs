@@ -1957,6 +1957,18 @@
         </Directory>
       </Directory>
       <Directory Id="dir20D076755BAF7EA1D1A980368C4F81A2" Name="assets">
+        <Component Id="cmp7984C95FC456456EA5A85EEB80E09204" Guid="{c9591dd0-5c06-4997-a4f4-d5864d3c0e36}">
+          <File Id="fil99FCB9FD009C409790C520A09D399E9D" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_black.ico" />
+        </Component>
+        <Component Id="cmp8D7F9374C5DD412483A642A8B872680C" Guid="{d56a231e-5182-47e7-8668-414508c9aa62}">
+          <File Id="fil42353E0FAC694311957AC2D4C223FB15" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_av_colors.ico" />
+        </Component>
+        <Component Id="cmpE8B93DD2C860455A94B67CB33B9739F2" Guid="{42153a7d-5bc1-47a8-b24a-8eca3d4d6342}">
+          <File Id="fil92B6333D39DF4F49B6311F5E5FC9A7EF" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\Powershell_avatar.ico" />
+        </Component>
+        <Component Id="cmp15470F05E94B498786E20716B1E70B73" Guid="{46f13c7c-e4e6-4409-93aa-d6a90798a4be}">
+          <File Id="fil5643BAFBA5124AC2BF0D1FF0C1742809" KeyPath="yes" Source="$(env.ProductSourcePath)\assets\ps_black_32x32.ico" />
+        </Component>
       </Directory>
       <Directory Id="dirC93D10F1DE914404E3248A7E28901CDC" Name="cs">
         <Component Id="cmp8CAF71174AEF09BEBBC46FBC901FF5DD" Guid="{29FD7D9F-CB72-4DF5-B1BC-5DDD110E35BB}">
@@ -3098,8 +3110,8 @@
       <Component Id="cmpDBF82E0B595545C691EFDEA6D0A55EC2" Guid="{04a2d230-ce2e-4957-bc6d-e7794b88fae3}">
         <File Id="filCE6DF8BB560F4785A4111E43CD9C14D7" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-console-l1-2-0.dll" />
       </Component>
-      <Component Id="cmp5D77F9D45B004ABE86B4740264F52117" Guid="{a64ec3c7-7097-48dc-88d8-1ba099716d74}">
-        <File Id="fil349DD627B88248BCADD4736536C35A5F" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.22709.dll" />
+      <Component Id="cmp09D3F0FF826A4CBEB4480AD2EC9720AC" Guid="{af62d3ce-a587-4e20-ac32-2ba264c171be}">
+        <File Id="filE2CC950CA4B8492D860AD430BFD08E83" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.25106.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4098,8 +4110,12 @@
       <ComponentRef Id="cmp70A5A090C6B94E8F8FC9B4AE5EC2969B" />
       <ComponentRef Id="cmpD5CAB799D1E7463A92559D3D8E71172C" />
       <ComponentRef Id="cmp10A3BA8FB6304CDE98FA8E6D57223EEF" />
-      <ComponentRef Id="cmp5D77F9D45B004ABE86B4740264F52117" />
       <ComponentRef Id="cmpA57645B04E5F4D66AC598512C95AA1B9" />
+      <ComponentRef Id="cmp09D3F0FF826A4CBEB4480AD2EC9720AC" />
+      <ComponentRef Id="cmp7984C95FC456456EA5A85EEB80E09204" />
+      <ComponentRef Id="cmp8D7F9374C5DD412483A642A8B872680C" />
+      <ComponentRef Id="cmpE8B93DD2C860455A94B67CB33B9739F2" />
+      <ComponentRef Id="cmp15470F05E94B498786E20716B1E70B73" />
     </ComponentGroup>
   </Fragment>
 </Wix>
