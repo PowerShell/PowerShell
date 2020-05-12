@@ -1199,7 +1199,7 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">
         /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
         /// </exception>
-        internal static string ToStringParser(ExecutionContext context, object obj)
+        internal static string? ToStringParser(ExecutionContext context, object obj)
         {
             return ToStringParser(context, obj, CultureInfo.InvariantCulture);
         }
@@ -1220,7 +1220,7 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">
         /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
         /// </exception>
-        internal static string ToStringParser(ExecutionContext context, object? obj, IFormatProvider? formatProvider)
+        internal static string? ToStringParser(ExecutionContext context, object? obj, IFormatProvider? formatProvider)
         {
             try
             {
@@ -1260,7 +1260,7 @@ namespace System.Management.Automation
         /// <exception cref="ExtendedTypeSystemException">
         /// When there is a brokered ToString but it failed, or when the ToString on obj throws an exception.
         /// </exception>
-        internal static string ToString(ExecutionContext? context, object? obj, string? separator, string? format, IFormatProvider? formatProvider, bool recurse, bool unravelEnumeratorOnRecurse)
+        internal static string? ToString(ExecutionContext? context, object? obj, string? separator, string? format, IFormatProvider? formatProvider, bool recurse, bool unravelEnumeratorOnRecurse)
         {
             bool TryFastTrackPrimitiveTypes(object? value, out string? str)
             {
@@ -1355,7 +1355,7 @@ namespace System.Management.Automation
                         Type? type = obj as Type;
                         return type != null
                             ? Microsoft.PowerShell.ToStringCodeMethods.Type(type)
-                            : obj.ToString() ?? string.Empty;
+                            : obj.ToString();
                     }
 
                     return objFormattable.ToString(format, formatProvider);
@@ -1511,7 +1511,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>The string representation for baseObject.</returns>
         /// <exception cref="ExtendedTypeSystemException">If an exception was thrown by the BaseObject's ToString.</exception>
-        public override string ToString()
+        public override string? ToString()
         {
             // If ToString value from deserialization is available,
             // simply return it.
@@ -1541,12 +1541,12 @@ namespace System.Management.Automation
                 return ToStringFromDeserialization;
             }
 
-            return PSObject.ToString(null, this, null, format, formatProvider, true, false);
+            return PSObject.ToString(null, this, null, format, formatProvider, true, false) ?? string.Empty;
         }
 
-        private string PrivateToString()
+        private string? PrivateToString()
         {
-            string result;
+            string? result;
             try
             {
                 result = this.ToString();
@@ -2616,7 +2616,7 @@ namespace Microsoft.PowerShell
         /// ToString implementation for XmlNodeList.
         /// </summary>
         /// <param name="instance">Instance of PSObject wrapping an XmlNodeList.</param>
-        public static string XmlNodeList(PSObject instance)
+        public static string? XmlNodeList(PSObject instance)
         {
             XmlNodeList? nodes = (XmlNodeList?)instance?.BaseObject;
             if (nodes == null)

@@ -2297,7 +2297,7 @@ namespace System.Management.Automation
         }
 
 #if !UNIX
-        private static ManagementObject ConvertToWMI(object? valueToConvert,
+        private static ManagementObject ConvertToWMI(object valueToConvert,
                                                      Type resultType,
                                                      bool recursion,
                                                      PSObject? originalValueToConvert,
@@ -2309,7 +2309,7 @@ namespace System.Management.Automation
             string valueToConvertString;
             try
             {
-                valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true);
+                valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true) ?? string.Empty;
             }
             catch (ExtendedTypeSystemException e)
             {
@@ -2337,11 +2337,11 @@ namespace System.Management.Automation
                 typeConversion.WriteLine("Exception creating WMI object: \"{0}\".", wmiObjectException.Message);
                 throw new PSInvalidCastException("InvalidCastToWMI", wmiObjectException,
                     ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
-                    valueToConvert!.ToString(), resultType.ToString(), wmiObjectException.Message);
+                    valueToConvert.ToString(), resultType.ToString(), wmiObjectException.Message);
             }
         }
 
-        private static ManagementObjectSearcher ConvertToWMISearcher(object? valueToConvert,
+        private static ManagementObjectSearcher ConvertToWMISearcher(object valueToConvert,
                                                                      Type resultType,
                                                                      bool recursion,
                                                                      PSObject? originalValueToConvert,
@@ -2352,7 +2352,7 @@ namespace System.Management.Automation
             string valueToConvertString;
             try
             {
-                valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true);
+                valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true) ?? string.Empty;
             }
             catch (ExtendedTypeSystemException e)
             {
@@ -2388,7 +2388,7 @@ namespace System.Management.Automation
             string valueToConvertString;
             try
             {
-                valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true);
+                valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true) ?? string.Empty;
             }
             catch (ExtendedTypeSystemException e)
             {
@@ -2433,7 +2433,7 @@ namespace System.Management.Automation
             string valueToConvertString;
             try
             {
-                valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true);
+                valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true) ?? string.Empty;
             }
             catch (ExtendedTypeSystemException e)
             {
@@ -2527,7 +2527,7 @@ namespace System.Management.Automation
                 string valueToConvertString;
                 try
                 {
-                    valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true);
+                    valueToConvertString = PSObject.ToString(null, valueToConvert, "\n", null, null, true, true) ?? string.Empty;
                 }
                 catch (ExtendedTypeSystemException e)
                 {
@@ -3315,7 +3315,7 @@ namespace System.Management.Automation
             }
         }
 
-        private static string ConvertNonNumericToString(object? valueToConvert,
+        private static string? ConvertNonNumericToString(object? valueToConvert,
                                                         Type resultType,
                                                         bool recursion,
                                                         PSObject? originalValueToConvert,
@@ -4535,9 +4535,9 @@ namespace System.Management.Automation
 
 #if !UNIX
                 // Conversions to WMI and ADSI
-                CacheConversion<ManagementObjectSearcher>(typeofString, typeof(ManagementObjectSearcher), LanguagePrimitives.ConvertToWMISearcher, ConversionRank.Language);
+                CacheConversion<ManagementObjectSearcher>(typeofString, typeof(ManagementObjectSearcher), LanguagePrimitives.ConvertToWMISearcher!, ConversionRank.Language);
                 CacheConversion<ManagementClass>(typeofString, typeof(ManagementClass), LanguagePrimitives.ConvertToWMIClass, ConversionRank.Language);
-                CacheConversion<ManagementObject>(typeofString, typeof(ManagementObject), LanguagePrimitives.ConvertToWMI, ConversionRank.Language);
+                CacheConversion<ManagementObject>(typeofString, typeof(ManagementObject), LanguagePrimitives.ConvertToWMI!, ConversionRank.Language);
                 CacheConversion<DirectoryEntry>(typeofString, typeof(DirectoryEntry), LanguagePrimitives.ConvertToADSI, ConversionRank.Language);
                 CacheConversion<DirectorySearcher>(typeofString, typeof(DirectorySearcher), LanguagePrimitives.ConvertToADSISearcher, ConversionRank.Language);
 #endif
@@ -4927,7 +4927,7 @@ namespace System.Management.Automation
             {
                 Dbg.Assert(!LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(fromType)) || fromType.IsEnum,
                     "Number to string should be cached on initialization of cache table");
-                return CacheConversion<string>(fromType, toType, LanguagePrimitives.ConvertNonNumericToString, ConversionRank.ToString);
+                return CacheConversion<string>(fromType, toType, LanguagePrimitives.ConvertNonNumericToString!, ConversionRank.ToString);
             }
 
             if (toType.IsArray)
