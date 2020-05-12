@@ -1071,7 +1071,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        internal static bool IsNull(object obj)
+        internal static bool IsNull([NotNullWhen(false)] object? obj)
         {
             return (obj == null || obj == AutomationNull.Value);
         }
@@ -1079,7 +1079,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.
         /// </summary>
-        internal static PSObject? AsPSObjectOrNull(object obj)
+        [return: NotNullIfNotNullAttribute("obj")]
+        internal static PSObject? AsPSObjectOrNull(object? obj)
         {
             if (obj == null)
             {
