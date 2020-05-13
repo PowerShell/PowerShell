@@ -31,7 +31,7 @@ function Get-ClassCoverageData([xml.xmlelement]$element)
     $classes = [system.collections.arraylist]::new()
     foreach ( $class in $element.classes.class )
     {
-        # skip classes with names like <>f__AnonymousType6`4
+        # skip classes with names like <>f__AnonymousType6`4
         if ( $class.fullname -match "<>" ) { continue }
         $name = $class.fullname
         $branch = $class.summary.branchcoverage
