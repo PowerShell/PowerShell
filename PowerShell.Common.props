@@ -94,8 +94,8 @@
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <RuntimeFrameworkVersion>2.1.13</RuntimeFrameworkVersion>
-    <LangVersion>Latest</LangVersion>
+    <RuntimeFrameworkVersion>2.1.18</RuntimeFrameworkVersion>
+    <LangVersion>preview</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
