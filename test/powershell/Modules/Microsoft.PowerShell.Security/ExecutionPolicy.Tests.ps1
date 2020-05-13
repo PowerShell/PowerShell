@@ -56,7 +56,7 @@ try {
 
         # Skip the test if Storage module is not available, return a pseudo result
         # ExecutionPolicy only works on windows
-        It "Test for Get-Help Get-Disk" -skip:(!(Test-Path (Join-Path -Path $PSHOME -ChildPath Modules\Storage\Storage.psd1)) -or $ShouldSkipTest) {
+        It "Test for Get-Help Get-Disk" -Skip:(!(Test-Path (Join-Path -Path $PSHOME -ChildPath Modules\Storage\Storage.psd1)) -or $ShouldSkipTest) {
 
                 try
                 {
@@ -458,7 +458,7 @@ try {
                         }
                     }
 
-                    set-content $filePath -Value $content
+                    Set-Content $filePath -Value $content
 
                     ## Valida File types and their corresponding int values are :
                     ##
@@ -476,7 +476,7 @@ try {
 [ZoneTransfer]
 ZoneId=$FileType
 "@
-                        Add-Content -Path $filePath -Value $alternateStreamContent -stream Zone.Identifier
+                        Add-Content -Path $filePath -Value $alternateStreamContent -Stream Zone.Identifier
                     }
                 }
 
@@ -1111,7 +1111,7 @@ ZoneId=$FileType
 
         BeforeAll {
             if ($IsNotSkipped) {
-                $originalPolicies = Get-ExecutionPolicy -list
+                $originalPolicies = Get-ExecutionPolicy -List
             }
         }
 
@@ -1145,7 +1145,7 @@ ZoneId=$FileType
         BeforeAll {
             if ($IsNotSkipped)
             {
-                $originalPolicies = Get-ExecutionPolicy -list
+                $originalPolicies = Get-ExecutionPolicy -List
             }
         }
 

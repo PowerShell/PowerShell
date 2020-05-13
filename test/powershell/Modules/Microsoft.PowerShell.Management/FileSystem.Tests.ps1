@@ -703,8 +703,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link = Join-Path $TestDrive "sym-to-folder"
             New-Item -ItemType Directory -Path $folder > $null
             New-Item -ItemType File -Path $file -Value "some content" > $null
-            New-Item -ItemType SymbolicLink -Path $link -value $folder > $null
-            $childA = Get-Childitem $folder
+            New-Item -ItemType SymbolicLink -Path $link -Value $folder > $null
+            $childA = Get-ChildItem $folder
             Remove-Item -Path $link -Recurse
             $childB = Get-ChildItem $folder
             $childB.Count | Should -Be 1
@@ -983,7 +983,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
 
         It "Verify Filter" {
-            $result = Get-Item -Path "TestDrive:\*" -filter "*2.txt"
+            $result = Get-Item -Path "TestDrive:\*" -Filter "*2.txt"
             $result.Name | Should -BeExactly $testFile2
         }
 
@@ -1085,7 +1085,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         }
 
         It "Verify Include and Exclude Intersection" {
-            Remove-Item "TestDrive:\*" -Include "*.txt" -exclude "*2*"
+            Remove-Item "TestDrive:\*" -Include "*.txt" -Exclude "*2*"
             $file1 = Get-Item $testFile -ErrorAction SilentlyContinue
             $file2 = Get-Item $testFile2 -ErrorAction SilentlyContinue
             $file1 | Should -BeNullOrEmpty

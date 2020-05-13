@@ -3,6 +3,8 @@
 
 [CmdletBinding()]
 param (
+    [Parameter()]
+    [string]$SDKVersionOverride
 )
 
 <#
@@ -11,6 +13,11 @@ param (
 function Update-GlobalJson([string] $Version) {
     $psGlobalJsonPath = Resolve-Path "$PSScriptRoot/../global.json"
     $psGlobalJson = Get-Content -Path $psGlobalJsonPath -Raw | ConvertFrom-Json
+
+    if ($psGlobalJson.sdk.version -eq $Version) {
+        throw '.NET SDK version is not updated'
+    }
+
     $psGlobalJson.sdk.version = $Version
     $psGlobalJson | ConvertTo-Json | Out-File -FilePath $psGlobalJsonPath -Force
 }
@@ -45,16 +52,27 @@ function Update-PackageVersion {
         "Microsoft.NETCore.Windows.ApiSets"
     )
 
-    $packages = [System.Collections.Generic.Dictionary[[string], [PkgVer]]]::new()
+    $packages = [System.Collections.Generic.Dictionary[[string], [PkgVer[]] ]]::new()
 
-    Get-ChildItem -Path "$PSScriptRoot/../src/" -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj' | ForEach-Object {
+    $paths = @(
+        "$PSScriptRoot/packaging/projects/reference/Microsoft.PowerShell.Commands.Utility/Microsoft.PowerShell.Commands.Utility.csproj"
+        "$PSScriptRoot/packaging/projects/reference/System.Management.Automation/System.Management.Automation.csproj"
+        "$PSScriptRoot/../src/"
+        "$PSScriptRoot/../test/tools/"
+    )
+
+    Get-ChildItem -Path $paths -Recurse -Filter "*.csproj" -Exclude 'PSGalleryModules.csproj','PSGalleryTestModules.csproj' | ForEach-Object {
+        Write-Verbose -Message "Reading - $($_.FullName)" -Verbose
         $prj = [xml] (Get-Content $_.FullName -Raw)
         $pkgRef = $prj.Project.ItemGroup.PackageReference
 
         foreach ($p in $pkgRef) {
             if ($null -ne $p -and -not $skipModules.Contains($p.Include)) {
                 if (-not $packages.ContainsKey($p.Include)) {
-                    $packages.Add($p.Include, [PkgVer]::new($p.Include, $p.Version, $null, $_.FullName))
+                    $packages.Add($p.Include, @([PkgVer]::new($p.Include, $p.Version, $null, $_.FullName)))
+                }
+                else {
+                    $packages[$p.Include] += [PkgVer]::new($p.Include, $p.Version, $null, $_.FullName)
                 }
             }
         }
@@ -63,21 +81,24 @@ function Update-PackageVersion {
     $versionPattern = (Get-Content "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.packageVersionPattern
 
     $packages.GetEnumerator() | ForEach-Object {
-        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPreReleaseVersions -Source 'dotnet5'
+        $pkgs = Find-Package -Name $_.Key -AllVersions -AllowPrereleaseVersions -Source 'dotnet5'
 
-        $version = $_.Value.Version
+        foreach ($v in $_.Value) {
+            $version = $v.Version
 
-        foreach ($p in $pkgs) {
-            if ($p.Version -like "$versionPattern*") {
-                if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
-                    $_.Value.NewVersion = $p.Version
-                    break
+            foreach ($p in $pkgs) {
+                if ($p.Version -like "$versionPattern*") {
+                    if ([System.Management.Automation.SemanticVersion] ($version) -lt [System.Management.Automation.SemanticVersion] ($p.Version)) {
+                        $v.NewVersion = $p.Version
+                        break
+                    }
                 }
             }
         }
     }
 
-    $pkgsByPath = $packages.Values | Group-Object -Property Path
+    # we need a ForEach-Object below to unravel each of the items in 'Values' which is an array of PkgVer
+    $pkgsByPath = $packages.Values | ForEach-Object { $_ } | Group-Object -Property Path
 
     $pkgsByPath | ForEach-Object {
         Update-CsprojFile -Path $_.Name -Values $_.Group
@@ -88,7 +109,7 @@ function Update-PackageVersion {
  .DESCRIPTION Update package versions to the latest as per the pattern mentioned in DotnetRuntimeMetadata.json
 #>
 function Update-CsprojFile([string] $path, $values) {
-    $fileContent = Get-Content $path -raw
+    $fileContent = Get-Content $path -Raw
     $updated = $false
 
     foreach ($v in $values) {
@@ -102,7 +123,7 @@ function Update-CsprojFile([string] $path, $values) {
     }
 
     if ($updated) {
-        $fileContent | Out-File -FilePath $path -Force
+        ($fileContent).TrimEnd() | Out-File -FilePath $path -Force
     }
 }
 
@@ -120,14 +141,26 @@ if(-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
 {
     $nugetFeed = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
     Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
-    Write-Verbose -Message "Register new package source 'dotnet5'" -verbose
+    Write-Verbose -Message "Register new package source 'dotnet5'" -Verbose
 }
 
 ## Install latest version from the channel
 
-Install-Dotnet -Channel "$Channel" -Version 'latest'
+$sdkVersion = if ($SDKVersionOverride) { $SDKVersionOverride } else { "latest" }
+
+Install-Dotnet -Channel "$Channel" -Version $sdkVersion
 
 Write-Verbose -Message "Installing .NET SDK completed." -Verbose
+
+$isWindowsEnv = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
+
+$dotnetPath = if ($IsWindowsEnv) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+
+$pathSep = [System.IO.Path]::PathSeparator
+
+if (-not (($ENV:PATH -split $pathSep) -contains "$dotnetPath")) {
+    $env:PATH = "$dotnetPath" + $pathSep + "$ENV:PATH"
+}
 
 $latestSdkVersion = (dotnet --list-sdks | Select-Object -Last 1 ).Split() | Select-Object -First 1
 

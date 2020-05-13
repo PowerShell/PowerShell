@@ -224,7 +224,7 @@ Function Add-PathTToSettings {
 
     # $key is null here if it the user was unable to get ReadWriteSubTree access.
     if ($null -eq $Key) {
-        throw (new-object -typeName 'System.Security.SecurityException' -ArgumentList "Unable to access the target registry")
+        throw (New-Object -TypeName 'System.Security.SecurityException' -ArgumentList "Unable to access the target registry")
     }
 
     # Get current unexpanded value

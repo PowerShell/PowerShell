@@ -346,7 +346,7 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
                 (Invoke-Command -Session $s {Get-Location}).Path | Should -BeExactly $PWD.Path
 
                 # after WinCompat cleanup local $PWD changes should not cause errors
-                Remove-module $ModuleName -Force
+                Remove-Module $ModuleName -Force
 
                 Pop-Location
             }

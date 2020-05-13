@@ -8,7 +8,7 @@ Describe "Tee-Object" -Tags "CI" {
 
 	    It "Should return the output to the screen and to the variable" {
 	        $teefile = $testfile
-	        Write-Output teeobjecttest1 | Tee-Object -variable teeresults
+	        Write-Output teeobjecttest1 | Tee-Object -Variable teeresults
 	        $teeresults         | Should -BeExactly "teeobjecttest1"
 	        Remove-Item $teefile -ErrorAction SilentlyContinue
 	    }

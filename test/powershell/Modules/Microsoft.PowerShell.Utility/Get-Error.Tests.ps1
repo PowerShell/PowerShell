@@ -38,7 +38,7 @@ Describe 'Get-Error tests' -Tag CI {
         }
 
         try {
-            get-item (new-guid) -ErrorAction SilentlyContinue
+            Get-Item (New-Guid) -ErrorAction SilentlyContinue
         }
         catch {
         }

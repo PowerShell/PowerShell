@@ -8,6 +8,7 @@ $packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.p
 Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "debian.9", "debian.10", "debian.11")
 $RedhatDistributions = @("rhel.7","centos.8")
+$script:netCoreRuntime = 'net5.0'
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -131,14 +132,14 @@ function Start-PSPackage {
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp5.0"           ## Last build wasn't for CoreCLR
+            $Script:Options.Framework -ne $script:netCoreRuntime    ## Last build wasn't for CoreCLR
         } else {
             -not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
             -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
             -not $PSModuleRestoreCorrect -or                        ## Last build didn't specify '-PSModuleRestore' correctly
             $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
             $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-            $Script:Options.Framework -ne "netcoreapp5.0"           ## Last build wasn't for CoreCLR
+            $Script:Options.Framework -ne $script:netCoreRuntime    ## Last build wasn't for CoreCLR
         }
 
         # Make sure the most recent build satisfies the package requirement
@@ -597,14 +598,7 @@ function New-PSSignedBuildZip
         [string]$VstsVariableName
     )
 
-    # Replace unsigned binaries with signed
-    $signedFilesFilter = Join-Path -Path $signedFilesPath -ChildPath '*'
-    Get-ChildItem -path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | Foreach-Object -Process {
-        $relativePath = $_.ToLowerInvariant().Replace($signedFilesPath.ToLowerInvariant(),'')
-        $destination = Join-Path -Path $buildPath -ChildPath $relativePath
-        Write-Log "replacing $destination with $_"
-        Copy-Item -Path $_ -Destination $destination -force
-    }
+    Update-PSSignedBuildFolder -BuildPath $BuildPath -SignedFilesPath $SignedFilesPath
 
     # Remove '$signedFilesPath' now that signed binaries are copied
     if (Test-Path $signedFilesPath)
@@ -612,7 +606,21 @@ function New-PSSignedBuildZip
         Remove-Item -Recurse -Force -Path $signedFilesPath
     }
 
-    $name = split-path -Path $BuildPath -Leaf
+    New-PSBuildZip -BuildPath $BuildPath -DestinationFolder $DestinationFolder -VstsVariableName $VstsVariableName
+}
+
+function New-PSBuildZip
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$BuildPath,
+        [Parameter(Mandatory)]
+        [string]$DestinationFolder,
+        [parameter(HelpMessage='VSTS variable to set for path to zip')]
+        [string]$VstsVariableName
+    )
+
+    $name = Split-Path -Path $BuildPath -Leaf
     $zipLocationPath = Join-Path -Path $DestinationFolder -ChildPath "$name-signed.zip"
     Compress-Archive -Path $BuildPath\* -DestinationPath $zipLocationPath
     if ($VstsVariableName)
@@ -627,6 +635,27 @@ function New-PSSignedBuildZip
     }
 }
 
+
+function Update-PSSignedBuildFolder
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]$BuildPath,
+        [Parameter(Mandatory)]
+        [string]$SignedFilesPath
+    )
+
+    # Replace unsigned binaries with signed
+    $signedFilesFilter = Join-Path -Path $SignedFilesPath -ChildPath '*'
+    Get-ChildItem -Path $signedFilesFilter -Recurse -File | Select-Object -ExpandProperty FullName | ForEach-Object -Process {
+        $relativePath = $_.ToLowerInvariant().Replace($SignedFilesPath.ToLowerInvariant(),'')
+        $destination = Join-Path -Path $BuildPath -ChildPath $relativePath
+        Write-Log "replacing $destination with $_"
+        Copy-Item -Path $_ -Destination $destination -Force
+    }
+}
+
+
 function Expand-PSSignedBuild
 {
     param(
@@ -636,11 +665,11 @@ function Expand-PSSignedBuild
         [Switch]$SkipPwshExeCheck
     )
 
-    $psModulePath = Split-Path -path $PSScriptRoot
+    $psModulePath = Split-Path -Path $PSScriptRoot
     # Expand signed build
-    $buildPath = Join-Path -path $psModulePath -childpath 'ExpandedBuild'
-    $null = New-Item -path $buildPath -itemtype Directory -force
-    Expand-Archive -path $BuildZip -destinationpath $buildPath -Force
+    $buildPath = Join-Path -Path $psModulePath -ChildPath 'ExpandedBuild'
+    $null = New-Item -Path $buildPath -ItemType Directory -Force
+    Expand-Archive -Path $BuildZip -DestinationPath $buildPath -Force
     # Remove the zip file that contains only those files from the parent folder of 'publish'.
     # That zip file is used for compliance scan.
     Remove-Item -Path (Join-Path -Path $buildPath -ChildPath '*.zip') -Recurse
@@ -926,10 +955,10 @@ function New-UnixPackage {
                 }
             }
             if ($AfterScriptInfo.AfterInstallScript) {
-                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
+                Remove-Item -ErrorAction 'silentlycontinue' $AfterScriptInfo.AfterInstallScript -Force
             }
             if ($AfterScriptInfo.AfterRemoveScript) {
-                Remove-Item -erroraction 'silentlycontinue' $AfterScriptInfo.AfterRemoveScript -Force
+                Remove-Item -ErrorAction 'silentlycontinue' $AfterScriptInfo.AfterRemoveScript -Force
             }
             Remove-Item -Path $ManGzipInfo.GzipFile -Force -ErrorAction SilentlyContinue
         }
@@ -968,7 +997,7 @@ Function New-LinkInfo
         $linkTarget
     )
 
-    $linkDir = Join-Path -path '/tmp' -ChildPath ([System.IO.Path]::GetRandomFileName())
+    $linkDir = Join-Path -Path '/tmp' -ChildPath ([System.IO.Path]::GetRandomFileName())
     $null = New-Item -ItemType Directory -Path $linkDir
     $linkSource = Join-Path -Path $linkDir -ChildPath 'pwsh'
 
@@ -998,19 +1027,19 @@ function New-MacOsDistributionPackage
         throw 'New-MacOsDistributionPackage is only supported on macOS!'
     }
 
-    $packageName = Split-Path -leaf -Path $FpmPackage
+    $packageName = Split-Path -Leaf -Path $FpmPackage
 
     # Create a temp directory to store the needed files
     $tempDir = Join-Path ([System.IO.Path]::GetTempPath()) ([System.IO.Path]::GetRandomFileName())
     New-Item -ItemType Directory -Path $tempDir -Force > $null
 
-    $resourcesDir = Join-Path -path $tempDir -childPath 'resources'
+    $resourcesDir = Join-Path -Path $tempDir -ChildPath 'resources'
     New-Item -ItemType Directory -Path $resourcesDir -Force > $null
     #Copy background file to temp directory
     $backgroundFile = "$RepoRoot/assets/macDialog.png"
     Copy-Item -Path $backgroundFile -Destination $resourcesDir
     # Move the current package to the temp directory
-    $tempPackagePath = Join-Path -path $tempDir -ChildPath $packageName
+    $tempPackagePath = Join-Path -Path $tempDir -ChildPath $packageName
     Move-Item -Path $FpmPackage -Destination $tempPackagePath -Force
 
     # Add the OS information to the macOS package file name.
@@ -1051,7 +1080,7 @@ function New-MacOsDistributionPackage
     finally
     {
         Pop-Location
-        Remove-item -Path $tempDir -Recurse -Force
+        Remove-Item -Path $tempDir -Recurse -Force
     }
 
     return (Get-Item $newPackagePath)
@@ -1402,7 +1431,7 @@ function New-ManGzip
     {
         $prodName = if ($IsLTS) { 'pwsh-lts' } else { 'pwsh-preview' }
         $newRonnFile = $RonnFile -replace 'pwsh', $prodName
-        Copy-Item -Path $RonnFile -Destination $newRonnFile -force
+        Copy-Item -Path $RonnFile -Destination $newRonnFile -Force
         $RonnFile = $newRonnFile
     }
 
@@ -1414,7 +1443,7 @@ function New-ManGzip
 
     if ($IsPreview.IsPresent)
     {
-        Remove-item $RonnFile
+        Remove-Item $RonnFile
     }
 
     # gzip in assets directory
@@ -1613,7 +1642,7 @@ function New-ZipPackage
             $staging = "$PSScriptRoot/staging"
             New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
 
-            Get-ChildItem $staging -Filter *.pdb -recurse | Remove-Item -Force
+            Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
         }
@@ -1719,7 +1748,7 @@ function CreateNugetPlatformFolder
         [string] $PlatformBinPath
     )
 
-    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/netcoreapp5.0")
+    $destPath = New-Item -ItemType Directory -Path (Join-Path $PackageRuntimesFolder "$Platform/lib/$script:netCoreRuntime")
     $fullPath = Join-Path $PlatformBinPath $file
 
     if (-not(Test-Path $fullPath)) {
@@ -1819,7 +1848,7 @@ function New-ILNugetPackage
             $packageRuntimesFolder = New-Item (Join-Path $filePackageFolder.FullName 'runtimes') -ItemType Directory
 
             #region ref
-            $refFolder = New-Item (Join-Path $filePackageFolder.FullName 'ref/netcoreapp5.0') -ItemType Directory -Force
+            $refFolder = New-Item (Join-Path $filePackageFolder.FullName "ref/$script:netCoreRuntime") -ItemType Directory -Force
             CopyReferenceAssemblies -assemblyName $fileBaseName -refBinPath $refBinPath -refNugetPath $refFolder -assemblyFileList $fileList
             #endregion ref
 
@@ -1863,8 +1892,8 @@ function New-ILNugetPackage
                     "Microsoft.PowerShell.Utility"
                 )
 
-                $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\netcoreapp5.0\Modules") -ItemType Directory -Force
-                $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\netcoreapp5.0\Modules") -ItemType Directory -Force
+                $winModuleFolder = New-Item (Join-Path $contentFolder "runtimes\win\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
+                $unixModuleFolder = New-Item (Join-Path $contentFolder "runtimes\unix\lib\$script:netCoreRuntime\Modules") -ItemType Directory -Force
 
                 foreach ($module in $winBuiltInModules) {
                     $source = Join-Path $WinFxdBinPath "Modules\$module"
@@ -1991,7 +2020,7 @@ function New-ILNugetPackage
 }
 
 <#
-  Copy the generated reference assemblies to the 'ref/netcoreapp3.0' folder properly.
+  Copy the generated reference assemblies to the 'ref/net5.0' folder properly.
   This is a helper function used by 'New-ILNugetPackage'
 #>
 function CopyReferenceAssemblies
@@ -2048,7 +2077,7 @@ function Get-ProjectPackageInformation
     )
 
     $csproj = "$RepoRoot\src\$ProjectName\$ProjectName.csproj"
-    [xml] $csprojXml = (Get-content -Raw -Path $csproj)
+    [xml] $csprojXml = (Get-Content -Raw -Path $csproj)
 
     # get the package references
     $packages=$csprojXml.Project.ItemGroup.PackageReference
@@ -2224,6 +2253,7 @@ function New-ReferenceAssembly
             $sourceProjectRoot = Join-Path $PSScriptRoot "projects/reference/$assemblyName"
             $sourceProjectFile = Join-Path $sourceProjectRoot "$assemblyName.csproj"
             Copy-Item -Path $sourceProjectFile -Destination "$projectFolder/$assemblyName.csproj" -Force
+            Copy-Item -Path (Join-Path -Path $PSScriptRoot -ChildPath "../../nuget.config") -Destination $projectFolder
 
             Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$projectFolder/$assemblyName.csproj"
             Write-Host "##vso[artifact.upload containerfolder=artifact;artifactname=artifact]$generatedSource"
@@ -2233,7 +2263,7 @@ function New-ReferenceAssembly
             Write-Log "Running: dotnet $arguments"
             Start-NativeExecution -sb {dotnet $arguments}
 
-            $refBinPath = Join-Path $projectFolder "bin/Release/netcoreapp5.0/$assemblyName.dll"
+            $refBinPath = Join-Path $projectFolder "bin/Release/$script:netCoreRuntime/$assemblyName.dll"
             if ($null -eq $refBinPath) {
                 throw "Reference assembly was not built."
             }
@@ -2530,7 +2560,7 @@ function New-NugetContentPackage
 
     # Setup staging directory so we don't change the original source directory
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
-    $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
+    $contentFolder = Join-Path -Path $stagingRoot -ChildPath 'content'
     if ($PSCmdlet.ShouldProcess("Create staging folder")) {
         New-StagingFolder -StagingPath $contentFolder -PackageSourcePath $PackageSourcePath
     }
@@ -2549,7 +2579,7 @@ function New-NugetContentPackage
 
     Write-Log "Running dotnet $arguments"
     Write-Log "Use -verbose to see output..."
-    Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
+    Start-NativeExecution -sb {dotnet $arguments} | ForEach-Object {Write-Verbose $_}
 
     $nupkgFile = "${nugetFolder}\${nuspecPackageName}-${packageRuntime}.${nugetSemanticVersion}.nupkg"
     if (Test-Path $nupkgFile)
@@ -2885,7 +2915,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp3.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net5.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
@@ -2961,7 +2991,7 @@ function New-MSIPackage
     $staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
 
-    Get-ChildItem $staging -Filter *.pdb -recurse | Remove-Item -Force
+    Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
 
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
@@ -3087,7 +3117,7 @@ function New-MSIPackage
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\netcoreapp3.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIXPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net5.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIXPackage
 {
@@ -3353,7 +3383,7 @@ function Test-FileWxs
     {
         $newXmlFileName = Join-Path -Path $env:TEMP -ChildPath ([System.io.path]::GetRandomFileName() + '.wxs')
         $newFilesAssetXml.Save($newXmlFileName)
-        $newXml = Get-Content -raw $newXmlFileName
+        $newXml = Get-Content -Raw $newXmlFileName
         $newXml = $newXml -replace 'amd64', '$(var.FileArchitecture)'
         $newXml = $newXml -replace 'x86', '$(var.FileArchitecture)'
         $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
@@ -3677,7 +3707,7 @@ function New-GlobalToolNupkg
     }
 
     $packageInfo | ForEach-Object {
-        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/netcoreapp5.0/any") -ItemType Directory
+        $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
 
         $packageType = $_.Type
 

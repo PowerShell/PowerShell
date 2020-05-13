@@ -16,7 +16,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
             Set-ItResult -Pending -Because "https://github.com/PowerShell/PowerShellGet/pull/529"
         }
 
-        Write-Verbose "DSC_HOME: ${env:DSC_HOME}" -verbose
+        Write-Verbose "DSC_HOME: ${env:DSC_HOME}" -Verbose
         [Scriptblock]::Create(@"
         configuration DSCTestConfig
         {

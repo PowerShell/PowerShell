@@ -95,7 +95,7 @@ Describe "Get-Command Feature tests" -Tag Feature {
         }
 
         It "Non-existing cmdlets returns non-terminating error" {
-            { get-command g-adf -ErrorAction Stop } | Should -Throw -ErrorId "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
+            { Get-Command g-adf -ErrorAction Stop } | Should -Throw -ErrorId "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
         }
 
         It "No results if wildcard is used" {

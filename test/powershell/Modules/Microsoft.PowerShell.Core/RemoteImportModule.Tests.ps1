@@ -9,7 +9,7 @@ Describe "Remote import-module tests" -Tags 'Feature','RequireAdminOnWindows' {
             $PSDefaultParameterValues["it:skip"] = $true
         } else {
             $pssession = New-RemoteSession
-            Invoke-Command -Session $pssession -ScriptBlock { $env:PSModulePath += ";${using:testdrive}" }
+            Invoke-Command -Session $pssession -Scriptblock { $env:PSModulePath += ";${using:testdrive}" }
             # pending https://github.com/PowerShell/PowerShell/issues/4819
             # $cimsession = New-RemoteSession -CimSession
             $null = New-Item -ItemType Directory -Path $modulePath

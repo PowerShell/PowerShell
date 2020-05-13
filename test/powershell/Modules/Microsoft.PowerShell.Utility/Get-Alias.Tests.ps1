@@ -80,17 +80,17 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Description | Should -BeNullOrEmpty
             $result.Options | Should -BeExactly "None"
 
-            Set-Alias -Name ABCD -Value "localfoo" -scope local
-            $result=Get-Alias -Name ABCD -scope local
+            Set-Alias -Name ABCD -Value "localfoo" -Scope local
+            $result=Get-Alias -Name ABCD -Scope local
             $result.Name | Should -BeExactly "ABCD"
             $result.Definition | Should -BeExactly "localfoo"
             $result.Description | Should -BeNullOrEmpty
             $result.Options | Should -BeExactly "None"
 
-            Set-Alias -Name ABCD -Value "globalfoo" -scope global
-            Set-Alias -Name ABCD -Value "scriptfoo" -scope "script"
-            Set-Alias -Name ABCD -Value "foo0" -scope "0"
-            Set-Alias -Name ABCD -Value "foo1" -scope "1"
+            Set-Alias -Name ABCD -Value "globalfoo" -Scope global
+            Set-Alias -Name ABCD -Value "scriptfoo" -Scope "script"
+            Set-Alias -Name ABCD -Value "foo0" -Scope "0"
+            Set-Alias -Name ABCD -Value "foo1" -Scope "1"
 
             $result=Get-Alias -Name ABCD
             $result.Name | Should -BeExactly "ABCD"
@@ -98,31 +98,31 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Description | Should -BeNullOrEmpty
             $result.Options | Should -BeExactly "None"
 
-            $result=Get-Alias -Name ABCD -scope local
+            $result=Get-Alias -Name ABCD -Scope local
             $result.Name | Should -BeExactly "ABCD"
             $result.Definition | Should -BeExactly "foo0"
             $result.Description | Should -BeNullOrEmpty
             $result.Options | Should -BeExactly "None"
 
-            $result=Get-Alias -Name ABCD -scope global
+            $result=Get-Alias -Name ABCD -Scope global
             $result.Name | Should -BeExactly "ABCD"
             $result.Definition | Should -BeExactly "globalfoo"
             $result.Description | Should -BeNullOrEmpty
             $result.Options | Should -BeExactly "None"
 
-            $result=Get-Alias -Name ABCD -scope "script"
+            $result=Get-Alias -Name ABCD -Scope "script"
             $result.Name | Should -BeExactly "ABCD"
             $result.Definition | Should -BeExactly "scriptfoo"
             $result.Description | Should -BeNullOrEmpty
             $result.Options | Should -BeExactly "None"
 
-            $result=Get-Alias -Name ABCD -scope "0"
+            $result=Get-Alias -Name ABCD -Scope "0"
             $result.Name | Should -BeExactly "ABCD"
             $result.Definition | Should -BeExactly "foo0"
             $result.Description | Should -BeNullOrEmpty
             $result.Options | Should -BeExactly "None"
 
-            $result=Get-Alias -Name ABCD -scope "1"
+            $result=Get-Alias -Name ABCD -Scope "1"
             $result.Name | Should -BeExactly "ABCD"
             $result.Definition | Should -BeExactly "foo1"
             $result.Description | Should -BeNullOrEmpty
@@ -139,7 +139,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Description | Should -BeNullOrEmpty
             $result.Options | Should -BeExactly "None"
 
-            $result=Get-Alias -Name ABCD -scope "0"
+            $result=Get-Alias -Name ABCD -Scope "0"
             $result.Name | Should -BeExactly "ABCD"
             $result.Definition | Should -BeExactly "foo"
             $result.Description | Should -BeNullOrEmpty

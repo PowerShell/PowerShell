@@ -27,7 +27,7 @@ Describe "Test-Connection" -tags "CI" {
             $pingResults.Count | Should -Be 4
 
             $result = $pingResults |
-                Where-Object Status -eq 'Success' |
+                Where-Object Status -EQ 'Success' |
                 Select-Object -First 1
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus
@@ -77,8 +77,8 @@ Describe "Test-Connection" -tags "CI" {
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
-        # In VSTS, address is 0.0.0.0
-        It "Force IPv4 with implicit PingOptions" {
+        # In VSTS, address is 0.0.0.0. Making pending due to instability in Az DevOps.
+        It "Force IPv4 with implicit PingOptions" -Pending:($IsMacOS) {
             $result = Test-Connection $hostName -Count 1 -IPv4
 
             $result[0].Address | Should -BeExactly $realAddress
@@ -118,7 +118,7 @@ Describe "Test-Connection" -tags "CI" {
             # be a lack of or inconsistent support for IPv6 in CI environments.
             It "Allows us to Force IPv6" -Pending {
                 $result = Test-Connection $targetName -IPv6 -Count 4 |
-                    Where-Object Status -eq Success |
+                    Where-Object Status -EQ Success |
                     Select-Object -First 1
 
                 $result.Address | Should -BeExactly $targetAddressIPv6
@@ -127,7 +127,7 @@ Describe "Test-Connection" -tags "CI" {
 
             It 'can convert IPv6 addresses to IPv4 with -IPv4 parameter' -Pending {
                 $result = Test-Connection '2001:4860:4860::8888' -IPv4 -Count 4 |
-                    Where-Object Status -eq Success |
+                    Where-Object Status -EQ Success |
                     Select-Object -First 1
                 # Google's DNS can resolve to either address.
                 $result.Address.IPAddressToString | Should -BeIn @('8.8.8.8', '8.8.4.4')
@@ -136,7 +136,7 @@ Describe "Test-Connection" -tags "CI" {
 
             It 'can convert IPv4 addresses to IPv6 with -IPv6 parameter' -Pending {
                 $result = Test-Connection '8.8.8.8' -IPv6 -Count 4 |
-                    Where-Object Status -eq Success |
+                    Where-Object Status -EQ Success |
                     Select-Object -First 1
                 # Google's DNS can resolve to either address.
                 $result.Address.IPAddressToString | Should -BeIn @('2001:4860:4860::8888', '2001:4860:4860::8844')
@@ -249,7 +249,8 @@ Describe "Test-Connection" -tags "CI" {
     }
 
     Context "TraceRoute" {
-        It "TraceRoute works" {
+        # Mark it as pending due to instability in Az DevOps
+        It "TraceRoute works" -Pending:($IsMacOS) {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $hostName -TraceRoute -IPv4
 

@@ -10,7 +10,7 @@ $excludeList = @()
 # load the module since it isn't there by default
 if ( $IsWindows )
 {
-    import-module CimCmdlets
+    Import-Module CimCmdlets
 }
 
 # run the tests

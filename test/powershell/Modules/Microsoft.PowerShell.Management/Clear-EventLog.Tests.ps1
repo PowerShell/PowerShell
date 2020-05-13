@@ -14,7 +14,7 @@ Describe "Clear-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
     It "should be able to Clear-EventLog" -Pending:($true) {
       Remove-EventLog -LogName TestLog -ErrorAction Ignore
       { New-EventLog -LogName TestLog -Source TestSource -ErrorAction Stop } | Should -Not -Throw
-      { Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ErrorAction Stop } | Should -Not -Throw
+      { Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventId 1 -ErrorAction Stop } | Should -Not -Throw
       { Get-EventLog -LogName TestLog }                           | Should -Not -Throw
       $result = Get-EventLog -LogName TestLog
       $result.Count                                               | Should -Be 1

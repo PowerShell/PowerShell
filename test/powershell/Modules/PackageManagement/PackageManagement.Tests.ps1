@@ -19,7 +19,7 @@ $InternalSource = 'OneGetTestSource'
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
  BeforeAll{
-    Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -force
+    Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -Force
     Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
     $SavedProgressPreference = $ProgressPreference
     $ProgressPreference = "SilentlyContinue"
@@ -37,37 +37,37 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
     }
 
     It "find-packageprovider PowerShellGet" {
-        $fpp = (Find-PackageProvider -Name "PowerShellGet" -force).name
+        $fpp = (Find-PackageProvider -Name "PowerShellGet" -Force).name
         $fpp | Should -Contain "PowerShellGet"
     }
 
      It "install-packageprovider, Expect succeed" {
-        $ipp = (install-PackageProvider -name gistprovider -force -source $InternalSource -Scope CurrentUser).name
+        $ipp = (Install-PackageProvider -Name gistprovider -Force -Source $InternalSource -Scope CurrentUser).name
         $ipp | Should -Contain "gistprovider"
     }
 
-    it "Find-package"  {
-        $f = Find-Package -ProviderName NuGet -Name jquery -source Nugettest
+    It "Find-package"  {
+        $f = Find-Package -ProviderName NuGet -Name jquery -Source Nugettest
         $f.Name | Should -Contain "jquery"
 	}
 
-    it "Install-package"  {
-        $i = install-Package -ProviderName NuGet -Name jquery -force -source Nugettest -Scope CurrentUser
+    It "Install-package"  {
+        $i = Install-Package -ProviderName NuGet -Name jquery -Force -Source Nugettest -Scope CurrentUser
         $i.Name | Should -Contain "jquery"
 	}
 
-    it "Get-package"  {
+    It "Get-package"  {
         $g = Get-Package -ProviderName NuGet -Name jquery
         $g.Name | Should -Contain "jquery"
 	}
 
-    it "save-package"  {
-        $s = save-Package -ProviderName NuGet -Name jquery -path $TestDrive -force -source Nugettest
+    It "save-package"  {
+        $s = Save-Package -ProviderName NuGet -Name jquery -Path $TestDrive -Force -Source Nugettest
         $s.Name | Should -Contain "jquery"
 	}
 
-    it "uninstall-package"  {
-        $u = uninstall-Package -ProviderName NuGet -Name jquery
+    It "uninstall-package"  {
+        $u = Uninstall-Package -ProviderName NuGet -Name jquery
         $u.Name | Should -Contain "jquery"
 	}
 }

@@ -23,5 +23,5 @@ $a = $Day.d0, $Day.d1, $Day.d2, $Day.d3, $Day.d4, $Day.d5, $Day.d6
         # Index into $a to get the name of the day.
         # Use string formatting to build a sentence.
 
-        "{0} {1}" -f $Day.messageDate, $a[(get-date -uformat %u)] | Out-Host
+        "{0} {1}" -f $Day.messageDate, $a[(Get-Date -UFormat %u)] | Out-Host
 

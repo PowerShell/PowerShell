@@ -391,6 +391,13 @@ Fix steps:
         $Arguments += "/property:IsWindows=false"
     }
 
+    # Framework Dependent builds do not support ReadyToRun as it needs a specific runtime to optimize for.
+    # The property is set in Powershell.Common.props file.
+    # We override the property through the build command line.
+    if($Options.Runtime -like 'fxdependent*') {
+        $Arguments += "/property:PublishReadyToRun=false"
+    }
+
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
 
@@ -531,10 +538,10 @@ Fix steps:
                 $cryptoTarget = "/lib64/libcrypto.so.10"
             }
 
-            if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
+            if ( ! (Test-Path "$publishPath/libssl.so.1.0.0")) {
                 $null = New-Item -Force -ItemType SymbolicLink -Target $sslTarget -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
             }
-            if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
+            if ( ! (Test-Path "$publishPath/libcrypto.so.1.0.0")) {
                 $null = New-Item -Force -ItemType SymbolicLink -Target $cryptoTarget -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
             }
         }
@@ -712,8 +719,8 @@ function New-PSOptions {
         [ValidateSet("Debug", "Release", "CodeCoverage", '')]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp5.0")]
-        [string]$Framework = "netcoreapp5.0",
+        [ValidateSet("net5.0")]
+        [string]$Framework = "net5.0",
 
         # These are duplicated from Start-PSBuild
         # We do not use ValidateScript since we want tab completion
@@ -787,11 +794,6 @@ function New-PSOptions {
 
     $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
     Write-Verbose "Top project directory is $Top"
-
-    if (-not $Framework) {
-        $Framework = "netcoreapp2.1"
-        Write-Verbose "Using framework '$Framework'"
-    }
 
     $Executable = if ($Runtime -like 'fxdependent*') {
         "pwsh.dll"
@@ -886,7 +888,7 @@ function Get-PesterTag {
     $alltags = @{}
     $warnings = @()
 
-    get-childitem -Recurse $testbase -File | Where-Object {$_.name -match "tests.ps1"}| ForEach-Object {
+    Get-ChildItem -Recurse $testbase -File | Where-Object {$_.name -match "tests.ps1"}| ForEach-Object {
         $fullname = $_.fullname
         $tok = $err = $null
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok,[ref]$err)
@@ -1274,7 +1276,7 @@ function Start-PSPester {
                     break
                 }
 
-                $count = ($lines | measure-object).Count
+                $count = ($lines | Measure-Object).Count
                 if ($count -eq 0)
                 {
                     Start-Sleep -Seconds 1
@@ -1467,7 +1469,7 @@ function Test-XUnitTestResults
         throw "Cannot convert $TestResultsFile to xml : $($_.message)"
     }
 
-    $failedTests = $results.assemblies.assembly.collection | Where-Object failed -gt 0
+    $failedTests = $results.assemblies.assembly.collection | Where-Object failed -GT 0
 
     if(-not $failedTests)
     {
@@ -1519,7 +1521,7 @@ function Test-PSPesterResults
             throw "Test result file '$testResultsFile' not found for $TestArea."
         }
 
-        $x = [xml](Get-Content -raw $testResultsFile)
+        $x = [xml](Get-Content -Raw $testResultsFile)
         if ([int]$x.'test-results'.failures -gt 0)
         {
             Write-Log -Error "TEST FAILURES"
@@ -1626,7 +1628,8 @@ function Install-Dotnet {
     param(
         [string]$Channel = $dotnetCLIChannel,
         [string]$Version = $dotnetCLIRequiredVersion,
-        [switch]$NoSudo
+        [switch]$NoSudo,
+        [string]$InstallDir
     )
 
     # This allows sudo install to be optional; needed when running in containers / as root
@@ -1660,7 +1663,12 @@ function Install-Dotnet {
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
             & $curl -sO $installObtainUrl/$installScript
-            bash ./$installScript -c $Channel -v $Version
+
+            if (-not $InstallDir) {
+                bash ./$installScript -c $Channel -v $Version
+            } else {
+                bash ./$installScript -c $Channel -v $Version -i $InstallDir
+            }
         }
     } elseif ($environment.IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
@@ -1668,12 +1676,22 @@ function Install-Dotnet {
         Invoke-WebRequest -Uri $installObtainUrl/$installScript -OutFile $installScript
 
         if (-not $environment.IsCoreCLR) {
-            & ./$installScript -Channel $Channel -Version $Version
+            if (-not $InstallDir) {
+                & ./$installScript -Channel $Channel -Version $Version
+            } else {
+                & ./$installScript -Channel $Channel -Version $Version -InstallDir $InstallDir
+            }
         } else {
             # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
             $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
             $fullDotnetInstallPath = Join-Path -Path $PWD.Path -ChildPath $installScript
-            Start-NativeExecution { & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version }
+            Start-NativeExecution {
+                if (-not $InstallDir) {
+                    & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version
+                } else {
+                    & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version  -InstallDir $InstallDir
+                }
+            }
         }
     }
 }
@@ -1853,7 +1871,7 @@ function Start-PSBootstrap {
                 Write-Log "dotnet not present.  Installing dotnet."
             }
             else {
-                Write-Log "dotnet out of date ($dotNetVersion).  Updating dotnet."
+                Write-Log "dotnet version $dotNetVersion does not match required version.  Installing dotnet."
             }
 
             $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
@@ -2075,7 +2093,7 @@ function script:Use-MSBuild {
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
     $frameworkMsBuildLocation = "${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\msbuild"
 
-    $msbuild = get-command msbuild -ErrorAction Ignore
+    $msbuild = Get-Command msbuild -ErrorAction Ignore
     if ($msbuild) {
         # all good, nothing to do
         return
@@ -2233,6 +2251,7 @@ function Start-CrossGen {
             $CrossgenPath
         )
 
+
         $platformAssembliesPath = Split-Path $AssemblyPath -Parent
         $crossgenFolder = Split-Path $CrossgenPath
 
@@ -2298,7 +2317,7 @@ function Start-CrossGen {
         throw "crossgen is not available for this platform"
     }
 
-    $dotnetRuntimeVersion = $script:Options.Framework -replace 'netcoreapp'
+    $dotnetRuntimeVersion = $script:Options.Framework -replace 'net'
 
     # Get the CrossGen.exe for the correct runtime with the latest version
     $crossGenPath = Get-ChildItem $script:Environment.nugetPackagesRoot $crossGenExe -Recurse | `
@@ -2361,29 +2380,7 @@ function Start-CrossGen {
         "Microsoft.ApplicationInsights.dll"
     )
 
-    # Common PowerShell libraries to crossgen
-    $psCoreAssemblyList = @(
-        "pwsh.dll",
-        "Microsoft.PowerShell.Commands.Utility.dll",
-        "Microsoft.PowerShell.Commands.Management.dll",
-        "Microsoft.PowerShell.Security.dll",
-        "Microsoft.PowerShell.ConsoleHost.dll",
-        "System.Management.Automation.dll"
-    )
-
-    # Add Windows specific libraries
-    if ($environment.IsWindows) {
-        $psCoreAssemblyList += @(
-            "Microsoft.PowerShell.CoreCLR.Eventing.dll",
-            "Microsoft.WSMan.Management.dll",
-            "Microsoft.WSMan.Runtime.dll",
-            "Microsoft.PowerShell.Commands.Diagnostics.dll",
-            "Microsoft.PowerShell.GraphicalHost.dll",
-            "Microsoft.Management.Infrastructure.CimCmdlets.dll"
-        )
-    }
-
-    $fullAssemblyList = $commonAssembliesForAddType + $psCoreAssemblyList
+    $fullAssemblyList = $commonAssembliesForAddType
 
     foreach ($assemblyName in $fullAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
@@ -2876,17 +2873,17 @@ assembly
     PROCESS {
         #### MAIN ####
         foreach ( $log in $Logfile ) {
-            foreach ( $logpath in (resolve-path $log).path ) {
-                write-progress "converting file $logpath"
+            foreach ( $logpath in (Resolve-Path $log).path ) {
+                Write-Progress "converting file $logpath"
                 if ( ! $logpath) { throw "Cannot resolve $Logfile" }
-                $x = [xml](get-content -raw -readcount 0 $logpath)
+                $x = [xml](Get-Content -Raw -ReadCount 0 $logpath)
 
                 if ( $x.psobject.properties['test-results'] ) {
                     $Logs += convert-pesterlog $x $logpath -includeempty:$includeempty
                 } elseif ( $x.psobject.properties['assemblies'] ) {
                     $Logs += convert-xunitlog $x $logpath -includeEmpty:$includeEmpty
                 } else {
-                    write-error "Cannot determine log type"
+                    Write-Error "Cannot determine log type"
                 }
             }
         }
