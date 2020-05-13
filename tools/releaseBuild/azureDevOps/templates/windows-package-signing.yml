@@ -15,6 +15,7 @@ jobs:
 
   steps:
 
+  - template: shouldSign.yml
   - template: SetVersionVariables.yml
     parameters:
       ReleaseTagVar: $(ReleaseTagVar)
@@ -57,7 +58,13 @@ jobs:
       outPathRoot: '$(Build.StagingDirectory)\signedPackages'
       binVersion: $(SigingVersion)
       binVersionOverride: $(SigningVersionOverride)
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
+
+  - powershell: |
+      new-item -itemtype Directory -path '$(Build.StagingDirectory)\signedPackages'
+      Get-ChildItem "$(System.ArtifactsDirectory)\signed\PowerShell-$(Version)-win-*.msi*" | copy-item -Destination '$(Build.StagingDirectory)\signedPackages'
+    displayName: 'Fake Signing'
+    condition: and(succeeded(), ne(variables['SHOULD_SIGN'], 'true'))
 
   - template: upload.yml
     parameters:

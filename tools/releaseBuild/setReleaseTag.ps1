@@ -47,4 +47,8 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     }
 }
 
+$vstsCommandString = "vso[task.setvariable variable=IS_DAILY]false"
+Write-Verbose -Message "$vstsCommandString" -Verbose
+Write-Host -Object "##$vstsCommandString"
+
 Write-Output $releaseTag

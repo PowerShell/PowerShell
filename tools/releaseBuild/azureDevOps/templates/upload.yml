@@ -19,7 +19,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'), eq(variables['Build.Reason'], 'Manual'))
+  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - template: upload-final-results.yml
   parameters:
@@ -34,7 +34,7 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+  condition: succeeded()
 
 - template: upload-final-results.yml
   parameters:
@@ -50,4 +50,4 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['Build.Reason'], 'Manual'))
+  condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'))
