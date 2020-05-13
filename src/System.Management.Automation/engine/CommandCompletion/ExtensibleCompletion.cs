@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// </summary>
         protected ArgumentCompleterAttribute()
         {
-            if (GetType().GetInterfaces().All(t => t != typeof(IArgumentCompleterFactory)))
+            if (!typeof(IArgumentCompleterFactory).IsAssignableFrom(this))
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
