@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+#nullable enable
+
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
@@ -62,11 +64,11 @@ namespace System.Management.Automation
         /// <returns>
         /// An instance of the Name class.
         /// </returns>
-        internal static PSSnapinQualifiedName GetInstance(string name)
+        internal static PSSnapinQualifiedName? GetInstance(string name)
         {
             if (name == null)
                 return null;
-            PSSnapinQualifiedName result = null;
+            PSSnapinQualifiedName? result = null;
             string[] splitName = name.Split(Utils.Separators.Backslash);
             if (splitName.Length == 0 || splitName.Length > 2)
                 return null;
@@ -96,7 +98,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the command's PSSnapin name.
         /// </summary>
-        internal string PSSnapInName
+        internal string? PSSnapInName
         {
             get
             {
@@ -104,7 +106,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _psSnapinName;
+        private string? _psSnapinName;
 
         /// <summary>
         /// Gets the command's short name.
