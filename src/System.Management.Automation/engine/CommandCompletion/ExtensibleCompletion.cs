@@ -46,7 +46,7 @@ namespace System.Management.Automation
         /// </summary>
         protected ArgumentCompleterAttribute()
         {
-            if (!typeof(IArgumentCompleterFactory).IsAssignableFrom(this))
+            if (!(this is IArgumentCompleterFactory))
             {
                 throw PSTraceSource.NewInvalidOperationException();
             }
@@ -70,8 +70,8 @@ namespace System.Management.Automation
         {
             return Type != null
                 ? Activator.CreateInstance(Type) as IArgumentCompleter
-                : this is IArgumentCompleterFactory factory 
-                    ? factory.Create() 
+                : this is IArgumentCompleterFactory factory
+                    ? factory.Create()
                     : null;
         }
     }
@@ -118,7 +118,7 @@ namespace System.Management.Automation
     /// public class NumberCompleterAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory {
     ///    private readonly int _from;
     ///    private readonly int _to;
-    /// 
+    ///
     ///    public NumberCompleterAttribute(int from, int to){
     ///       _from = from;
     ///       _to = to;
@@ -136,7 +136,7 @@ namespace System.Management.Automation
     ///       _from = from;
     ///       _to = to;
     ///    }
-    /// 
+    ///
     ///    IEnumerable{CompletionResult} CompleteArgument(string commandName, string parameterName, string wordToComplete,
     ///       CommandAst commandAst, IDictionary fakeBoundParameters) {
     ///       for(int i = _from; i &lt; _to; i++) {
