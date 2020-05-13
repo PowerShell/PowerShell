@@ -1628,17 +1628,8 @@
         <Component Id="cmpEA40E9164309426C88C4388FDCA9559D" Guid="{2c84f9de-c203-4551-bde8-71e9e7e21f45}">
           <File Id="fil205C9BE7027A408B985D96F5EEF11594" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Threading.Channels.dll" />
         </Component>
-        <Component Id="cmp34649490F5B04041A08E73D7A86D5A5A" Guid="{d8f897d8-16cd-41a0-b5d7-863f379b30a2}">
-          <File Id="fil2DDAEABD470A475E950B94AC186DAB2E" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Text.Encodings.Web.dll" />
-        </Component>
-        <Component Id="cmpB3116053008E492C9B36C89BF682B8F7" Guid="{6572fcd7-3c98-4180-b3da-bdaeb21294cd}">
-          <File Id="fil0D09CC7B4B8A43369D0207AC861D8D21" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Runtime.CompilerServices.Unsafe.dll" />
-        </Component>
         <Component Id="cmp859A3876902946E7B5B4965F90664C5D" Guid="{25192d48-42fc-4551-baec-cce4ecb420ea}">
           <File Id="fil2E0E3963F95C47F3BEA7D5A5848D6F28" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Diagnostics.DiagnosticSource.dll" />
-        </Component>
-        <Component Id="cmpF1B0E6DCC3BD4797B206C879EF270062" Guid="{af38a3e7-6bc2-47c8-a83e-ee8bfd0cc8be}">
-          <File Id="fil2694AE6F8EB8473CBDF0F73A4E55164B" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Text.Encoding.CodePages.dll" />
         </Component>
         <Component Id="cmp25A144CC34E545378735B06794A02F90" Guid="{35a3c141-1309-4277-9325-a97e177a9f09}">
           <File Id="filFCE4A935DE1D4DD08E9A1D32A07E0266" KeyPath="yes" Source="$(env.ProductSourcePath)\ref\System.Drawing.dll" />
@@ -3071,8 +3062,8 @@
       <Component Id="cmp2E32A6E773F543F0A150B972F8D3E23A" Guid="{a43d0117-1193-4316-a0f6-fef892870f38}">
         <File Id="fil66411B8941CA492E93BF262EA72C6BE6" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.GraphicalHost.xml" />
       </Component>
-      <Component Id="cmp4FF68ECC102A4EC79019A7B087B5DE8D" Guid="{44683a04-9f1c-4323-8223-8d2ee880e8ac}">
-        <File Id="fil5C3BB8A26E31487E931ABDD7FB37651A" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.20.6602.dll" />
+      <Component Id="cmpB354FFC600B342EE8DF733ED9C6F6494" Guid="{6f61d5bb-e947-4409-a877-f9d1f1d4438f}">
+        <File Id="fil7886B01FBE4D4BE5A2670CEDB38A75C8" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.20.20201.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3619,10 +3610,7 @@
       <ComponentRef Id="cmp1719A38F3C30484BBA189D718AF00D3C" />
       <ComponentRef Id="cmp770700CA06564FB187D1CD2A79AA3DA8" />
       <ComponentRef Id="cmpEA40E9164309426C88C4388FDCA9559D" />
-      <ComponentRef Id="cmp34649490F5B04041A08E73D7A86D5A5A" />
-      <ComponentRef Id="cmpB3116053008E492C9B36C89BF682B8F7" />
       <ComponentRef Id="cmp859A3876902946E7B5B4965F90664C5D" />
-      <ComponentRef Id="cmpF1B0E6DCC3BD4797B206C879EF270062" />
       <ComponentRef Id="cmp25A144CC34E545378735B06794A02F90" />
       <ComponentRef Id="cmpDC2EF4541FA5A2E63F36A8CD6C5FA51B" />
       <ComponentRef Id="cmpA620CA71E6FF4F50B6D7BB0761D17036" />
@@ -4063,7 +4051,7 @@
       <ComponentRef Id="cmp73A4CC8E2C9E4594A3D8258C9E00D7E6" />
       <ComponentRef Id="cmpAC984FA3A67247BC996F60290C87D0A1" />
       <ComponentRef Id="cmp2E32A6E773F543F0A150B972F8D3E23A" />
-      <ComponentRef Id="cmp4FF68ECC102A4EC79019A7B087B5DE8D" />
+      <ComponentRef Id="cmpB354FFC600B342EE8DF733ED9C6F6494" />
     </ComponentGroup>
   </Fragment>
 </Wix>

@@ -582,7 +582,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $proxyModule | Remove-Module -Force
         }
 
-        It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
+        It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" -Pending {
 
             Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
 
@@ -600,7 +600,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $proxyModule | Remove-Module -Force
         }
 
-        It "NoClobber WinCompat import works with ModuleSpecifications" {
+        It "NoClobber WinCompat import works with ModuleSpecifications" -Pending {
 
             Import-Module -UseWindowsPowerShell -FullyQualifiedName @{ModuleName='Microsoft.PowerShell.Utility';ModuleVersion='0.0'}
 
