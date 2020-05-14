@@ -173,7 +173,7 @@ Function Start-HTTPListener {
 
                             Example: test=redirectex&type=Moved&multiredirect=true
 
-                            See also https://docs.microsoft.com/dotnet/api/system.net.httpstatuscode?view=netcore-2.1
+                            See also https://docs.microsoft.com/dotnet/api/system.net.httpstatuscode
                         #>
                         "redirect"
                         {
