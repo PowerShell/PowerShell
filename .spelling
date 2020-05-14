@@ -457,6 +457,7 @@ new-timespan
 new-winevent
 new-wsmaninstance
 new-wsmansessionoption
+NJsonSchema
 non-22
 non-cim
 non-https
@@ -464,8 +465,8 @@ non-r2
 noresume
 notcontains
 nuget
-nugetfeed
 nuget.exe
+nugetfeed
 numberbytes
 nupkg
 oauth
