@@ -133,7 +133,6 @@ See our [Pull Request Process][pull-request-process]
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
 [pester]: ../testing-guidelines/WritingPesterTests.md
-[ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [breaking-changes]: ../dev-process/breaking-change-contract.md
 [issue-process]: ../maintainers/issue-management.md
 [pull-request-process]: ../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request
