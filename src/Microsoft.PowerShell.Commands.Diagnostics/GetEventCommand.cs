@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 logQuery.Session = eventLogSession;
-                logQuery.ReverseDirection = !_oldest; ;
+                logQuery.ReverseDirection = !_oldest;
 
                 ReadEvents(logQuery);
             }

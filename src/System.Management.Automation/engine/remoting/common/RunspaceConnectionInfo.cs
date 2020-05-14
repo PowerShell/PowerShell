@@ -2661,7 +2661,7 @@ namespace System.Management.Automation.Runspaces
                 byte[] securityDescBuffer = new byte[securityDesc.BinaryLength];
                 securityDesc.GetBinaryForm(securityDescBuffer, 0);
                 securityDescHandle = GCHandle.Alloc(securityDescBuffer, GCHandleType.Pinned);
-                securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value, true); ;
+                securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value, true);
             }
 
             // Create async named pipe.

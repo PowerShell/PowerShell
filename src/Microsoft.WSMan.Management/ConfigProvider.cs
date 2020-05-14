@@ -3336,7 +3336,7 @@ namespace Microsoft.WSMan.Management
         /// <returns></returns>
         private string NormalizePath(string path, string host)
         {
-            string uri = string.Empty; ;
+            string uri = string.Empty;
             if (path.StartsWith(host, StringComparison.OrdinalIgnoreCase))
             {
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))

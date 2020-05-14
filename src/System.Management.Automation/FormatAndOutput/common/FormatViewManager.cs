@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.NonExistingViewNameError, formatTypeName, so.BaseObject.GetType()));
                 }
 
-                msg = unKnowViewFormatStringBuilder.ToString(); ;
+                msg = unKnowViewFormatStringBuilder.ToString();
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
