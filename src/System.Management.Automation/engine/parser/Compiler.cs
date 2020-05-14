@@ -982,19 +982,20 @@ namespace System.Management.Automation.Language
             {
                 return left;
             }
-            else if (leftType == typeof(AutomationNull))
-            {
-                return right;
-            }
             else
             {
-                Expression lhs = left.Cast(typeof(object));
-                Expression rhs = right.Cast(typeof(object));
-
-                return Expression.Condition(
-                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhs),
-                    rhs,
-                    lhs);
+                ParameterExpression lhsStoreVar = Expression.Variable(typeof(object));
+                return Expression.Block(
+                    typeof(object),
+                    new ParameterExpression[] { lhsStoreVar },
+                    new Expression[]
+                    {
+                        Expression.Assign(lhsStoreVar, left.Cast(typeof(object))),
+                        Expression.Condition(
+                            Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhsStoreVar),
+                            right.Cast(typeof(object)),
+                            lhsStoreVar),
+                    });
             }
         }
 
