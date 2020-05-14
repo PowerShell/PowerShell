@@ -985,17 +985,20 @@ namespace System.Management.Automation.Language
             else
             {
                 ParameterExpression lhsStoreVar = Expression.Variable(typeof(object));
+                var blockParameters = new ParameterExpression[] { lhsStoreVar };
+                var blockStatements = new Expression[]
+                {
+                    Expression.Assign(lhsStoreVar, left.Cast(typeof(object))),
+                    Expression.Condition(
+                        Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhsStoreVar),
+                        right.Cast(typeof(object)),
+                        lhsStoreVar),
+                };
+
                 return Expression.Block(
                     typeof(object),
-                    new ParameterExpression[] { lhsStoreVar },
-                    new Expression[]
-                    {
-                        Expression.Assign(lhsStoreVar, left.Cast(typeof(object))),
-                        Expression.Condition(
-                            Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhsStoreVar),
-                            right.Cast(typeof(object)),
-                            lhsStoreVar),
-                    });
+                    blockParameters,
+                    blockStatements);
             }
         }
 
