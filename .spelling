@@ -201,6 +201,7 @@ enable-pswsmancombinedtrace
 enable-runspacedebug
 enable-wsmantrace
 encodings
+Endian
 enter-pshostprocess
 enter-pssession
 enum
@@ -768,6 +769,7 @@ v0.6.0
 v141
 v3
 v4
+v5
 v5.0
 v6
 v6.0.
@@ -982,3 +984,14 @@ wpaProfile
  - CHANGELOG/preview.md
 ThomasNieto
 spongemike2
+ChrisLGardner
+NoMoreFood
+jackdcasey
+tokenizer.cs
+nuget.config
+System.IO.Packaging
+PSGalleryModules
+ShaydeNofziger
+rkitover
+kevinoid
+parameshbabu
