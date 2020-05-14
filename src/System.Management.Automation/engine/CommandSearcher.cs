@@ -1010,10 +1010,10 @@ namespace System.Management.Automation
                         return null;
                     }
 
-                    WildcardPattern cmdletMatcher =
-                        WildcardPattern.Get(
-                            PSSnapinQualifiedCommandName.ShortName,
-                            WildcardOptions.IgnoreCase);
+                    var cmdletShortName = PSSnapinQualifiedCommandName?.ShortName;
+                    WildcardPattern cmdletMatcher = cmdletShortName != null
+                        ? WildcardPattern.Get(cmdletShortName, WildcardOptions.IgnoreCase)
+                        : null;
 
                     SessionStateInternal ss = _context.EngineSessionState;
 
@@ -1021,13 +1021,12 @@ namespace System.Management.Automation
                     {
                         foreach (CmdletInfo cmdlet in cmdletList)
                         {
-                            if (cmdletMatcher.IsMatch(cmdlet.Name) ||
+                            if (cmdletShortName != null &&
+                                cmdletMatcher.IsMatch(cmdlet.Name) ||
                                 (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
-                                FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
+                                 FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
                             {
-                                if (string.IsNullOrEmpty(PSSnapinQualifiedCommandName.PSSnapInName) ||
-                                    (PSSnapinQualifiedCommandName.PSSnapInName.Equals(
-                                        cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase)))
+                                if (PSSnapinQualifiedCommandName?.PSSnapInName?.Equals(cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase) == true)
                                 {
                                     // If PSSnapin is specified, make sure they match
                                     matchingCmdletInfo.Add(cmdlet);
