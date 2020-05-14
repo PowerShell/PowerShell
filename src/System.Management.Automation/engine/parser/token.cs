@@ -587,6 +587,8 @@ namespace System.Management.Automation.Language
 
         /// <summary>The 'default' keyword</summary>
         Default = 169,
+        /// <summary>The 'cleanup' keyword.</summary>
+        Cleanup = 170,
 
         #endregion Keywords
     }
@@ -948,6 +950,7 @@ namespace System.Management.Automation.Language
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
             /*              Default */ TokenFlags.Keyword,
+            /*              Cleanup */ TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName,
 
             #endregion Flags for keywords
         };
@@ -1147,6 +1150,7 @@ namespace System.Management.Automation.Language
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
             /*              Default */ "default",
+            /*              Cleanup */ "cleanup",
 
             #endregion Text for keywords
         };
@@ -1154,10 +1158,12 @@ namespace System.Management.Automation.Language
 #if DEBUG
         static TokenTraits()
         {
-            Diagnostics.Assert(s_staticTokenFlags.Length == ((int)TokenKind.Default + 1),
-                               "Table size out of sync with enum - _staticTokenFlags");
-            Diagnostics.Assert(s_tokenText.Length == ((int)TokenKind.Default + 1),
-                               "Table size out of sync with enum - _tokenText");
+            Diagnostics.Assert(
+                s_staticTokenFlags.Length == ((int)TokenKind.Cleanup + 1),
+                "Table size out of sync with enum - _staticTokenFlags");
+            Diagnostics.Assert(
+                s_tokenText.Length == ((int)TokenKind.Cleanup + 1),
+                "Table size out of sync with enum - _tokenText");
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),
                                "Table out of sync with enum - flags Begin");

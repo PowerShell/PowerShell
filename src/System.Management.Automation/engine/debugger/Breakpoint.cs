@@ -531,15 +531,16 @@ namespace System.Management.Automation
 
             // Not found.  First, we check if the line/column is before any real code.  If so, we'll
             // move the breakpoint to the first interesting sequence point (could be a dynamicparam,
-            // begin, process, or end block.)
+            // begin, process, end, or cleanup block.)
             if (scriptBlock != null)
             {
                 var ast = scriptBlock.Ast;
                 var bodyAst = ((IParameterMetadataProvider)ast).Body;
-                if ((bodyAst.DynamicParamBlock == null || bodyAst.DynamicParamBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.BeginBlock == null || bodyAst.BeginBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.ProcessBlock == null || bodyAst.ProcessBlock.Extent.IsAfter(Line, Column)) &&
-                    (bodyAst.EndBlock == null || bodyAst.EndBlock.Extent.IsAfter(Line, Column)))
+                if ((bodyAst.DynamicParamBlock == null || bodyAst.DynamicParamBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.BeginBlock == null || bodyAst.BeginBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.ProcessBlock == null || bodyAst.ProcessBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.EndBlock == null || bodyAst.EndBlock.Extent.IsAfter(Line, Column))
+                    && (bodyAst.CleanupBlock == null || bodyAst.CleanupBlock.Extent.IsAfter(Line, Column)))
                 {
                     SetBreakpoint(functionContext, 0);
                     return true;

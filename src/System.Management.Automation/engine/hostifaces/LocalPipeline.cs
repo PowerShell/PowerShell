@@ -1272,6 +1272,10 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal class PipelineStopper
     {
+        private readonly SemaphoreSlim _criticalRegionSemaphore = new SemaphoreSlim(1, 1);
+
+        private int _criticalRegionDepth;
+
         /// <summary>
         /// Stack of current executing pipeline processor.
         /// </summary>
@@ -1282,6 +1286,31 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private readonly object _syncRoot = new object();
         private readonly LocalPipeline _localPipeline;
+
+        internal void AcquirePipelineStopPermission()
+        {
+            _criticalRegionSemaphore.Wait();
+            _criticalRegionSemaphore.Release();
+        }
+
+        internal void EnterCriticalRegion()
+        {
+            Interlocked.Increment(ref _criticalRegionDepth);
+            _criticalRegionSemaphore.Wait(millisecondsTimeout: 0);
+        }
+
+        internal void ExitCriticalRegion()
+        {
+            if (Interlocked.Decrement(ref _criticalRegionDepth) == 0)
+            {
+                _criticalRegionSemaphore.Release();
+            }
+        }
+
+        internal bool InCriticalRegion
+        {
+            get => Interlocked.CompareExchange(ref _criticalRegionDepth, value: 0, comparand: 0) != 0;
+        }
 
         /// <summary>
         /// Default constructor.
@@ -1298,15 +1327,8 @@ namespace System.Management.Automation.Runspaces
 
         internal bool IsStopping
         {
-            get
-            {
-                return _stopping;
-            }
-
-            set
-            {
-                _stopping = value;
-            }
+            get => _stopping && !InCriticalRegion;
+            set => _stopping = value;
         }
 
         /// <summary>
@@ -1322,7 +1344,7 @@ namespace System.Management.Automation.Runspaces
 
             lock (_syncRoot)
             {
-                if (_stopping)
+                if (IsStopping)
                 {
                     PipelineStoppedException e = new PipelineStoppedException();
                     throw e;
@@ -1344,7 +1366,7 @@ namespace System.Management.Automation.Runspaces
                 // If we are stopping, Stop will pop the entire stack, so
                 // we shouldn't do any popping or some PipelineProcessor won't
                 // be notified that it is being stopped.
-                if (_stopping)
+                if (IsStopping)
                 {
                     return;
                 }
@@ -1379,6 +1401,10 @@ namespace System.Management.Automation.Runspaces
 
                 copyStack = _stack.ToArray();
             }
+
+            // We don't want to stop when a pipeline is in a critical region.
+            // Typically it will be in the middle of command disposal.
+            AcquirePipelineStopPermission();
 
             // Propagate error from the toplevel operation through to enclosing the LocalPipeline.
             if (copyStack.Length > 0)

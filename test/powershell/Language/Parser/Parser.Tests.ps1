@@ -67,6 +67,8 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             }
 
             end {}
+
+            cleanup {}
         }
 '@
         $functionDefinition>$functionDefinitionFile

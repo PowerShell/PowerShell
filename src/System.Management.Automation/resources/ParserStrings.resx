@@ -497,7 +497,7 @@ The correct form is: foreach ($a in $b) {...}</value>
     <value>Script command clause '{0}' has already been defined.</value>
   </data>
   <data name="MissingNamedBlocks" xml:space="preserve">
-    <value>unexpected token '{0}', expected 'begin', 'process', 'end', or 'dynamicparam'.</value>
+    <value>unexpected token '{0}', expected 'begin', 'process', 'end', 'cleanup', or 'dynamicparam'.</value>
   </data>
   <data name="MissingEndCurlyBrace" xml:space="preserve">
     <value>Missing closing '}' in statement block or type definition.</value>

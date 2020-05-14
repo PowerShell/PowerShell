@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Runspaces;
 using System.Reflection;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -394,46 +395,39 @@ namespace System.Management.Automation
 
         internal override void Complete()
         {
-            try
+            if (_exitWasCalled)
             {
-                if (_exitWasCalled)
-                {
-                    return;
-                }
-
-                // process any items that may still be in the input pipeline
-                if (_scriptBlock.HasProcessBlock && IsPipelineInputExpected())
-                {
-                    DoProcessRecordWithInput();
-                }
-
-                if (_scriptBlock.HasEndBlock)
-                {
-                    var endBlock = _runOptimizedCode ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock;
-                    if (this.CommandRuntime.InputPipe.ExternalReader == null)
-                    {
-                        if (IsPipelineInputExpected())
-                        {
-                            // read any items that may still be in the input pipe
-                            while (Read())
-                            {
-                                _input.Add(Command.CurrentPipelineObject);
-                            }
-                        }
-
-                        // run with accumulated input
-                        RunClause(endBlock, AutomationNull.Value, _input);
-                    }
-                    else
-                    {
-                        // run with asynchronously updated $input enumerator
-                        RunClause(endBlock, AutomationNull.Value, this.CommandRuntime.InputPipe.ExternalReader.GetReadEnumerator());
-                    }
-                }
+                return;
             }
-            finally
+
+            // process any items that may still be in the input pipeline
+            if (_scriptBlock.HasProcessBlock && IsPipelineInputExpected())
             {
-                ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+                DoProcessRecordWithInput();
+            }
+
+            if (_scriptBlock.HasEndBlock)
+            {
+                var endBlock = _runOptimizedCode ? _scriptBlock.EndBlock : _scriptBlock.UnoptimizedEndBlock;
+                if (this.CommandRuntime.InputPipe.ExternalReader == null)
+                {
+                    if (IsPipelineInputExpected())
+                    {
+                        // read any items that may still be in the input pipe
+                        while (Read())
+                        {
+                            _input.Add(Command.CurrentPipelineObject);
+                        }
+                    }
+
+                    // run with accumulated input
+                    RunClause(endBlock, AutomationNull.Value, _input);
+                }
+                else
+                {
+                    // run with asynchronously updated $input enumerator
+                    RunClause(endBlock, AutomationNull.Value, this.CommandRuntime.InputPipe.ExternalReader.GetReadEnumerator());
+                }
             }
         }
 
@@ -633,5 +627,131 @@ namespace System.Management.Automation
                 CommandSessionState.CurrentScope.DottedScopes.Pop();
             }
         }
+
+        internal void InvokeCleanupBlock()
+        {
+            ExecutionContext currentContext = LocalPipeline.GetExecutionContextFromTLS();
+            if (_scriptBlock.HasCleanupBlock && Context != currentContext)
+            {
+                // Something went wrong; Cleanup {} is being called from the wrong thread.
+                // Create an event to call it from the correct thread.
+                InvokeCleanupInOriginalContext();
+                return;
+            }
+
+            var oldOutputPipe = _functionContext?._outputPipe;
+            try
+            {
+                if (_scriptBlock.HasCleanupBlock)
+                {
+                    var cleanupBlock = _runOptimizedCode
+                        ? _scriptBlock.CleanupBlock
+                        : _scriptBlock.UnoptimizedCleanupBlock;
+
+                    if (_functionContext != null)
+                    {
+                        _functionContext._outputPipe = new Pipe
+                        {
+                            NullPipe = true
+                        };
+                    }
+
+                    // run with no pipeline input or $input enumerator
+                    RunClause(cleanupBlock, AutomationNull.Value, AutomationNull.Value);
+                }
+            }
+            finally
+            {
+                if (_functionContext != null)
+                {
+                    _functionContext._outputPipe = oldOutputPipe;
+                }
+
+                ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+            }
+        }
+
+        #region Eventing for Cleanup
+
+        private void InvokeCleanupInOriginalContext()
+        {
+            Context.Events.SubscribeEvent(
+                source: null,
+                eventName: PSEngineEvent.OnScriptCommandCleanup,
+                sourceIdentifier: PSEngineEvent.OnScriptCommandCleanup,
+                data: null,
+                handlerDelegate: new PSEventReceivedEventHandler(OnCleanupInvocationEventHandler),
+                supportEvent: true,
+                forwardEvent: false,
+                shouldQueueAndProcessInExecutionThread: true,
+                maxTriggerCount: 1);
+
+            var cleanupInvocationEventArgs = new ScriptCommandCleanupInvocationEventArgs(this);
+
+            Context.Events.GenerateEvent(
+                sourceIdentifier: PSEngineEvent.OnScriptCommandCleanup,
+                sender: null,
+                args: new object[] { cleanupInvocationEventArgs },
+                extraData: null,
+                processInCurrentThread: true,
+                waitForCompletionInCurrentThread: true);
+        }
+
+        /// <summary>
+        /// Handles OnCleanupInvoke event, this is called by the event manager.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="args">
+        /// Arguments to pass to the event, which must be of the type
+        /// <see cref="ScriptCommandCleanupInvocationEventArgs"/>
+        /// </param>
+        private static void OnCleanupInvocationEventHandler(object sender, PSEventArgs args)
+        {
+            var eventArgs = (object)args.SourceEventArgs as ScriptCommandCleanupInvocationEventArgs;
+            Diagnostics.Assert(
+                eventArgs?.ScriptCommandProcessor != null,
+                $"Event Arguments to {nameof(OnCleanupInvocationEventHandler)} should not be null");
+
+            bool wasAlreadyStopping = ExceptionHandlingOps.SuspendStoppingPipeline(
+                eventArgs.ScriptCommandProcessor.Context);
+            try
+            {
+                eventArgs.ScriptCommandProcessor.InvokeCleanupBlock();
+            }
+            finally
+            {
+                ExceptionHandlingOps.RestoreStoppingPipeline(
+                    eventArgs.ScriptCommandProcessor.Context,
+                    wasAlreadyStopping);
+            }
+        }
+
+        #endregion Eventing for Cleanup
+    }
+
+    /// <summary>
+    /// Defines Event arguments passed to OnDisposeInvocationEventHandler.
+    /// </summary>
+    internal sealed class ScriptCommandCleanupInvocationEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ScriptCommandCleanupInvocationEventArgs"/> class.
+        /// </summary>
+        /// <param name="commandProcessor">The command processor to invoke cleanup for.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="commandProcessor"/> is null.</exception>
+        internal ScriptCommandCleanupInvocationEventArgs(DlrScriptCommandProcessor commandProcessor)
+        {
+            if (commandProcessor == null)
+            {
+                throw new ArgumentNullException(nameof(commandProcessor));
+            }
+
+            ScriptCommandProcessor = commandProcessor;
+        }
+
+        /// <summary>
+        /// Gets the script command processor to be disposed.
+        /// </summary>
+        internal DlrScriptCommandProcessor ScriptCommandProcessor { get; }
     }
 }
