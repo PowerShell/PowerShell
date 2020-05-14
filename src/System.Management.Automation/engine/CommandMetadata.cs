@@ -875,8 +875,11 @@ process
 
 end
 {{{5}}}
+
+cleanup
+{{{6}}}
 <#
-{6}
+{7}
 #>
 ",
                 GetDecl(),
@@ -885,6 +888,7 @@ end
                 GetBeginBlock(),
                 GetProcessBlock(),
                 GetEndBlock(),
+                GetCleanupBlock(),
                 CodeGeneration.EscapeBlockCommentContent(helpComment));
 
             return result;
@@ -1107,6 +1111,17 @@ end
             return @"
     try {
         $steppablePipeline.End()
+    } catch {
+        throw
+    }
+";
+        }
+
+        internal string GetCleanupBlock()
+        {
+            return @"
+    try {
+        $steppablePipeline.Dispose()
     } catch {
         throw
     }

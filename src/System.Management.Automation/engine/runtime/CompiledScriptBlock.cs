@@ -12,11 +12,9 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading.Tasks;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
@@ -35,6 +33,7 @@ namespace System.Management.Automation
         Begin,
         Process,
         End,
+        Cleanup,
         ProcessBlockOnly,
     }
 
@@ -247,6 +246,7 @@ namespace System.Management.Automation
 
                 if (scriptBlockAst.BeginBlock != null
                     || scriptBlockAst.ProcessBlock != null
+                    || scriptBlockAst.CleanupBlock != null
                     || scriptBlockAst.ParamBlock != null
                     || scriptBlockAst.DynamicParamBlock != null
                     || scriptBlockAst.ScriptRequirements != null
@@ -331,6 +331,8 @@ namespace System.Management.Automation
         internal Action<FunctionContext> EndBlock { get; set; }
 
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
+        internal Action<FunctionContext> CleanupBlock { get; set; }
+        internal Action<FunctionContext> UnoptimizedCleanupBlock { get; set; }
 
         internal IScriptExtent[] SequencePoints { get; set; }
 
@@ -753,7 +755,7 @@ namespace System.Management.Automation
         {
             errorHandler ??= (static _ => null);
 
-            if (HasBeginBlock || HasProcessBlock)
+            if (HasBeginBlock || HasProcessBlock || HasCleanupBlock)
             {
                 return errorHandler(AutomationExceptions.CanConvertOneClauseOnly);
             }
@@ -891,7 +893,10 @@ namespace System.Management.Automation
             Parser parser = new Parser();
 
             var ast = AstInternal;
-            if (HasBeginBlock || HasProcessBlock || ast.Body.ParamBlock != null)
+            if (HasBeginBlock
+                || HasProcessBlock
+                || HasCleanupBlock
+                || ast.Body.ParamBlock != null)
             {
                 Ast errorAst = ast.Body.BeginBlock ?? (Ast)ast.Body.ProcessBlock ?? ast.Body.ParamBlock;
                 parser.ReportError(
@@ -976,7 +981,8 @@ namespace System.Management.Automation
         {
             if ((clauseToInvoke == ScriptBlockClauseToInvoke.Begin && !HasBeginBlock)
                 || (clauseToInvoke == ScriptBlockClauseToInvoke.Process && !HasProcessBlock)
-                || (clauseToInvoke == ScriptBlockClauseToInvoke.End && !HasEndBlock))
+                || (clauseToInvoke == ScriptBlockClauseToInvoke.End && !HasEndBlock)
+                || (clauseToInvoke == ScriptBlockClauseToInvoke.Cleanup && !HasCleanupBlock))
             {
                 return;
             }
@@ -1362,7 +1368,7 @@ namespace System.Management.Automation
         private Action<FunctionContext> GetCodeToInvoke(ref bool optimized, ScriptBlockClauseToInvoke clauseToInvoke)
         {
             if (clauseToInvoke == ScriptBlockClauseToInvoke.ProcessBlockOnly
-                && (HasBeginBlock || (HasEndBlock && HasProcessBlock)))
+                && (HasBeginBlock || HasCleanupBlock || (HasEndBlock && HasProcessBlock)))
             {
                 throw PSTraceSource.NewInvalidOperationException(AutomationExceptions.ScriptBlockInvokeOnOneClauseOnly);
             }
@@ -1379,6 +1385,8 @@ namespace System.Management.Automation
                         return _scriptBlockData.ProcessBlock;
                     case ScriptBlockClauseToInvoke.End:
                         return _scriptBlockData.EndBlock;
+                    case ScriptBlockClauseToInvoke.Cleanup:
+                        return _scriptBlockData.CleanupBlock;
                     default:
                         return HasProcessBlock ? _scriptBlockData.ProcessBlock : _scriptBlockData.EndBlock;
                 }
@@ -1392,6 +1400,8 @@ namespace System.Management.Automation
                     return _scriptBlockData.UnoptimizedProcessBlock;
                 case ScriptBlockClauseToInvoke.End:
                     return _scriptBlockData.UnoptimizedEndBlock;
+                case ScriptBlockClauseToInvoke.Cleanup:
+                    return _scriptBlockData.UnoptimizedCleanupBlock;
                 default:
                     return HasProcessBlock ? _scriptBlockData.UnoptimizedProcessBlock : _scriptBlockData.UnoptimizedEndBlock;
             }
@@ -2147,11 +2157,17 @@ namespace System.Management.Automation
 
         internal Action<FunctionContext> UnoptimizedEndBlock { get => _scriptBlockData.UnoptimizedEndBlock; }
 
+        internal Action<FunctionContext> CleanupBlock { get => _scriptBlockData.CleanupBlock; }
+
+        internal Action<FunctionContext> UnoptimizedCleanupBlock { get => _scriptBlockData.UnoptimizedCleanupBlock; }
+
         internal bool HasBeginBlock { get => AstInternal.Body.BeginBlock != null; }
 
         internal bool HasProcessBlock { get => AstInternal.Body.ProcessBlock != null; }
 
         internal bool HasEndBlock { get => AstInternal.Body.EndBlock != null; }
+
+        internal bool HasCleanupBlock { get => AstInternal.Body.CleanupBlock != null; }
     }
 
     [Serializable]
@@ -2514,18 +2530,134 @@ namespace System.Management.Automation
                 return;
             }
 
-            this.DisposingEvent.SafeInvoke(this, EventArgs.Empty);
-            commandRuntime = null;
-            currentObjectInPipeline = null;
-            _input.Clear();
-            // _scriptBlock = null;
-            // _localsTuple = null;
-            // _functionContext = null;
+            ExecutionContext currentContext = LocalPipeline.GetExecutionContextFromTLS();
+            if (Context != currentContext && _scriptBlock.HasCleanupBlock)
+            {
+                // Something went wrong; Dispose{} is being called from the wrong thread.
+                // Create an event to call it from the correct thread.
+                InvokeCleanupInOriginalContext();
+                return;
+            }
 
-            base.InternalDispose(true);
-            _disposed = true;
+            var oldOutputPipe = _functionContext?._outputPipe;
+
+            try
+            {
+                if (_scriptBlock.HasCleanupBlock)
+                {
+                    var disposeBlock = _runOptimized ? _scriptBlock.CleanupBlock : _scriptBlock.UnoptimizedCleanupBlock;
+                    if (_functionContext != null)
+                    {
+                        _functionContext._outputPipe = new Pipe
+                        {
+                            NullPipe = true
+                        };
+                    }
+
+                    RunClause(
+                        disposeBlock,
+                        AutomationNull.Value,
+                        AutomationNull.Value);
+                }
+            }
+            finally
+            {
+                if (_functionContext != null)
+                {
+                    _functionContext._outputPipe = oldOutputPipe;
+                }
+
+                this.DisposingEvent.SafeInvoke(this, EventArgs.Empty);
+
+                commandRuntime = null;
+                currentObjectInPipeline = null;
+                _input.Clear();
+
+                base.InternalDispose(true);
+                _disposed = true;
+            }
         }
 
         #endregion IDispose
+
+        #region Eventing for Cleanup
+
+        private void InvokeCleanupInOriginalContext()
+        {
+            Context.Events.SubscribeEvent(
+                    source: null,
+                    eventName: PSEngineEvent.OnScriptCommandCleanup,
+                    sourceIdentifier: PSEngineEvent.OnScriptCommandCleanup,
+                    data: null,
+                    handlerDelegate: new PSEventReceivedEventHandler(OnCleanupInvocationEventHandler),
+                    supportEvent: true,
+                    forwardEvent: false,
+                    shouldQueueAndProcessInExecutionThread: true,
+                    maxTriggerCount: 1);
+
+            var cleanupInvocationEventArgs = new CleanupInvocationEventArgs(this);
+
+            Context.Events.GenerateEvent(
+                sourceIdentifier: PSEngineEvent.OnScriptCommandCleanup,
+                sender: null,
+                args: new object[] { cleanupInvocationEventArgs },
+                extraData: null,
+                processInCurrentThread: true,
+                waitForCompletionInCurrentThread: true);
+        }
+
+        /// <summary>
+        /// Handles OnDisposeInvoke event, this is called by the event manager.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="args">
+        /// Arguments to be passed to the event, which must be of type
+        /// <see cref="CleanupInvocationEventArgs"/>
+        /// </param>
+        private static void OnCleanupInvocationEventHandler(object sender, PSEventArgs args)
+        {
+            var eventArgs = (object)args.SourceEventArgs as CleanupInvocationEventArgs;
+            Diagnostics.Assert(
+                eventArgs?.ScriptCmdlet != null,
+                $"Event Arguments to {nameof(OnCleanupInvocationEventHandler)} should not be null");
+
+            bool wasAlreadyStopping = ExceptionHandlingOps.SuspendStoppingPipeline(eventArgs.ScriptCmdlet.Context);
+            try
+            {
+                eventArgs.ScriptCmdlet.Dispose();
+            }
+            finally
+            {
+                ExceptionHandlingOps.RestoreStoppingPipeline(eventArgs.ScriptCmdlet.Context, wasAlreadyStopping);
+            }
+        }
+
+        #endregion Eventing for Cleanup
+    }
+
+    /// <summary>
+    /// Defines Event arguments passed to OnDisposeInvocationEventHandler.
+    /// </summary>
+    internal sealed class CleanupInvocationEventArgs : EventArgs
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CleanupInvocationEventArgs"/> class.
+        /// </summary>
+        /// <param name="cmdlet">The command processor to dispose.</param>
+        /// <exception cref="ArgumentNullException"><paramref name="cmdlet"/> is null.</exception>
+        internal CleanupInvocationEventArgs(PSScriptCmdlet cmdlet)
+        {
+            if (cmdlet == null)
+            {
+                throw new ArgumentNullException(nameof(cmdlet));
+            }
+
+            ScriptCmdlet = cmdlet;
+        }
+
+        /// <summary>
+        /// Gets the script cmdlet to be disposed.
+        /// </summary>
+        internal PSScriptCmdlet ScriptCmdlet { get; }
     }
 }

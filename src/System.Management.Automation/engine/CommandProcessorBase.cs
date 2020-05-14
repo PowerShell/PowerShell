@@ -612,7 +612,6 @@ namespace System.Management.Automation
         /// </summary>
         internal void DoComplete()
         {
-            Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
             CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
             try
             {
@@ -643,31 +642,43 @@ namespace System.Management.Automation
             }
             finally
             {
-                OnRestorePreviousScope();
+                RestorePreviousScope();
 
-                _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
+            }
+        }
 
-                // Destroy the local scope at this point if there is one...
-                if (_useLocalScope && CommandScope != null)
+        /// <summary>
+        /// Executes the appropriate disposal methods for script commands.
+        /// <see cref="DlrScriptCommandProcessor"/> is itself a command processor, so interpreted functions cannot be
+        /// reliably disposed without also disposing the entire command processor. Instead, it implements its own
+        /// <see cref="DlrScriptCommandProcessor.InvokeCleanupBlock"/> method to perform the same function as its
+        /// compiled counterpart <see cref="PSScriptCmdlet.Dispose"/>, which is a proper IDisposable implementation.
+        /// </summary>
+        internal virtual void CleanupScriptCommands()
+        {
+            try
+            {
+                if (Command is PSScriptCmdlet scriptCmdlet)
                 {
-                    CommandSessionState.RemoveScope(CommandScope);
+                    using (commandRuntime.AllowThisCommandToWrite(true))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Dispose"))
+                    {
+                        scriptCmdlet.Dispose();
+                    }
                 }
-
-                // and the previous scope...
-                if (_previousScope != null)
+                else if (this is DlrScriptCommandProcessor scriptProcessor)
                 {
-                    // Restore the scope but use the same session state instance we
-                    // got it from because the command may have changed the execution context
-                    // session state...
-                    CommandSessionState.CurrentScope = _previousScope;
+                    using (commandRuntime.AllowThisCommandToWrite(true))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Dispose"))
+                    {
+                        scriptProcessor.InvokeCleanupBlock();
+                    }
                 }
-
-                // Restore the previous session state
-                if (_previousCommandSessionState != null)
-                {
-                    Context.EngineSessionState = _previousCommandSessionState;
-                }
+            }
+            catch (Exception e)
+            {
+                throw ManageInvocationException(e);
             }
         }
 
@@ -943,21 +954,77 @@ namespace System.Management.Automation
         private void Dispose(bool disposing)
         {
             if (_disposed)
-                return;
-
-            if (disposing)
             {
-                // 2004/03/05-JonN Look into using metadata to check
-                // whether IDisposable is implemented, in order to avoid
-                // this expensive reflection cast.
-                IDisposable id = Command as IDisposable;
-                if (id != null)
-                {
-                    id.Dispose();
-                }
+                return;
             }
 
-            _disposed = true;
+            try
+            {
+                if (disposing)
+                {
+                    Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
+                    CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
+
+                    bool isStopping = false;
+                    try
+                    {
+                        if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
+                        {
+                            _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+                        }
+
+                        _context.CurrentCommandProcessor = this;
+                        isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
+                        SetCurrentScopeToExecutionScope();
+
+                        // This is a no-op for compiled cmdlets
+                        CleanupScriptCommands();
+                    }
+                    finally
+                    {
+                        ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
+                        OnRestorePreviousScope();
+
+                        _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
+                        _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
+
+                        // Destroy the local scope at this point if there is one...
+                        if (_useLocalScope && CommandScope != null)
+                        {
+                            CommandSessionState.RemoveScope(CommandScope);
+                        }
+
+                        // and the previous scope...
+                        if (_previousScope != null)
+                        {
+                            // Restore the scope but use the same session state instance we
+                            // got it from because the command may have changed the execution context
+                            // session state...
+                            CommandSessionState.CurrentScope = _previousScope;
+                        }
+
+                        // Restore the previous session state
+                        if (_previousCommandSessionState != null)
+                        {
+                            Context.EngineSessionState = _previousCommandSessionState;
+                        }
+
+                        this.CommandRuntime.RemoveVariableListsInPipe();
+
+                        // 2004/03/05-JonN Look into using metadata to check
+                        // whether IDisposable is implemented, in order to avoid
+                        // this expensive reflection cast.
+                        if (Command is IDisposable id)
+                        {
+                            id.Dispose();
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                _disposed = true;
+            }
         }
 
         #endregion IDispose

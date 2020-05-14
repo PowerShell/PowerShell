@@ -1578,11 +1578,13 @@ namespace System.Management.Automation
 
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            var pipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            if (pipeline != null)
             {
-                bool oldIsStopping = lpl.Stopper.IsStopping;
-                lpl.Stopper.IsStopping = false;
+                bool oldIsStopping = pipeline.Stopper.IsStopping;
+                pipeline.Stopper.IsStopping = false;
+                pipeline.Stopper.EnterCriticalRegion();
+
                 return oldIsStopping;
             }
 
@@ -1591,10 +1593,11 @@ namespace System.Management.Automation
 
         internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
         {
-            LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            if (lpl != null)
+            var pipeline = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
+            if (pipeline != null)
             {
-                lpl.Stopper.IsStopping = oldIsStopping;
+                pipeline.Stopper.IsStopping = oldIsStopping;
+                pipeline.Stopper.ExitCriticalRegion();
             }
         }
 

@@ -724,12 +724,13 @@ namespace System.Management.Automation.Language
             ParseError[] parseErrors;
             var ast = Parser.ParseInput(input, out throwAwayTokens, out parseErrors);
 
-            if ((ast == null) ||
-                parseErrors.Length > 0 ||
-                ast.BeginBlock != null ||
-                ast.ProcessBlock != null ||
-                ast.DynamicParamBlock != null ||
-                ast.EndBlock.Traps != null)
+            if (ast == null
+                || parseErrors.Length > 0
+                || ast.BeginBlock != null
+                || ast.ProcessBlock != null
+                || ast.CleanupBlock != null
+                || ast.DynamicParamBlock != null
+                || ast.EndBlock.Traps != null)
             {
                 return false;
             }
@@ -1713,9 +1714,9 @@ namespace System.Management.Automation.Language
             NamedBlockAst beginBlock = null;
             NamedBlockAst processBlock = null;
             NamedBlockAst endBlock = null;
-            IScriptExtent startExtent = lCurly != null
-                                            ? lCurly.Extent
-                                            : paramBlockAst?.Extent;
+            NamedBlockAst cleanupBlock = null;
+
+            IScriptExtent startExtent = lCurly?.Extent ?? paramBlockAst?.Extent;
             IScriptExtent endExtent = null;
             IScriptExtent extent = null;
             IScriptExtent scriptBlockExtent = null;
@@ -1757,6 +1758,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.Begin:
                     case TokenKind.Process:
                     case TokenKind.End:
+                    case TokenKind.Cleanup:
                         break;
                 }
 
@@ -1797,6 +1799,10 @@ namespace System.Management.Automation.Language
                 {
                     endBlock = new NamedBlockAst(extent, TokenKind.End, statementBlock, false);
                 }
+                else if (blockNameToken.Kind == TokenKind.Cleanup && cleanupBlock == null)
+                {
+                    cleanupBlock = new NamedBlockAst(extent, TokenKind.Cleanup, statementBlock, false);
+                }
                 else if (blockNameToken.Kind == TokenKind.Dynamicparam && dynamicParamBlock == null)
                 {
                     dynamicParamBlock = new NamedBlockAst(extent, TokenKind.Dynamicparam, statementBlock, false);
@@ -1818,7 +1824,14 @@ namespace System.Management.Automation.Language
             CompleteScriptBlockBody(lCurly, ref extent, out scriptBlockExtent);
 
         return_script_block_ast:
-            return new ScriptBlockAst(scriptBlockExtent, usingStatements, paramBlockAst, beginBlock, processBlock, endBlock,
+            return new ScriptBlockAst(
+                scriptBlockExtent,
+                usingStatements,
+                paramBlockAst,
+                beginBlock,
+                processBlock,
+                endBlock,
+                cleanupBlock,
                 dynamicParamBlock);
         }
 

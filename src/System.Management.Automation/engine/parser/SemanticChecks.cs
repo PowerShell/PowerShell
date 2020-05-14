@@ -406,10 +406,11 @@ namespace System.Management.Automation.Language
                     ParserStrings.ParamBlockNotAllowedInMethod);
             }
 
-            if (body.BeginBlock != null ||
-                body.ProcessBlock != null ||
-                body.DynamicParamBlock != null ||
-                !body.EndBlock.Unnamed)
+            if (body.BeginBlock != null
+                || body.ProcessBlock != null
+                || body.CleanupBlock != null
+                || body.DynamicParamBlock != null
+                || !body.EndBlock.Unnamed)
             {
                 _parser.ReportError(Parser.ExtentFromFirstOf(body.DynamicParamBlock, body.BeginBlock, body.ProcessBlock, body.EndBlock),
                     nameof(ParserStrings.NamedBlockNotAllowedInMethod),
