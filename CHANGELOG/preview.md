@@ -101,7 +101,7 @@
 - Add Windows 10 IoT Core reference in `Adopters.md` (#12266) (Thanks @parameshbabu!)
 - Update `README.md` and `metadata.json` for `7.1.0-preview.1` (#12211)
 
-## 7.1.0-preview.1 - 2020-03-26
+## [7.1.0-preview.1] - 2020-03-26
 
 ### Breaking Changes
 
@@ -262,3 +262,4 @@
 - Update `README.md` (#11100) (Thanks @mklement0!)
 
 [7.1.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.1...v7.1.0-preview.2
+[7.1.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.6...v7.1.0-preview.1
