@@ -112,13 +112,14 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
             function Set-TestStateWithNullResult {
                 [void]$testState.Value++
             }
-        }
 
-        BeforeEach {
             $testState = [pscustomobject]@{
                 Value = 0
             }
+        }
 
+        BeforeEach {
+            $testState.Value = 0
             $x = $null
         }
 
