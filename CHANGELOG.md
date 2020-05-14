@@ -1,5 +1,24 @@
 # Changelog
 
+## [6.2.5] - 2020-05-14
+
+### Build and Packaging Improvements
+
+<details>
+
+<ul>
+<li>Port back the code for new changelog format.</li>
+<li>Work around <code>FPM</code> issue with a specific version on macOS</li>
+<li>Update the combined package build to release the daily builds (#10449)</li>
+<li>Refactor packaging pipeline (#11852)</li>
+<li>Bump .NET SDK version to the version 2.1.18</li>
+<li>Move to standard internal pool for building (#12119)</li>
+</ul>
+
+</details>
+
+[6.2.5]: https://github.com/PowerShell/PowerShell/compare/v6.2.4...v6.2.5
+
 ## v6.2.4 - 01/27/2020
 
 ### General Cmdlet Updates and Fixes
