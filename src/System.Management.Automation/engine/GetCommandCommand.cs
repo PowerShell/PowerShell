@@ -591,12 +591,12 @@ namespace Microsoft.PowerShell.Commands
             if (this.Name != null && !Array.Exists(this.Name, name => name.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)))
             {
                 string aliasName = _nameContainsWildcard ? command.Name : this.Name[0];
-                
+
                 IDictionary<string, AliasInfo> aliasTable = SessionState.Internal.GetAliasTable();
                 foreach (KeyValuePair<string, AliasInfo> tableEntry in aliasTable)
                 {
-                    if ((Array.Exists(this.Name, name => name.Equals(tableEntry.Key, StringComparison.InvariantCultureIgnoreCase)) && 
-                        tableEntry.Value.Definition == command.Name) || 
+                    if ((Array.Exists(this.Name, name => name.Equals(tableEntry.Key, StringComparison.InvariantCultureIgnoreCase)) &&
+                        tableEntry.Value.Definition == command.Name) ||
                         (_nameContainsWildcard && tableEntry.Value.Definition == command.Name))
                     {
                         aliasName = tableEntry.Key;
@@ -635,7 +635,7 @@ namespace Microsoft.PowerShell.Commands
 
                         break;
                 }
-                
+
                 syntax = PSObject.AsPSObject(replacedSyntax);
             }
 
@@ -1444,15 +1444,15 @@ namespace Microsoft.PowerShell.Commands
                             // Look in function table
                             if ((this.CommandType & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
                             {
-                                foreach (DictionaryEntry function in module.SessionState.Internal.GetFunctionTable())
+                                foreach (var function in module.SessionState.Internal.GetFunctionTable())
                                 {
-                                    FunctionInfo func = (FunctionInfo)function.Value;
+                                    FunctionInfo func = function.Value;
 
-                                    if (matcher.IsMatch((string)function.Key) && func.IsImported)
+                                    if (matcher.IsMatch(function.Key) && func.IsImported)
                                     {
                                         // make sure function doesn't come from the current module's nested module
                                         if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                                            yield return (CommandInfo)function.Value;
+                                            yield return function.Value;
                                     }
                                 }
                             }

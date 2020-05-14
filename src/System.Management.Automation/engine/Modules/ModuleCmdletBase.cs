@@ -5074,9 +5074,9 @@ namespace Microsoft.PowerShell.Commands
                         // Remove the imported functions from SessionState...
                         // (can't just go through module.SessionState.Internal.ExportedFunctions,
                         //  because the names of the functions might have been changed by the -Prefix parameter of Import-Module)
-                        foreach (DictionaryEntry entry in ss.GetFunctionTable())
+                        foreach (var entry in ss.GetFunctionTable())
                         {
-                            FunctionInfo func = (FunctionInfo)entry.Value;
+                            FunctionInfo func = entry.Value;
                             if (func.Module == null)
                             {
                                 continue;

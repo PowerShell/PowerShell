@@ -778,19 +778,19 @@ namespace System.Management.Automation
                             _commandName,
                             WildcardOptions.IgnoreCase);
 
-                    foreach (DictionaryEntry functionEntry in _context.EngineSessionState.GetFunctionTable())
+                    foreach (var functionEntry in _context.EngineSessionState.GetFunctionTable())
                     {
-                        if (functionMatcher.IsMatch((string)functionEntry.Key) ||
+                        if (functionMatcher.IsMatch(functionEntry.Key) ||
                             (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
-                            FuzzyMatcher.IsFuzzyMatch(functionEntry.Key.ToString(), _commandName)))
+                            FuzzyMatcher.IsFuzzyMatch(functionEntry.Key, _commandName)))
                         {
-                            matchingFunction.Add((CommandInfo)functionEntry.Value);
+                            matchingFunction.Add(functionEntry.Value);
                         }
                         else if (_commandResolutionOptions.HasFlag(SearchResolutionOptions.UseAbbreviationExpansion))
                         {
-                            if (_commandName.Equals(ModuleUtils.AbbreviateName((string)functionEntry.Key), StringComparison.OrdinalIgnoreCase))
+                            if (_commandName.Equals(ModuleUtils.AbbreviateName(functionEntry.Key), StringComparison.OrdinalIgnoreCase))
                             {
-                                matchingFunction.Add((CommandInfo)functionEntry.Value);
+                                matchingFunction.Add(functionEntry.Value);
                             }
                         }
                     }
