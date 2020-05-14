@@ -24,8 +24,9 @@ At the end of this exercise, you should be able to launch the PowerShell session
   You can launch PowerShell console by pressing Windows key, typing PowerShell, and clicking on Windows PowerShell.
   However if you want to try out the latest PowerShell, follow the [PowerShell on Windows][inst-win].
 
-- Alternatively you can get the PowerShell by [building it](../../README.md#building-powershell)
+- Alternatively you can get the PowerShell by [building it][build-powershell]
 
+[build-powershell]:../../README.md#building-the-repository
 [inst-linux]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux
 [inst-win]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows
 [inst-macos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos
@@ -57,10 +58,7 @@ Click on the link below to learn more about debugging:
 - [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/components/vscode/using-vscode#debugging-with-visual-studio-code)
 - [PowerShell Command-line Debugging][cli-debugging]
 
-[use-vscode-editor]:./using-vscode.md#editing-with-vs-code
 [cli-debugging]:./debugging-from-commandline.md
-[get-powershell]:../../README.md#get-powershell
-[build-powershell]:../../README.md#building-the-repository
 
 ### PowerShell Testing
 
@@ -121,7 +119,6 @@ Note that all bash commands should continue working on PowerShell session.
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
-[Using Windows PowerShell for Administration]: https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration
 [ebook-from-Idera]:https://www.idera.com/resourcecentral/whitepapers/powershell-ebook
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
 [idera-learn-powershell]: https://community.idera.com/database-tools/powershell/video_library/

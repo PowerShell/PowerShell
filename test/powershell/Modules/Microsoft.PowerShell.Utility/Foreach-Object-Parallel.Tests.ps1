@@ -105,6 +105,27 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
         $parallelScriptLocation.Path | Should -BeExactly $PWD.Path
     }
 
+    It 'Verifies that the current working directory can have wildcards in its name' {
+        $oldLocation = Get-Location
+
+        $wildcardName = New-Item -Path 'TestDrive:\' -Name '[' -ItemType Directory
+        Set-Location -LiteralPath $wildcardName.FullName
+        try
+        {
+            { 1..1 | ForEach-Object -Parallel { $PWD } } | Should -Not -Throw
+
+            $wildcardPathResult = 1..1 | ForEach-Object -Parallel { $PWD }
+            $wildcardPathResult.Path | Should -BeExactly $PWD.Path
+        }
+        finally
+        {
+            Set-Location -Path $oldLocation
+            if ($drive -is [System.IO.DirectoryInfo]) {
+                $drive | Remove-Item -Force
+            }
+        }
+    }
+
     It 'Verifies no terminating error if current working drive is not found' {
         $oldLocation = Get-Location
         try
