@@ -103,23 +103,7 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
     }
 
     Context 'Null coalesce operator ??' {
-        BeforeAll {
-            function Set-TestStateWithStringResult {
-                'Test'
-                [void]$testState.Value++
-            }
-
-            function Set-TestStateWithNullResult {
-                [void]$testState.Value++
-            }
-
-            $testState = [pscustomobject]@{
-                Value = 0
-            }
-        }
-
         BeforeEach {
-            $testState.Value = 0
             $x = $null
         }
 
@@ -189,13 +173,15 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
             {$???$false} | Should -BeTrue
         }
 
-        It 'Should only evaluate LHS once when it is NOT null' {
-            (Set-TestStateWithStringResult) ?? 'Nothing' | Should -BeExactly 'Test'
+        It 'Should only evaluate LHS once when it IS null' {
+            $testState = [pscustomobject]@{ Value = 0 }
+            (& { [void]$testState.Value++ }) ?? 'Nothing' | Should -BeExactly 'Nothing'
             $testState.Value | Should -Be 1
         }
 
-        It 'Should only evaluate LHS once when it IS null' {
-            (Set-TestStateWithNullResult) ?? 'Nothing' | Should -BeExactly 'Nothing'
+        It 'Should only evaluate LHS once when it is NOT null' {
+            $testState = [pscustomobject]@{ Value = 0 }
+            (& { 'Test'; [void]$testState.Value++ }) ?? 'Nothing' | Should -BeExactly 'Test'
             $testState.Value | Should -Be 1
         }
     }
