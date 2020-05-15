@@ -1,4 +1,4 @@
-# Sample code from https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_script_internationalization?view=powershell-6&viewFallbackFrom=powershell-Microsoft.PowerShell.Core
+# Sample code from https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_script_internationalization
 
     $Day = DATA {
 # culture="en-US"

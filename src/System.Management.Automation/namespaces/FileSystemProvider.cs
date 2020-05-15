@@ -8164,7 +8164,7 @@ namespace Microsoft.PowerShell.Commands
             var data = new WIN32_FIND_DATA();
             using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
-                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/en-us/windows/win32/fileio/reparse-point-tags
+                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
