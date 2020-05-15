@@ -455,13 +455,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Proxy server
-            if (ProxyUseDefaultCredentials && (ProxyCredential != null))
-            {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyCredentialConflict,
-                                                       "WebCmdletProxyCredentialConflictException");
-                ThrowTerminatingError(error);
-            }
-            else if ((Proxy == null) && ((ProxyCredential != null) || ProxyUseDefaultCredentials))
+            if ((Proxy == null) && ProxyCredential != null)
             {
                 ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied,
                                                        "WebCmdletProxyUriNotSuppliedException");
@@ -633,6 +627,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 // store the UserAgent string
                 WebSession.UserAgent = UserAgent;
+            }
+
+            if (ProxyUseDefaultCredentials)
+            {
+                HttpClient.DefaultProxy.Credentials = CredentialCache.DefaultCredentials;
             }
 
             if (Proxy != null)

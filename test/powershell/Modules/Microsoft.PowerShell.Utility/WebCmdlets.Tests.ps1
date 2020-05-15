@@ -556,6 +556,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result.Output.Content | Should -BeExactly $expectedResult.Output.Content
     }
 
+    It "Invoke-WebRequest accepts '-ProxyUseDefaultCredentials' parameter" {
+        { Invoke-WebRequest -Uri http://httpbin.org -ProxyUseDefaultCredentials } | Should -Not -Throw
+    }
+
     # Perform the following operation for Invoke-WebRequest
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
@@ -2127,6 +2131,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '${protocol}://${proxy_address}' -NoProxy"
         $expectedResult = ExecuteWebCommand -command $command
         $result.Output | Should -BeExactly $expectedResult.Output
+    }
+
+    It "Invoke-RestMethod accepts '-ProxyUseDefaultCredentials' parameter" {
+        { Invoke-RestMethod -Uri http://httpbin.org -ProxyUseDefaultCredentials } | Should -Not -Throw
     }
 
     # Perform the following operation for Invoke-RestMethod
