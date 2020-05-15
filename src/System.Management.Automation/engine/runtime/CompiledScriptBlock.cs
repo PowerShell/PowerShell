@@ -2530,43 +2530,15 @@ namespace System.Management.Automation
                 return;
             }
 
-            ExecutionContext currentContext = LocalPipeline.GetExecutionContextFromTLS();
-            if (Context != currentContext && _scriptBlock.HasCleanupBlock)
-            {
-                // Something went wrong; Dispose{} is being called from the wrong thread.
-                // Create an event to call it from the correct thread.
-                InvokeCleanupInOriginalContext();
-                return;
-            }
-
-            var oldOutputPipe = _functionContext?._outputPipe;
-
             try
             {
                 if (_scriptBlock.HasCleanupBlock)
                 {
-                    var disposeBlock = _runOptimized ? _scriptBlock.CleanupBlock : _scriptBlock.UnoptimizedCleanupBlock;
-                    if (_functionContext != null)
-                    {
-                        _functionContext._outputPipe = new Pipe
-                        {
-                            NullPipe = true
-                        };
-                    }
-
-                    RunClause(
-                        disposeBlock,
-                        AutomationNull.Value,
-                        AutomationNull.Value);
+                    InvokeCleanupBlock();
                 }
             }
             finally
             {
-                if (_functionContext != null)
-                {
-                    _functionContext._outputPipe = oldOutputPipe;
-                }
-
                 this.DisposingEvent.SafeInvoke(this, EventArgs.Empty);
 
                 commandRuntime = null;
@@ -2575,6 +2547,44 @@ namespace System.Management.Automation
 
                 base.InternalDispose(true);
                 _disposed = true;
+            }
+        }
+
+        private void InvokeCleanupBlock()
+        {
+            ExecutionContext currentContext = LocalPipeline.GetExecutionContextFromTLS();
+            if (Context != currentContext)
+            {
+                // Something went wrong; Cleanup {} is being called from the wrong thread.
+                // Create an event to call it from the correct thread.
+                InvokeCleanupInOriginalContext();
+                return;
+            }
+
+            Pipe oldOutputPipe = _functionContext?._outputPipe;
+            try
+            {
+                Action<FunctionContext> cleanupBlock = _runOptimized
+                    ? _scriptBlock.CleanupBlock
+                    : _scriptBlock.UnoptimizedCleanupBlock;
+
+                if (_functionContext != null)
+                {
+                    _functionContext._outputPipe = new Pipe
+                    {
+                        NullPipe = true
+                    };
+                }
+
+                // run with no pipeline input or $input enumerator
+                RunClause(cleanupBlock, AutomationNull.Value, AutomationNull.Value);
+            }
+            finally
+            {
+                if (_functionContext != null)
+                {
+                    _functionContext._outputPipe = oldOutputPipe;
+                }
             }
         }
 

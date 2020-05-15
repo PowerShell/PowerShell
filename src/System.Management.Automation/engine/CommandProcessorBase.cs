@@ -657,21 +657,44 @@ namespace System.Management.Automation
         /// </summary>
         internal virtual void CleanupScriptCommands()
         {
+            var scriptCmdlet = Command as PSScriptCmdlet;
+            var scriptProcessor = this as DlrScriptCommandProcessor;
+
+            if (scriptCmdlet == null && scriptProcessor == null)
+            {
+                return;
+            }
+
+            bool isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
+            Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
+            CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
+
+            if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
+            {
+                Context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+            }
+
+            Context.CurrentCommandProcessor = this;
+
             try
             {
-                if (Command is PSScriptCmdlet scriptCmdlet)
+                SetCurrentScopeToExecutionScope();
+
+                if (scriptCmdlet != null)
                 {
                     using (commandRuntime.AllowThisCommandToWrite(true))
-                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Dispose"))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
                     {
                         scriptCmdlet.Dispose();
                     }
                 }
-                else if (this is DlrScriptCommandProcessor scriptProcessor)
+                else
                 {
                     using (commandRuntime.AllowThisCommandToWrite(true))
-                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Dispose"))
+                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
                     {
+                        // scriptProcessor cannot be null here if scriptCmdlet is null (we would have hit the early
+                        // return in that case).
                         scriptProcessor.InvokeCleanupBlock();
                     }
                 }
@@ -679,6 +702,15 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 throw ManageInvocationException(e);
+            }
+            finally
+            {
+                OnRestorePreviousScope();
+
+                Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
+                Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
+
+                ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
             }
         }
 
@@ -962,39 +994,20 @@ namespace System.Management.Automation
             {
                 if (disposing)
                 {
-                    Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
-                    CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
-
-                    bool isStopping = false;
                     try
                     {
-                        if (this.RedirectShellErrorOutputPipe || _context.ShellFunctionErrorOutputPipe != null)
-                        {
-                            _context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
-                        }
-
-                        _context.CurrentCommandProcessor = this;
-                        isStopping = ExceptionHandlingOps.SuspendStoppingPipeline(Context);
-                        SetCurrentScopeToExecutionScope();
-
-                        // This is a no-op for compiled cmdlets
+                        // This method handles script commands' `cleanup {}` blocks. It is a no-op for compiled cmdlets.
                         CleanupScriptCommands();
                     }
                     finally
                     {
-                        ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
-                        OnRestorePreviousScope();
-
-                        _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
-                        _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
-
                         // Destroy the local scope at this point if there is one...
                         if (_useLocalScope && CommandScope != null)
                         {
                             CommandSessionState.RemoveScope(CommandScope);
                         }
 
-                        // and the previous scope...
+                        // and restore the previous scope...
                         if (_previousScope != null)
                         {
                             // Restore the scope but use the same session state instance we
@@ -1008,8 +1021,6 @@ namespace System.Management.Automation
                         {
                             Context.EngineSessionState = _previousCommandSessionState;
                         }
-
-                        this.CommandRuntime.RemoveVariableListsInPipe();
 
                         // 2004/03/05-JonN Look into using metadata to check
                         // whether IDisposable is implemented, in order to avoid

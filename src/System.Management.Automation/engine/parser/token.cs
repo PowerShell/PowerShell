@@ -661,7 +661,7 @@ namespace System.Management.Automation.Language
         Keyword = 0x00000010,
 
         /// <summary>
-        /// The token one of the keywords that is a part of a script block: 'begin', 'process', 'end', or 'dynamicparam'.
+        /// The token one of the keywords that is a part of a script block: 'begin', 'process', 'end', 'cleanup', or 'dynamicparam'.
         /// </summary>
         ScriptBlockBlockName = 0x00000020,
 

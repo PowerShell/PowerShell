@@ -1447,7 +1447,8 @@ namespace System.Management.Automation
             int handler = FindMatchingHandlerByType(exception.GetType(), types);
 
             // If no handler was found, return without changing the current result.
-            if (handler == -1) { return; }
+            if (handler == -1)
+            { return; }
 
             // New handler was found.
             //  - If new-rank is less than current-rank -- meaning the new handler is more specific,
@@ -1583,7 +1584,7 @@ namespace System.Management.Automation
             {
                 bool oldIsStopping = pipeline.Stopper.IsStopping;
                 pipeline.Stopper.IsStopping = false;
-                pipeline.Stopper.EnterCriticalRegion();
+                pipeline.Stopper.EnterCriticalSection();
 
                 return oldIsStopping;
             }
@@ -1597,7 +1598,7 @@ namespace System.Management.Automation
             if (pipeline != null)
             {
                 pipeline.Stopper.IsStopping = oldIsStopping;
-                pipeline.Stopper.ExitCriticalRegion();
+                pipeline.Stopper.ExitCriticalSection();
             }
         }
 
