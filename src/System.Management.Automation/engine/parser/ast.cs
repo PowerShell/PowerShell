@@ -1932,10 +1932,7 @@ namespace System.Management.Automation.Language
         {
             // Validate the block name.  If the block is unnamed, it must be an End block (for a function)
             // or Process block (for a filter).
-            if (!blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
-                || (unnamed && (blockName == TokenKind.Begin
-                    || blockName == TokenKind.Cleanup
-                    || blockName == TokenKind.Dynamicparam)))
+            if (HasInvalidBlockName(blockName, unnamed))
             {
                 throw PSTraceSource.NewArgumentException(nameof(blockName));
             }
@@ -2032,6 +2029,15 @@ namespace System.Management.Automation.Language
             var statementBlock = new StatementBlockAst(statementBlockExtent, newStatements, newTraps);
             return new NamedBlockAst(this.Extent, this.BlockKind, statementBlock, this.Unnamed);
         }
+
+        private static bool HasInvalidBlockName(TokenKind blockName, bool unnamed)
+        {
+            return !blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
+                || (unnamed && (blockName == TokenKind.Begin
+                    || blockName == TokenKind.Cleanup
+                    || blockName == TokenKind.Dynamicparam));
+        }
+
 
         // Used by the debugger for command breakpoints
         internal IScriptExtent OpenCurlyExtent { get; }

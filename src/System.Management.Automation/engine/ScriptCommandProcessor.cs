@@ -630,8 +630,14 @@ namespace System.Management.Automation
 
         internal void InvokeCleanupBlock()
         {
+            if (!_scriptBlock.HasCleanupBlock)
+            {
+                ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+                return;
+            }
+
             ExecutionContext currentContext = LocalPipeline.GetExecutionContextFromTLS();
-            if (_scriptBlock.HasCleanupBlock && Context != currentContext)
+            if (Context != currentContext)
             {
                 // Something went wrong; Cleanup {} is being called from the wrong thread.
                 // Create an event to call it from the correct thread.
@@ -639,26 +645,23 @@ namespace System.Management.Automation
                 return;
             }
 
-            var oldOutputPipe = _functionContext?._outputPipe;
+            Pipe oldOutputPipe = _functionContext?._outputPipe;
             try
             {
-                if (_scriptBlock.HasCleanupBlock)
+                Action<FunctionContext> cleanupBlock = _runOptimizedCode
+                    ? _scriptBlock.CleanupBlock
+                    : _scriptBlock.UnoptimizedCleanupBlock;
+
+                if (_functionContext != null)
                 {
-                    var cleanupBlock = _runOptimizedCode
-                        ? _scriptBlock.CleanupBlock
-                        : _scriptBlock.UnoptimizedCleanupBlock;
-
-                    if (_functionContext != null)
+                    _functionContext._outputPipe = new Pipe
                     {
-                        _functionContext._outputPipe = new Pipe
-                        {
-                            NullPipe = true
-                        };
-                    }
-
-                    // run with no pipeline input or $input enumerator
-                    RunClause(cleanupBlock, AutomationNull.Value, AutomationNull.Value);
+                        NullPipe = true
+                    };
                 }
+
+                // run with no pipeline input or $input enumerator
+                RunClause(cleanupBlock, AutomationNull.Value, AutomationNull.Value);
             }
             finally
             {

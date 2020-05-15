@@ -1272,9 +1272,9 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     internal class PipelineStopper
     {
-        private readonly SemaphoreSlim _criticalRegionSemaphore = new SemaphoreSlim(1, 1);
+        private readonly SemaphoreSlim _criticalSectionSemaphore = new SemaphoreSlim(1, 1);
 
-        private int _criticalRegionDepth;
+        private int _criticalSectionDepth;
 
         /// <summary>
         /// Stack of current executing pipeline processor.
@@ -1287,29 +1287,29 @@ namespace System.Management.Automation.Runspaces
         private readonly object _syncRoot = new object();
         private readonly LocalPipeline _localPipeline;
 
-        internal void AcquirePipelineStopPermission()
+        internal void AwaitPipelineCriticalSection()
         {
-            _criticalRegionSemaphore.Wait();
-            _criticalRegionSemaphore.Release();
+            _criticalSectionSemaphore.Wait();
+            _criticalSectionSemaphore.Release();
         }
 
-        internal void EnterCriticalRegion()
+        internal void EnterCriticalSection()
         {
-            Interlocked.Increment(ref _criticalRegionDepth);
-            _criticalRegionSemaphore.Wait(millisecondsTimeout: 0);
+            Interlocked.Increment(ref _criticalSectionDepth);
+            _criticalSectionSemaphore.Wait(millisecondsTimeout: 0);
         }
 
-        internal void ExitCriticalRegion()
+        internal void ExitCriticalSection()
         {
-            if (Interlocked.Decrement(ref _criticalRegionDepth) == 0)
+            if (Interlocked.Decrement(ref _criticalSectionDepth) == 0)
             {
-                _criticalRegionSemaphore.Release();
+                _criticalSectionSemaphore.Release();
             }
         }
 
-        internal bool InCriticalRegion
+        internal bool InCriticalSection
         {
-            get => Interlocked.CompareExchange(ref _criticalRegionDepth, value: 0, comparand: 0) != 0;
+            get => Interlocked.CompareExchange(ref _criticalSectionDepth, value: 0, comparand: 0) != 0;
         }
 
         /// <summary>
@@ -1327,7 +1327,7 @@ namespace System.Management.Automation.Runspaces
 
         internal bool IsStopping
         {
-            get => _stopping && !InCriticalRegion;
+            get => _stopping && !InCriticalSection;
             set => _stopping = value;
         }
 
@@ -1404,7 +1404,7 @@ namespace System.Management.Automation.Runspaces
 
             // We don't want to stop when a pipeline is in a critical region.
             // Typically it will be in the middle of command disposal.
-            AcquirePipelineStopPermission();
+            AwaitPipelineCriticalSection();
 
             // Propagate error from the toplevel operation through to enclosing the LocalPipeline.
             if (copyStack.Length > 0)
