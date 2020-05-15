@@ -561,6 +561,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Invoke-WebRequest accepts '-ProxyCredential' parameter" {
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
         $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
         $credential = [pscredential]::new("testuser", $token)
         { Invoke-WebRequest -Uri http://httpbin.org -ProxyCredential $credential } | Should -Not -Throw
@@ -2144,6 +2145,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Invoke-RestMethod accepts '-ProxyCredential' parameter" {
+        #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
         $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
         $credential = [pscredential]::new("testuser", $token)
         { Invoke-RestMethod -Uri http://httpbin.org -ProxyCredential $credential } | Should -Not -Throw
