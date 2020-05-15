@@ -192,9 +192,6 @@
   <data name="OutFileWritingSkipped" xml:space="preserve">
     <value>The file will not be re-downloaded because the remote file is the same size as the OutFile: {0}</value>
   </data>
-  <data name="ProxyUriNotSupplied" xml:space="preserve">
-    <value>The cmdlet cannot run because the following parameter is missing: Proxy. Provide a valid proxy URI for the Proxy parameter when using the ProxyCredential or UseDefaultProxyCredentials parameters, then retry.</value>
-  </data>
   <data name="ReadResponseComplete" xml:space="preserve">
     <value>Reading web response completed. (Number of bytes read: {0})</value>
   </data>

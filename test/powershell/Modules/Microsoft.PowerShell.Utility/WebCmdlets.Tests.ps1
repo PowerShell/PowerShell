@@ -560,6 +560,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         { Invoke-WebRequest -Uri http://httpbin.org -ProxyUseDefaultCredentials } | Should -Not -Throw
     }
 
+    It "Invoke-WebRequest accepts '-ProxyCredential' parameter" {
+        $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
+        $credential = [pscredential]::new("testuser", $token)
+        { Invoke-WebRequest -Uri http://httpbin.org -ProxyCredential $credential } | Should -Not -Throw
+    }
+
     # Perform the following operation for Invoke-WebRequest
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
@@ -2135,6 +2141,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
 
     It "Invoke-RestMethod accepts '-ProxyUseDefaultCredentials' parameter" {
         { Invoke-RestMethod -Uri http://httpbin.org -ProxyUseDefaultCredentials } | Should -Not -Throw
+    }
+
+    It "Invoke-RestMethod accepts '-ProxyCredential' parameter" {
+        $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
+        $credential = [pscredential]::new("testuser", $token)
+        { Invoke-RestMethod -Uri http://httpbin.org -ProxyCredential $credential } | Should -Not -Throw
     }
 
     # Perform the following operation for Invoke-RestMethod

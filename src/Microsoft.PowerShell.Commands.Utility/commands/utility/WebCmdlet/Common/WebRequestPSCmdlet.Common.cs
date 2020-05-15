@@ -454,14 +454,6 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
-            // Proxy server
-            if ((Proxy == null) && ProxyCredential != null)
-            {
-                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyUriNotSupplied,
-                                                       "WebCmdletProxyUriNotSuppliedException");
-                ThrowTerminatingError(error);
-            }
-
             // request body content
             if ((Body != null) && (InFile != null))
             {
@@ -632,6 +624,10 @@ namespace Microsoft.PowerShell.Commands
             if (ProxyUseDefaultCredentials)
             {
                 HttpClient.DefaultProxy.Credentials = CredentialCache.DefaultCredentials;
+            }
+            else if (ProxyCredential != null)
+            {
+                HttpClient.DefaultProxy.Credentials = ProxyCredential.GetNetworkCredential();
             }
 
             if (Proxy != null)
