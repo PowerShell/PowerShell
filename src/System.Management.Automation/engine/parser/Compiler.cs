@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -962,7 +962,7 @@ namespace System.Management.Automation.Language
             var temps = new List<ParameterExpression>();
             var getExpr = av.GetValue(this, exprs, temps);
 
-            if(et == ExpressionType.Coalesce)
+            if (et == ExpressionType.Coalesce)
             {
                 exprs.Add(av.SetValue(this, Coalesce(getExpr, right)));
             }
@@ -982,19 +982,23 @@ namespace System.Management.Automation.Language
             {
                 return left;
             }
-            else if(leftType == typeof(AutomationNull))
-            {
-                return right;
-            }
             else
             {
-                Expression lhs = left.Cast(typeof(object));
-                Expression rhs = right.Cast(typeof(object));
+                ParameterExpression lhsStoreVar = Expression.Variable(typeof(object));
+                var blockParameters = new ParameterExpression[] { lhsStoreVar };
+                var blockStatements = new Expression[]
+                {
+                    Expression.Assign(lhsStoreVar, left.Cast(typeof(object))),
+                    Expression.Condition(
+                        Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhsStoreVar),
+                        right.Cast(typeof(object)),
+                        lhsStoreVar),
+                };
 
-                return Expression.Condition(
-                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhs),
-                    rhs,
-                    lhs);
+                return Expression.Block(
+                    typeof(object),
+                    blockParameters,
+                    blockStatements);
             }
         }
 
@@ -3307,7 +3311,7 @@ namespace System.Management.Automation.Language
                     // e.g. ("Hi"), vs (Test-Path ./here.txt)
                     return ShouldSetExecutionStatusToSuccess(parenExpression.Pipeline);
 
-              case SubExpressionAst subExpressionAst:
+                case SubExpressionAst subExpressionAst:
                     // Subexpressions generally set $? since they encapsulate a statement block
                     // But $() requires an explicit setting
                     return subExpressionAst.SubExpression.Statements.Count == 0;
