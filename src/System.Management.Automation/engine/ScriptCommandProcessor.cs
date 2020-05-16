@@ -628,8 +628,15 @@ namespace System.Management.Automation
             }
         }
 
+        private bool _cleanupCompleted;
+
         internal void InvokeCleanupBlock()
         {
+            if (_cleanupCompleted)
+            {
+                return;
+            }
+
             if (!_scriptBlock.HasCleanupBlock)
             {
                 ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
@@ -671,6 +678,8 @@ namespace System.Management.Automation
                 }
 
                 ScriptBlock.LogScriptBlockEnd(_scriptBlock, Context.CurrentRunspace.InstanceId);
+
+                _cleanupCompleted = true;
             }
         }
 

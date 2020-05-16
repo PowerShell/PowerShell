@@ -672,7 +672,7 @@ namespace System.Management.Automation
         /// <see cref="DlrScriptCommandProcessor.InvokeCleanupBlock"/> method to perform the same function as its
         /// compiled counterpart <see cref="PSScriptCmdlet.Dispose"/>, which is a proper IDisposable implementation.
         /// </summary>
-        internal virtual void CleanupScriptCommands()
+        internal virtual void CleanupScriptCommand()
         {
             var scriptCmdlet = Command as PSScriptCmdlet;
             var scriptProcessor = this as DlrScriptCommandProcessor;
@@ -688,7 +688,7 @@ namespace System.Management.Automation
 
             if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
             {
-                Context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
+                Context.ShellFunctionErrorOutputPipe = commandRuntime.ErrorOutputPipe;
             }
 
             try
@@ -696,21 +696,17 @@ namespace System.Management.Automation
                 Context.CurrentCommandProcessor = this;
                 SetCurrentScopeToExecutionScope();
 
-                if (scriptCmdlet != null)
+                using (commandRuntime.AllowThisCommandToWrite(true))
+                using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
                 {
-                    using (commandRuntime.AllowThisCommandToWrite(true))
-                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
+                    if (scriptCmdlet != null)
                     {
                         scriptCmdlet.Dispose();
+                        return;
                     }
-                }
-                else
-                {
-                    using (commandRuntime.AllowThisCommandToWrite(true))
-                    using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
+
+                    if (scriptProcessor != null)
                     {
-                        // scriptProcessor cannot be null here if scriptCmdlet is null (we would have hit the early
-                        // return in that case).
                         scriptProcessor.InvokeCleanupBlock();
                     }
                 }
@@ -1033,15 +1029,13 @@ namespace System.Management.Automation
             {
                 if (disposing)
                 {
-                    // This method handles script commands' `cleanup {}` blocks. It is a no-op for compiled cmdlets.
-                    CleanupScriptCommands();
+                    // This method handles script commands' `cleanup {}` blocks.
+                    // It is a no-op for non-disposable commands.
+                    CleanupScriptCommand();
 
-                    // 2004/03/05-JonN Look into using metadata to check
-                    // whether IDisposable is implemented, in order to avoid
-                    // this expensive reflection cast.
-                    if (Command is IDisposable id)
+                    if (Command is IDisposable disposableCommand)
                     {
-                        id.Dispose();
+                        disposableCommand.Dispose();
                     }
                 }
             }
