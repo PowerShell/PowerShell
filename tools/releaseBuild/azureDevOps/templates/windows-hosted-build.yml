@@ -19,6 +19,7 @@ jobs:
 
   - checkout: self
     clean: true
+    fetchDepth: 20
     persistCredentials: true
 
   - template: SetVersionVariables.yml
