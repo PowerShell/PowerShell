@@ -11,6 +11,11 @@ assignees: ''
 
 - Name of the Distribution: 
 - Version of the Distribution:
+- Pakcage Types
+  - [ ] Deb
+  - [ ] RPM
+  - [ ] Tar.gz
+  - Snap - Please file issue in https://github.com/powershell/powershell-snap.  This issues type is unrelated to snap packages with a distribution neutral.
 - Processor Architecture (One per request): 
 - [ ] **Required** - An issues has been filed to create a Docker image in https://github.com/powershell/powershell-docker
 - The following is a requirement for supporting a distribution **without exception.**
