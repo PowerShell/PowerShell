@@ -612,6 +612,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void DoComplete()
         {
+            Pipe oldErrorOutputPipe = _context.ShellFunctionErrorOutputPipe;
             CommandProcessorBase oldCurrentCommandProcessor = _context.CurrentCommandProcessor;
             try
             {
@@ -642,9 +643,25 @@ namespace System.Management.Automation
             }
             finally
             {
-                RestorePreviousScope();
+                OnRestorePreviousScope();
 
+                _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
+
+                // and the previous scope...
+                if (_previousScope != null)
+                {
+                    // Restore the scope but use the same session state instance we
+                    // got it from because the command may have changed the execution context
+                    // session state...
+                    CommandSessionState.CurrentScope = _previousScope;
+                }
+
+                // Restore the previous session state
+                if (_previousCommandSessionState != null)
+                {
+                    Context.EngineSessionState = _previousCommandSessionState;
+                }
             }
         }
 
@@ -674,10 +691,9 @@ namespace System.Management.Automation
                 Context.ShellFunctionErrorOutputPipe = this.commandRuntime.ErrorOutputPipe;
             }
 
-            Context.CurrentCommandProcessor = this;
-
             try
             {
+                Context.CurrentCommandProcessor = this;
                 SetCurrentScopeToExecutionScope();
 
                 if (scriptCmdlet != null)
@@ -711,6 +727,29 @@ namespace System.Management.Automation
                 Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
 
                 ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
+
+                // Destroy the local scope at this point if there is one...
+                if (_useLocalScope && CommandScope != null)
+                {
+                    CommandSessionState.RemoveScope(CommandScope);
+                }
+
+                // and restore the previous scope...
+                if (_previousScope != null)
+                {
+                    // Restore the scope but use the same session state instance we
+                    // got it from because the command may have changed the execution context
+                    // session state...
+                    CommandSessionState.CurrentScope = _previousScope;
+                }
+
+                // Restore the previous session state
+                if (_previousCommandSessionState != null)
+                {
+                    Context.EngineSessionState = _previousCommandSessionState;
+                }
+
+                CommandRuntime.RemoveVariableListsInPipe();
             }
         }
 
@@ -994,41 +1033,15 @@ namespace System.Management.Automation
             {
                 if (disposing)
                 {
-                    try
+                    // This method handles script commands' `cleanup {}` blocks. It is a no-op for compiled cmdlets.
+                    CleanupScriptCommands();
+
+                    // 2004/03/05-JonN Look into using metadata to check
+                    // whether IDisposable is implemented, in order to avoid
+                    // this expensive reflection cast.
+                    if (Command is IDisposable id)
                     {
-                        // This method handles script commands' `cleanup {}` blocks. It is a no-op for compiled cmdlets.
-                        CleanupScriptCommands();
-                    }
-                    finally
-                    {
-                        // Destroy the local scope at this point if there is one...
-                        if (_useLocalScope && CommandScope != null)
-                        {
-                            CommandSessionState.RemoveScope(CommandScope);
-                        }
-
-                        // and restore the previous scope...
-                        if (_previousScope != null)
-                        {
-                            // Restore the scope but use the same session state instance we
-                            // got it from because the command may have changed the execution context
-                            // session state...
-                            CommandSessionState.CurrentScope = _previousScope;
-                        }
-
-                        // Restore the previous session state
-                        if (_previousCommandSessionState != null)
-                        {
-                            Context.EngineSessionState = _previousCommandSessionState;
-                        }
-
-                        // 2004/03/05-JonN Look into using metadata to check
-                        // whether IDisposable is implemented, in order to avoid
-                        // this expensive reflection cast.
-                        if (Command is IDisposable id)
-                        {
-                            id.Dispose();
-                        }
+                        id.Dispose();
                     }
                 }
             }
