@@ -11,6 +11,10 @@ jobs:
   displayName: ${{ parameters.displayName }}
 
   steps:
+  - checkout: self
+    clean: true
+    fetchDepth: 20
+
   - powershell: |
       Get-ChildItem -Path env:
     displayName: Capture Environment
