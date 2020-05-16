@@ -316,6 +316,8 @@ namespace System.Management.Automation
 
         internal Dictionary<string, int> NameToIndexMap { get; set; }
 
+        #region Named Blocks
+
         internal Action<FunctionContext> DynamicParamBlock { get; set; }
 
         internal Action<FunctionContext> UnoptimizedDynamicParamBlock { get; set; }
@@ -331,8 +333,12 @@ namespace System.Management.Automation
         internal Action<FunctionContext> EndBlock { get; set; }
 
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
+
         internal Action<FunctionContext> CleanupBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedCleanupBlock { get; set; }
+
+        #endregion Named Blocks
 
         internal IScriptExtent[] SequencePoints { get; set; }
 

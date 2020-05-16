@@ -2038,7 +2038,6 @@ namespace System.Management.Automation.Language
                     || blockName == TokenKind.Dynamicparam));
         }
 
-
         // Used by the debugger for command breakpoints
         internal IScriptExtent OpenCurlyExtent { get; }
 
