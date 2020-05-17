@@ -11,7 +11,7 @@ assignees: ''
 
 - Name of the Distribution: 
 - Version of the Distribution:
-- Pakcage Types
+- Package Types
   - [ ] Deb
   - [ ] RPM
   - [ ] Tar.gz
