@@ -2413,7 +2413,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             const string setMethodName = "Set";
             const string testMethodName = "Test";
 
-            methodsLinePosition = new Dictionary<string, int>(); ;
+            methodsLinePosition = new Dictionary<string, int>();
             foreach (var member in typeDefinitionAst.Members)
             {
                 var functionMemberAst = member as FunctionMemberAst;
