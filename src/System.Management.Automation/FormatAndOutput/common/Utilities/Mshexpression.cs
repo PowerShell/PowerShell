@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Resolve the names matched by this the expression.
+        /// Resolve the names matched by the expression.
         /// </summary>
         /// <param name="target">The object to apply the expression against.</param>
         public List<PSPropertyExpression> ResolveNames(PSObject target)
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Resolve the names matched by this the expression.
+        /// Resolve the names matched by the expression.
         /// </summary>
         /// <param name="target">The object to apply the expression against.</param>
         /// <param name="expand">If the matched properties are property sets, expand them.</param>
