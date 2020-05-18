@@ -18,8 +18,7 @@ This guide assumes that you have recursively cloned the PowerShell repository an
 
 ### Visual Studio
 
-You will need to install an edition of Visual Studio 2015 (Community, Enterprise, or Professional) with the optional feature 'Common Tools for Visual C++' installed.
-The free Community edition of Visual Studio 2015 can be downloaded [here](https://www.visualstudio.com/visual-studio-community-vs/).
+This repository requires at least Visual Studio 2019 16.6 Preview 2. The free Community edition of Visual Studio can be downloaded from [Microsoft](https://visualstudio.microsoft.com/downloads/).
 
 ### Visual Studio Code
 
