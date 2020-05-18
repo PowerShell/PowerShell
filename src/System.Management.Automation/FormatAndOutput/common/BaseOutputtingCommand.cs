@@ -510,7 +510,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we assume FormatEntryData as a standard wrapper
             if (fed == null)
             {
-                PSTraceSource.NewArgumentNullException("fed");
+                PSTraceSource.NewArgumentNullException(nameof(fed));
             }
 
             if (fed.formatEntryInfo == null)

@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
                 case OutputAssemblyType.WindowsApplication:
                     return OutputKind.WindowsApplication;
                 default:
-                    throw new ArgumentOutOfRangeException("outputType");
+                    throw new ArgumentOutOfRangeException(nameof(outputType));
             }
         }
 

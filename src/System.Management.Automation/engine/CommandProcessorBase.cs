@@ -35,7 +35,7 @@ namespace System.Management.Automation
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
 
             if (commandInfo is IScriptCommandInfo scriptCommand)
@@ -278,12 +278,12 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (string.IsNullOrEmpty(helpTarget))
             {
-                throw PSTraceSource.NewArgumentNullException("helpTarget");
+                throw PSTraceSource.NewArgumentNullException(nameof(helpTarget));
             }
 
             CommandProcessorBase helpCommandProcessor = context.CreateCommand("get-help", false);

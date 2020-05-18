@@ -219,7 +219,7 @@ namespace System.Management.Automation
         public PSCredential(PSObject pso)
         {
             if (pso == null)
-                throw PSTraceSource.NewArgumentNullException("pso");
+                throw PSTraceSource.NewArgumentNullException(nameof(pso));
 
             if (pso.Properties["UserName"] != null)
             {

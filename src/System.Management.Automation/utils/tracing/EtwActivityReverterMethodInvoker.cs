@@ -22,7 +22,7 @@ namespace System.Management.Automation.Tracing
         {
             if (eventCorrelator == null)
             {
-                throw new ArgumentNullException("eventCorrelator");
+                throw new ArgumentNullException(nameof(eventCorrelator));
             }
 
             _eventCorrelator = eventCorrelator;

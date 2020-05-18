@@ -63,7 +63,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -143,7 +143,7 @@ namespace System.Management.Automation.Runspaces
 
         private static ProgressRecord Validate(ProgressRecord progressRecord)
         {
-            if (progressRecord == null) throw new ArgumentNullException("progressRecord");
+            if (progressRecord == null) throw new ArgumentNullException(nameof(progressRecord));
             return progressRecord;
         }
     }

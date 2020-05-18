@@ -75,7 +75,7 @@ namespace System.Management.Automation
         {
             if (namespaceID == null)
             {
-                throw PSTraceSource.NewArgumentNullException("namespaceID");
+                throw PSTraceSource.NewArgumentNullException(nameof(namespaceID));
             }
 
             // If namespace ID is empty, we will use the current working drive
@@ -236,7 +236,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             PathInfo current = CurrentLocation;
@@ -519,7 +519,7 @@ namespace System.Management.Automation
 
                         throw
                             PSTraceSource.NewArgumentException(
-                                "path",
+                                nameof(path),
                                 SessionStateStrings.PathResolvedToMultiple,
                                 originalPath);
                     }
@@ -636,7 +636,7 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             PSDriveInfo drive = null;
@@ -913,7 +913,7 @@ namespace System.Management.Automation
                         {
                             throw
                                 PSTraceSource.NewArgumentException(
-                                    "stackName",
+                                    nameof(stackName),
                                     SessionStateStrings.StackNameResolvedToMultiple,
                                     stackName);
                         }
@@ -935,7 +935,7 @@ namespace System.Management.Automation
                     {
                         throw
                             PSTraceSource.NewArgumentException(
-                                "stackName",
+                                nameof(stackName),
                                 SessionStateStrings.StackNotFound,
                                 stackName);
                     }
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("stackName");
+                    throw PSTraceSource.NewArgumentException(nameof(stackName));
                 }
             }
 

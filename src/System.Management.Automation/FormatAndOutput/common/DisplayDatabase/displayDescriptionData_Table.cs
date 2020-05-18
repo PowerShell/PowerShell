@@ -306,7 +306,7 @@ namespace System.Management.Automation
             if (tableControlRow == null)
                 throw PSTraceSource.NewArgumentNullException("tableControlRows");
             if (tableControlColumnHeaders == null)
-                throw PSTraceSource.NewArgumentNullException("tableControlColumnHeaders");
+                throw PSTraceSource.NewArgumentNullException(nameof(tableControlColumnHeaders));
 
             this.Rows.Add(tableControlRow);
             foreach (TableControlColumnHeader header in tableControlColumnHeaders)
@@ -355,7 +355,7 @@ namespace System.Management.Automation
         public TableControlColumnHeader(string label, int width, Alignment alignment)
         {
             if (width < 0)
-                throw PSTraceSource.NewArgumentOutOfRangeException("width", width);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(width), width);
 
             this.Label = label;
             this.Width = width;
@@ -467,7 +467,7 @@ namespace System.Management.Automation
         public TableControlRow(IEnumerable<TableControlColumn> columns) : this()
         {
             if (columns == null)
-                throw PSTraceSource.NewArgumentNullException("columns");
+                throw PSTraceSource.NewArgumentNullException(nameof(columns));
             foreach (TableControlColumn column in columns)
             {
                 Columns.Add(column);
@@ -507,7 +507,7 @@ namespace System.Management.Automation
         private TableRowDefinitionBuilder AddItem(string value, DisplayEntryValueType entryType, Alignment alignment, string format)
         {
             if (string.IsNullOrEmpty(value))
-                throw PSTraceSource.NewArgumentException("value");
+                throw PSTraceSource.NewArgumentException(nameof(value));
 
             var tableControlColumn = new TableControlColumn(alignment, new DisplayEntry(value, entryType))
             {

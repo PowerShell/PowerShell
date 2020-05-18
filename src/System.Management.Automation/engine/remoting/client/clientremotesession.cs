@@ -299,7 +299,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (arg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("arg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(arg));
                 }
 
                 if (arg.SessionStateInfo.State == RemoteSessionState.EstablishedAndKeyReceived) // TODO - Client session would never get into this state... to be removed
@@ -454,12 +454,12 @@ namespace System.Management.Automation.Remoting
             {
                 if (arg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("arg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(arg));
                 }
 
                 if (arg.RemoteSessionCapability == null)
                 {
-                    throw PSTraceSource.NewArgumentException("arg");
+                    throw PSTraceSource.NewArgumentException(nameof(arg));
                 }
 
                 Context.ServerCapability = arg.RemoteSessionCapability;

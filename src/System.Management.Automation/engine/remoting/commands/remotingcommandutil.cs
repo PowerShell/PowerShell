@@ -36,12 +36,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (runspaceInfos == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspaceInfos");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspaceInfos));
             }
 
             if (runspaceInfos.GetLength(0) == 0)
             {
-                throw PSTraceSource.NewArgumentException("runspaceInfos");
+                throw PSTraceSource.NewArgumentException(nameof(runspaceInfos));
             }
 
             for (int i = 0; i < runspaceInfos.GetLength(0); i++)
@@ -65,12 +65,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (runspaceInfos == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspaceInfos");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspaceInfos));
             }
 
             if (runspaceInfos.GetLength(0) == 0)
             {
-                throw PSTraceSource.NewArgumentException("runspaceInfos");
+                throw PSTraceSource.NewArgumentException(nameof(runspaceInfos));
             }
 
             return false;

@@ -2281,7 +2281,7 @@ namespace System.Management.Automation.Language
                     result = resultList;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("context");
+                    throw new ArgumentOutOfRangeException(nameof(context));
             }
 
             finallyExprs.Add(Expression.Assign(s_getCurrentPipe, oldPipe));

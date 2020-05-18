@@ -34,7 +34,7 @@ namespace System.Management.Automation
         {
             if (type == null || (type.GetInterfaces().All(t => t != typeof(IArgumentCompleter))))
             {
-                throw PSTraceSource.NewArgumentException("type");
+                throw PSTraceSource.NewArgumentException(nameof(type));
             }
 
             Type = type;
@@ -48,7 +48,7 @@ namespace System.Management.Automation
         {
             if (scriptBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("scriptBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
             ScriptBlock = scriptBlock;
@@ -176,12 +176,12 @@ namespace System.Management.Automation
         {
             if (completions == null)
             {
-                throw PSTraceSource.NewArgumentNullException("completions");
+                throw PSTraceSource.NewArgumentNullException(nameof(completions));
             }
 
             if (completions.Length == 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("completions", completions);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(completions), completions);
             }
 
             _completions = completions;

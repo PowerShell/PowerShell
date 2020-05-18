@@ -1191,7 +1191,7 @@ namespace System.Management.Automation.PSTasks
         {
             if (debugger == null)
             {
-                throw new PSArgumentNullException("debugger");
+                throw new PSArgumentNullException(nameof(debugger));
             }
 
             _wrappedDebugger = debugger;

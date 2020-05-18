@@ -794,13 +794,13 @@ namespace System.Management.Automation.Host
             if (right < left)
             {
                 // "right" and "left" are not localizable
-                throw PSTraceSource.NewArgumentException("right", MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "right", "left");
+                throw PSTraceSource.NewArgumentException(nameof(right), MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "right", "left");
             }
 
             if (bottom < top)
             {
                 // "bottom" and "top" are not localizable
-                throw PSTraceSource.NewArgumentException("bottom", MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "bottom", "top");
+                throw PSTraceSource.NewArgumentException(nameof(bottom), MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "bottom", "top");
             }
 
             this.left = left;
@@ -1681,7 +1681,7 @@ namespace System.Management.Automation.Host
         {
             if (source == null)
             {
-                throw PSTraceSource.NewArgumentNullException("source");
+                throw PSTraceSource.NewArgumentNullException(nameof(source));
             }
 
             // this implementation is inefficient
@@ -1720,7 +1720,7 @@ namespace System.Management.Automation.Host
         {
             if (source == null)
             {
-                throw PSTraceSource.NewArgumentNullException("source");
+                throw PSTraceSource.NewArgumentNullException(nameof(source));
             }
 
             return source.Length;
@@ -1807,7 +1807,7 @@ namespace System.Management.Automation.Host
 
             if (contents == null)
             {
-                throw PSTraceSource.NewArgumentNullException("contents");
+                throw PSTraceSource.NewArgumentNullException(nameof(contents));
             }
 
             byte[][] charLengths = new byte[contents.Length][];
@@ -1835,7 +1835,7 @@ namespace System.Management.Automation.Host
 
             if (maxStringLengthInBufferCells <= 0)
             {
-                throw PSTraceSource.NewArgumentException("contents", MshHostRawUserInterfaceStrings.AllNullOrEmptyStringsErrorTemplate);
+                throw PSTraceSource.NewArgumentException(nameof(contents), MshHostRawUserInterfaceStrings.AllNullOrEmptyStringsErrorTemplate);
             }
 
             BufferCell[,] results = new BufferCell[contents.Length, maxStringLengthInBufferCells];
@@ -1920,14 +1920,14 @@ namespace System.Management.Automation.Host
             if (width <= 0)
             {
                 // "width" is not localizable
-                throw PSTraceSource.NewArgumentOutOfRangeException("width", width,
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(width), width,
                     MshHostRawUserInterfaceStrings.NonPositiveNumberErrorTemplate, "width");
             }
 
             if (height <= 0)
             {
                 // "height" is not localizable
-                throw PSTraceSource.NewArgumentOutOfRangeException("height", height,
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(height), height,
                     MshHostRawUserInterfaceStrings.NonPositiveNumberErrorTemplate, "height");
             }
 

@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(
                     new ErrorRecord(
                         new ArgumentException(GetMessage(RemotingErrorIdStrings.HostDoesNotSupportPushRunspace)),
-                        PSRemotingErrorId.HostDoesNotSupportPushRunspace.ToString(),
+                        nameof(PSRemotingErrorId.HostDoesNotSupportPushRunspace),
                         ErrorCategory.InvalidArgument,
                         null));
                 return;

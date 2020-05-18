@@ -555,7 +555,7 @@ namespace Microsoft.PowerShell.Commands
                         System.Globalization.CultureInfo.CurrentCulture,
                         UtilsStrings.FileSmallerThan4Bytes, filePath);
 
-                    PSArgumentException e = new PSArgumentException(message, "filePath");
+                    PSArgumentException e = new PSArgumentException(message, nameof(filePath));
                     ErrorRecord er = SecurityUtils.CreateInvalidArgumentErrorRecord(
                             e,
                             "SignatureCommandsBaseFileSmallerThan4Bytes"

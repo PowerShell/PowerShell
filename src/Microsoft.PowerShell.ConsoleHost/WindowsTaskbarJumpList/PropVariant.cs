@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell
         {
             if (value == null)
             {
-                throw new ArgumentException("PropVariantNullString", "value");
+                throw new ArgumentException("PropVariantNullString", nameof(value));
             }
 
 #pragma warning disable CS0618 // Type or member is obsolete (might get deprecated in future versions

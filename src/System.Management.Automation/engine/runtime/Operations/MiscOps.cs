@@ -2538,7 +2538,7 @@ namespace System.Management.Automation
 
             if (numberToReturn < 0)
             {
-                throw new ArgumentOutOfRangeException("numberToReturn", numberToReturn, ParserStrings.NumberToReturnMustBeGreaterThanZero);
+                throw new ArgumentOutOfRangeException(nameof(numberToReturn), numberToReturn, ParserStrings.NumberToReturnMustBeGreaterThanZero);
             }
 
             var context = Runspace.DefaultRunspace.ExecutionContext;
@@ -2771,7 +2771,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(arguments != null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
             if (expression == null)
             {
-                throw new ArgumentNullException("expression");
+                throw new ArgumentNullException(nameof(expression));
             }
 
             var context = Runspace.DefaultRunspace.ExecutionContext;

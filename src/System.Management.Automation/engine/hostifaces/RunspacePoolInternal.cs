@@ -76,7 +76,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             this.host = host;
@@ -121,12 +121,12 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             _initialSessionState = initialSessionState.Clone();
@@ -154,17 +154,17 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (maxRunspaces < 1)
             {
-                throw PSTraceSource.NewArgumentException("maxRunspaces", RunspacePoolStrings.MaxPoolLessThan1);
+                throw PSTraceSource.NewArgumentException(nameof(maxRunspaces), RunspacePoolStrings.MaxPoolLessThan1);
             }
 
             if (minRunspaces < 1)
             {
-                throw PSTraceSource.NewArgumentException("minRunspaces", RunspacePoolStrings.MinPoolLessThan1);
+                throw PSTraceSource.NewArgumentException(nameof(minRunspaces), RunspacePoolStrings.MinPoolLessThan1);
             }
 
             if (minRunspaces > maxRunspaces)
             {
-                throw PSTraceSource.NewArgumentException("minRunspaces", RunspacePoolStrings.MinPoolGreaterThanMaxPool);
+                throw PSTraceSource.NewArgumentException(nameof(minRunspaces), RunspacePoolStrings.MinPoolGreaterThanMaxPool);
             }
 
             maxPoolSz = maxRunspaces;
@@ -618,7 +618,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
@@ -627,7 +627,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (!rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginOpen");
@@ -685,7 +685,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
@@ -694,7 +694,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginClose");
@@ -754,7 +754,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (runspace == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspace");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
 
             AssertPoolIsOpen();
@@ -893,7 +893,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             GetRunspaceAsyncResult grsAsyncResult =
@@ -901,7 +901,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginGetRunspace");
@@ -932,7 +932,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             GetRunspaceAsyncResult grsAsyncResult =
@@ -940,7 +940,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             if ((grsAsyncResult == null) || (grsAsyncResult.OwnerId != instanceId))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginGetRunspace");

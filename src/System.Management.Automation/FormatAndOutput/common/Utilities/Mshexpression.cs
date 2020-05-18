@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(s))
             {
-                throw PSTraceSource.NewArgumentNullException("s");
+                throw PSTraceSource.NewArgumentNullException(nameof(s));
             }
 
             _stringValue = s;
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (scriptBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("scriptBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
             Script = scriptBlock;

@@ -32,7 +32,7 @@ namespace System.Management.Automation
         {
             if (parameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameter));
             }
 
             Name = parameter.Name;

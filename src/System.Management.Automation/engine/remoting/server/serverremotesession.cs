@@ -298,14 +298,14 @@ namespace System.Management.Automation.Remoting
         {
             if (dataEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataEventArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = dataEventArg.ReceivedData;
 
             if (rcvdData == null)
             {
-                throw PSTraceSource.NewArgumentException("dataEventArg");
+                throw PSTraceSource.NewArgumentException(nameof(dataEventArg));
             }
 
             RemotingDestination destination = rcvdData.Destination;
@@ -744,7 +744,7 @@ namespace System.Management.Automation.Remoting
         {
             if (createRunspaceEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("createRunspaceEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(createRunspaceEventArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
@@ -922,7 +922,7 @@ namespace System.Management.Automation.Remoting
         {
             if (negotiationEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("negotiationEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(negotiationEventArg));
             }
 
             try

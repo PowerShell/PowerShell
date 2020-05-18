@@ -333,14 +333,14 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             IList<T> listToUse = info.GetValue("Data", typeof(IList<T>)) as IList<T>;
 
             if (listToUse == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             _data = listToUse;
@@ -664,7 +664,7 @@ namespace System.Management.Automation
                 {
                     if ((index < 0) || (index >= _data.Count))
                     {
-                        throw PSTraceSource.NewArgumentOutOfRangeException("index", index,
+                        throw PSTraceSource.NewArgumentOutOfRangeException(nameof(index), index,
                             PSDataBufferStrings.IndexOutOfRange, 0, _data.Count - 1);
                     }
 
@@ -738,7 +738,7 @@ namespace System.Management.Automation
             {
                 if ((index < 0) || (index >= _data.Count))
                 {
-                    throw PSTraceSource.NewArgumentOutOfRangeException("index", index,
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(index), index,
                         PSDataBufferStrings.IndexOutOfRange, 0, _data.Count - 1);
                 }
 
@@ -1299,7 +1299,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             info.AddValue("Data", _data);
@@ -1514,7 +1514,7 @@ namespace System.Management.Automation
         {
             if (collection == null)
             {
-                throw PSTraceSource.NewArgumentNullException("collection");
+                throw PSTraceSource.NewArgumentNullException(nameof(collection));
             }
 
             int index = -1;
@@ -1631,12 +1631,12 @@ namespace System.Management.Automation
             {
                 if (typeof(T).IsValueType)
                 {
-                    throw PSTraceSource.NewArgumentNullException("value", PSDataBufferStrings.ValueNullReference);
+                    throw PSTraceSource.NewArgumentNullException(nameof(value), PSDataBufferStrings.ValueNullReference);
                 }
             }
             else if (!(value is T))
             {
-                throw PSTraceSource.NewArgumentException("value", PSDataBufferStrings.CannotConvertToGenericType,
+                throw PSTraceSource.NewArgumentException(nameof(value), PSDataBufferStrings.CannotConvertToGenericType,
                                                          value.GetType().FullName,
                                                          typeof(T).FullName);
             }

@@ -1660,7 +1660,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (fakeBoundParameters == null)
             {
-                throw PSTraceSource.NewArgumentNullException("fakeBoundParameters");
+                throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
             }
 
             var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));

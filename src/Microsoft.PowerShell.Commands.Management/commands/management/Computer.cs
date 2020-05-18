@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             ComputerName = info.GetString("ComputerName");
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

@@ -87,7 +87,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             int errorCount = info.GetInt32("ErrorCount");
@@ -114,7 +114,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Runspaces
         public void AppendFormatData(IEnumerable<ExtendedTypeDefinition> formatData)
         {
             if (formatData == null)
-                throw PSTraceSource.NewArgumentNullException("formatData");
+                throw PSTraceSource.NewArgumentNullException(nameof(formatData));
             _formatDBMgr.AddFormatData(formatData, false);
         }
 
@@ -226,7 +226,7 @@ namespace System.Management.Automation.Runspaces
         public void PrependFormatData(IEnumerable<ExtendedTypeDefinition> formatData)
         {
             if (formatData == null)
-                throw PSTraceSource.NewArgumentNullException("formatData");
+                throw PSTraceSource.NewArgumentNullException(nameof(formatData));
             _formatDBMgr.AddFormatData(formatData, true);
         }
 
@@ -253,7 +253,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (formatFiles == null)
             {
-                throw PSTraceSource.NewArgumentNullException("formatFiles");
+                throw PSTraceSource.NewArgumentNullException(nameof(formatFiles));
             }
 
             _formatDBMgr = new TypeInfoDataBaseManager(formatFiles, true, authorizationManager, host);
