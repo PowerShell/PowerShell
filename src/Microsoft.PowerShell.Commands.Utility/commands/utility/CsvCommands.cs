@@ -29,14 +29,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
+        [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
+        [Parameter(Position = 1, ParameterSetName = "DelimiterLiteralPath")]
         [ValidateNotNull]
         public char Delimiter { get; set; }
 
         ///<summary>
         ///Culture switch for csv conversion
         ///</summary>
-        [Parameter(ParameterSetName = "UseCulture")]
+        [Parameter(Position = 1, ParameterSetName = "CulturePath")]
+        [Parameter(Position = 1, ParameterSetName = "CultureLiteralPath")]
         public SwitchParameter UseCulture { get; set; }
 
         /// <summary>
@@ -138,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Export-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096608")]
+    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "DelimiterPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096608")]
     public sealed class ExportCsvCommand : BaseCsvWritingCommand, IDisposable
     {
         #region Command Line Parameters
@@ -155,7 +157,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Mandatory file name to write to.
         /// </summary>
-        [Parameter(Position = 0)]
+        [Parameter(Position = 0, ParameterSetName = "DelimiterPath", Mandatory = true)]
+        [Parameter(Position = 0, ParameterSetName = "CulturePath", Mandatory = true)]
         [ValidateNotNullOrEmpty]
         public string Path
         {
@@ -167,17 +170,16 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _path = value;
-                _specifiedPath = true;
             }
         }
 
         private string _path;
-        private bool _specifiedPath = false;
 
         /// <summary>
         /// The literal path of the mandatory file name to write to.
         /// </summary>
-        [Parameter]
+        [Parameter(Position = 0, ParameterSetName = "DelimiterLiteralPath", Mandatory = true)]
+        [Parameter(Position = 0, ParameterSetName = "CultureLiteralPath", Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -243,14 +245,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-
-            // Validate that they don't provide both Path and LiteralPath, but have provided at least one.
-            if (!(_specifiedPath ^ _isLiteralPath))
-            {
-                InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyPathAndLiteralPath);
-                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyPathAndLiteralPath", ErrorCategory.InvalidData, null);
-                this.ThrowTerminatingError(errorRecord);
-            }
 
             _shouldProcess = ShouldProcess(Path);
             if (!_shouldProcess)
@@ -538,12 +532,10 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _paths = value;
-                _specifiedPath = true;
             }
         }
 
         private string[] _paths;
-        private bool _specifiedPath = false;
 
         /// <summary>
         /// Gets or sets the literal path of the mandatory file name to read from.
@@ -616,13 +608,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Validate that they don't provide both Path and LiteralPath, but have provided at least one.
-            if (!(_specifiedPath ^ _isLiteralPath))
-            {
-                InvalidOperationException exception = new InvalidOperationException(CsvCommandStrings.CannotSpecifyPathAndLiteralPath);
-                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyPathAndLiteralPath", ErrorCategory.InvalidData, null);
-                this.ThrowTerminatingError(errorRecord);
-            }
 
             if (_paths != null)
             {
