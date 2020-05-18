@@ -1448,7 +1448,9 @@ namespace System.Management.Automation
 
             // If no handler was found, return without changing the current result.
             if (handler == -1)
-            { return; }
+            {
+                return;
+            }
 
             // New handler was found.
             //  - If new-rank is less than current-rank -- meaning the new handler is more specific,

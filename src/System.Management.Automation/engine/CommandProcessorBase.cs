@@ -648,7 +648,7 @@ namespace System.Management.Automation
                 _context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 _context.CurrentCommandProcessor = oldCurrentCommandProcessor;
 
-                // and the previous scope...
+                // Restore the previous scope...
                 if (_previousScope != null)
                 {
                     // Restore the scope but use the same session state instance we
@@ -686,26 +686,24 @@ namespace System.Management.Automation
             Pipe oldErrorOutputPipe = Context.ShellFunctionErrorOutputPipe;
             CommandProcessorBase oldCurrentCommandProcessor = Context.CurrentCommandProcessor;
 
-            if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
-            {
-                Context.ShellFunctionErrorOutputPipe = commandRuntime.ErrorOutputPipe;
-            }
-
             try
             {
+                if (this.RedirectShellErrorOutputPipe || Context.ShellFunctionErrorOutputPipe != null)
+                {
+                    Context.ShellFunctionErrorOutputPipe = CommandRuntime.ErrorOutputPipe;
+                }
+
                 Context.CurrentCommandProcessor = this;
                 SetCurrentScopeToExecutionScope();
 
-                using (commandRuntime.AllowThisCommandToWrite(true))
+                using (CommandRuntime.AllowThisCommandToWrite(true))
                 using (ParameterBinderBase.bindingTracer.TraceScope("CALLING Cleanup"))
                 {
                     if (scriptCmdlet != null)
                     {
                         scriptCmdlet.Dispose();
-                        return;
                     }
-
-                    if (scriptProcessor != null)
+                    else if (scriptProcessor != null)
                     {
                         scriptProcessor.InvokeCleanupBlock();
                     }
@@ -721,7 +719,6 @@ namespace System.Management.Automation
 
                 Context.ShellFunctionErrorOutputPipe = oldErrorOutputPipe;
                 Context.CurrentCommandProcessor = oldCurrentCommandProcessor;
-
                 ExceptionHandlingOps.RestoreStoppingPipeline(Context, isStopping);
 
                 // Destroy the local scope at this point if there is one...
@@ -744,8 +741,6 @@ namespace System.Management.Automation
                 {
                     Context.EngineSessionState = _previousCommandSessionState;
                 }
-
-                CommandRuntime.RemoveVariableListsInPipe();
             }
         }
 
@@ -1029,13 +1024,20 @@ namespace System.Management.Automation
             {
                 if (disposing)
                 {
-                    // This method handles script commands' `cleanup {}` blocks.
-                    // It is a no-op for non-disposable commands.
-                    CleanupScriptCommand();
-
-                    if (Command is IDisposable disposableCommand)
+                    try
                     {
-                        disposableCommand.Dispose();
+                        CommandRuntime.RemoveVariableListsInPipe();
+
+                        // This method handles script commands' `cleanup {}` blocks.
+                        // It is a no-op for compiled cmdlets.
+                        CleanupScriptCommand();
+                    }
+                    finally
+                    {
+                        if (Command is IDisposable disposableCommand)
+                        {
+                            disposableCommand.Dispose();
+                        }
                     }
                 }
             }
