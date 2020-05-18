@@ -156,6 +156,16 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// Base class for parameterized argument completer attributes.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public abstract class ArgumentCompleterFactoryAttribute : ArgumentCompleterAttribute, IArgumentCompleterFactory
+    {
+        /// <inheritdoc />
+        public abstract IArgumentCompleter Create();
+    }
+
+    /// <summary>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Register, "ArgumentCompleter", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=528576")]
     public class RegisterArgumentCompleterCommand : PSCmdlet
