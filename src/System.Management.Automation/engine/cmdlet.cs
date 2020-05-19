@@ -30,7 +30,7 @@ namespace System.Management.Automation
     /// task, extending the Cmdlet or PSCmdlet classes only as a thin management layer.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Internal.InternalCommand"/>
-    public abstract partial class Cmdlet : InternalCommand
+    public abstract class Cmdlet : InternalCommand
     {
         #region public_properties
 

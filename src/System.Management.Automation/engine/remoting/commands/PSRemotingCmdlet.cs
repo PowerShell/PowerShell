@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
     /// It contains tons of utility functions which are used all
     /// across the remoting cmdlets.
     /// </summary>
-    public abstract partial class PSRemotingCmdlet : PSCmdlet
+    public abstract class PSRemotingCmdlet : PSCmdlet
     {
         #region Overrides
 
@@ -296,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
     ///     2. Invoke-Expression
     ///     3. Start-PSJob.
     /// </summary>
-    public abstract partial class PSRemotingBaseCmdlet : PSRemotingCmdlet
+    public abstract class PSRemotingBaseCmdlet : PSRemotingCmdlet
     {
         #region Enums
 
@@ -1149,7 +1149,7 @@ namespace Microsoft.PowerShell.Commands
     ///     1. Invoke-Expression
     ///     2. Start-PSJob.
     /// </summary>
-    public abstract partial class PSExecutionCmdlet : PSRemotingBaseCmdlet
+    public abstract class PSExecutionCmdlet : PSRemotingBaseCmdlet
     {
         #region Strings
 
@@ -2448,7 +2448,7 @@ namespace Microsoft.PowerShell.Commands
     ///     3. Disconnect-PSSession
     ///     4. Connect-PSSession.
     /// </summary>
-    public abstract partial class PSRunspaceCmdlet : PSRemotingCmdlet
+    public abstract class PSRunspaceCmdlet : PSRemotingCmdlet
     {
         #region Parameters
 
@@ -3222,7 +3222,7 @@ namespace Microsoft.PowerShell.Commands
     /// Base class for both the helpers. This is an abstract class
     /// and the helpers need to derive from this.
     /// </summary>
-    internal abstract partial class ExecutionCmdletHelper : IThrottleOperation
+    internal abstract class ExecutionCmdletHelper : IThrottleOperation
     {
         /// <summary>
         /// Pipeline associated with this operation.

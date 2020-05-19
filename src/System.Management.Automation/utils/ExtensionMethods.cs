@@ -68,7 +68,7 @@ namespace System.Management.Automation
     /// * If you want to add an extension method that will be used only by CoreCLR powershell, please add it to the partial
     ///   'PSTypeExtensions' class in 'CorePsExtensions.cs'.
     /// </summary>
-    internal static partial class PSTypeExtensions
+    internal static class PSTypeExtensions
     {
         /// <summary>
         /// Check does the type have an instance default constructor with visibility that allows calling it from subclass.
