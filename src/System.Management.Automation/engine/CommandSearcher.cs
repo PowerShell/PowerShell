@@ -1026,7 +1026,8 @@ namespace System.Management.Automation
                                 (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
                                  FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
                             {
-                                if (PSSnapinQualifiedCommandName?.PSSnapInName?.Equals(cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase) == true)
+                                string moduleName = PSSnapinQualifiedCommandName?.PSSnapInName;
+                                if (moduleName == null || moduleName.Equals(cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase))
                                 {
                                     // If PSSnapin is specified, make sure they match
                                     matchingCmdletInfo.Add(cmdlet);
