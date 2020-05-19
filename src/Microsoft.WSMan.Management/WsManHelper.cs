@@ -1110,7 +1110,7 @@ namespace Microsoft.WSMan.Management
             }
             catch (IOException e)
             {
-                throw (e);
+                throw;
             }
         }
 

@@ -654,7 +654,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     catch (Exception ex)
                     {
                         DebugHelper.WriteLogEx(ex.ToString(), 1);
-                        throw ex;
+                        throw;
                     }
                 }
             }

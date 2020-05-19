@@ -636,7 +636,7 @@ namespace System.Management.Automation.Remoting
             }
             catch (PSRemotingDataStructureException ex)
             {
-                throw ex;
+                throw;
             }
 
             // validate client connect_runspacepool request

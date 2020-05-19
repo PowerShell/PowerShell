@@ -1519,7 +1519,7 @@ namespace System.Management.Automation.Runspaces
                 }
                 catch (PSSnapInException pse)
                 {
-                    throw pse;
+                    throw;
                 }
 #if DEBUG
                 // NOTE:
@@ -3828,7 +3828,7 @@ namespace System.Management.Automation.Runspaces
             }
             catch (PSSnapInException pse)
             {
-                throw pse;
+                throw;
             }
 
             return coreSnapin;
