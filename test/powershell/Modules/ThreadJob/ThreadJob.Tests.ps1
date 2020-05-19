@@ -93,24 +93,21 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         $job = Start-ThreadJob -ScriptBlock { "Goodbye" } -InitializationScript { "Hello" }
         $results = $job | Receive-Job -Wait
-        $results[0] | Should -Be "Hello"
-        $results[1] | Should -Be "Goodbye"
+        $results | Should -BeExactly "Hello", "Goodbye"
     }
 
     It 'ThreadJob with ScriptBlock and Argument list' {
 
         $job = Start-ThreadJob -ScriptBlock { param ($arg1, $arg2) $arg1; $arg2 } -ArgumentList @("Hello","Goodbye")
         $results = $job | Receive-Job -Wait
-        $results[0] | Should -Be "Hello"
-        $results[1] | Should -Be "Goodbye"
+        $results | Should -BeExactly "Hello", "Goodbye"
     }
 
     It 'ThreadJob with ScriptBlock and piped input' {
 
         $job = "Hello","Goodbye" | Start-ThreadJob -ScriptBlock { $input | ForEach-Object { $_ } }
         $results = $job | Receive-Job -Wait
-        $results[0] | Should -Be "Hello"
-        $results[1] | Should -Be "Goodbye"
+        $results | Should -BeExactly "Hello", "Goodbye"
     }
 
     It 'ThreadJob with ScriptBlock and Using variables' {
@@ -130,12 +127,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
         }
 
         $results = $job | Receive-Job -Wait
-        $results[0] | Should -Be $Var1
-        $results[1] | Should -Be $Var2
-        $results[2] | Should -Be $Var3
-        $results[3] | Should -Be 2
-        $results[4] | Should -Be $Var4
-        $results[5] | Should -Be $global:GVar1
+        $results | Should -BeExactly $Var1, $Var2, $Var3, 2, $Var4, $global:GVar1
     }
 
     It 'ThreadJob with ScriptBlock and Using variables and argument list' {
@@ -172,16 +164,14 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         $job = Start-ThreadJob -FilePath $scriptFilePath2 -ArgumentList @("Hello","Goodbye")
         $results = $job | Receive-Job -Wait
-        $results[0] | Should -Be "Hello"
-        $results[1] | Should -Be "Goodbye"
+        $results | Should -BeExactly "Hello", "Goodbye"
     }
 
     It 'ThreadJob with ScriptFile and piped input' {
 
         $job = "Hello","Goodbye" | Start-ThreadJob -FilePath $scriptFilePath3
         $results = $job | Receive-Job -Wait
-        $results[0] | Should -Be "Hello"
-        $results[1] | Should -Be "Goodbye"
+        $results | Should -BeExactly "Hello", "Goodbye"
     }
 
     It 'ThreadJob with ScriptFile and Using variables' {
@@ -191,9 +181,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
 
         $job = Start-ThreadJob -FilePath $scriptFilePath4
         $results = $job | Receive-Job -Wait
-        $results[0] | Should -Be $Var1
-        $results[1] | Should -Be 3
-        $results[2] | Should -Be $Array1
+        $results | Should -BeExactly $Var1, 3, $Array1
     }
 
     It 'ThreadJob with ScriptFile and Using variables with argument list' {
@@ -227,7 +215,7 @@ Describe 'Basic ThreadJob Tests' -Tags 'CI' {
     It 'ThreadJob and Verbose stream output' {
 
         $job = Start-ThreadJob -ScriptBlock { $VerbosePreference = 'Continue'; Write-Verbose "VerboseOut" } | Wait-Job
-        $job.Verbose | Should -Match "VerboseOut"
+        $job.Verbose | Should -BeExactly "VerboseOut"
     }
 
     It 'ThreadJob and Verbose stream output' {
