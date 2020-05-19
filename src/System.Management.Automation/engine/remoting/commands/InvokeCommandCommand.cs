@@ -2137,7 +2137,7 @@ namespace System.Management.Automation.Internal
 
             if (string.IsNullOrEmpty(computerName))
             {
-                throw new ArgumentNullException("computerName");
+                throw new ArgumentNullException(nameof(computerName));
             }
 
             lock (_syncObject)

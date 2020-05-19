@@ -3005,7 +3005,7 @@ namespace Microsoft.PowerShell.Commands
             base.GetObjectData(info, context);
 
             if (info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
 
             info.AddValue("ProcessName", _processName);
         }

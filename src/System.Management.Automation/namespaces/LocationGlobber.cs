@@ -2387,7 +2387,7 @@ namespace System.Management.Automation
             {
                 ArgumentException e =
                     PSTraceSource.NewArgumentException(
-                        "path",
+                        nameof(path),
                         SessionStateStrings.NotProviderQualifiedPath);
                 throw e;
             }

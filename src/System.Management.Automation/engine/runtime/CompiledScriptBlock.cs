@@ -2154,7 +2154,7 @@ namespace System.Management.Automation
             _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
             if (_scriptText == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
         }
 

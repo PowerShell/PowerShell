@@ -238,7 +238,7 @@ namespace System.Management.Automation.Remoting
                 // Create an error record and write it to the stream.
                 ErrorRecord errorRecord = new ErrorRecord(
                     exception,
-                    PSRemotingErrorId.RemoteHostCallFailed.ToString(),
+                    nameof(PSRemotingErrorId.RemoteHostCallFailed),
                     ErrorCategory.InvalidArgument,
                     _remoteHostCall.MethodName);
                 writeErrorAction(errorRecord);

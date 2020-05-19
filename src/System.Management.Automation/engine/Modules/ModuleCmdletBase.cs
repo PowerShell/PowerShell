@@ -7148,7 +7148,7 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions options)
         {
             if (sourceModule == null)
-                throw PSTraceSource.NewArgumentNullException("sourceModule");
+                throw PSTraceSource.NewArgumentNullException(nameof(sourceModule));
 
             bool isImportModulePrivate = cmdlet.CommandInfo.Visibility == SessionStateEntryVisibility.Private ||
                 targetSessionState.DefaultCommandVisibility == SessionStateEntryVisibility.Private;

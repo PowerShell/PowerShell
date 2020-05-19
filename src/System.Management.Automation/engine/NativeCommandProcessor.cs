@@ -161,7 +161,7 @@ namespace System.Management.Automation
         {
             if (applicationInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("applicationInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(applicationInfo));
             }
 
             _applicationInfo = applicationInfo;

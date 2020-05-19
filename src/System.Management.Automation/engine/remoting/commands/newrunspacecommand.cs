@@ -416,12 +416,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (sender == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sender");
+                throw PSTraceSource.NewArgumentNullException(nameof(sender));
             }
 
             if (stateEventArgs == null)
             {
-                throw PSTraceSource.NewArgumentNullException("stateEventArgs");
+                throw PSTraceSource.NewArgumentNullException(nameof(stateEventArgs));
             }
 
             RunspaceStateEventArgs runspaceStateEventArgs =
@@ -909,7 +909,7 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                         new ErrorRecord(
                             new ArgumentException(RemotingErrorIdStrings.HyperVModuleNotAvailable),
-                            PSRemotingErrorId.HyperVModuleNotAvailable.ToString(),
+                            nameof(PSRemotingErrorId.HyperVModuleNotAvailable),
                             ErrorCategory.NotInstalled,
                             null));
 
@@ -927,7 +927,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMIdNotSingle,
                                                                  this.VMId[index].ToString(null))),
-                                PSRemotingErrorId.InvalidVMIdNotSingle.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMIdNotSingle),
                                 ErrorCategory.InvalidArgument,
                                 null));
 
@@ -941,7 +941,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMNameNotSingle,
                                                                  this.VMName[index])),
-                                PSRemotingErrorId.InvalidVMNameNotSingle.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMNameNotSingle),
                                 ErrorCategory.InvalidArgument,
                                 null));
 
@@ -962,7 +962,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMState,
                                                                  this.VMName[index])),
-                                PSRemotingErrorId.InvalidVMState.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMState),
                                 ErrorCategory.InvalidArgument,
                                 null));
 

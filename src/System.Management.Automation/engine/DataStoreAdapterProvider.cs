@@ -297,7 +297,7 @@ namespace System.Management.Automation
         {
             if (providerInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
 
             Name = providerInfo.Name;
@@ -394,17 +394,17 @@ namespace System.Management.Automation
             // Verify parameters
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             if (implementingType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("implementingType");
+                throw PSTraceSource.NewArgumentNullException(nameof(implementingType));
             }
 
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             _sessionState = sessionState;

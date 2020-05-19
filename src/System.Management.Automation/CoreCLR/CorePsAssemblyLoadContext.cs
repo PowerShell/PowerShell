@@ -78,7 +78,7 @@ namespace System.Management.Automation
                     if (!Directory.Exists(basePath))
                     {
                         string message = string.Format(CultureInfo.CurrentCulture, BaseFolderDoesNotExist, basePath);
-                        throw new ArgumentException(message, "basePaths");
+                        throw new ArgumentException(message, nameof(basePaths));
                     }
 
                     _probingPaths[i] = basePath.Trim();
@@ -582,7 +582,7 @@ namespace System.Management.Automation
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)]string basePaths)
         {
             if (string.IsNullOrEmpty(basePaths))
-                throw new ArgumentNullException("basePaths");
+                throw new ArgumentNullException(nameof(basePaths));
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
         }

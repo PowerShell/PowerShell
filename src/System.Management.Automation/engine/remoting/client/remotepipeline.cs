@@ -173,7 +173,7 @@ namespace System.Management.Automation
             // originally copied it from PipelineBase
             if (pipeline == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pipeline");
+                throw PSTraceSource.NewArgumentNullException(nameof(pipeline));
             }
 
             if (pipeline._disposed)

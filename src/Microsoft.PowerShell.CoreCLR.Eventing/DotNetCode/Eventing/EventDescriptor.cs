@@ -38,12 +38,12 @@ namespace System.Diagnostics.Eventing
         {
             if (id < 0)
             {
-                throw new ArgumentOutOfRangeException("id", DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
+                throw new ArgumentOutOfRangeException(nameof(id), DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
             }
 
             if (id > ushort.MaxValue)
             {
-                throw new ArgumentOutOfRangeException("id", string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
+                throw new ArgumentOutOfRangeException(nameof(id), string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
             }
 
             _id = (ushort)id;
@@ -55,12 +55,12 @@ namespace System.Diagnostics.Eventing
 
             if (task < 0)
             {
-                throw new ArgumentOutOfRangeException("task", DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
+                throw new ArgumentOutOfRangeException(nameof(task), DotNetEventingStrings.ArgumentOutOfRange_NeedNonNegNum);
             }
 
             if (task > ushort.MaxValue)
             {
-                throw new ArgumentOutOfRangeException("task", string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
+                throw new ArgumentOutOfRangeException(nameof(task), string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_NeedValidId, 1, ushort.MaxValue));
             }
 
             _task = (ushort)task;

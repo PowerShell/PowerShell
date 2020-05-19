@@ -566,7 +566,7 @@ namespace System.Management.Automation
 
             if (cmdletInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdletInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdletInfo));
             }
 
             // Get the help file name from the cmdlet metadata

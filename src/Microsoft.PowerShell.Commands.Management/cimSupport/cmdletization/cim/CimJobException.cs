@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
 
             _errorRecord = (ErrorRecord)info.GetValue("errorRecord", typeof(ErrorRecord));
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

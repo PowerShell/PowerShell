@@ -104,7 +104,7 @@ namespace System.Management.Automation
             Cmdlet cmdlet = command as Cmdlet;
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentException("command");
+                throw PSTraceSource.NewArgumentException(nameof(command));
             }
 
             ParameterBinderBase parameterBinder;

@@ -970,7 +970,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Assert(false, "Unrecognized authentication mechanism [ValidateSet should prevent that from happening]");
-            throw new ArgumentOutOfRangeException("authentication");
+            throw new ArgumentOutOfRangeException(nameof(authentication));
         }
 
         internal static CimSession CreateCimSession(

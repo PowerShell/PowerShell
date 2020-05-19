@@ -196,8 +196,8 @@ namespace System.Management.Automation.Remoting
                     default:
                         throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownNodeType, RemotingErrorIdStrings.IPCUnknownNodeType,
                             reader.NodeType.ToString(),
-                            XmlNodeType.Element.ToString(),
-                            XmlNodeType.EndElement.ToString());
+                            nameof(XmlNodeType.Element),
+                            nameof(XmlNodeType.EndElement));
                 }
             }
         }
@@ -903,7 +903,7 @@ namespace System.Management.Automation.Remoting.Client
         private void OnDataPacketReceived(byte[] rawData, string stream, Guid psGuid)
         {
             string streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_STDOUT;
-            if (stream.Equals(DataPriorityType.PromptResponse.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (stream.Equals(nameof(DataPriorityType.PromptResponse), StringComparison.OrdinalIgnoreCase))
             {
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
@@ -1444,7 +1444,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1478,7 +1478,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.VMSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.VMSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.VMSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1492,7 +1492,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.VMSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.VMSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.VMSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1527,7 +1527,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1551,7 +1551,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ContainerSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.ContainerSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.ContainerSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1875,7 +1875,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -2000,7 +2000,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -2067,7 +2067,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;

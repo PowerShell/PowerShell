@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (s_tracer.IsEnabled)
@@ -435,7 +435,7 @@ namespace Microsoft.PowerShell.Commands
             if (backCount < 0)
             {
                 // The caller needs to guarantee that 'backCount' is greater or equals to 0
-                throw PSTraceSource.NewArgumentException("backCount");
+                throw PSTraceSource.NewArgumentException(nameof(backCount));
             }
 
             if (_isRawStream && _waitForChanges)
@@ -1088,7 +1088,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidCastException)
                 {
-                    throw PSTraceSource.NewArgumentException("content", FileSystemProviderStrings.ByteEncodingError);
+                    throw PSTraceSource.NewArgumentException(nameof(content), FileSystemProviderStrings.ByteEncodingError);
                 }
             }
             else

@@ -154,7 +154,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             FunctionInfo result = null;
@@ -269,12 +269,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (function == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
 
             string originalName = name;
@@ -504,12 +504,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (function == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
 
             string originalName = name;
@@ -583,12 +583,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (function == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
 
             string originalName = name;
@@ -711,7 +711,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             // Use the scope enumerator to find an existing function

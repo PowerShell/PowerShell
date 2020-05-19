@@ -1810,7 +1810,7 @@ namespace System.Management.Automation
         {
             // errToken may be null
             if (string.IsNullOrEmpty(resourceIdAndErrorId))
-                throw PSTraceSource.NewArgumentException("resourceIdAndErrorId");
+                throw PSTraceSource.NewArgumentException(nameof(resourceIdAndErrorId));
             // innerException may be null
             // args may be null or empty
 

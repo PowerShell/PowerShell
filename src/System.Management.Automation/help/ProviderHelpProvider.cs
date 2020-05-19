@@ -149,7 +149,7 @@ namespace System.Management.Automation
         {
             if (providerInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
 
             string helpFile = providerInfo.HelpFile;

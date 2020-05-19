@@ -1856,7 +1856,7 @@ namespace System.Management.Automation
             {
                 if (resultType == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("resultType");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
 
                 bool isArgumentByRef;
@@ -1911,7 +1911,7 @@ namespace System.Management.Automation
             {
                 if (resultType == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("resultType");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
 
                 PSObject mshObj = valueToConvert as PSObject;

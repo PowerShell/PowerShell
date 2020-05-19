@@ -529,7 +529,7 @@ namespace System.Management.Automation.Language
             var target = indexExpressionAst.Target.Accept(this);
             if (index == null || target == null)
             {
-                throw new ArgumentNullException("indexExpressionAst");
+                throw new ArgumentNullException(nameof(indexExpressionAst));
             }
 
             return GetIndexedValueFromTarget(target, index);

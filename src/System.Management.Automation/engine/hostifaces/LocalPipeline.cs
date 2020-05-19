@@ -1341,7 +1341,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (item == null)
             {
-                throw PSTraceSource.NewArgumentNullException("item");
+                throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
             lock (_syncRoot)

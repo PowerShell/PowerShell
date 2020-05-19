@@ -101,7 +101,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                throw PSTraceSource.NewArgumentNullException("executionContext");
+                throw PSTraceSource.NewArgumentNullException(nameof(executionContext));
             }
 
             string shellId = executionContext.ShellID;
@@ -205,13 +205,13 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
             if (exception == null)
             {
-                PSTraceSource.NewArgumentNullException("exception");
+                PSTraceSource.NewArgumentNullException(nameof(exception));
                 return;
             }
 
@@ -320,13 +320,13 @@ namespace System.Management.Automation
         {
             if (logContext == null)
             {
-                PSTraceSource.NewArgumentNullException("logContext");
+                PSTraceSource.NewArgumentNullException(nameof(logContext));
                 return;
             }
 
             if (exception == null)
             {
-                PSTraceSource.NewArgumentNullException("exception");
+                PSTraceSource.NewArgumentNullException(nameof(exception));
                 return;
             }
 
@@ -359,7 +359,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
@@ -407,13 +407,13 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
             if (exception == null)
             {
-                PSTraceSource.NewArgumentNullException("exception");
+                PSTraceSource.NewArgumentNullException(nameof(exception));
                 return;
             }
 
@@ -448,13 +448,13 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
             if (invocationInfo == null)
             {
-                PSTraceSource.NewArgumentNullException("invocationInfo");
+                PSTraceSource.NewArgumentNullException(nameof(invocationInfo));
                 return;
             }
 
@@ -490,7 +490,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
@@ -531,7 +531,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
@@ -562,7 +562,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
@@ -598,13 +598,13 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
             if (exception == null)
             {
-                PSTraceSource.NewArgumentNullException("exception");
+                PSTraceSource.NewArgumentNullException(nameof(exception));
                 return;
             }
 
@@ -639,7 +639,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 
@@ -675,7 +675,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                PSTraceSource.NewArgumentNullException("executionContext");
+                PSTraceSource.NewArgumentNullException(nameof(executionContext));
                 return;
             }
 

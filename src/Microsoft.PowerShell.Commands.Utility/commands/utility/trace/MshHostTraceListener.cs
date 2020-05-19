@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (cmdlet == null)
             {
-                throw new PSArgumentNullException("cmdlet");
+                throw new PSArgumentNullException(nameof(cmdlet));
             }
 
             Diagnostics.Assert(

@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal MshResolvedExpressionParameterAssociation(MshParameter parameter, PSPropertyExpression expression)
         {
             if (expression == null)
-                throw PSTraceSource.NewArgumentNullException("expression");
+                throw PSTraceSource.NewArgumentNullException(nameof(expression));
 
             OriginatingParameter = parameter;
             ResolvedExpression = expression;

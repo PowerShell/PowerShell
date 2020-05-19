@@ -278,7 +278,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.RemoteSessionHyperVSocketServerConstructorFailure),
                     ex,
-                    PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure.ToString(),
+                    nameof(PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure),
                     ErrorCategory.InvalidOperation,
                     null);
             }

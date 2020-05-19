@@ -541,7 +541,7 @@ namespace System.Management.Automation.Internal
         {
             if (capacity <= 0 || capacity > Int32.MaxValue)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("capacity", capacity);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(capacity), capacity);
             }
 
             // the maximum number of objects to allow in the stream at a given time.
@@ -1124,7 +1124,7 @@ namespace System.Management.Automation.Internal
         {
             if (count < 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
             }
 
             if (count == 0)
@@ -1232,7 +1232,7 @@ namespace System.Management.Automation.Internal
 
             if (maxRequested < 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("maxRequested", maxRequested);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(maxRequested), maxRequested);
             }
 
             try
@@ -1583,7 +1583,7 @@ namespace System.Management.Automation.Internal
         {
             if (storeToUse == null)
             {
-                throw PSTraceSource.NewArgumentNullException("storeToUse");
+                throw PSTraceSource.NewArgumentNullException(nameof(storeToUse));
             }
 
             _objects = storeToUse;

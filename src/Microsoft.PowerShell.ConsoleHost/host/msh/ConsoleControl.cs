@@ -1084,7 +1084,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
             if (contents == null)
             {
-                throw PSTraceSource.NewArgumentNullException("contents");
+                throw PSTraceSource.NewArgumentNullException(nameof(contents));
             }
 
             uint codePage;

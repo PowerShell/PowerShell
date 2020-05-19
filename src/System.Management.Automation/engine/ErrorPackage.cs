@@ -420,7 +420,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(errorCategoryString))
             {
                 // this probably indicates an invalid ErrorCategory value
-                errorCategoryString = ErrorCategory.NotSpecified.ToString();
+                errorCategoryString = nameof(ErrorCategory.NotSpecified);
             }
 
             string templateText = ErrorCategoryStrings.ResourceManager.GetString(errorCategoryString, uiCultureInfo);
