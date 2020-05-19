@@ -634,7 +634,7 @@ namespace System.Management.Automation.Remoting
             {
                 RunServerNegotiationAlgorithm(clientCapability, true);
             }
-            catch (PSRemotingDataStructureException ex)
+            catch (PSRemotingDataStructureException)
             {
                 throw;
             }

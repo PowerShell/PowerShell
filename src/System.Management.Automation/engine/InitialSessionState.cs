@@ -1517,7 +1517,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     ss.ImportPSSnapIn(si, out warning);
                 }
-                catch (PSSnapInException pse)
+                catch (PSSnapInException)
                 {
                     throw;
                 }
@@ -3826,7 +3826,7 @@ namespace System.Management.Automation.Runspaces
                 PSSnapInException warning;
                 this.ImportPSSnapIn(coreSnapin, out warning);
             }
-            catch (PSSnapInException pse)
+            catch (PSSnapInException)
             {
                 throw;
             }
