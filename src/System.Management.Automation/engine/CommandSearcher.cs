@@ -1010,6 +1010,8 @@ namespace System.Management.Automation
                         return null;
                     }
 
+                    string moduleName = PSSnapinQualifiedCommandName?.PSSnapInName;
+
                     var cmdletShortName = PSSnapinQualifiedCommandName?.ShortName;
                     WildcardPattern cmdletMatcher = cmdletShortName != null
                         ? WildcardPattern.Get(cmdletShortName, WildcardOptions.IgnoreCase)
@@ -1026,8 +1028,7 @@ namespace System.Management.Automation
                                 (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
                                  FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
                             {
-                                string moduleName = PSSnapinQualifiedCommandName?.PSSnapInName;
-                                if (moduleName == null || moduleName.Equals(cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase))
+                                if (string.IsNullOrEmpty(moduleName) || moduleName.Equals(cmdlet.ModuleName, StringComparison.OrdinalIgnoreCase))
                                 {
                                     // If PSSnapin is specified, make sure they match
                                     matchingCmdletInfo.Add(cmdlet);
