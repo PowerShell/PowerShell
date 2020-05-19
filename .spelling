@@ -448,6 +448,7 @@ metadata
 metadata.json
 miaromero
 microsoft
+Microsoft.ApplicationInsights
 Microsoft.CodeAnalysis.CSharp
 microsoft.com
 microsoft.management.infrastructure.cimcmdlets
@@ -492,12 +493,15 @@ namespace
 nano
 nanoserver
 nativeexecution
+net5.0
+netcoreapp5.0
 netip.ps1.
 netstandard.dll
 new-apachevhost
 new-ciminstance
 new-cimsessionoption
 new-cronjob
+New-DockerTestBuild
 new-guid
 new-itemproperty
 new-localgroup
@@ -545,6 +549,7 @@ opensuse
 oss
 p1
 packagemanagement
+PackageVersion
 parameshbabu
 parameterbinderbase
 parameterbindercontroller
@@ -571,6 +576,7 @@ powershell
 powershell-unix
 powershell.6
 powershell.com
+PowerShell.Common.props
 powershell.core.instrumentation
 powershell.exe
 powershell.org
@@ -597,6 +603,8 @@ preview.4
 preview.5
 preview.6
 preview.7
+preview.4.20258.7
+preview.4.20229.10
 preview1-24530-04
 preview7
 productversion
@@ -627,6 +635,7 @@ pssnapins
 psversion
 psversiontable
 PSWindowsPowerShellCompatibility
+PublishReadyToRun
 pvs-studio
 pwd
 pwrshplughin.dll
@@ -644,6 +653,7 @@ rc3-24011
 readme
 readme.md
 readonly
+ReadyToRun
 rebase
 rebasing
 receive-pssession
@@ -783,6 +793,7 @@ SytzeAndr
 tabcompletion
 tadas
 tandasat
+TargetFramework
 test-modulemanifest
 test-pssessionconfigurationfile
 test-scriptfileinfo
@@ -914,6 +925,7 @@ x86
 xpath
 xtqqczze
 xunit
+Xunit.SkippableFact
 yaml
 yashrajbharti
 yml
@@ -1038,3 +1050,6 @@ wpaProfile
  - CHANGELOG/preview.md
 ThomasNieto
 spongemike2
+davidseibel
+HumanEquivalentUnit
+jcotton42

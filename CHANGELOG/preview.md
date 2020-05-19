@@ -1,5 +1,102 @@
 # Current preview release
 
+## [7.1.0-preview.3] - 2020-05-14
+
+### Breaking Changes
+
+- Fix string parameter binding for `BigInteger` numeric literals (#11634) (Thanks @vexx32!)
+
+### Engine Updates and Fixes
+
+- Set correct `PSProvider` full name at module load time (#11813) (Thanks @iSazonov!)
+
+### Experimental Features
+
+- Support passing `PSPath` to native commands (#12386)
+
+### General Cmdlet Updates and Fixes
+
+- Fix incorrect index in format string in ParameterBinderBase (#12630) (Thanks @powercode!)
+- Copy the `CommandInfo` property in `Command.Clone()` (#12301) (Thanks @TylerLeonhardt!)
+- Apply `-IncludeEqual` in `Compare-Object` when `-ExcludeDifferent` is specified (#12317) (Thanks @davidseibel!)
+- Change `Get-FileHash` to close file handles before writing output (#12474) (Thanks @HumanEquivalentUnit!)
+- Fix inconsistent exception message in `-replace` operator (#12388) (Thanks @jackdcasey!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @RDIL, @powercode, @xtqqczze, @xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Replace Unicode <code>non-breaking space</code> character with space (#12576) (Thanks @xtqqczze!)</li>
+<li>Remove unused <code>New-DockerTestBuild.ps1</code> (#12610) (Thanks @RDIL!)</li>
+<li>Annotate <code>Assert</code> methods for better code analysis (#12618) (Thanks @powercode!)</li>
+<li>Use correct casing for cmdlet names and parameters in *.ps1 files throughout the codebase (#12584) (Thanks @xtqqczze!)</li>
+<li>Document why <code>PackageVersion</code> is used in <code>PowerShell.Common.props</code> (#12523) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Update `@PoshChan` config to include `SSH` (#12526) (Thanks @vexx32!)
+- Update log message in `Start-PSBootstrap` (#12573) (Thanks @xtqqczze!)
+- Add the `.NET SDK` installation path to the current process path in `tools/UpdateDotnetRuntime.ps1` (#12525)
+
+### Tests
+
+- Make CIM tab completion test case insensitive (#12636)
+- Mark ping tests as Pending due to stability issues in macOS (#12504)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@jcotton42, @iSazonov, @iSazonov, @iSazonov</p>
+
+</summary>
+
+<ul>
+<li>Update build to use the new .NET SDK <code>5.0.100-preview.4.20258.7</code> (#12637)</li>
+<li>Bump NJsonSchema from 10.1.14 to 10.1.15 (#12608)</li>
+<li>Bump NJsonSchema from 10.1.13 to 10.1.14 (#12598)</li>
+<li>Bump NJsonSchema from 10.1.12 to 10.1.13 (#12583)</li>
+<li>Update the build to sign any unsigned files as 3rd party Dlls (#12581)</li>
+<li>Update .NET SDK to <code>5.0.100-preview.4.20229.10</code> (#12538)</li>
+<li>Add ability to <code>Install-Dotnet</code> to specify directory (#12469)</li>
+<li>Allow <code>/</code> in relative paths for <code>using module</code> (#7424) (#12492) (Thanks @jcotton42!)</li>
+<li>Update dotnet metadata for next channel for automated updates (#12502)</li>
+<li>Bump .NET to 5.0.0-preview.4 (#12507)</li>
+<li>Bump <code>Microsoft.ApplicationInsights</code> from <code>2.13.1</code> to <code>2.14.0</code> (#12479)</li>
+<li>Bump PackageManagement from 1.4.6 to 1.4.7 in /src/Modules (#12506)</li>
+<li>Bump <code>Xunit.SkippableFact</code> from <code>1.3.12</code> to <code>1.4.8</code> (#12480)</li>
+<li>Fix quotes to allow variable expansion (#12512)</li>
+<li>Use new <code>TargetFramework</code> as <code>net5.0</code> in packaging scripts (#12503) (Thanks @iSazonov!)</li>
+<li>Use new value for <code>TargetFramework</code> as <code>net5.0</code> instead of <code>netcoreapp5.0</code> (#12486) (Thanks @iSazonov!)</li>
+<li>Disable <code>PublishReadyToRun</code> for framework dependent packages (#12450)</li>
+<li>Add <code>dependabot</code> rules to ignore updates from .NET (#12466)</li>
+<li>Update <code>README.md</code> and <code>metadata.json</code> for upcoming release (#12441)</li>
+<li>Turn on <code>ReadyToRun</code> (#12361) (Thanks @iSazonov!)</li>
+<li>Add summary to compressed sections of change log (#12429)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Add link to life cycle doc to distribution request template (#12638)
+- Update TFM reference in build docs (#12514) (Thanks @xtqqczze!)
+- Fix broken link for blogs in documents (#12471)
+
 ## [7.1.0-preview.2] - 2020-04-23
 
 ### Breaking Changes
@@ -261,5 +358,7 @@
 - Update `SUPPORT.md` (#11101) (Thanks @mklement0!)
 - Update `README.md` (#11100) (Thanks @mklement0!)
 
+[7.1.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.2...v7.1.0-preview.3
 [7.1.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.1...v7.1.0-preview.2
 [7.1.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.6...v7.1.0-preview.1
+
