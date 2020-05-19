@@ -337,7 +337,6 @@ function Start-PSPackage {
                     ProductSourcePath = $Source
                     ProductVersion = $Version
                     AssetsPath = "$RepoRoot\assets"
-                    LicenseFilePath = "$RepoRoot\assets\license.rtf"
                     # Product Code needs to be unique for every PowerShell version since it is a unique identifier for the particular product release
                     ProductCode = New-Guid
                     ProductTargetArchitecture = $TargetArchitecture
@@ -2959,11 +2958,6 @@ function New-MSIPackage
         [ValidateScript( {Test-Path $_})]
         [string] $AssetsPath = "$RepoRoot\assets",
 
-        # Path to license.rtf file - for the EULA
-        [ValidateNotNullOrEmpty()]
-        [ValidateScript( {Test-Path $_})]
-        [string] $LicenseFilePath = "$RepoRoot\assets\license.rtf",
-
         # Architecture to use when creating the MSI
         [Parameter(Mandatory = $true)]
         [ValidateSet("x86", "x64")]
@@ -3087,7 +3081,7 @@ function New-MSIPackage
     Write-Log "running light..."
     # suppress ICE61, because we allow same version upgrades
     # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath"}
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension }
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
