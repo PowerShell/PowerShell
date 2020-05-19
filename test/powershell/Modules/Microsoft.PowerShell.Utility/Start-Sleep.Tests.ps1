@@ -23,6 +23,15 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime
     }
 
+    It "Should work properly when sleeping with a [TimeSpan]" {
+        $duration = [timespan]::FromMilliseconds(1500)
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
+        Start-Sleep -Duration $duration
+        $watch.Stop()
+        $watch.ElapsedMilliseconds | Should -BeGreaterThan $minTime
+        $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime
+    }
+
     It "Should work properly when sleeping with ms alias" {
         $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -ms 1500
@@ -34,6 +43,15 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
     It "Should work properly when sleeping without parameters" {
         $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep 1.5
+        $watch.Stop()
+        $watch.ElapsedMilliseconds | Should -BeGreaterThan $minTime
+        $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime
+    }
+
+    It "Should work properly when sleeping without parameters from [timespan]" {
+        $duration = [timespan]::FromMilliseconds(1500)
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
+        Start-Sleep $duration
         $watch.Stop()
         $watch.ElapsedMilliseconds | Should -BeGreaterThan $minTime
         $watch.ElapsedMilliseconds | Should -BeLessThan $maxTime

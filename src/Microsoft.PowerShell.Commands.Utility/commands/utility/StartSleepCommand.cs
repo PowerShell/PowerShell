@@ -55,6 +55,13 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ms")]
         public int Milliseconds { get; set; }
 
+        /// <summary>
+        /// Allows sleep time to be specified as a TimeSpan
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ParameterSetName = "FromTimeSpan", ValueFromPipeline = true)]
+        [Alias("ts")]
+        public TimeSpan Duration { get; set; }
+
         #endregion
 
         #region methods
@@ -103,6 +110,10 @@ namespace Microsoft.PowerShell.Commands
 
                 case "Milliseconds":
                     sleepTime = Milliseconds;
+                    break;
+                
+                case "FromTimeSpan":
+                    sleepTime = (int)Math.Floor(Duration.Duration().TotalMilliseconds);
                     break;
 
                 default:
