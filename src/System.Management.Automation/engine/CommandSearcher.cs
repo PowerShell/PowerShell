@@ -1023,7 +1023,7 @@ namespace System.Management.Automation
                     {
                         foreach (CmdletInfo cmdlet in cmdletList)
                         {
-                            if (cmdletShortName != null &&
+                            if (cmdletMatcher != null &&
                                 cmdletMatcher.IsMatch(cmdlet.Name) ||
                                 (_commandResolutionOptions.HasFlag(SearchResolutionOptions.FuzzyMatch) &&
                                  FuzzyMatcher.IsFuzzyMatch(cmdlet.Name, _commandName)))
