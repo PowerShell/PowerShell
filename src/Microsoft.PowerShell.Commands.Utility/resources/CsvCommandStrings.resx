@@ -133,9 +133,6 @@
   <data name="CannotSpecifyIncludeTypeInformationAndNoTypeInformation" xml:space="preserve">
     <value>You must specify either the -IncludeTypeInformation or -NoTypeInformation parameters, but not both.</value>
   </data>
-  <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
-    <value>You must specify either the -Path or -LiteralPath parameters, but not both.</value>
-  </data>
   <data name="UseDefaultNameForUnspecifiedHeader" xml:space="preserve">
     <value>One or more headers were not specified. Default names starting with "H" have been used in place of any missing headers.</value>
   </data>
