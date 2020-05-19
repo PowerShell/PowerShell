@@ -1444,15 +1444,13 @@ namespace Microsoft.PowerShell.Commands
                             // Look in function table
                             if ((this.CommandType & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
                             {
-                                foreach (var function in module.SessionState.Internal.GetFunctionTable())
+                                foreach ((string functionName, FunctionInfo functionInfo) in module.SessionState.Internal.GetFunctionTable())
                                 {
-                                    FunctionInfo func = function.Value;
-
-                                    if (matcher.IsMatch(function.Key) && func.IsImported)
+                                    if (matcher.IsMatch(functionName) && functionInfo.IsImported)
                                     {
                                         // make sure function doesn't come from the current module's nested module
-                                        if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                                            yield return function.Value;
+                                        if (functionInfo.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                                            yield return functionInfo;
                                     }
                                 }
                             }
