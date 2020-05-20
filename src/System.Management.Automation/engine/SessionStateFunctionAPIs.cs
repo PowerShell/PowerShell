@@ -39,7 +39,7 @@ namespace System.Management.Automation
         /// <returns>
         /// An IDictionary representing the visible functions.
         /// </returns>
-        internal IDictionary GetFunctionTable()
+        internal IDictionary<string, FunctionInfo> GetFunctionTable()
         {
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);

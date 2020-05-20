@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override IDictionary GetSessionStateTable()
         {
-            return SessionState.Internal.GetFunctionTable();
+            return (IDictionary)SessionState.Internal.GetFunctionTable();
         }
 
         /// <summary>

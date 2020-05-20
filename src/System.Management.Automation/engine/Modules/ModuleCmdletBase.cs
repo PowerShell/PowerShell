@@ -5074,29 +5074,29 @@ namespace Microsoft.PowerShell.Commands
                         // Remove the imported functions from SessionState...
                         // (can't just go through module.SessionState.Internal.ExportedFunctions,
                         //  because the names of the functions might have been changed by the -Prefix parameter of Import-Module)
-                        foreach (DictionaryEntry entry in ss.GetFunctionTable())
+                        foreach ((var _, FunctionInfo functionInfo) in ss.GetFunctionTable())
                         {
-                            FunctionInfo func = (FunctionInfo)entry.Value;
-                            if (func.Module == null)
+                            if (functionInfo.Module == null)
                             {
                                 continue;
                             }
 
-                            if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                            if (functionInfo.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
+                                string functionName = functionInfo.Name;
                                 try
                                 {
-                                    ss.RemoveFunction(func.Name, true);
+                                    ss.RemoveFunction(functionName, true);
 
-                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, func.Name);
+                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, functionName);
                                     WriteVerbose(memberMessage);
                                 }
                                 catch (SessionStateUnauthorizedAccessException e)
                                 {
-                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, func.Name, module.Name, e.Message);
+                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, functionName, module.Name, e.Message);
                                     InvalidOperationException memberNotRemoved = new InvalidOperationException(message, e);
                                     ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved",
-                                                                     ErrorCategory.PermissionDenied, func.Name);
+                                                                     ErrorCategory.PermissionDenied, functionName);
                                     WriteError(er);
                                 }
                             }
