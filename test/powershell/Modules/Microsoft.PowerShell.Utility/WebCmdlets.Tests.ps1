@@ -41,14 +41,15 @@ function ExecuteRequestWithOutFile {
     )
 
     $result = [PSObject]@{Output = $null; Error = $null}
-    $filePath = Join-Path $TestDrive ((Get-Random).ToString() + ".txt")
+    # We use '[outfile1]' in the file name to check that OutFile parameter is literal path
+    $filePath = Join-Path $TestDrive ((Get-Random).ToString() + "[outfile1].txt")
     try {
         if ($cmdletName -eq "Invoke-WebRequest") {
             Invoke-WebRequest -Uri $uri -OutFile $filePath
         } else {
             Invoke-RestMethod -Uri $uri -OutFile $filePath
         }
-        $result.Output = Get-Content $filePath -Raw -ErrorAction SilentlyContinue
+        $result.Output = Get-Content -LiteralPath $filePath -Raw -ErrorAction SilentlyContinue
     } catch {
         $result.Error = $_
     } finally {
