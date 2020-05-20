@@ -126,7 +126,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal static partial class DelegateHelpers
+    internal static class DelegateHelpers
     {
         #region Generated Maximum Delegate Arity
 
