@@ -364,6 +364,7 @@ namespace System.Management.Automation
             {
                 try
                 {
+                    // the previous call to setupPathSearcher ensures _pathSearcher != null
                     while (currentMatch == null && _pathSearcher!.MoveNext())
                     {
                         currentMatch = GetInfoFromPath(((IEnumerator<string>)_pathSearcher).Current);

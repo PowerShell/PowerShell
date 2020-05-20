@@ -64,15 +64,14 @@ namespace System.Management.Automation
         /// <returns>
         /// An instance of the Name class.
         /// </returns>
-        internal static PSSnapinQualifiedName? GetInstance(string name)
+        internal static PSSnapinQualifiedName? GetInstance(string? name)
         {
             if (name == null)
                 return null;
-            PSSnapinQualifiedName? result = null;
             string[] splitName = name.Split(Utils.Separators.Backslash);
             if (splitName.Length == 0 || splitName.Length > 2)
                 return null;
-            result = new PSSnapinQualifiedName(splitName);
+            var result = new PSSnapinQualifiedName(splitName);
             // If the shortname is empty, then return null...
             if (string.IsNullOrEmpty(result.ShortName))
             {
@@ -93,7 +92,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _fullName;
+        private readonly string _fullName;
 
         /// <summary>
         /// Gets the command's PSSnapin name.
@@ -106,7 +105,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string? _psSnapinName;
+        private readonly string? _psSnapinName;
 
         /// <summary>
         /// Gets the command's short name.
@@ -119,7 +118,7 @@ namespace System.Management.Automation
             }
         }
 
-        private string _shortName;
+        private readonly string _shortName;
 
         /// <summary>
         /// The full name.
