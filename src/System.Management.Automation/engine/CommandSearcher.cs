@@ -928,7 +928,10 @@ namespace System.Management.Automation
                     }
                 }
 
-                module ??= modules[0];
+                if (module == null)
+                {
+                    module = modules[0];
+                }
             }
 
             return module;

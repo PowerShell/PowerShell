@@ -23,7 +23,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a command searching enumerator that resolves the location
         /// of a command using the PATH environment variable.
-        /// of a command using the PATH environment variable.
         /// </summary>
         /// <param name="commandName">
         /// The command name to search for in the path.
