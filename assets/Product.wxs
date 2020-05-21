@@ -167,7 +167,7 @@
             </Component>
             <Component Id="Disable_Telemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
               <Condition>DISABLE_TELEMETRY</Condition>
-              <Environment Id="PowerShellDistributionChannel" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
+              <Environment Id="PowerShellTelemetryOptout" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
             </Component>
             <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
               <!-- create key for easy detection of a particular version of a powershell core package
