@@ -161,17 +161,8 @@ $dotnetUpdate = Get-DotnetUpdate
 
 if ($dotnetUpdate.ShouldUpdate) {
 
-<<<<<<< HEAD
-if(-not (Get-PackageSource -Name 'dotnet5' -ErrorAction SilentlyContinue))
-{
-    $nugetFeed = ([xml](Get-Content .\nuget.config -Raw)).Configuration.packagesources.add | Where-Object { $_.Key -eq 'dotnet5' } | Select-Object -ExpandProperty Value
-    Register-PackageSource -Name 'dotnet5' -Location $nugetFeed -ProviderName NuGet
-    Write-Verbose -Message "Register new package source 'dotnet5'" -Verbose
-}
-=======
     $dotnetMetadataPath = "$PSScriptRoot/../DotnetRuntimeMetadata.json"
     $dotnetMetadataJson = Get-Content $dotnetMetadataPath -Raw | ConvertFrom-Json
->>>>>>> Add function to get the latest SDK version
 
     # Channel is like: $Channel = "5.0.1xx-preview2"
     $Channel = $dotnetMetadataJson.sdk.channel
