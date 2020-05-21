@@ -21,10 +21,6 @@ Describe "Export-Csv" -Tags "CI" {
         { $testObject | Export-Csv -Path $testCsv -ErrorAction Stop } | Should -Not -Throw
     }
 
-    It "Should throw if an output file isn't specified" {
-        { $testObject | Export-Csv -ErrorAction Stop } | Should -Throw -ErrorId "CannotSpecifyPathAndLiteralPath,Microsoft.PowerShell.Commands.ExportCsvCommand"
-    }
-
     It "Should be a string when exporting via pipe" {
         $testObject | Export-Csv -Path  $testCsv -IncludeTypeInformation
         $results = Get-Content -Path $testCsv
@@ -80,8 +76,15 @@ Describe "Export-Csv" -Tags "CI" {
             Should -Throw -ErrorId "CannotSpecifyIncludeTypeInformationAndNoTypeInformation,Microsoft.PowerShell.Commands.ExportCsvCommand"
     }
 
-    It "Should support -LiteralPath parameter" {
-        $testObject | Export-Csv -LiteralPath $testCsv
+    It "Should support -LiteralPath parameter with Delimiter" {
+        $testObject | Export-Csv -LiteralPath $testCsv -Delimiter ','
+        $results = Import-Csv -Path  $testCsv
+
+        $results | Should -HaveCount 3
+    }
+
+    It "Should support -LiteralPath parameter with UseCulture" {
+        $testObject | Export-Csv -LiteralPath $testCsv -UseCulture
         $results = Import-Csv -Path  $testCsv
 
         $results | Should -HaveCount 3
