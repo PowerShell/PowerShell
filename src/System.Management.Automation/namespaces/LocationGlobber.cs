@@ -1850,7 +1850,11 @@ namespace System.Management.Automation
                 }
                 catch (DriveNotFoundException) when (_sessionState.Drive.Current != null)
                 {
-
+                    // Check to see if it is a path relative to the
+                    // current drive's root. This is true when a drive root
+                    // appears to be a drive (like HTTP://). The drive will not
+                    // actually exist, but this is not an absolute path.
+                    
                     string normalizedRoot = _sessionState.Drive.Current.Root.Replace(
                         StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
 

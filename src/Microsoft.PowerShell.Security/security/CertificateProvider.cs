@@ -1126,6 +1126,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (ProviderInvocationException e) when (e.InnerException is CertificateProviderItemNotFoundException)
                 {
+                    // Swallow the exception if the item is not found
                 }
 
                 result = (bool)item;

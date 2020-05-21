@@ -388,10 +388,10 @@ namespace Microsoft.PowerShell.Commands
                 s_tracer.WriteLine("blocks read = {0}", blocks.Count);
             }
             catch (Exception e) when ((e is IOException) ||
-                    (e is ArgumentException) ||
-                    (e is System.Security.SecurityException) ||
-                    (e is UnauthorizedAccessException) ||
-                    (e is ArgumentNullException))
+                (e is ArgumentException) ||
+                (e is System.Security.SecurityException) ||
+                (e is UnauthorizedAccessException) ||
+                (e is ArgumentNullException))
             {
                 // Exception contains specific message about the error occured and so no need for errordetails.
                 _provider.WriteError(new ErrorRecord(e, "GetContentReaderIOError", ErrorCategory.ReadError, _path));
@@ -537,10 +537,10 @@ namespace Microsoft.PowerShell.Commands
                 s_tracer.WriteLine("blocks seek position = {0}", _stream.Position);
             }
             catch (Exception e) when ((e is IOException) ||
-                    (e is ArgumentException) ||
-                    (e is System.Security.SecurityException) ||
-                    (e is UnauthorizedAccessException) ||
-                    (e is ArgumentNullException))
+                (e is ArgumentException) ||
+                (e is System.Security.SecurityException) ||
+                (e is UnauthorizedAccessException) ||
+                (e is ArgumentNullException))
             {
                 // Exception contains specific message about the error occured and so no need for errordetails.
                 _provider.WriteError(new ErrorRecord(e, "GetContentReaderIOError", ErrorCategory.ReadError, _path));

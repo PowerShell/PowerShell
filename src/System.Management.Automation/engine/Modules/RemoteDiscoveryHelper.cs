@@ -123,6 +123,7 @@ namespace System.Management.Automation
                                }
                                catch (InvalidOperationException) when (swallowInvalidOperationExceptions)
                                {
+                                   // Swallow the exception
                                }
                            }
                        };

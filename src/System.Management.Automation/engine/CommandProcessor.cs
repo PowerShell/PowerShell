@@ -390,7 +390,7 @@ namespace System.Management.Automation
                 }
                 catch (RuntimeException rte) when (!rte.WasThrownFromThrowStatement)
                 {
-
+                    // Wrap the exception
                     exceptionToThrow = rte;
                 }
                 catch (LoopFlowException)

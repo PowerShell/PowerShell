@@ -467,7 +467,6 @@ namespace System.Management.Automation
                     }
                     catch (Win32Exception) when (Platform.IsWindowsDesktop)
                     {
-
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
                         string executable = FindExecutable(startInfo.FileName);
                         bool notDone = true;

@@ -1026,11 +1026,11 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     catch (Exception exception) when ((exception is ArgumentException) ||
-                            (exception is InvalidCastException) ||
-                            (exception is System.IO.IOException) ||
-                            (exception is System.Security.SecurityException) ||
-                            (exception is System.UnauthorizedAccessException) ||
-                            (exception is NotSupportedException))
+                        (exception is InvalidCastException) ||
+                        (exception is System.IO.IOException) ||
+                        (exception is System.Security.SecurityException) ||
+                        (exception is System.UnauthorizedAccessException) ||
+                        (exception is NotSupportedException))
                     {
                         ErrorRecord rec = new ErrorRecord(
                             exception,

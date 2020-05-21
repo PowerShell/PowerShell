@@ -1380,9 +1380,11 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(new ErrorRecord(metadataException, "GetCommandMetadataError",
                                                        ErrorCategory.MetadataError, current));
                         }
-                        catch (ParameterBindingException parameterBindingException) when (parameterBindingException.ErrorRecord.FullyQualifiedErrorId.StartsWith(
-                                "GetDynamicParametersException", StringComparison.Ordinal))
+                         catch (ParameterBindingException parameterBindingException) when (parameterBindingException.ErrorRecord.FullyQualifiedErrorId.StartsWith(
+                            "GetDynamicParametersException", StringComparison.Ordinal))
                         {
+                            // if the exception is thrown when retrieving dynamic parameters, ignore it and
+                            // the static parameter info will be used.
                         }
                     }
                 }

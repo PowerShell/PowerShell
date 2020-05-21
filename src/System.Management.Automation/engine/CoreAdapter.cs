@@ -614,9 +614,9 @@ namespace System.Management.Automation
             catch (PipelineStoppedException) { throw; }
             catch (MethodException) { throw; }
             catch (Exception e) when (!(method.baseObject is SteppablePipeline)
-                    || (!method.Name.Equals("Begin", StringComparison.OrdinalIgnoreCase) &&
-                        !method.Name.Equals("Process", StringComparison.OrdinalIgnoreCase) &&
-                        !method.Name.Equals("End", StringComparison.OrdinalIgnoreCase)))
+                || (!method.Name.Equals("Begin", StringComparison.OrdinalIgnoreCase) &&
+                    !method.Name.Equals("Process", StringComparison.OrdinalIgnoreCase) &&
+                    !method.Name.Equals("End", StringComparison.OrdinalIgnoreCase)))
             {
 
                 throw new MethodInvocationException(

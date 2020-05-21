@@ -251,6 +251,7 @@ namespace System.Management.Automation
             }
             catch (COMException ce) when (ce.HResult == ComUtil.TYPE_E_ELEMENTNOTFOUND)
             {
+                // swallow the exception when we can't IDispatch interface
             }
 
             return dispinfo;

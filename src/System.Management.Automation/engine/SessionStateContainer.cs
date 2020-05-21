@@ -1634,6 +1634,7 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
+            // if ProviderInvocationException is wrapping access denied error, it is ok to not terminate the pipeline
             catch (ProviderInvocationException accessException) when (accessException.InnerException != null &&
                     accessException.InnerException.GetType().Equals(typeof(System.UnauthorizedAccessException)))
             {
@@ -2020,6 +2021,9 @@ namespace System.Management.Automation
             }
             catch (ItemNotFoundException) when (providerInstance != null)
             {
+                // If the provided path is like c:\fakepath\aa*, since we cannot resolve c:\fakepath, an
+                // ItemNotFoundException will be thrown out. However, If providerInstance is not null,
+                // we can swallow the exception.
             }
 
             if (providerPaths != null && providerPaths.Count > 0)
@@ -2811,6 +2815,9 @@ namespace System.Management.Automation
             }
             catch (ItemNotFoundException) when (providerInstance != null)
             {
+                // If the provided path is like c:\fakepath\aa*, since we cannot resolve c:\fakepath, an
+                // ItemNotFoundException will be thrown out. However, If providerInstance is not null,
+                // we can swallow the exception.
             }
 
             object result = null;

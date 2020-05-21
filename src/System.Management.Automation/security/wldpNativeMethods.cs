@@ -227,15 +227,15 @@ namespace System.Management.Automation.Security
                                 IO.File.WriteAllText(testPathScript, dtAppLockerTestFileContents);
                                 IO.File.WriteAllText(testPathModule, dtAppLockerTestFileContents);
                             }
-                            catch (System.IO.IOException) when (iteration != 2)
+                            catch (System.IO.IOException) when (iteration < 2)
                             {
                                 error = true;
                             }
-                            catch (System.UnauthorizedAccessException) when (iteration != 2)
+                            catch (System.UnauthorizedAccessException) when (iteration < 2)
                             {
                                 error = true;
                             }
-                            catch (System.Security.SecurityException) when (iteration != 2)
+                            catch (System.Security.SecurityException) when (iteration < 2)
                             {
                                 error = true;
                             }

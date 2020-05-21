@@ -2406,14 +2406,14 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                         catch (Exception exception) when ((exception is FileNotFoundException) ||
-                                (exception is DirectoryNotFoundException) ||
-                                (exception is UnauthorizedAccessException) ||
-                                (exception is System.Security.SecurityException) ||
-                                (exception is ArgumentException) ||
-                                (exception is PathTooLongException) ||
-                                (exception is NotSupportedException) ||
-                                (exception is ArgumentNullException) ||
-                                (exception is IOException))
+                            (exception is DirectoryNotFoundException) ||
+                            (exception is UnauthorizedAccessException) ||
+                            (exception is System.Security.SecurityException) ||
+                            (exception is ArgumentException) ||
+                            (exception is PathTooLongException) ||
+                            (exception is NotSupportedException) ||
+                            (exception is ArgumentNullException) ||
+                            (exception is IOException))
                         {
                             WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                         }
@@ -2614,15 +2614,15 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         if ((exception is FileNotFoundException) ||
-                                (exception is DirectoryNotFoundException) ||
-                                (exception is UnauthorizedAccessException) ||
-                                (exception is System.Security.SecurityException) ||
-                                (exception is ArgumentException) ||
-                                (exception is PathTooLongException) ||
-                                (exception is NotSupportedException) ||
-                                (exception is ArgumentNullException) ||
-                                (exception is Win32Exception) ||
-                                (exception is IOException))
+                            (exception is DirectoryNotFoundException) ||
+                            (exception is UnauthorizedAccessException) ||
+                            (exception is System.Security.SecurityException) ||
+                            (exception is ArgumentException) ||
+                            (exception is PathTooLongException) ||
+                            (exception is NotSupportedException) ||
+                            (exception is ArgumentNullException) ||
+                            (exception is Win32Exception) ||
+                            (exception is IOException))
                         {
                             WriteError(new ErrorRecord(exception, "NewItemCreateIOError", ErrorCategory.WriteError, path));
                         }
@@ -3280,10 +3280,10 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     catch (Exception attributeException) when ((attributeException is System.IO.DirectoryNotFoundException) ||
-                            (attributeException is System.Security.SecurityException) ||
-                            (attributeException is System.ArgumentException) ||
-                            (attributeException is System.IO.FileNotFoundException) ||
-                            (attributeException is System.IO.IOException))
+                        (attributeException is System.Security.SecurityException) ||
+                        (attributeException is System.ArgumentException) ||
+                        (attributeException is System.IO.FileNotFoundException) ||
+                        (attributeException is System.IO.IOException))
                     {
                         ErrorDetails attributeDetails = new ErrorDetails(
                             this, "FileSystemProviderStrings",
@@ -3956,10 +3956,10 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
                             catch (Exception exception) when ((exception is FileNotFoundException) ||
-                                    (exception is DirectoryNotFoundException) ||
-                                    (exception is System.Security.SecurityException) ||
-                                    (exception is ArgumentException) ||
-                                    (exception is IOException))
+                                (exception is DirectoryNotFoundException) ||
+                                (exception is System.Security.SecurityException) ||
+                                (exception is ArgumentException) ||
+                                (exception is IOException))
                             {
                                 // Write out the original error since we failed to force the copy
                                 WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
@@ -5853,14 +5853,14 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     catch (Exception e) when ((e is IOException) ||
-                            (e is ArgumentNullException) ||
-                            (e is ArgumentException) ||
-                            (e is System.Security.SecurityException) ||
-                            (e is UnauthorizedAccessException) ||
-                            (e is FileNotFoundException) ||
-                            (e is DirectoryNotFoundException) ||
-                            (e is PathTooLongException) ||
-                            (e is NotSupportedException))
+                        (e is ArgumentNullException) ||
+                        (e is ArgumentException) ||
+                        (e is System.Security.SecurityException) ||
+                        (e is UnauthorizedAccessException) ||
+                        (e is FileNotFoundException) ||
+                        (e is DirectoryNotFoundException) ||
+                        (e is PathTooLongException) ||
+                        (e is NotSupportedException))
                     {
                         // If any exception occurs return the original error
                         WriteError(new ErrorRecord(unauthorizedAccess, "MoveFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
@@ -5896,14 +5896,14 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
                         catch (Exception exception) when ((exception is FileNotFoundException) ||
-                                (exception is DirectoryNotFoundException) ||
-                                (exception is UnauthorizedAccessException) ||
-                                (exception is System.Security.SecurityException) ||
-                                (exception is ArgumentException) ||
-                                (exception is PathTooLongException) ||
-                                (exception is NotSupportedException) ||
-                                (exception is ArgumentNullException) ||
-                                (exception is IOException))
+                            (exception is DirectoryNotFoundException) ||
+                            (exception is UnauthorizedAccessException) ||
+                            (exception is System.Security.SecurityException) ||
+                            (exception is ArgumentException) ||
+                            (exception is PathTooLongException) ||
+                            (exception is NotSupportedException) ||
+                            (exception is ArgumentNullException) ||
+                            (exception is IOException))
                         {
                             // IOException contains specific message about the error occured and so no need for errordetails.
                             WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, destfile));
@@ -5980,10 +5980,10 @@ namespace Microsoft.PowerShell.Commands
                         WriteError(new ErrorRecord(unauthorizedAccess, "MoveDirectoryItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory));
                     }
                     catch (Exception exception) when ((exception is FileNotFoundException) ||
-                            (exception is ArgumentNullException) ||
-                            (exception is DirectoryNotFoundException) ||
-                            (exception is System.Security.SecurityException) ||
-                            (exception is ArgumentException))
+                        (exception is ArgumentNullException) ||
+                        (exception is DirectoryNotFoundException) ||
+                        (exception is System.Security.SecurityException) ||
+                        (exception is ArgumentException))
                     {
                         WriteError(new ErrorRecord(unauthorizedAccess, "MoveDirectoryItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory));
                     }

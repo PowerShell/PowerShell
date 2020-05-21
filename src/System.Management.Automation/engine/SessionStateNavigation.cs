@@ -144,6 +144,8 @@ namespace System.Management.Automation
                         out provider,
                         out drive);
                 }
+                // the path is sure to be drive_qualified and it is absolute path, otherwise the
+                // drive would be set to the current drive and the DriveNotFoundException will not happen
                 catch (DriveNotFoundException) when (useDefaultProvider)
                 {
                     // the default provider is FileSystem
@@ -1119,6 +1121,8 @@ namespace System.Management.Automation
             {
                 workingPath = Globber.GetProviderPath(path, context, out provider, out drive);
             }
+            // the path is sure to be drive_qualified and it is an absolute path, otherwise the
+            // drive would be set to the current drive and the DriveNotFoundException will not happen.
             catch (DriveNotFoundException) when (useDefaultProvider)
             {
                 // the default provider is FileSystem

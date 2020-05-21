@@ -119,6 +119,7 @@ namespace Microsoft.Management.UI.Internal
             }
             catch (Exception e) when (!(e is AccessViolationException) && !(e is StackOverflowException))
             {
+                // Swallow the exception
             }
 
             return false;

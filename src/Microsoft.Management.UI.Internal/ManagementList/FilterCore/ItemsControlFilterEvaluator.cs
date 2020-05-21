@@ -117,6 +117,7 @@ namespace Microsoft.Management.UI.Internal
             }
             catch (Exception e) when (this.TryNotifyFilterException(e))
             {
+                // Swallow the exception
             }
 
             return false;

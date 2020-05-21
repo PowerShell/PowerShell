@@ -150,16 +150,13 @@ namespace System.Management.Automation
             {
                 return ComInvoker.Invoke(target as IDispatch, _dispId, null, null, COM.INVOKEKIND.INVOKE_PROPERTYGET);
             }
-            catch (TargetInvocationException te)
+            catch (TargetInvocationException te) when ((te.InnerException is COMException innerCom) && innerCom.HResult == ComUtil.DISP_E_MEMBERNOTFOUND)
             {
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
-                {
-                    throw;
-                }
+                // Swallow the exception
             }
             catch (COMException ce) when (ce.HResult == ComUtil.DISP_E_UNKNOWNNAME)
             {
+                // Swallow the exception
             }
 
             return null;
@@ -190,16 +187,13 @@ namespace System.Management.Automation
                 Adapter.SetReferences(newarguments, bestMethod, arguments);
                 return returnValue;
             }
-            catch (TargetInvocationException te)
+            catch (TargetInvocationException te) when ((te.InnerException is COMException innerCom) && innerCom.HResult == ComUtil.DISP_E_MEMBERNOTFOUND)
             {
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
-                {
-                    throw;
-                }
+                // Swallow the exception
             }
             catch (COMException ce) when (ce.HResult == ComUtil.DISP_E_UNKNOWNNAME)
             {
+                // Swallow the exception
             }
 
             return null;
@@ -220,16 +214,13 @@ namespace System.Management.Automation
             {
                 ComInvoker.Invoke(target as IDispatch, _dispId, propValue, null, COM.INVOKEKIND.INVOKE_PROPERTYPUT);
             }
-            catch (TargetInvocationException te)
+            catch (TargetInvocationException te) when ((te.InnerException is COMException innerCom) && innerCom.HResult == ComUtil.DISP_E_MEMBERNOTFOUND)
             {
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
-                {
-                    throw;
-                }
+                // Swallow the exception
             }
             catch (COMException ce) when (ce.HResult == ComUtil.DISP_E_UNKNOWNNAME)
             {
+                // Swallow the exception
             }
         }
 
@@ -265,16 +256,13 @@ namespace System.Management.Automation
                                   bestMethod.InvokeKind);
                 Adapter.SetReferences(finalArguments, bestMethod, arguments);
             }
-            catch (TargetInvocationException te)
+            catch (TargetInvocationException te) when ((te.InnerException is COMException innerCom) && innerCom.HResult == ComUtil.DISP_E_MEMBERNOTFOUND)
             {
-                var innerCom = te.InnerException as COMException;
-                if (innerCom == null || innerCom.HResult != ComUtil.DISP_E_MEMBERNOTFOUND)
-                {
-                    throw;
-                }
+                // Swallow the exception
             }
             catch (COMException ce) when (ce.HResult == ComUtil.DISP_E_UNKNOWNNAME)
             {
+                // Swallow the exception
             }
         }
 

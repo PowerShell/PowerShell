@@ -2354,7 +2354,6 @@ namespace System.Management.Automation
             }
             catch (ExitException ee) when (_fromScriptFile && !_rethrowExitException)
             {
-
                 _exitWasCalled = true;
 
                 int exitCode = (int)ee.Argument;

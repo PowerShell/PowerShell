@@ -172,7 +172,6 @@ namespace System.Management.Automation
                 }
                 catch (ParameterBindingException pbex) when (DefaultParameterBindingInUse)
                 {
-
                     ThrowElaboratedBindingException(pbex);
                 }
             }
@@ -1166,7 +1165,6 @@ namespace System.Management.Automation
                     }
                     catch (ParameterBindingException pbex) when (DefaultParameterBindingInUse)
                     {
-
                         ThrowElaboratedBindingException(pbex);
                     }
                 }
@@ -1708,7 +1706,7 @@ namespace System.Management.Automation
                                 dynamicParamBindableObject = dynamicParameterCmdlet.GetDynamicParameters();
                             }
                             catch (Exception e) // Catch-all OK, this is a third-party callout
-when (!(e is ProviderInvocationException))
+                            when (!(e is ProviderInvocationException))
                             {
 
                                 ParameterBindingException bindingException =

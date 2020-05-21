@@ -60,9 +60,9 @@ namespace System.Management.Automation
                 {
                     return targetProcess.MainModule;
                 }
+                // Do not catch an Access Denied error (which can happen with thread impersonation)
                 catch (System.ComponentModel.Win32Exception e) when (e.NativeErrorCode != 5)
                 {
-
                     // Otherwise retry to ensure module is loaded.
                     caughtCount++;
                     System.Threading.Thread.Sleep(100);

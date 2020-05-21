@@ -1144,6 +1144,7 @@ namespace System.Management.Automation
             }
             catch (ProviderInvocationException) when (force)
             {
+                // Swallow the exception
             }
 
             // Now remove the drive if there was no error or we are forcing the removal

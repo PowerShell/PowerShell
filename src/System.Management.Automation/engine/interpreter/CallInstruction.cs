@@ -104,7 +104,6 @@ namespace System.Management.Automation.Interpreter
             }
             catch (TargetInvocationException tie) when (tie.InnerException is NotSupportedException)
             {
-
                 res = new MethodInfoCallInstruction(info, argumentCount);
             }
             catch (NotSupportedException)

@@ -454,7 +454,6 @@ namespace System.Management.Automation.Configuration
                 }
                 catch (IOException) when (numTries != (MaxTries - 1))
                 {
-
                     Thread.Sleep(50);
                 }
             }

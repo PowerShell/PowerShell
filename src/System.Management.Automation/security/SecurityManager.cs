@@ -163,7 +163,6 @@ namespace Microsoft.PowerShell
                     }
                     catch (System.ComponentModel.Win32Exception) when (saferAttempt <= 4)
                     {
-
                         saferAttempt++;
                         System.Threading.Thread.Sleep(100);
                     }
