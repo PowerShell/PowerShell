@@ -1,4 +1,4 @@
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <!-- MSI installs on Win7 and above -->
   <?define MinOSVersionSupported = "VersionNT >= 601" ?>
   <!-- The URL for add/remove programs -->
@@ -72,16 +72,6 @@
                   Execute="deferred"
                   Return="ignore"
                   Impersonate="no" />
-    <SetProperty Id="DisableTelemetry"
-                 Before="DisableTelemetry"
-                 Sequence="execute"
-                 Value="&quot;[$(var.ProductDirectoryName)]pwsh.exe&quot; -NoProfile -ExecutionPolicy Bypass -Command &quot;[\[]System.Environment[\]]::SetEnvironmentVariable('POWERSHELL_TELEMETRY_OPTOUT', '1',  [\[]System.EnvironmentVariableTarget[\]]::Machine)&quot;" />
-    <CustomAction Id="DisableTelemetry"
-                  BinaryKey="WixCA"
-                  DllEntry="CAQuietExec"
-                  Execute="deferred"
-                  Return="ignore"
-                  Impersonate="no" />
     <InstallExecuteSequence>
       <!-- Do not remove shortcuts on upgrade to preserve user shortcuts pinned to Taskbar, see https://stackoverflow.com/a/33402698/1810304 -->
       <RemoveShortcuts>Installed AND NOT UPGRADINGPRODUCTCODE</RemoveShortcuts>
@@ -90,9 +80,6 @@
       </Custom>
       <Custom Action="EnablePSRemoting" After="InstallFiles">
         <![CDATA[NOT Installed AND (ENABLE_PSREMOTING=1)]]>
-      </Custom>
-      <Custom Action="DisableTelemetry" After="InstallFiles">
-        <![CDATA[NOT Installed AND (DISABLE_TELEMETRY=1)]]>
       </Custom>
     </InstallExecuteSequence>
     <UI>
@@ -177,6 +164,10 @@
             </Component>
             <Component Id="Telemetry" Guid="{80520f20-471d-4d08-adc8-bab637627b39}" KeyPath="yes">
               <Environment Id="PowerShellDistributionChannel" Action="create" Name="POWERSHELL_DISTRIBUTION_CHANNEL" Permanent="no" System="yes" Value="MSI:[WINDOWS_PRODUCT_NAME]"/>
+            </Component>
+            <Component Id="Disable_Telemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
+              <Condition>DISABLE_TELEMETRY</Condition>
+              <Environment Id="PowerShellDistributionChannel" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
             </Component>
             <Component Id="RegistryEntries" Guid="{402e52f7-baf8-489d-af21-f756a6ca3530}">
               <!-- create key for easy detection of a particular version of a powershell core package
