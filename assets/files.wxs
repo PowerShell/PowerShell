@@ -3099,7 +3099,7 @@
         <File Id="filCE6DF8BB560F4785A4111E43CD9C14D7" KeyPath="yes" Source="$(env.ProductSourcePath)\api-ms-win-core-console-l1-2-0.dll" />
       </Component>
       <Component Id="cmp09D3F0FF826A4CBEB4480AD2EC9720AC" Guid="{af62d3ce-a587-4e20-ac32-2ba264c171be}">
-        <File Id="filE2CC950CA4B8492D860AD430BFD08E83" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.25106.dll" />
+        <File Id="filE2CC950CA4B8492D860AD430BFD08E83" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.26809.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
