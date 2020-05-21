@@ -37,8 +37,8 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         ///Culture switch for csv conversion
         ///</summary>
-        [Parameter(Position = 1, ParameterSetName = "CulturePath")]
-        [Parameter(Position = 1, ParameterSetName = "CultureLiteralPath")]
+        [Parameter(Position = 1, ParameterSetName = "CulturePath", Mandatory = true)]
+        [Parameter(Position = 1, ParameterSetName = "CultureLiteralPath", Mandatory = true)]
         public SwitchParameter UseCulture { get; set; }
 
         /// <summary>
@@ -178,8 +178,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The literal path of the mandatory file name to write to.
         /// </summary>
-        [Parameter(Position = 0, ParameterSetName = "DelimiterLiteralPath", Mandatory = true)]
-        [Parameter(Position = 0, ParameterSetName = "CultureLiteralPath", Mandatory = true)]
+        [Parameter(ParameterSetName = "DelimiterLiteralPath", Mandatory = true)]
+        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
