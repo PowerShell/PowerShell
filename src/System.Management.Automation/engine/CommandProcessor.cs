@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -104,7 +104,7 @@ namespace System.Management.Automation
             Cmdlet cmdlet = command as Cmdlet;
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentException("command");
+                throw PSTraceSource.NewArgumentException(nameof(command));
             }
 
             ParameterBinderBase parameterBinder;

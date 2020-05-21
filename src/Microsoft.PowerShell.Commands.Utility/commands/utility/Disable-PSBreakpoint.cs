@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation;
@@ -8,7 +8,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Disable-PSBreakpoint.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Disable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Breakpoint", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113294")]
+    [Cmdlet(VerbsLifecycle.Disable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Breakpoint", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096498")]
     [OutputType(typeof(Breakpoint))]
     public class DisablePSBreakpointCommand : PSBreakpointCommandBase
     {

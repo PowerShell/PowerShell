@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -704,7 +704,7 @@ namespace System.Management.Automation
             AssertNotDisposed();
             if (childJob == null)
             {
-                throw new ArgumentNullException("childJob");
+                throw new ArgumentNullException(nameof(childJob));
             }
 
             _tracer.WriteMessage(TraceClassName, "AddChildJob", Guid.Empty, childJob, "Adding Child to Parent with InstanceId : ", InstanceId.ToString());
@@ -2181,7 +2181,7 @@ namespace System.Management.Automation
         public override void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             if (info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
 
             base.GetObjectData(info, context);
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Group-Object implementation.
     /// </summary>
-    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113338", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.Group, "Object", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096619", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Hashtable), typeof(GroupInfo))]
     public class GroupObjectCommand : ObjectBase
     {
@@ -516,9 +516,12 @@ namespace Microsoft.PowerShell.Commands
             s_tracer.WriteLine(_groups.Count);
             if (_groups.Count > 0)
             {
-                if (AsHashTable)
+                if (AsHashTable.IsPresent)
                 {
-                    Hashtable hashtable = CollectionsUtil.CreateCaseInsensitiveHashtable();
+                    StringComparer comparer = CaseSensitive.IsPresent
+                        ? StringComparer.CurrentCulture
+                        : StringComparer.CurrentCultureIgnoreCase;
+                    var hashtable = new Hashtable(comparer);
                     try
                     {
                         if (AsString)

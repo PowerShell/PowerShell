@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -119,13 +119,31 @@
   </resheader>
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
     <value>PowerShell {0}
-Copyright (c) Microsoft Corporation. All rights reserved.
+Copyright (c) Microsoft Corporation.
 
 https://aka.ms/powershell
 Type 'help' to get help.</value>
   </data>
   <data name="PSReadLineDisabledWhenScreenReaderIsActive" xml:space="preserve">
     <value>Warning: PowerShell detected that you might be using a screen reader and has disabled PSReadLine for compatibility purposes. If you want to re-enable it, run 'Import-Module PSReadLine'.</value>
+  </data>
+  <data name="PreviewUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} A new PowerShell preview release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="StableUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} A new PowerShell stable release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
   </data>
   <data name="UsageHelp" xml:space="preserve">
     <value>Usage: pwsh[.exe] [-Login] [[-File] &lt;filePath&gt; [args]]

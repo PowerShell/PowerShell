@@ -1,7 +1,5 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
-
-#if !UNIX
 
 #region Using directives
 
@@ -9,10 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
+using System.Runtime.InteropServices;
 
 #endregion
 
@@ -20,9 +21,14 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>Removes the Zone.Identifier stream from a file.</summary>
     [Cmdlet(VerbsSecurity.Unblock, "File", DefaultParameterSetName = "ByPath", SupportsShouldProcess = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217450")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097033")]
     public sealed class UnblockFileCommand : PSCmdlet
     {
+#if UNIX
+        private const string MacBlockAttribute = "com.apple.quarantine";
+        private const int RemovexattrFollowSymLink = 0;
+#endif
+
         /// <summary>
         /// The path of the file to unblock.
         /// </summary>
@@ -112,6 +118,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
+#if !UNIX
 
             // Unblock files
             foreach (string path in pathsToProcess)
@@ -124,10 +131,34 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception e)
                     {
-                        WriteError(new ErrorRecord(e, "RemoveItemUnableToAccessFile", ErrorCategory.ResourceUnavailable, path));
+                        WriteError(new ErrorRecord(exception: e, errorId: "RemoveItemUnableToAccessFile", ErrorCategory.ResourceUnavailable, targetObject: path));
                     }
                 }
             }
+#else
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                string errorMessage = UnblockFileStrings.LinuxNotSupported;
+                Exception e = new PlatformNotSupportedException(errorMessage);
+                ThrowTerminatingError(new ErrorRecord(exception: e, errorId: "LinuxNotSupported", ErrorCategory.NotImplemented, targetObject: null));
+                return;
+            }
+
+            foreach (string path in pathsToProcess)
+            {
+                if(IsBlocked(path))
+                {
+                    UInt32 result = RemoveXattr(path, MacBlockAttribute, RemovexattrFollowSymLink);
+                    if(result != 0)
+                    {
+                        string errorMessage = string.Format(CultureInfo.CurrentUICulture, UnblockFileStrings.UnblockError, path);
+                        Exception e = new InvalidOperationException(errorMessage);
+                        WriteError(new ErrorRecord(exception: e, errorId: "UnblockError", ErrorCategory.InvalidResult, targetObject: path));
+                    }
+                }
+            }
+
+#endif
         }
 
         /// <summary>
@@ -157,12 +188,42 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    isValidUnblockableFile = true; ;
+                    isValidUnblockableFile = true;
                 }
             }
 
             return isValidUnblockableFile;
         }
+
+#if UNIX
+        private bool IsBlocked(string path)
+        {
+            uint valueSize = 1024;
+            IntPtr value = Marshal.AllocHGlobal((int)valueSize);
+            try
+            {
+                var resultSize = GetXattr(path, MacBlockAttribute, value, valueSize, 0, RemovexattrFollowSymLink);
+                return resultSize != -1;
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(value);
+            }
+        }
+
+        // Ansi means UTF8 on Unix
+        // https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man2/RemoveXattr.2.html
+        [DllImport("libc", SetLastError = true, EntryPoint = "removexattr", CharSet = CharSet.Ansi)]
+        private static extern UInt32 RemoveXattr(string path, string name, int options);
+
+        [DllImport("libc", EntryPoint = "getxattr", CharSet = CharSet.Ansi)]
+        private static extern long GetXattr(
+            [MarshalAs(UnmanagedType.LPStr)] string path,
+            [MarshalAs(UnmanagedType.LPStr)] string name,
+            IntPtr value,
+            ulong size,
+            uint position,
+            int options);
+#endif
     }
 }
-#endif

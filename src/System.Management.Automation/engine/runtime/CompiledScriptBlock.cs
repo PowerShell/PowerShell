@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1713,7 +1713,7 @@ namespace System.Management.Automation
             return true;
         }
 
-        private static object s_syncObject = new Object();
+        private static object s_syncObject = new object();
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
@@ -2154,7 +2154,7 @@ namespace System.Management.Automation
             _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
             if (_scriptText == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
         }
 

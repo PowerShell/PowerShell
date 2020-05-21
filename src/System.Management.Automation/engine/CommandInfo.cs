@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -112,7 +112,7 @@ namespace System.Management.Automation
 
             if (name == null)
             {
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
             }
 
             Name = name;
@@ -287,7 +287,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(newName))
             {
-                throw new ArgumentNullException("newName");
+                throw new ArgumentNullException(nameof(newName));
             }
 
             Name = newName;
@@ -800,7 +800,7 @@ namespace System.Management.Automation
         {
             if (typeDefinitionAst == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeDefinitionAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeDefinitionAst));
             }
 
             TypeDefinitionAst = typeDefinitionAst;
@@ -814,7 +814,7 @@ namespace System.Management.Automation
         {
             if (typeName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
 
             _type = typeName.GetReflectionType();

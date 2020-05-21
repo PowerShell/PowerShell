@@ -130,15 +130,6 @@ for count in {1..2}; do
     sleep 5
 done
 
-# Suppress output, it's very noisy on Azure DevOps
-if [[ ! -d $(brew --prefix cask) ]]; then
-    echo "Installing cask..."
-    if ! brew tap caskroom/cask >/dev/null; then
-        echo "ERROR: Cask failed to install! Cannot install powershell..." >&2
-        exit 2
-    fi
-fi
-
 if ! hash pwsh 2>/dev/null; then
     echo "Installing PowerShell..."
     if ! brew cask install ${powershellpackageid}; then

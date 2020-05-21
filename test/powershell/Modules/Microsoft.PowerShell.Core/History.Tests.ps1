@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "History cmdlet test cases" -Tags "CI" {
     Context "Simple History Tests" {
@@ -65,9 +65,9 @@ Describe "History cmdlet test cases" -Tags "CI" {
             "Output"
         }
 
-        $informationPreference = "Continue"
-        $debugPreference = "Continue"
-        $verbosePreference = "Continue"
+        $InformationPreference = "Continue"
+        $DebugPreference = "Continue"
+        $VerbosePreference = "Continue"
         '
 
         $invocationSettings = New-Object System.Management.Automation.PSInvocationSettings
@@ -100,7 +100,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
         $ps = [PowerShell]::Create()
         $null = $ps.AddScript("(Get-Command Get-Process).Visibility = 'Private'").Invoke()
         $ps.Commands.Clear()
-        $null = $ps.AddScript("Get-Process -id $pid")
+        $null = $ps.AddScript("Get-Process -id $PID")
         $null = $ps.Invoke($null, $invocationSettings)
         $ps.Commands.Clear()
         $null = $ps.AddScript("Invoke-History -id 1")
@@ -122,7 +122,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
             EndExecutionTime   = $end
         }
         $history | Add-History
-        $h = Get-History -count 1
+        $h = Get-History -Count 1
         $h.Duration | Should -Be $duration
     }
 }

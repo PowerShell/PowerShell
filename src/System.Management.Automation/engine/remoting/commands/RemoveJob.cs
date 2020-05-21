@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -768,7 +768,7 @@ namespace Microsoft.PowerShell.Commands
     /// through get-psjob command.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113377")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096868")]
     [OutputType(typeof(Job), ParameterSetName = new string[] { JobCmdletBase.JobParameterSet })]
     public class RemoveJobCommand : JobCmdletBase, IDisposable
     {

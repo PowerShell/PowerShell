@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// a provider internal path.
     /// </summary>
     [Cmdlet(VerbsData.Convert, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113289", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096588", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(string))]
     public class ConvertPathCommand : CoreCommandBase
     {

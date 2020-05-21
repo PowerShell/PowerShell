@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 if($PSVersionTable.PSEdition -ne 'Desktop')
@@ -30,8 +30,8 @@ function New-LocalUser
   )
   $LocalComputer = [ADSI] "WinNT://$env:computername";
   $user = $LocalComputer.Create('user', $username);
-  $user.SetPassword($password) | out-null;
-  $user.SetInfo() | out-null;
+  $user.SetPassword($password) | Out-Null;
+  $user.SetInfo() | Out-Null;
 }
 
 <#
@@ -43,7 +43,7 @@ function ConvertTo-NtAccount
     [Parameter(Mandatory=$true)]
     [string] $sid
   )
-	(new-object System.Security.Principal.SecurityIdentifier($sid)).translate([System.Security.Principal.NTAccount]).Value
+	(New-Object System.Security.Principal.SecurityIdentifier($sid)).translate([System.Security.Principal.NTAccount]).Value
 }
 
 <#
@@ -65,7 +65,7 @@ function Add-UserToGroup
 
   $userAD = [ADSI] "WinNT://$env:computername/${username},user"
 
-  if($PsCmdlet.ParameterSetName -eq "SID")
+  if($PSCmdlet.ParameterSetName -eq "SID")
   {
     $ntAccount=ConvertTo-NtAccount $groupSid
     $group =$ntAccount.Split("\\")[1]

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -112,7 +112,7 @@ namespace System.Management.Automation
                     (timeStampServerUrl.IndexOf("http://", StringComparison.OrdinalIgnoreCase) != 0))
                 {
                     throw PSTraceSource.NewArgumentException(
-                        "certificate",
+                        nameof(certificate),
                         Authenticode.TimeStampUrlRequired);
                 }
             }
@@ -131,7 +131,7 @@ namespace System.Management.Automation
                 if (oidPtr == IntPtr.Zero)
                 {
                     throw PSTraceSource.NewArgumentException(
-                        "certificate",
+                        nameof(certificate),
                         Authenticode.InvalidHashAlgorithm);
                 }
                 else
@@ -146,7 +146,7 @@ namespace System.Management.Automation
             if (!SecuritySupport.CertIsGoodForSigning(certificate))
             {
                 throw PSTraceSource.NewArgumentException(
-                        "certificate",
+                        nameof(certificate),
                         Authenticode.CertNotGoodForSigning);
             }
 
@@ -226,7 +226,7 @@ namespace System.Management.Automation
                         if (error == Win32Errors.NTE_BAD_ALGID)
                         {
                             throw PSTraceSource.NewArgumentException(
-                                "certificate",
+                                nameof(certificate),
                                 Authenticode.InvalidHashAlgorithm);
                         }
 

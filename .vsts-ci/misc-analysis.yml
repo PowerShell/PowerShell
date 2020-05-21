@@ -30,11 +30,11 @@ jobs:
   steps:
   - powershell: |
       Get-ChildItem -Path env:
-    displayName: Capture environment
+    displayName: Capture Environment
     condition: succeededOrFailed()
 
   - powershell: |
-      Install-module pester -Scope CurrentUser -Force
+      Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
     displayName: Install Pester
     condition: succeededOrFailed()
 

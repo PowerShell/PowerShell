@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -21,8 +21,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="returnValue">Return value of the method (ok to pass <c>null</c> if the method doesn't return anything).</param>
         public MethodInvocationInfo(string name, IEnumerable<MethodParameter> parameters, MethodParameter returnValue)
         {
-            if (name == null) throw new ArgumentNullException("name");
-            if (parameters == null) throw new ArgumentNullException("parameters");
+            if (name == null) throw new ArgumentNullException(nameof(name));
+            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
             // returnValue can be null
 
             MethodName = name;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Set-PSBreakpoint command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113449")]
+    [Cmdlet(VerbsCommon.Set, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096623")]
     [OutputType(typeof(VariableBreakpoint), typeof(CommandBreakpoint), typeof(LineBreakpoint))]
     public class SetPSBreakpointCommand : PSBreakpointCreationBase
     {
@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         WriteObject(
-                            Context.Debugger.SetCommandBreakpoint(Command[i], Action));
+                            Context.Debugger.SetCommandBreakpoint(Command[i], Action, path: null));
                     }
                 }
             }
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
                     else
                     {
                         WriteObject(
-                            Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action));
+                            Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action, path: null));
                     }
                 }
             }

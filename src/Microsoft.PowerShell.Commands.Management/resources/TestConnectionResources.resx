@@ -126,4 +126,7 @@
   <data name="TargetAddressAbsent" xml:space="preserve">
     <value>Target IPv4/IPv6 address absent.</value>
   </data>
+  <data name="MaxHopsExceeded" xml:space="preserve">
+    <value>Cannot complete traceroute to destination '{0}': Number of hops required to reach host exceeds MaxHops ({1}).</value>
+  </data>
 </root>

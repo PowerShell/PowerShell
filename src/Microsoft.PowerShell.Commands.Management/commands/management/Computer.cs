@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             ComputerName = info.GetString("ComputerName");
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -164,7 +164,7 @@ namespace Microsoft.PowerShell.Commands
     /// Restarts the computer.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Restart, "Computer", SupportsShouldProcess = true, DefaultParameterSetName = DefaultParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135253", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097060", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RestartComputerCommand : PSCmdlet, IDisposable
     {
         #region "Parameters and PrivateData"
@@ -1117,7 +1117,7 @@ $result
     /// Cmdlet to stop computer.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Computer", SupportsShouldProcess = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135263", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097151", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public sealed class StopComputerCommand : PSCmdlet, IDisposable
     {
         #region Private Members
@@ -1181,11 +1181,7 @@ $result
         /// </summary>
         public void Dispose()
         {
-            try
-            {
-                _cancel.Dispose();
-            }
-            catch (ObjectDisposedException) { }
+            _cancel.Dispose();
         }
 
         #endregion "IDisposable Members"
@@ -1277,7 +1273,7 @@ $result
     /// </summary>
 
     [Cmdlet(VerbsCommon.Rename, "Computer", SupportsShouldProcess = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=219990", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097054", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class RenameComputerCommand : PSCmdlet
     {
         #region Private Members

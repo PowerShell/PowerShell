@@ -1,0 +1,61 @@
+<!--=================================================================
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+==================================================================-->
+
+<UserControl x:Class="Microsoft.PowerShell.Commands.ShowCommandInternal.CmdletControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ch="clr-namespace:Microsoft.PowerShell.Commands.ShowCommandInternal"
+             xmlns:default="clr-namespace:"
+             xmlns:controls="clr-namespace:Microsoft.PowerShell.Commands.ShowCommandInternal"
+             mc:Ignorable="d"
+             FocusManager.FocusedElement="{Binding ElementName=HelpButton}"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="{Binding CommonParametersHeight}"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" HorizontalAlignment="Left" Content="{Binding DetailsTitle}"></Label>
+            <controls:ImageButton x:Name="helpButton" EnabledImageSource="/Microsoft.PowerShell.GraphicalHost;component/resources/Graphics/Help.ico" Grid.Column="1" AutomationProperties.AutomationId="btnGetHelp" ToolTip="{x:Static default:ShowCommandResources.CmdletControl_Button_ToolTip_Help}" AutomationProperties.Name="{x:Static default:ShowCommandResources.CmdletControl_Button_ToolTip_Help}"></controls:ImageButton>
+        </Grid>
+        <Border BorderBrush="{x:Static SystemColors.ControlDarkBrush}" BorderThickness="1" Grid.Row="1" Margin="3" Padding="0,3,3,0"  Visibility="{Binding NoParameterVisibility}">
+            <TextBlock Margin="3" x:Name="NoParametersText" Text="{x:Static default:ShowCommandResources.NoParameters}"></TextBlock>
+        </Border>
+        <Border BorderBrush="{x:Static SystemColors.ControlDarkBrush}" BorderThickness="1" Grid.Row="1" Margin="3" Padding="0,3,3,0"  Visibility="{Binding SingleParameterSetControlVisibility}">
+            <ch:ParameterSetControl x:Name="ParameterSetControl" DataContext="{Binding Path=ParameterSets[0]}" AutomationProperties.Name="{Binding Path=Name}"/>
+        </Border>
+        <ch:NotImportedCmdletControl x:Name="NotImportedControl" Grid.Row="1" Margin="3" Visibility="{Binding NotImportedVisibility}" AutomationProperties.AutomationId="notImportedCmdletControl"/>
+        <TabControl Grid.Row="1" Margin="3" x:Name="ParameterSetTabControl" ItemsSource="{Binding ParameterSets}" SelectedItem="{Binding Path=SelectedParameterSet, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ParameterSetTabControlVisibility}" AutomationProperties.AutomationId="tabControlParameterSet" AutomationProperties.Name="{x:Static default:ShowCommandResources.DetailsParameterTitleFormat}" Tag="{x:Static default:ShowCommandResources.DetailsParameterTitleFormat}">
+            <TabControl.ItemContainerStyle>
+                <Style TargetType="TabItem">
+                    <Setter Property="AutomationProperties.Name" Value="{Binding Name}"/>
+                </Style>
+             </TabControl.ItemContainerStyle>
+             <TabControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Name}" AutomationProperties.Name="{Binding Name}"></TextBlock>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
+            <TabControl.ContentTemplate>
+                <DataTemplate>
+                    <ch:ParameterSetControl x:Name="ParameterSetControl" DataContext="{Binding}" AutomationProperties.Name="{Binding Name}" Tag="{Binding Name}"/>
+                </DataTemplate>
+            </TabControl.ContentTemplate>
+        </TabControl>
+        <Border x:Name="UbiquitousBorder" Grid.Row="2" BorderBrush="{x:Static SystemColors.ControlDarkBrush}" BorderThickness="1" Margin="3" Visibility="{Binding CommonParameterVisibility}" AutomationProperties.Name="{x:Static default:ShowCommandResources.CmdletControl_Header_CommonParameters}" Tag="{x:Static default:ShowCommandResources.CmdletControl_Header_CommonParameters}">
+            <Expander IsExpanded="{Binding AreCommonParametersExpanded}" Header="{x:Static default:ShowCommandResources.CmdletControl_Header_CommonParameters}" AutomationProperties.AutomationId="grpCommonGroup" Foreground="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}">
+                <ch:ParameterSetControl DataContext="{Binding CommonParameters}" AutomationProperties.Name="{x:Static default:ShowCommandResources.CmdletControl_Header_CommonParameters}" Tag="{x:Static default:ShowCommandResources.CmdletControl_Header_CommonParameters}"/>
+            </Expander>
+        </Border>
+    </Grid>
+</UserControl>

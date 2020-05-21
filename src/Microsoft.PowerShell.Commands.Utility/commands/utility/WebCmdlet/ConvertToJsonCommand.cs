@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertTo-Json command.
     /// This command converts an object to a Json string representation.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217032", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.ConvertTo, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096925", RemotingCapability = RemotingCapability.None)]
     public class ConvertToJsonCommand : PSCmdlet
     {
         /// <summary>
@@ -98,10 +98,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            if (InputObject != null)
-            {
-                _inputObjects.Add(InputObject);
-            }
+            _inputObjects.Add(InputObject);
         }
 
         /// <summary>

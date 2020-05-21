@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -243,9 +243,6 @@ namespace System.Management.Automation.Remoting
             readerSettings.IgnoreProcessingInstructions = true;
             readerSettings.MaxCharactersInDocument = 10000;
             readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
-            readerSettings.XmlResolver = null;
-#endif
 
             using (XmlReader reader = XmlReader.Create(new StringReader(initializationParameters), readerSettings))
             {
@@ -531,7 +528,7 @@ namespace System.Management.Automation.Remoting
                 assembly = LoadSsnStateProviderAssembly(applicationBase, assemblyName);
                 if (assembly == null)
                 {
-                    throw PSTraceSource.NewArgumentException("assemblyName", RemotingErrorIdStrings.UnableToLoadAssembly,
+                    throw PSTraceSource.NewArgumentException(nameof(assemblyName), RemotingErrorIdStrings.UnableToLoadAssembly,
                         assemblyName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
                 }
             }
@@ -548,7 +545,7 @@ namespace System.Management.Automation.Remoting
                     Type type = assembly.GetType(typeToLoad, true, true);
                     if (type == null)
                     {
-                        throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
+                        throw PSTraceSource.NewArgumentException(nameof(typeToLoad), RemotingErrorIdStrings.UnableToLoadType,
                             typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
                     }
 
@@ -575,7 +572,7 @@ namespace System.Management.Automation.Remoting
 
                 // if we are here, that means we are unable to load the type specified
                 // in the config xml.. notify the same.
-                throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
+                throw PSTraceSource.NewArgumentException(nameof(typeToLoad), RemotingErrorIdStrings.UnableToLoadType,
                         typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
             }
 
@@ -770,7 +767,7 @@ namespace System.Management.Automation.Remoting
             {
                 s_tracer.TraceError("Mandatory property {0} not specified for registry key {1}",
                         name, registryKey.Name);
-                throw PSTraceSource.NewArgumentException("name", RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
+                throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
             }
 
             string s = value as string;
@@ -778,7 +775,7 @@ namespace System.Management.Automation.Remoting
             {
                 s_tracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
                         name, registryKey.Name);
-                throw PSTraceSource.NewArgumentException("name", RemotingErrorIdStrings.MandatoryValueNotInCorrectFormat, name, registryKey.Name);
+                throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotInCorrectFormat, name, registryKey.Name);
             }
 
             return s;
@@ -815,13 +812,13 @@ namespace System.Management.Automation.Remoting
         public override InitialSessionState GetInitialSessionState(PSSessionConfigurationData sessionConfigurationData, PSSenderInfo senderInfo, string configProviderId)
         {
             if (sessionConfigurationData == null)
-                throw new ArgumentNullException("sessionConfigurationData");
+                throw new ArgumentNullException(nameof(sessionConfigurationData));
 
             if (senderInfo == null)
-                throw new ArgumentNullException("senderInfo");
+                throw new ArgumentNullException(nameof(senderInfo));
 
             if (configProviderId == null)
-                throw new ArgumentNullException("configProviderId");
+                throw new ArgumentNullException(nameof(configProviderId));
 
             InitialSessionState sessionState = InitialSessionState.CreateDefault2();
             // now get all the modules in the specified path and import the same
@@ -1765,7 +1762,7 @@ namespace System.Management.Automation.Remoting
                 DISCUtils.ValidateRoleDefinitions(roleEntry);
 
                 // Go through the Roles hashtable
-                foreach (Object role in roleEntry.Keys)
+                foreach (object role in roleEntry.Keys)
                 {
                     // Check if this role applies to the connected user
                     if (roleVerifier(role.ToString()))
@@ -1854,7 +1851,7 @@ namespace System.Management.Automation.Remoting
         // Merge a role / role capability hashtable into the master configuration hashtable
         private void MergeConfigHashIntoConfigHash(IDictionary childConfigHash)
         {
-            foreach (Object customization in childConfigHash.Keys)
+            foreach (object customization in childConfigHash.Keys)
             {
                 string customizationString = customization.ToString();
 
@@ -1899,7 +1896,7 @@ namespace System.Management.Automation.Remoting
         private string GetRoleCapabilityPath(string roleCapability)
         {
             string moduleName = "*";
-            if (roleCapability.IndexOf('\\') != -1)
+            if (roleCapability.Contains('\\'))
             {
                 string[] components = roleCapability.Split(Utils.Separators.Backslash, 2);
                 moduleName = components[0];
@@ -2458,7 +2455,7 @@ namespace System.Management.Automation.Remoting
                 commandModuleNames.Add(moduleSpec.Name);
             }
 
-            foreach (Object commandObject in commands)
+            foreach (object commandObject in commands)
             {
                 if (commandObject == null)
                 {

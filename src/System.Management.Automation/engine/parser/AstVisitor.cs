@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -175,6 +175,9 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
+
+        /// <summary/>
+        object VisitPipelineChain(PipelineChainAst statementChainAst) => DefaultVisit(statementChainAst);
     }
 
 #if DEBUG
@@ -318,6 +321,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return CheckParent(ast); }
 
         public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) => CheckParent(ast);
+
+        public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) => CheckParent(ast);
     }
 
     /// <summary>
@@ -552,6 +557,8 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return Check(ast); }
 
         public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) { return Check(ast); }
+
+        public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) { return Check(ast); }
     }
 
     /// <summary>
@@ -690,5 +697,7 @@ namespace System.Management.Automation.Language
         public virtual object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return null; }
         /// <summary/>
         public virtual object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return null; }
+        /// <summary/>
+        public virtual object VisitPipelineChain(PipelineChainAst statementChainAst) { return null; }
     }
 }

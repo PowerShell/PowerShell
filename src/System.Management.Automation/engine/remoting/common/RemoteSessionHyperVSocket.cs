@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.IO;
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Remoting
             return endpoint;
         }
 
-        public override bool Equals(Object obj)
+        public override bool Equals(object obj)
         {
             HyperVSocketEndPoint endpoint = (HyperVSocketEndPoint)obj;
 
@@ -278,7 +278,7 @@ namespace System.Management.Automation.Remoting
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.RemoteSessionHyperVSocketServerConstructorFailure),
                     ex,
-                    PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure.ToString(),
+                    nameof(PSRemotingErrorId.RemoteSessionHyperVSocketServerConstructorFailure),
                     ErrorCategory.InvalidOperation,
                     null);
             }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -285,7 +285,7 @@ namespace System.Management.Automation.Internal
 
         internal void AddRedirectionPipe(PipelineProcessor pipelineProcessor)
         {
-            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException("pipelineProcessor");
+            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException(nameof(pipelineProcessor));
             if (_redirectionPipes == null)
                 _redirectionPipes = new List<PipelineProcessor>();
             _redirectionPipes.Add(pipelineProcessor);
@@ -317,7 +317,7 @@ namespace System.Management.Automation.Internal
         {
             if (commandProcessor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandProcessor");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandProcessor));
             }
 
             if (_commands == null)
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Internal
                 {
                     // "First command cannot have input"
                     throw PSTraceSource.NewArgumentException(
-                        "readFromCommand",
+                        nameof(readFromCommand),
                         PipelineStrings.FirstCommandCannotHaveInput);
                 }
 
@@ -360,7 +360,7 @@ namespace System.Management.Automation.Internal
             {
                 // "invalid command number"
                 throw PSTraceSource.NewArgumentException(
-                    "readFromCommand",
+                    nameof(readFromCommand),
                     PipelineStrings.InvalidCommandNumber);
             }
             else

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target">Instance of the object from which to get the property value.</param>
         /// <returns>Value of the property.</returns>
-        internal object GetValue(Object target)
+        internal object GetValue(object target)
         {
             try
             {
@@ -175,7 +175,7 @@ namespace System.Management.Automation
         /// <param name="target">Instance of the object from which to get the property value.</param>
         /// <param name="arguments">Parameters to get the property value.</param>
         /// <returns>Value of the property</returns>
-        internal object GetValue(Object target, object[] arguments)
+        internal object GetValue(object target, object[] arguments)
         {
             try
             {
@@ -218,7 +218,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="target">Instance of the object to which to set the property value.</param>
         /// <param name="setValue">Value to set this property.</param>
-        internal void SetValue(Object target, object setValue)
+        internal void SetValue(object target, object setValue)
         {
             object[] propValue = new object[1];
             setValue = Adapter.PropertySetAndMethodArgumentConvertTo(setValue, this.Type, CultureInfo.InvariantCulture);
@@ -251,7 +251,7 @@ namespace System.Management.Automation
         /// <param name="target">Instance of the object to which to set the property value.</param>
         /// <param name="setValue">Value to set this property.</param>
         /// <param name="arguments">Parameters to set this property.</param>
-        internal void SetValue(Object target, Object setValue, object[] arguments)
+        internal void SetValue(object target, object setValue, object[] arguments)
         {
             object[] newarguments;
             var setterCollection = new Collection<int> { _hasSetterByRef ? _setterByRefIndex : _setterIndex };

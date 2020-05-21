@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal TerminatingErrorContext(PSCmdlet command)
         {
             if (command == null)
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             _command = command;
         }
 

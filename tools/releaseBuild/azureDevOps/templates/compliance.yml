@@ -32,17 +32,17 @@ jobs:
 
   - template: expand-compliance.yml
     parameters:
+      architecture: fxdependent
+      version: $(version)
+
+  - template: expand-compliance.yml
+    parameters:
       architecture: x86
       version: $(version)
 
   - template: expand-compliance.yml
     parameters:
       architecture: x64
-      version: $(version)
-
-  - template: expand-compliance.yml
-    parameters:
-      architecture: fxdependent
       version: $(version)
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3

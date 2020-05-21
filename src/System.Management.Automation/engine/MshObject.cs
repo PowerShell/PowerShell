@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -569,7 +569,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                throw PSTraceSource.NewArgumentNullException("obj");
+                throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
 
             CommonInitialization(obj);
@@ -584,14 +584,14 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             string serializedData = info.GetValue("CliXml", typeof(string)) as string;
 
             if (serializedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             PSObject result = PSObject.AsPSObject(PSSerializer.Deserialize(serializedData));
@@ -1051,7 +1051,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                throw PSTraceSource.NewArgumentNullException("obj");
+                throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
 
             if (obj is PSObject so)
@@ -1674,7 +1674,7 @@ namespace System.Management.Automation
             // This ReferenceEquals is not just an optimization.
             // It is necessary so that mshObject.Equals(mshObject) returns 0.
             // Please see the comments inside the Equals implementation.
-            if (Object.ReferenceEquals(this, obj))
+            if (object.ReferenceEquals(this, obj))
             {
                 return 0;
             }
@@ -1705,7 +1705,7 @@ namespace System.Management.Automation
             // BaseObject returns the MshCustomBaseObject.
             // Because we have to call BaseObject here, and LP.Compare uses PSObject.Base
             // we need the reference equals below so that mshObject.Equals(mshObject) returns true.
-            if (Object.ReferenceEquals(this, obj))
+            if (object.ReferenceEquals(this, obj))
             {
                 return true;
             }
@@ -1713,7 +1713,7 @@ namespace System.Management.Automation
             // The above check validates if we are comparing with the same object references
             // This check "shortcuts" the comparison if the first object is a CustomObject
             // since 2 custom objects are not equal.
-            if (Object.ReferenceEquals(this.BaseObject, PSCustomObject.SelfInstance))
+            if (object.ReferenceEquals(this.BaseObject, PSCustomObject.SelfInstance))
             {
                 return false;
             }
@@ -1815,7 +1815,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             // We create a wrapper PSObject, so that we can successfully deserialize it
@@ -1914,7 +1914,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal SerializationMethod GetSerializationMethod(TypeTable backupTypeTable)
         {
-            SerializationMethod result = TypeTable.defaultSerializationMethod;
+            SerializationMethod result = TypeTable.DefaultSerializationMethod;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
             if (typeTable != null)
@@ -1922,7 +1922,7 @@ namespace System.Management.Automation
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
                 result = (SerializationMethod)GetNoteSettingValue(standardMemberSet,
-                        TypeTable.SerializationMethodNode, TypeTable.defaultSerializationMethod, typeof(SerializationMethod), true, this);
+                        TypeTable.SerializationMethodNode, TypeTable.DefaultSerializationMethod, typeof(SerializationMethod), true, this);
             }
 
             return result;

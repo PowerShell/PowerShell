@@ -1,10 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using Xunit;
 
 namespace PSTests.Sequential
@@ -100,6 +100,33 @@ namespace PSTests.Sequential
 
                 runspace.Close();
             }
+        }
+
+        [SkippableFact]
+        public void TestAppDomainProcessExitEvenHandlerNotLeaking()
+        {
+            // Skip this flaky test for now.
+            Skip.IfNot(false);
+
+            Skip.IfNot(Platform.IsWindows);
+
+            EventHandler eventHandler;
+            Delegate[] delegates;
+            FieldInfo field = typeof(AppContext).GetField("ProcessExit", BindingFlags.NonPublic | BindingFlags.Static);
+
+            // Open runspace and invoke script.
+            using (var ps = PowerShell.Create())
+            {
+                ps.AddScript("1").Invoke();
+                eventHandler = (EventHandler)field.GetValue(null);
+                delegates = eventHandler.GetInvocationList();
+                Assert.Contains(delegates, d => d.Method.Name == "CurrentDomain_ProcessExit");
+            }
+
+            // Handler registered by PowerShell should be unregistered.
+            eventHandler = (EventHandler)field.GetValue(null);
+            delegates = eventHandler.GetInvocationList();
+            Assert.DoesNotContain(delegates, d => d.Method.Name == "CurrentDomain_ProcessExit");
         }
     }
 }

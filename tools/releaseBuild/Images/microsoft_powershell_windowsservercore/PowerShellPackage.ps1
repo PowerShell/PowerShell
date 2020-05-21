@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 [cmdletbinding(DefaultParameterSetName='default')]
 # PowerShell Script to clone, build and package PowerShell from specified fork and branch
@@ -7,7 +7,7 @@ param (
 
     [string] $branch = 'master',
 
-    [string] $location = "$pwd\powershell",
+    [string] $location = "$PWD\powershell",
 
     [string] $destination = "$env:WORKSPACE",
 
@@ -70,15 +70,15 @@ try{
     Import-Module "$location\tools\packaging" -Force
     $env:platform = $null
 
-    Write-Verbose "Sync'ing Tags..." -verbose
+    Write-Verbose "Sync'ing Tags..." -Verbose
     Sync-PSTags -AddRemoteIfMissing
 
-    Write-Verbose "Bootstrapping powershell build..." -verbose
+    Write-Verbose "Bootstrapping powershell build..." -Verbose
     Start-PSBootstrap -Force -Package
 
     if ($PSCmdlet.ParameterSetName -eq 'packageSigned')
     {
-        Write-Verbose "Expanding signed build..." -verbose
+        Write-Verbose "Expanding signed build..." -Verbose
         if($Runtime -like 'fxdependent*')
         {
             Expand-PSSignedBuild -BuildZip $BuildZip -SkipPwshExeCheck
@@ -92,7 +92,7 @@ try{
     }
     else
     {
-        Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -verbose
+        Write-Verbose "Starting powershell build for RID: $Runtime and ReleaseTag: $ReleaseTag ..." -Verbose
         $buildParams = @{'CrossGen'= $Runtime -notmatch "arm" -and $Runtime -notlike "fxdependent*"}
 
         if($Symbols.IsPresent)
@@ -122,29 +122,36 @@ try{
 
     if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notmatch 'arm' -and $Runtime -notlike 'fxdependent*')
     {
-        Write-Verbose "Starting powershell packaging(msi)..." -verbose
+        Write-Verbose "Starting powershell packaging(msi)..." -Verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
-    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'win7-x86','fxdependent', 'fxdependent-win-desktop')
+    if (!$ComponentRegistration.IsPresent -and !$Symbols.IsPresent -and $Runtime -notin 'fxdependent', 'fxdependent-win-desktop')
     {
         $pspackageParams['Type']='msix'
-        Write-Verbose "Starting powershell packaging(msix)..." -verbose
+        $pspackageParams['WindowsRuntime']=$Runtime
+        Write-Verbose "Starting powershell packaging(msix)..." -Verbose
         Start-PSPackage @pspackageParams @releaseTagParam
     }
 
     if (!$ComponentRegistration.IsPresent -and $Runtime -notlike 'fxdependent*')
     {
+        if (!$Symbols.IsPresent) {
+            $pspackageParams['Type'] = 'zip-pdb'
+            Write-Verbose "Starting powershell symbols packaging(zip)..." -Verbose
+            Start-PSPackage @pspackageParams @releaseTagParam
+        }
+
         $pspackageParams['Type']='zip'
         $pspackageParams['IncludeSymbols']=$Symbols.IsPresent
-        Write-Verbose "Starting powershell packaging(zip)..." -verbose
+        Write-Verbose "Starting powershell packaging(zip)..." -Verbose
         Start-PSPackage @pspackageParams @releaseTagParam
 
-        Write-Verbose "Exporting packages ..." -verbose
+        Write-Verbose "Exporting packages ..." -Verbose
 
         Get-ChildItem $location\*.msi,$location\*.zip,$location\*.wixpdb,$location\*.msix | ForEach-Object {
             $file = $_.FullName
-            Write-Verbose "Copying $file to $destination" -verbose
+            Write-Verbose "Copying $file to $destination" -Verbose
             Copy-Item -Path $file -Destination "$destination\" -Force
         }
     }
@@ -157,13 +164,13 @@ try{
         ## Copy the fxdependent Zip package to destination.
         Get-ChildItem $location\PowerShell-*.zip | ForEach-Object {
             $file = $_.FullName
-            Write-Verbose "Copying $file to $destination" -verbose
+            Write-Verbose "Copying $file to $destination" -Verbose
             Copy-Item -Path $file -Destination "$destination\" -Force
         }
     }
     else
     {
-        Write-Verbose "Exporting project.assets files ..." -verbose
+        Write-Verbose "Exporting project.assets files ..." -Verbose
 
         $projectAssetsCounter = 1
         $projectAssetsFolder = Join-Path -Path $destination -ChildPath 'projectAssets'
@@ -174,7 +181,7 @@ try{
             $itemDestination = Join-Path -Path $projectAssetsFolder -ChildPath $subfolder
                     New-Item -Path $itemDestination -ItemType Directory -Force
             $file = $_.FullName
-            Write-Verbose "Copying $file to $itemDestination" -verbose
+            Write-Verbose "Copying $file to $itemDestination" -Verbose
             Copy-Item -Path $file -Destination "$itemDestination\" -Force
             $projectAssetsCounter++
         }
@@ -186,7 +193,7 @@ try{
 }
 finally
 {
-    Write-Verbose "Beginning build clean-up..." -verbose
+    Write-Verbose "Beginning build clean-up..." -Verbose
     if ($Wait.IsPresent)
     {
         $path = Join-Path $PSScriptRoot -ChildPath 'delete-to-continue.txt'

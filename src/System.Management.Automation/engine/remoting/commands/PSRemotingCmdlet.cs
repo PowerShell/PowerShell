@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
     /// It contains tons of utility functions which are used all
     /// across the remoting cmdlets.
     /// </summary>
-    public abstract partial class PSRemotingCmdlet : PSCmdlet
+    public abstract class PSRemotingCmdlet : PSCmdlet
     {
         #region Overrides
 
@@ -195,6 +195,11 @@ namespace Microsoft.PowerShell.Commands
         protected const string SessionParameterSet = "Session";
 
         /// <summary>
+        /// Parameter set to use Windows PowerShell.
+        /// </summary>
+        protected const string UseWindowsPowerShellParameterSet = "UseWindowsPowerShellParameterSet";
+
+        /// <summary>
         /// Default shellname.
         /// </summary>
         protected const string DefaultPowerShellRemoteShellName = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix + "Microsoft.PowerShell";
@@ -291,7 +296,7 @@ namespace Microsoft.PowerShell.Commands
     ///     2. Invoke-Expression
     ///     3. Start-PSJob.
     /// </summary>
-    public abstract partial class PSRemotingBaseCmdlet : PSRemotingCmdlet
+    public abstract class PSRemotingBaseCmdlet : PSRemotingCmdlet
     {
         #region Enums
 
@@ -981,7 +986,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(new ErrorRecord(new ArgumentException(
                     GetMessage(RemotingErrorIdStrings.RemoteRunspaceInfoHasDuplicates)),
-                        PSRemotingErrorId.RemoteRunspaceInfoHasDuplicates.ToString(),
+                        nameof(PSRemotingErrorId.RemoteRunspaceInfoHasDuplicates),
                             ErrorCategory.InvalidArgument, Session));
             }
 
@@ -992,7 +997,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ThrowTerminatingError(new ErrorRecord(new ArgumentException(
                     GetMessage(RemotingErrorIdStrings.RemoteRunspaceInfoLimitExceeded)),
-                        PSRemotingErrorId.RemoteRunspaceInfoLimitExceeded.ToString(),
+                        nameof(PSRemotingErrorId.RemoteRunspaceInfoLimitExceeded),
                             ErrorCategory.InvalidArgument, Session));
             }
         }
@@ -1060,7 +1065,17 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Parameter value as string.</returns>
         private static string GetSSHConnectionStringParameter(object param)
         {
-            if (param is string paramValue && !string.IsNullOrEmpty(paramValue))
+            string paramValue;
+            try
+            {
+                paramValue = LanguagePrimitives.ConvertTo<string>(param);
+            }
+            catch (PSInvalidCastException e)
+            {
+                throw new PSArgumentException(e.Message, e);
+            }
+
+            if (!string.IsNullOrEmpty(paramValue))
             {
                 return paramValue;
             }
@@ -1075,12 +1090,19 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Parameter value as integer.</returns>
         private static int GetSSHConnectionIntParameter(object param)
         {
-            if (param is int paramValue)
+            if (param == null)
             {
-                return paramValue;
+                throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
             }
 
-            throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
+            try
+            {
+                return LanguagePrimitives.ConvertTo<int>(param);
+            }
+            catch (PSInvalidCastException e)
+            {
+                throw new PSArgumentException(e.Message, e);
+            }
         }
 
         #endregion Private Methods
@@ -1127,7 +1149,7 @@ namespace Microsoft.PowerShell.Commands
     ///     1. Invoke-Expression
     ///     2. Start-PSJob.
     /// </summary>
-    public abstract partial class PSExecutionCmdlet : PSRemotingBaseCmdlet
+    public abstract class PSExecutionCmdlet : PSRemotingBaseCmdlet
     {
         #region Strings
 
@@ -1586,7 +1608,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowTerminatingError(
                             new ErrorRecord(
                                 new ArgumentException(RemotingErrorIdStrings.HyperVModuleNotAvailable),
-                                PSRemotingErrorId.HyperVModuleNotAvailable.ToString(),
+                                nameof(PSRemotingErrorId.HyperVModuleNotAvailable),
                                 ErrorCategory.NotInstalled,
                                 null));
 
@@ -1634,7 +1656,7 @@ namespace Microsoft.PowerShell.Commands
                         ThrowTerminatingError(
                             new ErrorRecord(
                                 new ArgumentException(RemotingErrorIdStrings.HyperVModuleNotAvailable),
-                                PSRemotingErrorId.HyperVModuleNotAvailable.ToString(),
+                                nameof(PSRemotingErrorId.HyperVModuleNotAvailable),
                                 ErrorCategory.NotInstalled,
                                 null));
 
@@ -1670,7 +1692,7 @@ namespace Microsoft.PowerShell.Commands
                         new ErrorRecord(
                             new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMNameNotSingle,
                                                              this.VMName[index])),
-                            PSRemotingErrorId.InvalidVMNameNotSingle.ToString(),
+                            nameof(PSRemotingErrorId.InvalidVMNameNotSingle),
                             ErrorCategory.InvalidArgument,
                             null));
 
@@ -1684,7 +1706,7 @@ namespace Microsoft.PowerShell.Commands
                         new ErrorRecord(
                             new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMIdNotSingle,
                                                              this.VMId[index].ToString(null))),
-                            PSRemotingErrorId.InvalidVMIdNotSingle.ToString(),
+                            nameof(PSRemotingErrorId.InvalidVMIdNotSingle),
                             ErrorCategory.InvalidArgument,
                             null));
 
@@ -1696,7 +1718,7 @@ namespace Microsoft.PowerShell.Commands
                         new ErrorRecord(
                             new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMState,
                                                              this.VMName[index])),
-                            PSRemotingErrorId.InvalidVMState.ToString(),
+                            nameof(PSRemotingErrorId.InvalidVMState),
                             ErrorCategory.InvalidArgument,
                             null));
 
@@ -1991,12 +2013,12 @@ namespace Microsoft.PowerShell.Commands
             // Make sure filepath doesn't contain wildcards
             if ((!isLiteralPath) && WildcardPattern.ContainsWildcardCharacters(filePath))
             {
-                throw new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.WildCardErrorFilePathParameter), "filePath");
+                throw new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.WildCardErrorFilePathParameter), nameof(filePath));
             }
 
             if (!filePath.EndsWith(".ps1", StringComparison.OrdinalIgnoreCase))
             {
-                throw new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.FilePathShouldPS1Extension), "filePath");
+                throw new ArgumentException(PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.FilePathShouldPS1Extension), nameof(filePath));
             }
 
             // Resolve file path
@@ -2408,7 +2430,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (localScriptBlock == null)
             {
-                throw new ArgumentNullException("localScriptBlock", "Caller needs to make sure the parameter value is not null");
+                throw new ArgumentNullException(nameof(localScriptBlock), "Caller needs to make sure the parameter value is not null");
             }
 
             var allUsingExprs = UsingExpressionAstSearcher.FindAllUsingExpressionExceptForWorkflow(localScriptBlock.Ast);
@@ -2426,7 +2448,7 @@ namespace Microsoft.PowerShell.Commands
     ///     3. Disconnect-PSSession
     ///     4. Connect-PSSession.
     /// </summary>
-    public abstract partial class PSRunspaceCmdlet : PSRemotingCmdlet
+    public abstract class PSRunspaceCmdlet : PSRemotingCmdlet
     {
         #region Parameters
 
@@ -3200,7 +3222,7 @@ namespace Microsoft.PowerShell.Commands
     /// Base class for both the helpers. This is an abstract class
     /// and the helpers need to derive from this.
     /// </summary>
-    internal abstract partial class ExecutionCmdletHelper : IThrottleOperation
+    internal abstract class ExecutionCmdletHelper : IThrottleOperation
     {
         /// <summary>
         /// Pipeline associated with this operation.
@@ -4346,9 +4368,9 @@ namespace System.Management.Automation.Remoting
                     default:
                         string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
                             value,
-                            AuthenticationMechanism.Basic.ToString(),
-                            AuthenticationMechanism.Negotiate.ToString(),
-                            AuthenticationMechanism.Digest.ToString());
+                            nameof(AuthenticationMechanism.Basic),
+                            nameof(AuthenticationMechanism.Negotiate),
+                            nameof(AuthenticationMechanism.Digest));
                         throw new ArgumentException(message);
                 }
             }

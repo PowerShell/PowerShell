@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Linq;
@@ -373,7 +373,7 @@ namespace System.Management.Automation
             internal struct UnionTypes
             {
                 [FieldOffset(0)]
-                internal SByte _i1;
+                internal sbyte _i1;
                 [FieldOffset(0)]
                 internal Int16 _i2;
                 [FieldOffset(0)]
@@ -381,7 +381,7 @@ namespace System.Management.Automation
                 [FieldOffset(0)]
                 internal Int64 _i8;
                 [FieldOffset(0)]
-                internal Byte _ui1;
+                internal byte _ui1;
                 [FieldOffset(0)]
                 internal UInt16 _ui2;
                 [FieldOffset(0)]
@@ -399,7 +399,7 @@ namespace System.Management.Automation
                 [FieldOffset(0)]
                 internal Single _r4;
                 [FieldOffset(0)]
-                internal Double _r8;
+                internal double _r8;
                 [FieldOffset(0)]
                 internal Int64 _cy;
                 [FieldOffset(0)]

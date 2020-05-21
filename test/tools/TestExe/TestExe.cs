@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 using System;
 using System.Threading;
@@ -8,7 +8,7 @@ namespace TestExe
 {
     class TestExe
     {
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
             if (args.Length > 0)
             {
@@ -20,6 +20,10 @@ namespace TestExe
                     case "-createchildprocess":
                         CreateChildProcess(args);
                         break;
+                    case "-returncode":
+                        // Used to test functionality depending on $LASTEXITCODE, like &&/|| operators
+                        Console.WriteLine(args[1]);
+                        return int.Parse(args[1]);
                     default:
                         Console.WriteLine("Unknown test {0}", args[0]);
                         break;
@@ -29,6 +33,8 @@ namespace TestExe
             {
                 Console.WriteLine("Test not specified");
             }
+
+            return 0;
         }
 
         // <Summary>

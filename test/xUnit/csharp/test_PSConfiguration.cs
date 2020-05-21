@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -360,6 +360,15 @@ namespace PSTests.Sequential
             File.Create(fileName).Dispose();
         }
 
+        internal void ForceReadingFromFile()
+        {
+            // Reset the cached roots.
+            FieldInfo roots = typeof(PowerShellConfig).GetField("configRoots", BindingFlags.NonPublic | BindingFlags.Instance);
+            JObject[] value = (JObject[])roots.GetValue(PowerShellConfig.Instance);
+            value[0] = null;
+            value[1] = null;
+        }
+
         #endregion
     }
 
@@ -376,6 +385,8 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -390,6 +401,8 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -403,6 +416,8 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -416,6 +431,8 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -427,6 +444,8 @@ namespace PSTests.Sequential
         public void PowerShellConfig_GetPowerShellPolicies_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
+            fixture.ForceReadingFromFile();
+
             var sysPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.AllUsers);
             var userPolicies = PowerShellConfig.Instance.GetPowerShellPolicies(ConfigScope.CurrentUser);
 
@@ -438,6 +457,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_BothConfigFilesNotEmpty()
         {
             fixture.SetupConfigFile1();
+            fixture.ForceReadingFromFile();
 
             ScriptExecution scriptExecution;
             scriptExecution = Utils.GetPolicySetting<ScriptExecution>(Utils.SystemWideOnlyConfig);
@@ -536,6 +556,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_EmptyUserConfig()
         {
             fixture.SetupConfigFile2();
+            fixture.ForceReadingFromFile();
 
             // The CurrentUser config is empty
             ScriptExecution scriptExecution;
@@ -634,6 +655,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_EmptySystemConfig()
         {
             fixture.SetupConfigFile3();
+            fixture.ForceReadingFromFile();
 
             // The SystemWide config is empty
             ScriptExecution scriptExecution;
@@ -733,6 +755,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_BothConfigFilesEmpty()
         {
             fixture.SetupConfigFile4();
+            fixture.ForceReadingFromFile();
 
             // Both config files are empty
             ScriptExecution scriptExecution;
@@ -832,6 +855,7 @@ namespace PSTests.Sequential
         public void Utils_GetPolicySetting_BothConfigFilesNotExist()
         {
             fixture.CleanupConfigFiles();
+            fixture.ForceReadingFromFile();
 
             // Both config files don't exist
             ScriptExecution scriptExecution;

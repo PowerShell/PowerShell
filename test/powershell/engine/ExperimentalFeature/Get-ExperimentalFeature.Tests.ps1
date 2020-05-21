@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -6,6 +6,7 @@ Import-Module HelpersCommon
 Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
+        $pwsh = "$PSHOME/pwsh"
         $systemConfigPath = "$PSHOME/powershell.config.json"
         if ($IsWindows) {
             $userConfigPath = "~/Documents/powershell/powershell.config.json"
@@ -55,7 +56,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
     Context "Feature disabled tests" {
 
         It "'Get-ExperimentalFeature' should return all available features from module path" {
-            $features = pwsh -noprofile -output xml -command Get-ExperimentalFeature "ExpTest*"
+            $features = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature "ExpTest*"
             $features | Should -Not -BeNullOrEmpty
             $features[0].Name | Should -BeExactly "ExpTest.FeatureOne"
             $features[0].Enabled | Should -BeFalse
@@ -67,7 +68,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         }
 
         It "'Get-ExperimentalFeature' pipeline input" {
-            $features = pwsh -noprofile -output xml -command { "ExpTest.FeatureOne", "ExpTest.FeatureTwo" | Get-ExperimentalFeature }
+            $features = & $pwsh -noprofile -output xml -command { "ExpTest.FeatureOne", "ExpTest.FeatureTwo" | Get-ExperimentalFeature }
             $features | Should -Not -BeNullOrEmpty
             $features[0].Name | Should -BeExactly "ExpTest.FeatureOne"
             $features[0].Enabled | Should -BeFalse
@@ -85,15 +86,15 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         }
 
         It "'Get-ExperimentalFeature' should return enabled features 'ExpTest.FeatureOne'" {
-            pwsh -noprofile -command '$EnabledExperimentalFeatures.Count' | Should -Be 1
-            $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature "ExpTest.FeatureOne"
+            & $pwsh -noprofile -command '$EnabledExperimentalFeatures.Count' | Should -Be 1
+            $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature "ExpTest.FeatureOne"
             $feature | Should -Not -BeNullOrEmpty
             $feature.Enabled | Should -BeTrue
             $feature.Source | Should -BeExactly $testModuleManifestPath
         }
 
         It "'Get-ExperimentalFeature' should return all available features from module path" {
-            $features = pwsh -noprofile -output xml -command Get-ExperimentalFeature "ExpTest*"
+            $features = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature "ExpTest*"
             $features | Should -Not -BeNullOrEmpty
             $features[0].Name | Should -BeExactly "ExpTest.FeatureOne"
             $features[0].Enabled | Should -BeTrue
@@ -105,7 +106,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
         }
 
         It "'Get-ExperimentalFeature' pipeline input" {
-            $features = pwsh -noprofile -output xml -command  { "ExpTest.FeatureOne", "ExpTest.FeatureTwo" | Get-ExperimentalFeature }
+            $features = & $pwsh -noprofile -output xml -command  { "ExpTest.FeatureOne", "ExpTest.FeatureTwo" | Get-ExperimentalFeature }
             $features | Should -Not -BeNullOrEmpty
             $features[0].Name | Should -BeExactly "ExpTest.FeatureOne"
             $features[0].Enabled | Should -BeTrue
@@ -122,9 +123,9 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
             '{"ExperimentalFeatures":["ExpTest.FeatureOne"]}' > $userConfigPath
             '{"ExperimentalFeatures":["ExpTest.FeatureTwo"]}' > $systemConfigPath
 
-            $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
+            $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureOne
             $feature.Enabled | Should -BeTrue -Because "FeatureOne is enabled in user config"
-            $feature = pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureTwo
+            $feature = & $pwsh -noprofile -output xml -command Get-ExperimentalFeature ExpTest.FeatureTwo
             $feature.Enabled | Should -BeFalse -Because "System config is not read when user config exists"
         }
     }
@@ -132,7 +133,7 @@ Describe "Get-ExperimentalFeature Tests" -tags "Feature","RequireAdminOnWindows"
 
 Describe "Default enablement of Experimental Features" -Tags CI {
     BeforeAll {
-        $isPreview = $PSVersionTable.GitCommitId.Contains("preview")
+        $isPreview = $PSVersionTable.GitCommitId -match "preview|daily"
 
         Function BeEnabled {
             [CmdletBinding()]

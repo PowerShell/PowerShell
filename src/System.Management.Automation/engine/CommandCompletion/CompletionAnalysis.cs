@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -404,6 +404,7 @@ namespace System.Management.Automation
 
                     case TokenKind.Dot:
                     case TokenKind.ColonColon:
+                    case TokenKind.QuestionDot:
                         replacementIndex += tokenAtCursor.Text.Length;
                         replacementLength = 0;
                         result = CompletionCompleters.CompleteMember(completionContext, @static: tokenAtCursor.Kind == TokenKind.ColonColon);
@@ -420,6 +421,17 @@ namespace System.Management.Automation
 
                     case TokenKind.StringExpandable:
                     case TokenKind.StringLiteral:
+                        // Search to see if we're looking at an assignment
+                        if (lastAst.Parent is CommandExpressionAst
+                            && lastAst.Parent.Parent is AssignmentStatementAst assignmentAst)
+                        {
+                            // Handle scenarios like `$ErrorActionPreference = '<tab>`
+                            if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst, out List<CompletionResult> completions))
+                            {
+                                return completions;
+                            }
+                        }
+
                         result = GetResultForString(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         break;
 
@@ -505,6 +517,15 @@ namespace System.Management.Automation
                             replacementIndex = completionContext.ReplacementIndex;
                             replacementLength = completionContext.ReplacementLength;
                         }
+                        else if (lastAst.Parent is CommandExpressionAst
+                            && lastAst.Parent.Parent is AssignmentStatementAst assignmentAst2)
+                        {
+                            // Handle scenarios like '[ValidateSet(11,22)][int]$i = 11; $i = 2<tab>'
+                            if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst2, out List<CompletionResult> completions))
+                            {
+                                result = completions;
+                            }
+                        }
 
                         break;
 
@@ -563,6 +584,17 @@ namespace System.Management.Automation
                             {
                                 // Handle scenarios such as 'gci | Format-Table @{Label=<tab>' if incomplete parsing of the assignment.
                                 return null;
+                            }
+                            else if (lastAst is AssignmentStatementAst assignmentAst2)
+                            {
+                                completionContext.ReplacementIndex = replacementIndex += tokenAtCursor.Text.Length;
+                                completionContext.ReplacementLength = replacementLength = 0;
+
+                                // Handle scenarios like '$ErrorActionPreference =<tab>'
+                                if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst2, out List<CompletionResult> completions))
+                                {
+                                    return completions;
+                                }
                             }
                             else
                             {
@@ -732,6 +764,15 @@ namespace System.Management.Automation
                                 case TokenKind.Comma:
                                 case TokenKind.AtParen:
                                     {
+                                        if (lastAst is AssignmentStatementAst assignmentAst)
+                                        {
+                                            // Handle scenarios like '$ErrorActionPreference = <tab>'
+                                            if (TryGetCompletionsForVariableAssignment(completionContext, assignmentAst, out result))
+                                            {
+                                                break;
+                                            }
+                                        }
+
                                         bool unused;
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                                         break;
@@ -1025,6 +1066,239 @@ namespace System.Management.Automation
             return keyValuePairWithCursor;
         }
 
+        // Pulls the variable out of an assignment's LHS expression
+        // Also brings back the innermost type constraint if there is one
+        private static VariableExpressionAst GetVariableFromExpressionAst(
+            ExpressionAst expression,
+            ref Type typeConstraint,
+            ref ValidateSetAttribute setConstraint)
+        {
+            switch (expression)
+            {
+                // $x = ...
+                case VariableExpressionAst variableExpression:
+                    return variableExpression;
+
+                // [type]$x = ...
+                case ConvertExpressionAst convertExpression:
+                    typeConstraint = convertExpression.Type.TypeName.GetReflectionType();
+                    return GetVariableFromExpressionAst(convertExpression.Child, ref typeConstraint, ref setConstraint);
+
+                // [attribute()][type]$x = ...
+                case AttributedExpressionAst attributedExpressionAst:
+
+                    try
+                    {
+                        setConstraint = attributedExpressionAst.Attribute.GetAttribute() as ValidateSetAttribute;
+                    }
+                    catch
+                    {
+                        // Do nothing, just prevent fallout from an unsuccessful attribute conversion
+                    }
+
+                    return GetVariableFromExpressionAst(attributedExpressionAst.Child, ref typeConstraint, ref setConstraint);
+
+                // Something else, like `MemberExpressionAst` $a.p = <tab> which isn't currently handled
+                default:
+                    return null;
+            }
+        }
+
+        // Gets any type constraints or validateset constraints on a given variable
+        private static bool TryGetTypeConstraintOnVariable(
+            CompletionContext completionContext,
+            string variableName,
+            out Type typeConstraint,
+            out ValidateSetAttribute setConstraint)
+        {
+            typeConstraint = null;
+            setConstraint = null;
+
+            PSVariable variable = completionContext.ExecutionContext.EngineSessionState.GetVariable(variableName);
+
+            if (variable == null || variable.Attributes.Count == 0)
+            {
+                return false;
+            }
+
+            foreach (Attribute attribute in variable.Attributes)
+            {
+                if (attribute is ArgumentTypeConverterAttribute typeConverterAttribute)
+                {
+                    typeConstraint = typeConverterAttribute.TargetType;
+                    continue;
+                }
+
+                if (attribute is ValidateSetAttribute validateSetAttribute)
+                {
+                    setConstraint = validateSetAttribute;
+                }
+            }
+
+            return typeConstraint != null || setConstraint != null;
+        }
+
+        private static bool TryGetCompletionsForVariableAssignment(
+            CompletionContext completionContext,
+            AssignmentStatementAst assignmentAst,
+            out List<CompletionResult> completions)
+        {
+            bool TryGetResultForEnum(Type typeConstraint, CompletionContext completionContext, out List<CompletionResult> completions)
+            {
+                completions = null;
+
+                if (typeConstraint != null && typeConstraint.IsEnum)
+                {
+                    completions = GetResultForEnum(typeConstraint, completionContext);
+                    return true;
+                }
+
+                return false;
+            }
+
+            bool TryGetResultForSet(Type typeConstraint, ValidateSetAttribute setConstraint, CompletionContext completionContext1, out List<CompletionResult> completions)
+            {
+                completions = null;
+
+                if (setConstraint?.ValidValues != null)
+                {
+                    completions = GetResultForSet(typeConstraint, setConstraint.ValidValues, completionContext);
+                    return true;
+                }
+
+                return false;
+            }
+
+            completions = null;
+
+            // Try to get the variable from the assignment, plus any type constraint on it
+            Type typeConstraint = null;
+            ValidateSetAttribute setConstraint = null;
+            VariableExpressionAst variableAst = GetVariableFromExpressionAst(assignmentAst.Left, ref typeConstraint, ref setConstraint);
+
+            if (variableAst == null)
+            {
+                return false;
+            }
+
+            // Assignment constraints override any existing ones, so try them first
+
+            // Check any [ValidateSet()] constraint first since it's likely to be narrow
+            if (TryGetResultForSet(typeConstraint, setConstraint, completionContext, out completions))
+            {
+                return true;
+            }
+
+            // Then try to complete for an enum type
+            if (TryGetResultForEnum(typeConstraint, completionContext, out completions))
+            {
+                return true;
+            }
+
+            // If the assignment itself was unconstrained, the variable still might be
+            if (!TryGetTypeConstraintOnVariable(completionContext, variableAst.VariablePath.UserPath, out typeConstraint, out setConstraint))
+            {
+                return false;
+            }
+
+            // Again try the [ValidateSet()] constraint first
+            if (TryGetResultForSet(typeConstraint, setConstraint, completionContext, out completions))
+            {
+                return true;
+            }
+
+            // Then try to complete for an enum type again
+            if (TryGetResultForEnum(typeConstraint, completionContext, out completions))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static List<CompletionResult> GetResultForSet(
+            Type typeConstraint,
+            IList<string> validValues,
+            CompletionContext completionContext)
+        {
+            var allValues = new List<string>();
+            foreach (string value in validValues)
+            {
+                if (typeConstraint != null && (typeConstraint == typeof(string) || typeConstraint.IsEnum))
+                {
+                    allValues.Add(GetQuotedString(value, completionContext));
+                }
+                else
+                {
+                    allValues.Add(value);
+                }
+            }
+
+            return GetMatchedResults(allValues, completionContext);
+        }
+
+        private static List<CompletionResult> GetMatchedResults(
+            List<string> allValues,
+            CompletionContext completionContext)
+        {
+            var stringToComplete = string.Empty;
+            if (completionContext.TokenAtCursor != null && completionContext.TokenAtCursor.Kind != TokenKind.Equals)
+            {
+                stringToComplete = completionContext.TokenAtCursor.Text;
+            }
+
+            IEnumerable<string> matchedResults = null;
+
+            if (!string.IsNullOrEmpty(stringToComplete))
+            {
+                string matchString = stringToComplete + "*";
+                var wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+
+                matchedResults = allValues.Where(r => wildcardPattern.IsMatch(r));
+            }
+            else
+            {
+                matchedResults = allValues;
+            }
+
+            var result = new List<CompletionResult>();
+            foreach (var match in matchedResults)
+            {
+                result.Add(new CompletionResult(match));
+            }
+
+            return result;
+        }
+
+        private static string GetQuotedString(
+            string value,
+            CompletionContext completionContext)
+        {
+            var stringToComplete = string.Empty;
+            if (completionContext.TokenAtCursor != null)
+            {
+                stringToComplete = completionContext.TokenAtCursor.Text;
+            }
+
+            var quote = stringToComplete.StartsWith('"') ? "\"" : "'";
+            return quote + value + quote;
+        }
+
+        private static List<CompletionResult> GetResultForEnum(
+            Type type,
+            CompletionContext completionContext)
+        {
+            var allNames = new List<string>();
+            foreach (var name in Enum.GetNames(type))
+            {
+                allNames.Add(GetQuotedString(name, completionContext));
+            }
+
+            allNames.Sort();
+
+            return GetMatchedResults(allNames, completionContext);
+        }
+
         private List<CompletionResult> GetResultForEnumPropertyValueOfDSCResource(
             CompletionContext completionContext,
             string stringToComplete,
@@ -1240,19 +1514,18 @@ namespace System.Management.Automation
                 var analysis = new CompletionAnalysis(_ast, _tokens, _cursorPosition, _options);
                 var subContext = analysis.CreateCompletionContext(completionContext.TypeInferenceContext);
 
-                int subReplaceIndex, subReplaceLength;
-                var subResult = analysis.GetResultHelper(subContext, out subReplaceIndex, out subReplaceLength, true);
+                var subResult = analysis.GetResultHelper(subContext, out int subReplaceIndex, out _, true);
 
                 if (subResult != null && subResult.Count > 0)
                 {
                     result = new List<CompletionResult>();
                     replacementIndex = stringStartIndex + 1 + (cursorIndexInString - subInput.Length);
                     replacementLength = subInput.Length;
-                    string prefix = subInput.Substring(0, subReplaceIndex);
+                    ReadOnlySpan<char> prefix = subInput.AsSpan(0, subReplaceIndex);
 
                     foreach (CompletionResult entry in subResult)
                     {
-                        string completionText = prefix + entry.CompletionText;
+                        string completionText = string.Concat(prefix, entry.CompletionText.AsSpan());
                         if (entry.ResultType == CompletionResultType.Property)
                         {
                             completionText = TokenKind.DollarParen.Text() + completionText + TokenKind.RParen.Text();
@@ -1291,7 +1564,7 @@ namespace System.Management.Automation
                         result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
 
                         // Try command name completion only if the text contains '-'
-                        if (wordToComplete.IndexOf('-') != -1)
+                        if (wordToComplete.Contains('-'))
                         {
                             var commandNameResult = CompletionCompleters.CompleteCommand(completionContext);
                             if (commandNameResult != null && commandNameResult.Count > 0)

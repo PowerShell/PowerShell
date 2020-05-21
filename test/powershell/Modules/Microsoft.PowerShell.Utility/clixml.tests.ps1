@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "CliXml test" -Tags "CI" {
 
@@ -6,7 +6,7 @@ Describe "CliXml test" -Tags "CI" {
         $testFilePath = Join-Path "testdrive:\" "testCliXml"
         $subFilePath = Join-Path $testFilePath ".test"
 
-        if(test-path $testFilePath)
+        if(Test-Path $testFilePath)
         {
             Remove-Item $testFilePath -Force -Recurse
         }
@@ -23,11 +23,11 @@ Describe "CliXml test" -Tags "CI" {
             [string] $expectedError
             [string] $testFile
 
-            TestData($name, $file, $inputObj, $error)
+            TestData($name, $file, $inputObj, $errorId)
             {
                 $this.testName = $name
                 $this.inputObject = $inputObj
-                $this.expectedError = $error
+                $this.expectedError = $errorId
                 $this.testFile = $file
             }
         }
@@ -178,7 +178,7 @@ Describe "CliXml test" -Tags "CI" {
             $cred | Export-Clixml -Path $path
             $cred = Import-Clixml -Path $path
             $cred.UserName | Should -BeExactly "Foo"
-            $cred.Password | Should -BeOfType "System.Security.SecureString"
+            $cred.Password | Should -BeOfType System.Security.SecureString
         }
     }
 }
@@ -207,7 +207,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         }
     }
 
-    It "Verifies that importing the corrupted Cim class does not launch calc.exe" -skip:$skipNotWindows {
+    It "Verifies that importing the corrupted Cim class does not launch calc.exe" -Skip:$skipNotWindows {
 
         Import-Clixml -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml")
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// The Invoke-WebRequest command.
     /// This command makes an HTTP or HTTPS request to a web server and returns the results.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217035", DefaultParameterSetName = "StandardMethod")]
+    [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097126", DefaultParameterSetName = "StandardMethod")]
     public class InvokeWebRequestCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException("response"); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
             Stream responseStream = StreamHelper.GetResponseStream(response);
             if (ShouldWriteToPipeline)
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldSaveToOutFile)
             {
-                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this);
+                StreamHelper.SaveStreamToFile(responseStream, QualifiedOutFile, this, _cancelToken.Token);
             }
         }
 

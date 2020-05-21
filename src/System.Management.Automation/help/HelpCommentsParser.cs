@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -495,47 +495,25 @@ namespace System.Management.Automation
 
         private static void GetExampleSections(string content, out string prompt_str, out string code_str, out string remarks_str)
         {
-            prompt_str = code_str = string.Empty;
-            StringBuilder builder = new StringBuilder();
             string default_prompt_str = "PS > ";
 
-            int collectingPart = 1;
-            foreach (char c in content)
+            var promptMatch = Regex.Match(content, "^.*?>");
+            prompt_str = promptMatch.Success ? promptMatch.Value : default_prompt_str;
+            if (promptMatch.Success)
             {
-                if (c == '>' && collectingPart == 1)
-                {
-                    builder.Append(c);
-                    prompt_str = builder.ToString().Trim();
-                    builder = new StringBuilder();
-                    ++collectingPart;
-                    continue;
-                }
-
-                if (c == '\n' && collectingPart < 3)
-                {
-                    if (collectingPart == 1)
-                    {
-                        prompt_str = default_prompt_str;
-                    }
-
-                    code_str = builder.ToString().Trim();
-                    builder = new StringBuilder();
-                    collectingPart = 3;
-                    continue;
-                }
-
-                builder.Append(c);
+                content = content.Substring(prompt_str.Length);
             }
 
-            if (collectingPart == 1)
+            var codeAndRemarksMatch = Regex.Match(content, "^(?<code>.*?)\r?\n\r?\n(?<remarks>.*)$", RegexOptions.Singleline);
+            if (codeAndRemarksMatch.Success)
             {
-                prompt_str = default_prompt_str;
-                code_str = builder.ToString().Trim();
-                remarks_str = string.Empty;
+                code_str = codeAndRemarksMatch.Groups["code"].Value.Trim();
+                remarks_str = codeAndRemarksMatch.Groups["remarks"].Value;
             }
             else
             {
-                remarks_str = builder.ToString();
+                code_str = content.Trim();
+                remarks_str = string.Empty;
             }
         }
 

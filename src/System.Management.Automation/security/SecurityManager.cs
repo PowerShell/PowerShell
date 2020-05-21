@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell
         {
             if (string.IsNullOrEmpty(shellId))
             {
-                throw PSTraceSource.NewArgumentNullException("shellId");
+                throw PSTraceSource.NewArgumentNullException(nameof(shellId));
             }
 
             _shellId = shellId;

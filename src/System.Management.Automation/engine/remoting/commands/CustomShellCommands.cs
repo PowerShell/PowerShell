@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -30,7 +30,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsLifecycle.Register, RemotingConstants.PSSessionConfigurationNoun,
         DefaultParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName,
         SupportsShouldProcess = true,
-        ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144306")]
+        ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096793")]
     public sealed class RegisterPSSessionConfigurationCommand : PSSessionConfigurationCommandBase
     {
         #region Private Data
@@ -1120,11 +1120,6 @@ else
                 architectureParameter = string.Format(CultureInfo.InvariantCulture,
                     architectureAttribFormat,
                     tempValue);
-            }
-
-            if (!isUseSharedProcessSpecified)
-            {
-                UseSharedProcess = true;
             }
 
             string sharedHostParameter = string.Empty;
@@ -2440,7 +2435,7 @@ else
     /// Class implementing Unregister-PSSessionConfiguration.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Unregister, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144308")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096803")]
     public sealed class UnregisterPSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -2674,7 +2669,7 @@ else
     /// <summary>
     /// Class implementing Get-PSSessionConfiguration.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, RemotingConstants.PSSessionConfigurationNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144304")]
+    [Cmdlet(VerbsCommon.Get, RemotingConstants.PSSessionConfigurationNoun, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096790")]
     [OutputType("Microsoft.PowerShell.Commands.PSSessionConfigurationCommands#PSSessionConfiguration")]
     public sealed class GetPSSessionConfigurationCommand : PSCmdlet
     {
@@ -2905,7 +2900,7 @@ $args[0] | ForEach-Object {{
     [Cmdlet(VerbsCommon.Set, RemotingConstants.PSSessionConfigurationNoun,
        DefaultParameterSetName = PSSessionConfigurationCommandBase.NameParameterSetName,
        SupportsShouldProcess = true,
-       ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144307")]
+       ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096901")]
     public sealed class SetPSSessionConfigurationCommand : PSSessionConfigurationCommandBase
     {
         #region Private Data
@@ -3997,7 +3992,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
     /// Class implementing Enable-PSSessionConfiguration cmdlet.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144301")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096785")]
     public sealed class EnablePSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -4010,6 +4005,11 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
 function Test-WinRMQuickConfigNeeded
 {{
+    # see issue #11005 - Function Test-WinRMQuickConfigNeeded needs to be updated: 
+    # 1) currently this function always returns $True
+    # 2) checking for a firewall rule using Get-NetFirewallRule engages WinCompat code and has significant perf impact on Enable-PSRemoting; maybe change to Get-CimInstance -ClassName MSFT_NetFirewallRule
+    return $True
+
 # Checking the following items
 #1. Starting or restarting (if already started) the WinRM service
 #2. Setting the WinRM service startup type to Automatic
@@ -4427,7 +4427,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
     /// <summary>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSSessionConfigurationNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144299")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096692")]
     public sealed class DisablePSSessionConfigurationCommand : PSCmdlet
     {
         #region Private Data
@@ -4658,7 +4658,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
     /// <summary>
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSRemotingNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144300")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096577")]
     public sealed class EnablePSRemotingCommand : PSCmdlet
     {
         #region Private Data
@@ -5026,7 +5026,7 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
     /// local access is still enabled.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSRemotingNoun,
-        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144298")]
+        SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096482")]
     public sealed class DisablePSRemotingCommand : PSCmdlet
     {
         #region Private Data

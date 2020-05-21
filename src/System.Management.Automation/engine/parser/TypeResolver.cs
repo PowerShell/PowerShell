@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -759,7 +759,7 @@ namespace System.Management.Automation
                     { typeof(IPEndPoint),                                  new[] { "IPEndpoint" } },
                     { typeof(NullString),                                  new[] { "NullString" } },
                     { typeof(OutputTypeAttribute),                         new[] { "OutputType" } },
-                    { typeof(Object[]),                                    null },
+                    { typeof(object[]),                                    null },
                     { typeof(ObjectSecurity),                              new[] { "ObjectSecurity" } },
                     { typeof(ParameterAttribute),                          new[] { "Parameter" } },
                     { typeof(PhysicalAddress),                             new[] { "PhysicalAddress" } },
@@ -772,7 +772,7 @@ namespace System.Management.Automation
                     { typeof(PSTypeNameAttribute),                         new[] { "PSTypeNameAttribute" } },
                     { typeof(Regex),                                       new[] { "regex" } },
                     { typeof(DscPropertyAttribute),                        new[] { "DscProperty" } },
-                    { typeof(SByte),                                       new[] { "sbyte" } },
+                    { typeof(sbyte),                                       new[] { "sbyte" } },
                     { typeof(string),                                      new[] { "string" } },
                     { typeof(SupportsWildcardsAttribute),                  new[] { "SupportsWildcards" } },
                     { typeof(SwitchParameter),                             new[] { "switch" } },

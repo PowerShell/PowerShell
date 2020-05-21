@@ -1,6 +1,6 @@
 // See https://aka.ms/vscode-remote/devcontainer.json for format details.
 {
-	"name": ".NET Core 3.0, including pwsh (Debian 10)",
+	"name": ".NET Core 5.0, including pwsh (Debian 10)",
 	"dockerFile": "Dockerfile",
 
 	// Uncomment the next line to run commands after the container is created.
@@ -8,7 +8,7 @@
 
 	"extensions": [
 		"ms-azure-devops.azure-pipelines",
-		"ms-vscode.csharp",
+		"ms-dotnettools.csharp",
 		"ms-vscode.powershell",
 		"DavidAnson.vscode-markdownlint",
 		"vitaliymaz.vscode-svg-previewer"

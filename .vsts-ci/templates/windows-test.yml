@@ -16,11 +16,11 @@ jobs:
   steps:
   - pwsh: |
       Get-ChildItem -Path env:
-    displayName: Capture environment
+    displayName: Capture Environment
     condition: succeededOrFailed()
 
   - task: DownloadBuildArtifacts@0
-    displayName: 'Download build artifacts'
+    displayName: 'Download Build Artifacts'
     inputs:
       downloadType: specific
       itemPattern: |
@@ -29,7 +29,7 @@ jobs:
 
   - pwsh: |
       Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
-    displayName: 'Capture artifacts directory'
+    displayName: 'Capture Artifacts Directory'
     continueOnError: true
 
   # must be run frow Windows PowerShell

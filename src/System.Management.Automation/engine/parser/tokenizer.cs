@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Language
         {
             if (keywordToAdd == null)
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("keywordToAdd");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(keywordToAdd));
                 throw e;
             }
 
@@ -191,7 +191,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -543,7 +543,7 @@ namespace System.Management.Automation.Language
         Decimal = 0x10,
 
         /// <summary>
-        /// Indicates 'I' suffix for BigInteger (arbitrarily large integer) numerals.
+        /// Indicates 'N' suffix for BigInteger (arbitrarily large integer) numerals.
         /// </summary>
         BigInteger = 0x20
     }
@@ -727,7 +727,7 @@ namespace System.Management.Automation.Language
         internal bool ForceEndNumberOnTernaryOpChars
         {
             get { return _forceEndNumberOnTernaryOpChars; }
-            set { _forceEndNumberOnTernaryOpChars = value && ExperimentalFeature.IsEnabled("PSTernaryOperator"); }
+            set { _forceEndNumberOnTernaryOpChars = value; }
         }
 
         internal bool WantSimpleName { get; set; }
@@ -885,9 +885,9 @@ namespace System.Management.Automation.Language
 
         internal void SkipNewlines(bool skipSemis)
         {
-            // We normally don't create any tokens in a Skip method, but the
-            // V2 tokenizer api returns newline, semi-colon, and line
-            // continuation tokens so we create them as they are encountered.
+        // We normally don't create any tokens in a Skip method, but the
+        // V2 tokenizer api returns newline, semi-colon, and line
+        // continuation tokens so we create them as they are encountered.
         again:
             char c = GetChar();
             switch (c)
@@ -1460,17 +1460,28 @@ namespace System.Management.Automation.Language
 
             switch (c)
             {
-                case '0': return '\0';
-                case 'a': return '\a';
-                case 'b': return '\b';
-                case 'e': return '\u001b';
-                case 'f': return '\f';
-                case 'n': return '\n';
-                case 'r': return '\r';
-                case 't': return '\t';
-                case 'u': return ScanUnicodeEscape(out surrogateCharacter);
-                case 'v': return '\v';
-                default: return c;
+                case '0':
+                    return '\0';
+                case 'a':
+                    return '\a';
+                case 'b':
+                    return '\b';
+                case 'e':
+                    return '\u001b';
+                case 'f':
+                    return '\f';
+                case 'n':
+                    return '\n';
+                case 'r':
+                    return '\r';
+                case 't':
+                    return '\t';
+                case 'u':
+                    return ScanUnicodeEscape(out surrogateCharacter);
+                case 'v':
+                    return '\v';
+                default:
+                    return c;
             }
         }
 
@@ -3557,8 +3568,9 @@ namespace System.Management.Automation.Language
             {
                 try
                 {
-                    NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
-                                         NumberStyles.AllowExponent;
+                    NumberStyles style = NumberStyles.AllowLeadingSign
+                        | NumberStyles.AllowDecimalPoint
+                        | NumberStyles.AllowExponent;
 
                     if (real)
                     {
@@ -3685,9 +3697,21 @@ namespace System.Management.Automation.Language
                             }
 
                             // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
-                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && ((strNum.Length - 1) & 7) == 0)
+                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
-                                strNum = strNum.Slice(1);
+                                var expectedLength = suffix switch
+                                {
+                                    NumberSuffixFlags.SignedByte => 2,
+                                    NumberSuffixFlags.Short => 4,
+                                    NumberSuffixFlags.Long => 16,
+                                    // No suffix flag can mean int or long depending on input string length
+                                    _ => strNum.Length < 16 ? 8 : 16
+                                };
+
+                                if (strNum.Length == expectedLength + 1)
+                                {
+                                    strNum = strNum.Slice(1);
+                                }
                             }
 
                             style = NumberStyles.AllowHexSpecifier;
@@ -4215,6 +4239,27 @@ namespace System.Management.Automation.Language
                 _tokenStart = _currentIndex;
                 SkipChar();
                 return NewToken(TokenKind.LBracket);
+            }
+
+
+            if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators") && c == '?')
+            {
+                _tokenStart = _currentIndex;
+                SkipChar();
+                c = PeekChar();
+                if (c == '.')
+                {
+                    SkipChar();
+                    return NewToken(TokenKind.QuestionDot);
+                }
+                else if (c == '[' && allowLBracket)
+                {
+                    SkipChar();
+                    return NewToken(TokenKind.QuestionLBracket);
+                }
+
+                UngetChar();
+                return null;
             }
 
             return null;
@@ -4967,7 +5012,10 @@ namespace System.Management.Automation.Language
                         _currentIndex = _tokenStart;
                         c = GetChar();
 
-                        if (strNum == null) { return ScanGenericToken(c); }
+                        if (strNum == null)
+                        {
+                            return ScanGenericToken(c);
+                        }
                     }
 
                     return NewToken(TokenKind.Exclaim);
@@ -4994,6 +5042,22 @@ namespace System.Management.Automation.Language
                     return this.NewToken(TokenKind.Colon);
 
                 case '?' when InExpressionMode():
+                    c1 = PeekChar();
+
+                    if (c1 == '?')
+                    {
+                        SkipChar();
+                        c1 = PeekChar();
+
+                        if (c1 == '=')
+                        {
+                            SkipChar();
+                            return this.NewToken(TokenKind.QuestionQuestionEquals);
+                        }
+
+                        return this.NewToken(TokenKind.QuestionQuestion);
+                    }
+
                     return this.NewToken(TokenKind.QuestionMark);
 
                 case '\0':

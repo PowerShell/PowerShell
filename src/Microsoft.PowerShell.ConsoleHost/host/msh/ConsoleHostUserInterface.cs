@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell
 #if UNIX
                     else if (char.IsControl(keyInfo.KeyChar))
                     {
-                        // blacklist control characters
+                        // deny list control characters
                         continue;
                     }
 #endif
@@ -603,7 +603,7 @@ namespace Microsoft.PowerShell
 
         private void WriteToConsole(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string text, bool newLine = false)
         {
-            // Sync access so that we don't race on color settings if called from multiple threads.
+            // Sync access so that we don't conflict on color settings if called from multiple threads.
             lock (_instanceLock)
             {
                 ConsoleColor fg = RawUI.ForegroundColor;
@@ -779,7 +779,7 @@ namespace Microsoft.PowerShell
 
         private void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value, bool newLine)
         {
-            // Sync access so that we don't race on color settings if called from multiple threads.
+            // Sync access so that we don't conflict on color settings if called from multiple threads.
             lock (_instanceLock)
             {
                 ConsoleColor fg = RawUI.ForegroundColor;
@@ -1355,6 +1355,9 @@ namespace Microsoft.PowerShell
             }
         }
 
+        // Format colors
+        public ConsoleColor FormatAccentColor { get; set; } = ConsoleColor.Green;
+
         // Error colors
         public ConsoleColor ErrorAccentColor { get; set; } = ConsoleColor.Cyan;
         public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
@@ -1373,8 +1376,8 @@ namespace Microsoft.PowerShell
         public ConsoleColor VerboseBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Progress colors
-        public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.Yellow;
-        public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.DarkCyan;
+        public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.Black;
+        public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.Yellow;
 
         #endregion Line-oriented interaction
 
@@ -1782,7 +1785,7 @@ namespace Microsoft.PowerShell
 
                     if (char.IsControl(keyInfo.KeyChar))
                     {
-                        // blacklist control characters
+                        // deny list control characters
                         continue;
                     }
 
@@ -1862,8 +1865,11 @@ namespace Microsoft.PowerShell
         /// <returns>The string with any \0 characters removed...</returns>
         private string RemoveNulls(string input)
         {
-            if (input.IndexOf('\0') == -1)
+            if (input.Contains('\0'))
+            {
                 return input;
+            }
+
             StringBuilder sb = new StringBuilder();
             foreach (char c in input)
             {

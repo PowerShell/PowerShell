@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -1502,5 +1502,11 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="MissingColonInTernaryExpression" xml:space="preserve">
     <value>Missing ':' in the ternary expression.</value>
+  </data>
+  <data name="EmptyPipelineChainElement" xml:space="preserve">
+    <value>A pipeline chain operator must be followed by a pipeline.</value>
+  </data>
+  <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
+    <value>Background operators can only be used at the end of a pipeline chain.</value>
   </data>
 </root>

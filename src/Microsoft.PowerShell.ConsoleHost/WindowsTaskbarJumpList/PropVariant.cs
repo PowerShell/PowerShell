@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell
         {
             if (value == null)
             {
-                throw new ArgumentException("PropVariantNullString", "value");
+                throw new ArgumentException("PropVariantNullString", nameof(value));
             }
 
 #pragma warning disable CS0618 // Type or member is obsolete (might get deprecated in future versions

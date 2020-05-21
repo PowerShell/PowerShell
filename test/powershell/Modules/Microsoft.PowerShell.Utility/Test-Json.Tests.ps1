@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Test-Json" -Tags "CI" {
@@ -83,15 +83,15 @@ Describe "Test-Json" -Tags "CI" {
     }
 
     It "Test-Json write an error on invalid (<name>) Json against a valid schema" -TestCases @(
-        @{ name = "type"; json = $invalidTypeInJson; error = "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand" }
-        @{ name = "node"; json = $invalidNodeInJson; error = "InvalidJson,Microsoft.PowerShell.Commands.TestJsonCommand" }
+        @{ name = "type"; json = $invalidTypeInJson; errorId = "InvalidJsonAgainstSchema,Microsoft.PowerShell.Commands.TestJsonCommand" }
+        @{ name = "node"; json = $invalidNodeInJson; errorId = "InvalidJson,Microsoft.PowerShell.Commands.TestJsonCommand" }
         ) {
-            param($json, $error)
+            param ($json, $errorId)
 
             $errorVar = $null
             Test-Json -Json $json -Schema $validSchemaJson -ErrorVariable errorVar -ErrorAction SilentlyContinue
 
-            $errorVar.FullyQualifiedErrorId | Should -BeExactly $error
+            $errorVar.FullyQualifiedErrorId | Should -BeExactly $errorId
     }
 
     It "Test-Json return all errors when check invalid Json against a valid schema" {

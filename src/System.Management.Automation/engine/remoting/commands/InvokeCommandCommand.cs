@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
     /// "Microsoft.PowerShell" is used.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "Command", DefaultParameterSetName = InvokeCommandCommand.InProcParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135225", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096789", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class InvokeCommandCommand : PSExecutionCmdlet, IDisposable
     {
         #region Parameters
@@ -486,6 +486,8 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostHashParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         public string JobName
         {
             get
@@ -531,9 +533,11 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(Mandatory = true,
+        [Parameter(Position = 1,
+                   Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [Parameter(Mandatory = true,
+        [Parameter(Position = 1,
+                   Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostHashParameterSet)]
         [ValidateNotNull]
         [Alias("Command")]
@@ -1105,7 +1109,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     if (Operations.Count > 0)
                                     {
-                                        string[] locations = new String[ConnectionUri.Length];
+                                        string[] locations = new string[ConnectionUri.Length];
                                         for (int i = 0; i < locations.Length; i++)
                                         {
                                             locations[i] = ConnectionUri[i].ToString();
@@ -1202,8 +1206,15 @@ namespace Microsoft.PowerShell.Commands
                         // be connected to later.
                         WriteJobResults(false);
 
-                        // finally dispose the job.
-                        _job.Dispose();
+                        // Dispose job object if it is not returned to the user.
+                        // The _asjob field can change dynamically and needs to be checked before the job 
+                        // object is disposed. For example, if remote sessions are disconnected abruptly
+                        // via WinRM, a disconnected job object is created to facilitate a reconnect.
+                        // If the job object is disposed here, then a session reconnect cannot happen.
+                        if (!_asjob)
+                        {
+                            _job.Dispose();
+                        }
 
                         // We no longer need to call ClearInvokeCommandOnRunspaces() here because
                         // this command might finish before the foreach block finishes. previously,
@@ -1249,8 +1260,15 @@ namespace Microsoft.PowerShell.Commands
                             // be connected to later.
                             WriteJobResults(false);
 
-                            // finally dispose the job.
-                            _job.Dispose();
+                            // Dispose job object if it is not returned to the user.
+                            // The _asjob field can change dynamically and needs to be checked before the job 
+                            // object is disposed. For example, if remote sessions are disconnected abruptly
+                            // via WinRM, a disconnected job object is created to facilitate a reconnect.
+                            // If the job object is disposed here, then a session reconnect cannot happen.
+                            if (!_asjob)
+                            {
+                                _job.Dispose();
+                            }
                         }
                     }
                 }
@@ -2119,7 +2137,7 @@ namespace System.Management.Automation.Internal
 
             if (string.IsNullOrEmpty(computerName))
             {
-                throw new ArgumentNullException("computerName");
+                throw new ArgumentNullException(nameof(computerName));
             }
 
             lock (_syncObject)

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// Retrieves input from the host virtual console and writes it to the pipeline output.
     /// </summary>
 
-    [Cmdlet(VerbsCommunications.Read, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113371")]
+    [Cmdlet(VerbsCommunications.Read, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096610")]
     [OutputType(typeof(string), typeof(SecureString))]
     public sealed class ReadHostCommand : PSCmdlet
     {

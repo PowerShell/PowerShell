@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Read-Host Test" -tag "CI" {
+Describe "Read-Host Test" -Tag "CI" {
     BeforeAll {
         $th = New-TestHost
         $rs = [runspacefactory]::Createrunspace($th)
@@ -33,13 +33,13 @@ Describe "Read-Host Test" -tag "CI" {
     }
 
     It "Read-Host returns a secure string when using -AsSecureString parameter" {
-        $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | select-object -first 1
+        $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | Select-Object -First 1
         $result | Should -BeOfType SecureString
         [pscredential]::New("foo",$result).GetNetworkCredential().Password | Should -BeExactly TEST
     }
 
     It "Read-Host doesn't enter command prompt mode" {
-        $result = "!1" | pwsh -NoProfile -c "Read-host -Prompt 'foo'"
+        $result = "!1" | & "$PSHOME/pwsh" -NoProfile -c "Read-host -Prompt 'foo'"
         if ($IsWindows) {
             # Windows write to console directly so can't capture prompt in stdout
             $expected = @('!1','!1')
@@ -47,6 +47,6 @@ Describe "Read-Host Test" -tag "CI" {
         else {
             $expected = @('foo: !1','!1')
         }
-        $result | should -BeExactly $expected
+        $result | Should -BeExactly $expected
     }
 }

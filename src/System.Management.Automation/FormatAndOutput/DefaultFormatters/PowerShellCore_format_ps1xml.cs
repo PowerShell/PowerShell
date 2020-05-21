@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -18,22 +18,8 @@ namespace System.Management.Automation.Runspaces
                     .EndEntry()
                 .EndControl();
 
-            var ByteCollection_GroupHeader = CustomControl.Create()
-                    .StartEntry()
-                        .StartFrame()
-                            .AddScriptBlockExpressionBinding(@"
-                      $header = ""                       00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F""
-                      if($_.Path) { $header = ""                       "" + [Microsoft.PowerShell.Commands.UtilityResources]::FormatHexPathPrefix + $_.Path + ""`r`n`r`n"" + $header }
-
-                      $header
-                    ")
-                        .EndFrame()
-                    .EndEntry()
-                .EndControl();
-
             var sharedControls = new CustomControl[] {
-                AvailableModules_GroupingFormat,
-                ByteCollection_GroupHeader
+                AvailableModules_GroupingFormat
             };
 
             yield return new ExtendedTypeDefinition(
@@ -59,6 +45,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.MatchInfo",
                 ViewsOf_Microsoft_PowerShell_Commands_MatchInfo());
+
+            yield return new ExtendedTypeDefinition(
+                "Deserialized.Microsoft.PowerShell.Commands.MatchInfo",
+                ViewsOf_Deserialized_Microsoft_PowerShell_Commands_MatchInfo());
 
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSVariable",
@@ -151,9 +141,16 @@ namespace System.Management.Automation.Runspaces
                 "System.Management.Automation.ScriptBlock",
                 ViewsOf_System_Management_Automation_ScriptBlock());
 
-            yield return new ExtendedTypeDefinition(
+            var extendedError = new ExtendedTypeDefinition(
+                "System.Management.Automation.ErrorRecord#PSExtendedError",
+                ViewsOf_System_Management_Automation_GetError());
+            extendedError.TypeNames.Add("System.Exception#PSExtendedError");
+            yield return extendedError;
+
+            var errorRecord_Exception = new ExtendedTypeDefinition(
                 "System.Management.Automation.ErrorRecord",
                 ViewsOf_System_Management_Automation_ErrorRecord());
+            yield return errorRecord_Exception;
 
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.WarningRecord",
@@ -166,14 +163,6 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.InformationRecord",
                 ViewsOf_System_Management_Automation_InformationRecord());
-
-            yield return new ExtendedTypeDefinition(
-                "Microsoft.PowerShell.Commands.ByteCollection",
-                ViewsOf_Microsoft_PowerShell_Commands_ByteCollection(sharedControls));
-
-            yield return new ExtendedTypeDefinition(
-                "System.Exception",
-                ViewsOf_System_Exception());
 
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.CommandParameterSetInfo",
@@ -254,6 +243,22 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.MarkdownRender.PSMarkdownOptionInfo",
                 ViewsOf_Microsoft_PowerShell_MarkdownRender_MarkdownOptionInfo());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingMtuStatus());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TraceStatus());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.ByteCollection",
+                ViewsOf_Microsoft_PowerShell_Commands_ByteCollection());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -376,7 +381,17 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("MatchInfo",
                 CustomControl.Create()
                     .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"$_.ToString(((get-location).path))")
+                        .AddScriptBlockExpressionBinding(@"$_.ToEmphasizedString(((get-location).path))")
+                    .EndEntry()
+                .EndControl());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Deserialized_Microsoft_PowerShell_Commands_MatchInfo()
+        {
+            yield return new FormatViewDefinition("MatchInfo",
+                CustomControl.Create()
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(@"$_.Line")
                     .EndEntry()
                 .EndControl());
         }
@@ -736,13 +751,212 @@ namespace System.Management.Automation.Runspaces
                 .EndControl());
         }
 
+        // This generates a custom view for ErrorRecords and Exceptions making
+        // specific nested types defined in $expandTypes visible.  It also handles
+        // IEnumerable types.  Nested types are indented by 4 spaces.
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_GetError()
+        {
+            yield return new FormatViewDefinition("GetErrorInstance",
+                CustomControl.Create()
+                    .GroupByProperty("PSErrorIndex", label: "ErrorIndex")
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(@"
+                            Set-StrictMode -Off
+
+                            $maxDepth = 10
+                            $ellipsis = ""`u{2026}""
+                            $resetColor = ''
+                            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
+                                    [System.Management.Automation.VTUtility+VT]::Reset
+                                )
+                            }
+
+                            function Get-VT100Color([ConsoleColor] $color) {
+                                if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                    return ''
+                                }
+
+                                return [System.Management.Automation.VTUtility]::GetEscapeSequence($color)
+                            }
+
+                            function Show-ErrorRecord($obj, [int]$indent = 0, [int]$depth = 1) {
+                                $newline = [Environment]::Newline
+                                $output = [System.Text.StringBuilder]::new()
+                                $prefix = ' ' * $indent
+                                $accentColor = ''
+
+                                if ($null -ne $Host.PrivateData) {
+                                    $accentColor = Get-VT100Color ($Host.PrivateData.FormatAccentColor ?? $Host.PrivateData.ErrorForegroundColor)
+                                }
+
+                                $expandTypes = @(
+                                    'Microsoft.Rest.HttpRequestMessageWrapper'
+                                    'Microsoft.Rest.HttpResponseMessageWrapper'
+                                    'System.Management.Automation.InvocationInfo'
+                                )
+
+                                # if object is an Exception, add an ExceptionType property
+                                if ($obj -is [Exception]) {
+                                    $obj | Add-Member -NotePropertyName Type -NotePropertyValue $obj.GetType().FullName -ErrorAction Ignore
+                                }
+
+                                # first find the longest property so we can indent properly
+                                $propLength = 0
+                                foreach ($prop in $obj.PSObject.Properties) {
+                                    if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Name.Length -gt $propLength) {
+                                        $propLength = $prop.Name.Length
+                                    }
+                                }
+
+                                $addedProperty = $false
+                                foreach ($prop in $obj.PSObject.Properties) {
+
+                                    # don't show empty properties or our added property for $error[index]
+                                    if ($prop.Value -ne $null -and $prop.Value -ne [string]::Empty -and $prop.Value.count -gt 0 -and $prop.Name -ne 'PSErrorIndex') {
+                                        $addedProperty = $true
+                                        $null = $output.Append($prefix)
+                                        $null = $output.Append($accentColor)
+                                        $null = $output.Append($prop.Name)
+                                        $propNameIndent = ' ' * ($propLength - $prop.Name.Length)
+                                        $null = $output.Append($propNameIndent)
+                                        $null = $output.Append(' : ')
+                                        $null = $output.Append($resetColor)
+
+                                        $newIndent = $indent + 4
+
+                                        # only show nested objects that are Exceptions, ErrorRecords, or types defined in $expandTypes and types not in $ignoreTypes
+                                        if ($prop.Value -is [Exception] -or $prop.Value -is [System.Management.Automation.ErrorRecord] -or
+                                            $expandTypes -contains $prop.TypeNameOfValue -or ($prop.TypeNames -ne $null -and $expandTypes -contains $prop.TypeNames[0])) {
+
+                                            if ($depth -ge $maxDepth) {
+                                                $null = $output.Append($ellipsis)
+                                            }
+                                            else {
+                                                $null = $output.Append($newline)
+                                                $null = $output.Append((Show-ErrorRecord $prop.Value $newIndent ($depth + 1)))
+                                            }
+                                        }
+                                        # `TargetSite` has many members that are not useful visually, so we have a reduced view of the relevant members
+                                        elseif ($prop.Name -eq 'TargetSite' -and $prop.Value.GetType().Name -eq 'RuntimeMethodInfo') {
+                                            if ($depth -ge $maxDepth) {
+                                                $null = $output.Append($ellipsis)
+                                            }
+                                            else {
+                                                $targetSite = [PSCustomObject]@{
+                                                    Name = $prop.Value.Name
+                                                    DeclaringType = $prop.Value.DeclaringType
+                                                    MemberType = $prop.Value.MemberType
+                                                    Module = $prop.Value.Module
+                                                }
+
+                                                $null = $output.Append($newline)
+                                                $null = $output.Append((Show-ErrorRecord $targetSite $newIndent ($depth + 1)))
+                                            }
+                                        }
+                                        # `StackTrace` is handled specifically because the lines are typically long but necessary so they are left justified without additional indentation
+                                        elseif ($prop.Name -eq 'StackTrace') {
+                                            # for a stacktrace which is usually quite wide with info, we left justify it
+                                            $null = $output.Append($newline)
+                                            $null = $output.Append($prop.Value)
+                                        }
+                                        # Dictionary and Hashtable we want to show as Key/Value pairs, we don't do the extra whitespace alignment here
+                                        elseif ($prop.Value.GetType().Name.StartsWith('Dictionary') -or $prop.Value.GetType().Name -eq 'Hashtable') {
+                                            $isFirstElement = $true
+                                            foreach ($key in $prop.Value.Keys) {
+                                                if ($isFirstElement) {
+                                                    $null = $output.Append($newline)
+                                                }
+
+                                                if ($key -eq 'Authorization') {
+                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} : ${resetColor}${ellipsis}${newline}"")
+                                                }
+                                                else {
+                                                    $null = $output.Append(""${prefix}    ${accentColor}${key} : ${resetColor}$($prop.Value[$key])${newline}"")
+                                                }
+
+                                                $isFirstElement = $false
+                                            }
+                                        }
+                                        # if the object implements IEnumerable and not a string, we try to show each object
+                                        # We ignore the `Data` property as it can contain lots of type information by the interpreter that isn't useful here
+                                        elseif (!($prop.Value -is [System.String]) -and $prop.Value.GetType().GetInterface('IEnumerable') -ne $null -and $prop.Name -ne 'Data') {
+
+                                            if ($depth -ge $maxDepth) {
+                                                $null = $output.Append($ellipsis)
+                                            }
+                                            else {
+                                                $isFirstElement = $true
+                                                foreach ($value in $prop.Value) {
+                                                    $null = $output.Append($newline)
+                                                    if (!$isFirstElement) {
+                                                        $null = $output.Append($newline)
+                                                    }
+                                                    $null = $output.Append((Show-ErrorRecord $value $newIndent ($depth + 1)))
+                                                    $isFirstElement = $false
+                                                }
+                                            }
+                                        }
+                                        # Anything else, we convert to string.
+                                        # ToString() can throw so we use LanguagePrimitives.TryConvertTo() to hide a convert error
+                                        else {
+                                            $value = $null
+                                            if ([System.Management.Automation.LanguagePrimitives]::TryConvertTo($prop.Value, [string], [ref]$value) -and $value -ne $null)
+                                            {
+                                                $isFirstLine = $true
+                                                if ($value.Contains($newline)) {
+                                                    # the 3 is to account for ' : '
+                                                    $valueIndent = ' ' * ($propLength + 3)
+                                                    # need to trim any extra whitespace already in the text
+                                                    foreach ($line in $value.Split($newline)) {
+                                                        if (!$isFirstLine) {
+                                                            $null = $output.Append(""${newline}${prefix}${valueIndent}"")
+                                                        }
+                                                        $null = $output.Append($line.Trim())
+                                                        $isFirstLine = $false
+                                                    }
+                                                }
+                                                else {
+                                                    $null = $output.Append($value)
+                                                }
+                                            }
+                                        }
+
+                                        $null = $output.Append($newline)
+                                    }
+                                }
+
+                                # if we had added nested properties, we need to remove the last newline
+                                if ($addedProperty) {
+                                    $null = $output.Remove($output.Length - $newline.Length, $newline.Length)
+                                }
+
+                                $output.ToString()
+                            }
+
+                            # Add back original typename and remove PSExtendedError
+                            if ($_.PSObject.TypeNames.Contains('System.Management.Automation.ErrorRecord#PSExtendedError')) {
+                                $_.PSObject.TypeNames.Add('System.Management.Automation.ErrorRecord')
+                                $null = $_.PSObject.TypeNames.Remove('System.Management.Automation.ErrorRecord#PSExtendedError')
+                            }
+                            elseif ($_.PSObject.TypeNames.Contains('System.Exception#PSExtendedError')) {
+                                $_.PSObject.TypeNames.Add('System.Exception')
+                                $null = $_.PSObject.TypeNames.Remove('System.Exception#PSExtendedError')
+                            }
+
+                            Show-ErrorRecord $_
+                        ")
+                    .EndEntry()
+                .EndControl());
+        }
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ErrorRecord()
         {
             yield return new FormatViewDefinition("ErrorInstance",
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
-                                    if (@('NativeCommandErrorMessage'.'NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView') -notcontains $ErrorView)
+                                    if (@('NativeCommandErrorMessage','NativeCommandError') -notcontains $_.FullyQualifiedErrorId -and @('CategoryView','ConciseView') -notcontains $ErrorView)
                                     {
                                         $myinv = $_.InvocationInfo
                                         if ($myinv -and $myinv.MyCommand)
@@ -793,39 +1007,24 @@ namespace System.Management.Automation.Runspaces
                                     }
                                 ")
                         .AddScriptBlockExpressionBinding(@"
+                                    Set-StrictMode -Off
+                                    $newline = [Environment]::Newline
 
                                     function Get-ConciseViewPositionMessage {
 
                                         $resetColor = ''
-                                        if ($Host.UI.SupportsVirtualTerminal) {
-                                            $resetColor = ""`e[0m""
+                                        if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                            $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
+                                                [System.Management.Automation.VTUtility+VT]::Reset
+                                            )
                                         }
 
-                                        function Get-VT100Color([string] $color) {
-                                            if (! $Host.UI.SupportsVirtualTerminal) {
+                                        function Get-VT100Color([ConsoleColor] $color) {
+                                            if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
                                                 return ''
                                             }
 
-                                            $colors = @{
-                                                'Black' = ""`e[2;30m""
-                                                'DarkRed' = ""`e[2;31m""
-                                                'DarkGreen' = ""`e[2;32m""
-                                                'DarkYellow' = ""`e[2;33m""
-                                                'DarkBlue' = ""`e[2;34m""
-                                                'DarkMagenta' = ""`e[2;35m""
-                                                'DarkCyan' = ""`e[2;36m""
-                                                'Gray' = ""`e[2;37m""
-                                                'DarkGray' = ""`e[1;30m""
-                                                'Red' = ""`e[1;31m""
-                                                'Green' = ""`e[1;32m""
-                                                'Yellow' = ""`e[1;33m""
-                                                'Blue' = ""`e[1;34m""
-                                                'Magenta' = ""`e[1;35m""
-                                                'Cyan' = ""`e[1;36m""
-                                                'White' = ""`e[1;37m""
-                                            }
-
-                                            return $colors[$color]
+                                            return [System.Management.Automation.VTUtility]::GetEscapeSequence($color)
                                         }
 
                                         # return length of string sans VT100 codes
@@ -850,25 +1049,14 @@ namespace System.Management.Automation.Runspaces
                                             }
 
                                             return ($string.Substring(0,$length) -split '\s',-2)[0]
-
-                                            #if (-not $string.Contains(' ')) {
-                                            #    return $string.Substring(0, $length)
-                                            #}
-
-                                            #$split = $string.Substring(0, $length).Split(' ')
-                                            #if ($split.Count -gt 1) {
-                                            #    return [string]::Join(' ', $split, 0, $split.Count - 1)
-                                            #}
-                                            #else {
-                                            #    return $split[0]
-                                            #}
                                         }
 
                                         $errorColor = ''
                                         $accentColor = ''
-                                        if ($Host.PrivateData) {
-                                            $errorColor = Get-VT100Color -color $Host.PrivateData.ErrorForegroundColor
-                                            $accentColor = Get-VT100Color -color $Host.PrivateData.ErrorAccentColor
+
+                                        if ($null -ne $Host.PrivateData) {
+                                            $errorColor = Get-VT100Color $Host.PrivateData.ErrorForegroundColor
+                                            $accentColor = Get-VT100Color ($Host.PrivateData.ErrorAccentColor ?? $errorColor)
                                         }
 
                                         $posmsg = ''
@@ -876,17 +1064,37 @@ namespace System.Management.Automation.Runspaces
                                         $offsetWhitespace = ''
                                         $message = ''
                                         $prefix = ''
-                                        $newline = [Environment]::Newline
 
-                                        if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
-                                            if ($myinv.ScriptName) {
-                                                $posmsg = ""error in${resetcolor} $($myinv.ScriptName)${newline}""
+                                        if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
+                                            $useTargetObject = $false
+
+                                            # Handle case where there is a TargetObject and we can show the error at the target rather than the script source
+                                            if ($_.TargetObject.Line -and $_.TargetObject.LineText) {
+                                                $posmsg = ""${resetcolor}$($_.TargetObject.File)${newline}""
+                                                $useTargetObject = $true
+                                            }
+                                            elseif ($myinv.ScriptName) {
+                                                if ($env:TERM_PROGRAM -eq 'vscode') {
+                                                    # If we are running in vscode, we know the file:line:col links are clickable so we use this format
+                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber):$($myinv.OffsetInLine)${newline}""
+                                                }
+                                                else {
+                                                    $posmsg = ""${resetcolor}$($myinv.ScriptName):$($myinv.ScriptLineNumber)${newline}""
+                                                }
                                             }
                                             else {
                                                 $posmsg = ""${newline}""
                                             }
 
-                                            $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            if ($useTargetObject) {
+                                                $scriptLineNumber = $_.TargetObject.Line
+                                                $scriptLineNumberLength = $_.TargetObject.Line.ToString().Length
+                                            }
+                                            else {
+                                                $scriptLineNumber = $myinv.ScriptLineNumber
+                                                $scriptLineNumberLength = $myinv.ScriptLineNumber.ToString().Length
+                                            }
+
                                             if ($scriptLineNumberLength -gt 4) {
                                                 $headerWhitespace = ' ' * ($scriptLineNumberLength - 4)
                                             }
@@ -898,50 +1106,91 @@ namespace System.Management.Automation.Runspaces
 
                                             $verticalBar = '|'
                                             $posmsg += ""${accentColor}${headerWhitespace}Line ${verticalBar}${newline}""
-                                            $line = $myinv.Line
-                                            $highlightLine = $myinv.PositionMessage.Split('+').Count - 1
-                                            $offsetLength = $myinv.PositionMessage.split('+')[$highlightLine].Trim().Length
-                                            $line = $line.Insert($myinv.OffsetInLine - 1 + $offsetLength, $resetColor)
-                                            $line = $line.Insert($myinv.OffsetInLine - 1, $errorColor)
-                                            $posmsg += ""${accentColor}${lineWhitespace}$($myinv.ScriptLineNumber) ${verticalBar} ${resetcolor}${line}`n""
-                                            $offsetWhitespace = ' ' * ($myinv.OffsetInLine - 1)
-                                            $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
-                                            $message = ""${prefix}${offsetWhitespace}^ ""
-                                        }
 
-                                        if (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                            # we use `n instead of $newline here because that's what is in the message
-                                            if ($_.CategoryInfo.Category -eq 'ParserError' -and $_.Exception.Message.Contains(""~`n"")) {
-                                                # need to parse out the relevant part of the pre-rendered positionmessage
-                                                $message += $_.Exception.Message.split(""~`n"")[1].split(""${newline}${newline}"")[0]
+                                            $highlightLine = ''
+                                            if ($useTargetObject) {
+                                                $line = $_.TargetObject.LineText.Trim()
+                                                $offsetLength = 0
+                                                $offsetInLine = 0
                                             }
                                             else {
-                                                $message += $_.Exception.Message
+                                                $positionMessage = $myinv.PositionMessage.Split($newline)
+                                                $line = $positionMessage[1].Substring(1) # skip the '+' at the start
+                                                $highlightLine = $positionMessage[$positionMessage.Count - 1].Substring(1)
+                                                $offsetLength = $highlightLine.Trim().Length
+                                                $offsetInLine = $highlightLine.IndexOf('~')
+                                            }
+
+                                            if (-not $line.EndsWith($newline)) {
+                                                $line += $newline
+                                            }
+
+                                            # don't color the whole line
+                                            if ($offsetLength -lt $line.Length - 1) {
+                                                $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
+                                            }
+
+                                            $posmsg += ""${accentColor}${lineWhitespace}${ScriptLineNumber} ${verticalBar} ${resetcolor}${line}""
+                                            $offsetWhitespace = ' ' * $offsetInLine
+                                            $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
+                                            if ($highlightLine -ne '') {
+                                                $posMsg += ""${prefix}${highlightLine}${newline}""
+                                            }
+                                            $message = ""${prefix}""
+                                        }
+
+                                        if (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
+                                            if ($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception.Message.Contains(""~$newline"")) {
+                                                # need to parse out the relevant part of the pre-rendered positionmessage
+                                                $message += $err.Exception.Message.split(""~$newline"")[1].split(""${newline}${newline}"")[0]
+                                            }
+                                            elseif ($err.Exception) {
+                                                $message += $err.Exception.Message
+                                            }
+                                            elseif ($err.Message) {
+                                                $message += $err.Message
+                                            }
+                                            else {
+                                                $message += $err.ToString()
                                             }
                                         }
                                         else {
-                                            $message += $_.ErrorDetails.Message
+                                            $message += $err.ErrorDetails.Message
                                         }
 
                                         # if rendering line information, break up the message if it's wider than the console
-                                        if ($myinv -and $myinv.ScriptName -or $_.CategoryInfo.Category -eq 'ParserError') {
+                                        if ($myinv -and $myinv.ScriptName -or $err.CategoryInfo.Category -eq 'ParserError') {
                                             $prefixLength = Get-RawStringLength -string $prefix
                                             $prefixVtLength = $prefix.Length - $prefixLength
 
                                             # replace newlines in message so it lines up correct
                                             $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
-                                            if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
+
+                                            $windowWidth = 120
+                                            if ($Host.UI.RawUI -ne $null) {
+                                                $windowWidth = $Host.UI.RawUI.WindowSize.Width
+                                            }
+
+                                            if ($windowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt $windowWidth) {
                                                 $sb = [Text.StringBuilder]::new()
-                                                $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
+                                                $substring = Get-TruncatedString -string $message -length ($windowWidth + $prefixVTLength)
                                                 $null = $sb.Append($substring)
                                                 $remainingMessage = $message.Substring($substring.Length).Trim()
                                                 $null = $sb.Append($newline)
-                                                while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
+                                                while (($remainingMessage.Length + $prefixLength) -gt $windowWidth) {
                                                     $subMessage = $prefix + $remainingMessage
-                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth + $prefixVtLength)
-                                                    $null = $sb.Append($substring)
-                                                    $null = $sb.Append($newline)
-                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    $substring = Get-TruncatedString -string $subMessage -length ($windowWidth + $prefixVtLength)
+
+                                                    if ($substring.Length - $prefix.Length -gt 0)
+                                                    {
+                                                        $null = $sb.Append($substring)
+                                                        $null = $sb.Append($newline)
+                                                        $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    }
+                                                    else
+                                                    {
+                                                        break
+                                                    }
                                                 }
                                                 $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()
@@ -953,8 +1202,17 @@ namespace System.Management.Automation.Runspaces
                                         $posmsg += ""${errorColor}"" + $message
 
                                         $reason = 'Error'
-                                        if ($_.Exception -and $_.Exception.WasThrownFromThrowStatement) {
+                                        if ($err.Exception -and $err.Exception.WasThrownFromThrowStatement) {
                                             $reason = 'Exception'
+                                        }
+                                        # MyCommand can be the script block, so we don't want to show that so check if it's an actual command
+                                        elseif ($myinv.MyCommand -and (Get-Command -Name $myinv.MyCommand -ErrorAction Ignore))
+                                        {
+                                            $reason = $myinv.MyCommand
+                                        }
+                                        # If it's a scriptblock, better to show the command in the scriptblock that had the error
+                                        elseif ($_.CategoryInfo.Activity) {
+                                            $reason = $_.CategoryInfo.Activity
                                         }
                                         elseif ($myinv.MyCommand) {
                                             $reason = $myinv.MyCommand
@@ -962,11 +1220,11 @@ namespace System.Management.Automation.Runspaces
                                         elseif ($myinv.InvocationName) {
                                             $reason = $myinv.InvocationName
                                         }
-                                        elseif ($_.CategoryInfo.Category) {
-                                            $reason = $_.CategoryInfo.Category
+                                        elseif ($err.CategoryInfo.Category) {
+                                            $reason = $err.CategoryInfo.Category
                                         }
-                                        elseif ($_CategoryInfo.Reason) {
-                                            $reason = $_.CategoryInfo.Reason
+                                        elseif ($err.CategoryInfo.Reason) {
+                                            $reason = $err.CategoryInfo.Reason
                                         }
 
                                         $errorMsg = 'Error'
@@ -974,16 +1232,23 @@ namespace System.Management.Automation.Runspaces
                                         ""${errorColor}${reason}: ${posmsg}${resetcolor}""
                                     }
 
-                                    if ($_.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $_.FullyQualifiedErrorId -eq 'NativeCommandError') {
-                                        $_.Exception.Message
+                                    $myinv = $_.InvocationInfo
+                                    $err = $_
+                                    if (!$myinv -and $_.ErrorRecord -and $_.ErrorRecord.InvocationInfo) {
+                                        $err = $_.ErrorRecord
+                                        $myinv = $err.InvocationInfo
+                                    }
+
+                                    if ($err.FullyQualifiedErrorId -eq 'NativeCommandErrorMessage' -or $err.FullyQualifiedErrorId -eq 'NativeCommandError') {
+                                        $err.Exception.Message
                                     }
                                     else
                                     {
-                                        $myinv = $_.InvocationInfo
+                                        $myinv = $err.InvocationInfo
                                         if ($ErrorView -eq 'ConciseView') {
                                             $posmsg = Get-ConciseViewPositionMessage
                                         }
-                                        elseif ($myinv -and ($myinv.MyCommand -or ($_.CategoryInfo.Category -ne 'ParserError'))) {
+                                        elseif ($myinv -and ($myinv.MyCommand -or ($err.CategoryInfo.Category -ne 'ParserError'))) {
                                             $posmsg = $myinv.PositionMessage
                                         } else {
                                             $posmsg = ''
@@ -991,11 +1256,11 @@ namespace System.Management.Automation.Runspaces
 
                                         if ($posmsg -ne '')
                                         {
-                                            $posmsg = ""`n"" + $posmsg
+                                            $posmsg = $newline + $posmsg
                                         }
 
-                                        if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
-                                            $posmsg = ' : ' +  $_.PSMessageDetails + $posmsg
+                                        if ($err.PSMessageDetails) {
+                                            $posmsg = ' : ' +  $err.PSMessageDetails + $posmsg
                                         }
 
                                         if ($ErrorView -eq 'ConciseView') {
@@ -1004,37 +1269,37 @@ namespace System.Management.Automation.Runspaces
 
                                         $indent = 4
 
-                                        $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
+                                        $errorCategoryMsg = $err.ErrorCategory_Message
 
                                         if ($null -ne $errorCategoryMsg)
                                         {
-                                            $indentString = '+ CategoryInfo          : ' + $_.ErrorCategory_Message
+                                            $indentString = '+ CategoryInfo          : ' + $err.ErrorCategory_Message
                                         }
                                         else
                                         {
-                                            $indentString = '+ CategoryInfo          : ' + $_.CategoryInfo
+                                            $indentString = '+ CategoryInfo          : ' + $err.CategoryInfo
                                         }
 
-                                        $posmsg += ""`n"" + $indentString
+                                        $posmsg += $newline + $indentString
 
-                                        $indentString = ""+ FullyQualifiedErrorId : "" + $_.FullyQualifiedErrorId
-                                        $posmsg += ""`n"" + $indentString
+                                        $indentString = ""+ FullyQualifiedErrorId : "" + $err.FullyQualifiedErrorId
+                                        $posmsg += $newline + $indentString
 
-                                        $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
+                                        $originInfo = $err.OriginInfo
 
                                         if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
                                         {
                                             $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
-                                            $posmsg += ""`n"" + $indentString
+                                            $posmsg += $newline + $indentString
                                         }
 
                                         if ($ErrorView -eq 'CategoryView') {
-                                            $_.CategoryInfo.GetMessage()
+                                            $err.CategoryInfo.GetMessage()
                                         }
-                                        elseif (! $_.ErrorDetails -or ! $_.ErrorDetails.Message) {
-                                            $_.Exception.Message + $posmsg + ""`n""
+                                        elseif (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
+                                            $err.Exception.Message + $posmsg + $newline
                                         } else {
-                                            $_.ErrorDetails.Message + $posmsg
+                                            $err.ErrorDetails.Message + $posmsg
                                         }
                                     }
                                 ")
@@ -1068,29 +1333,6 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create(outOfBand: true)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"$_.ToString()")
-                    .EndEntry()
-                .EndControl());
-        }
-
-        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_ByteCollection(CustomControl[] sharedControls)
-        {
-            yield return new FormatViewDefinition("ByteCollection",
-                CustomControl.Create()
-                    .GroupByScriptBlock("if($_.Path) { $_.Path } else { $_.GetHashCode() }", customControl: sharedControls[1])
-                    .StartEntry()
-                        .StartFrame()
-                            .AddScriptBlockExpressionBinding(@"$_.ToString()")
-                        .EndFrame()
-                    .EndEntry()
-                .EndControl());
-        }
-
-        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Exception()
-        {
-            yield return new FormatViewDefinition("Exception",
-                CustomControl.Create(outOfBand: true)
-                    .StartEntry()
-                        .AddScriptBlockExpressionBinding(@"$_.Message")
                     .EndEntry()
                 .EndControl());
         }
@@ -1624,6 +1866,127 @@ namespace System.Management.Automation.Runspaces
                         .AddItemScriptBlock(@"$_.AsEscapeSequence('EmphasisItalics')", label: "EmphasisItalics")
                     .EndEntry()
                 .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingStatus()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Ping", width: 4)
+                    .AddHeader(Alignment.Left, label: "Source", width: 16)
+                    .AddHeader(Alignment.Left, label: "Address", width: 25)
+                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
+                    .AddHeader(Alignment.Right, label: "BufferSize(B)", width: 10)
+                    .AddHeader(Alignment.Left, label: "Status", width: 16)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Ping")
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("DisplayAddress")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.BufferSize
+                            }
+                        ")
+                        .AddPropertyColumn("Status")
+                    .EndRowDefinition()
+                    .GroupByProperty("Destination")
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_PingMtuStatus()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, label: "Source", width: 16)
+                    .AddHeader(Alignment.Left, label: "Address", width: 25)
+                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
+                    .AddHeader(Alignment.Left, label: "Status", width: 16)
+                    .AddHeader(Alignment.Right, label: "MtuSize(B)", width: 7)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("DisplayAddress")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
+                        .AddPropertyColumn("Status")
+                        .AddPropertyColumn("MtuSize")
+                    .EndRowDefinition()
+                    .GroupByProperty("Destination")
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_TestConnectionCommand_TraceStatus()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Hop", width: 3)
+                    .AddHeader(Alignment.Left, label: "Hostname", width: 25)
+                    .AddHeader(Alignment.Right, label: "Ping", width: 4)
+                    .AddHeader(Alignment.Right, label: "Latency(ms)", width: 7)
+                    .AddHeader(Alignment.Left, label: "Status", width: 16)
+                    .AddHeader(Alignment.Left, label: "Source", width: 12)
+                    .AddHeader(Alignment.Left, label: "TargetAddress", width: 15)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Hop")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Hostname) {
+                                $_.HostName
+                            }
+                            else {
+                                '*'
+                            }
+                        ")
+                        .AddPropertyColumn("Ping")
+                        .AddScriptBlockColumn(@"
+                            if ($_.Status -eq 'TimedOut') {
+                                '*'
+                            }
+                            else {
+                                $_.Latency
+                            }
+                        ")
+                        .AddPropertyColumn("Status")
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("TargetAddress")
+                    .EndRowDefinition()
+                    .GroupByProperty("Target")
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_ByteCollection()
+        {
+            yield return new FormatViewDefinition(
+                "Microsoft.PowerShell.Commands.ByteCollection",
+                TableControl.Create()
+                    .AddHeader(Alignment.Right, label: "Offset", width: 16)
+                    .AddHeader(Alignment.Left, label: "Bytes\n00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F", width: 47)
+                    .AddHeader(Alignment.Left, label: "Ascii", width: 16)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("HexOffset")
+                        .AddPropertyColumn("HexBytes")
+                        .AddPropertyColumn("Ascii")
+                    .EndRowDefinition()
+                    .GroupByProperty("Label")
+                .EndTable());
         }
     }
 }

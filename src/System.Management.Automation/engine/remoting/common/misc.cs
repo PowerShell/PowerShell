@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Remoting;
@@ -17,7 +17,7 @@ namespace System.Management.Automation
 
             if (remoteSessionCapability == null)
             {
-                throw PSTraceSource.NewArgumentNullException("remoteSessionCapability");
+                throw PSTraceSource.NewArgumentNullException(nameof(remoteSessionCapability));
             }
 
             RemoteSessionCapability = remoteSessionCapability;
@@ -50,7 +50,7 @@ namespace System.Management.Automation
 
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             ReceivedData = receivedData;
@@ -314,7 +314,7 @@ namespace System.Management.Automation
 
             if (remoteSessionStateInfo == null)
             {
-                PSTraceSource.NewArgumentNullException("remoteSessionStateInfo");
+                PSTraceSource.NewArgumentNullException(nameof(remoteSessionStateInfo));
             }
 
             SessionStateInfo = remoteSessionStateInfo;

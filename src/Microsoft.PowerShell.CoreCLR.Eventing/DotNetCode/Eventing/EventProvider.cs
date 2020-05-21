@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.ComponentModel;
@@ -404,13 +404,6 @@ namespace System.Diagnostics.Eventing
                 *decimalptr = (decimal)data;
                 dataDescriptor->DataPointer = (ulong)decimalptr;
             }
-            else if (data is Boolean)
-            {
-                dataDescriptor->Size = (uint)sizeof(bool);
-                Boolean* booleanptr = (Boolean*)dataBuffer;
-                *booleanptr = (bool)data;
-                dataDescriptor->DataPointer = (ulong)booleanptr;
-            }
             else
             {
                 // To our eyes, everything else is a just a string
@@ -442,7 +435,7 @@ namespace System.Diagnostics.Eventing
 
             if (eventMessage == null)
             {
-                throw new ArgumentNullException("eventMessage");
+                throw new ArgumentNullException(nameof(eventMessage));
             }
 
             if (IsEnabled(eventLevel, eventKeywords))
@@ -626,7 +619,7 @@ namespace System.Diagnostics.Eventing
                             //
                             // too many arguments to log
                             //
-                            throw new ArgumentOutOfRangeException("eventPayload",
+                            throw new ArgumentOutOfRangeException(nameof(eventPayload),
                                 string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded, s_etwMaxNumberArguments));
                         }
 
@@ -663,7 +656,7 @@ namespace System.Diagnostics.Eventing
                                 }
                                 else
                                 {
-                                    throw new ArgumentOutOfRangeException("eventPayload",
+                                    throw new ArgumentOutOfRangeException(nameof(eventPayload),
                                         string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxStringsExceeded, s_etwAPIMaxStringCount));
                                 }
                             }

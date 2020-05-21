@@ -1,8 +1,8 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>Generates CorePsTypeCatalog.cs given powershell.inc</Description>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>TypeCatalogGen</AssemblyName>
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>

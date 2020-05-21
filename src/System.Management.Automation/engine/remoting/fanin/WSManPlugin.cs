@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
@@ -146,7 +146,7 @@ namespace System.Management.Automation.Remoting
         internal WSManPluginInstance()
         {
             _activeShellSessions = new Dictionary<IntPtr, WSManPluginShellSession>();
-            _syncObject = new System.Object();
+            _syncObject = new object();
         }
 
         /// <summary>

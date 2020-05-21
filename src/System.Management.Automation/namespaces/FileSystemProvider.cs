@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(FileSecurity), ProviderCmdlet = ProviderCmdlet.SetAcl)]
     [OutputType(typeof(string), typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.ResolvePath)]
     [OutputType(typeof(PathInfo), ProviderCmdlet = ProviderCmdlet.PushLocation)]
-    [OutputType(typeof(Byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
+    [OutputType(typeof(byte), typeof(string), ProviderCmdlet = ProviderCmdlet.GetContent)]
     [OutputType(typeof(FileInfo), ProviderCmdlet = ProviderCmdlet.GetItem)]
     [OutputType(typeof(FileInfo), typeof(DirectoryInfo), ProviderCmdlet = ProviderCmdlet.GetChildItem)]
     [OutputType(typeof(FileSecurity), typeof(DirectorySecurity), ProviderCmdlet = ProviderCmdlet.GetAcl)]
@@ -146,7 +146,12 @@ namespace Microsoft.PowerShell.Commands
                     else if (string.IsNullOrEmpty(item))
                     {
                         // This handles the trailing slash case
-                        continue;
+                        if (!exactPath.EndsWith(StringLiterals.DefaultPathSeparator))
+                        {
+                            exactPath += StringLiterals.DefaultPathSeparator;
+                        }
+
+                        break;
                     }
                     else if (item.Contains('~'))
                     {
@@ -155,13 +160,26 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        exactPath = Directory.GetFileSystemEntries(exactPath, item).First();
+                        // Use GetFileSystemEntries to get the correct casing of this element
+                        try
+                        {
+                            var entries = Directory.GetFileSystemEntries(exactPath, item);
+                            if (entries.Length > 0)
+                            {
+                                exactPath = entries.First();
+                            }
+                            else
+                            {
+                                // If previous call didn't return anything, something failed so we just return the path we were given
+                                return path;
+                            }
+                        }
+                        catch
+                        {
+                            // If we can't enumerate, we stop and just return the original path
+                            return path;
+                        }
                     }
-                }
-
-                if (path.EndsWith(StringLiterals.DefaultPathSeparator))
-                {
-                    return exactPath + StringLiterals.DefaultPathSeparator;
                 }
 
                 return exactPath;
@@ -489,7 +507,7 @@ namespace Microsoft.PowerShell.Commands
             // verify parameters
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             if (string.IsNullOrEmpty(drive.Root))
@@ -580,6 +598,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private static bool _WNetApiAvailable = true;
+
         private void WinMapNetworkDrive(PSDriveInfo drive)
         {
             if (drive != null && !string.IsNullOrEmpty(drive.Root))
@@ -590,6 +610,7 @@ namespace Microsoft.PowerShell.Commands
                 const int RESOURCETYPE_ANY = 0x00000000;
                 const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
                 const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
+                const int ERROR_NO_NETWORK = 1222;
 
                 // By default the connection is not persisted.
                 int CONNECT_TYPE = CONNECT_NOPERSIST;
@@ -634,7 +655,19 @@ namespace Microsoft.PowerShell.Commands
                     resource.Type = RESOURCETYPE_ANY;
                     resource.Usage = RESOURCEUSAGE_CONNECTABLE;
 
-                    int code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
+                    int code = ERROR_NO_NETWORK;
+
+                    if (_WNetApiAvailable)
+                    {
+                        try
+                        {
+                            code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
+                        }
+                        catch (System.DllNotFoundException)
+                        {
+                            _WNetApiAvailable = false;
+                        }
+                    }
 
                     if (code != 0)
                     {
@@ -699,6 +732,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsNetworkMappedDrive(drive))
             {
                 const int CONNECT_UPDATE_PROFILE = 0x00000001;
+                const int ERROR_NO_NETWORK = 1222;
 
                 int flags = 0;
                 string driveName;
@@ -716,7 +750,19 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // You need to actually remove the drive.
-                int code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                int code = ERROR_NO_NETWORK;
+
+                if (_WNetApiAvailable)
+                {
+                    try
+                    {
+                        code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                    }
+                    catch (System.DllNotFoundException)
+                    {
+                        _WNetApiAvailable = false;
+                    }
+                }
 
                 if (code != 0)
                 {
@@ -769,6 +815,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string WinGetUNCForNetworkDrive(string driveName)
         {
+            const int ERROR_NO_NETWORK = 1222;
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
@@ -785,7 +832,16 @@ namespace Microsoft.PowerShell.Commands
                 driveName += ':';
 
                 // Call the windows API
-                int errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                int errorCode = ERROR_NO_NETWORK;
+
+                try
+                {
+                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                }
+                catch (System.DllNotFoundException)
+                {
+                    return null;
+                }
 
                 // error code 234 is returned whenever the required buffer size is greater
                 // than the specified buffer size.
@@ -1204,7 +1260,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(path))
             {
                 // The parameter was null, throw an exception
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             try
@@ -1390,7 +1446,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -1572,7 +1628,7 @@ namespace Microsoft.PowerShell.Commands
             // Verify parameters
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -2058,14 +2114,14 @@ namespace Microsoft.PowerShell.Commands
             // Check the parameters
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
 
             if (string.IsNullOrEmpty(newName))
             {
-                throw PSTraceSource.NewArgumentException("newName");
+                throw PSTraceSource.NewArgumentException(nameof(newName));
             }
 
             // Clean up "newname" to fix some common usability problems:
@@ -2085,7 +2141,7 @@ namespace Microsoft.PowerShell.Commands
             // If a path is specified for the newName then we flag that as an error.
             if (string.Compare(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase) != 0)
             {
-                throw PSTraceSource.NewArgumentException("newName", FileSystemProviderStrings.RenameError);
+                throw PSTraceSource.NewArgumentException(nameof(newName), FileSystemProviderStrings.RenameError);
             }
 
             // Verify that the target doesn't represent a device name
@@ -2199,7 +2255,7 @@ namespace Microsoft.PowerShell.Commands
             // Verify parameters
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(type))
@@ -2295,7 +2351,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (string.IsNullOrEmpty(strTargetPath))
                     {
-                        throw PSTraceSource.NewArgumentNullException("value");
+                        throw PSTraceSource.NewArgumentNullException(nameof(value));
                     }
 
                     bool exists = false;
@@ -2487,7 +2543,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!exists)
                     {
-                        WriteError(new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.ItemNotFound), "ItemNotFound", ErrorCategory.ObjectNotFound, value));
+                        string message = StringUtil.Format(FileSystemProviderStrings.ItemNotFound, strTargetPath);
+                        WriteError(new ErrorRecord(new ItemNotFoundException(message), "ItemNotFound", ErrorCategory.ObjectNotFound, strTargetPath));
                         return;
                     }
 
@@ -2606,7 +2663,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw PSTraceSource.NewArgumentException("type", FileSystemProviderStrings.UnknownType);
+                throw PSTraceSource.NewArgumentException(nameof(type), FileSystemProviderStrings.UnknownType);
             }
         }
 
@@ -2765,7 +2822,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             try
@@ -2855,7 +2912,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             try
@@ -3031,13 +3088,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
+                    // TODO:
+                    // Different symlinks seem to vary by behavior.
+                    // In particular, OneDrive symlinks won't remove without recurse,
+                    // but the .NET API here does not allow us to distinguish them.
+                    // We may need to revisit using p/Invokes here to get the right behavior
                     directory.Delete();
                 }
                 catch (Exception e)
                 {
-                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
+                    var exception = new IOException(error, e);
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
                 }
 
                 return;
@@ -3323,7 +3385,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             bool result = false;
@@ -3424,7 +3486,7 @@ namespace Microsoft.PowerShell.Commands
             // verify parameters
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -3526,12 +3588,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(destinationPath))
             {
-                throw PSTraceSource.NewArgumentException("destinationPath");
+                throw PSTraceSource.NewArgumentException(nameof(destinationPath));
             }
 
             path = NormalizePath(path);
@@ -3953,6 +4015,10 @@ namespace Microsoft.PowerShell.Commands
                             WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                         }
                     }
+                    catch (IOException ioException)
+                    {
+                        WriteError(new ErrorRecord(ioException, "CopyFileInfoItemIOError", ErrorCategory.WriteError, file));
+                    }
                 }
             }
         }
@@ -4301,14 +4367,14 @@ namespace Microsoft.PowerShell.Commands
                     ps.AddParameter("copyFromNumBytes", fragmentSize);
                     if (force)
                     {
-                        ps.AddParameter("force", true);
+                        ps.AddParameter(nameof(force), true);
                     }
 
 #if !UNIX
                     if (isAlternateDataStream)
                     {
                         ps.AddParameter("isAlternateStream", true);
-                        ps.AddParameter("streamName", streamName);
+                        ps.AddParameter(nameof(streamName), streamName);
                     }
 #endif
 
@@ -4462,7 +4528,7 @@ namespace Microsoft.PowerShell.Commands
             string path = null;
 
             ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
-            ps.AddParameter("remotePath", remotePath);
+            ps.AddParameter(nameof(remotePath), remotePath);
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
             if (op != null)
@@ -4623,7 +4689,7 @@ namespace Microsoft.PowerShell.Commands
                         ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
                         ps.AddParameter("copyToFilePath", destinationPath);
                         ps.AddParameter("b64Fragment", b64Fragment);
-                        ps.AddParameter("streamName", streamName);
+                        ps.AddParameter(nameof(streamName), streamName);
                     }
 
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
@@ -4777,7 +4843,7 @@ namespace Microsoft.PowerShell.Commands
             ps.AddParameter("createDirectoryPath", destination);
             if (force)
             {
-                ps.AddParameter("force", true);
+                ps.AddParameter(nameof(force), true);
             }
 
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
@@ -4984,7 +5050,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path) || !IsValidPath(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (basePath == null)
@@ -5033,7 +5099,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // Add the base path back on so that it can be used for
                             // processing
-                            if (!result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (!result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = MakePath(basePath, result);
                             }
@@ -5097,7 +5163,7 @@ namespace Microsoft.PowerShell.Commands
                             result = files.First();
 #endif
 
-                            if (result.StartsWith(basePath, StringComparison.CurrentCulture))
+                            if (result.StartsWith(basePath, StringComparison.Ordinal))
                             {
                                 result = result.Substring(basePath.Length);
                             }
@@ -5171,7 +5237,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (path.Length == 0)
@@ -5595,7 +5661,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             // Normalize the path
@@ -5658,7 +5724,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -5692,12 +5758,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(destination))
             {
-                throw PSTraceSource.NewArgumentException("destination");
+                throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
             path = NormalizePath(path);
@@ -6056,7 +6122,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -6189,12 +6255,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (propertyToSet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyToSet");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyToSet));
             }
 
             path = NormalizePath(path);
@@ -6360,7 +6426,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -6368,14 +6434,14 @@ namespace Microsoft.PowerShell.Commands
             if (propertiesToClear == null ||
                 propertiesToClear.Count == 0)
             {
-                throw PSTraceSource.NewArgumentNullException("propertiesToClear");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertiesToClear));
             }
 
             // Only the attributes property can be cleared
             if (propertiesToClear.Count > 1 ||
                 Host.CurrentCulture.CompareInfo.Compare("Attributes", propertiesToClear[0], CompareOptions.IgnoreCase) != 0)
             {
-                throw PSTraceSource.NewArgumentException("propertiesToClear", FileSystemProviderStrings.CannotClearProperty);
+                throw PSTraceSource.NewArgumentException(nameof(propertiesToClear), FileSystemProviderStrings.CannotClearProperty);
             }
 
             try
@@ -6478,7 +6544,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -6652,7 +6718,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -6781,7 +6847,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -7074,6 +7140,8 @@ namespace Microsoft.PowerShell.Commands
             [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
             internal static extern int PathGetDriveNumber(string path);
 
+            private static bool _WNetApiAvailable = true;
+
             /// <summary>
             /// The API 'PathIsNetworkPath' is not available in CoreSystem.
             /// This implementation is based on the 'PathIsNetworkPath' API.
@@ -7092,6 +7160,11 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
+                if (!_WNetApiAvailable)
+                {
+                    return false;
+                }
+
                 // 0 - 25 corresponding to 'A' - 'Z'
                 int driveId = PathGetDriveNumber(path);
                 if (driveId >= 0 && driveId < 26)
@@ -7100,7 +7173,16 @@ namespace Microsoft.PowerShell.Commands
 
                     int bufferSize = 260; // MAX_PATH from EhStorIoctl.h
                     StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                    int errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                    int errorCode = -1;
+                    try
+                    {
+                        errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                    }
+                    catch (System.DllNotFoundException)
+                    {
+                        _WNetApiAvailable = false;
+                        return false;
+                    }
 
                     // From the 'IsNetDrive' API.
                     // 0: success; 1201: connection closed; 31: device error
@@ -8082,7 +8164,7 @@ namespace Microsoft.PowerShell.Commands
             var data = new WIN32_FIND_DATA();
             using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
-                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/en-us/windows/win32/fileio/reparse-point-tags
+                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
@@ -8373,12 +8455,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    throw new ArgumentNullException("target");
+                    throw new ArgumentNullException(nameof(target));
                 }
             }
             else
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
         }
 
@@ -8453,7 +8535,7 @@ namespace System.Management.Automation.Internal
         /// <returns>The list of streams (and their size) in the file.</returns>
         internal static List<AlternateStreamData> GetStreams(string path)
         {
-            if (path == null) throw new ArgumentNullException("path");
+            if (path == null) throw new ArgumentNullException(nameof(path));
 
             List<AlternateStreamData> alternateStreams = new List<AlternateStreamData>();
 
@@ -8566,8 +8648,8 @@ namespace System.Management.Automation.Internal
         /// <param name="streamName">The name of the alternate data stream to delete.</param>
         internal static void DeleteFileStream(string path, string streamName)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (streamName == null) throw new ArgumentNullException("streamName");
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (streamName == null) throw new ArgumentNullException(nameof(streamName));
 
             string adjustedStreamName = streamName.Trim();
             if (adjustedStreamName.IndexOf(':') != 0)

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Validate start of console host" -Tag CI {
@@ -44,7 +44,7 @@ Describe "Validate start of console host" -Tag CI {
     }
 
     It "PSReadLine should not be auto-loaded when screen reader status is active" -Skip:(-not $IsWindows) {
-        $output = pwsh -noprofile -noexit -c "Get-Module PSReadLine; exit"
+        $output = & "$PSHOME/pwsh" -noprofile -noexit -c "Get-Module PSReadLine; exit"
         $output.Length | Should -BeExactly 2
 
         ## The warning message about screen reader should be returned, but the PSReadLine module should not be loaded.

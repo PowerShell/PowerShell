@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements the get-process command.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Process", DefaultParameterSetName = NameParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113324", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096814", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ProcessModule), typeof(FileVersionInfo), typeof(Process))]
     public sealed class GetProcessCommand : ProcessBaseCommand
     {
@@ -839,7 +839,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Wait-process command.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Wait, "Process", DefaultParameterSetName = "Name", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135277")]
+    [Cmdlet(VerbsLifecycle.Wait, "Process", DefaultParameterSetName = "Name", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097146")]
     public sealed class WaitProcessCommand : ProcessBaseCommand
     {
         #region Parameters
@@ -1068,7 +1068,7 @@ namespace Microsoft.PowerShell.Commands
     /// </remarks>
     [Cmdlet(VerbsLifecycle.Stop, "Process",
         DefaultParameterSetName = "Id",
-        SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113412")]
+        SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097058")]
     [OutputType(typeof(Process))]
     public sealed class StopProcessCommand : ProcessBaseCommand
     {
@@ -1433,7 +1433,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Debug-process command.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Debug, "Process", DefaultParameterSetName = "Name", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135206")]
+    [Cmdlet(VerbsDiagnostic.Debug, "Process", DefaultParameterSetName = "Name", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096809")]
     public sealed class DebugProcessCommand : ProcessBaseCommand
     {
         #region Parameters
@@ -1604,7 +1604,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Start-process command.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Process", DefaultParameterSetName = "Default", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135261")]
+    [Cmdlet(VerbsLifecycle.Start, "Process", DefaultParameterSetName = "Default", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097141")]
     [OutputType(typeof(Process))]
     public sealed class StartProcessCommand : PSCmdlet, IDisposable
     {
@@ -2348,22 +2348,8 @@ namespace Microsoft.PowerShell.Commands
             return bytes;
         }
 
-        /// <summary>
-        /// This method will be used on all windows platforms, both full desktop and headless SKUs.
-        /// </summary>
-        private Process StartWithCreateProcess(ProcessStartInfo startinfo)
+        private void SetStartupInfo(ProcessStartInfo startinfo, ref ProcessNativeMethods.STARTUPINFO lpStartupInfo, ref int creationFlags)
         {
-            ProcessNativeMethods.STARTUPINFO lpStartupInfo = new ProcessNativeMethods.STARTUPINFO();
-            SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new SafeNativeMethods.PROCESS_INFORMATION();
-            int error = 0;
-            GCHandle pinnedEnvironmentBlock = new GCHandle();
-            string message = string.Empty;
-
-            // building the cmdline with the file name given and it's arguments
-            StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.Arguments);
-
-            try
-            {
                 // RedirectionStandardInput
                 if (_redirectstandardinput != null)
                 {
@@ -2375,6 +2361,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdInput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-10), false);
                 }
+
                 // RedirectionStandardOutput
                 if (_redirectstandardoutput != null)
                 {
@@ -2386,6 +2373,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdOutput = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-11), false);
                 }
+
                 // RedirectionStandardError
                 if (_redirectstandarderror != null)
                 {
@@ -2397,10 +2385,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
                 }
+
                 // STARTF_USESTDHANDLES
                 lpStartupInfo.dwFlags = 0x100;
-
-                int creationFlags = 0;
 
                 if (startinfo.CreateNoWindow)
                 {
@@ -2411,6 +2398,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // CREATE_NEW_CONSOLE
                     creationFlags |= 0x00000010;
+
                     // STARTF_USESHOWWINDOW
                     lpStartupInfo.dwFlags |= 0x00000001;
 
@@ -2438,15 +2426,41 @@ namespace Microsoft.PowerShell.Commands
 
                 // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
                 creationFlags |= 0x00000004;
+        }
 
-                IntPtr AddressOfEnvironmentBlock = IntPtr.Zero;
-                var environmentVars = startinfo.EnvironmentVariables;
-                if (environmentVars != null)
+        /// <summary>
+        /// This method will be used on all windows platforms, both full desktop and headless SKUs.
+        /// </summary>
+        private Process StartWithCreateProcess(ProcessStartInfo startinfo)
+        {
+            ProcessNativeMethods.STARTUPINFO lpStartupInfo = new ProcessNativeMethods.STARTUPINFO();
+            SafeNativeMethods.PROCESS_INFORMATION lpProcessInformation = new SafeNativeMethods.PROCESS_INFORMATION();
+            int error = 0;
+            GCHandle pinnedEnvironmentBlock = new GCHandle();
+            IntPtr AddressOfEnvironmentBlock = IntPtr.Zero;
+            string message = string.Empty;
+
+            // building the cmdline with the file name given and it's arguments
+            StringBuilder cmdLine = BuildCommandLine(startinfo.FileName, startinfo.Arguments);
+
+            try
+            {
+                int creationFlags = 0;
+
+                SetStartupInfo(startinfo, ref lpStartupInfo, ref creationFlags);
+
+                // We follow the logic:
+                //   - Ignore `UseNewEnvironment` when we run a process as another user.
+                //          Setting initial environment variables makes sense only for current user.
+                //   - Set environment variables if they present in ProcessStartupInfo.
+                if (!UseNewEnvironment)
                 {
-                    if (this.UseNewEnvironment)
+                    var environmentVars = startinfo.EnvironmentVariables;
+                    if (environmentVars != null)
                     {
                         // All Windows Operating Systems that we support are Windows NT systems, so we use Unicode for environment.
                         creationFlags |= 0x400;
+
                         pinnedEnvironmentBlock = GCHandle.Alloc(ConvertEnvVarsToByteArray(environmentVars), GCHandleType.Pinned);
                         AddressOfEnvironmentBlock = pinnedEnvironmentBlock.AddrOfPinnedObject();
                     }
@@ -2456,6 +2470,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_credential != null)
                 {
+                    // Run process as another user.
                     ProcessNativeMethods.LogonFlags logonFlags = 0;
                     if (startinfo.LoadUserProfile)
                     {
@@ -2504,6 +2519,22 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
+                // Run process as current user.
+                if (UseNewEnvironment)
+                {
+                    // All Windows Operating Systems that we support are Windows NT systems, so we use Unicode for environment.
+                    creationFlags |= 0x400;
+
+                    IntPtr token = WindowsIdentity.GetCurrent().Token;
+                    if (!ProcessNativeMethods.CreateEnvironmentBlock(out AddressOfEnvironmentBlock, token, false))
+                    {
+                        Win32Exception win32ex = new Win32Exception(error);
+                        message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
+                        var errorRecord = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                        ThrowTerminatingError(errorRecord);
+                    }
+                }
+
                 ProcessNativeMethods.SECURITY_ATTRIBUTES lpProcessAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
                 ProcessNativeMethods.SECURITY_ATTRIBUTES lpThreadAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
                 flag = ProcessNativeMethods.CreateProcess(null, cmdLine, lpProcessAttributes, lpThreadAttributes, true, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, lpProcessInformation);
@@ -2530,6 +2561,10 @@ namespace Microsoft.PowerShell.Commands
                 if (pinnedEnvironmentBlock.IsAllocated)
                 {
                     pinnedEnvironmentBlock.Free();
+                }
+                else
+                {
+                    ProcessNativeMethods.DestroyEnvironmentBlock(AddressOfEnvironmentBlock);
                 }
 
                 lpStartupInfo.Dispose();
@@ -2597,7 +2632,7 @@ namespace Microsoft.PowerShell.Commands
         /// Checks to see if the JobObject is empty (has no assigned processes).
         /// If job is empty the auto reset event supplied as input would be set.
         /// </summary>
-        internal void CheckJobStatus(Object stateInfo)
+        internal void CheckJobStatus(object stateInfo)
         {
             ManualResetEvent emptyJobAutoEvent = (ManualResetEvent)stateInfo;
             int dwSize = 0;
@@ -2719,6 +2754,14 @@ namespace Microsoft.PowerShell.Commands
             DWORD dwFlagsAndAttributes,
             System.IntPtr hTemplateFile
             );
+
+        [DllImport("userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CreateEnvironmentBlock(out IntPtr lpEnvironment, IntPtr hToken, bool bInherit);
+
+        [DllImport("userenv.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool DestroyEnvironmentBlock(IntPtr lpEnvironment);
 
         [Flags]
         internal enum LogonFlags
@@ -2962,7 +3005,7 @@ namespace Microsoft.PowerShell.Commands
             base.GetObjectData(info, context);
 
             if (info == null)
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
 
             info.AddValue("ProcessName", _processName);
         }

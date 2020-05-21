@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -126,7 +126,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal static partial class DelegateHelpers
+    internal static class DelegateHelpers
     {
         #region Generated Maximum Delegate Arity
 
@@ -247,9 +247,9 @@ namespace System.Management.Automation.Interpreter
             switch (type.GetTypeCode())
             {
                 case TypeCode.Boolean: return ScriptingRuntimeHelpers.False;
-                case TypeCode.SByte: return default(SByte);
-                case TypeCode.Byte: return default(Byte);
-                case TypeCode.Char: return default(Char);
+                case TypeCode.SByte: return default(sbyte);
+                case TypeCode.Byte: return default(byte);
+                case TypeCode.Char: return default(char);
                 case TypeCode.Int16: return default(Int16);
                 case TypeCode.Int32: return ScriptingRuntimeHelpers.Int32ToObject(0);
                 case TypeCode.Int64: return default(Int64);
@@ -257,7 +257,7 @@ namespace System.Management.Automation.Interpreter
                 case TypeCode.UInt32: return default(UInt32);
                 case TypeCode.UInt64: return default(UInt64);
                 case TypeCode.Single: return default(Single);
-                case TypeCode.Double: return default(Double);
+                case TypeCode.Double: return default(double);
                 case TypeCode.DateTime: return default(DateTime);
                 case TypeCode.Decimal: return default(Decimal);
                 // TypeCode.Empty:  null;

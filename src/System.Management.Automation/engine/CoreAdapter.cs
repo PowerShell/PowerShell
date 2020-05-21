@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
@@ -1856,7 +1856,7 @@ namespace System.Management.Automation
             {
                 if (resultType == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("resultType");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
 
                 bool isArgumentByRef;
@@ -1911,7 +1911,7 @@ namespace System.Management.Automation
             {
                 if (resultType == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("resultType");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
 
                 PSObject mshObj = valueToConvert as PSObject;
@@ -1983,13 +1983,39 @@ namespace System.Management.Automation
 
         #endregion base
     }
+
+    /// <summary>
+    /// The abstract cache entry type.
+    /// All specific cache entry types should derive from it.
+    /// </summary>
+    internal abstract class CacheEntry
+    {
+        /// <summary>
+        /// Gets the boolean value to indicate if the member is hidden.
+        /// </summary>
+        /// <remarks>
+        /// Currently, we only check the 'HiddenAttribute' declared for properties and methods,
+        /// because it can be done for them through the 'hidden' keyword in PowerShell Class.
+        ///
+        /// We can't currently write a parameterized property in a PowerShell class so it's not too important
+        /// to check for the 'HiddenAttribute' for parameterized properties. But if someone added the attribute
+        /// to their C#, it'd be good to set this property correctly.
+        /// </remarks>
+        internal virtual bool IsHidden => false;
+    }
+
     /// <summary>
     /// Ordered and case insensitive hashtable.
     /// </summary>
     internal class CacheTable
     {
+        /// <summary>
+        /// An object collection is used to help make populating method cache table more efficient
+        /// <see cref="DotNetAdapter.PopulateMethodReflectionTable(Type, CacheTable, BindingFlags)"/>.
+        /// </summary>
         internal Collection<object> memberCollection;
         private Dictionary<string, int> _indexes;
+
         internal CacheTable()
         {
             memberCollection = new Collection<object>();
@@ -2012,17 +2038,30 @@ namespace System.Management.Automation
                     return null;
                 }
 
-                return this.memberCollection[indexObj];
+                return memberCollection[indexObj];
             }
         }
 
+        /// <summary>
+        /// Get the first non-hidden member that satisfies the predicate.
+        /// </summary>
+        /// <remarks>
+        /// Hidden members are not returned for any fuzzy searches (searching by 'match' or enumerating a collection).
+        /// A hidden member is returned only if the member name is explicitly looked for.
+        /// </remarks>
         internal object GetFirstOrDefault(MemberNamePredicate predicate)
         {
             foreach (var entry in _indexes)
             {
                 if (predicate(entry.Key))
                 {
-                    return this.memberCollection[entry.Value];
+                    object member = memberCollection[entry.Value];
+                    if (member is CacheEntry cacheEntry && cacheEntry.IsHidden)
+                    {
+                        continue;
+                    }
+
+                    return member;
                 }
             }
 
@@ -2565,9 +2604,9 @@ namespace System.Management.Automation
         private static readonly Dictionary<Type, Dictionary<string, EventCacheEntry>> s_staticEventCacheTable
             = new Dictionary<Type, Dictionary<string, EventCacheEntry>>();
 
-        internal class MethodCacheEntry
+        internal class MethodCacheEntry : CacheEntry
         {
-            internal MethodInformation[] methodInformationStructures;
+            internal readonly MethodInformation[] methodInformationStructures;
             /// <summary>
             /// Cache delegate to the ctor of PSMethod&lt;&gt; with a template parameter derived from the methodInformationStructures.
             /// </summary>
@@ -2585,9 +2624,33 @@ namespace System.Management.Automation
                     return methodInformationStructures[i];
                 }
             }
+
+            private bool? _isHidden;
+            internal override bool IsHidden
+            {
+                get
+                {
+                    if (_isHidden == null)
+                    {
+                        bool hasHiddenAttribute = false;
+                        foreach (var method in methodInformationStructures)
+                        {
+                            if (method.method.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0)
+                            {
+                                hasHiddenAttribute = true;
+                                break;
+                            }
+                        }
+
+                        _isHidden = hasHiddenAttribute;
+                    }
+
+                    return _isHidden.Value;
+                }
+            }
         }
 
-        internal class EventCacheEntry
+        internal class EventCacheEntry : CacheEntry
         {
             internal EventInfo[] events;
 
@@ -2597,7 +2660,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal class ParameterizedPropertyCacheEntry
+        internal class ParameterizedPropertyCacheEntry : CacheEntry
         {
             internal MethodInformation[] getterInformation;
             internal MethodInformation[] setterInformation;
@@ -2676,7 +2739,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal class PropertyCacheEntry
+        internal class PropertyCacheEntry : CacheEntry
         {
             internal delegate object GetterDelegate(object instance);
             internal delegate void SetterDelegate(object instance, object setValue);
@@ -2915,6 +2978,20 @@ namespace System.Management.Automation
             internal bool writeOnly;
             internal bool isStatic;
             internal Type propertyType;
+
+            private bool? _isHidden;
+            internal override bool IsHidden
+            {
+                get
+                {
+                    if (_isHidden == null)
+                    {
+                        _isHidden = member.GetCustomAttributes(typeof(HiddenAttribute), inherit: false).Length != 0;
+                    }
+
+                    return _isHidden.Value;
+                }
+            }
 
             private AttributeCollection _attributes;
             internal AttributeCollection Attributes
@@ -3578,8 +3655,7 @@ namespace System.Management.Automation
                 case null:
                     return null;
                 case PropertyCacheEntry cacheEntry when lookingForProperties:
-                    var isHidden = cacheEntry.member.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
-                    return new PSProperty(cacheEntry.member.Name, this, obj, cacheEntry) { IsHidden = isHidden } as T;
+                    return new PSProperty(cacheEntry.member.Name, this, obj, cacheEntry) { IsHidden = cacheEntry.IsHidden } as T;
                 case ParameterizedPropertyCacheEntry paramCacheEntry when lookingForParameterizedProperties:
 
                     // TODO: check for HiddenAttribute
@@ -3612,17 +3688,8 @@ namespace System.Management.Automation
 
             var isCtor = methods[0].method is ConstructorInfo;
             bool isSpecial = !isCtor && methods[0].method.IsSpecialName;
-            bool isHidden = false;
-            foreach (var method in methods.methodInformationStructures)
-            {
-                if (method.method.GetCustomAttributes(typeof(HiddenAttribute), false).Any())
-                {
-                    isHidden = true;
-                    break;
-                }
-            }
 
-            return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, isHidden) as T;
+            return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, methods.IsHidden) as T;
         }
 
         internal T GetDotNetProperty<T>(object obj, string propertyName) where T : PSMemberInfo
@@ -3712,10 +3779,13 @@ namespace System.Management.Automation
                     {
                         if (!ignoreDuplicates || (members[propertyEntry.member.Name] == null))
                         {
-                            var isHidden = propertyEntry.member.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
-                            members.Add(new PSProperty(propertyEntry.member.Name, this,
-                                obj, propertyEntry)
-                            { IsHidden = isHidden } as T);
+                            members.Add(
+                                new PSProperty(
+                                    name: propertyEntry.member.Name,
+                                    adapter: this,
+                                    baseObject: obj,
+                                    adapterData: propertyEntry)
+                                { IsHidden = propertyEntry.IsHidden } as T);
                         }
                     }
                 }
@@ -3754,17 +3824,7 @@ namespace System.Management.Automation
                 if (!ignoreDuplicates || (members[name] == null))
                 {
                     bool isSpecial = !isCtor && method[0].method.IsSpecialName;
-                    bool isHidden = false;
-                    foreach (var m in method.methodInformationStructures)
-                    {
-                        if (m.method.GetCustomAttributes(typeof(HiddenAttribute), false).Any())
-                        {
-                            isHidden = true;
-                            break;
-                        }
-                    }
-
-                    members.Add(PSMethod.Create(name, this, obj, method, isSpecial, isHidden) as T);
+                    members.Add(PSMethod.Create(name, this, obj, method, isSpecial, method.IsHidden) as T);
                 }
             }
         }

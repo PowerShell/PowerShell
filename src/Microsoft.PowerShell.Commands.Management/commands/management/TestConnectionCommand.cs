@@ -1,8 +1,12 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
+
+#nullable enable
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Net;
@@ -17,31 +21,63 @@ namespace Microsoft.PowerShell.Commands
     /// The implementation of the "Test-Connection" cmdlet.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "Connection", DefaultParameterSetName = DefaultPingParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135266")]
-    [OutputType(typeof(PingReport), ParameterSetName = new string[] { DefaultPingParameterSet })]
-    [OutputType(typeof(PingReply), ParameterSetName = new string[] { RepeatPingParameterSet, MtuSizeDetectParameterSet })]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097144")]
+    [OutputType(typeof(PingStatus), ParameterSetName = new string[] { DefaultPingParameterSet })]
+    [OutputType(typeof(PingStatus), ParameterSetName = new string[] { RepeatPingParameterSet, MtuSizeDetectParameterSet })]
     [OutputType(typeof(bool), ParameterSetName = new string[] { DefaultPingParameterSet, RepeatPingParameterSet, TcpPortParameterSet })]
+    [OutputType(typeof(PingMtuStatus), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
     [OutputType(typeof(int), ParameterSetName = new string[] { MtuSizeDetectParameterSet })]
-    [OutputType(typeof(TraceRouteReply), ParameterSetName = new string[] { TraceRouteParameterSet })]
+    [OutputType(typeof(TraceStatus), ParameterSetName = new string[] { TraceRouteParameterSet })]
     public class TestConnectionCommand : PSCmdlet, IDisposable
     {
+        #region Parameter Set Names
         private const string DefaultPingParameterSet = "DefaultPing";
         private const string RepeatPingParameterSet = "RepeatPing";
         private const string TraceRouteParameterSet = "TraceRoute";
         private const string TcpPortParameterSet = "TcpPort";
         private const string MtuSizeDetectParameterSet = "MtuSizeDetect";
 
+        #endregion
+
+        #region Cmdlet Defaults
+
+        // Count of pings sent to each trace route hop. Default mimics Windows' defaults.
+        // If this value changes, we need to update 'ConsoleTraceRouteReply' resource string.
+        private const int DefaultTraceRoutePingCount = 3;
+
+        // Default size for the send buffer.
+        private const int DefaultSendBufferSize = 32;
+
+        private const int DefaultMaxHops = 128;
+
+        private const string TestConnectionExceptionId = "TestConnectionException";
+
+        #endregion
+
+        #region Private Fields
+
+        private static byte[]? s_DefaultSendBuffer;
+
+        private readonly CancellationTokenSource _dnsLookupCancel = new CancellationTokenSource();
+
+        private bool _disposed;
+
+        private Ping? _sender;
+
+        #endregion
+
         #region Parameters
 
         /// <summary>
-        /// Do ping test.
+        /// Gets or sets whether to do ping test.
+        /// Default is true.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
         public SwitchParameter Ping { get; set; } = true;
 
         /// <summary>
-        /// Force using IPv4 protocol.
+        /// Gets or sets whether to force use of IPv4 protocol.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
@@ -51,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IPv4 { get; set; }
 
         /// <summary>
-        /// Force using IPv6 protocol.
+        /// Gets or sets whether to force use of IPv6 protocol.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
@@ -61,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter IPv6 { get; set; }
 
         /// <summary>
-        /// Do reverse DNS lookup to get names for IP addresses.
+        /// Gets or sets whether to do reverse DNS lookup to get names for IP addresses.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
@@ -71,8 +107,8 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter ResolveDestination { get; set; }
 
         /// <summary>
-        /// Source from which to do a test (ping, trace route, ...).
-        /// The default is Local Host.
+        /// Gets the source from which to run the selected test.
+        /// The default is localhost.
         /// Remoting is not yet implemented internally in the cmdlet.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
@@ -82,22 +118,20 @@ namespace Microsoft.PowerShell.Commands
         public string Source { get; } = Dns.GetHostName();
 
         /// <summary>
-        /// The number of times the Ping data packets can be forwarded by routers.
-        /// As gateways and routers transmit packets through a network,
-        /// they decrement the Time-to-Live (TTL) value found in the packet header.
+        /// Gets or sets the number of times the Ping data packets can be forwarded by routers.
+        /// As gateways and routers transmit packets through a network, they decrement the Time-to-Live (TTL)
+        /// value found in the packet header.
         /// The default (from Windows) is 128 hops.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
         [Parameter(ParameterSetName = TraceRouteParameterSet)]
-        [ValidateRange(0, sMaxHops)]
+        [ValidateRange(1, DefaultMaxHops)]
         [Alias("Ttl", "TimeToLive", "Hops")]
-        public int MaxHops { get; set; } = sMaxHops;
-
-        private const int sMaxHops = 128;
+        public int MaxHops { get; set; } = DefaultMaxHops;
 
         /// <summary>
-        /// Count of attempts.
+        /// Gets or sets the number of ping attempts.
         /// The default (from Windows) is 4 times.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
@@ -105,7 +139,7 @@ namespace Microsoft.PowerShell.Commands
         public int Count { get; set; } = 4;
 
         /// <summary>
-        /// Delay between attempts.
+        /// Gets or sets the delay between ping attempts.
         /// The default (from Windows) is 1 second.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
@@ -114,9 +148,9 @@ namespace Microsoft.PowerShell.Commands
         public int Delay { get; set; } = 1;
 
         /// <summary>
-        /// Buffer size to send.
-        /// The default (from Windows) is 32 bites.
-        /// Max value is 65500 (limit from Windows API).
+        /// Gets or sets the buffer size to send with the ping packet.
+        /// The default (from Windows) is 32 bytes.
+        /// Max value is 65500 (limitation imposed by Windows API).
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
         [Parameter(ParameterSetName = RepeatPingParameterSet)]
@@ -125,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         public int BufferSize { get; set; } = DefaultSendBufferSize;
 
         /// <summary>
-        /// Don't fragment ICMP packages.
+        /// Gets or sets whether to prevent fragmentation of the ICMP packets.
         /// Currently CoreFX not supports this on Unix.
         /// </summary>
         [Parameter(ParameterSetName = DefaultPingParameterSet)]
@@ -133,31 +167,31 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter DontFragment { get; set; }
 
         /// <summary>
-        /// Continue ping until user press Ctrl-C
-        /// or Int.MaxValue threshold reached.
+        /// Gets or sets whether to continue pinging until user presses Ctrl-C (or Int.MaxValue threshold reached).
         /// </summary>
-        [Parameter(ParameterSetName = RepeatPingParameterSet)]
-        public SwitchParameter Continues { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = RepeatPingParameterSet)]
+        [Alias("Continuous")]
+        public SwitchParameter Repeat { get; set; }
 
         /// <summary>
-        /// Set short output kind ('bool' for Ping, 'int' for MTU size ...).
-        /// Default is to return typed result object(s).
+        /// Gets or sets whether to enable quiet output mode, reducing output to a single simple value only.
+        /// By default, PingStatus, PingMtuStatus, or TraceStatus objects are emitted.
+        /// With this switch, standard ping and -Traceroute returns only true / false, and -MtuSize returns an integer.
         /// </summary>
         [Parameter]
         public SwitchParameter Quiet;
 
         /// <summary>
-        /// Time-out value in seconds.
+        /// Gets or sets the timeout value for an individual ping in seconds.
         /// If a response is not received in this time, no response is assumed.
-        /// It is not the cmdlet timeout! It is a timeout for waiting one ping response.
-        /// The default (from Windows) is 5 second.
+        /// The default (from Windows) is 5 seconds.
         /// </summary>
         [Parameter]
         [ValidateRange(ValidateRangeKind.Positive)]
         public int TimeoutSeconds { get; set; } = 5;
 
         /// <summary>
-        /// Destination - computer name or IP address.
+        /// Gets or sets the destination hostname or IP address.
         /// </summary>
         [Parameter(
             Mandatory = true,
@@ -166,36 +200,37 @@ namespace Microsoft.PowerShell.Commands
             ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [Alias("ComputerName")]
-        public string[] TargetName { get; set; }
+        public string[]? TargetName { get; set; }
 
         /// <summary>
-        /// Detect MTU size.
+        /// Gets or sets whether to detect Maximum Transmission Unit size.
+        /// When selected, only a single ping result is returned, indicating the maximum buffer size
+        /// the route to the destination can support without fragmenting the ICMP packets.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = MtuSizeDetectParameterSet)]
-        public SwitchParameter MTUSizeDetect { get; set; }
+        [Alias("MtuSizeDetect")]
+        public SwitchParameter MtuSize { get; set; }
 
         /// <summary>
-        /// Do traceroute test.
+        /// Gets or sets whether to perform a traceroute test.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = TraceRouteParameterSet)]
         public SwitchParameter Traceroute { get; set; }
 
         /// <summary>
-        /// Do tcp connection test.
+        /// Gets or sets whether to perform a TCP connection test.
         /// </summary>
         [ValidateRange(0, 65535)]
         [Parameter(Mandatory = true, ParameterSetName = TcpPortParameterSet)]
-        public int TCPPort { get; set; }
+        public int TcpPort { get; set; }
 
         #endregion Parameters
 
         /// <summary>
-        /// Init the cmdlet.
+        /// BeginProcessing implementation for TestConnectionCommand.
         /// </summary>
         protected override void BeginProcessing()
         {
-            base.BeginProcessing();
-
             switch (ParameterSetName)
             {
                 case RepeatPingParameterSet:
@@ -209,6 +244,11 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            if (TargetName == null)
+            {
+                return;
+            }
+
             foreach (var targetName in TargetName)
             {
                 switch (ParameterSetName)
@@ -230,14 +270,27 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// On receiving the StopProcessing() request, the cmdlet will immediately cancel any in-progress ping request.
+        /// This allows a cancellation to occur during a ping request without having to wait for the timeout.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            _sender?.SendAsyncCancel();
+            _dnsLookupCancel.Cancel();
+        }
+
         #region ConnectionTest
 
         private void ProcessConnectionByTCPPort(string targetNameOrAddress)
         {
-            string resolvedTargetName;
-            IPAddress targetAddress;
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out _, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -245,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                Task connectionTask = client.ConnectAsync(targetAddress, TCPPort);
+                Task connectionTask = client.ConnectAsync(targetAddress, TcpPort);
                 string targetString = targetAddress.ToString();
 
                 for (var i = 1; i <= TimeoutSeconds; i++)
@@ -278,43 +331,104 @@ namespace Microsoft.PowerShell.Commands
 
             WriteObject(false);
         }
+
         #endregion ConnectionTest
 
         #region TracerouteTest
+
         private void ProcessTraceroute(string targetNameOrAddress)
         {
             byte[] buffer = GetSendBuffer(BufferSize);
 
-            string resolvedTargetName;
-            IPAddress targetAddress;
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (!Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
-            TraceRouteResult traceRouteResult = new TraceRouteResult(Source, targetAddress, resolvedTargetName);
-
             int currentHop = 1;
             PingOptions pingOptions = new PingOptions(currentHop, DontFragment.IsPresent);
-            PingReply reply = null;
+            PingReply reply;
+            PingReply discoveryReply;
             int timeout = TimeoutSeconds * 1000;
+            Stopwatch timer = new Stopwatch();
 
+            IPAddress hopAddress;
             do
             {
-                TraceRouteReply traceRouteReply = new TraceRouteReply();
+                pingOptions.Ttl = currentHop;
 
-                pingOptions.Ttl = traceRouteReply.Hop = currentHop;
-                currentHop++;
+#if !UNIX
+                // Get intermediate hop target. This needs to be done first, so that we can target it properly
+                // and get useful responses.
+                var discoveryAttempts = 0;
+                bool addressIsValid = false;
+                do
+                {
+                    discoveryReply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
+                    discoveryAttempts++;
+                    addressIsValid = !(discoveryReply.Address.Equals(IPAddress.Any)
+                        || discoveryReply.Address.Equals(IPAddress.IPv6Any));
+                }
+                while (discoveryAttempts <= DefaultTraceRoutePingCount && addressIsValid);
 
-                // In the specific case we don't use 'Count' property.
+                // If we aren't able to get a valid address, just re-target the final destination of the trace.
+                hopAddress = addressIsValid ? discoveryReply.Address : targetAddress;
+#else
+                // Unix Ping API returns nonsense "TimedOut" for ALL intermediate hops. No way around this
+                // issue for traceroutes as we rely on information (intermediate addresses, etc.) that is
+                // simply not returned to us by the API.
+                // The only supported states on Unix seem to be Success and TimedOut. Workaround is to
+                // keep targeting the final address; at the very least we will be able to tell the user
+                // the required number of hops to reach the destination.
+                hopAddress = targetAddress;
+                discoveryReply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
+#endif
+                var hopAddressString = discoveryReply.Address.ToString();
+
+                string routerName = hopAddressString;
+                try
+                {
+                    if (!TryResolveNameOrAddress(hopAddressString, out routerName, out _))
+                    {
+                        routerName = hopAddressString;
+                    }
+                }
+                catch
+                {
+                    // Swallow hostname resolve exceptions and continue with traceroute
+                }
+
+                // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
-                for (int i = 1; i <= DefaultTraceRoutePingCount; i++)
+                for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
                     try
                     {
-                        reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                        reply = SendCancellablePing(hopAddress, timeout, buffer, pingOptions, timer);
 
-                        traceRouteReply.PingReplies.Add(reply);
+                        if (!Quiet.IsPresent)
+                        {
+                            var status = new PingStatus(
+                                Source,
+                                routerName,
+                                reply,
+                                reply.Status == IPStatus.Success
+                                    ? reply.RoundtripTime
+                                    : timer.ElapsedMilliseconds,
+                                buffer.Length,
+                                pingNum: i);
+                            WriteObject(new TraceStatus(
+                                currentHop,
+                                status,
+                                Source,
+                                resolvedTargetName,
+                                targetAddress));
+                        }
                     }
                     catch (PingException ex)
                     {
@@ -332,98 +446,34 @@ namespace Microsoft.PowerShell.Commands
 
                         continue;
                     }
-                    catch
-                    {
-                        // Ignore host resolve exceptions.
-                    }
 
                     // We use short delay because it is impossible DoS with trace route.
-                    Thread.Sleep(200);
+                    Thread.Sleep(50);
+                    timer.Reset();
                 }
 
-                if (ResolveDestination && reply.Status == IPStatus.Success)
-                {
-                    traceRouteReply.ReplyRouterName = Dns.GetHostEntry(reply.Address).HostName;
-                }
-
-                traceRouteReply.ReplyRouterAddress = reply.Address;
-                traceRouteResult.Replies.Add(traceRouteReply);
-            } while (reply != null
-                && currentHop <= sMaxHops
-                && (reply.Status == IPStatus.TtlExpired || reply.Status == IPStatus.TimedOut));
+                currentHop++;
+            } while (currentHop <= MaxHops
+                && (discoveryReply.Status == IPStatus.TtlExpired
+                    || discoveryReply.Status == IPStatus.TimedOut));
 
             if (Quiet.IsPresent)
             {
-                WriteObject(currentHop <= sMaxHops);
+                WriteObject(currentHop <= MaxHops);
             }
-            else
+            else if (currentHop > MaxHops)
             {
-                WriteObject(traceRouteResult);
+                var message = StringUtil.Format(
+                    TestConnectionResources.MaxHopsExceeded,
+                    resolvedTargetName,
+                    MaxHops);
+                var pingException = new PingException(message);
+                WriteError(new ErrorRecord(
+                    pingException,
+                    TestConnectionExceptionId,
+                    ErrorCategory.ConnectionError,
+                    targetAddress));
             }
-        }
-
-        /// <summary>
-        /// The class contains an information about a trace route attempt.
-        /// </summary>
-        public class TraceRouteReply
-        {
-            internal TraceRouteReply()
-            {
-                PingReplies = new List<PingReply>(DefaultTraceRoutePingCount);
-            }
-
-            /// <summary>
-            /// Number of current hop (router).
-            /// </summary>
-            public int Hop;
-
-            /// <summary>
-            /// List of ping replies for current hop (router).
-            /// </summary>
-            public List<PingReply> PingReplies;
-
-            /// <summary>
-            /// Router IP address.
-            /// </summary>
-            public IPAddress ReplyRouterAddress;
-
-            /// <summary>
-            /// Resolved router name.
-            /// </summary>
-            public string ReplyRouterName;
-        }
-
-        /// <summary>
-        /// The class contains an information about the source, the destination and trace route results.
-        /// </summary>
-        public class TraceRouteResult
-        {
-            internal TraceRouteResult(string source, IPAddress destinationAddress, string destinationHost)
-            {
-                Source = source;
-                DestinationAddress = destinationAddress;
-                DestinationHost = destinationHost;
-                Replies = new List<TraceRouteReply>();
-            }
-
-            /// <summary>
-            /// Source from which to trace route.
-            /// </summary>
-            public string Source { get; }
-
-            /// <summary>
-            /// Destination to which to trace route.
-            /// </summary>
-            public IPAddress DestinationAddress { get; }
-
-            /// <summary>
-            /// Destination to which to trace route.
-            /// </summary>
-            public string DestinationHost { get; }
-
-            /// <summary>
-            /// </summary>
-            public List<TraceRouteReply> Replies { get; }
         }
 
         #endregion TracerouteTest
@@ -431,15 +481,18 @@ namespace Microsoft.PowerShell.Commands
         #region MTUSizeTest
         private void ProcessMTUSize(string targetNameOrAddress)
         {
-            PingReply reply, replyResult = null;
-            string resolvedTargetName;
-            IPAddress targetAddress;
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            PingReply? reply, replyResult = null;
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(-1);
+                }
+
                 return;
             }
 
-            // Cautious! Algorithm is sensitive to changing boundary values.
+            // Caution! Algorithm is sensitive to changing boundary values.
             int HighMTUSize = 10000;
             int CurrentMTUSize = 1473;
             int LowMTUSize = targetAddress.AddressFamily == AddressFamily.InterNetworkV6 ? 1280 : 68;
@@ -460,10 +513,9 @@ namespace Microsoft.PowerShell.Commands
                         CurrentMTUSize,
                         HighMTUSize));
 
-                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
 
-                    // Cautious! Algorithm is sensitive to changing boundary values.
-                    if (reply.Status == IPStatus.PacketTooBig)
+                    if (reply.Status == IPStatus.PacketTooBig || reply.Status == IPStatus.TimedOut)
                     {
                         HighMTUSize = CurrentMTUSize;
                         retry = 1;
@@ -476,7 +528,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // Target host don't reply - try again up to 'Count'.
+                        // If the host didn't reply, try again up to the 'Count' value.
                         if (retry >= Count)
                         {
                             string message = StringUtil.Format(
@@ -524,17 +576,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                var res = PSObject.AsPSObject(replyResult);
-
-                PSMemberInfo sourceProperty = new PSNoteProperty("Source", Source);
-                res.Members.Add(sourceProperty);
-                PSMemberInfo destinationProperty = new PSNoteProperty("Destination", targetNameOrAddress);
-                res.Members.Add(destinationProperty);
-                PSMemberInfo mtuSizeProperty = new PSNoteProperty("MTUSize", CurrentMTUSize);
-                res.Members.Add(mtuSizeProperty);
-                res.TypeNames.Insert(0, "PingReply#MTUSize");
-
-                WriteObject(res);
+                WriteObject(new PingMtuStatus(
+                    Source,
+                    resolvedTargetName,
+                    replyResult ?? throw new ArgumentNullException(nameof(replyResult)),
+                    CurrentMTUSize));
             }
         }
 
@@ -544,10 +590,13 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessPing(string targetNameOrAddress)
         {
-            string resolvedTargetName;
-            IPAddress targetAddress;
-            if (!InitProcessPing(targetNameOrAddress, out resolvedTargetName, out targetAddress))
+            if (!TryResolveNameOrAddress(targetNameOrAddress, out string resolvedTargetName, out IPAddress? targetAddress))
             {
+                if (Quiet.IsPresent)
+                {
+                    WriteObject(false);
+                }
+
                 return;
             }
 
@@ -556,15 +605,14 @@ namespace Microsoft.PowerShell.Commands
 
             PingReply reply;
             PingOptions pingOptions = new PingOptions(MaxHops, DontFragment.IsPresent);
-            PingReport pingReport = new PingReport(Source, resolvedTargetName);
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
-            for (int i = 1; i <= Count; i++)
+            for (uint i = 1; i <= Count; i++)
             {
                 try
                 {
-                    reply = _sender.Send(targetAddress, timeout, buffer, pingOptions);
+                    reply = SendCancellablePing(targetAddress, timeout, buffer, pingOptions);
                 }
                 catch (PingException ex)
                 {
@@ -581,21 +629,23 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                if (Continues.IsPresent)
-                {
-                    WriteObject(reply);
-                }
-                else if (Quiet.IsPresent)
+                if (Quiet.IsPresent)
                 {
                     // Return 'true' only if all pings have completed successfully.
                     quietResult &= reply.Status == IPStatus.Success;
                 }
                 else
                 {
-                    pingReport.Replies.Add(reply);
+                    WriteObject(new PingStatus(
+                        Source,
+                        resolvedTargetName,
+                        reply,
+                        reply.RoundtripTime,
+                        buffer.Length,
+                        pingNum: i));
                 }
 
-                // Delay between ping but not after last ping.
+                // Delay between pings, but not after last ping.
                 if (i < Count && Delay > 0)
                 {
                     Thread.Sleep(delay);
@@ -606,74 +656,29 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject(quietResult);
             }
-            else
-            {
-                WriteObject(pingReport);
-            }
-        }
-
-        /// <summary>
-        /// The class contains an information about the source, the destination and ping results.
-        /// </summary>
-        public class PingReport
-        {
-            internal PingReport(string source, string destination)
-            {
-                Source = source;
-                Destination = destination;
-                Replies = new List<PingReply>();
-            }
-
-            /// <summary>
-            /// Source from which to ping.
-            /// </summary>
-            public string Source { get; }
-
-            /// <summary>
-            /// Destination to which to ping.
-            /// </summary>
-            public string Destination { get; }
-
-            /// <summary>
-            /// Ping results for every ping attempt.
-            /// </summary>
-            public List<PingReply> Replies { get; }
         }
 
         #endregion PingTest
 
-        private bool InitProcessPing(string targetNameOrAddress, out string resolvedTargetName, out IPAddress targetAddress)
+        private bool TryResolveNameOrAddress(
+            string targetNameOrAddress,
+            out string resolvedTargetName,
+            [NotNullWhen(true)]
+            out IPAddress? targetAddress)
         {
             resolvedTargetName = targetNameOrAddress;
 
             IPHostEntry hostEntry;
             if (IPAddress.TryParse(targetNameOrAddress, out targetAddress))
             {
-                if (ResolveDestination)
-                {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
-                    resolvedTargetName = hostEntry.HostName;
-                }
-            }
-            else
-            {
-                try
-                {
-                    hostEntry = Dns.GetHostEntry(targetNameOrAddress);
-
-                    if (ResolveDestination)
-                    {
-                        resolvedTargetName = hostEntry.HostName;
-                        hostEntry = Dns.GetHostEntry(hostEntry.HostName);
-                    }
-                }
-                catch (Exception ex)
+                if ((IPv4 && targetAddress.AddressFamily != AddressFamily.InterNetwork)
+                    || (IPv6 && targetAddress.AddressFamily != AddressFamily.InterNetworkV6))
                 {
                     string message = StringUtil.Format(
                         TestConnectionResources.NoPingResult,
                         resolvedTargetName,
-                        TestConnectionResources.CannotResolveTargetName);
-                    Exception pingException = new PingException(message, ex);
+                        TestConnectionResources.TargetAddressAbsent);
+                    Exception pingException = new PingException(message, null);
                     ErrorRecord errorRecord = new ErrorRecord(
                         pingException,
                         TestConnectionExceptionId,
@@ -683,18 +688,55 @@ namespace Microsoft.PowerShell.Commands
                     return false;
                 }
 
+                if (ResolveDestination)
+                {
+                    hostEntry = GetCancellableHostEntry(targetNameOrAddress);
+                    resolvedTargetName = hostEntry.HostName;
+                }
+                else
+                {
+                    resolvedTargetName = targetAddress.ToString();
+                }
+            }
+            else
+            {
+                try
+                {
+                    hostEntry = GetCancellableHostEntry(targetNameOrAddress);
+
+                    if (ResolveDestination)
+                    {
+                        resolvedTargetName = hostEntry.HostName;
+                        hostEntry = GetCancellableHostEntry(hostEntry.HostName);
+                    }
+                }
+                catch (PipelineStoppedException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    if (!Quiet.IsPresent)
+                    {
+                        string message = StringUtil.Format(
+                            TestConnectionResources.NoPingResult,
+                            resolvedTargetName,
+                            TestConnectionResources.CannotResolveTargetName);
+                        Exception pingException = new PingException(message, ex);
+                        ErrorRecord errorRecord = new ErrorRecord(
+                            pingException,
+                            TestConnectionExceptionId,
+                            ErrorCategory.ResourceUnavailable,
+                            resolvedTargetName);
+                        WriteError(errorRecord);
+                    }
+
+                    return false;
+                }
+
                 if (IPv6 || IPv4)
                 {
-                    AddressFamily addressFamily = IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
-
-                    foreach (var address in hostEntry.AddressList)
-                    {
-                        if (address.AddressFamily == addressFamily)
-                        {
-                            targetAddress = address;
-                            break;
-                        }
-                    }
+                    targetAddress = GetHostAddress(hostEntry);
 
                     if (targetAddress == null)
                     {
@@ -721,8 +763,37 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
+        private IPHostEntry GetCancellableHostEntry(string targetNameOrAddress)
+        {
+            var task = Dns.GetHostEntryAsync(targetNameOrAddress);
+            var waitHandles = new[] { ((IAsyncResult)task).AsyncWaitHandle, _dnsLookupCancel.Token.WaitHandle };
+
+            // WaitAny() returns the index of the first signal it gets; 1 is our cancellation token.
+            if (WaitHandle.WaitAny(waitHandles) == 1)
+            {
+                throw new PipelineStoppedException();
+            }
+
+            return task.GetAwaiter().GetResult();
+        }
+
+        private IPAddress? GetHostAddress(IPHostEntry hostEntry)
+        {
+            AddressFamily addressFamily = IPv6 ? AddressFamily.InterNetworkV6 : AddressFamily.InterNetwork;
+
+            foreach (var address in hostEntry.AddressList)
+            {
+                if (address.AddressFamily == addressFamily)
+                {
+                    return address;
+                }
+            }
+
+            return null;
+        }
+
         // Users most often use the default buffer size so we cache the buffer.
-        // Creates and filles a send buffer. This follows the ping.exe and CoreFX model.
+        // Creates and fills a send buffer. This follows the ping.exe and CoreFX model.
         private byte[] GetSendBuffer(int bufferSize)
         {
             if (bufferSize == DefaultSendBufferSize && s_DefaultSendBuffer != null)
@@ -762,31 +833,259 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            if (!this._disposed)
+            if (!_disposed)
             {
                 if (disposing)
                 {
-                    _sender.Dispose();
+                    _sender?.Dispose();
                 }
 
                 _disposed = true;
             }
         }
 
-        // Count of pings sent per each trace route hop.
-        // Default = 3 (from Windows).
-        // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
-        private const int DefaultTraceRoutePingCount = 3;
+        // Uses the SendAsync() method to send pings, so that Ctrl+C can halt the request early if needed.
+        private PingReply SendCancellablePing(
+            IPAddress targetAddress,
+            int timeout,
+            byte[] buffer,
+            PingOptions pingOptions,
+            Stopwatch? timer = null)
+        {
+            try
+            {
+                _sender = new Ping();
 
-        /// Create the default send buffer once and cache it.
-        private const int DefaultSendBufferSize = 32;
-        private static byte[] s_DefaultSendBuffer = null;
+                timer?.Start();
+                // 'SendPingAsync' always uses the default synchronization context (threadpool).
+                // This is what we want to avoid the deadlock resulted by async work being scheduled back to the
+                // pipeline thread due to a change of the current synchronization context of the pipeline thread.
+                return _sender.SendPingAsync(targetAddress, timeout, buffer, pingOptions).GetAwaiter().GetResult();
+            }
+            catch (PingException ex) when (ex.InnerException is TaskCanceledException)
+            {
+                // The only cancellation we have implemented is on pipeline stops via StopProcessing().
+                throw new PipelineStoppedException();
+            }
+            finally
+            {
+                timer?.Stop();
+                _sender?.Dispose();
+                _sender = null;
+            }
+        }
 
-        private bool _disposed;
+        /// <summary>
+        /// The class contains information about the source, the destination and ping results.
+        /// </summary>
+        public class PingStatus
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PingStatus"/> class.
+            /// This constructor allows manually specifying the initial values for the cases where the PingReply
+            /// object may be missing some information, specifically in the instances where PingReply objects are
+            /// utilised to perform a traceroute.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
+            /// <param name="latency">The latency of the ping.</param>
+            /// <param name="bufferSize">The buffer size.</param>
+            /// <param name="pingNum">The sequence number in the sequence of pings to the hop point.</param>
+            internal PingStatus(
+                string source,
+                string destination,
+                PingReply reply,
+                long latency,
+                int bufferSize,
+                uint pingNum)
+                : this(source, destination, reply, pingNum)
+            {
+                _bufferSize = bufferSize;
+                _latency = latency;
+            }
 
-        private readonly Ping _sender = new Ping();
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PingStatus"/> class.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
+            /// <param name="pingNum">The sequence number of the ping in the sequence of pings to the target.</param>
+            internal PingStatus(string source, string destination, PingReply reply, uint pingNum)
+            {
+                Ping = pingNum;
+                Reply = reply;
+                Source = source;
+                Destination = destination;
+            }
 
-        private const string TestConnectionExceptionId = "TestConnectionException";
+            // These values can be set manually to skirt issues with the Ping API on Unix platforms
+            // so that we can return meaningful known data that is discarded by the API.
+            private readonly int _bufferSize = -1;
+
+            private readonly long _latency = -1;
+
+            /// <summary>
+            /// Gets the sequence number of this ping in the sequence of pings to the <see cref="Destination"/>
+            /// </summary>
+            public uint Ping { get; }
+
+            /// <summary>
+            /// Gets the source from which the ping was sent.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
+            /// Gets the destination which was pinged.
+            /// </summary>
+            public string Destination { get; }
+
+            /// <summary>
+            /// Gets the target address of the ping.
+            /// </summary>
+            public IPAddress? Address { get => Reply.Status == IPStatus.Success ? Reply.Address : null; }
+
+            /// <summary>
+            /// Gets the target address of the ping if one is available, or "*" if it is not.
+            /// </summary>
+            public string DisplayAddress { get => Address?.ToString() ?? "*"; }
+
+            /// <summary>
+            /// Gets the roundtrip time of the ping in milliseconds.
+            /// </summary>
+            public long Latency { get => _latency >= 0 ? _latency : Reply.RoundtripTime; }
+
+            /// <summary>
+            /// Gets the returned status of the ping.
+            /// </summary>
+            public IPStatus Status { get => Reply.Status; }
+
+            /// <summary>
+            /// Gets the size in bytes of the buffer data sent in the ping.
+            /// </summary>
+            public int BufferSize { get => _bufferSize >= 0 ? _bufferSize : Reply.Buffer.Length; }
+
+            /// <summary>
+            /// Gets the reply object from this ping.
+            /// </summary>
+            public PingReply Reply { get; }
+        }
+
+        /// <summary>
+        /// The class contains information about the source, the destination and ping results.
+        /// </summary>
+        public class PingMtuStatus : PingStatus
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="PingMtuStatus"/> class.
+            /// </summary>
+            /// <param name="source">The source machine name or IP of the ping.</param>
+            /// <param name="destination">The destination machine name of the ping.</param>
+            /// <param name="reply">The response from the ping attempt.</param>
+            /// <param name="bufferSize">The buffer size from the successful ping attempt.</param>
+            internal PingMtuStatus(string source, string destination, PingReply reply, int bufferSize)
+                : base(source, destination, reply, 1)
+            {
+                MtuSize = bufferSize;
+            }
+
+            /// <summary>
+            /// Gets the maximum transmission unit size on the network path between the source and destination.
+            /// </summary>
+            public int MtuSize { get; }
+        }
+
+        /// <summary>
+        /// The class contains an information about a trace route attempt.
+        /// </summary>
+        public class TraceStatus
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="TraceStatus"/> class.
+            /// </summary>
+            /// <param name="hop">The hop number of this trace hop.</param>
+            /// <param name="status">The PingStatus response from this trace hop.</param>
+            /// <param name="source">The source computer name or IP address of the traceroute.</param>
+            /// <param name="destination">The target destination of the traceroute.</param>
+            /// <param name="destinationAddress">The target IPAddress of the overall traceroute.</param>
+            internal TraceStatus(
+                int hop,
+                PingStatus status,
+                string source,
+                string destination,
+                IPAddress destinationAddress)
+            {
+                _status = status;
+                Hop = hop;
+                Source = source;
+                Target = destination;
+                TargetAddress = destinationAddress;
+
+                if (_status.Address == IPAddress.Any
+                    || _status.Address == IPAddress.IPv6Any)
+                {
+                    Hostname = null;
+                }
+                else
+                {
+                    Hostname = _status.Destination;
+                }
+            }
+
+            private readonly PingStatus _status;
+
+            /// <summary>
+            /// Gets the number of the current hop / router.
+            /// </summary>
+            public int Hop { get; }
+
+            /// <summary>
+            /// Gets the hostname of the current hop point.
+            /// </summary>
+            /// <value></value>
+            public string? Hostname { get; }
+
+            /// <summary>
+            /// Gets the sequence number of the ping in the sequence of pings to the hop point.
+            /// </summary>
+            public uint Ping { get => _status.Ping; }
+
+            /// <summary>
+            /// Gets the IP address of the current hop point.
+            /// </summary>
+            public IPAddress? HopAddress { get => _status.Address; }
+
+            /// <summary>
+            /// Gets the latency values of each ping to the current hop point.
+            /// </summary>
+            public long Latency { get => _status.Latency; }
+
+            /// <summary>
+            /// Gets the status of the traceroute hop.
+            /// </summary>
+            public IPStatus Status { get => _status.Status; }
+
+            /// <summary>
+            /// Gets the source address of the traceroute command.
+            /// </summary>
+            public string Source { get; }
+
+            /// <summary>
+            /// Gets the final destination hostname of the trace.
+            /// </summary>
+            public string Target { get; }
+
+            /// <summary>
+            /// Gets the final destination IP address of the trace.
+            /// </summary>
+            public IPAddress TargetAddress { get; }
+
+            /// <summary>
+            /// Gets the raw PingReply object received from the ping to this hop point.
+            /// </summary>
+            public PingReply Reply { get => _status.Reply; }
+        }
 
         /// <summary>
         /// Finalizes an instance of the <see cref="TestConnectionCommand"/> class.

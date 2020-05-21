@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that creates a dynamic module from a scriptblock..
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "Module", DefaultParameterSetName = "ScriptBlock", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141554")]
+    [Cmdlet(VerbsCommon.New, "Module", DefaultParameterSetName = "ScriptBlock", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096698")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class NewModuleCommand : ModuleCmdletBase
     {

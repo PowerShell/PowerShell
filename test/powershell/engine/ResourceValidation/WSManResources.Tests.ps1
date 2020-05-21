@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-. "$psscriptroot/TestRunner.ps1"
+. "$PSScriptRoot/TestRunner.ps1"
 
 $assemblyName = "Microsoft.WSMan.Management"
 
@@ -9,7 +9,7 @@ $assemblyName = "Microsoft.WSMan.Management"
 $excludeList = @()
 # load the module since it isn't there by default
 if ( $IsWindows ) {
-    import-module Microsoft.WSMan.Management
+    Import-Module Microsoft.WSMan.Management
 }
 
 # run the tests

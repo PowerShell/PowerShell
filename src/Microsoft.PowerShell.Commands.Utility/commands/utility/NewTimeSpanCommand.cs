@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implementation for the new-timespan command.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TimeSpan", DefaultParameterSetName = "Date",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113360", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096709", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(TimeSpan))]
     public sealed class NewTimeSpanCommand : PSCmdlet
     {

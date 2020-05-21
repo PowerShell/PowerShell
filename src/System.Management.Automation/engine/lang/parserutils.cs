@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -9,10 +10,8 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.RegularExpressions;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -601,7 +600,8 @@ namespace System.Management.Automation
 
                 int subStringLength = 0;
 
-                for (int charCount = 0; charCount < item.Length; charCount++) {
+                for (int charCount = 0; charCount < item.Length; charCount++)
+                {
                     // Evaluate the predicate using the character at cursor.
                     object predicateResult = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,
@@ -927,7 +927,7 @@ namespace System.Management.Automation
                 {
                     // only allow 1 or 2 arguments to -replace
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException), errorPosition,
-                        "BadReplaceArgument", ParserStrings.BadReplaceArgument, ignoreCase ? "-ireplace" : "-replace", rList.Count);
+                        "BadReplaceArgument", ParserStrings.BadReplaceArgument, errorPosition.Text, rList.Count);
                 }
 
                 if (rList.Count > 0)
@@ -968,7 +968,15 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval?.ToString() ?? string.Empty;
+                string lvalString;
+                if (ExperimentalFeature.IsEnabled("PSCultureInvariantReplaceOperator"))
+                {
+                    lvalString = PSObject.ToStringParser(context, lval) ?? string.Empty;
+                }
+                else
+                {
+                    lvalString = lval?.ToString() ?? string.Empty;
+                }
 
                 return ReplaceOperatorImpl(context, lvalString, rr, substitute);
             }
@@ -1347,35 +1355,37 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Cache regular expressions...
+        /// Cache regular expressions.
         /// </summary>
         /// <param name="patternString">The string to find the pattern for.</param>
-        /// <param name="options">The options used to create the regex...</param>
-        /// <returns>A case-insensitive Regex...</returns>
+        /// <param name="options">The options used to create the regex.</param>
+        /// <returns>New or cached Regex.</returns>
         internal static Regex NewRegex(string patternString, RegexOptions options)
         {
-            if (options != RegexOptions.IgnoreCase)
-                return new Regex(patternString, options);
-
-            lock (s_regexCache)
+            var subordinateRegexCache = s_regexCache.GetOrAdd(options, s_subordinateRegexCacheCreationDelegate);
+            if (subordinateRegexCache.TryGetValue(patternString, out Regex result))
             {
-                Regex result;
-                if (s_regexCache.TryGetValue(patternString, out result))
+                return result;
+            }
+            else
+            {
+                if (subordinateRegexCache.Count > MaxRegexCache)
                 {
-                    return result;
+                    // TODO: it would be useful to get a notice (in telemetry?) if the cache is full.
+                    subordinateRegexCache.Clear();
                 }
-                else
-                {
-                    if (s_regexCache.Count > MaxRegexCache)
-                        s_regexCache.Clear();
-                    Regex re = new Regex(patternString, RegexOptions.IgnoreCase);
-                    s_regexCache.Add(patternString, re);
-                    return re;
-                }
+
+                var regex = new Regex(patternString, options);
+                return subordinateRegexCache.GetOrAdd(patternString, regex);
             }
         }
 
-        private static Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>();
+        private static readonly ConcurrentDictionary<RegexOptions, ConcurrentDictionary<string, Regex>> s_regexCache =
+            new ConcurrentDictionary<RegexOptions, ConcurrentDictionary<string, Regex>>();
+
+        private static readonly Func<RegexOptions, ConcurrentDictionary<string, Regex>> s_subordinateRegexCacheCreationDelegate =
+            key => new ConcurrentDictionary<string, Regex>(StringComparer.Ordinal);
+
         private const int MaxRegexCache = 1000;
 
         /// <summary>
@@ -1800,7 +1810,7 @@ namespace System.Management.Automation
         {
             // errToken may be null
             if (string.IsNullOrEmpty(resourceIdAndErrorId))
-                throw PSTraceSource.NewArgumentException("resourceIdAndErrorId");
+                throw PSTraceSource.NewArgumentException(nameof(resourceIdAndErrorId));
             // innerException may be null
             // args may be null or empty
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal HashtableEntryDefinition MatchEntry(string keyName, TerminatingErrorContext invocationContext)
         {
             if (string.IsNullOrEmpty(keyName))
-                PSTraceSource.NewArgumentNullException("keyName");
+                PSTraceSource.NewArgumentNullException(nameof(keyName));
 
             HashtableEntryDefinition matchingEntry = null;
             for (int k = 0; k < this.hashEntries.Count; k++)
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (key.Length < normalizedKey.Length)
             {
                 // shorter, could be an abbreviation
-                if (string.Equals(key, normalizedKey.Substring(0, key.Length), StringComparison.OrdinalIgnoreCase))
+                if (key.AsSpan().Equals(normalizedKey.AsSpan(0, key.Length), StringComparison.OrdinalIgnoreCase))
                 {
                     // found abbreviation
                     return true;

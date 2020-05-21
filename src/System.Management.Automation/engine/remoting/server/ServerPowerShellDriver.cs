@@ -1,6 +1,7 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Generic;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
@@ -289,7 +290,8 @@ namespace System.Management.Automation
         /// commands that sets debugger state but doesn't run any command
         /// on the server runspace.
         /// </summary>
-        internal void RunNoOpCommand()
+        /// <param name="output">The output from preprocessing that we want to send to the client.</param>
+        internal void RunNoOpCommand(IReadOnlyCollection<object> output)
         {
             if (LocalPowerShell != null)
             {
@@ -299,6 +301,14 @@ namespace System.Management.Automation
                             LocalPowerShell.SetStateChanged(
                                 new PSInvocationStateInfo(
                                     PSInvocationState.Running, null));
+
+                            foreach (var item in output)
+                            {
+                                if (item != null)
+                                {
+                                    _localPowerShellOutput.Add(PSObject.AsPSObject(item));
+                                }
+                            }
 
                             LocalPowerShell.SetStateChanged(
                                 new PSInvocationStateInfo(

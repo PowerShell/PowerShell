@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (wildcardPatternsStrings == null)
             {
-                throw new ArgumentNullException("wildcardPatternsStrings");
+                throw new ArgumentNullException(nameof(wildcardPatternsStrings));
             }
 
             _wildcardPatterns = new WildcardPattern[wildcardPatternsStrings.Length];
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// </summary>
     [Cmdlet(VerbsCommon.Select, "Object", DefaultParameterSetName = "DefaultParameter",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113387", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096716", RemotingCapability = RemotingCapability.None)]
     public sealed class SelectObjectCommand : PSCmdlet
     {
         #region Command Line Switches
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (obj != AutomationNull.Value)
                 {
-                    SetPSCustomObject(obj);
+                    SetPSCustomObject(obj, newPSObject: addedNoteProperties.Count > 0);
                     WriteObject(obj);
                 }
 
@@ -648,16 +648,22 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isObjUnique)
                 {
-                    SetPSCustomObject(obj);
+                    SetPSCustomObject(obj, newPSObject: addedNoteProperties.Count > 0);
                     _uniques.Add(new UniquePSObjectHelper(obj, addedNoteProperties.Count));
                 }
             }
         }
 
-        private void SetPSCustomObject(PSObject psObj)
+        private void SetPSCustomObject(PSObject psObj, bool newPSObject)
         {
             if (psObj.ImmediateBaseObject is PSCustomObject)
-                psObj.TypeNames.Insert(0, "Selected." + InputObject.BaseObject.GetType().ToString());
+            {
+                var typeName = "Selected." + InputObject.BaseObject.GetType().ToString();
+                if (newPSObject || !psObj.TypeNames.Contains(typeName))
+                {
+                    psObj.TypeNames.Insert(0, typeName);
+                }
+            }
         }
 
         private void ProcessObjectAndHandleErrors(PSObject pso)

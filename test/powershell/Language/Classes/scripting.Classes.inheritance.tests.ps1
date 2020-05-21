@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Classes inheritance syntax' -Tags "CI" {
@@ -68,7 +68,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         $C1 = Invoke-Expression 'class ClassWithInterfaceProperty : InterfaceWithProperty { [int]$Integer } [ClassWithInterfaceProperty]::new()'
         $getter = $C1.GetType().GetMember('get_Integer')
         $getter.ReturnType.FullName | Should -Be System.Int32
-        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([System.Reflection.MethodAttributes]::Virtual)
+        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual | Should -Be ([System.Reflection.MethodAttributes]::Virtual)
     }
 
     It 'can implement inherited .NET interface properties' {
@@ -77,7 +77,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         $C1 = Invoke-Expression 'class ClassWithInheritedInterfaces : IChild { [int]$ParentInteger; [int]$ChildInteger } [ClassWithInheritedInterfaces]'
         $getter = $C1.GetMember('get_ParentInteger')
         $getter.ReturnType.FullName | Should -Be System.Int32
-        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual |Should -Be ([System.Reflection.MethodAttributes]::Virtual)
+        $getter.Attributes -band [System.Reflection.MethodAttributes]::Virtual | Should -Be ([System.Reflection.MethodAttributes]::Virtual)
     }
 
     It 'allows use of defined later type as a property type' {
@@ -103,7 +103,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
                 [void]ExitNestedPrompt(){ throw "Unsupported" }
                 [void]NotifyBeginApplication() { }
                 [void]NotifyEndApplication() { }
-                [string]get_Name() { return $this.myName; write-host "MyName" }
+                [string]get_Name() { return $this.myName; Write-Host "MyName" }
                 [version]get_Version() { return $this.myVersion }
                 [System.Globalization.CultureInfo]get_CurrentCulture() { return $this.myCurrentCulture }
                 [System.Globalization.CultureInfo]get_CurrentUICulture() { return $this.myCurrentUICulture }

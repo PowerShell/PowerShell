@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
@@ -272,48 +272,39 @@ namespace System.Management.Automation.Runspaces
                 remoteRunspace.PSSessionName = Name;
             }
 
-            // WSMan session
-            if (remoteRunspace.ConnectionInfo is WSManConnectionInfo)
+            switch (remoteRunspace.ConnectionInfo)
             {
-                ComputerType = TargetMachineType.RemoteMachine;
+                case WSManConnectionInfo _:
+                    ComputerType = TargetMachineType.RemoteMachine;
+                    string fullShellName = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<string>(
+                        remoteRunspace.ConnectionInfo,
+                        "ShellUri", string.Empty);
+                    ConfigurationName = GetDisplayShellName(fullShellName);
+                    break;
 
-                string fullShellName = WSManConnectionInfo.ExtractPropertyAsWsManConnectionInfo<string>(
-                    remoteRunspace.ConnectionInfo,
-                    "ShellUri", string.Empty);
+                case VMConnectionInfo vmConnectionInfo:
+                    ComputerType = TargetMachineType.VirtualMachine;
+                    ConfigurationName = vmConnectionInfo.ConfigurationName;
+                    break;
 
-                ConfigurationName = GetDisplayShellName(fullShellName);
-                return;
+                case ContainerConnectionInfo containerConnectionInfo:
+                    ComputerType = TargetMachineType.Container;
+                    ConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
+                    break;
+
+                case SSHConnectionInfo _:
+                    ComputerType = TargetMachineType.RemoteMachine;
+                    ConfigurationName = "DefaultShell";
+                    break;
+
+                case NewProcessConnectionInfo _:
+                    ComputerType = TargetMachineType.RemoteMachine;
+                    break;
+
+                default:
+                    Dbg.Assert(false, "Invalid Runspace");
+                    break;
             }
-
-            // VM session
-            VMConnectionInfo vmConnectionInfo = remoteRunspace.ConnectionInfo as VMConnectionInfo;
-            if (vmConnectionInfo != null)
-            {
-                ComputerType = TargetMachineType.VirtualMachine;
-                ConfigurationName = vmConnectionInfo.ConfigurationName;
-                return;
-            }
-
-            // Container session
-            ContainerConnectionInfo containerConnectionInfo = remoteRunspace.ConnectionInfo as ContainerConnectionInfo;
-            if (containerConnectionInfo != null)
-            {
-                ComputerType = TargetMachineType.Container;
-                ConfigurationName = containerConnectionInfo.ContainerProc.ConfigurationName;
-                return;
-            }
-
-            // SSH session
-            SSHConnectionInfo sshConnectionInfo = remoteRunspace.ConnectionInfo as SSHConnectionInfo;
-            if (sshConnectionInfo != null)
-            {
-                ComputerType = TargetMachineType.RemoteMachine;
-                ConfigurationName = "DefaultShell";
-                return;
-            }
-
-            // We only support WSMan/VM/Container sessions now.
-            Dbg.Assert(false, "Invalid Runspace");
         }
 
         #endregion Constructor
@@ -326,33 +317,28 @@ namespace System.Management.Automation.Runspaces
         /// <returns>Auto generated name.</returns>
         private string GetTransportName()
         {
-            if (_remoteRunspace.ConnectionInfo is WSManConnectionInfo)
+            switch (_remoteRunspace.ConnectionInfo)
             {
-                return "WSMan";
-            }
-            else if (_remoteRunspace.ConnectionInfo is SSHConnectionInfo)
-            {
-                return "SSH";
-            }
-            else if (_remoteRunspace.ConnectionInfo is NamedPipeConnectionInfo)
-            {
-                return "NamedPipe";
-            }
-            else if (_remoteRunspace.ConnectionInfo is ContainerConnectionInfo)
-            {
-                return "Container";
-            }
-            else if (_remoteRunspace.ConnectionInfo is NewProcessConnectionInfo)
-            {
-                return "Process";
-            }
-            else if (_remoteRunspace.ConnectionInfo is VMConnectionInfo)
-            {
-                return "VMBus";
-            }
-            else
-            {
-                return "Unknown";
+                case WSManConnectionInfo _:
+                    return "WSMan";
+
+                case SSHConnectionInfo _:
+                    return "SSH";
+
+                case NamedPipeConnectionInfo _:
+                    return "NamedPipe";
+
+                case ContainerConnectionInfo _:
+                    return "Container";
+
+                case NewProcessConnectionInfo _:
+                    return "Process";
+
+                case VMConnectionInfo _:
+                    return "VMBus";
+
+                default:
+                    return "Unknown";
             }
         }
 

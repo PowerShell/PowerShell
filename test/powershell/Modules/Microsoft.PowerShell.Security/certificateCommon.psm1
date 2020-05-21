@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Function New-GoodCertificate
 {
@@ -146,22 +146,15 @@ function Install-TestCertificates
         # PKI module is not available for PowerShell, so we need to use Windows PowerShell to import the cert
         $fullPowerShell = Join-Path "$env:SystemRoot" "System32\WindowsPowerShell\v1.0\powershell.exe"
 
-        try {
-            $modulePathCopy = $env:PSModulePath
-            $env:PSModulePath = $null
-
-            $command = @"
+        $command = @"
 Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My | ForEach-Object PSPath
 Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | ForEach-Object PSPath
 "@
-            $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
-            $certPaths.Count | Should -Be 2 | Out-Null
+        $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
+        $certPaths.Count | Should -Be 2 | Out-Null
 
-            $script:importedCert = Get-ChildItem $certPaths[0]
-            $script:testBadCert  = Get-ChildItem $certPaths[1]
-        } finally {
-            $env:PSModulePath = $modulePathCopy
-        }
+        $script:importedCert = Get-ChildItem $certPaths[0]
+        $script:testBadCert  = Get-ChildItem $certPaths[1]
     }
     elseif($IsWindows)
     {

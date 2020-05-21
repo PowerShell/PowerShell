@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -272,7 +272,7 @@ namespace System.Diagnostics.Eventing
             [FieldOffset(0)]
             public UInt32 Bool;
             [FieldOffset(0)]
-            public Byte ByteVal;
+            public byte ByteVal;
             [FieldOffset(0)]
             public byte SByte;
             [FieldOffset(0)]
@@ -282,7 +282,7 @@ namespace System.Diagnostics.Eventing
             [FieldOffset(0)]
             public Single Single;
             [FieldOffset(0)]
-            public Double Double;
+            public double Double;
             [FieldOffset(0)]
             public IntPtr StringVal;
             [FieldOffset(0)]

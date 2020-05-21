@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -53,12 +53,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (parameterType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterType");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterType));
             }
 
             _name = name;

@@ -1,22 +1,22 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM host process" -Tags "CI" {
 
-    It -skip "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
+    It -Skip "Disabled test because it is fragile and does not consistently succeed on test VMs" { }
     return
 
     try
     {
         # Create PSSession
         $wc = [System.Management.Automation.Runspaces.WSManConnectionInfo]::new()
-        $rs = [runspacefactory]::CreateRunspace($host, $wc)
+        $rs = [runspacefactory]::CreateRunspace($Host, $wc)
         $rs.Open()
 
         # Get WinRM host process id
         [powershell] $ps = [powershell]::Create()
         $ps.Runspace = $rs
-        $result = $ps.AddScript('$pid').Invoke()
+        $result = $ps.AddScript('$PID').Invoke()
         It "Verifies the WinRM host process Id was found" {
             $result | Should -Not -BeNullOrEmpty
             ($result.Count -eq 1) | Should -BeTrue
@@ -69,7 +69,7 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
     finally
     {
         # Clean up
-        if ($host.IsRunspacePushed) { $host.PopRunspace() }
+        if ($Host.IsRunspacePushed) { $Host.PopRunspace() }
 
         if ($null -ne $psHost) { $psHost.Dispose() }
         if ($null -ne $hostRS) { $hostRS.Dispose() }

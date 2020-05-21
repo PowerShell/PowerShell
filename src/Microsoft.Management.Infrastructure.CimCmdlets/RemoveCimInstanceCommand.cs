@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -18,7 +18,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     [Cmdlet(
         VerbsCommon.Remove,
         "CimInstance",
-        SupportsShouldProcess=true,
+        SupportsShouldProcess = true,
         DefaultParameterSetName = CimBaseCommand.CimInstanceComputerSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227964")]
     public class RemoveCimInstanceCommand : CimBaseCommand
@@ -143,7 +143,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter]
         public UInt32 OperationTimeoutSec
         {
-            get { return operationTimeout;}
+            get { return operationTimeout; }
 
             set { operationTimeout = value; }
         }
@@ -201,7 +201,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.QuerySessionSet)]
         public string Query
         {
-            get { return query;}
+            get { return query; }
 
             set
             {
@@ -223,7 +223,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.QueryComputerSet)]
         public string QueryDialect
         {
-            get { return querydialect;}
+            get { return querydialect; }
 
             set
             {

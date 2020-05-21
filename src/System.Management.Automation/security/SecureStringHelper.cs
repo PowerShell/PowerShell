@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell
             {
                 for (int i = 0; i < dataLen; i++)
                 {
-                    data[i] = byte.Parse(s.Substring(2 * i, 2),
+                    data[i] = byte.Parse(s.AsSpan(2 * i, 2),
                                          NumberStyles.AllowHexSpecifier,
                                          System.Globalization.CultureInfo.InvariantCulture);
                 }
@@ -185,7 +185,7 @@ namespace Microsoft.PowerShell
             Utils.CheckArgForNullOrEmpty(input, "input");
             if ((input.Length % 2) != 0)
             {
-                throw PSTraceSource.NewArgumentException("input", Serialization.InvalidEncryptedString, input);
+                throw PSTraceSource.NewArgumentException(nameof(input), Serialization.InvalidEncryptedString, input);
             }
 
             byte[] data = null;
@@ -432,7 +432,7 @@ namespace Microsoft.PowerShell
         {
             if (userData == null)
             {
-                throw new ArgumentNullException("userData");
+                throw new ArgumentNullException(nameof(userData));
             }
 
             GCHandle pbDataIn = new GCHandle();
@@ -520,7 +520,7 @@ namespace Microsoft.PowerShell
         {
             if (encryptedData == null)
             {
-                throw new ArgumentNullException("encryptedData");
+                throw new ArgumentNullException(nameof(encryptedData));
             }
 
             GCHandle pbDataIn = new GCHandle();

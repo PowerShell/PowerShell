@@ -1,4 +1,4 @@
-﻿<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <!-- MSI installs on Win7 and above -->
   <?define MinOSVersionSupported = "VersionNT >= 601" ?>
   <!-- The URL for add/remove programs -->

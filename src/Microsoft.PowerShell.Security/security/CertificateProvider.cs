@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -605,7 +605,7 @@ namespace Microsoft.PowerShell.Commands
                     X509StoreLocation user =
                         new X509StoreLocation(StoreLocation.CurrentUser);
                     s_storeLocations.Add(user);
-                    AddItemToCache(StoreLocation.CurrentUser.ToString(),
+                    AddItemToCache(nameof(StoreLocation.CurrentUser),
                                   user);
 
                     //
@@ -614,7 +614,7 @@ namespace Microsoft.PowerShell.Commands
                     X509StoreLocation machine =
                         new X509StoreLocation(StoreLocation.LocalMachine);
                     s_storeLocations.Add(machine);
-                    AddItemToCache(StoreLocation.LocalMachine.ToString(),
+                    AddItemToCache(nameof(StoreLocation.LocalMachine),
                                    machine);
 
                     AddItemToCache(string.Empty, s_storeLocations);
@@ -1324,7 +1324,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             // Normalize the path
@@ -3088,7 +3088,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw Marshal.GetExceptionForHR(Security.NativeMethods.NTE_NOT_SUPPORTED);
+                Marshal.ThrowExceptionForHR(Security.NativeMethods.NTE_NOT_SUPPORTED);
             }
         }
 

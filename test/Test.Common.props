@@ -2,9 +2,9 @@
   <PropertyGroup>
     <Product>PowerShell Test</Product>
     <Company>Microsoft Corporation</Company>
-    <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>netcoreapp5.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

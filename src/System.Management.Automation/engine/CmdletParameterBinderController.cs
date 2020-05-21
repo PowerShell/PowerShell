@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -54,12 +54,12 @@ namespace System.Management.Automation
         {
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
 
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetadata");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             this.Command = cmdlet;
@@ -1214,7 +1214,7 @@ namespace System.Management.Automation
 
             do // false loop
             {
-                if (parameterType == typeof(Object))
+                if (parameterType == typeof(object))
                 {
                     result = true;
                     break;
@@ -3173,7 +3173,7 @@ namespace System.Management.Automation
             for (int i = 0; i < parameterName.Length; i++)
             {
                 // try Upper case
-                if (char.IsUpper(parameterName[i]) && (usedHotKeysStr.IndexOf(parameterName[i]) == -1))
+                if (char.IsUpper(parameterName[i]) && usedHotKeysStr.Contains(parameterName[i]))
                 {
                     label.Insert(i, hotKeyPrefix);
                     usedHotKeys.Append(parameterName[i]);
@@ -3187,7 +3187,7 @@ namespace System.Management.Automation
                 // try Lower case
                 for (int i = 0; i < parameterName.Length; i++)
                 {
-                    if (char.IsLower(parameterName[i]) && (usedHotKeysStr.IndexOf(parameterName[i]) == -1))
+                    if (char.IsLower(parameterName[i]) && usedHotKeysStr.Contains(parameterName[i]))
                     {
                         label.Insert(i, hotKeyPrefix);
                         usedHotKeys.Append(parameterName[i]);
@@ -3202,7 +3202,7 @@ namespace System.Management.Automation
                 // try non-letters
                 for (int i = 0; i < parameterName.Length; i++)
                 {
-                    if (!char.IsLetter(parameterName[i]) && (usedHotKeysStr.IndexOf(parameterName[i]) == -1))
+                    if (!char.IsLetter(parameterName[i]) && usedHotKeysStr.Contains(parameterName[i]))
                     {
                         label.Insert(i, hotKeyPrefix);
                         usedHotKeys.Append(parameterName[i]);
@@ -4275,7 +4275,7 @@ namespace System.Management.Automation
         {
             if (parameters == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameters");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameters));
             }
 
             // Get all the matching arguments from the defaultParameterValues collection
@@ -4409,7 +4409,7 @@ namespace System.Management.Automation
         {
             if (dictionary == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dictionary");
+                throw PSTraceSource.NewArgumentNullException(nameof(dictionary));
             }
             // Contains keys that are in bad format. For every bad format key, we should write out a warning message
             // the first time we encounter it, and remove it from the $PSDefaultParameterValues
@@ -4481,7 +4481,7 @@ namespace System.Management.Automation
         {
             if (key == null)
             {
-                throw PSTraceSource.NewArgumentNullException("key");
+                throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
             var strKey = key as string;
@@ -4508,13 +4508,13 @@ namespace System.Management.Automation
         {
             if (key == null)
             {
-                throw PSTraceSource.NewArgumentNullException("key");
+                throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
             var strKey = key as string;
             if (strKey == null)
             {
-                throw PSTraceSource.NewArgumentException("key", ParameterBinderStrings.StringValueKeyExpected, key, key.GetType().FullName);
+                throw PSTraceSource.NewArgumentException(nameof(key), ParameterBinderStrings.StringValueKeyExpected, key, key.GetType().FullName);
             }
 
             string keyAfterTrim = strKey.Trim();
@@ -4530,7 +4530,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                throw PSTraceSource.NewArgumentException("key", ParameterBinderStrings.KeyAlreadyAdded, key);
+                throw PSTraceSource.NewArgumentException(nameof(key), ParameterBinderStrings.KeyAlreadyAdded, key);
             }
 
             if (!CheckKeyIsValid(keyAfterTrim, ref cmdletName, ref parameterName))
@@ -4555,7 +4555,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (key == null) { throw PSTraceSource.NewArgumentNullException("key"); }
+                if (key == null) { throw PSTraceSource.NewArgumentNullException(nameof(key)); }
 
                 var strKey = key as string;
                 if (strKey == null) { return null; }
@@ -4578,7 +4578,7 @@ namespace System.Management.Automation
         {
             if (key == null)
             {
-                throw PSTraceSource.NewArgumentNullException("key");
+                throw PSTraceSource.NewArgumentNullException(nameof(key));
             }
 
             var strKey = key as string;

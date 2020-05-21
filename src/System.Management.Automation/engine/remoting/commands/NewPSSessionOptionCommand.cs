@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements New-PSSessionOption cmdlet.
     /// Spec: TBD.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144305", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommon.New, "PSSessionOption", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096488", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(PSSessionOption))]
     public sealed class NewPSSessionOptionCommand : PSCmdlet
     {

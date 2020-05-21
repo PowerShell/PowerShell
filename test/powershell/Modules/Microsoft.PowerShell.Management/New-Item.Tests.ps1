@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -80,7 +80,7 @@ Describe "New-Item" -Tags "CI" {
         Test-Path $FullyQualifiedFile | Should -BeTrue
     }
 
-    It "Should create a file with sample text inside the file using the Value switch" {
+    It "Should create a file with sample text inside the file using the Value parameter" {
         $expected = "This is test string"
         New-Item -Name $testfile -Path $tmpDirectory -ItemType file -Value $expected
 
@@ -89,7 +89,7 @@ Describe "New-Item" -Tags "CI" {
         Get-Content $FullyQualifiedFile | Should -Be $expected
     }
 
-    It "Should not create a file when the Name switch is not used and only a directory specified" {
+    It "Should not create a file when the Name parameter is not used and only a directory specified" {
         #errorAction used because permissions issue in Windows
         New-Item -Path $tmpDirectory -ItemType file -ErrorAction SilentlyContinue
 
@@ -97,7 +97,7 @@ Describe "New-Item" -Tags "CI" {
 
     }
 
-    It "Should create a file when the Name switch is not used but a fully qualified path is specified" {
+    It "Should create a file when the Name parameter is not used but a fully qualified path is specified" {
         New-Item -Path $FullyQualifiedFile -ItemType file
 
         Test-Path $FullyQualifiedFile | Should -BeTrue

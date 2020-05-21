@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             if (optionInfo == null)
             {
-                throw new ArgumentNullException("optionInfo");
+                throw new ArgumentNullException(nameof(optionInfo));
             }
 
             options = optionInfo;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
     ///              not PSRemotingJob.
     /// </summary>
     [Cmdlet(VerbsCommunications.Receive, "Job", DefaultParameterSetName = ReceiveJobCommand.LocationParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113372", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096965", RemotingCapability = RemotingCapability.SupportedByCommand)]
     public class ReceiveJobCommand : JobCmdletBase, IDisposable
     {
         #region Properties

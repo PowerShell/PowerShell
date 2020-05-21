@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -505,7 +505,7 @@ namespace System.Management.Automation
         }
 
         internal static void InvokePipelineInBackground(
-                                            PipelineAst pipelineAst,
+                                            PipelineBaseAst pipelineAst,
                                             FunctionContext funcContext)
         {
             PipelineProcessor pipelineProcessor = new PipelineProcessor();
@@ -525,41 +525,50 @@ namespace System.Management.Automation
                 var scriptblockBodyString = pipelineAst.Extent.Text;
                 var pipelineOffset = pipelineAst.Extent.StartOffset;
                 var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
+
                 // Used to make sure that the job runs in the current directory
                 const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
+
                 // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
                 System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
                 updatedScriptblock.Append(cmdPrefix);
                 int position = 0;
+
                 // Prefix variables in the scriptblock with $using:
                 foreach (var v in variables)
                 {
-                    var vName = ((VariableExpressionAst)v).VariablePath.UserPath;
+                    var variableName = ((VariableExpressionAst)v).VariablePath.UserPath;
+
                     // Skip variables that don't exist
-                    if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
-                        continue;
-                    // Skip PowerShell magic variables
-                    if (Regex.Match(vName,
-                            "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
-                                RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false
-                    )
+                    if (funcContext._executionContext.EngineSessionState.GetVariable(variableName) == null)
                     {
-                        updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
+                        continue;
+                    }
+
+                    // Skip PowerShell magic variables
+                    if (Regex.Match(
+                            variableName,
+                            "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$",
+                            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Success == false)
+                    {
+                        updatedScriptblock.Append(scriptblockBodyString.AsSpan(position, v.Extent.StartOffset - pipelineOffset - position));
                         updatedScriptblock.Append("${using:");
-                        updatedScriptblock.Append(CodeGeneration.EscapeVariableName(vName));
+                        updatedScriptblock.Append(CodeGeneration.EscapeVariableName(variableName));
                         updatedScriptblock.Append('}');
                         position = v.Extent.EndOffset - pipelineOffset;
                     }
                 }
 
-                updatedScriptblock.Append(scriptblockBodyString.Substring(position));
+                updatedScriptblock.Append(scriptblockBodyString.AsSpan(position));
                 var sb = ScriptBlock.Create(updatedScriptblock.ToString());
                 var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
-                commandProcessor = context.CommandDiscovery.LookupCommandProcessor(
-                    commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
+                commandProcessor = context.CommandDiscovery.LookupCommandProcessor(commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
                 var parameter = CommandParameterInternal.CreateParameterWithArgument(
-                    /*parameterAst*/pipelineAst, "ScriptBlock", null,
-                    /*argumentAst*/pipelineAst, sb,
+                    parameterAst: pipelineAst,
+                    "ScriptBlock",
+                    null,
+                    argumentAst: pipelineAst,
+                    sb,
                     false);
                 commandProcessor.AddParameter(parameter);
                 pipelineProcessor.Add(commandProcessor);
@@ -1566,15 +1575,23 @@ namespace System.Management.Automation
         internal static bool SuspendStoppingPipeline(ExecutionContext context)
         {
             LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            bool oldIsStopping = lpl.Stopper.IsStopping;
-            lpl.Stopper.IsStopping = false;
-            return oldIsStopping;
+            if (lpl != null)
+            {
+                bool oldIsStopping = lpl.Stopper.IsStopping;
+                lpl.Stopper.IsStopping = false;
+                return oldIsStopping;
+            }
+
+            return false;
         }
 
         internal static void RestoreStoppingPipeline(ExecutionContext context, bool oldIsStopping)
         {
             LocalPipeline lpl = (LocalPipeline)context.CurrentRunspace.GetCurrentlyRunningPipeline();
-            lpl.Stopper.IsStopping = oldIsStopping;
+            if (lpl != null)
+            {
+                lpl.Stopper.IsStopping = oldIsStopping;
+            }
         }
 
         internal static void CheckActionPreference(FunctionContext funcContext, Exception exception)
@@ -2521,7 +2538,7 @@ namespace System.Management.Automation
 
             if (numberToReturn < 0)
             {
-                throw new ArgumentOutOfRangeException("numberToReturn", numberToReturn, ParserStrings.NumberToReturnMustBeGreaterThanZero);
+                throw new ArgumentOutOfRangeException(nameof(numberToReturn), numberToReturn, ParserStrings.NumberToReturnMustBeGreaterThanZero);
             }
 
             var context = Runspace.DefaultRunspace.ExecutionContext;
@@ -2584,7 +2601,7 @@ namespace System.Management.Automation
                     return rest.ToArray();
                 }
 
-                object[] first = new System.Object[numberToReturn];
+                object[] first = new object[numberToReturn];
                 while (MoveNext(context, enumerator))
                 {
                     current = Current(enumerator);
@@ -2754,7 +2771,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(arguments != null, "The ForEach() operator should never receive a null value for the 'arguments' parameter from the runtime.");
             if (expression == null)
             {
-                throw new ArgumentNullException("expression");
+                throw new ArgumentNullException(nameof(expression));
             }
 
             var context = Runspace.DefaultRunspace.ExecutionContext;
@@ -3282,17 +3299,28 @@ namespace System.Management.Automation
         internal static IEnumerator GetCOMEnumerator(object obj)
         {
             object targetValue = PSObject.Base(obj);
+            try
+            {
+                var enumerator = (targetValue as IEnumerable)?.GetEnumerator();
+                if (enumerator != null)
+                {
+                    return enumerator;
+                }
+            }
+            catch (Exception)
+            {
+            }
 
             // We use ComEnumerator to enumerate COM collections because the following code doesn't work in .NET Core
-            //   IEnumerable enumerable = targetValue as IEnumerable;
-            //   if (enumerable != null)
+            //   IEnumerator enumerator = targetValue as IEnumerator;
+            //   if (enumerator != null)
             //   {
-            //       var enumerator = enumerable.GetEnumerator();
+            //       enumerable.MoveNext();
             //       ...
             //   }
-            // The call to 'GetEnumerator()' throws exception because COM is not supported in .NET Core.
-            // See https://github.com/dotnet/corefx/issues/19731 for more information.
-            // When COM support is back to .NET Core, we need to change back to the original implementation.
+            // The call to 'MoveNext()' throws exception because COM is not fully supported in .NET Core.
+            // See https://github.com/dotnet/runtime/issues/21690 for more information.
+            // When COM support is fully back to .NET Core, we need to change back to directly use the type cast.
             return ComEnumerator.Create(targetValue) ?? NonEnumerableObjectEnumerator.Create(obj);
         }
 

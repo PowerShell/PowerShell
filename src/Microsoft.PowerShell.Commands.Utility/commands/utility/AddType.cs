@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
     /// Adds a new type to the Application Domain.
     /// This version is based on CodeAnalysis (Roslyn).
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = FromSourceParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135195")]
+    [Cmdlet(VerbsCommon.Add, "Type", DefaultParameterSetName = FromSourceParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096601")]
     [OutputType(typeof(Type))]
     public sealed class AddTypeCommand : PSCmdlet
     {
@@ -887,7 +887,7 @@ namespace Microsoft.PowerShell.Commands
                 case OutputAssemblyType.WindowsApplication:
                     return OutputKind.WindowsApplication;
                 default:
-                    throw new ArgumentOutOfRangeException("outputType");
+                    throw new ArgumentOutOfRangeException(nameof(outputType));
             }
         }
 

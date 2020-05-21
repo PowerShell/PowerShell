@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -442,7 +442,7 @@ namespace System.Management.Automation.Remoting
             _operationsQueue = new List<IThrottleOperation>();
             _startOperationQueue = new List<IThrottleOperation>();
             _stopOperationQueue = new List<IThrottleOperation>();
-            _syncObject = new Object();
+            _syncObject = new object();
         }
 
         #endregion Constructors

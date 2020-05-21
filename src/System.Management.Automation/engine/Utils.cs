@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -14,6 +14,7 @@ using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Numerics;
@@ -445,6 +446,41 @@ namespace System.Management.Automation
             }
 
             return null;
+        }
+
+        private static string s_windowsPowerShellVersion = null;
+
+        /// <summary>
+        /// Get the Windows PowerShell version from registry.
+        /// </summary>
+        /// <returns>
+        /// String of Windows PowerShell version from registry.
+        /// </returns>
+        internal static string GetWindowsPowerShellVersionFromRegistry()
+        {
+            if (!string.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellVersionString))
+            {
+                return InternalTestHooks.TestWindowsPowerShellVersionString;
+            }
+
+            if (s_windowsPowerShellVersion != null)
+            {
+                return s_windowsPowerShellVersion;
+            }
+
+            string engineKeyPath = RegistryStrings.MonadRootKeyPath + "\\" +
+                PSVersionInfo.RegistryVersionKey + "\\" + RegistryStrings.MonadEngineKey;
+
+            using (RegistryKey engineKey = Registry.LocalMachine.OpenSubKey(engineKeyPath))
+            {
+                if (engineKey != null)
+                {
+                    s_windowsPowerShellVersion = engineKey.GetValue(RegistryStrings.MonadEngine_MonadVersion) as string;
+                    return s_windowsPowerShellVersion;
+                }
+            }
+
+            return string.Empty;
         }
 #endif
 
@@ -1246,8 +1282,19 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
+            if (string.IsNullOrEmpty(path) || !path.StartsWith('\\'))
+            {
+                return false;
+            }
+
+            // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
+            if (path.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
             Uri uri;
-            return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+            return Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
 #endif
         }
 
@@ -2025,6 +2072,9 @@ namespace System.Management.Automation.Internal
         // since we can't manipulate the System32 directory in a test
         internal static string TestWindowsPowerShellPSHomeLocation;
 
+        // A version of Windows PS that is installed on the system; normally this is retrieved from a reg key that is write-protected.
+        internal static string TestWindowsPowerShellVersionString;
+
         internal static bool ShowMarkdownOutputBypass;
 
         /// <summary>This member is used for internal test purposes.</summary>
@@ -2048,6 +2098,25 @@ namespace System.Management.Automation.Internal
         public static bool TestImplicitRemotingBatching(string commandPipeline, System.Management.Automation.Runspaces.Runspace runspace)
         {
             return Utils.TryRunAsImplicitBatch(commandPipeline, runspace);
+        }
+
+        /// <summary>
+        /// Constructs a custom PSSenderInfo instance that can be assigned to $PSSenderInfo
+        /// in order to simulate a remoting session with respect to the $PSSenderInfo.ConnectionString (connection URL)
+        /// and $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion (the remoting client's PowerShell version).
+        /// See Get-FormatDataTest.ps1.
+        /// </summary>
+        /// <param name="url">The connection URL to reflect in the returned instance's ConnectionString property.</param>
+        /// <param name="clientVersion">The version number to report as the remoting client's PowerShell version.</param>
+        /// <returns>The newly constructed custom PSSenderInfo instance.</returns>
+        public static PSSenderInfo GetCustomPSSenderInfo(string url, Version clientVersion)
+        {
+            var dummyPrincipal = new PSPrincipal(new PSIdentity("none", true, "someuser", null), null);
+            var pssi = new PSSenderInfo(dummyPrincipal, url);
+            pssi.ApplicationArguments = new PSPrimitiveDictionary();
+            pssi.ApplicationArguments.Add("PSVersionTable", new PSObject(new PSPrimitiveDictionary()));
+            ((PSPrimitiveDictionary)PSObject.Base(pssi.ApplicationArguments["PSVersionTable"])).Add("PSVersion", new PSObject(clientVersion));
+            return pssi;
         }
     }
 

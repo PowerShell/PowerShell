@@ -1,11 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Rename-Item tests" -Tag "CI" {
     BeforeAll {
-        Setup -f originalFile.txt -content "This is content"
+        Setup -f originalFile.txt -Content "This is content"
         $source = "$TESTDRIVE/originalFile.txt"
         $target = "$TESTDRIVE/ItemWhichHasBeenRenamed.txt"
-        Setup -f [orig-file].txt -content "This is not content"
+        Setup -f [orig-file].txt -Content "This is not content"
         $sourceSp = "$TestDrive/``[orig-file``].txt"
         $targetSpName = "ItemWhichHasBeen[Renamed].txt"
         $targetSp = "$TestDrive/ItemWhichHasBeen``[Renamed``].txt"
@@ -14,8 +14,8 @@ Describe "Rename-Item tests" -Tag "CI" {
     }
     It "Rename-Item will rename a file" {
         Rename-Item $source $target
-        test-path $source | Should -BeFalse
-        test-path $target | Should -BeTrue
+        Test-Path $source | Should -BeFalse
+        Test-Path $target | Should -BeTrue
         "$target" | Should -FileContentMatchExactly "This is content"
     }
     It "Rename-Item will rename a file when path contains special char" {
@@ -31,7 +31,7 @@ Describe "Rename-Item tests" -Tag "CI" {
         $oldSp = "$wdSp/$oldSpBName"
         $newSpName = "[renamed]file.txt"
         $newSp = "$wdSp/``[renamed``]file.txt"
-        In $wdSp -Execute {
+        In $wdSp -execute {
             $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
             Rename-Item -Path $oldSpBName $newSpName
         }
@@ -46,7 +46,7 @@ Describe "Rename-Item tests" -Tag "CI" {
         $oldSp = "$wdSp/$oldSpBName"
         $newSpName = "[renamed]file2.txt"
         $newSp = "$wdSp/``[renamed``]file2.txt"
-        In $wdSp -Execute {
+        In $wdSp -execute {
             $null = New-Item -Name $oldSpName -ItemType File -Value $content -Force
             Rename-Item -LiteralPath $oldSpName $newSpName
         }

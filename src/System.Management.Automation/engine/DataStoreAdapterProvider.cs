@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -37,6 +37,7 @@ namespace System.Management.Automation
         private SessionState _sessionState;
 
         private string _fullName;
+        private string _cachedModuleName;
 
         /// <summary>
         /// Gets the name of the provider.
@@ -44,7 +45,7 @@ namespace System.Management.Automation
         public string Name { get; }
 
         /// <summary>
-        /// Gets the full name of the provider including the pssnapin name if available.
+        /// Gets the full name of the provider including the module name if available.
         /// </summary>
         internal string FullName
         {
@@ -77,7 +78,13 @@ namespace System.Management.Automation
                     return result;
                 }
 
-                return _fullName ?? (_fullName = GetFullName(Name, PSSnapInName, ModuleName));
+                if (_fullName != null && ModuleName.Equals(_cachedModuleName, StringComparison.Ordinal))
+                {
+                    return _fullName;
+                }
+
+                _cachedModuleName = ModuleName;
+                return _fullName = GetFullName(Name, PSSnapInName, ModuleName);
             }
         }
 
@@ -290,7 +297,7 @@ namespace System.Management.Automation
         {
             if (providerInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInfo));
             }
 
             Name = providerInfo.Name;
@@ -387,17 +394,17 @@ namespace System.Management.Automation
             // Verify parameters
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             if (implementingType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("implementingType");
+                throw PSTraceSource.NewArgumentNullException(nameof(implementingType));
             }
 
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             _sessionState = sessionState;

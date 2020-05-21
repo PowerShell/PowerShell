@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 //
@@ -62,7 +62,7 @@ namespace System.Management.Automation.Security
             return s_systemLockdownPolicy.Value;
         }
 
-        private static object s_systemLockdownPolicyLock = new Object();
+        private static object s_systemLockdownPolicyLock = new object();
         private static SystemEnforcementMode? s_systemLockdownPolicy = null;
         private static bool s_allowDebugOverridePolicy = false;
 
@@ -564,6 +564,7 @@ namespace System.Management.Automation.Security
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*
             /// pdwLockdownState: PDWORD->DWORD*
             /// dwFlags: DWORD->unsigned int
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpGetLockdownPolicy")]
             internal static extern int WldpGetLockdownPolicy(ref WLDP_HOST_INFORMATION pHostInformation, ref uint pdwLockdownState, uint dwFlags);
 
@@ -572,6 +573,7 @@ namespace System.Management.Automation.Security
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*
             /// ptIsApproved: PBOOL->BOOL*
             /// dwFlags: DWORD->unsigned int
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpIsClassInApprovedList")]
             internal static extern int WldpIsClassInApprovedList(ref Guid rclsid, ref WLDP_HOST_INFORMATION pHostInformation, ref int ptIsApproved, uint dwFlags);
 

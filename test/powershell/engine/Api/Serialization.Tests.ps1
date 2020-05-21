@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Serialization Tests" -tags "CI" {
     BeforeAll {
@@ -37,7 +37,7 @@ Describe "Serialization Tests" -tags "CI" {
     }
 
     It 'Test DateTime stamps serialize and deserialize work as expected.' {
-        $objs = [System.DateTime]::MaxValue, [System.DateTime]::MinValue, [System.DateTime]::Today, (new-object System.DateTime), (new-object System.DateTime 123456789)
+        $objs = [System.DateTime]::MaxValue, [System.DateTime]::MinValue, [System.DateTime]::Today, (New-Object System.DateTime), (New-Object System.DateTime 123456789)
         foreach($inputObject in $objs)
         {
            SerializeAndDeserialize($inputObject) | Should -Be $inputObject
@@ -49,7 +49,7 @@ Describe "Serialization Tests" -tags "CI" {
         $uristrings = "http://www.microsoft.com","http://www.microsoft.com:8000","http://www.microsoft.com/index.html","http://www.microsoft.com/default.asp","http://www.microsoft.com/Hello%20World.htm"
         foreach($uristring in $uristrings)
         {
-           $inputObject = new-object System.Uri $uristring
+           $inputObject = New-Object System.Uri $uristring
            SerializeAndDeserialize($inputObject) | Should -Be $inputObject
         }
     }
@@ -58,10 +58,10 @@ Describe "Serialization Tests" -tags "CI" {
         $objs1 = [byte]0, [byte]1, [byte]2, [byte]3, [byte]255
         $objs2 = @()
         $objs3 = [byte]128
-        $objs4 = @()
-        for($i=0;$i -lt 256;$i++)
+        $objs4 = [System.Byte[]]::new(256)
+        for($i=0; $i -lt 256; $i++)
         {
-           $objs4 += [byte]$i
+           $objs4[$i] = [byte]$i
         }
         $objsArray = New-Object System.Collections.ArrayList
         $objsArray.Add($objs1)
@@ -86,7 +86,7 @@ Describe "Serialization Tests" -tags "CI" {
 
     It 'Test SecureString serialize and deserialize work as expected.' {
         #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
-        $inputObject = Convertto-Securestring -String "PowerShellRocks!" -AsPlainText -Force
+        $inputObject = ConvertTo-SecureString -String "PowerShellRocks!" -AsPlainText -Force
         SerializeAndDeserialize($inputObject).Length | Should -Be $inputObject.Length
 
     }

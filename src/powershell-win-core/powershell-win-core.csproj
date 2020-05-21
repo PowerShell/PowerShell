@@ -1,4 +1,4 @@
-﻿<Project ToolsVersion="15.0">
+<Project ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
 
   <PropertyGroup>
@@ -7,9 +7,15 @@
     <OutputType>Exe</OutputType>
     <TieredCompilation>true</TieredCompilation>
     <TieredCompilationQuickJit>true</TieredCompilationQuickJit>
+    <TieredCompilationQuickJitForLoops>true</TieredCompilationQuickJitForLoops>
     <RuntimeIdentifiers>win7-x86;win7-x64</RuntimeIdentifiers>
     <RootNamespace>Microsoft.PowerShell</RootNamespace>
     <ApplicationManifest>..\..\assets\pwsh.manifest</ApplicationManifest>
+  </PropertyGroup>
+
+  <!-- Have default so this builds in Visual Studio -->
+  <PropertyGroup Condition = "'$(SDKToUse)' == ''">
+    <SDKToUse>Microsoft.NET.Sdk.WindowsDesktop</SDKToUse>
   </PropertyGroup>
 
   <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk' " />
@@ -50,6 +56,7 @@
     <ProjectReference Include="..\Microsoft.PowerShell.Commands.Diagnostics\Microsoft.PowerShell.Commands.Diagnostics.csproj" />
     <ProjectReference Include="..\Microsoft.Management.Infrastructure.CimCmdlets\Microsoft.Management.Infrastructure.CimCmdlets.csproj" />
     <ProjectReference Include="..\Microsoft.WSMan.Management\Microsoft.WSMan.Management.csproj" />
+    <ProjectReference Include="..\Microsoft.Management.UI.Internal\Microsoft.PowerShell.GraphicalHost.csproj" Condition="'$(SDKToUse)' == 'Microsoft.NET.Sdk.WindowsDesktop' "/>
   </ItemGroup>
 
   <ItemGroup>

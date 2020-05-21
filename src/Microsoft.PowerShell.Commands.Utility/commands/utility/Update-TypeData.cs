@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements update-typeData command.
     /// </summary>
     [Cmdlet(VerbsData.Update, "TypeData", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113421")]
+        DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097131")]
     public class UpdateTypeDataCommand : UpdateData
     {
         #region dynamic type set
@@ -886,7 +886,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements update-typeData command.
     /// </summary>
     [Cmdlet(VerbsData.Update, "FormatData", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113420")]
+        DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097135")]
     public class UpdateFormatDataCommand : UpdateData
     {
         /// <summary>
@@ -1039,7 +1039,7 @@ namespace Microsoft.PowerShell.Commands
     /// Remove-TypeData cmdlet.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "TypeData", SupportsShouldProcess = true, DefaultParameterSetName = RemoveTypeDataSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217038")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096622")]
     public class RemoveTypeDataCommand : PSCmdlet
     {
         private const string RemoveTypeSet = "RemoveTypeSet";
@@ -1269,7 +1269,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Get-TypeData cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "TypeData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217033")]
+    [Cmdlet(VerbsCommon.Get, "TypeData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097018")]
     [OutputType(typeof(System.Management.Automation.PSObject))]
     public class GetTypeDataCommand : PSCmdlet
     {

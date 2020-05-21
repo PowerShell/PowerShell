@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #if !UNIX
 
@@ -218,7 +218,7 @@ namespace System.Management.Automation
             if (dirInfo != null)
             {
                 // Relative path of the file is the path inside the containing folder excluding folder Name
-                relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
+                relativePath = fileToHash.FullName.AsSpan(dirInfo.FullName.Length).TrimStart('\\').ToString();
             }
             else
             {
@@ -613,7 +613,7 @@ namespace System.Management.Automation
             if (dirInfo != null)
             {
                 // Relative path of the file is the path inside the containing folder excluding folder Name
-                relativePath = fileToHash.FullName.Substring(dirInfo.FullName.Length).TrimStart('\\');
+                relativePath = fileToHash.FullName.AsSpan(dirInfo.FullName.Length).TrimStart('\\').ToString();
                 exclude = fileToHash.Name;
             }
             else
@@ -631,9 +631,8 @@ namespace System.Management.Automation
                     fileHash = CalculateFileHash(fileToHash.FullName, hashAlgorithm);
                 }
 
-                if (!fileHashes.ContainsKey(relativePath))
+                if (fileHashes.TryAdd(relativePath, fileHash))
                 {
-                    fileHashes.Add(relativePath, fileHash);
                     _cmdlet.WriteVerbose(StringUtil.Format(CatalogStrings.FoundFileInPath, relativePath, fileHash));
                 }
                 else

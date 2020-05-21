@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma warning disable 1634, 1691
 
@@ -396,7 +396,7 @@ namespace System.Management.Automation
         {
             if (progressRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("progressRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
             }
 
             if (Host == null || Host.UI == null)
@@ -2053,7 +2053,7 @@ namespace System.Management.Automation
             ThrowIfStopping();
             if (errorRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("errorRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
             }
 
             errorRecord.SetInvocationInfo(MyInvocation);
@@ -2318,7 +2318,7 @@ namespace System.Management.Automation
             internal AllowWrite(InternalCommand permittedToWrite, bool permittedToWriteToPipeline)
             {
                 if (permittedToWrite == null)
-                    throw PSTraceSource.NewArgumentNullException("permittedToWrite");
+                    throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
                 MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
                 if (mcr == null)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
@@ -2368,7 +2368,7 @@ namespace System.Management.Automation
         public Exception ManageException(Exception e)
         {
             if (e == null)
-                throw PSTraceSource.NewArgumentNullException("e");
+                throw PSTraceSource.NewArgumentNullException(nameof(e));
 
             if (PipelineProcessor != null)
             {
@@ -2381,7 +2381,8 @@ namespace System.Management.Automation
             // 913088-2005/06/06
             // PipelineStoppedException should not get added to $Error
             // 2008/06/25 - narrieta: ExistNestedPromptException should not be added to $error either
-            if (!(e is HaltCommandException) && !(e is PipelineStoppedException) && !(e is ExitNestedPromptException))
+            // 2019/10/18 - StopUpstreamCommandsException should not be added either
+            if (!(e is HaltCommandException) && !(e is PipelineStoppedException) && !(e is ExitNestedPromptException) && !(e is StopUpstreamCommandsException))
             {
                 try
                 {
@@ -2926,7 +2927,7 @@ namespace System.Management.Automation
         // See "User Feedback Mechanisms - Note.doc" for details.
 
         private bool _isConfirmPreferenceCached = false;
-        private ConfirmImpact _confirmPreference = InitialSessionState.defaultConfirmPreference;
+        private ConfirmImpact _confirmPreference = InitialSessionState.DefaultConfirmPreference;
         /// <summary>
         /// Preference setting controlling behavior of ShouldProcess()
         /// </summary>
@@ -2966,7 +2967,7 @@ namespace System.Management.Automation
         }
 
         private bool _isDebugPreferenceSet = false;
-        private ActionPreference _debugPreference = InitialSessionState.defaultDebugPreference;
+        private ActionPreference _debugPreference = InitialSessionState.DefaultDebugPreference;
         private bool _isDebugPreferenceCached = false;
         /// <summary>
         /// Preference setting.
@@ -3020,7 +3021,7 @@ namespace System.Management.Automation
         }
 
         private bool _isVerbosePreferenceCached = false;
-        private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
+        private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -3069,7 +3070,7 @@ namespace System.Management.Automation
         internal bool IsWarningActionSet { get; private set; } = false;
 
         private bool _isWarningPreferenceCached = false;
-        private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
+        private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
         /// <summary>
         /// Preference setting.
         /// </summary>
@@ -3208,7 +3209,7 @@ namespace System.Management.Automation
 
         internal bool IsDebugFlagSet { get; private set; } = false;
 
-        private bool _whatIfFlag = InitialSessionState.defaultWhatIfPreference;
+        private bool _whatIfFlag = InitialSessionState.DefaultWhatIfPreference;
         private bool _isWhatIfPreferenceCached /* = false */;
         /// <summary>
         /// WhatIf indicates that the command should not
@@ -3240,7 +3241,7 @@ namespace System.Management.Automation
 
         internal bool IsWhatIfFlagSet { get; private set; }
 
-        private ActionPreference _errorAction = InitialSessionState.defaultErrorActionPreference;
+        private ActionPreference _errorAction = InitialSessionState.DefaultErrorActionPreference;
         private bool _isErrorActionPreferenceCached = false;
         /// <summary>
         /// ErrorAction tells the command what to do when an error occurs.
@@ -3316,7 +3317,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ActionPreference _progressPreference = InitialSessionState.defaultProgressPreference;
+        private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
         private bool _isProgressPreferenceSet = false;
         private bool _isProgressPreferenceCached = false;
 
@@ -3353,7 +3354,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
+        private ActionPreference _informationPreference = InitialSessionState.DefaultInformationPreference;
 
         internal bool IsInformationActionSet { get; private set; } = false;
 

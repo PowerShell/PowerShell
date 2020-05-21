@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell
             /// </summary>
             /// <param name="propertyCount"></param>
             /// <returns></returns>
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            [PreserveSig]
             HResult GetCount([Out] out uint propertyCount);
 
             /// <summary>
@@ -115,7 +115,7 @@ namespace Microsoft.PowerShell
             /// <param name="propertyIndex"></param>
             /// <param name="key"></param>
             /// <returns></returns>
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            [PreserveSig]
             HResult GetAt([In] uint propertyIndex, out PropertyKey key);
 
             /// <summary>
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell
             /// <param name="key"></param>
             /// <param name="pv"></param>
             /// <returns></returns>
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
+            [PreserveSig]
             HResult GetValue([In] ref PropertyKey key, [Out] PropVariant pv);
 
             /// <summary>
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell
             /// <param name="key"></param>
             /// <param name="pv"></param>
             /// <returns></returns>
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime), PreserveSig]
+            [PreserveSig]
             HResult SetValue([In] ref PropertyKey key, [In] PropVariant pv);
 
             /// <summary>
@@ -141,7 +141,6 @@ namespace Microsoft.PowerShell
             /// </summary>
             /// <returns></returns>
             [PreserveSig]
-            [MethodImpl(MethodImplOptions.InternalCall, MethodCodeType = MethodCodeType.Runtime)]
             HResult Commit();
         }
 
@@ -199,9 +198,8 @@ namespace Microsoft.PowerShell
         internal interface IObjectCollection
         {
             // IObjectArray
-            [PreserveSig]
             void GetCount(out uint cObjects);
-            [PreserveSig]
+
             void GetAt(
                 uint iIndex,
                 ref Guid riid,

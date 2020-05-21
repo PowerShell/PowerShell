@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -71,7 +71,7 @@ namespace System.Management.Automation.Remoting
         {
             if (session == null)
             {
-                throw PSTraceSource.NewArgumentNullException("session");
+                throw PSTraceSource.NewArgumentNullException(nameof(session));
             }
 
             _session = session;
@@ -257,7 +257,7 @@ namespace System.Management.Automation.Remoting
         {
             if (fsmEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
             }
 
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)_state, (int)fsmEventArg.StateEvent];
@@ -291,7 +291,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.CreateSession, "StateEvent must be CreateSession");
@@ -320,7 +320,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert((_state == RemoteSessionState.Idle) || (_state == RemoteSessionState.NegotiationSent),
@@ -352,7 +352,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationReceived, "StateEvent must be NegotiationReceived");
@@ -361,12 +361,12 @@ namespace System.Management.Automation.Remoting
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.NegotiationReceived)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 if (fsmEventArg.RemoteSessionCapability == null)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 SetState(RemoteSessionState.NegotiationReceived, null);
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Remoting
         {
             if (fsmEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
             }
 
             Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationSending, "Event must be NegotiationSending");
@@ -419,7 +419,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(_state == RemoteSessionState.NegotiationSending, "State must be NegotiationSending");
@@ -447,7 +447,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(_state == RemoteSessionState.NegotiationSent, "State must be NegotiationReceived");
@@ -455,7 +455,7 @@ namespace System.Management.Automation.Remoting
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.NegotiationCompleted)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 if (_state != RemoteSessionState.NegotiationSent)
@@ -487,12 +487,12 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 if (fsmEventArg.RemoteData == null)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(_state == RemoteSessionState.Established ||
@@ -592,14 +592,14 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.ConnectFailed, "StateEvent must be ConnectFailed");
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.ConnectFailed)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(_state == RemoteSessionState.Connecting, "session State must be Connecting");
@@ -629,14 +629,14 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.FatalError, "StateEvent must be FatalError");
 
                 if (fsmEventArg.StateEvent != RemoteSessionEvent.FatalError)
                 {
-                    throw PSTraceSource.NewArgumentException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentException(nameof(fsmEventArg));
                 }
 
                 DoClose(this, fsmEventArg);
@@ -674,7 +674,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 RemoteSessionState oldState = _state;
@@ -728,7 +728,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.CloseFailed, "StateEvent must be CloseFailed");
@@ -758,7 +758,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.CloseCompleted, "StateEvent must be CloseCompleted");
@@ -788,7 +788,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationFailed, "StateEvent must be NegotiationFailed");
@@ -817,7 +817,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.NegotiationTimeout, "StateEvent must be NegotiationTimeout");
@@ -852,7 +852,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.SendFailed, "StateEvent must be SendFailed");
@@ -881,7 +881,7 @@ namespace System.Management.Automation.Remoting
             {
                 if (fsmEventArg == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("fsmEventArg");
+                    throw PSTraceSource.NewArgumentNullException(nameof(fsmEventArg));
                 }
 
                 Dbg.Assert(fsmEventArg.StateEvent == RemoteSessionEvent.ReceiveFailed, "StateEvent must be ReceivedFailed");

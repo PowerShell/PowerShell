@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
 
@@ -86,8 +86,8 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         else
         {
             # Skip for non-Windows platforms
-            $defaultParamValues = $PSdefaultParameterValues.Clone()
-            $PSdefaultParameterValues = @{ "it:skip" = $true }
+            $defaultParamValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues = @{ "it:skip" = $true }
         }
     }
 
@@ -161,7 +161,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
 
         $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] $protectedEventLoggingCertPath
-        $recipient.Resolve($executionContext.SessionState, "Decryption", [ref] $errors)
+        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
 
         $recipient.Certificates.Count | Should -Be 1
     }
@@ -327,9 +327,9 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     It "Verify protect message using OutString" {
-        $protected = Get-Process -Id $pid | Protect-CmsMessage -To (Get-GoodCertificateLocation)
+        $protected = Get-Process -Id $PID | Protect-CmsMessage -To (Get-GoodCertificateLocation)
         $decrypted = $protected | Unprotect-CmsMessage -To (Get-GoodCertificateLocation)
         # Should have had PID in output
-        $decrypted | Should -Match $pid
+        $decrypted | Should -Match $PID
     }
 }

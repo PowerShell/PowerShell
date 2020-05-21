@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -484,7 +484,7 @@ namespace System.Management.Automation
             {
                 if (providerId == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("providerId");
+                    throw PSTraceSource.NewArgumentNullException(nameof(providerId));
                 }
 
                 PathInfo result = SessionState.Path.CurrentProviderLocation(providerId);

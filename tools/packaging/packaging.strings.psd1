@@ -1,4 +1,4 @@
-﻿@{
+@{
     Description = @'
 PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.
@@ -137,12 +137,12 @@ open {0}
         <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation.</copyright>
         <contentFiles>
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework=".netcoreapp3.0"></group>
+            <group targetFramework="net5.0"></group>
         </dependencies>
     </metadata>
 </package>
@@ -173,7 +173,7 @@ open {0}
         <license type="expression">MIT</license>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>&#169; Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation.</copyright>
         <packageTypes>
             <packageType name="DotnetTool" />
         </packageTypes>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="source">The input object to serialize. Serializes to a default depth of 1.</param>
         /// <returns>The serialized object, as CliXml.</returns>
-        public static string Serialize(Object source)
+        public static string Serialize(object source)
         {
             return Serialize(source, s_mshDefaultSerializationDepth);
         }
@@ -102,7 +102,7 @@ namespace System.Management.Automation
         /// <param name="source">The input object to serialize.</param>
         /// <param name="depth">The depth of the members to serialize.</param>
         /// <returns>The serialized object, as CliXml.</returns>
-        public static string Serialize(Object source, int depth)
+        public static string Serialize(object source, int depth)
         {
             // Create an xml writer
             StringBuilder sb = new StringBuilder();
@@ -218,12 +218,12 @@ namespace System.Management.Automation
         {
             if (writer == null)
             {
-                throw PSTraceSource.NewArgumentException("writer");
+                throw PSTraceSource.NewArgumentException(nameof(writer));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentException("context");
+                throw PSTraceSource.NewArgumentException(nameof(context));
             }
 
             _serializer = new InternalSerializer(writer, context);
@@ -484,7 +484,7 @@ namespace System.Management.Automation
         {
             if (reader == null)
             {
-                throw PSTraceSource.NewArgumentNullException("reader");
+                throw PSTraceSource.NewArgumentNullException(nameof(reader));
             }
 
             _reader = reader;
@@ -666,7 +666,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             if (o == null)
@@ -687,7 +687,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             if (o == null)
@@ -2583,7 +2583,7 @@ namespace System.Management.Automation
             Dbg.Assert(source != null, "caller should have validated the information");
             Dbg.Assert(entry != null, "caller should have validated the information");
 
-            WriteRawString(serializer, streamName, property, XmlConvert.ToString((Double)source), entry);
+            WriteRawString(serializer, streamName, property, XmlConvert.ToString((double)source), entry);
         }
 
         /// <summary>
@@ -2891,7 +2891,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return new String(result, 0, rlen);
+            return new string(result, 0, rlen);
         }
 
         /// <summary>
@@ -3012,14 +3012,14 @@ namespace System.Management.Automation
                     typeof(byte),
                     typeof(char),
                     typeof(DateTime),
-                    typeof(Decimal),
-                    typeof(Double),
+                    typeof(decimal),
+                    typeof(double),
                     typeof(Int16),
                     typeof(Int32),
                     typeof(Int64),
-                    typeof(SByte),
+                    typeof(sbyte),
                     typeof(Single),
-                    typeof(String),
+                    typeof(string),
                     typeof(TimeSpan),
                     typeof(UInt16),
                     typeof(UInt32),
@@ -3110,7 +3110,7 @@ namespace System.Management.Automation
             if (_reader.NodeType != XmlNodeType.Element)
             {
                 throw NewXmlException(Serialization.InvalidNodeType, null,
-                                       _reader.NodeType.ToString(), XmlNodeType.Element.ToString());
+                                       _reader.NodeType.ToString(), nameof(XmlNodeType.Element));
             }
 
             s_trace.WriteLine("Processing start node {0}", _reader.LocalName);
@@ -5155,13 +5155,13 @@ namespace System.Management.Automation
                                 InternalSerializer.WriteBoolean,
                                 InternalDeserializer.DeserializeBoolean),
 
-            new TypeSerializationInfo(typeof(Byte),
+            new TypeSerializationInfo(typeof(byte),
                                 SerializationStrings.UnsignedByteTag,
                                 SerializationStrings.UnsignedByteTag,
                                 null,
                                 InternalDeserializer.DeserializeByte),
 
-            new TypeSerializationInfo(typeof(Char),
+            new TypeSerializationInfo(typeof(char),
                                 SerializationStrings.CharTag,
                                 SerializationStrings.CharTag,
                                 InternalSerializer.WriteChar,
@@ -5173,13 +5173,13 @@ namespace System.Management.Automation
                                 InternalSerializer.WriteDateTime,
                                 InternalDeserializer.DeserializeDateTime),
 
-            new TypeSerializationInfo(typeof(Decimal),
+            new TypeSerializationInfo(typeof(decimal),
                                 SerializationStrings.DecimalTag,
                                 SerializationStrings.DecimalTag,
                                 null,
                                 InternalDeserializer.DeserializeDecimal),
 
-            new TypeSerializationInfo(typeof(Double),
+            new TypeSerializationInfo(typeof(double),
                                 SerializationStrings.DoubleTag,
                                 SerializationStrings.DoubleTag,
                                 InternalSerializer.WriteDouble,
@@ -5208,7 +5208,7 @@ namespace System.Management.Automation
                                 null,
                                 InternalDeserializer.DeserializeInt64),
 
-            new TypeSerializationInfo(typeof(SByte),
+            new TypeSerializationInfo(typeof(sbyte),
                                 SerializationStrings.ByteTag,
                                 SerializationStrings.ByteTag,
                                 null,
@@ -5226,7 +5226,7 @@ namespace System.Management.Automation
                                 InternalSerializer.WriteScriptBlock,
                                 InternalDeserializer.DeserializeScriptBlock),
 
-            new TypeSerializationInfo(typeof(String),
+            new TypeSerializationInfo(typeof(string),
                                 SerializationStrings.StringTag,
                                 SerializationStrings.StringTag,
                                 InternalSerializer.WriteEncodedString,
@@ -5905,7 +5905,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             foreach (DictionaryEntry entry in other)
@@ -5952,19 +5952,19 @@ namespace System.Management.Automation
         }
 
         private static readonly Type[] s_handshakeFriendlyTypes = new Type[] {
-                typeof(Boolean),
-                typeof(Byte),
-                typeof(Char),
+                typeof(bool),
+                typeof(byte),
+                typeof(char),
                 typeof(DateTime),
-                typeof(Decimal),
-                typeof(Double),
+                typeof(decimal),
+                typeof(double),
                 typeof(Guid),
                 typeof(Int32),
                 typeof(Int64),
-                typeof(SByte),
+                typeof(sbyte),
                 typeof(Single),
                 // typeof(ScriptBlock) - don't want ScriptBlocks, because they are deserialized into strings
-                typeof(String),
+                typeof(string),
                 typeof(TimeSpan),
                 typeof(UInt16),
                 typeof(UInt32),
@@ -6125,7 +6125,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Boolean[] value)
+        public void Add(string key, bool[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6135,7 +6135,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Byte value)
+        public void Add(string key, byte value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6215,7 +6215,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Double value)
+        public void Add(string key, double value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6225,7 +6225,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, Double[] value)
+        public void Add(string key, double[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6295,7 +6295,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, SByte value)
+        public void Add(string key, sbyte value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6305,7 +6305,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="key">The key of the element to add.</param>
         /// <param name="value">The value of the element to add.</param>
-        public void Add(string key, SByte[] value)
+        public void Add(string key, sbyte[] value)
         {
             this.Add((object)key, (object)value);
         }
@@ -6691,14 +6691,14 @@ namespace Microsoft.PowerShell
         {
             if (destinationType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("destinationType");
+                throw PSTraceSource.NewArgumentNullException(nameof(destinationType));
             }
 
             if (sourceValue == null)
             {
                 throw new PSInvalidCastException(
                     "InvalidCastWhenRehydratingFromNull",
-                    PSTraceSource.NewArgumentNullException("sourceValue"),
+                    PSTraceSource.NewArgumentNullException(nameof(sourceValue)),
                     ExtendedTypeSystem.InvalidCastFromNull,
                     destinationType.ToString());
             }
@@ -7274,13 +7274,13 @@ namespace Microsoft.PowerShell
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ParameterSetMetadata parameterSetMetadata = instance.BaseObject as ParameterSetMetadata;
             if (parameterSetMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             return (UInt32)(parameterSetMetadata.Flags);
@@ -7296,13 +7296,13 @@ namespace Microsoft.PowerShell
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             DebuggerStopEventArgs dbgStopEventArgs = instance.BaseObject as DebuggerStopEventArgs;
             if (dbgStopEventArgs == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             if (dbgStopEventArgs.InvocationInfo == null)
@@ -7474,7 +7474,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                throw PSTraceSource.NewArgumentException("deserializedItem");
+                throw PSTraceSource.NewArgumentException(nameof(deserializedItem));
             }
 
             return result;
@@ -7556,13 +7556,13 @@ namespace Microsoft.PowerShell
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             FormatViewDefinition formatViewDefinition = instance.BaseObject as FormatViewDefinition;
             if (formatViewDefinition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             return formatViewDefinition.InstanceId;

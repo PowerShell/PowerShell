@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell SDK metapackage</Description>
@@ -16,21 +16,21 @@
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/fxdac -->
-    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.IO.Packaging" Version="4.6.0" />
-    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.6.0" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="4.6.0" />
+    <PackageReference Include="System.IO.Packaging" Version="5.0.0-preview.4.20251.6" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="5.0.0-preview.4.20251.6" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="5.0.0-preview.4.20251.6" />
     <!-- the following package(s) are from https://github.com/dotnet/wcf -->
-    <PackageReference Include="System.ServiceModel.Duplex" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.Http" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.Primitives" Version="4.6.0" />
-    <PackageReference Include="System.ServiceModel.Security" Version="4.6.0" />
-    <PackageReference Include="System.Private.ServiceModel" Version="4.6.0" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.7.0" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.7.0" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.7.0" />
     <!-- the source could not be found for the following package(s) -->
     <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0-preview.4.20251.6" />
   </ItemGroup>
 
 </Project>

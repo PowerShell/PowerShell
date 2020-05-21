@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-Table" -Tags "CI" {
         It "Should call format table on piped input without error" {
@@ -20,8 +20,8 @@ Describe "Format-Table" -Tags "CI" {
         }
 
         It "Format-Table with not existing table with force should throw PipelineStoppedException"{
-                $obj = New-Object -typename PSObject
-                $e = { $obj | Format-Table -view bar -force -ErrorAction Stop } |
+                $obj = New-Object -TypeName PSObject
+                $e = { $obj | Format-Table -View bar -Force -ErrorAction Stop } |
                     Should -Throw -ErrorId "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand" -PassThru
                 $e.CategoryInfo | Should -Match "PipelineStoppedException"
         }
@@ -36,7 +36,7 @@ Describe "Format-Table" -Tags "CI" {
 
         It "Format-Table with Negative Count should work" {
                 $FormatEnumerationLimit = -1
-                $result = Format-Table -inputobject @{'test'= 1, 2}
+                $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
@@ -44,28 +44,28 @@ Describe "Format-Table" -Tags "CI" {
         # Pending on issue#888
         It "Format-Table with Zero Count should work" -Pending {
                 $FormatEnumerationLimit = 0
-                $result = Format-Table -inputobject @{'test'= 1, 2}
+                $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{...}"
         }
 
         It "Format-Table with Less Count should work" {
                 $FormatEnumerationLimit = 1
-                $result = Format-Table -inputobject @{'test'= 1, 2}
+                $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1...}"
         }
 
         It "Format-Table with More Count should work" {
                 $FormatEnumerationLimit = 10
-                $result = Format-Table -inputobject @{'test'= 1, 2}
+                $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
 
         It "Format-Table with Equal Count should work" {
                 $FormatEnumerationLimit = 2
-                $result = Format-Table -inputobject @{'test'= 1, 2}
+                $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
@@ -73,7 +73,7 @@ Describe "Format-Table" -Tags "CI" {
         # Pending on issue#888
         It "Format-Table with Bogus Count should throw Exception" -Pending {
                 $FormatEnumerationLimit = "abc"
-                $result = Format-Table -inputobject @{'test'= 1, 2}
+                $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result|Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
@@ -82,7 +82,7 @@ Describe "Format-Table" -Tags "CI" {
         It "Format-Table with Var Deleted should throw Exception" -Pending {
                 $FormatEnumerationLimit = 2
                 Remove-Variable FormatEnumerationLimit
-                $result = Format-Table -inputobject @{'test'= 1, 2}
+                $result = Format-Table -InputObject @{'test'= 1, 2}
                 $resultStr = $result | Out-String
                 $resultStr | Should -Match "test\s+{1, 2}"
         }
@@ -112,7 +112,7 @@ Describe "Format-Table" -Tags "CI" {
                 $IPs = New-Object System.Collections.ArrayList
                 $IPs.Add($IP1)
                 $IPs.Add($IP2)
-                $result = $IPs | Format-Table -Autosize | Out-String
+                $result = $IPs | Format-Table -AutoSize | Out-String
                 $result | Should -Match "name size booleanValue"
                 $result | Should -Match "---- ---- ------------"
                 $result | Should -Match "Bob\s+1234\s+True"
@@ -134,8 +134,8 @@ Describe "Format-Table" -Tags "CI" {
             @{ testName = "array"      ; testString = "line1","line2"      }
         ) {
             param ($testString)
-            $result = $testString | Format-Table -Property "foo","bar" -Force | Out-String
-            $result.Replace(" ","").Replace([Environment]::NewLine,"") | Should -BeExactly "foobar------"
+            $result = $testString | Format-Table -Property "fox","bar" -Force | Out-String
+            $result.Replace(" ","").Replace([Environment]::NewLine,"") | Should -BeExactly "foxbar------"
         }
 
         It "Format-Table with complex object for End-To-End should work" {
@@ -785,7 +785,7 @@ A Name                                  B
                 # Fill the console window with the string, so that it reaches its max width.
                 # Check if the max width is equal to default value (120), to test test hook set.
                 $testObject = @{ test = '1' * 200}
-                Format-table -inputobject $testObject | Out-String -Stream | ForEach-Object{$_.length} | Sort-Object -Bottom 1 | Should -Be 120
+                Format-Table -InputObject $testObject | Out-String -Stream | ForEach-Object{$_.length} | Sort-Object -Bottom 1 | Should -Be 120
             }
             finally {
                 [system.management.automation.internal.internaltesthooks]::SetTestHook('SetConsoleWidthToZero', $false)
@@ -811,5 +811,25 @@ A Name                                  B
 "@
             $output = [pscustomobject] @{ one = 1 } | Format-Table @{ l='one'; e='one'; width=10; alignment='center' } | Out-String
             $output.Replace("`r","").Replace(" ",".").Replace("`n","^") | Should -BeExactly $expectedTable.Replace("`r","").Replace(" ",".").Replace("`n","^")
+        }
+
+        It "Should be formatted correctly with double byte wide chars" {
+            $obj = [pscustomobject]@{
+                "哇" = "62";
+                "dbda" = "KM";
+                "消息" = "千"
+            }
+
+            $expected = @"
+
+哇 dbda 消息
+-- ---- ----
+62 KM   千
+
+
+"@
+
+            $actual = $obj | Format-Table | Out-String
+            ($actual.Replace("`r`n", "`n")) | Should -BeExactly ($expected.Replace("`r`n", "`n"))
         }
     }

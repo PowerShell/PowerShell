@@ -1,5 +1,5 @@
 #requires -Version 6.0
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 class CommitNode {
@@ -12,6 +12,7 @@ class CommitNode {
     [string] $Body
     [string] $PullRequest
     [string] $ChangeLogMessage
+    [string] $ThankYouMessage
     [bool] $IsBreakingChange
 
     CommitNode($hash, $parents, $name, $email, $subject, $body) {
@@ -137,8 +138,11 @@ function New-CommitNode
 function Get-ChangeLog
 {
     param(
-        [Parameter(Mandatory)]
+        [Parameter(Mandatory = $true)]
         [string]$LastReleaseTag,
+
+        [Parameter(Mandatory = $true)]
+        [string]$ThisReleaseTag,
 
         [Parameter(Mandatory)]
         [string]$Token,
@@ -263,6 +267,7 @@ function Get-ChangeLog
                 }
             }
             $commit.ChangeLogMessage = ("- {0} (Thanks @{1}!)" -f (Get-ChangeLogMessage $commit.Subject), $commit.AuthorGitHubLogin)
+            $commit.ThankYouMessage = ("@{0}" -f ($commit.AuthorGitHubLogin))
         }
 
         if ($commit.IsBreakingChange) {
@@ -328,23 +333,46 @@ function Get-ChangeLog
         throw "Some PRs are tagged multiple times or have no tags."
     }
 
+    # Write output
+
+    $version = $ThisReleaseTag.TrimStart('v')
+
+    Write-Output "## [${version}] - $(Get-Date -Format yyyy-MM-dd)`n"
+
     PrintChangeLog -clSection $clUntagged -sectionTitle 'UNTAGGED - Please classify'
     PrintChangeLog -clSection $clBreakingChange -sectionTitle 'Breaking Changes'
     PrintChangeLog -clSection $clEngine -sectionTitle 'Engine Updates and Fixes'
     PrintChangeLog -clSection $clExperimental -sectionTitle 'Experimental Features'
-    PrintChangeLog -clSection $clGeneral -sectionTitle 'General Cmdlet Updates and Fixes'
-    PrintChangeLog -clSection $clCodeCleanup -sectionTitle 'Code Cleanup'
     PrintChangeLog -clSection $clPerformance -sectionTitle 'Performance'
+    PrintChangeLog -clSection $clGeneral -sectionTitle 'General Cmdlet Updates and Fixes'
+    PrintChangeLog -clSection $clCodeCleanup -sectionTitle 'Code Cleanup' -Compress
     PrintChangeLog -clSection $clTools -sectionTitle 'Tools'
     PrintChangeLog -clSection $clTest -sectionTitle 'Tests'
-    PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements'
+    PrintChangeLog -clSection $clBuildPackage -sectionTitle 'Build and Packaging Improvements' -Compress
     PrintChangeLog -clSection $clDocs -sectionTitle 'Documentation and Help Content'
+
+    Write-Output "[${version}]: https://github.com/PowerShell/PowerShell/compare/${$LastReleaseTag}...${ThisReleaseTag}`n"
 }
 
-function PrintChangeLog($clSection, $sectionTitle) {
+function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
     if ($clSection.Count -gt 0) {
-        "### $sectionTitle"
-        $clSection | ForEach-Object -MemberName ChangeLogMessage
+        "### $sectionTitle`n"
+
+        if ($Compress) {
+            $items = $clSection.ChangeLogMessage -join "`n"
+            $thankYou = "We thank the following contributors!`n`n"
+            $thankYou += ($clSection.ThankYouMessage | Where-Object { if($_) { return $true} return $false}) -join ", "
+
+            "<details>`n"
+            "<summary>`n"
+            $thankYou | ConvertFrom-Markdown | Select-Object -ExpandProperty Html
+            "</summary>`n"
+            $items | ConvertFrom-Markdown | Select-Object -ExpandProperty Html
+            "</details>"
+        }
+        else {
+            $clSection | ForEach-Object -MemberName ChangeLogMessage
+        }
         ""
     }
 }
@@ -384,7 +412,7 @@ function Get-NewOfficalPackage
 {
     param(
         [String]
-        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..\src'),
+        $Path = (Join-Path -Path $PSScriptRoot -ChildPath '..\src'),
         [Switch]
         $IncludeAll
     )
@@ -396,7 +424,7 @@ function Get-NewOfficalPackage
         $file = $_
 
         # parse the csproj
-        [xml] $csprojXml = (Get-content -Raw -Path $_)
+        [xml] $csprojXml = (Get-Content -Raw -Path $_)
 
         # get the package references
         $packages=$csprojXml.Project.ItemGroup.PackageReference
@@ -410,7 +438,7 @@ function Get-NewOfficalPackage
             if ($name)
             {
                 # Get the current package from nuget
-                $versions = find-package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue -AllVersions |
+                $versions = Find-Package -Name $name -Source https://nuget.org/api/v2/  -ErrorAction SilentlyContinue -AllVersions |
                     Add-Member -Type ScriptProperty -Name Published -Value { $this.Metadata['published']} -PassThru |
                         Where-Object { Test-IncludePackageVersion -NewVersion $_.Version -Version $package.version}
 
@@ -574,25 +602,25 @@ function Update-PsVersionInCode
         $NextReleaseTag,
 
         [String]
-        $Path = (Join-path -Path $PSScriptRoot -ChildPath '..')
+        $Path = (Join-Path -Path $PSScriptRoot -ChildPath '..')
     )
 
     $metaDataPath = (Join-Path -Path $PSScriptRoot -ChildPath 'metadata.json')
-    $metaData = Get-Content -Path $metaDataPath | convertfrom-json
+    $metaData = Get-Content -Path $metaDataPath | ConvertFrom-Json
     $currentTag = $metaData.StableReleaseTag
 
     $currentVersion = $currentTag -replace '^v'
     $newVersion = $NewReleaseTag -replace '^v'
     $metaData.NextReleaseTag = $NextReleaseTag
-    Set-Content -path $metaDataPath -Encoding ascii -Force -Value ($metaData | convertto-json)
+    Set-Content -Path $metaDataPath -Encoding ascii -Force -Value ($metaData | ConvertTo-Json)
 
     Get-ChildItem -Path $Path -Recurse -File |
         Where-Object {$_.Extension -notin '.icns','.svg' -and $_.NAME -ne 'CHANGELOG.md' -and $_.DirectoryName -notmatch '[\\/]docs|demos[\\/]'} |
             Where-Object {$_ | Select-String -SimpleMatch $currentVersion -List} |
-                Foreach-Object {
+                ForEach-Object {
                     $content = Get-Content -Path $_.FullName -Raw -ReadCount 0
                     $newContent = $content.Replace($currentVersion,$newVersion)
-                    Set-Content -path $_.FullName -Encoding ascii -Force -Value $newContent -NoNewline
+                    Set-Content -Path $_.FullName -Encoding ascii -Force -Value $newContent -NoNewline
                 }
 }
 

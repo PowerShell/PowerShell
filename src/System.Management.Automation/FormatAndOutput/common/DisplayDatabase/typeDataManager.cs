@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 if (string.IsNullOrEmpty(formatFile) || (!Path.IsPathRooted(formatFile)))
                 {
-                    throw PSTraceSource.NewArgumentException("formatFiles", FormatAndOutXmlLoadingStrings.FormatFileNotRooted, formatFile);
+                    throw PSTraceSource.NewArgumentException(nameof(formatFiles), FormatAndOutXmlLoadingStrings.FormatFileNotRooted, formatFile);
                 }
 
                 PSSnapInTypeAndFormatErrors fileToLoad = new PSSnapInTypeAndFormatErrors(string.Empty, formatFile);
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (string.IsNullOrEmpty(formatFile) || (!Path.IsPathRooted(formatFile)))
             {
-                throw PSTraceSource.NewArgumentException("formatFile", FormatAndOutXmlLoadingStrings.FormatFileNotRooted, formatFile);
+                throw PSTraceSource.NewArgumentException(nameof(formatFile), FormatAndOutXmlLoadingStrings.FormatFileNotRooted, formatFile);
             }
 
             lock (_formatFileList)

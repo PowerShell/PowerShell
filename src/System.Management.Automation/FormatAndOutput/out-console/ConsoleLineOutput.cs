@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 // NOTE: define this if you want to test the output on US machine and ASCII
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(str, offset);
             }
-            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+            catch
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(str);
             }
-            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+            catch
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 return _rawUserInterface.LengthInBufferCells(character);
             }
-            catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+            catch
             {
                 // thrown when external host rawui is not implemented, in which case
                 // we will fallback to the default value.
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return _forceNewLine ? raw.BufferSize.Width - 1 : raw.BufferSize.Width;
                 }
-                catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+                catch
                 {
                     // thrown when external host rawui is not implemented, in which case
                     // we will fallback to the default value.
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     return raw.WindowSize.Height;
                 }
-                catch (Exception ex) when (ex is HostException || ex is NotImplementedException)
+                catch
                 {
                     // thrown when external host rawui is not implemented, in which case
                     // we will fallback to the default value.
@@ -252,9 +252,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal ConsoleLineOutput(PSHostUserInterface hostConsole, bool paging, TerminatingErrorContext errorContext)
         {
             if (hostConsole == null)
-                throw PSTraceSource.NewArgumentNullException("hostConsole");
+                throw PSTraceSource.NewArgumentNullException(nameof(hostConsole));
             if (errorContext == null)
-                throw PSTraceSource.NewArgumentNullException("errorContext");
+                throw PSTraceSource.NewArgumentNullException(nameof(errorContext));
 
             _console = hostConsole;
             _errorContext = errorContext;
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal PromptHandler(string s, ConsoleLineOutput cmdlet)
             {
                 if (string.IsNullOrEmpty(s))
-                    throw PSTraceSource.NewArgumentNullException("s");
+                    throw PSTraceSource.NewArgumentNullException(nameof(s));
 
                 _promptString = s;
                 _callingCmdlet = cmdlet;

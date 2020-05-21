@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -40,7 +40,7 @@ namespace System.Management.Automation
         private Collection<PSClassInfo> _matchingClassList = null;
         private bool _useWildCards = false;
         private Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
-        private object _lockObject = new Object();
+        private object _lockObject = new object();
 
         #endregion
 
