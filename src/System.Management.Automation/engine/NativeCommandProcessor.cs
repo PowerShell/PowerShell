@@ -465,11 +465,8 @@ namespace System.Management.Automation
                         _nativeProcess = new Process() { StartInfo = startInfo };
                         _nativeProcess.Start();
                     }
-                    catch (Win32Exception)
+                    catch (Win32Exception) when (Platform.IsWindowsDesktop)
                     {
-                        // On Unix platforms, nothing can be further done, so just throw
-                        // On headless Windows SKUs, there is no shell to fall back to, so just throw
-                        if (!Platform.IsWindowsDesktop) { throw; }
 
                         // on Windows desktops, see if there is a file association for this command. If so then we'll use that.
                         string executable = FindExecutable(startInfo.FileName);

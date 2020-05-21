@@ -121,12 +121,8 @@ namespace System.Management.Automation
                                {
                                    forwardingAction(t);
                                }
-                               catch (InvalidOperationException)
+                               catch (InvalidOperationException) when (swallowInvalidOperationExceptions)
                                {
-                                   if (!swallowInvalidOperationExceptions)
-                                   {
-                                       throw;
-                                   }
                                }
                            }
                        };

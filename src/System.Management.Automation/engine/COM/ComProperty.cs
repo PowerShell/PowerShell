@@ -158,12 +158,8 @@ namespace System.Management.Automation
                     throw;
                 }
             }
-            catch (COMException ce)
+            catch (COMException ce) when (ce.HResult == ComUtil.DISP_E_UNKNOWNNAME)
             {
-                if (ce.HResult != ComUtil.DISP_E_UNKNOWNNAME)
-                {
-                    throw;
-                }
             }
 
             return null;
@@ -202,12 +198,8 @@ namespace System.Management.Automation
                     throw;
                 }
             }
-            catch (COMException ce)
+            catch (COMException ce) when (ce.HResult == ComUtil.DISP_E_UNKNOWNNAME)
             {
-                if (ce.HResult != ComUtil.DISP_E_UNKNOWNNAME)
-                {
-                    throw;
-                }
             }
 
             return null;
@@ -236,12 +228,8 @@ namespace System.Management.Automation
                     throw;
                 }
             }
-            catch (COMException ce)
+            catch (COMException ce) when (ce.HResult == ComUtil.DISP_E_UNKNOWNNAME)
             {
-                if (ce.HResult != ComUtil.DISP_E_UNKNOWNNAME)
-                {
-                    throw;
-                }
             }
         }
 
@@ -285,12 +273,8 @@ namespace System.Management.Automation
                     throw;
                 }
             }
-            catch (COMException ce)
+            catch (COMException ce) when (ce.HResult == ComUtil.DISP_E_UNKNOWNNAME)
             {
-                if (ce.HResult != ComUtil.DISP_E_UNKNOWNNAME)
-                {
-                    throw;
-                }
             }
         }
 

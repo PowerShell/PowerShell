@@ -1142,12 +1142,8 @@ namespace System.Management.Automation
             {
                 throw;
             }
-            catch (ProviderInvocationException)
+            catch (ProviderInvocationException) when (force)
             {
-                if (!force)
-                {
-                    throw;
-                }
             }
 
             // Now remove the drive if there was no error or we are forcing the removal

@@ -698,16 +698,9 @@ namespace System.Management.Automation
                         object targetObject = eventProperty.SetMethod.IsStatic ? null : source;
                         eventProperty.SetValue(targetObject, true);
                     }
-                    catch (TargetInvocationException e)
+                    catch (TargetInvocationException e) when (e.InnerException != null)
                     {
-                        if (e.InnerException != null)
-                        {
-                            throw e.InnerException;
-                        }
-                        else
-                        {
-                            throw;
-                        }
+                        throw e.InnerException;
                     }
                 }
 

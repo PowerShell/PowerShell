@@ -115,12 +115,8 @@ namespace Microsoft.Management.UI.Internal
             {
                 return this.CachedFilterExpression.Evaluate(item);
             }
-            catch (Exception e)
+            catch (Exception e) when (this.TryNotifyFilterException(e))
             {
-                if (!this.TryNotifyFilterException(e))
-                {
-                    throw;
-                }
             }
 
             return false;

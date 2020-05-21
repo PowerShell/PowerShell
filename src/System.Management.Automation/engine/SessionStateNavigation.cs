@@ -144,19 +144,10 @@ namespace System.Management.Automation
                         out provider,
                         out drive);
                 }
-                catch (DriveNotFoundException)
+                catch (DriveNotFoundException) when (useDefaultProvider)
                 {
-                    // the path is sure to be drive_qualified and it is absolute path, otherwise the
-                    // drive would be set to the current drive and the DriveNotFoundException will not happen
-                    if (useDefaultProvider)
-                    {
-                        // the default provider is FileSystem
-                        provider = PublicSessionState.Internal.GetSingleProvider(Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName);
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    // the default provider is FileSystem
+                    provider = PublicSessionState.Internal.GetSingleProvider(Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName);
                 }
 
                 if (getProviderPathContext.HasErrors())
@@ -1128,22 +1119,13 @@ namespace System.Management.Automation
             {
                 workingPath = Globber.GetProviderPath(path, context, out provider, out drive);
             }
-            catch (DriveNotFoundException)
+            catch (DriveNotFoundException) when (useDefaultProvider)
             {
-                // the path is sure to be drive_qualified and it is an absolute path, otherwise the
-                // drive would be set to the current drive and the DriveNotFoundException will not happen.
-                if (useDefaultProvider)
-                {
-                    // the default provider is FileSystem
-                    provider = PublicSessionState.Internal.GetSingleProvider(Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName);
+                // the default provider is FileSystem
+                provider = PublicSessionState.Internal.GetSingleProvider(Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName);
 
-                    workingPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
-                    workingPath = workingPath.TrimEnd(StringLiterals.DefaultPathSeparator);
-                }
-                else
-                {
-                    throw;
-                }
+                workingPath = path.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                workingPath = workingPath.TrimEnd(StringLiterals.DefaultPathSeparator);
             }
 
             Dbg.Diagnostics.Assert(

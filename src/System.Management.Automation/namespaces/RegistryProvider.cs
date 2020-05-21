@@ -1025,28 +1025,20 @@ namespace Microsoft.PowerShell.Commands
                             SetRegistryValue(newKey, string.Empty, newItem, kind, path, false);
                         }
                     }
-                    catch (Exception exception)
-                    {
-                        // The key has been created, but the default value failed to be set.
-                        // If possible, just write an error instead of failing the entire operation.
-
-                        if ((exception is ArgumentException) ||
+                    catch (Exception exception) when ((exception is ArgumentException) ||
                             (exception is InvalidCastException) ||
                             (exception is System.IO.IOException) ||
                             (exception is System.Security.SecurityException) ||
                             (exception is System.UnauthorizedAccessException) ||
                             (exception is NotSupportedException))
-                        {
-                            ErrorRecord rec = new ErrorRecord(
-                                exception,
-                                exception.GetType().FullName,
-                                ErrorCategory.WriteError,
-                                newKey);
-                            rec.ErrorDetails = new ErrorDetails(StringUtil.Format(RegistryProviderStrings.KeyCreatedValueFailed, childName));
-                            WriteError(rec);
-                        }
-                        else
-                            throw;
+                    {
+                        ErrorRecord rec = new ErrorRecord(
+                            exception,
+                            exception.GetType().FullName,
+                            ErrorCategory.WriteError,
+                            newKey);
+                        rec.ErrorDetails = new ErrorDetails(StringUtil.Format(RegistryProviderStrings.KeyCreatedValueFailed, childName));
+                        WriteError(rec);
                     }
 
                     // Write the new key out.

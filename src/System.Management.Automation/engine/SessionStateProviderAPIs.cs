@@ -104,17 +104,10 @@ namespace System.Management.Automation
             {
                 throw;
             }
-            catch (SessionStateException sessionStateException)
+            catch (SessionStateException sessionStateException) when (sessionStateException.GetType() != typeof(SessionStateException))
             {
-                if (sessionStateException.GetType() == typeof(SessionStateException))
-                {
-                    throw;
-                }
-                else
-                {
-                    // NTRAID#Windows OS Bugs-1009281-2004/02/11-JeffJon
-                    this.ExecutionContext.ReportEngineStartupError(sessionStateException);
-                }
+                // NTRAID#Windows OS Bugs-1009281-2004/02/11-JeffJon
+                this.ExecutionContext.ReportEngineStartupError(sessionStateException);
             }
             catch (Exception e) // Catch-all OK, 3rd party callout
             {

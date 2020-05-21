@@ -378,12 +378,8 @@ namespace Microsoft.PowerShell.Commands
                     "CannotCreateAbstractClass",
                     ErrorCategory.InvalidOperation, null));
             }
-            catch (COMException e)
+            catch (COMException e) when (e.HResult != RPC_E_CHANGED_MODE)
             {
-                if (e.HResult == RPC_E_CHANGED_MODE)
-                {
-                    throw;
-                }
 
                 ThrowTerminatingError(
                     new ErrorRecord(

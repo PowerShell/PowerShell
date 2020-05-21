@@ -613,15 +613,11 @@ namespace System.Management.Automation
             catch (ScriptCallDepthException) { throw; }
             catch (PipelineStoppedException) { throw; }
             catch (MethodException) { throw; }
-            catch (Exception e)
+            catch (Exception e) when (!(method.baseObject is SteppablePipeline)
+                    || (!method.Name.Equals("Begin", StringComparison.OrdinalIgnoreCase) &&
+                        !method.Name.Equals("Process", StringComparison.OrdinalIgnoreCase) &&
+                        !method.Name.Equals("End", StringComparison.OrdinalIgnoreCase)))
             {
-                if (method.baseObject is SteppablePipeline
-                    && (method.Name.Equals("Begin", StringComparison.OrdinalIgnoreCase) ||
-                        method.Name.Equals("Process", StringComparison.OrdinalIgnoreCase) ||
-                        method.Name.Equals("End", StringComparison.OrdinalIgnoreCase)))
-                {
-                    throw;
-                }
 
                 throw new MethodInvocationException(
                     "CatchFromBaseAdapterMethodInvoke",
@@ -4245,17 +4241,11 @@ namespace System.Management.Automation
             catch (FlowControlException) { throw; }
             catch (ScriptCallDepthException) { throw; }
             catch (PipelineStoppedException) { throw; }
-            catch (Exception e)
+            catch (Exception e) when (methodInformation.method.DeclaringType != typeof(SteppablePipeline) ||
+                    (!methodInformation.method.Name.Equals("Begin") &&
+                     !methodInformation.method.Name.Equals("Process") &&
+                     !methodInformation.method.Name.Equals("End")))
             {
-                if (methodInformation.method.DeclaringType == typeof(SteppablePipeline) &&
-                    (methodInformation.method.Name.Equals("Begin") ||
-                     methodInformation.method.Name.Equals("Process") ||
-                     methodInformation.method.Name.Equals("End")))
-                {
-                    // Don't wrap exceptions that happen when calling methods on SteppablePipeline
-                    // that are only used for proxy commands.
-                    throw;
-                }
 
                 throw new MethodInvocationException(
                     "DotNetMethodException",

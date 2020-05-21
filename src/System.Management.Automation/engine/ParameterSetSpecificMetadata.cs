@@ -178,27 +178,13 @@ namespace System.Management.Automation
                 {
                     helpInfo = cmdlet.GetResourceString(HelpMessageBaseName, HelpMessageResourceId);
                 }
-                catch (ArgumentException)
+                catch (ArgumentException) when (isHelpMsgSet)
                 {
-                    if (isHelpMsgSet)
-                    {
-                        helpInfo = HelpMessage;
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    helpInfo = HelpMessage;
                 }
-                catch (InvalidOperationException)
+                catch (InvalidOperationException) when (isHelpMsgSet)
                 {
-                    if (isHelpMsgSet)
-                    {
-                        helpInfo = HelpMessage;
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    helpInfo = HelpMessage;
                 }
             }
             else if (isHelpMsgSet)

@@ -537,13 +537,8 @@ namespace System.Management.Automation
                     processor.SetCurrentScopeToExecutionScope();
                     processor.CmdletParameterBinderController.BindCommandLineParametersNoValidation(processor.arguments);
                 }
-                catch (ParameterBindingException)
+                catch (ParameterBindingException) when (processor.arguments.Count <= 0)
                 {
-                    // Ignore the binding exception if no argument is specified
-                    if (processor.arguments.Count > 0)
-                    {
-                        throw;
-                    }
                 }
                 finally
                 {

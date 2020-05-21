@@ -3884,27 +3884,20 @@ namespace Microsoft.PowerShell.Commands
                 {
                     runspaces = Runspace.GetRunspaces(connectionInfo, host, BuiltInTypesTable);
                 }
-                catch (System.Management.Automation.RuntimeException e)
+                catch (System.Management.Automation.RuntimeException e) when (e.InnerException is InvalidOperationException)
                 {
-                    if (e.InnerException is InvalidOperationException)
+                    // The Get-WSManInstance cmdlet used to query remote computers for runspaces will throw
+                    // an Invalid Operation (inner) exception if the connectInfo object is invalid, including
+                    // invalid computer names.
+                    // We don't want to propagate the exception so just write error here.
+                    if (stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
                     {
-                        // The Get-WSManInstance cmdlet used to query remote computers for runspaces will throw
-                        // an Invalid Operation (inner) exception if the connectInfo object is invalid, including
-                        // invalid computer names.
-                        // We don't want to propagate the exception so just write error here.
-                        if (stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
-                        {
-                            int errorCode;
-                            string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out errorCode));
-                            string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "RemotePSSessionQueryFailed");
-                            Exception reason = new RuntimeException(msg, e.InnerException);
-                            ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
-                            stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
-                        }
-                    }
-                    else
-                    {
-                        throw;
+                        int errorCode;
+                        string msg = StringUtil.Format(RemotingErrorIdStrings.QueryForRunspacesFailed, connectionInfo.ComputerName, ExtractMessage(e.InnerException, out errorCode));
+                        string FQEID = WSManTransportManagerUtils.GetFQEIDFromTransportError(errorCode, "RemotePSSessionQueryFailed");
+                        Exception reason = new RuntimeException(msg, e.InnerException);
+                        ErrorRecord errorRecord = new ErrorRecord(reason, FQEID, ErrorCategory.InvalidOperation, connectionInfo);
+                        stream.ObjectWriter.Write((Action<Cmdlet>)(cmdlet => cmdlet.WriteError(errorRecord)));
                     }
                 }
 

@@ -102,12 +102,8 @@ namespace System.Management.Automation.Interpreter
                     res = SlowCreate(info, parameters);
                 }
             }
-            catch (TargetInvocationException tie)
+            catch (TargetInvocationException tie) when (tie.InnerException is NotSupportedException)
             {
-                if (!(tie.InnerException is NotSupportedException))
-                {
-                    throw;
-                }
 
                 res = new MethodInfoCallInstruction(info, argumentCount);
             }

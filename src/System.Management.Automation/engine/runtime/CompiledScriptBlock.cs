@@ -2352,12 +2352,8 @@ namespace System.Management.Automation
                     ExitScope();
                 }
             }
-            catch (ExitException ee)
+            catch (ExitException ee) when (_fromScriptFile && !_rethrowExitException)
             {
-                if (!_fromScriptFile || _rethrowExitException)
-                {
-                    throw;
-                }
 
                 _exitWasCalled = true;
 

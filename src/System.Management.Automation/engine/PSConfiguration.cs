@@ -452,12 +452,8 @@ namespace System.Management.Automation.Configuration
                 {
                     return new FileStream(fullPath, mode, access, share);
                 }
-                catch (IOException)
+                catch (IOException) when (numTries != (MaxTries - 1))
                 {
-                    if (numTries == (MaxTries - 1))
-                    {
-                        throw;
-                    }
 
                     Thread.Sleep(50);
                 }

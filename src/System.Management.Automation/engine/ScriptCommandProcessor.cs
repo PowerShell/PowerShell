@@ -562,12 +562,8 @@ namespace System.Management.Automation
                     Context.EngineSessionState.CurrentScope.ScopeOrigin = oldScopeOrigin;
                 }
             }
-            catch (ExitException ee)
+            catch (ExitException ee) when (this.FromScriptFile && !_rethrowExitException)
             {
-                if (!this.FromScriptFile || _rethrowExitException)
-                {
-                    throw;
-                }
 
                 this._exitWasCalled = true;
 

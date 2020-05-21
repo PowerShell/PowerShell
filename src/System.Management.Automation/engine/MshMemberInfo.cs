@@ -901,12 +901,8 @@ namespace System.Management.Automation
                         this.name,
                         inner.Message);
                 }
-                catch (Exception e)
+                catch (Exception e) when (!(e is GetValueException))
                 {
-                    if (e is GetValueException)
-                    {
-                        throw;
-                    }
 
                     throw new GetValueInvocationException(
                         "CatchFromCodePropertyGet",
@@ -942,12 +938,8 @@ namespace System.Management.Automation
                         this.name,
                         inner.Message);
                 }
-                catch (Exception e)
+                catch (Exception e) when (!(e is SetValueException))
                 {
-                    if (e is SetValueException)
-                    {
-                        throw;
-                    }
 
                     throw new SetValueInvocationException(
                         "CatchFromCodePropertySet",

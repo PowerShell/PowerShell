@@ -249,15 +249,8 @@ namespace System.Management.Automation
                 typeinfo.GetRefTypeOfImplType(-1, out href);
                 typeinfo.GetRefTypeInfo(href, out dispinfo);
             }
-            catch (COMException ce)
+            catch (COMException ce) when (ce.HResult == ComUtil.TYPE_E_ELEMENTNOTFOUND)
             {
-                // check if the error code is TYPE_E_ELEMENTNOTFOUND.
-                // This error code is thrown when we can't IDispatch interface.
-                if (ce.HResult != ComUtil.TYPE_E_ELEMENTNOTFOUND)
-                {
-                    // For other codes, rethrow the exception.
-                    throw;
-                }
             }
 
             return dispinfo;

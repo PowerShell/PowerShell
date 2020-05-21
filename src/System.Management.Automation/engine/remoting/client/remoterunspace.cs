@@ -2998,14 +2998,10 @@ namespace System.Management.Automation
             {
                 remotePipeline.Invoke();
             }
-            catch (RemoteException e)
+            catch (RemoteException e) when (string.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
             {
-                if (string.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
-                {
-                    _setVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                    throw _setVariableCommandNotFoundException;
-                }
-                else throw;
+                _setVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                throw _setVariableCommandNotFoundException;
             }
 
             if (remotePipeline.Error.Count > 0)
@@ -3058,14 +3054,10 @@ namespace System.Management.Automation
             {
                 result = remotePipeline.Invoke();
             }
-            catch (RemoteException e)
+            catch (RemoteException e) when (string.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
             {
-                if (string.Equals("CommandNotFoundException", e.ErrorRecord.FullyQualifiedErrorId, StringComparison.OrdinalIgnoreCase))
-                {
-                    _getVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                    throw _getVariableCommandNotFoundException;
-                }
-                else throw;
+                _getVariableCommandNotFoundException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                throw _getVariableCommandNotFoundException;
             }
 
             if (remotePipeline.Error.Count > 0)
@@ -3119,14 +3111,10 @@ namespace System.Management.Automation
                         result.Add(application.BaseObject as string);
                     }
                 }
-                catch (RemoteException e)
+                catch (RemoteException e) when (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                 {
-                    if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
-                    {
-                        _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                        throw _isInNoLanguageModeException;
-                    }
-                    else throw;
+                    _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                    throw _isInNoLanguageModeException;
                 }
 
                 return result;
@@ -3164,14 +3152,10 @@ namespace System.Management.Automation
                         result.Add(application.BaseObject as string);
                     }
                 }
-                catch (RemoteException e)
+                catch (RemoteException e) when (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                 {
-                    if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
-                    {
-                        _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                        throw _isInNoLanguageModeException;
-                    }
-                    else throw;
+                    _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                    throw _isInNoLanguageModeException;
                 }
 
                 return result;
@@ -3224,14 +3208,10 @@ namespace System.Management.Automation
                 {
                     result = remotePipeline.Invoke();
                 }
-                catch (RemoteException e)
+                catch (RemoteException e) when (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
                 {
-                    if (e.ErrorRecord.CategoryInfo.Category == ErrorCategory.ParserError)
-                    {
-                        _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
-                        return PSLanguageMode.NoLanguage;
-                    }
-                    else throw;
+                    _isInNoLanguageModeException = new PSNotSupportedException(RunspaceStrings.NotSupportedOnRestrictedRunspace, e);
+                    return PSLanguageMode.NoLanguage;
                 }
 
                 return (PSLanguageMode)LanguagePrimitives.ConvertTo(result[0], typeof(PSLanguageMode), CultureInfo.InvariantCulture);

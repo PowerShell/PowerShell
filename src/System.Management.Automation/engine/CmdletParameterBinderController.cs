@@ -170,12 +170,8 @@ namespace System.Management.Automation
                         BindUnboundScriptParameters();
                     }
                 }
-                catch (ParameterBindingException pbex)
+                catch (ParameterBindingException pbex) when (DefaultParameterBindingInUse)
                 {
-                    if (!DefaultParameterBindingInUse)
-                    {
-                        throw;
-                    }
 
                     ThrowElaboratedBindingException(pbex);
                 }
@@ -1168,12 +1164,8 @@ namespace System.Management.Automation
                         BindParameter(parameterSets, argument, parameter,
                             ParameterBindingFlags.ShouldCoerceType | ParameterBindingFlags.DelayBindScriptBlock);
                     }
-                    catch (ParameterBindingException pbex)
+                    catch (ParameterBindingException pbex) when (DefaultParameterBindingInUse)
                     {
-                        if (!DefaultParameterBindingInUse)
-                        {
-                            throw;
-                        }
 
                         ThrowElaboratedBindingException(pbex);
                     }
@@ -1664,16 +1656,9 @@ namespace System.Management.Automation
                         {
                             BindParameter(cpi, varargsParameter, ParameterBindingFlags.ShouldCoerceType);
                         }
-                        catch (ParameterBindingException pbex)
+                        catch (ParameterBindingException pbex) when (DefaultParameterBindingInUse)
                         {
-                            if (!DefaultParameterBindingInUse)
-                            {
-                                throw;
-                            }
-                            else
-                            {
-                                ThrowElaboratedBindingException(pbex);
-                            }
+                            ThrowElaboratedBindingException(pbex);
                         }
 
                         UnboundArguments.Clear();
@@ -1723,8 +1708,8 @@ namespace System.Management.Automation
                                 dynamicParamBindableObject = dynamicParameterCmdlet.GetDynamicParameters();
                             }
                             catch (Exception e) // Catch-all OK, this is a third-party callout
+when (!(e is ProviderInvocationException))
                             {
-                                if (e is ProviderInvocationException) { throw; }
 
                                 ParameterBindingException bindingException =
                                     new ParameterBindingException(

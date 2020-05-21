@@ -1634,18 +1634,10 @@ namespace System.Management.Automation
             {
                 context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
-            catch (ProviderInvocationException accessException)
-            {
-                // if providerinvocationexception is wrapping access denied error, it is ok to not terminate the pipeline
-                if (accessException.InnerException != null &&
+            catch (ProviderInvocationException accessException) when (accessException.InnerException != null &&
                     accessException.InnerException.GetType().Equals(typeof(System.UnauthorizedAccessException)))
-                {
-                    context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
-                }
-                else
-                {
-                    throw;
-                }
+            {
+                context.WriteError(new ErrorRecord(accessException, "GetItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
             }
 
             return itemContainer;
@@ -2026,16 +2018,8 @@ namespace System.Management.Automation
                         out provider,
                         out providerInstance);
             }
-            catch (ItemNotFoundException)
+            catch (ItemNotFoundException) when (providerInstance != null)
             {
-                // If the provided path is like c:\fakepath\aa*, since we cannot resolve c:\fakepath, an
-                // ItemNotFoundException will be thrown out. In this case, we catch the exception
-                // and check if the "providerInstance" is identified. If providerInstance is not null,
-                // we can carry on with the get-dynamic-parameters method.
-                if (providerInstance == null)
-                {
-                    throw;
-                }
             }
 
             if (providerPaths != null && providerPaths.Count > 0)
@@ -2825,16 +2809,8 @@ namespace System.Management.Automation
                         out provider,
                         out providerInstance);
             }
-            catch (ItemNotFoundException)
+            catch (ItemNotFoundException) when (providerInstance != null)
             {
-                // If the provided path is like c:\fakepath\aa*, since we cannot resolve c:\fakepath, an
-                // ItemNotFoundException will be thrown out. In this case, we catch the exception
-                // and check if the "providerInstance" is identified. If providerInstance is not null,
-                // we can carry on with the get-dynamic-parameters method.
-                if (providerInstance == null)
-                {
-                    throw;
-                }
             }
 
             object result = null;

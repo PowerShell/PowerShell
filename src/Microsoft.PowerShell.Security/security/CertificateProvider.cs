@@ -1124,18 +1124,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     item = GetItemAtPath(path, true, out isContainer);
                 }
-                catch (ProviderInvocationException e)
+                catch (ProviderInvocationException e) when (e.InnerException is CertificateProviderItemNotFoundException)
                 {
-                    //
-                    // if the item is not found, we get ProviderInvocationException
-                    // with inner exception set to CertificateProviderItemNotFoundException
-                    // If the inner exception is not of that type
-                    // then we need to rethrow
-                    //
-                    if (!(e.InnerException is CertificateProviderItemNotFoundException))
-                    {
-                        throw;
-                    }
                 }
 
                 result = (bool)item;

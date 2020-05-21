@@ -117,12 +117,8 @@ namespace Microsoft.Management.UI.Internal
                 propertyValue = descriptor.GetValue(value);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception e) when (!(e is AccessViolationException) && !(e is StackOverflowException))
             {
-                if (e is AccessViolationException || e is StackOverflowException)
-                {
-                    throw;
-                }
             }
 
             return false;

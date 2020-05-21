@@ -388,14 +388,8 @@ namespace System.Management.Automation
                         Command.DoProcessRecord();
                     }
                 }
-                catch (RuntimeException rte)
+                catch (RuntimeException rte) when (!rte.WasThrownFromThrowStatement)
                 {
-                    // Most exceptions get wrapped here, but an exception that originated from
-                    // a throw statement should not get wrapped, so it is just rethrown.
-                    if (rte.WasThrownFromThrowStatement)
-                    {
-                        throw;
-                    }
 
                     exceptionToThrow = rte;
                 }

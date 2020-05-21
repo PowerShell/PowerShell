@@ -161,9 +161,8 @@ namespace Microsoft.PowerShell
                         saferPolicy = SecuritySupport.GetSaferPolicy(path, null);
                         gotSaferPolicy = true;
                     }
-                    catch (System.ComponentModel.Win32Exception)
+                    catch (System.ComponentModel.Win32Exception) when (saferAttempt <= 4)
                     {
-                        if (saferAttempt > 4) { throw; }
 
                         saferAttempt++;
                         System.Threading.Thread.Sleep(100);

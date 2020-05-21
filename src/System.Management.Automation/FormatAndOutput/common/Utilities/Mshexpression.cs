@@ -331,16 +331,9 @@ namespace Microsoft.PowerShell.Commands
 
                 return new PSPropertyExpressionResult(result, this, null);
             }
-            catch (RuntimeException e)
+            catch (RuntimeException e) when (eatExceptions)
             {
-                if (eatExceptions)
-                {
-                    return new PSPropertyExpressionResult(null, this, e);
-                }
-                else
-                {
-                    throw;
-                }
+                return new PSPropertyExpressionResult(null, this, e);
             }
         }
 

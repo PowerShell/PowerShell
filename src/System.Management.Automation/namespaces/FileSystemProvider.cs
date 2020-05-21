@@ -974,20 +974,13 @@ namespace Microsoft.PowerShell.Commands
             {
                 rootPath = GetUNCForNetworkDrive(driveName);
             }
-            catch (Win32Exception)
+            catch (Win32Exception) when (driveInfo.IsReady)
             {
-                if (driveInfo.IsReady)
-                {
-                    // The drive is ready but we failed to find the UNC path based on the drive name.
-                    // In this case, it's possibly a MS-DOS device created by 'subst' command that
-                    //  - substitutes a network location directly, or
-                    //  - substitutes a path in a drive that maps to a network location
-                    rootPath = GetSubstitutedPathForNetworkDosDevice(driveName);
-                }
-                else
-                {
-                    throw;
-                }
+                // The drive is ready but we failed to find the UNC path based on the drive name.
+                // In this case, it's possibly a MS-DOS device created by 'subst' command that
+                //  - substitutes a network location directly, or
+                //  - substitutes a path in a drive that maps to a network location
+                rootPath = GetSubstitutedPathForNetworkDosDevice(driveName);
             }
 
             return rootPath;
@@ -1218,21 +1211,14 @@ namespace Microsoft.PowerShell.Commands
             {
                 FileInfo testFile = new FileInfo(path);
             }
-            catch (Exception e)
-            {
-                if ((e is ArgumentNullException) ||
+            catch (Exception e) when ((e is ArgumentNullException) ||
                     (e is ArgumentException) ||
                     (e is System.Security.SecurityException) ||
                     (e is UnauthorizedAccessException) ||
                     (e is PathTooLongException) ||
                     (e is NotSupportedException))
-                {
-                    return false;
-                }
-                else
-                {
-                    throw;
-                }
+            {
+                return false;
             }
 
             return true;
@@ -2419,9 +2405,7 @@ namespace Microsoft.PowerShell.Commands
                                 Directory.Delete(path);
                             }
                         }
-                        catch (Exception exception)
-                        {
-                            if ((exception is FileNotFoundException) ||
+                        catch (Exception exception) when ((exception is FileNotFoundException) ||
                                 (exception is DirectoryNotFoundException) ||
                                 (exception is UnauthorizedAccessException) ||
                                 (exception is System.Security.SecurityException) ||
@@ -2430,13 +2414,8 @@ namespace Microsoft.PowerShell.Commands
                                 (exception is NotSupportedException) ||
                                 (exception is ArgumentNullException) ||
                                 (exception is IOException))
-                            {
-                                WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
-                            }
-                            else
-                            {
-                                throw;
-                            }
+                        {
+                            WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                         }
                     }
                     else
@@ -2595,19 +2574,12 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 pathDirInfo.Delete();
                             }
-                            catch (Exception exception)
-                            {
-                                if ((exception is DirectoryNotFoundException) ||
+                            catch (Exception exception) when ((exception is DirectoryNotFoundException) ||
                                     (exception is UnauthorizedAccessException) ||
                                     (exception is System.Security.SecurityException) ||
                                     (exception is IOException))
-                                {
-                                    WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
-                                }
-                                else
-                                {
-                                    throw;
-                                }
+                            {
+                                WriteError(new ErrorRecord(exception, "NewItemDeleteIOError", ErrorCategory.WriteError, path));
                             }
                         }
                     }
@@ -3307,27 +3279,22 @@ namespace Microsoft.PowerShell.Commands
                             fileSystemInfo.Attributes = oldAttributes;
                         }
                     }
-                    catch (Exception attributeException)
-                    {
-                        if ((attributeException is System.IO.DirectoryNotFoundException) ||
+                    catch (Exception attributeException) when ((attributeException is System.IO.DirectoryNotFoundException) ||
                             (attributeException is System.Security.SecurityException) ||
                             (attributeException is System.ArgumentException) ||
                             (attributeException is System.IO.FileNotFoundException) ||
                             (attributeException is System.IO.IOException))
-                        {
-                            ErrorDetails attributeDetails = new ErrorDetails(
-                                this, "FileSystemProviderStrings",
-                                    "CannotRestoreAttributes",
-                                    fileSystemInfo.FullName,
-                                    attributeException.Message);
+                    {
+                        ErrorDetails attributeDetails = new ErrorDetails(
+                            this, "FileSystemProviderStrings",
+                                "CannotRestoreAttributes",
+                                fileSystemInfo.FullName,
+                                attributeException.Message);
 
-                            ErrorRecord errorRecord = new ErrorRecord(attributeException, "RemoveFileSystemItemCannotRestoreAttributes", ErrorCategory.PermissionDenied, fileSystemInfo);
-                            errorRecord.ErrorDetails = attributeDetails;
+                        ErrorRecord errorRecord = new ErrorRecord(attributeException, "RemoveFileSystemItemCannotRestoreAttributes", ErrorCategory.PermissionDenied, fileSystemInfo);
+                        errorRecord.ErrorDetails = attributeDetails;
 
-                            WriteError(errorRecord);
-                        }
-                        else
-                            throw;
+                        WriteError(errorRecord);
                     }
                 }
             }
@@ -3988,21 +3955,14 @@ namespace Microsoft.PowerShell.Commands
                                     PerformCopyFileToRemoteSession(file, destinationPath, ps);
                                 }
                             }
-                            catch (Exception exception)
-                            {
-                                if ((exception is FileNotFoundException) ||
+                            catch (Exception exception) when ((exception is FileNotFoundException) ||
                                     (exception is DirectoryNotFoundException) ||
                                     (exception is System.Security.SecurityException) ||
                                     (exception is ArgumentException) ||
                                     (exception is IOException))
-                                {
-                                    // Write out the original error since we failed to force the copy
-                                    WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
-                                }
-                                else
-                                {
-                                    throw;
-                                }
+                            {
+                                // Write out the original error since we failed to force the copy
+                                WriteError(new ErrorRecord(unAuthorizedAccessException, "CopyFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                             }
 
                             file.CopyTo(destinationPath, true);
@@ -5892,9 +5852,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteItemObject(file, file.FullName, false);
                         }
                     }
-                    catch (Exception e)
-                    {
-                        if ((e is IOException) ||
+                    catch (Exception e) when ((e is IOException) ||
                             (e is ArgumentNullException) ||
                             (e is ArgumentException) ||
                             (e is System.Security.SecurityException) ||
@@ -5903,12 +5861,9 @@ namespace Microsoft.PowerShell.Commands
                             (e is DirectoryNotFoundException) ||
                             (e is PathTooLongException) ||
                             (e is NotSupportedException))
-                        {
-                            // If any exception occurs return the original error
-                            WriteError(new ErrorRecord(unauthorizedAccess, "MoveFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
-                        }
-                        else
-                            throw;
+                    {
+                        // If any exception occurs return the original error
+                        WriteError(new ErrorRecord(unauthorizedAccess, "MoveFileInfoItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, file));
                     }
                 }
                 else
@@ -5940,9 +5895,7 @@ namespace Microsoft.PowerShell.Commands
                                 WriteItemObject(file, file.FullName, false);
                             }
                         }
-                        catch (Exception exception)
-                        {
-                            if ((exception is FileNotFoundException) ||
+                        catch (Exception exception) when ((exception is FileNotFoundException) ||
                                 (exception is DirectoryNotFoundException) ||
                                 (exception is UnauthorizedAccessException) ||
                                 (exception is System.Security.SecurityException) ||
@@ -5951,12 +5904,9 @@ namespace Microsoft.PowerShell.Commands
                                 (exception is NotSupportedException) ||
                                 (exception is ArgumentNullException) ||
                                 (exception is IOException))
-                            {
-                                // IOException contains specific message about the error occured and so no need for errordetails.
-                                WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, destfile));
-                            }
-                            else
-                                throw;
+                        {
+                            // IOException contains specific message about the error occured and so no need for errordetails.
+                            WriteError(new ErrorRecord(ioException, "MoveFileInfoItemIOError", ErrorCategory.WriteError, destfile));
                         }
                     }
                     else
@@ -6029,18 +5979,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteError(new ErrorRecord(unauthorizedAccess, "MoveDirectoryItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory));
                     }
-                    catch (Exception exception)
-                    {
-                        if ((exception is FileNotFoundException) ||
+                    catch (Exception exception) when ((exception is FileNotFoundException) ||
                             (exception is ArgumentNullException) ||
                             (exception is DirectoryNotFoundException) ||
                             (exception is System.Security.SecurityException) ||
                             (exception is ArgumentException))
-                        {
-                            WriteError(new ErrorRecord(unauthorizedAccess, "MoveDirectoryItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory));
-                        }
-                        else
-                            throw;
+                    {
+                        WriteError(new ErrorRecord(unauthorizedAccess, "MoveDirectoryItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory));
                     }
                 }
                 else
