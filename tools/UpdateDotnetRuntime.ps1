@@ -185,9 +185,9 @@ if ($dotnetUpdate.ShouldUpdate) {
 
     Write-Verbose -Message "Installing .NET SDK completed." -Verbose
 
-    $isWindowsEnv = [System.Environment]::OSVersion.Platform -eq [System.PlatformID]::Win32NT
+    $environment = Get-EnvironmentInformation
 
-    $dotnetPath = if ($IsWindowsEnv) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
+    $dotnetPath = if ($environment.IsWindows) { "$env:LocalAppData\Microsoft\dotnet" } else { "$env:HOME/.dotnet" }
 
     $pathSep = [System.IO.Path]::PathSeparator
 
@@ -208,7 +208,7 @@ if ($dotnetUpdate.ShouldUpdate) {
     Write-Verbose -Message "Updating project files completed." -Verbose
 
     if ($UpdateMSIPackaging) {
-        if (-not $isWindowsEnv) {
+        if (-not $environment.IsWindows) {
             throw "UpdateMSIPackaging can only be done on Windows"
         }
 
