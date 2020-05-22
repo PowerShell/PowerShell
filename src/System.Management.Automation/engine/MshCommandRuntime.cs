@@ -3744,6 +3744,17 @@ namespace System.Management.Automation
 
             if (this.PipelineVariable != null)
             {
+                // _state can be null if the current script block is dynamicparam, etc.
+                if (_state != null)
+                {
+                    // Create the pipeline variable
+                    _state.PSVariable.Set(_pipelineVarReference);
+
+                    // Get the reference again in case we re-used one from the
+                    // same scope.
+                    _pipelineVarReference = _state.PSVariable.Get(this.PipelineVariable);
+                }
+
                 this.OutputPipe.SetPipelineVariable(_pipelineVarReference);
             }
         }
