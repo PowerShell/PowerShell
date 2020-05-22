@@ -634,9 +634,9 @@ namespace System.Management.Automation.Remoting
             {
                 RunServerNegotiationAlgorithm(clientCapability, true);
             }
-            catch (PSRemotingDataStructureException ex)
+            catch (PSRemotingDataStructureException)
             {
-                throw ex;
+                throw;
             }
 
             // validate client connect_runspacepool request
