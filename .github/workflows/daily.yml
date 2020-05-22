@@ -49,5 +49,6 @@ jobs:
           commit-message: "Update .NET SDK version from `${{ env.OLD_VERSION }}` to `${{ env.NEW_VERSION }}`"
           title: "Update .NET SDK version from `${{ env.OLD_VERSION }}` to `${{ env.NEW_VERSION }}`"
           base: master
+          branch: dotnet_update
 
 
