@@ -17,6 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// CimInstance must have values of all [KEY] properties.
     /// </para>
     /// </summary>
+    [Alias("scim")]
     [Cmdlet(
         VerbsCommon.Set,
         "CimInstance",

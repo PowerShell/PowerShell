@@ -15,7 +15,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// This cmdlet enables the user to invoke a static method on a CIM class using
     /// the arguments passed as a list of name value pair dictionary.
     /// </summary>
-
+    [Alias("icim")]
     [Cmdlet(
         "Invoke",
         "CimMethod",

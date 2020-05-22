@@ -14,7 +14,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// The command returns zero, one or more CimSession objects that represent
     /// connections with remote computers established from the current PS Session.
     /// </summary>
-
+    [Alias("gcms")]
     [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227966")]
     [OutputType(typeof(CimSession))]
     public sealed class GetCimSessionCommand : CimBaseCommand
