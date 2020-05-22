@@ -127,6 +127,7 @@
       <ComponentRef Id="RegistryEntries"/>
       <ComponentRef Id="SetPath"/>
       <ComponentRef Id="Telemetry"/>
+      <ComponentRef Id="DisableTelemetry"/>
       <ComponentRef Id="ExplorerContextMenu"/>
     </Feature>
     <!-- We need to show EULA, and provide option to customize download location -->
@@ -165,7 +166,7 @@
             <Component Id="Telemetry" Guid="{80520f20-471d-4d08-adc8-bab637627b39}" KeyPath="yes">
               <Environment Id="PowerShellDistributionChannel" Action="create" Name="POWERSHELL_DISTRIBUTION_CHANNEL" Permanent="no" System="yes" Value="MSI:[WINDOWS_PRODUCT_NAME]"/>
             </Component>
-            <Component Id="Disable_Telemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
+            <Component Id="DisableTelemetry" Guid="{E86F5C91-3721-4C5C-A31F-1F0A5A468573}" KeyPath="yes">
               <Condition>DISABLE_TELEMETRY</Condition>
               <Environment Id="PowerShellTelemetryOptout" Action="set" Name="POWERSHELL_TELEMETRY_OPTOUT" Permanent="no" System="yes" Value="1"/>
             </Component>
