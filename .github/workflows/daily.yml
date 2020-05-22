@@ -20,6 +20,7 @@ jobs:
     name: Update .NET preview
     timeout-minutes: 15
     runs-on: windows-latest
+    if: github.repository == 'PowerShell/PowerShell'
     steps:
       - name: Checkout
         uses: actions/checkout@v2

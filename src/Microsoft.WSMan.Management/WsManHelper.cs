@@ -1108,9 +1108,9 @@ namespace Microsoft.WSMan.Management
                     }
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
-                throw (e);
+                throw;
             }
         }
 
