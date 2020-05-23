@@ -16,16 +16,16 @@
     <!-- the Application Insights package -->
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.14.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.DirectoryServices" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.Management" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.Security.AccessControl" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.Security.Permissions" Version="5.0.0-preview.5.20268.9" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0-preview.5.20268.9" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.DirectoryServices" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.Management" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.Security.AccessControl" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.Security.Permissions" Version="5.0.0-preview.5.20268.11" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0-preview.5.20268.11" />
     <!-- the following package(s) are from the powershell org -->
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
     <PackageReference Include="Microsoft.PowerShell.Native" Version="7.0.0" />

@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0-preview.5.20268.9" />
+    <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0-preview.5.20268.11" />
   </ItemGroup>
 
 </Project>
