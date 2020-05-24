@@ -48,14 +48,14 @@ You can use your favorite editor to write scripts.
 We use Visual Studio Code (VS Code) which works on Windows, Linux, and macOS.
 Click on the following link to create your first PowerShell script.
 
-- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/components/vscode/using-vscode)
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/dev-cross-plat/vscode/using-vscode)
 
 ### PowerShell Debugger
 
 Debugging can help you find bugs and fix problems in your PowerShell scripts.
 Click on the link below to learn more about debugging:
 
-- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/components/vscode/using-vscode#debugging-with-visual-studio-code)
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/dev-cross-plat/vscode/using-vscode#debugging-with-visual-studio-code)
 - [PowerShell Command-line Debugging][cli-debugging]
 
 [cli-debugging]:./debugging-from-commandline.md
