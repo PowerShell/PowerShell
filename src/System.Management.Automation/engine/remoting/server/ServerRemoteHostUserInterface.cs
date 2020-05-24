@@ -208,7 +208,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Prompt for credential.
         /// </summary>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, bool reEnterPassword, string targetName)
         {
             return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential1,
                     new object[] { caption, message, userName, targetName });
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Prompt for credential.
         /// </summary>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, bool reEnterPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
             return _serverMethodExecutor.ExecuteMethod<PSCredential>(RemoteHostMethodId.PromptForCredential2,
                     new object[] { caption, message, userName, targetName, allowedCredentialTypes, options });

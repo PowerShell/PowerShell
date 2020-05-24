@@ -32,6 +32,7 @@ namespace System.Management.Automation
             PSCredential cred = null;
             string userName = null;
             bool shouldPrompt = false;
+            bool reEnterPassword = false;
 
             if ((engineIntrinsics == null) ||
                (engineIntrinsics.Host == null) ||
@@ -77,6 +78,7 @@ namespace System.Management.Automation
                            caption,
                            prompt,
                            userName,
+                           reEnterPassword,
                            string.Empty);
             }
 
