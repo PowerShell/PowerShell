@@ -73,4 +73,3 @@ jobs:
     inputs:
       sourceScanPath: '$(Build.SourcesDirectory)'
       snapshotForceEnabled: true
-      
