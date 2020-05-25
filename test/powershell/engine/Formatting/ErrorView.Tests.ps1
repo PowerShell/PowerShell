@@ -105,6 +105,11 @@ Describe 'Tests for $ErrorView' -Tag CI {
             $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" | Out-String
             $e | Should -Not -BeLike "*At line*"
         }
+
+        It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' | Out-String
+            $e | Should -BeLike "*cmdletThatDoesntExist*"
+        }
     }
 
     Context 'NormalView tests' {
