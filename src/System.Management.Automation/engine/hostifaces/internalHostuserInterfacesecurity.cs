@@ -22,10 +22,11 @@ namespace System.Management.Automation.Internal.Host
             string caption,
             string message,
             string userName,
+            bool reEnterPassword,
             string targetName
         )
         {
-            return PromptForCredential(caption, message, userName,
+            return PromptForCredential(caption, message, userName, reEnterPassword,
                                          targetName,
                                          PSCredentialTypes.Default,
                                          PSCredentialUIOptions.Default);
@@ -42,6 +43,7 @@ namespace System.Management.Automation.Internal.Host
             string caption,
             string message,
             string userName,
+            bool reEnterPassword,
             string targetName,
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options
@@ -55,7 +57,7 @@ namespace System.Management.Automation.Internal.Host
             PSCredential result = null;
             try
             {
-                result = _externalUI.PromptForCredential(caption, message, userName, targetName, allowedCredentialTypes, options);
+                result = _externalUI.PromptForCredential(caption, message, userName, reEnterPassword, targetName, allowedCredentialTypes, options);
             }
             catch (PipelineStoppedException)
             {

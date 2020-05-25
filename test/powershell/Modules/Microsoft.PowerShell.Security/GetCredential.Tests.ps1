@@ -102,4 +102,20 @@ Describe "Get-Credential Test" -Tag "CI" {
         $netcred.UserName | Should -Be "John"
         $netcred.Password | Should -Be "CredTest"
     }
+    It "Get-credential Joe `$reEnterPassword"{
+        $cred = $ps.AddScript("Get-Credential Joe -ReEnterPassword").Invoke() | Select-Object -First 1
+        $cred | Should -BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should -Be "Joe"
+        $netcred.Password | Should -Be "This is a test"
+        $th.ui.Streams.Prompt[-1] | Should -Match "Credential:[^:]+:[^:]+"
+    }
+    It "Get-Credential with only `$reEnterPassword" {
+        $cred = $ps.AddScript("Get-Credential -ReEnterPassword").Invoke() | Select-Object -First 1
+        $cred | Should -BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should -Be "John"
+        $netcred.Password | Should -Be "This is a test"
+        $th.ui.Streams.Prompt[-1] | Should -Match "Credential:[^:]+:[^:]+"
+    }
 }

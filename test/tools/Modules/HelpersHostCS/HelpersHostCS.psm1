@@ -10,6 +10,7 @@ using System.Globalization;
 using System.Collections.ObjectModel;
 using System.Security;
 using System.Collections;
+using System.Runtime.InteropServices;
 
 namespace TestHost
 {
@@ -143,20 +144,82 @@ namespace TestHost
             return PromptedChoice;
         }
 
-        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, bool _reEnterPassword, string targetName)
         {
             Streams.Prompt.Add("Credential:" + caption + ":" + message);
-            SecureString ss = ReadLineAsSecureString();
+            SecureString password = ReadLineAsSecureString();
+            if(_reEnterPassword)
+            {
+                SecureString confirmPassword = ReadLineAsSecureString();
+                IntPtr pwd_ptr = IntPtr.Zero;
+                IntPtr confirmPwd_ptr = IntPtr.Zero;
+                try
+                {
+                    pwd_ptr = Marshal.SecureStringToBSTR(password);
+                    confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
+                    string pwd = Marshal.PtrToStringBSTR(pwd_ptr);
+                    string confirmPwd = Marshal.PtrToStringBSTR(confirmPwd_ptr);
+
+                    // If the string is not equal print error message and returns null
+
+                    if(!(pwd.Equals(confirmPwd)))
+                    {
+                        return null;
+                    }
+                }
+                finally
+                {
+                    if (pwd_ptr != IntPtr.Zero)
+                    {
+                        Marshal.ZeroFreeBSTR(pwd_ptr);
+                    }
+                    if (confirmPwd_ptr != IntPtr.Zero)
+                    {
+                        Marshal.ZeroFreeBSTR(confirmPwd_ptr);
+                    }
+                }
+            }
             string userNameToUse = string.IsNullOrEmpty(userName) ? UserNameForCredential : userName;
-            return new PSCredential(userNameToUse, ss);
+            return new PSCredential(userNameToUse, password);
         }
 
-        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, bool _reEnterPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
             Streams.Prompt.Add("Credential:" + caption + ":" + message);
-            SecureString ss = ReadLineAsSecureString();
+            SecureString password = ReadLineAsSecureString();
+            if(_reEnterPassword)
+            {
+                SecureString confirmPassword = ReadLineAsSecureString();
+                IntPtr pwd_ptr = IntPtr.Zero;
+                IntPtr confirmPwd_ptr = IntPtr.Zero;
+                try
+                {
+                    pwd_ptr = Marshal.SecureStringToBSTR(password);
+                    confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
+                    string pwd = Marshal.PtrToStringBSTR(pwd_ptr);
+                    string confirmPwd = Marshal.PtrToStringBSTR(confirmPwd_ptr);
+                    
+                    // If the string is not equal print error message and returns null
+                    
+                    if(!(pwd.Equals(confirmPwd)))
+                    {
+                        return null;
+                    }
+                }
+                finally
+                {
+                    if (pwd_ptr != IntPtr.Zero)
+                    {
+                        Marshal.ZeroFreeBSTR(pwd_ptr);
+                    }
+                    if (confirmPwd_ptr != IntPtr.Zero)
+                    {
+                        Marshal.ZeroFreeBSTR(confirmPwd_ptr);
+                    }
+                }
+            }
             string userNameToUse = string.IsNullOrEmpty(userName) ? UserNameForCredential : userName;
-            return new PSCredential(userNameToUse, ss);
+            return new PSCredential(userNameToUse, password);
         }
 
         public override string ReadLine()

@@ -306,6 +306,7 @@ namespace Microsoft.PowerShell
                         null,   // caption already written
                         null,   // message already written
                         null,
+                        false,
                         string.Empty);
                 convertedObj = credential;
                 cancelInput = (convertedObj == null);
