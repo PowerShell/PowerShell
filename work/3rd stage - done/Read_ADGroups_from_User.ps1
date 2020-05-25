@@ -1,0 +1,1 @@
+﻿Get-ADUser R666815 -Properties MemberOf | select MemberOf -ExpandProperty MemberOf | `Get-ADGroup -Properties Description | `Select Name,Description |`Format-Table -AutoSize

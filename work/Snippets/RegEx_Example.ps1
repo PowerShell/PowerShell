@@ -1,0 +1,2 @@
+﻿$content = Get-ADUser UI221223 -Properties MemberOf | Select-Object -ExpandProperty MemberOf | Get-ADObject -Properties * | Select-Object -ExpandProperty DistinguishedName
+[regex]::matches($content, '(?<=\[).+?(?=\])').value
