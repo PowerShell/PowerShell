@@ -1093,7 +1093,8 @@ namespace Microsoft.PowerShell.Commands
                     this.KeyFilePath,
                     port,
                     Subsystem,
-                    ConnectingTimeout);
+                    ConnectingTimeout,
+                    Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;
@@ -1120,7 +1121,8 @@ namespace Microsoft.PowerShell.Commands
                     sshConnection.KeyFilePath,
                     sshConnection.Port,
                     sshConnection.Subsystem,
-                    sshConnection.ConnectingTimeout);
+                    sshConnection.ConnectingTimeout,
+                    sshConnection.Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 string rsName = GetRunspaceName(index, out int rsIdUnused);
                 index++;

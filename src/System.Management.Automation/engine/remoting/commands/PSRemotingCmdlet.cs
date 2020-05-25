@@ -287,6 +287,7 @@ namespace Microsoft.PowerShell.Commands
         public int Port;
         public string Subsystem;
         public int ConnectingTimeout;
+        public Hashtable Options;
     }
 
     /// <summary>
@@ -805,6 +806,20 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// This parameter specifies the SSH subsystem to use for the remote connection.
+        /// </summary>
+        [Parameter(ValueFromPipelineByPropertyName = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        public virtual string Subsystem { get; set; }
+        
+        /// <summary>
+        /// Hashtable containing options to be passed to OpenSSH.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public virtual Hashtable Options { get; set; }
+
         #endregion
 
         #endregion Properties
@@ -866,6 +881,7 @@ namespace Microsoft.PowerShell.Commands
         private const string PortParameter = "Port";
         private const string SubsystemParameter = "Subsystem";
         private const string ConnectingTimeoutParameter = "ConnectingTimeout";
+        private const string OptionsParameter = "Options";
 
         #endregion
 
@@ -968,6 +984,10 @@ namespace Microsoft.PowerShell.Commands
                     else if (paramName.Equals(ConnectingTimeoutParameter, StringComparison.OrdinalIgnoreCase))
                     {
                         connectionInfo.ConnectingTimeout = GetSSHConnectionIntParameter(item[paramName]);
+                    }
+                    else if (paramName.Equals(OptionsParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.Options = item[paramName] as Hashtable;
                     }
                     else
                     {
@@ -1462,7 +1482,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 ParseSshHostName(computerName, out string host, out string userName, out int port);
 
-                var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout);
+                var sshConnectionInfo = new SSHConnectionInfo(userName, host, KeyFilePath, port, Subsystem, ConnectingTimeout, Options);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);

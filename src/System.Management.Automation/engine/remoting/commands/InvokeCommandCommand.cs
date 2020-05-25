@@ -792,6 +792,26 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// Hashtable containing options to be passed to OpenSSH.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public override Hashtable Options
+        {
+            get 
+            {
+                return base.Options;
+            }
+
+            set 
+            {
+                base.Options = value;
+            }
+        }
+
+
         #endregion
 
         #region Remote Debug Parameters
