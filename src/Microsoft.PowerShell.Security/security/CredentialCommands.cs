@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         private string _title = UtilsStrings.PromptForCredential_DefaultCaption;
 
         /// <summary>
-        /// Gets and sets the Re-enter Password on the window prompt.
+        /// Gets or sets the Re-enter Password on the window prompt.
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = messageSet)]
         public SwitchParameter ReEnterPassword { get; set; }

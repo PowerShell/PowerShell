@@ -26,14 +26,12 @@ namespace System.Management.Automation.Internal.Host
         /// See base class.
         /// </summary>
         public override PSCredential PromptForCredential
-            (
-            string caption, 
+            (string caption,
             string message,
-            string userName, 
-            string targetName, 
-            PSCredentialTypes allowedCredentialTypes, 
-            PSCredentialUIOptions options
-            )
+            string userName,
+            string targetName,
+            PSCredentialTypes allowedCredentialTypes,
+            PSCredentialUIOptions options)
         {
             return PromptForCredential(caption, message, userName, reenterPassword: false,
                                          targetName, allowedCredentialTypes, options);
@@ -42,19 +40,16 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
-
         public override
         PSCredential
         PromptForCredential
-        (
-            string caption,
+            (string caption,
             string message,
             string userName,
             bool reenterPassword,
             string targetName,
             PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options
-        )
+            PSCredentialUIOptions options)
         {
             if (_externalUI == null)
             {

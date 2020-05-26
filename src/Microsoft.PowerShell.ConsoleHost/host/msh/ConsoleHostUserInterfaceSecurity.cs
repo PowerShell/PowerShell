@@ -96,11 +96,11 @@ namespace Microsoft.PowerShell
             string userPrompt = null;
             string passwordPrompt = null;
             string reenterPasswordPrompt = null;
+            string passwordMismatch = null;
 
             if (!string.IsNullOrEmpty(caption))
             {
                 // Should be a skin lookup
-
                 WriteLineToConsole();
                 WriteLineToConsole(PromptColor, RawUI.BackgroundColor, WrapToCurrentWindowWidth(caption));
             }
@@ -115,7 +115,6 @@ namespace Microsoft.PowerShell
                 userPrompt = ConsoleHostUserInterfaceSecurityResources.PromptForCredential_User;
 
                 // need to prompt for user name first
-
                 do
                 {
                     WriteToConsole(userPrompt, true);
@@ -128,11 +127,9 @@ namespace Microsoft.PowerShell
                 while (userName.Length == 0);
             }
 
-            passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName
-            );
+            passwordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_Password, userName);
 
             // now, prompt for the password
-
             do
             {
                 WriteToConsole(passwordPrompt, true);
@@ -147,39 +144,36 @@ namespace Microsoft.PowerShell
             if (reenterPassword)
             {
                 reenterPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ReenterPassword, userName);
-
-
-                // now, prompt to re-enter the password.
-
-                do
-                {
-                    WriteToConsole(reenterPasswordPrompt, true);
-                    confirmPassword = ReadLineAsSecureString();
-                    if (confirmPassword == null)
-                    {
-                        return null;
-                    }
-                }
-                while (confirmPassword.Length == 0);
+                passwordMismatch = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_PasswordMismatch);
 
                 IntPtr pwd_ptr = IntPtr.Zero;
                 IntPtr confirmPwd_ptr = IntPtr.Zero;
-
+                bool isPasswordMatch = false;
                 try
                 {
                     pwd_ptr = Marshal.SecureStringToBSTR(password);
-                    confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
-
                     string pwd = Marshal.PtrToStringBSTR(pwd_ptr);
-                    string confirmPwd = Marshal.PtrToStringBSTR(confirmPwd_ptr);
 
-                    // If the string is not equal print error message and returns null.
-
-                    if (!(pwd.Equals(confirmPwd)))
+                    while (!isPasswordMatch)
                     {
-                        reenterPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PasswordMismatch);
+
+                        // now, prompt to re-enter the password.
                         WriteToConsole(reenterPasswordPrompt, true);
-                        return null;
+                        confirmPassword = ReadLineAsSecureString();
+                        if (confirmPassword == null)
+                        {
+                            return null;
+                        }
+
+                        confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
+                        string confirmPwd = Marshal.PtrToStringBSTR(confirmPwd_ptr);
+                        isPasswordMatch = pwd.Equals(confirmPwd);
+
+                        // If the string is not equal print message and loop.
+                        if(!isPasswordMatch)
+                        {
+                            WriteToConsole(passwordMismatch, true);
+                        }
                     }
                 }
                 finally

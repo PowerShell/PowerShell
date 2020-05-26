@@ -888,7 +888,7 @@ namespace System.Management.Automation.Host
         /// Types of credential can be supplied by the user.
         /// </param>
         /// <param name="options">
-        /// Options that control the credential gathering UI behavior
+        /// Options that control the credential gathering UI behavior.
         /// </param>
         /// <returns>
         /// User input credential.
@@ -899,10 +899,9 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract PSCredential PromptForCredential(string caption, string message,
-            string userName, string targetName, PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options
-        );
+        public abstract PSCredential PromptForCredential(string caption, string message, string userName,
+                                                         string targetName, PSCredentialTypes allowedCredentialTypes,
+                                                         PSCredentialUIOptions options);
 
         /// <summary>
         /// Prompt for credential.
