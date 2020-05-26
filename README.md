@@ -135,7 +135,7 @@ To install a specific version, visit [releases](https://github.com/PowerShell/Po
 
 For more information on how and why we built this dashboard, check out this [blog post](https://devblogs.microsoft.com/powershell/powershell-open-source-community-dashboard/).
 
-## Chat Room
+## Chat
 
 Want to chat with other members of the PowerShell community?
 
@@ -143,9 +143,9 @@ We have a Gitter Room which you can join below.
 
 [![Join the chat](https://img.shields.io/static/v1.svg?label=chat&message=on%20gitter&color=informational&logo=gitter)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-There is also the community driven PowerShell Slack Team which you can sign up for at [Slack].
-
-[Slack]: http://slack.poshcode.org
+There is also the community driven PowerShell Virtual User Group, which you can join on:
+* [Slack](https://aka.ms/psslack)
+* [Discord](https://aka.ms/psdiscord)
 
 ## Add-ons and libraries
 
