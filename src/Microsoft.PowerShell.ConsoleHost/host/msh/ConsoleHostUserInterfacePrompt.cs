@@ -303,11 +303,10 @@ namespace Microsoft.PowerShell
                 PSCredential credential = null;
                 credential =
                     PromptForCredential(
-                        null,   // caption already written
-                        null,   // message already written
-                        null,
-                        false,
-                        string.Empty);
+                        caption: null,   // caption already written
+                        message: null,   // message already written
+                        userName: null,
+                        targetName: string.Empty);
                 convertedObj = credential;
                 cancelInput = (convertedObj == null);
                 if ((credential != null) && (credential.Password.Length == 0) && listInput)

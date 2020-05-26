@@ -14,22 +14,29 @@ namespace System.Management.Automation.Internal.Host
         /// <summary>
         /// See base class.
         /// </summary>
-
-        public override
-        PSCredential
-        PromptForCredential
-        (
-            string caption,
-            string message,
-            string userName,
-            bool reEnterPassword,
-            string targetName
-        )
+        public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
         {
-            return PromptForCredential(caption, message, userName, reEnterPassword,
+            return PromptForCredential(caption, message, userName, reenterPassword: false,
                                          targetName,
                                          PSCredentialTypes.Default,
                                          PSCredentialUIOptions.Default);
+        }
+
+        /// <summary>
+        /// See base class.
+        /// </summary>
+        public override PSCredential PromptForCredential
+            (
+            string caption, 
+            string message,
+            string userName, 
+            string targetName, 
+            PSCredentialTypes allowedCredentialTypes, 
+            PSCredentialUIOptions options
+            )
+        {
+            return PromptForCredential(caption, message, userName, reenterPassword: false,
+                                         targetName, allowedCredentialTypes, options);
         }
 
         /// <summary>
@@ -43,7 +50,7 @@ namespace System.Management.Automation.Internal.Host
             string caption,
             string message,
             string userName,
-            bool reEnterPassword,
+            bool reenterPassword,
             string targetName,
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options
@@ -57,7 +64,7 @@ namespace System.Management.Automation.Internal.Host
             PSCredential result = null;
             try
             {
-                result = _externalUI.PromptForCredential(caption, message, userName, reEnterPassword, targetName, allowedCredentialTypes, options);
+                result = _externalUI.PromptForCredential(caption, message, userName, reenterPassword, targetName, allowedCredentialTypes, options);
             }
             catch (PipelineStoppedException)
             {
