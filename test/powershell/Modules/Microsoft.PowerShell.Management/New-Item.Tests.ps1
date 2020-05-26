@@ -268,6 +268,38 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 }
 
+Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        Push-Location TestDrive:/
+        $null = New-Item -Type Directory someDir
+        $null = New-Item -Type File someFile
+    }
+
+    AfterAll {
+        Pop-Location
+    }
+
+    It "Symlink with absolute path to existing directory behaves like a directory" {
+        New-Item -Type SymbolicLink someDirLinkAbsolute -Target (Convert-Path someDir)
+        Get-Item someDirLinkAbsolute | Should -BeOfType System.IO.DirectoryInfo
+    }
+
+    It "Symlink with relative path to existing directory behaves like a directory" {
+        New-Item -Type SymbolicLink someDirLinkRelative -Target .\someDir
+        Get-Item someDirLinkRelative | Should -BeOfType System.IO.DirectoryInfo
+    }
+
+    It "Symlink with absolute path to existing file behaves like a file" {
+        New-Item -Type SymbolicLink someFileLinkAbsolute -Target (Convert-Path someFile)
+        Get-Item someFileLinkAbsolute | Should -BeOfType System.IO.FileInfo
+    }
+
+    It "Symlink with relative path to existing file behaves like a file" {
+        New-Item -Type SymbolicLink someFileLinkRelative -Target ./someFile
+        Get-Item someFileLinkRelative | Should -BeOfType System.IO.FileInfo
+    }
+}
+
 Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
     BeforeAll {
         $testfile             = "testfile.txt"
