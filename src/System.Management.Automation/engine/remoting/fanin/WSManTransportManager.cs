@@ -2059,9 +2059,9 @@ namespace System.Management.Automation.Remoting.Client
                     new CompletionEventArgs(CompletionNotification.DisconnectCompleted));
 
                 //Log ETW traces                
-				PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseShellCallbackReceived,
-					PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-					sessionTM.RunspacePoolInstanceId.ToString(), "OnRemoteSessionReconnectCompleted: DisconnectCompleted");
+                PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseShellCallbackReceived,
+                    PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
+                    sessionTM.RunspacePoolInstanceId.ToString(), "OnRemoteSessionReconnectCompleted: DisconnectCompleted");
             }
 
             return;
@@ -2995,8 +2995,8 @@ namespace System.Management.Automation.Remoting.Client
                 AddCmdTransportManager(_cmdContextId, this);
 
                 PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateCommand, PSOpcode.Connect,
-                                PSTask.CreateRunspace, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                                RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
+                    PSTask.CreateRunspace, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
+                    RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
 
                 _createCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdCreateCallback);
                 _createCmdCompletedGCHandle = GCHandle.Alloc(_createCmdCompleted);
@@ -3959,8 +3959,9 @@ namespace System.Management.Automation.Remoting.Client
         internal override void StartReceivingData()
         {
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManReceiveShellOutputEx,
-                    PSOpcode.Receive, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                    RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
+                PSOpcode.Receive, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
+                RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
+
             // We should call Receive only once.. WSMan will call the callback multiple times.
             _shouldStartReceivingData = false;
             lock (syncObject)
