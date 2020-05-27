@@ -2059,9 +2059,13 @@ namespace System.Management.Automation.Remoting.Client
                     new CompletionEventArgs(CompletionNotification.DisconnectCompleted));
 
                 //Log ETW traces                
-                PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseShellCallbackReceived,
-                    PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                    sessionTM.RunspacePoolInstanceId.ToString(), "OnRemoteSessionReconnectCompleted: DisconnectCompleted");
+                PSEtwLog.LogAnalyticInformational(
+                    PSEventId.WSManCloseShellCallbackReceived,
+                    PSOpcode.Disconnect,
+                    PSTask.None,
+                    PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
+                    sessionTM.RunspacePoolInstanceId.ToString(),
+                    "OnRemoteSessionReconnectCompleted: DisconnectCompleted");
             }
 
             return;
@@ -3542,9 +3546,13 @@ namespace System.Management.Automation.Remoting.Client
             cmdTM._isSendingInput = false;
 
             // do the logging for this send
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManSendShellInputExCallbackReceived,
-                PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManSendShellInputExCallbackReceived,
+                PSOpcode.Connect,
+                PSTask.None,
+                PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
+                cmdTM.RunspacePoolInstanceId.ToString(),
+                cmdTM.powershellInstanceId.ToString());
 
             if ((!shellOperationHandle.Equals(cmdTM._wsManShellOperationHandle)) ||
                 (!commandOperationHandle.Equals(cmdTM._wsManCmdOperationHandle)))
