@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the re-enter password on the window prompt.
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = messageSet)]
+        [Parameter(ParameterSetName = messageSet)]
         public SwitchParameter ReenterPassword { get; set; }
 
         /// <summary>

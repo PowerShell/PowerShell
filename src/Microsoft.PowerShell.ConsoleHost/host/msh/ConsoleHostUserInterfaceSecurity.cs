@@ -153,11 +153,11 @@ namespace Microsoft.PowerShell
                         return null;
                     }
 
-                    // If the string is not equal print message and loop.
                     if(SecureStringEquals(password, confirmPassword))
                     {
                         break;
                     }
+
                     WriteToConsole(ConsoleColor.Red, ConsoleColor.Black, passwordMismatch, true);
                 }
                 while (true);
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell
                 confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
                 string confirmPwd = Marshal.PtrToStringBSTR(confirmPwd_ptr);
 
-                return pwd.Equals(confirmPwd);
+                return pwd.Equals(confirmPwd, StringComparison.Ordinal);
             }
             finally
             {
