@@ -354,7 +354,7 @@ namespace System.Management.Automation.Remoting
 
                 // now report the shell context to WSMan.
                 PSEtwLog.LogAnalyticInformational(
-				    PSEventId.ReportContext,
+                    PSEventId.ReportContext,
                     PSOpcode.Connect, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                     requestDetails.ToString(), requestDetails.ToString());
@@ -936,9 +936,12 @@ namespace System.Management.Automation.Remoting
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerReceivedData,
-                PSOpcode.Open, PSTask.None,
+                PSOpcode.Open,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                ((IntPtr)shellContext).ToString(), ((IntPtr)commandContext).ToString(), requestDetails.ToString());
+                ((IntPtr)shellContext).ToString(),
+                ((IntPtr)commandContext).ToString(),
+                requestDetails.ToString());
 
             WSManPluginShellSession mgdShellSession = GetFromActiveShellSessions(shellContext);
             if (mgdShellSession == null)
@@ -973,9 +976,12 @@ namespace System.Management.Automation.Remoting
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerReceivedData,
-                PSOpcode.Open, PSTask.None,
+                PSOpcode.Open,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                ((IntPtr)shellContext).ToString(), ((IntPtr)commandContext).ToString(), requestDetails.ToString());
+                ((IntPtr)shellContext).ToString(),
+                ((IntPtr)commandContext).ToString(),
+                requestDetails.ToString());
 
             mgdCmdSession.SendOneItemToSession(requestDetails, flags, stream, inboundData);
 
@@ -1025,7 +1031,8 @@ namespace System.Management.Automation.Remoting
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerClientReceiveRequest,
-                PSOpcode.Open, PSTask.None,
+                PSOpcode.Open,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 ((IntPtr)shellContext).ToString(),
                 ((IntPtr)commandContext).ToString(),
@@ -1316,7 +1323,8 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManData_UnToMan inboundShellInfo = WSManNativeApi.WSManData_UnToMan.UnMarshal(inboundShellInformation);
 
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
-                PSOpcode.Open, PSTask.None,
+                PSOpcode.Open,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 requestDetailsInstance.ToString(), requestDetailsInstance.resourceUri);
 
@@ -1364,7 +1372,8 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManCommandArgSet argSet = WSManNativeApi.WSManCommandArgSet.UnMarshal(arguments);
 
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
-                PSOpcode.Open, PSTask.None,
+                PSOpcode.Open,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 request.ToString(), request.resourceUri);
 
@@ -1412,7 +1421,8 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManData_UnToMan connectInformation = WSManNativeApi.WSManData_UnToMan.UnMarshal(inboundConnectInformation);
 
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
-                PSOpcode.Open, PSTask.None,
+                PSOpcode.Open,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 request.ToString(), request.resourceUri);
 
@@ -1504,7 +1514,8 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManStreamIDSet_UnToMan streamIdSet = WSManNativeApi.WSManStreamIDSet_UnToMan.UnMarshal(streamSet);
 
             PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
-                PSOpcode.Open, PSTask.None,
+                PSOpcode.Open,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 request.ToString(), request.resourceUri);
 
