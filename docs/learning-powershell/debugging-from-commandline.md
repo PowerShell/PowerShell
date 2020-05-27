@@ -103,7 +103,7 @@ PS /home/jen/debug>
 
 ```
 
-### Setting a Breakpoint on a Variable
+## Setting a Breakpoint on a Variable
 - Clear existing breakpoints if there are any
 
 ```powershell
