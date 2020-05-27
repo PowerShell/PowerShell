@@ -744,7 +744,8 @@ namespace System.Management.Automation.Remoting
             if (requestDetails == null)
             {
                 // Nothing can be done because requestDetails are required to report operation complete
-                PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
+                PSEtwLog.LogAnalyticInformational(
+                    PSEventId.ReportOperationComplete,
                     PSOpcode.Close, PSTask.None,
                     PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                     "null",
@@ -759,7 +760,8 @@ namespace System.Management.Automation.Remoting
 
             SetThreadProperties(requestDetails);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.ServerStopCommand,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ServerStopCommand,
                 PSOpcode.Disconnect, PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 ((IntPtr)shellContext).ToString(),
@@ -1322,15 +1324,18 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManShellStartupInfo_UnToMan startupInfoInstance = WSManNativeApi.WSManShellStartupInfo_UnToMan.UnMarshal(startupInfo);
             WSManNativeApi.WSManData_UnToMan inboundShellInfo = WSManNativeApi.WSManData_UnToMan.UnMarshal(inboundShellInformation);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                requestDetailsInstance.ToString(), requestDetailsInstance.resourceUri);
+                requestDetailsInstance.ToString(),
+                requestDetailsInstance.resourceUri);
 
             pluginToUse.CreateShell(pluginContext, requestDetailsInstance, flags, extraInfo, startupInfoInstance, inboundShellInfo);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1347,7 +1352,8 @@ namespace System.Management.Automation.Remoting
             [MarshalAs(UnmanagedType.LPWStr)] string commandLine,
             IntPtr arguments) // WSMAN_COMMAND_ARG_SET*
         {
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1371,7 +1377,8 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest request = WSManNativeApi.WSManPluginRequest.UnMarshal(requestDetails);
             WSManNativeApi.WSManCommandArgSet argSet = WSManNativeApi.WSManCommandArgSet.UnMarshal(arguments);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1379,7 +1386,8 @@ namespace System.Management.Automation.Remoting
 
             pluginToUse.CreateCommand(pluginContext, request, flags, shellContext, commandLine, argSet);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1396,7 +1404,8 @@ namespace System.Management.Automation.Remoting
             IntPtr commandContext,
             IntPtr inboundConnectInformation)
         {
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1420,15 +1429,18 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest request = WSManNativeApi.WSManPluginRequest.UnMarshal(requestDetails);
             WSManNativeApi.WSManData_UnToMan connectInformation = WSManNativeApi.WSManData_UnToMan.UnMarshal(inboundConnectInformation);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                request.ToString(), request.resourceUri);
+                request.ToString(),
+                request.resourceUri);
 
             pluginToUse.ConnectShellOrCommand(request, flags, shellContext, commandContext, connectInformation);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1446,7 +1458,8 @@ namespace System.Management.Automation.Remoting
             string stream,
             IntPtr inboundData) // WSMAN_DATA*
         {
-            PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ServerReceivedData,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1472,7 +1485,8 @@ namespace System.Management.Automation.Remoting
 
             pluginToUse.SendOneItemToShellOrCommand(request, flags, shellContext, commandContext, stream, data);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ServerReceivedData,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1489,7 +1503,8 @@ namespace System.Management.Automation.Remoting
             IntPtr commandContext,
             IntPtr streamSet) // WSMAN_STREAM_ID_SET*
         {
-            PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ServerReceivedData,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1513,15 +1528,18 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest request = WSManNativeApi.WSManPluginRequest.UnMarshal(requestDetails);
             WSManNativeApi.WSManStreamIDSet_UnToMan streamIdSet = WSManNativeApi.WSManStreamIDSet_UnToMan.UnMarshal(streamSet);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ServerReceivedData,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                request.ToString(), request.resourceUri);
+                request.ToString(),
+                request.resourceUri);
 
             pluginToUse.EnableShellOrCommandToSendDataToClient(pluginContext, request, flags, shellContext, commandContext, streamIdSet);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ServerReceivedData,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1538,7 +1556,8 @@ namespace System.Management.Automation.Remoting
             IntPtr commandContext, // PVOID
             string code)
         {
-            PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ServerReceivedData,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1597,7 +1616,8 @@ namespace System.Management.Automation.Remoting
         internal static void PerformCloseOperation(
             WSManPluginOperationShutdownContext context)
         {
-            PSEtwLog.LogAnalyticInformational(PSEventId.ServerReceivedData,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ServerReceivedData,
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
@@ -1676,7 +1696,8 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(requestDetails != null, "requestDetails cannot be null in operation complete.");
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ReportOperationComplete,
                 PSOpcode.Close, PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 (requestDetails.unmanagedHandle).ToString(),
@@ -1709,7 +1730,8 @@ namespace System.Management.Automation.Remoting
                 stackTrace = reasonForClose.StackTrace;
             }
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.ReportOperationComplete,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.ReportOperationComplete,
                 PSOpcode.Close, PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 requestDetails.ToString(),
