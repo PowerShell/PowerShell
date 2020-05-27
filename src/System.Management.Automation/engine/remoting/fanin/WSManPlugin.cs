@@ -194,7 +194,7 @@ namespace System.Management.Automation.Remoting
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 "null",
                 "CreateShell: Create a new shell in the plugin context",
-                String.Empty);
+                string.Empty);
 
             if (requestDetails == null)
             {
@@ -244,7 +244,7 @@ namespace System.Management.Automation.Remoting
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 requestDetails.ToString(),
                 "CreateShell: NULL checks being performed",
-                String.Empty);
+                string.Empty);
 
             if ((0 == startupInfo.inputStreamSet.streamIDsCount) || (0 == startupInfo.outputStreamSet.streamIDsCount))
             {
@@ -472,7 +472,7 @@ namespace System.Management.Automation.Remoting
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 requestDetails.ToString(),
                 "CreateShell: Completed",
-                String.Empty);
+                string.Empty);
 
             return;
         }
@@ -516,7 +516,7 @@ namespace System.Management.Automation.Remoting
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 "CloseShellOperation: Completed",
-                String.Empty);
+                string.Empty);
         }
 
         internal void CloseCommandOperation(
@@ -547,7 +547,7 @@ namespace System.Management.Automation.Remoting
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 "CloseCommandOperation: Completed",
-                String.Empty);
+                string.Empty);
         }
 
         /// <summary>
@@ -698,9 +698,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Connect,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "CreateCommand: Create a new command in the shell context",
-                String.Empty);
+                string.Empty);
 
             if (!validateIncomingContexts(requestDetails, shellContext, "WSManRunShellCommandEx"))
             {
@@ -733,9 +733,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Connect,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "CreateCommand: Create a new command in the shell context completed",
-                String.Empty);
+                string.Empty);
         }
 
         internal void StopCommand(
@@ -801,7 +801,7 @@ namespace System.Management.Automation.Remoting
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 "StopCommand: completed",
-                String.Empty);
+                string.Empty);
         }
 
         internal void Shutdown()
@@ -838,9 +838,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Connect,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "ConnectShellOrCommand: Connect",
-                String.Empty);
+                string.Empty);
 
             if (!validateIncomingContexts(requestDetails, shellContext, "ConnectShellOrCommand"))
             {
@@ -904,9 +904,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Connect,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "ConnectShellOrCommand: ExecuteConnect invoked",
-                String.Empty);
+                string.Empty);
         }
 
         /// <summary>
@@ -931,9 +931,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "SendOneItemToShellOrCommand: Send data to the shell / command specified",
-                String.Empty);
+                string.Empty);
 
             if (!validateIncomingContexts(requestDetails, shellContext, "SendOneItemToShellOrCommand"))
             {
@@ -998,9 +998,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "SendOneItemToShellOrCommand: SendOneItemToSession invoked",
-                String.Empty);
+                string.Empty);
         }
 
         /// <summary>
@@ -1026,9 +1026,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "EnableShellOrCommandToSendDataToClient: unlock the shell / command specified so that the shell / command starts sending data to the client.",
-                String.Empty);
+                string.Empty);
 
             if (!validateIncomingContexts(requestDetails, shellContext, "EnableShellOrCommandToSendDataToClient"))
             {
@@ -1070,9 +1070,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "EnableShellOrCommandToSendDataToClient: Instruction destined to shell or for command",
-                String.Empty);
+                string.Empty);
 
             if (IntPtr.Zero == commandContext)
             {
@@ -1304,9 +1304,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginShell: static func to take care of unmanaged to managed transitions.",
-                String.Empty);
+                string.Empty);
 
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
@@ -1345,9 +1345,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginShell: Completed",
-                String.Empty);
+                string.Empty);
         }
 
         internal static void PerformWSManPluginCommand(
@@ -1363,9 +1363,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginCommand: static func to take care of unmanaged to managed transitions.",
-                String.Empty);
+                string.Empty);
 
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
@@ -1398,9 +1398,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginCommand: Completed",
-                String.Empty);
+                string.Empty);
         }
 
         internal static void PerformWSManPluginConnect(
@@ -1416,9 +1416,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginConnect: static func to take care of unmanaged to managed transitions.",
-                String.Empty);
+                string.Empty);
 
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
@@ -1451,9 +1451,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginConnect: Completed",
-                String.Empty);
+                string.Empty);
         }
 
         internal static void PerformWSManPluginSend(
@@ -1470,9 +1470,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginSend: Invoked",
-                String.Empty);
+                string.Empty);
 
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
@@ -1497,9 +1497,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginSend: Completed",
-                String.Empty);
+                string.Empty);
         }
 
         internal static void PerformWSManPluginReceive(
@@ -1515,9 +1515,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginReceive: Invoked",
-                String.Empty);
+                string.Empty);
 
             WSManPluginInstance pluginToUse = GetFromActivePlugins(pluginContext);
 
@@ -1550,9 +1550,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginReceive: Completed",
-                String.Empty);
+                string.Empty);
         }
 
         internal static void PerformWSManPluginSignal(
@@ -1568,9 +1568,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformWSManPluginSignal: Invoked",
-                String.Empty);
+                string.Empty);
 
             WSManNativeApi.WSManPluginRequest request = WSManNativeApi.WSManPluginRequest.UnMarshal(requestDetails);
 
@@ -1628,9 +1628,9 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                String.Empty,
+                string.Empty,
                 "PerformCloseOperation: Invoked",
-                String.Empty);
+                string.Empty);
 
             WSManPluginInstance pluginToUse = GetFromActivePlugins(context.pluginContext);
 
