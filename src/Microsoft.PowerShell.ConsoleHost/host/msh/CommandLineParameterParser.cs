@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForChoice.
+        /// Prompt for choice.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential.
+        /// Prompt for credential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential.
+        /// Prompt for credential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// PromptForCredential.
+        /// Prompt for credential.
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// ReadLine.
+        /// Read line.
         /// </summary>
         /// <returns></returns>
         public override string ReadLine()

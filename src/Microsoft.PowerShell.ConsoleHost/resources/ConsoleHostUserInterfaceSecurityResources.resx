@@ -124,9 +124,9 @@
     <value>Password for user {0}: </value>
   </data>
   <data name="PromptForCredential_ReenterPassword" xml:space="preserve">
-    <value>Re-Enter Password for user {0}:</value>
+    <value>Re-enter password for user {0}:</value>
   </data>
   <data name="PromptForCredential_PasswordMismatch" xml:space="preserve">
-    <value>Passwords do not match. </value>
+    <value>Passwords do not match.</value>
   </data>
 </root>

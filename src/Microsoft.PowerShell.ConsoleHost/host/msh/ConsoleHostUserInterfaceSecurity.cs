@@ -5,8 +5,8 @@ using System;
 using System.Globalization;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
-using System.Security;
 using System.Runtime.InteropServices;
+using System.Security;
 using Microsoft.Win32;
 
 namespace Microsoft.PowerShell
@@ -26,10 +26,9 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="caption">Caption for the message.</param>
         /// <param name="message">Message to be displayed.</param>
-        /// <param name="userName">Name of the user whose creds are to be prompted for. If set to null or empty string, the function will prompt for user name first.</param>
-        /// <param name="targetName">Name of the target for which creds are being collected.</param>
+        /// <param name="userName">Name of the user whose credentials are to be prompted for. If set to null or empty string, the function will prompt for user name first.</param>
+        /// <param name="targetName">Name of the target for which credentials are being collected.</param>
         /// <returns>PSCredential object.</returns>
-
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
         {
             return PromptForCredential(caption,
@@ -46,12 +45,11 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="caption">Caption for the message.</param>
         /// <param name="message">Message to be displayed.</param>
-        /// <param name="userName">Name of the user whose creds are to be prompted for. If set to null or empty string, the function will prompt for user name first.</param>
-        /// <param name="targetName">Name of the target for which creds are being collected.</param>
-        /// <param name="allowedCredentialTypes">What type of creds can be supplied by the user.</param>
-        /// <param name="options">Options that control the cred gathering UI behavior.</param>
+        /// <param name="userName">Name of the user whose credentials are to be prompted for. If set to null or empty string, the function will prompt for user name first.</param>
+        /// <param name="targetName">Name of the target for which credentials are being collected.</param>
+        /// <param name="allowedCredentialTypes">What type of credentials can be supplied by the user.</param>
+        /// <param name="options">Options that control the credential gathering UI behavior.</param>
         /// <returns>PSCredential object, or null if input was cancelled (or if reading from stdin and stdin at EOF).</returns>
-
         public override PSCredential PromptForCredential(
             string caption, 
             string message, 
@@ -60,13 +58,14 @@ namespace Microsoft.PowerShell
             PSCredentialTypes allowedCredentialTypes, 
             PSCredentialUIOptions options)
         {
-            return PromptForCredential(caption,
-                                         message,
-                                         userName,
-                                         reenterPassword: false,
-                                         targetName,
-                                         allowedCredentialTypes,
-                                         options);
+            return PromptForCredential(
+                caption,
+                message,
+                userName,
+                reenterPassword: false,
+                targetName,
+                allowedCredentialTypes,
+                options);
         }
 
         /// <summary>
@@ -74,13 +73,12 @@ namespace Microsoft.PowerShell
         /// </summary>
         /// <param name="caption">Caption for the message.</param>
         /// <param name="message">Message to be displayed.</param>
-        /// <param name="userName">Name of the user whose creds are to be prompted for. If set to null or empty string, the function will prompt for user name first.</param>
+        /// <param name="userName">Name of the user whose credentials are to be prompted for. If set to null or empty string, the function will prompt for user name first.</param>
         /// <param name="reenterPassword">Prompts user to re-enter the password for confirmation.</param>
-        /// <param name="targetName">Name of the target for which creds are being collected.</param>
-        /// <param name="allowedCredentialTypes">What type of creds can be supplied by the user.</param>
-        /// <param name="options">Options that control the cred gathering UI behavior.</param>
+        /// <param name="targetName">Name of the target for which credentials are being collected.</param>
+        /// <param name="allowedCredentialTypes">What type of credentials can be supplied by the user.</param>
+        /// <param name="options">Options that control the credential gathering UI behavior.</param>
         /// <returns>PSCredential object, or null if input was cancelled (or if reading from stdin and stdin at EOF).</returns>
-
         public override PSCredential PromptForCredential(
             string caption,
             string message,
@@ -145,55 +143,57 @@ namespace Microsoft.PowerShell
             {
                 reenterPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ReenterPassword, userName);
                 passwordMismatch = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_PasswordMismatch);
-
-                IntPtr pwd_ptr = IntPtr.Zero;
-                IntPtr confirmPwd_ptr = IntPtr.Zero;
-                bool isPasswordMatch = false;
-                try
+                do
                 {
-                    pwd_ptr = Marshal.SecureStringToBSTR(password);
-                    string pwd = Marshal.PtrToStringBSTR(pwd_ptr);
-
-                    while (!isPasswordMatch)
+                    // now, prompt to re-enter the password.
+                    WriteToConsole(reenterPasswordPrompt, true);
+                    confirmPassword = ReadLineAsSecureString();
+                    if (confirmPassword == null)
                     {
-
-                        // now, prompt to re-enter the password.
-                        WriteToConsole(reenterPasswordPrompt, true);
-                        confirmPassword = ReadLineAsSecureString();
-                        if (confirmPassword == null)
-                        {
-                            return null;
-                        }
-
-                        confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
-                        string confirmPwd = Marshal.PtrToStringBSTR(confirmPwd_ptr);
-                        isPasswordMatch = pwd.Equals(confirmPwd);
-
-                        // If the string is not equal print message and loop.
-                        if(!isPasswordMatch)
-                        {
-                            WriteToConsole(passwordMismatch, true);
-                        }
+                        return null;
                     }
+
+                    // If the string is not equal print message and loop.
+                    if(SecureStringEquals(password, confirmPassword))
+                    {
+                        break;
+                    }
+                    WriteToConsole(ConsoleColor.Red, ConsoleColor.Black, passwordMismatch, true);
                 }
-                finally
-                {
-                    if (pwd_ptr != IntPtr.Zero)
-                    {
-                        Marshal.ZeroFreeBSTR(pwd_ptr);
-                    }
+                while (true);
+            }
 
-                    if (confirmPwd_ptr != IntPtr.Zero)
-                    {
-                        Marshal.ZeroFreeBSTR(confirmPwd_ptr);
-                    }
+            WriteLineToConsole();
+            cred = new PSCredential(userName, password);
+            return cred;
+        }
+
+        private static bool SecureStringEquals(SecureString password, SecureString confirmPassword)
+        {
+            IntPtr pwd_ptr = IntPtr.Zero;
+            IntPtr confirmPwd_ptr = IntPtr.Zero;
+            try
+            {
+                pwd_ptr = Marshal.SecureStringToBSTR(password);
+                string pwd = Marshal.PtrToStringBSTR(pwd_ptr);
+
+                confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
+                string confirmPwd = Marshal.PtrToStringBSTR(confirmPwd_ptr);
+
+                return pwd.Equals(confirmPwd);
+            }
+            finally
+            {
+                if (pwd_ptr != IntPtr.Zero)
+                {
+                    Marshal.ZeroFreeBSTR(pwd_ptr);
+                }
+
+                if (confirmPwd_ptr != IntPtr.Zero)
+                {
+                    Marshal.ZeroFreeBSTR(confirmPwd_ptr);
                 }
             }
-            WriteLineToConsole();
-
-            cred = new PSCredential(userName, password);
-
-            return cred;
         }
     }
 }

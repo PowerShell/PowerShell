@@ -864,9 +864,11 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract PSCredential PromptForCredential(string caption, string message,
-            string userName, string targetName
-        );
+        public abstract PSCredential PromptForCredential(
+            string caption,
+            string message,
+            string userName,
+            string targetName);
 
         /// <summary>
         /// Prompt for credential.
@@ -899,9 +901,13 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, bool, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract PSCredential PromptForCredential(string caption, string message, string userName,
-                                                         string targetName, PSCredentialTypes allowedCredentialTypes,
-                                                         PSCredentialUIOptions options);
+        public abstract PSCredential PromptForCredential(
+            string caption,
+            string message,
+            string userName,
+            string targetName,
+            PSCredentialTypes allowedCredentialTypes,
+            PSCredentialUIOptions options);
 
         /// <summary>
         /// Prompt for credential.
@@ -926,7 +932,7 @@ namespace System.Management.Automation.Host
         /// Types of credential can be supplied by the user.
         /// </param>
         /// <param name="options">
-        /// Options that control the credential gathering UI behavior
+        /// Options that control the credential gathering UI behavior.
         /// </param>
         /// <returns>
         /// User input credential.
@@ -937,10 +943,14 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
-        public abstract PSCredential PromptForCredential(string caption, string message,
-            string userName, bool reenterPassword, string targetName, PSCredentialTypes allowedCredentialTypes,
-            PSCredentialUIOptions options
-        );
+        public abstract PSCredential PromptForCredential(
+            string caption,
+            string message,
+            string userName,
+            bool reenterPassword,
+            string targetName,
+            PSCredentialTypes allowedCredentialTypes,
+            PSCredentialUIOptions options);
 
         /// <summary>
         /// Presents a dialog allowing the user to choose an option from a set of options.

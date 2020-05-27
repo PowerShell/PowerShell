@@ -16,25 +16,35 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         public override PSCredential PromptForCredential(string caption, string message, string userName, string targetName)
         {
-            return PromptForCredential(caption, message, userName, reenterPassword: false,
-                                         targetName,
-                                         PSCredentialTypes.Default,
-                                         PSCredentialUIOptions.Default);
+            return PromptForCredential(
+                caption,
+                message,
+                userName,
+                reenterPassword: false,
+                targetName,
+                PSCredentialTypes.Default,
+                PSCredentialUIOptions.Default);
         }
 
         /// <summary>
         /// See base class.
         /// </summary>
-        public override PSCredential PromptForCredential
-            (string caption,
+        public override PSCredential PromptForCredential(
+            string caption,
             string message,
             string userName,
             string targetName,
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
-            return PromptForCredential(caption, message, userName, reenterPassword: false,
-                                         targetName, allowedCredentialTypes, options);
+            return PromptForCredential(
+                caption,
+                message,
+                userName,
+                reenterPassword: false,
+                targetName,
+                allowedCredentialTypes,
+                options);
         }
 
         /// <summary>
@@ -42,8 +52,8 @@ namespace System.Management.Automation.Internal.Host
         /// </summary>
         public override
         PSCredential
-        PromptForCredential
-            (string caption,
+        PromptForCredential(
+            string caption,
             string message,
             string userName,
             bool reenterPassword,
