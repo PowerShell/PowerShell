@@ -100,7 +100,10 @@ foreach ($file in $ThirdPartyFiles) {
 }
 
 foreach ($file in $MsixFiles) {
-    New-FileElement -File $file -SignType 'CP-459155' -XmlDoc $signingXml -Job $job
+    # should be 'CP-459155' but this makes it worse,
+    # sticking with existing cert for now
+    # update releasePublisher in packaging.psm1 when this is changed
+    New-FileElement -File $file -SignType 'AuthenticodeFormer' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)
