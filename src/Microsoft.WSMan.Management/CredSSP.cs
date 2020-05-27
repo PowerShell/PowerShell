@@ -751,7 +751,7 @@ namespace Microsoft.WSMan.Management
     public class GetWSManCredSSPCommand : PSCmdlet, IDisposable
     {
         #region private
-        WSManHelper helper = null;
+        private WSManHelper helper = null;
         /// <summary>
         /// Method to get the values.
         /// </summary>

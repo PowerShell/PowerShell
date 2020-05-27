@@ -287,7 +287,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Remove-CimInstance operations.
         /// </para>
         /// </summary>
-        CimRemoveCimInstance GetOperationAgent()
+        private CimRemoveCimInstance GetOperationAgent()
         {
             return (this.AsyncOperation as CimRemoveCimInstance);
         }
@@ -299,7 +299,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns></returns>
-        CimRemoveCimInstance CreateOperationAgent()
+        private CimRemoveCimInstance CreateOperationAgent()
         {
             CimRemoveCimInstance cimRemoveInstance = new CimRemoveCimInstance();
             this.AsyncOperation = cimRemoveInstance;
@@ -323,7 +323,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameCimSession, new HashSet<ParameterDefinitionEntry> {
@@ -372,7 +372,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.CimInstanceComputerSet, new ParameterSetEntry(1, true)     },
             {   CimBaseCommand.CimInstanceSessionSet, new ParameterSetEntry(2)     },

@@ -5061,7 +5061,7 @@ namespace System.Management.Automation
 
         private struct SignatureComparator
         {
-            enum TypeMatchingContext
+            private enum TypeMatchingContext
             {
                 ReturnType,
                 ParameterType,

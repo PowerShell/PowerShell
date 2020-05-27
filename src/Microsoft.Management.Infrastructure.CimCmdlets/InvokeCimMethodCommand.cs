@@ -417,7 +417,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Invoke-CimMethod operations.
         /// </para>
         /// </summary>
-        CimInvokeCimMethod GetOperationAgent()
+        private CimInvokeCimMethod GetOperationAgent()
         {
             return this.AsyncOperation as CimInvokeCimMethod;
         }
@@ -429,7 +429,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns></returns>
-        CimInvokeCimMethod CreateOperationAgent()
+        private CimInvokeCimMethod CreateOperationAgent()
         {
             CimInvokeCimMethod cimInvokeMethod = new CimInvokeCimMethod();
             this.AsyncOperation = cimInvokeMethod;
@@ -473,7 +473,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameClassName, new HashSet<ParameterDefinitionEntry> {
@@ -560,7 +560,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.ClassNameComputerSet, new ParameterSetEntry(2, true)     },
             {   CimBaseCommand.ResourceUriSessionSet, new ParameterSetEntry(3)     },
