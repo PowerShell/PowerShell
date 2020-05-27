@@ -1005,7 +1005,8 @@ namespace System.Management.Automation.Remoting.Client
 
                 receiveDataInitiated = true;
                 tracer.WriteLine("Client Session TM: Placing Receive request using WSManReceiveShellOutputEx");
-                PSEtwLog.LogAnalyticInformational(PSEventId.WSManReceiveShellOutputEx,
+                PSEtwLog.LogAnalyticInformational(
+                    PSEventId.WSManReceiveShellOutputEx,
                     PSOpcode.Receive, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     RunspacePoolInstanceId.ToString(), Guid.Empty.ToString());
 
@@ -1109,7 +1110,9 @@ namespace System.Management.Automation.Remoting.Client
                 _createSessionCallbackGCHandle = GCHandle.Alloc(_createSessionCallback);
             }
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell, PSOpcode.Connect,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShell,
+                PSOpcode.Connect,
                 PSTask.CreateRunspace, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString());
 
@@ -1227,7 +1230,8 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // TODO - On unexpected failures on a reconstructed session... we dont want to close server session
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseShell,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCloseShell,
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString());
             _closeSessionCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_sessionContextID), s_sessionCloseCallback);
@@ -1306,7 +1310,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             CloseSessionAndClearResources();
             tracer.WriteLine("Redirecting to URI: {0}", newUri);
-            PSEtwLog.LogAnalyticInformational(PSEventId.URIRedirection,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.URIRedirection,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString(), newUri.ToString());
             Initialize(newUri, (WSManConnectionInfo)connectionInfo);
@@ -1638,14 +1643,16 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // Write errors into both Operational and Analytical channels
-            PSEtwLog.LogOperationalError(PSEventId.TransportError, PSOpcode.Open, PSTask.None, PSKeyword.UseAlwaysOperational,
+            PSEtwLog.LogOperationalError(
+                PSEventId.TransportError, PSOpcode.Open, PSTask.None, PSKeyword.UseAlwaysOperational,
                 RunspacePoolInstanceId.ToString(),
                 Guid.Empty.ToString(),
                 eventArgs.Exception.ErrorCode.ToString(CultureInfo.InvariantCulture),
                 eventArgs.Exception.Message,
                 stackTrace);
 
-            PSEtwLog.LogAnalyticError(PSEventId.TransportError_Analytic,
+            PSEtwLog.LogAnalyticError(
+                PSEventId.TransportError_Analytic,
                 PSOpcode.Open, PSTask.None,
                 PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString(),
@@ -1852,7 +1859,8 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShellCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateShellCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 sessionTM.RunspacePoolInstanceId.ToString());
 
@@ -1965,7 +1973,8 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseShellCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCloseShellCallbackReceived,
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 sessionTM.RunspacePoolInstanceId.ToString(), "OnCloseSessionCompleted");
 
@@ -2013,7 +2022,8 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             //LOG ETW EVENTS
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseShellCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCloseShellCallbackReceived,
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 sessionTM.RunspacePoolInstanceId.ToString(), "OnRemoteSessionDisconnectCompleted");
 
@@ -2091,7 +2101,8 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             //Add ETW events
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseShellCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCloseShellCallbackReceived,
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 sessionTM.RunspacePoolInstanceId.ToString(), "OnRemoteSessionReconnectCompleted");
 
@@ -2189,7 +2200,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Client Session TM: Connect callback received");
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManSendShellInputExCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManSendShellInputExCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 "OnRemoteSessionConnectCallback:Client Session TM: Connect callback received");
 
@@ -2286,7 +2298,8 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // do the logging for this send
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManSendShellInputExCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManSendShellInputExCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 sessionTM.RunspacePoolInstanceId.ToString(), Guid.Empty.ToString());
 
@@ -2998,7 +3011,8 @@ namespace System.Management.Automation.Remoting.Client
                 _cmdContextId = GetNextCmdTMHandleId();
                 AddCmdTransportManager(_cmdContextId, this);
 
-                PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateCommand, PSOpcode.Connect,
+                PSEtwLog.LogAnalyticInformational(
+                    PSEventId.WSManCreateCommand, PSOpcode.Connect,
                     PSTask.CreateRunspace, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                     RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
 
@@ -3132,7 +3146,8 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseCommand,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCloseCommand,
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
             _closeCmdCompleted = new WSManNativeApi.WSManShellAsync(new IntPtr(_cmdContextId), s_cmdCloseCallback);
@@ -3309,7 +3324,8 @@ namespace System.Management.Automation.Remoting.Client
                 return;
             }
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateCommandCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateCommandCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
 
@@ -3401,7 +3417,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("OnConnectCmdCompleted callback received");
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateCommandCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCreateCommandCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 "OnConnectCmdCompleted: OnConnectCmdCompleted callback received");
 
@@ -3494,7 +3511,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("OnCloseCmdCompleted callback received for operation context {0}", commandOperationHandle);
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseCommandCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCloseCommandCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 "OnCloseCmdCompleted: OnCloseCmdCompleted callback received");
 
@@ -3508,7 +3526,8 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             tracer.WriteLine("Close completed callback received for command: {0}", cmdTM._cmdContextId);
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManCloseCommandCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManCloseCommandCallbackReceived,
                 PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
 
@@ -3530,7 +3549,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("SendComplete callback received");
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManSendShellInputExCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManSendShellInputExCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 "OnRemoteCmdSendCompleted: SendComplete callback received");
 
@@ -3621,7 +3641,8 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Remote Command DataReceived callback.");
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManReceiveShellOutputExCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManReceiveShellOutputExCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 "OnRemoteCmdDataReceived: Remote Command DataReceived callback");
 
@@ -3710,7 +3731,8 @@ namespace System.Management.Automation.Remoting.Client
             long cmdContextId = 0;
             WSManClientCommandTransportManager cmdTM = null;
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManReceiveShellOutputExCallbackReceived,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManReceiveShellOutputExCallbackReceived,
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 "OnReconnectCmdCompleted");
 
@@ -3773,9 +3795,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Signal Completed callback received.");
 
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManSignalCallbackReceived,
-                PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                "OnRemoteCmdSignalCompleted");
+            PSEtwLog.LogAnalyticInformational(PSEventId.WSManSignalCallbackReceived, PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic, "OnRemoteCmdSignalCompleted");
 
             long cmdContextId = 0;
             WSManClientCommandTransportManager cmdTM = null;
@@ -3787,9 +3807,13 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             // log the callback received event.
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManSignalCallbackReceived,
-                PSOpcode.Disconnect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
-                cmdTM.RunspacePoolInstanceId.ToString(), cmdTM.powershellInstanceId.ToString());
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManSignalCallbackReceived,
+                PSOpcode.Disconnect,
+                PSTask.None,
+                PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
+                cmdTM.RunspacePoolInstanceId.ToString(),
+                cmdTM.powershellInstanceId.ToString());
 
             if ((!shellOperationHandle.Equals(cmdTM._wsManShellOperationHandle)) ||
                 (!commandOperationHandle.Equals(cmdTM._wsManCmdOperationHandle)))
@@ -3966,7 +3990,8 @@ namespace System.Management.Automation.Remoting.Client
 
         internal override void StartReceivingData()
         {
-            PSEtwLog.LogAnalyticInformational(PSEventId.WSManReceiveShellOutputEx,
+            PSEtwLog.LogAnalyticInformational(
+                PSEventId.WSManReceiveShellOutputEx,
                 PSOpcode.Receive, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 RunspacePoolInstanceId.ToString(), powershellInstanceId.ToString());
 
