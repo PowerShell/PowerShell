@@ -762,7 +762,8 @@ namespace System.Management.Automation.Remoting
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerStopCommand,
-                PSOpcode.Disconnect, PSTask.None,
+                PSOpcode.Disconnect,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 ((IntPtr)shellContext).ToString(),
                 ((IntPtr)commandContext).ToString(),
@@ -794,7 +795,8 @@ namespace System.Management.Automation.Remoting
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerStopCommand,
-                PSOpcode.Disconnect, PSTask.None,
+                PSOpcode.Disconnect,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 "StopCommand: completed",
                 String.Empty);
@@ -848,7 +850,8 @@ namespace System.Management.Automation.Remoting
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerReceivedData,
-                PSOpcode.Connect, PSTask.None,
+                PSOpcode.Connect,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 ((IntPtr)shellContext).ToString(),
                 ((IntPtr)commandContext).ToString(),
@@ -885,7 +888,8 @@ namespace System.Management.Automation.Remoting
 
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerReceivedData,
-                PSOpcode.Connect, PSTask.None,
+                PSOpcode.Connect,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 ((IntPtr)shellContext).ToString(),
                 ((IntPtr)commandContext).ToString(),
@@ -1382,7 +1386,8 @@ namespace System.Management.Automation.Remoting
                 PSOpcode.Open,
                 PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
-                request.ToString(), request.resourceUri);
+                request.ToString(),
+                request.resourceUri);
 
             pluginToUse.CreateCommand(pluginContext, request, flags, shellContext, commandLine, argSet);
 
