@@ -486,7 +486,8 @@ namespace System.Management.Automation.Remoting
         {
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerCloseOperation,
-                PSOpcode.Disconnect, PSTask.None,
+                PSOpcode.Disconnect,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 ((IntPtr)context.shellContext).ToString(),
                 ((IntPtr)context.commandContext).ToString(),
@@ -523,7 +524,8 @@ namespace System.Management.Automation.Remoting
         {
             PSEtwLog.LogAnalyticInformational(
                 PSEventId.ServerCloseOperation,
-                PSOpcode.Disconnect, PSTask.None,
+                PSOpcode.Disconnect,
+                PSTask.None,
                 PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                 context.shellContext.ToString(),
                 context.commandContext.ToString(),
