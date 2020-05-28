@@ -665,17 +665,13 @@ namespace Microsoft.WSMan.Management
             {
                 string Registry_Path_Credentials_Delegation = Registry_Path + @"\CredentialsDelegation";
                 // open the registry key.If key is not present,create a new one
-                Credential_Delegation_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation, true);
-                if (Credential_Delegation_Key == null)
-                    Credential_Delegation_Key = rootKey.CreateSubKey(Registry_Path_Credentials_Delegation, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                Credential_Delegation_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation, true) ?? rootKey.CreateSubKey(Registry_Path_Credentials_Delegation, RegistryKeyPermissionCheck.ReadWriteSubTree);
 
                 Credential_Delegation_Key.SetValue(helper.Key_Allow_Fresh_Credentials, 1, RegistryValueKind.DWord);
                 Credential_Delegation_Key.SetValue(helper.Key_Concatenate_Defaults_AllowFresh, 1, RegistryValueKind.DWord);
 
                 // add the delegate value
-                Allow_Fresh_Credential_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, true);
-                if (Allow_Fresh_Credential_Key == null)
-                    Allow_Fresh_Credential_Key = rootKey.CreateSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, RegistryKeyPermissionCheck.ReadWriteSubTree);
+                Allow_Fresh_Credential_Key = rootKey.OpenSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, true) ?? rootKey.CreateSubKey(Registry_Path_Credentials_Delegation + @"\" + helper.Key_Allow_Fresh_Credentials, RegistryKeyPermissionCheck.ReadWriteSubTree);
 
                 if (Allow_Fresh_Credential_Key != null)
                 {

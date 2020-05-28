@@ -373,11 +373,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         protected override void BeginProcessing()
         {
-            CimInvokeCimMethod cimInvokeMethod = this.GetOperationAgent();
-            if (cimInvokeMethod == null)
-            {
-                cimInvokeMethod = CreateOperationAgent();
-            }
+            CimInvokeCimMethod cimInvokeMethod = this.GetOperationAgent() ?? CreateOperationAgent();
 
             this.CmdletOperation = new CmdletOperationInvokeCimMethod(this, cimInvokeMethod);
             this.AtBeginProcess = false;

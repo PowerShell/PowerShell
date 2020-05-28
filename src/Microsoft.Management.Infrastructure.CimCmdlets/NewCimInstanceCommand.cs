@@ -355,11 +355,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            CimNewCimInstance cimNewCimInstance = this.GetOperationAgent();
-            if (cimNewCimInstance == null)
-            {
-                cimNewCimInstance = CreateOperationAgent();
-            }
+            CimNewCimInstance cimNewCimInstance = this.GetOperationAgent() ?? CreateOperationAgent();
 
             cimNewCimInstance.NewCimInstance(this);
             cimNewCimInstance.ProcessActions(this.CmdletOperation);

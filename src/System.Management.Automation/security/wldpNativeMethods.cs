@@ -82,7 +82,7 @@ namespace System.Management.Automation.Security
             // At this point, LockdownPolicy = Audit or Allowed.
             // If there was a WLDP policy, but WLDP didn't block it,
             // then it was explicitly allowed. Therefore, return the result for the file.
-            SystemEnforcementMode systemWldpPolicy = s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+            SystemEnforcementMode systemWldpPolicy = s_cachedWldpSystemPolicy ?? SystemEnforcementMode.None;
             if ((systemWldpPolicy == SystemEnforcementMode.Enforce) ||
                 (systemWldpPolicy == SystemEnforcementMode.Audit))
             {
@@ -98,7 +98,7 @@ namespace System.Management.Automation.Security
 
             // If there was a system-wide AppLocker policy, but AppLocker didn't block it,
             // then return AppLocker's status.
-            if (s_cachedSaferSystemPolicy.GetValueOrDefault(SaferPolicy.Allowed) ==
+            if ((s_cachedSaferSystemPolicy ?? SaferPolicy.Allowed) ==
                 SaferPolicy.Disallowed)
             {
                 return lockdownPolicy;
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Security
             // If the WLDP assembly is missing (such as windows 7 or down OS), return default/None to skip WLDP validation
             if (s_hadMissingWldpAssembly)
             {
-                return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+                return s_cachedWldpSystemPolicy ?? SystemEnforcementMode.None;
             }
 
             // If path is NULL, see if we have the cached system-wide lockdown policy.
@@ -168,7 +168,7 @@ namespace System.Management.Automation.Security
             catch (DllNotFoundException)
             {
                 s_hadMissingWldpAssembly = true;
-                return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+                return s_cachedWldpSystemPolicy ?? SystemEnforcementMode.None;
             }
         }
 
@@ -384,7 +384,7 @@ namespace System.Management.Automation.Security
 
                 // No explicit debug allowance for the file, so return the system policy if there
                 // is one.
-                return s_systemLockdownPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+                return s_systemLockdownPolicy ?? SystemEnforcementMode.None;
             }
 
             // Support fall-back debug hook for system-wide policy on non-WOA platforms

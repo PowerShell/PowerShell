@@ -301,11 +301,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         protected override void BeginProcessing()
         {
-            CimSetCimInstance cimSetCimInstance = this.GetOperationAgent();
-            if (cimSetCimInstance == null)
-            {
-                cimSetCimInstance = CreateOperationAgent();
-            }
+            CimSetCimInstance cimSetCimInstance = this.GetOperationAgent() ?? CreateOperationAgent();
 
             this.CmdletOperation = new CmdletOperationSetCimInstance(this, cimSetCimInstance);
             this.AtBeginProcess = false;

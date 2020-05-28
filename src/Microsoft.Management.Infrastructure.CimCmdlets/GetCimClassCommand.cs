@@ -220,11 +220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void ProcessRecord()
         {
             base.CheckParameterSet();
-            CimGetCimClass cimGetCimClass = this.GetOperationAgent();
-            if (cimGetCimClass == null)
-            {
-                cimGetCimClass = CreateOperationAgent();
-            }
+            CimGetCimClass cimGetCimClass = this.GetOperationAgent() ?? CreateOperationAgent();
 
             cimGetCimClass.GetCimClass(this);
             cimGetCimClass.ProcessActions(this.CmdletOperation);
