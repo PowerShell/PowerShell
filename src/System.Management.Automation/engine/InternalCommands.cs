@@ -2089,6 +2089,16 @@ namespace Microsoft.PowerShell.Commands
                     _operationDelegate =
                         (lval, rval) => ParserOps.LikeOperator(Context, PositionUtilities.EmptyExtent, lval, rval, _binaryOperator);
                     break;
+                case TokenKind.Imatchall:
+                    CheckLanguageMode();
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.MatchAllOperator(Context, PositionUtilities.EmptyExtent, lval, (string) rval, ignoreCase: true);
+                    break;
+                case TokenKind.Cmatchall:
+                    CheckLanguageMode();
+                    _operationDelegate =
+                        (lval, rval) => ParserOps.MatchAllOperator(Context, PositionUtilities.EmptyExtent, lval, (string) rval, ignoreCase: false);
+                    break;
                 case TokenKind.Imatch:
                     CheckLanguageMode();
                     _operationDelegate =

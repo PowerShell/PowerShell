@@ -6,6 +6,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
@@ -1159,6 +1160,37 @@ namespace System.Management.Automation
             }
 
             return resultList.ToArray();
+        }
+
+        /// <summary>
+        /// Implementation of the PowerShell -matchall operator.
+        /// </summary>
+        /// <param name="context">The execution context to use.</param>
+        /// <param name="errorPosition">The position to use for error reporting.</param>
+        /// <param name="lval">Left operand.</param>
+        /// <param name="rval">Right operand.</param>
+        /// <param name="ignoreCase">Ignore case.</param>
+        /// <returns>The result of the operator.</returns>
+        internal static object MatchAllOperator(ExecutionContext context, IScriptExtent errorPosition, object lval, string rval, bool ignoreCase)
+        {
+            IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
+            if (list == null)
+            {
+                string lvalString = lval == null ? string.Empty : PSObject.ToStringParser(context, lval);
+                RegexOptions options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+                return Regex.Matches(lvalString, rval, options);
+            }
+            
+            List<MatchCollection> matches = new List<MatchCollection>();
+            while (list.MoveNext())
+            {
+                object val = list.Current;
+                string lvalString = val == null ? string.Empty : PSObject.ToStringParser(context, val);
+                RegexOptions options = ignoreCase ? RegexOptions.IgnoreCase : RegexOptions.None;
+                matches.Add(Regex.Matches(lvalString, rval, options));
+            }
+            
+            return matches.ToArray();
         }
 
         /// <summary>

@@ -428,6 +428,14 @@ namespace System.Management.Automation.Language
         /// <summary>The null conditional index access operator '?[]'.</summary>
         QuestionLBracket = 104,
 
+        /// <summary>The case insensitive match operator '-imatchall' or '-matchall'.</summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        Imatchall = 105,
+
+        /// <summary>The case insensitive match operator '-cmatchall'.</summary>
+        [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
+        Cmatchall = 106,
+
         #endregion Operators
 
         #region Keywords
@@ -583,7 +591,7 @@ namespace System.Management.Automation.Language
         Hidden = 167,
 
         /// <summary>The 'base' keyword</summary>
-        Base = 168,
+        Base = 168
 
         #endregion Keywords
     }
@@ -875,8 +883,8 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
             /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
             /*     QuestionLBracket */ TokenFlags.None,
-            /*     Reserved slot 7  */ TokenFlags.None,
-            /*     Reserved slot 8  */ TokenFlags.None,
+            /*           Imatchall  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
+            /*           CMatchall  */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceComparison | TokenFlags.DisallowedInRestrictedMode,
             /*     Reserved slot 9  */ TokenFlags.None,
             /*     Reserved slot 10 */ TokenFlags.None,
             /*     Reserved slot 11 */ TokenFlags.None,
@@ -1073,7 +1081,7 @@ namespace System.Management.Automation.Language
             /*     QuestionQuestion */ "??",
             /*          QuestionDot */ "?.",
             /*     QuestionLBracket */ "?[",
-            /*    Reserved slot 7   */ string.Empty,
+            /*            matchall  */ "-matchall",
             /*    Reserved slot 8   */ string.Empty,
             /*    Reserved slot 9   */ string.Empty,
             /*    Reserved slot 10  */ string.Empty,

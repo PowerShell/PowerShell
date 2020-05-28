@@ -332,6 +332,9 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo ParserOps_MatchOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.MatchOperator), StaticFlags);
+        
+        internal static readonly MethodInfo ParserOps_MatchAllOperator =
+            typeof(ParserOps).GetMethod(nameof(ParserOps.MatchAllOperator), StaticFlags);
 
         internal static readonly MethodInfo ParserOps_RangeOperator =
             typeof(ParserOps).GetMethod(nameof(ParserOps.RangeOperator), StaticFlags);
@@ -5794,6 +5797,14 @@ namespace System.Management.Automation.Language
                         rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(true),
                         ExpressionCache.Constant(true));
+                case TokenKind.Imatchall:
+                    return Expression.Call(
+                        CachedReflectionInfo.ParserOps_MatchAllOperator,
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(string)),
+                        ExpressionCache.Constant(true));
                 case TokenKind.Ireplace:
                     // TODO: replace this with faster code
                     return Expression.Call(
@@ -5865,6 +5876,14 @@ namespace System.Management.Automation.Language
                         lhs.Cast(typeof(object)),
                         rhs.Cast(typeof(object)),
                         ExpressionCache.Constant(false),
+                        ExpressionCache.Constant(false));
+                case TokenKind.Cmatchall:
+                    return Expression.Call(
+                        CachedReflectionInfo.ParserOps_MatchAllOperator,
+                        s_executionContextParameter,
+                        Expression.Constant(binaryExpressionAst.ErrorPosition),
+                        lhs.Cast(typeof(object)),
+                        rhs.Cast(typeof(string)),
                         ExpressionCache.Constant(false));
                 case TokenKind.Cnotmatch:
                     // TODO: replace this with faster code
