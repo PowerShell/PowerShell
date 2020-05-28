@@ -49,31 +49,78 @@ stages:
 - stage: TestWin
   displayName: Test for Windows
   jobs:
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: UnelevatedPesterTests
-      tagSet: CI
+  - job: win_test
+    pool:
+      vmImage: vs2017-win2016
+    displayName: Windows Test
 
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: ElevatedPesterTests
-      tagSet: CI
+    steps:
+      - pwsh: |
+          Get-ChildItem -Path env:
+        displayName: 'Capture Environment'
+        condition: succeededOrFailed()
 
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: UnelevatedPesterTests
-      tagSet: Others
+      - task: DownloadBuildArtifacts@0
+        displayName: 'Download Build Artifacts'
+        inputs:
+          downloadType: specific
+          itemPattern: |
+            build/**/*
+          downloadPath: '$(System.ArtifactsDirectory)'
 
-  - template: templates/windows-test.yml
-    parameters:
-      purpose: ElevatedPesterTests
-      tagSet: Others
+      - pwsh: |
+          Get-ChildItem "$(System.ArtifactsDirectory)\*" -Recurse
+        displayName: 'Capture Artifacts Directory'
+        continueOnError: true
 
-  - template: templates/verify-xunit.yml
+      # must be run frow Windows PowerShell
+      - powershell: |
+          Import-Module .\tools\ci.psm1
+          Invoke-CIInstall
+        displayName: Bootstrap
+        condition: succeededOrFailed()
+
+      - pwsh: |
+          Import-Module .\tools\ci.psm1
+          Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
+          $options = (Get-PSOptions)
+          $path = Split-Path -Path $options.Output
+          $rootPath = Split-Path -Path $path
+          Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
+        displayName: 'Unzip Build'
+        condition: succeeded()
+
+      - pwsh: |
+          Import-Module .\tools\ci.psm1
+          Invoke-CITest -Purpose UnelevatedPesterTests -TagSet CI
+        displayName: Test - UnelevatedPesterTests - CI
+        condition: succeeded()
+
+      - pwsh: |
+          Import-Module .\tools\ci.psm1
+          Invoke-CITest -Purpose ElevatedPesterTests -TagSet CI
+        displayName: Test - ElevatedPesterTests - CI
+        condition: succeededOrFailed()
+
+      - pwsh: |
+          Import-Module .\tools\ci.psm1
+          Invoke-CITest -Purpose UnelevatedPesterTests -TagSet Others
+        displayName: Test - UnelevatedPesterTests - Others
+        condition: succeededOrFailed()
+
+      - pwsh: |
+          Import-Module .\tools\ci.psm1
+          Invoke-CITest -Purpose ElevatedPesterTests -TagSet Others
+        displayName: Test - ElevatedPesterTests - Others
+        condition: succeededOrFailed()
+
+      - pwsh: |
+          Import-Module .\tools\ci.psm1
+          $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
+          Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
 
 - stage: PackagingWin
   displayName: Packaging for Windows
   jobs:
   # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
   - template: templates/windows-packaging.yml
-
