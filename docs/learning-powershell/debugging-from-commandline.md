@@ -20,7 +20,7 @@ $result =[int](ConvertFahrenheitToCelsius($fahrenheit))
 Write-Host "$result Celsius"
 ```
 
- 1. **Setting a Breakpoint on a Line**
+## Setting a Breakpoint on a Line
 
 - Open a [PowerShell editor](README.md#powershell-editor)
 - Save the above code snippet to a file. For example, "test.ps1"
@@ -103,7 +103,7 @@ PS /home/jen/debug>
 
 ```
 
-1. **Setting a Breakpoint on a Variable**
+## Setting a Breakpoint on a Variable
 - Clear existing breakpoints if there are any
 
 ```powershell
