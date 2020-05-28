@@ -565,6 +565,7 @@ namespace Microsoft.PowerShell.Commands
         /// this property.
         /// </remarks>
         private static Regex s_certPathRegex = null;
+
         private static Regex CertPathRegex
         {
             get
@@ -3093,6 +3094,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static readonly char[] s_separators = new char[] { '/', '\\' };
+
         private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_separators);

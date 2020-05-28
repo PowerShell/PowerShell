@@ -590,6 +590,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly Dictionary<string, TokenKind> s_keywordTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
@@ -724,6 +725,7 @@ namespace System.Management.Automation.Language
 
         // TODO: use auto-properties when making 'ternary operator' an official feature.
         private bool _forceEndNumberOnTernaryOpChars;
+
         internal bool ForceEndNumberOnTernaryOpChars
         {
             get { return _forceEndNumberOnTernaryOpChars; }

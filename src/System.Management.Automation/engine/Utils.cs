@@ -485,6 +485,7 @@ namespace System.Management.Automation
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
+
         internal static string GetApplicationBase(string shellId)
         {
             // Use the location of SMA.dll as the application base.
@@ -1826,6 +1827,7 @@ namespace System.Management.Automation
         }
 
         private const string WhereObjectCommandAlias = "?";
+
         private static bool TryGetCommandInfoList(PowerShell ps, HashSet<string> commandNames, out Collection<CommandInfo> cmdInfoList)
         {
             if (commandNames.Count == 0)

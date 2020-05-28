@@ -955,6 +955,7 @@ namespace System.Management.Automation
 
         private bool? _initialSessionStateIncludesGetCommandWithListImportedSwitch;
         private object _initialSessionStateIncludesGetCommandWithListImportedSwitchLock = new object();
+
         private bool DoesInitialSessionStateIncludeGetCommandWithListImportedSwitch()
         {
             if (!_initialSessionStateIncludesGetCommandWithListImportedSwitch.HasValue)

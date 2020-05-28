@@ -25,6 +25,7 @@ namespace System.Management.Automation
         internal const string Utf32 = "utf32";
         internal const string Default = "default";
         internal const string OEM = "oem";
+
         internal static readonly string[] TabCompletionResults = {
                 Ascii, BigEndianUnicode, BigEndianUtf32, OEM, Unicode, Utf7, Utf8, Utf8Bom, Utf8NoBom, Utf32
             };

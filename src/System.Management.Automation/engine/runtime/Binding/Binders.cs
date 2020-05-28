@@ -1306,6 +1306,7 @@ namespace System.Management.Automation.Language
 
         private readonly bool _static;
         private readonly Type _classScope;
+
         private PSGetDynamicMemberBinder(Type classScope, bool @static)
         {
             _static = @static;
@@ -5024,6 +5025,7 @@ namespace System.Management.Automation.Language
         }
 
         private bool _hasTypeTableMember;
+
         internal static void TypeTableMemberAdded(string memberName)
         {
             var binderList = s_binderCacheIgnoringCase.GetOrAdd(memberName, _ => new List<PSGetMemberBinder>());

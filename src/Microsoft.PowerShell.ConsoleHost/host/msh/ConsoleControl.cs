@@ -136,6 +136,7 @@ namespace Microsoft.PowerShell
             internal short FontHeight;
             internal int FontFamily;
             internal int FontWeight;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             internal string FontFace;
         }

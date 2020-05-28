@@ -1493,6 +1493,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private readonly Dictionary<Guid, bool> _eventArgsWritten = new Dictionary<Guid, bool>();
+
         private void WriteJobStateInformation(Job job, JobStateEventArgs args = null)
         {
             // at any point there will be only one thread which will have

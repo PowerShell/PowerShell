@@ -5735,6 +5735,7 @@ namespace System.Management.Automation
         }
 
         internal class Null { };
+
         private static IConversionData FigureConversionFromNull(Type toType)
         {
             IConversionData data = GetConversionData(typeof(Null), toType);

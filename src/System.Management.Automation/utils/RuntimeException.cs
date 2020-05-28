@@ -305,6 +305,7 @@ namespace System.Management.Automation
         #endregion Internal
 
         private Token _errorToken;
+
         internal Token ErrorToken
         {
             get

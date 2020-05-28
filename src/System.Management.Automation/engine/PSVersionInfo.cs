@@ -351,6 +351,7 @@ namespace System.Management.Automation
     public sealed class PSVersionHashTable : Hashtable, IEnumerable
     {
         private static readonly PSVersionTableComparer s_keysComparer = new PSVersionTableComparer();
+
         internal PSVersionHashTable(IEqualityComparer equalityComparer) : base(equalityComparer)
         {
         }

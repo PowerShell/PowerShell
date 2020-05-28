@@ -1640,12 +1640,14 @@ namespace System.Management.Automation
     internal class RangeEnumerator : IEnumerator
     {
         private int _lowerBound;
+
         internal int LowerBound
         {
             get { return _lowerBound; }
         }
 
         private int _upperBound;
+
         internal int UpperBound
         {
             get { return _upperBound; }

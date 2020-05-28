@@ -39,6 +39,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private const string QueryLanguageKey = "QueryDialect";
 
         private bool? _useEnumerateInstancesInsteadOfWql;
+
         public bool UseEnumerateInstancesInsteadOfWql
         {
             get
@@ -113,6 +114,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
         private Uri _resourceUri;
         private bool _resourceUriHasBeenCalculated;
+
         public Uri ResourceUri
         {
             get
@@ -141,6 +143,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private CimOperationFlags? _schemaConformanceLevel;
+
         public CimOperationFlags SchemaConformanceLevel
         {
             get

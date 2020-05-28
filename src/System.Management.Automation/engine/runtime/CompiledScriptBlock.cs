@@ -558,6 +558,7 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<Tuple<string, string>, ScriptBlock> s_cachedScripts =
             new ConcurrentDictionary<Tuple<string, string>, ScriptBlock>();
+
         internal static ScriptBlock TryGetCachedScriptBlock(string fileName, string fileContents)
         {
             if (InternalTestHooks.IgnoreScriptBlockCache)
@@ -1720,6 +1721,7 @@ namespace System.Management.Automation
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
+
         private static Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
             () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);

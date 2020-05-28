@@ -625,6 +625,7 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManBinaryOrTextDataStruct
         {
             internal int bufferLength;
+
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr data;
         }
@@ -635,8 +636,10 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManData_ManToUn : IDisposable
         {
             private WSManDataStruct _internalData;
+
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _marshalledObject = IntPtr.Zero;
+
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _marshalledBuffer = IntPtr.Zero;
 
@@ -768,6 +771,7 @@ namespace System.Management.Automation.Remoting.Client
             /// Gets the type of data.
             /// </summary>
             private uint _type;
+
             internal uint Type
             {
                 get { return _type; }
@@ -779,6 +783,7 @@ namespace System.Management.Automation.Remoting.Client
             /// Gets the buffer length of data.
             /// </summary>
             private int _bufferLength;
+
             internal int BufferLength
             {
                 get { return _bufferLength; }
@@ -787,6 +792,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             private string _text;
+
             internal string Text
             {
                 get
@@ -799,6 +805,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             private byte[] _data;
+
             internal byte[] Data
             {
                 get
@@ -929,6 +936,7 @@ namespace System.Management.Automation.Remoting.Client
         internal struct WSManStreamIDSetStruct
         {
             internal int streamIDsCount;
+
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr streamIDs;
         }
@@ -1083,6 +1091,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             internal IntPtr options;
+
             internal bool optionsMustUnderstand;
         }
 
@@ -1217,11 +1226,13 @@ namespace System.Management.Automation.Remoting.Client
             internal struct WSManCommandArgSetInternal
             {
                 internal int argsCount;
+
                 [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
                 internal IntPtr args;
             }
 
             private WSManCommandArgSetInternal _internalData;
+
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private MarshalledObject _data;
 
@@ -1549,6 +1560,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string name;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string value;
             }
@@ -1724,6 +1736,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             // GC handle which prevents garbage collector from collecting this delegate.
             private GCHandle _gcHandle;
+
             [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
             private IntPtr _asyncCallback;
 
@@ -1961,9 +1974,12 @@ namespace System.Management.Automation.Remoting.Client
             {
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string streamId;
+
                 internal WSManDataStruct data;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string commandState;
+
                 internal int exitCode;
             }
 
@@ -2068,8 +2084,10 @@ namespace System.Management.Automation.Remoting.Client
                 /// WSManSenderDetails.
                 /// </summary>
                 internal IntPtr senderDetails;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string locale;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string resourceUri;
                 /// <summary>
@@ -2121,6 +2139,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string senderName;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string authenticationMechanism;
                 /// <summary>
@@ -2128,6 +2147,7 @@ namespace System.Management.Automation.Remoting.Client
                 /// </summary>
                 internal IntPtr certificateDetails;
                 internal IntPtr clientToken;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string httpUrl;
             }
@@ -2170,10 +2190,13 @@ namespace System.Management.Automation.Remoting.Client
             {
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string subject;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string issuerName;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string issuerThumbprint;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string subjectName;
             }
@@ -2230,6 +2253,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string path;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string dialect;
             }
@@ -2242,6 +2266,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string filter;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string dialect;
             }
@@ -2301,6 +2326,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string key;
+
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string value;
             }

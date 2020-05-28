@@ -5446,6 +5446,7 @@ namespace Microsoft.WSMan.Management
 
         #region def
         private static readonly string[] WinrmRootName = new string[] { "winrm/Config" };
+
         private static readonly string[] WinRmRootConfigs = new string[] {
             "Client",
             "Service",

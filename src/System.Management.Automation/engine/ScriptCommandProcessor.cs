@@ -66,6 +66,7 @@ namespace System.Management.Automation
         protected ScriptBlock _scriptBlock;
 
         private ScriptParameterBinderController _scriptParameterBinderController;
+
         internal ScriptParameterBinderController ScriptParameterBinderController
         {
             get

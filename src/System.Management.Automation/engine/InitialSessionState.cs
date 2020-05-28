@@ -4775,6 +4775,7 @@ end {
         internal static ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
 
         private static PSLanguageMode systemLanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
+
         internal static SessionStateFunctionEntry[] BuiltInFunctions = new SessionStateFunctionEntry[]
         {
            // Functions that don't require full language mode
@@ -4872,6 +4873,7 @@ end {
                 { "Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics"},
                 { "Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost"},
             };
+
         internal static Dictionary<string, string> NestedModuleEngineModuleMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { "Microsoft.PowerShell.Commands.Utility", "Microsoft.PowerShell.Utility"},

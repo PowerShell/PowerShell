@@ -37,6 +37,7 @@ namespace System.Management.Automation.Language
     internal class FindAllVariablesVisitor : AstVisitor
     {
         private static readonly HashSet<string> s_hashOfPessimizingCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly string[] s_pessimizingCmdlets = new string[]
                                                           {
                                                               "New-Variable",
@@ -107,6 +108,7 @@ namespace System.Management.Automation.Language
         }
 
         private bool _disableOptimizations;
+
         private readonly Dictionary<string, VariableAnalysisDetails> _variables
             = new Dictionary<string, VariableAnalysisDetails>(StringComparer.OrdinalIgnoreCase);
 
@@ -251,6 +253,7 @@ namespace System.Management.Automation.Language
         }
 
         private int _runtimeUsingIndex;
+
         public override AstVisitAction VisitUsingExpression(UsingExpressionAst usingExpressionAst)
         {
             // On the local machine, we may have set the index because of a call to ScriptBlockToPowerShell or Invoke-Command.

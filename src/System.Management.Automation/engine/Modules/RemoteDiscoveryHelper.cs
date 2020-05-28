@@ -841,12 +841,14 @@ namespace System.Management.Automation
             "Description",
             "HelpInfoURI",
         };
+
         private static readonly string[] s_manifestEntriesToKeepAsStringArray = new[] {
             "FunctionsToExport",
             "VariablesToExport",
             "AliasesToExport",
             "CmdletsToExport",
         };
+
         internal static Hashtable RewriteManifest(
             Hashtable originalManifest,
             IEnumerable<string> nestedModules,

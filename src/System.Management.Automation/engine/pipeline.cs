@@ -156,6 +156,7 @@ namespace System.Management.Automation.Internal
         }
 
         private bool _terminatingErrorLogged = false;
+
         internal void LogExecutionException(Exception exception)
         {
             _executionFailed = true;
@@ -1559,6 +1560,7 @@ namespace System.Management.Automation.Internal
         }
 
         private LocalPipeline _localPipeline;
+
         internal LocalPipeline LocalPipeline
         {
             get { return _localPipeline; }

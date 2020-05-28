@@ -18,8 +18,10 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public enum ProtocolType
     {
         Default,
+
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         Dcom,
+
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
         Wsman
     };

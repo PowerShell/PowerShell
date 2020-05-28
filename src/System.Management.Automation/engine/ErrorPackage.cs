@@ -1470,6 +1470,7 @@ namespace System.Management.Automation
         public object TargetObject { get => _target; }
 
         private object _target /* = null */;
+
         internal void SetTargetObject(object target)
         {
             _target = target;

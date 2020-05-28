@@ -547,6 +547,7 @@ namespace System.Management.Automation
     public sealed class TableControlBuilder
     {
         internal readonly TableControl _table;
+
         internal TableControlBuilder(TableControl table)
         {
             _table = table;

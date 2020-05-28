@@ -533,6 +533,7 @@ namespace System.Management.Automation
         private readonly PSDataCollection<ErrorRecord> _executionError = new PSDataCollection<ErrorRecord>();
 
         private PSEventManager _eventManager;
+
         internal PSEventManager EventManager
         {
             get { return _eventManager; }
@@ -545,6 +546,7 @@ namespace System.Management.Automation
         }
 
         private ManualResetEvent _jobRunning;
+
         private ManualResetEvent JobRunning
         {
             get
@@ -569,6 +571,7 @@ namespace System.Management.Automation
         }
 
         private ManualResetEvent _jobSuspendedOrAborted;
+
         private ManualResetEvent JobSuspendedOrAborted
         {
             get

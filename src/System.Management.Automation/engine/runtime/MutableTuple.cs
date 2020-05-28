@@ -308,6 +308,7 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<Type, Func<MutableTuple>> s_tupleCreators =
             new ConcurrentDictionary<Type, Func<MutableTuple>>(concurrencyLevel: 3, capacity: 100);
+
         public static Func<MutableTuple> TupleCreator(Type type)
         {
             return s_tupleCreators.GetOrAdd(type,

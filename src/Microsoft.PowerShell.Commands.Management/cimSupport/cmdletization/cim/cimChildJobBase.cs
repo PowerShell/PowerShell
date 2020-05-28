@@ -168,6 +168,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private const int MinRetryDelayMs = 100;
 
         private Timer _sleepAndRetryTimer;
+
         private void SleepAndRetry_OnWakeup(object state)
         {
             this.ExceptionSafeWrapper(
@@ -533,6 +534,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private readonly Lazy<CimCustomOptionsDictionary> _jobSpecificCustomOptions;
 
         internal abstract CimCustomOptionsDictionary CalculateJobSpecificCustomOptions();
+
         private CimCustomOptionsDictionary GetJobSpecificCustomOptions()
         {
             return _jobSpecificCustomOptions.Value;

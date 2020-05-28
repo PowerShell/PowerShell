@@ -83,6 +83,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Collection<WildcardPattern> _excludeMatcher = null;
+
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchType = MatchType.Win32,
@@ -7307,12 +7308,16 @@ namespace Microsoft.PowerShell.Commands
             public int Type;
             public int DisplayType;
             public int Usage;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string LocalName;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string RemoteName;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Comment;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Provider;
         }
@@ -7855,6 +7860,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort PrintNameOffset;
             public ushort PrintNameLength;
             public uint Flags;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] PathBuffer;
         }
@@ -7869,6 +7875,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort SubstituteNameLength;
             public ushort PrintNameOffset;
             public ushort PrintNameLength;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] PathBuffer;
         }
@@ -7880,6 +7887,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort ReparseDataLength;
             public ushort Reserved;
             public uint StringCount;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] StringList;
         }
@@ -7905,6 +7913,7 @@ namespace Microsoft.PowerShell.Commands
             public uint Data1;
             public ushort Data2;
             public ushort Data3;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public char[] Data4;
         }
@@ -7916,6 +7925,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort ReparseDataLength;
             public ushort Reserved;
             public GUID ReparseGuid;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
             public char[] DataBuffer;
         }
@@ -8755,6 +8765,7 @@ namespace System.Management.Automation.Internal
         private static string s_driveMaxSizeErrorFormatString = FileSystemProviderStrings.DriveMaxSizeError;
         private static string s_PSCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
         private static string s_PSCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
+
         private const string PSCopyToSessionHelperDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
@@ -9221,6 +9232,7 @@ namespace System.Management.Automation.Internal
 
         private static string s_PSCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
         private static string s_PSCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
+
         private const string PSCopyFromSessionHelperDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
@@ -9711,6 +9723,7 @@ namespace System.Management.Automation.Internal
 
         internal static string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
         private static string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
+
         private const string PSCopyRemoteUtilsDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSRemoteDirectoryExist"", Mandatory=$true)]
@@ -9879,6 +9892,7 @@ namespace System.Management.Automation.Internal
         #endregion
 
         internal static string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
+
         internal static IEnumerable<Hashtable> GetAllCopyToRemoteScriptFunctions()
         {
             yield return s_PSCopyToSessionHelperFunction;
@@ -9886,6 +9900,7 @@ namespace System.Management.Automation.Internal
         }
 
         internal static string AllCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
+
         internal static IEnumerable<Hashtable> GetAllCopyFromRemoteScriptFunctions()
         {
             yield return s_PSCopyFromSessionHelperFunction;

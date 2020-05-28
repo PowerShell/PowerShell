@@ -36,6 +36,7 @@ namespace System.Management.Automation.Remoting
 
         private ServerRemoteSession _session;
         private object _syncObject;
+
         private Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
             = new Queue<RemoteSessionStateMachineEventArgs>();
         // whether some thread is actively processing events

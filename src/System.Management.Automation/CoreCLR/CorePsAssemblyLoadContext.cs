@@ -113,6 +113,7 @@ namespace System.Management.Automation
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
+
         private readonly HashSet<string> _denyListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
                 "System.Windows.Forms"
             };

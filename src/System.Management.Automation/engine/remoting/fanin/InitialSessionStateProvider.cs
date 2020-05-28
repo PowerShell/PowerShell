@@ -784,8 +784,10 @@ namespace System.Management.Automation.Remoting
         private const string configProvidersKeyName = "PSConfigurationProviders";
         private const string configProviderApplicationBaseKeyName = "ApplicationBase";
         private const string configProviderAssemblyNameKeyName = "AssemblyName";
+
         private static Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
             new Dictionary<string, ConfigurationDataFromXML>(StringComparer.OrdinalIgnoreCase);
+
         private static object s_syncObject = new object();
 
         #endregion
@@ -1786,6 +1788,7 @@ namespace System.Management.Automation.Remoting
 
         // Takes the "RoleCapabilities" node in the config hash, and merges its values into the base configuration.
         private const string PSRCExtension = ".psrc";
+
         private void MergeRoleCapabilitiesIntoConfigHash()
         {
             List<string> psrcFiles = new List<string>();

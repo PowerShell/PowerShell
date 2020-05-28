@@ -656,6 +656,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         /// </summary>
         [ThreadStatic]
         private static bool t_cacheResourcesFromMultipleModuleVersions;
+
         private static bool CacheResourcesFromMultipleModuleVersions
         {
             get
@@ -3712,6 +3713,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
 
         private static ScriptBlock s_cimKeywordImplementationFunction;
+
         private const string CimKeywordImplementationFunctionText = @"
     param (
         [Parameter(Mandatory)]

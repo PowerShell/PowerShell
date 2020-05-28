@@ -1320,6 +1320,7 @@ namespace System.Management.Automation.Runspaces
         /// This is set true when stop is called.
         /// </summary>
         private bool _stopping;
+
         internal bool IsStopping
         {
             get

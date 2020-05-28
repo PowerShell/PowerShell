@@ -216,6 +216,7 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> s_getterMethods
             = new ConcurrentDictionary<Tuple<Type, string>, Func<object, object>>();
+
         private static readonly ConcurrentDictionary<Tuple<Type, string>, Action<object, object>> s_setterMethods =
             new ConcurrentDictionary<Tuple<Type, string>, Action<object, object>>();
 
