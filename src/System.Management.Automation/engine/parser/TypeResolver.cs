@@ -221,7 +221,7 @@ namespace System.Management.Automation.Language
         /// This set should be used directly only in the method CallResolveTypeNameWorkerHelper.
         /// </remarks>
         [ThreadStatic]
-        private static HashSet<Assembly> s_searchedAssemblies = null;
+        private static HashSet<Assembly> t_searchedAssemblies = null;
 
         /// <summary>
         /// A helper method to call ResolveTypeNameWorker in steps.
@@ -233,21 +233,21 @@ namespace System.Management.Automation.Language
                                                             TypeResolutionState typeResolutionState,
                                                             out Exception exception)
         {
-            if (s_searchedAssemblies == null)
+            if (t_searchedAssemblies == null)
             {
-                s_searchedAssemblies = new HashSet<Assembly>();
+                t_searchedAssemblies = new HashSet<Assembly>();
             }
             else
             {
                 // Clear the set before starting a full search to make sure we have a clean start.
-                s_searchedAssemblies.Clear();
+                t_searchedAssemblies.Clear();
             }
 
             try
             {
                 exception = null;
                 var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
-                Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, s_searchedAssemblies, typeResolutionState,
+                Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
                 if (exception == null && result == null)
                 {
@@ -256,14 +256,14 @@ namespace System.Management.Automation.Language
                         // If the assemblies to search from is not specified by the caller of 'ResolveTypeNameWithContext',
                         // then we search our assembly cache first, so as to give preference to resolving the type against
                         // assemblies explicitly loaded by powershell, for example, via importing module/snapin.
-                        result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, s_searchedAssemblies, typeResolutionState,
+                        result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
                     }
 
                     if (result == null)
                     {
                         // Search from the assembly list passed in.
-                        result = ResolveTypeNameWorker(typeName, currentScope, assemblies, s_searchedAssemblies, typeResolutionState,
+                        result = ResolveTypeNameWorker(typeName, currentScope, assemblies, t_searchedAssemblies, typeResolutionState,
                                                     /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
                     }
                 }
@@ -273,7 +273,7 @@ namespace System.Management.Automation.Language
             finally
             {
                 // Clear the set after a full search, so dynamic assemblies can get reclaimed as needed.
-                s_searchedAssemblies.Clear();
+                t_searchedAssemblies.Clear();
             }
         }
 
