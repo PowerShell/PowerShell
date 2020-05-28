@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell
                         return null;
                     }
 
-                    if(SecureStringEquals(password, confirmPassword))
+                    if (SecureStringEquals(password, confirmPassword))
                     {
                         break;
                     }
