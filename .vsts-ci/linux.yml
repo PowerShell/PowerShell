@@ -87,6 +87,7 @@ stages:
       pool: ubuntu-16.04
 
 - stage: CodeCovTestPackage
+  dependsOn: []
   displayName: CodeCoverage and Test Packages
   jobs:
   - job: CodeCovTestPackage
