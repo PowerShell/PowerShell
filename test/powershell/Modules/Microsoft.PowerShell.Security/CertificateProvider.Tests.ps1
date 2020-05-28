@@ -1,25 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-# The import and table creation work on non-windows, but are currently not needed
-if($IsWindows)
-{
-    Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
-}
-
-    $currentUserMyLocations = @(
-        @{path = 'Cert:\CurrentUser\my'}
-        @{path = 'cert:\currentuser\my'}
-        @{path = 'Microsoft.PowerShell.Security\Certificate::CurrentUser\My'}
-        @{path = 'Microsoft.PowerShell.Security\certificate::currentuser\my'}
-    )
-
-    $testLocations = @(
-        @{path = 'cert:\'}
-        @{path = 'CERT:\'}
-        @{path = 'Microsoft.PowerShell.Security\Certificate::'}
-    )
-
 Describe "Certificate Provider tests" -Tags "CI" {
     BeforeAll{
         if(!$IsWindows)
@@ -27,6 +8,20 @@ Describe "Certificate Provider tests" -Tags "CI" {
             # Skip for non-Windows platforms
             $defaultParamValues = $global:PSDefaultParameterValues.Clone()
             $global:PSDefaultParameterValues = @{ "it:skip" = $true }
+        }
+        else
+        {
+            $testLocations = @(
+                @{path = 'cert:\'}
+                @{path = 'CERT:\'}
+                @{path = 'Microsoft.PowerShell.Security\Certificate::'}
+            )
+            $currentUserMyLocations = @(
+                @{path = 'Cert:\CurrentUser\my'}
+                @{path = 'cert:\currentuser\my'}
+                @{path = 'Microsoft.PowerShell.Security\Certificate::CurrentUser\My'}
+                @{path = 'Microsoft.PowerShell.Security\certificate::currentuser\my'}
+            )
         }
     }
 
@@ -38,15 +33,17 @@ Describe "Certificate Provider tests" -Tags "CI" {
     }
 
     Context "Get-Item tests" {
-        function GetItemTestHelper {
-            param([string] $path)
-            $expectedResolvedPath = Resolve-Path -LiteralPath $path
-            $result = Get-Item -LiteralPath $path
-            $result | Should -Not -Be $null
-            $result | ForEach-Object {
-                $resolvedPath = Resolve-Path $_.PSPath
-                $resolvedPath.Provider | Should -Be $expectedResolvedPath.Provider
-                $resolvedPath.ProviderPath.TrimStart('\') | Should -Be $expectedResolvedPath.ProviderPath.TrimStart('\')
+        BeforeAll {
+            function GetItemTestHelper {
+                param([string] $path)
+                $expectedResolvedPath = Resolve-Path -LiteralPath $path
+                $result = Get-Item -LiteralPath $path
+                $result | Should -Not -Be $null
+                $result | ForEach-Object {
+                    $resolvedPath = Resolve-Path $_.PSPath
+                    $resolvedPath.Provider | Should -Be $expectedResolvedPath.Provider
+                    $resolvedPath.ProviderPath.TrimStart('\') | Should -Be $expectedResolvedPath.ProviderPath.TrimStart('\')
+                }
             }
         }
         It "Should be able to get a certificate store, path: <path>" -TestCases $currentUserMyLocations {
@@ -84,6 +81,8 @@ Describe "Certificate Provider tests" -Tags "Feature" {
     BeforeAll{
         if($IsWindows)
         {
+            # The import and table creation work on non-windows, but are currently not needed
+            Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
             Install-TestCertificates
             Push-Location Cert:\
         }
