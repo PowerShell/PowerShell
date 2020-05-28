@@ -66,6 +66,7 @@ stages:
           downloadType: specific
           itemPattern: |
             build/**/*
+            xunit/**/*
           downloadPath: '$(System.ArtifactsDirectory)'
 
       - pwsh: |
@@ -118,9 +119,11 @@ stages:
         condition: succeededOrFailed()
 
       - pwsh: |
-          Import-Module .\tools\ci.psm1
+          Import-Module .\build.psm1
           $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
           Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
+        displayName: Verify xUnit Test Results
+        condition: succeededOrFailed()
 
 - stage: PackagingWin
   displayName: Packaging for Windows
