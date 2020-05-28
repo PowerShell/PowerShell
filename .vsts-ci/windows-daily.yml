@@ -81,10 +81,9 @@ stages:
         condition: succeededOrFailed()
 
       - pwsh: |
-          Import-Module .\tools\ci.psm1
+          Import-Module .\build.psm1
           Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
-          $options = (Get-PSOptions)
-          $path = Split-Path -Path $options.Output
+          $path = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
           $rootPath = Split-Path -Path $path
           Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
         displayName: 'Unzip Build'
@@ -92,24 +91,28 @@ stages:
 
       - pwsh: |
           Import-Module .\tools\ci.psm1
+          Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
           Invoke-CITest -Purpose UnelevatedPesterTests -TagSet CI
         displayName: Test - UnelevatedPesterTests - CI
         condition: succeeded()
 
       - pwsh: |
           Import-Module .\tools\ci.psm1
+          Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
           Invoke-CITest -Purpose ElevatedPesterTests -TagSet CI
         displayName: Test - ElevatedPesterTests - CI
         condition: succeededOrFailed()
 
       - pwsh: |
           Import-Module .\tools\ci.psm1
+          Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
           Invoke-CITest -Purpose UnelevatedPesterTests -TagSet Others
         displayName: Test - UnelevatedPesterTests - Others
         condition: succeededOrFailed()
 
       - pwsh: |
           Import-Module .\tools\ci.psm1
+          Restore-PSOptions -PSOptionsPath '$(System.ArtifactsDirectory)\build\psoptions.json'
           Invoke-CITest -Purpose ElevatedPesterTests -TagSet Others
         displayName: Test - ElevatedPesterTests - Others
         condition: succeededOrFailed()
