@@ -473,13 +473,9 @@ namespace System.Management.Automation
 
             if (result == null && automount)
             {
-                // first try to automount as a file system drive
+                // Attempt to automount as a file system drive
+                // or as a BuiltIn drive (e.g. "Cert"/"Certificate"/"WSMan")
                 result = AutomountFileSystemDrive(name) ?? AutomountBuiltInDrive(name);
-                // if it didn't work, then try automounting as a BuiltIn drive (e.g. "Cert"/"Certificate"/"WSMan")
-                   
-                
-                       // internally this calls GetDrive(name, false)
-                
             }
 
             if (result == null)
@@ -744,6 +740,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Auto-mounts a built-in drive.
         /// </summary>
+        /// <remarks>
+        /// Calls GetDrive(name, false) internally.
+        /// </remarks>
         /// <param name="name">The name of the drive to load.</param>
         /// <returns></returns>
         internal PSDriveInfo AutomountBuiltInDrive(string name)

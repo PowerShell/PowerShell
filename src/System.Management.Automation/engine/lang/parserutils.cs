@@ -1177,13 +1177,10 @@ namespace System.Management.Automation
 
             // if passed an explicit regex, just use it
             // otherwise compile the expression.
-            Regex r = PSObject.Base(rval) as Regex ?? NewRegex(PSObject.ToStringParser(context, rval), reOptions);
-               
-            
-                // In this situation, creation of Regex should not fail. We are not
-                // processing ArgumentException in this case.
-                    
-            
+            // In this situation, creation of Regex should not fail. We are not
+            // processing ArgumentException in this case.
+            Regex r = PSObject.Base(rval) as Regex
+                ?? NewRegex(PSObject.ToStringParser(context, rval), reOptions);
 
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)

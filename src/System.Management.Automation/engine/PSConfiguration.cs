@@ -219,38 +219,25 @@ namespace System.Management.Automation.Configuration
 
         internal bool IsImplicitWinCompatEnabled()
         {
-            bool? settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey) ?? ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey, defaultValue: false);
-             
-            
-                // if the setting is not mentioned in configuration files, then the default DisableImplicitWinCompat value is False
-                     
-            
+            bool settingValue = ReadValueFromFile<bool?>(ConfigScope.CurrentUser, DisableImplicitWinCompatKey)
+                ?? ReadValueFromFile<bool?>(ConfigScope.AllUsers, DisableImplicitWinCompatKey)
+                ?? false;
 
-            return !settingValue.Value;
+            return !settingValue;
         }
 
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
-            string[] settingValue = ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey) ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
-               
-            
-                // if the setting is not mentioned in configuration files, then the default WindowsPowerShellCompatibilityModuleDenyList value is null
-                   
-            
-
-            return settingValue;
+            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey)
+                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey)
+                ?? null;
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
-            string[] settingValue = ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey) ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
-               
-            
-                // if the setting is not mentioned in configuration files, then the default WindowsPowerShellCompatibilityNoClobberModuleList value is null
-                   
-            
-
-            return settingValue;
+            return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
+                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey)
+                ?? null;
         }
 
         /// <summary>
