@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Set-StrictMode -Version 3.0
-
 param(
     # Skips a check that prevents building PowerShell on unsupported Linux distributions
     [parameter(Mandatory = $false)][switch]$SkipLinuxDistroCheck = $false
 )
+
+Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
