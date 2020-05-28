@@ -38,6 +38,17 @@ Describe "Read-Host Test" -Tag "CI" {
         [pscredential]::New("foo",$result).GetNetworkCredential().Password | Should -BeExactly TEST
     }
 
+    It "Read-Host returns a string when using -MaskInput parameter" {
+        $result = $ps.AddScript("Read-Host -MaskInput").Invoke()
+        $result | Should -Be $th.UI.ReadLineData
+    }
+
+    It "Read-Host throws an error when both -AsSecureString parameter and -MaskInput parameter are used" {
+        # Contrary to the rest of the tests this does not need to be invoked through a runspace since it is going to throw an error.
+        $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ReadHostCommand"
+        {Read-Host -MaskInput -AsSecureString} | Should -Throw -ErrorId $errorId
+    }
+
     It "Read-Host doesn't enter command prompt mode" {
         $result = "!1" | & "$PSHOME/pwsh" -NoProfile -c "Read-host -Prompt 'foo'"
         if ($IsWindows) {

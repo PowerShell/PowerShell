@@ -59,6 +59,30 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         public abstract string ReadLine();
+
+        /// <summary>
+        /// Same as ReadLine except that the input is not echoed to the user while it is collected
+        /// or is echoed in some obfuscated way, such as showing a dot for each character.
+        /// </summary>
+        /// <returns>
+        /// The characters typed by the user.
+        /// </returns>
+        /// <remarks>
+        /// Note that credentials (a user name and password) should be gathered with
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
+        /// </remarks>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
+        public virtual string ReadLineMaskedAsString()
+        {
+            // Default implementation of the function to maintain backwards compatibility of the base class.
+            throw new PSNotImplementedException();
+        }
+
         /// <summary>
         /// Same as ReadLine, except that the result is a SecureString, and that the input is not echoed to the user while it is
         /// collected (or is echoed in some obfuscated way, such as showing a dot for each character).
