@@ -81,8 +81,8 @@ stages:
       pool: macOS-latest
 
 - stage: CodeCovTestPackage
-  dependsOn: []
   displayName: CodeCoverage and Test Packages
+  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
   jobs:
   - job: CodeCovTestPackage
     displayName: CodeCoverage and Test Packages
