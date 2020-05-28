@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Tee-Object" -Tags "CI" {
 
@@ -19,15 +19,16 @@ Describe "Tee-Object" -Tags "CI" {
             Remove-Item -Path $testfile -ErrorAction SilentlyContinue -Force
         }
 
-	    It "Should return the output to the screen and to the variable" {
-	        Write-Output teeobjecttest1 | Tee-Object -Variable teeresults
-	        $teeresults | Should -BeExactly "teeobjecttest1"
-	    }
+	      It "Should return the output to the screen and to the variable" {
+	          Write-Output teeobjecttest1 | Tee-Object -Variable teeresults
+	          $teeresults | Should -BeExactly "teeobjecttest1"
+            Remove-Item $teefile -ErrorAction SilentlyContinue
+	      }
 
-	    It "Should tee the output to a file" {
-	        $teefile = $testfile
-	        Write-Output teeobjecttest3  | Tee-Object $teefile
-	        Get-Content $teefile | Should -BeExactly "teeobjecttest3"
+	      It "Should tee the output to a file" {
+	          $teefile = $testfile
+	          Write-Output teeobjecttest3  | Tee-Object $teefile
+	          Get-Content $teefile | Should -BeExactly "teeobjecttest3"
         }
 
         It "Parameter 'Encoding' should accept encoding" {

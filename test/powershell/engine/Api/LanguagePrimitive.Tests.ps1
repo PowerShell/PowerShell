@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Language Primitive Tests" -Tags "CI" {
     It "Equality comparison with string and non-numeric type should not be culture sensitive" {
@@ -101,5 +101,55 @@ Describe "Language Primitive Tests" -Tags "CI" {
         $val = [System.Management.Automation.LanguagePrimitives]::TryCompare(10, $null, [ref] $result)
         $val | Should -BeTrue
         $result | Should -BeExactly $compareResult
+    }
+
+    It "Convert ScriptBlock to delegate type" {
+        $code = @'
+        using System;
+        namespace Test.API
+        {
+            public enum TestEnum
+            {
+                Music,
+                Video
+            }
+            public class LanguagePrimitivesTest
+            {
+                Func<string, object> _handlerReturnObject;
+                Func<string, TestEnum> _handlerReturnEnum;
+                public LanguagePrimitivesTest(Func<string, object> handlerReturnObject, Func<string, TestEnum> handlerReturnEnum)
+                {
+                    _handlerReturnObject = handlerReturnObject;
+                    _handlerReturnEnum = handlerReturnEnum;
+                }
+
+                public bool TestHandlerReturnEnum()
+                {
+                    var value = _handlerReturnEnum("bar");
+                    return value == TestEnum.Music;
+                }
+
+                public bool TestHandlerReturnObject()
+                {
+                    object value = _handlerReturnObject("bar");
+                    return value is TestEnum;
+                }
+            }
+        }
+'@
+
+        if (-not ("Test.API.TestEnum" -as [type]))
+        {
+            Add-Type -TypeDefinition $code
+        }
+
+        # The script actually returns a enum value, and the converted delegate should return the boxed enum value.
+        $handlerReturnObject = [System.Func[string, object]] { param([string]$str) [Test.API.TestEnum]::Music }
+        # The script actually returns a string, and the converted delegate should return the corresponding enum value.
+        $handlerReturnEnum = [System.Func[string, Test.API.TestEnum]] { param([string]$str) "Music" }
+        $test = [Test.API.LanguagePrimitivesTest]::new($handlerReturnObject, $handlerReturnEnum)
+
+        $test.TestHandlerReturnEnum() | Should -BeTrue
+        $test.TestHandlerReturnObject() | Should -BeTrue
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(
                     new ErrorRecord(
                         new ArgumentException(GetMessage(RemotingErrorIdStrings.HostDoesNotSupportPushRunspace)),
-                        PSRemotingErrorId.HostDoesNotSupportPushRunspace.ToString(),
+                        nameof(PSRemotingErrorId.HostDoesNotSupportPushRunspace),
                         ErrorCategory.InvalidArgument,
                         null));
                 return;
@@ -373,7 +373,7 @@ namespace Microsoft.PowerShell.Commands
                         new ErrorRecord(
                             new ArgumentException(GetMessage(RemotingErrorIdStrings.EnterPSSessionBrokenSession,
                                 sessionName, remoteRunspace.ConnectionInfo.ComputerName, remoteRunspace.InstanceId)),
-                            PSRemotingErrorId.PushedRunspaceMustBeOpen.ToString(),
+                            nameof(PSRemotingErrorId.PushedRunspaceMustBeOpen),
                             ErrorCategory.InvalidArgument,
                             null));
                 }
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(
                         new ErrorRecord(
                             new ArgumentException(GetMessage(RemotingErrorIdStrings.PushedRunspaceMustBeOpen)),
-                            PSRemotingErrorId.PushedRunspaceMustBeOpen.ToString(),
+                            nameof(PSRemotingErrorId.PushedRunspaceMustBeOpen),
                             ErrorCategory.InvalidArgument,
                             null));
                 }
@@ -537,7 +537,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(
                     new ErrorRecord(
                         new ArgumentException(GetMessage(RemotingErrorIdStrings.HostDoesNotSupportPushRunspace)),
-                        PSRemotingErrorId.HostDoesNotSupportPushRunspace.ToString(),
+                        nameof(PSRemotingErrorId.HostDoesNotSupportPushRunspace),
                         ErrorCategory.InvalidArgument,
                         null));
                 return;
@@ -940,7 +940,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(
                         new ErrorRecord(
                             new ArgumentException(RemotingErrorIdStrings.HyperVModuleNotAvailable),
-                            PSRemotingErrorId.HyperVModuleNotAvailable.ToString(),
+                            nameof(PSRemotingErrorId.HyperVModuleNotAvailable),
                             ErrorCategory.NotInstalled,
                             null));
 
@@ -952,7 +952,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(
                         new ErrorRecord(
                             new ArgumentException(RemotingErrorIdStrings.InvalidVMId),
-                            PSRemotingErrorId.InvalidVMId.ToString(),
+                            nameof(PSRemotingErrorId.InvalidVMId),
                             ErrorCategory.InvalidArgument,
                             null));
 
@@ -977,7 +977,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(
                         new ErrorRecord(
                             new ArgumentException(RemotingErrorIdStrings.HyperVModuleNotAvailable),
-                            PSRemotingErrorId.HyperVModuleNotAvailable.ToString(),
+                            nameof(PSRemotingErrorId.HyperVModuleNotAvailable),
                             ErrorCategory.NotInstalled,
                             null));
 
@@ -989,7 +989,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(
                         new ErrorRecord(
                             new ArgumentException(RemotingErrorIdStrings.InvalidVMNameNoVM),
-                            PSRemotingErrorId.InvalidVMNameNoVM.ToString(),
+                            nameof(PSRemotingErrorId.InvalidVMNameNoVM),
                             ErrorCategory.InvalidArgument,
                             null));
 
@@ -1000,7 +1000,7 @@ namespace Microsoft.PowerShell.Commands
                     WriteError(
                         new ErrorRecord(
                             new ArgumentException(RemotingErrorIdStrings.InvalidVMNameMultipleVM),
-                            PSRemotingErrorId.InvalidVMNameMultipleVM.ToString(),
+                            nameof(PSRemotingErrorId.InvalidVMNameMultipleVM),
                             ErrorCategory.InvalidArgument,
                             null));
 
@@ -1020,7 +1020,7 @@ namespace Microsoft.PowerShell.Commands
                     new ErrorRecord(
                         new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMState,
                                                          this.VMName)),
-                        PSRemotingErrorId.InvalidVMState.ToString(),
+                        nameof(PSRemotingErrorId.InvalidVMState),
                         ErrorCategory.InvalidArgument,
                         null));
 

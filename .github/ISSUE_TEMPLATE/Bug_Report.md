@@ -16,7 +16,7 @@ This repository is **ONLY** for PowerShell Core 6 and PowerShell 7+ issues.
 - Make sure you are able to repro it on the [latest released version](https://github.com/PowerShell/PowerShell/releases)
 - Search the existing issues.
 - Refer to the [FAQ](https://github.com/PowerShell/PowerShell/blob/master/docs/FAQ.md).
-- Refer to the [known issues](https://docs.microsoft.com/powershell/scripting/whats-new/known-issues-ps6?view=powershell-6).
+- Refer to the [known issues](https://docs.microsoft.com/powershell/scripting/whats-new/known-issues-ps6).
 
 -->
 

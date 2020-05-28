@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 function Install-ChocolateyPackage
 {
@@ -24,7 +24,7 @@ function Install-ChocolateyPackage
         $Version
     )
 
-    if(-not(Get-Command -name Choco -ErrorAction SilentlyContinue))
+    if(-not(Get-Command -Name Choco -ErrorAction SilentlyContinue))
     {
         Write-Verbose "Installing Chocolatey provider..." -Verbose
         Invoke-WebRequest https://chocolatey.org/install.ps1 -UseBasicParsing | Invoke-Expression
@@ -42,25 +42,25 @@ function Install-ChocolateyPackage
     {
         Write-Verbose "Verifing $Executable is in path..." -Verbose
         $exeSource = $null
-        $exeSource = Get-ChildItem -path "$env:ProgramFiles\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+        $exeSource = Get-ChildItem -Path "$env:ProgramFiles\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
         if(!$exeSource)
         {
             Write-Verbose "Falling back to x86 program files..." -Verbose
-            $exeSource = Get-ChildItem -path "${env:ProgramFiles(x86)}\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+            $exeSource = Get-ChildItem -Path "${env:ProgramFiles(x86)}\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
         }
 
         # Don't search the chocolatey program data until more official locations have been searched
         if(!$exeSource)
         {
             Write-Verbose "Falling back to chocolatey..." -Verbose
-            $exeSource = Get-ChildItem -path "$env:ProgramData\chocolatey\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+            $exeSource = Get-ChildItem -Path "$env:ProgramData\chocolatey\$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
         }
 
         # all obvious locations are exhausted, use brute force and search from the root of the filesystem
         if(!$exeSource)
         {
             Write-Verbose "Falling back to the root of the drive..." -Verbose
-            $exeSource = Get-ChildItem -path "/$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
+            $exeSource = Get-ChildItem -Path "/$Executable" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName
         }
 
         if(!$exeSource)
@@ -110,6 +110,6 @@ function Remove-Folder
     Write-Verbose "Cleaning up $Folder..." -Verbose
     $filter = Join-Path -Path $Folder -ChildPath *
     [int]$measuredCleanupMB = (Get-ChildItem $filter -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
-    Remove-Item -recurse -force $filter -ErrorAction SilentlyContinue
+    Remove-Item -Recurse -Force $filter -ErrorAction SilentlyContinue
     Write-Verbose "Cleaned up $measuredCleanupMB MB from $Folder" -Verbose
 }

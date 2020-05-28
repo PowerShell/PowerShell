@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell
         {
             if (largeIntegerInstance == null)
             {
-                throw PSTraceSource.NewArgumentException("largeIntegerInstance");
+                throw PSTraceSource.NewArgumentException(nameof(largeIntegerInstance));
             }
 
             object largeIntObject = (object)largeIntegerInstance.BaseObject;
@@ -111,7 +111,7 @@ namespace Microsoft.PowerShell
         {
             if (dnWithBinaryInstance == null)
             {
-                throw PSTraceSource.NewArgumentException("dnWithBinaryInstance");
+                throw PSTraceSource.NewArgumentException(nameof(dnWithBinaryInstance));
             }
 
             object dnWithBinaryObject = (object)dnWithBinaryInstance.BaseObject;

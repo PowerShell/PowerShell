@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -130,7 +130,7 @@ namespace System.Management.Automation
         {
             if (scriptBlock == null)
             {
-                throw PSTraceSource.NewArgumentException("scriptBlock");
+                throw PSTraceSource.NewArgumentException(nameof(scriptBlock));
             }
 
             // Get the ExecutionContext from the thread.
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(variableName))
             {
-                throw new ArgumentNullException("variableName");
+                throw new ArgumentNullException(nameof(variableName));
             }
 
             var context = LocalPipeline.GetExecutionContextFromTLS();

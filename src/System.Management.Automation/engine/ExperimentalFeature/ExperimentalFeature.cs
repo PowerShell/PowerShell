@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -120,6 +120,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSCultureInvariantReplaceOperator",
                     description: "Use culture invariant to-string convertor for lval in replace operator"),
+                new ExperimentalFeature(
+                    name: "PSNativePSPathResolution",
+                    description: "Convert PSPath to filesystem path, if possible, for native commands"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
@@ -346,7 +349,7 @@ namespace System.Management.Automation
             if (experimentAction == ExperimentAction.None)
             {
                 string paramName = nameof(experimentAction);
-                string invalidMember = ExperimentAction.None.ToString();
+                string invalidMember = nameof(ExperimentAction.None);
                 string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
                 throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
             }

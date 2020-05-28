@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1234,7 +1234,7 @@ namespace System.Management.Automation
 
 #if !UNIX
         /// <summary>
-        /// Returns a PSModulePath suiteable for Windows PowerShell by removing this PowerShell's specific
+        /// Returns a PSModulePath suiteable for Windows PowerShell by removing PowerShell's specific
         /// paths from current PSModulePath.
         /// </summary>
         /// <returns>
@@ -1250,7 +1250,7 @@ namespace System.Management.Automation
             }
 
             // PowerShell specific paths including if set in powershell.config.json file we want to exclude
-            var excludeModulePaths = new HashSet<string> {
+            var excludeModulePaths = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
                 GetPersonalModulePath(),
                 GetSharedModulePath(),
                 GetPSHomeModulePath(),
@@ -1261,9 +1261,24 @@ namespace System.Management.Automation
             var modulePathList = new List<string>();
             foreach (var path in currentModulePath.Split(';'))
             {
-                if (!excludeModulePaths.Contains(path))
+                var trimmedPath = path.Trim();
+                if (!excludeModulePaths.Contains(trimmedPath))
                 {
-                    modulePathList.Add(path);
+                    // make sure this module path is Not part of other PS Core installation
+                    var possiblePwshDir = Path.GetDirectoryName(trimmedPath);
+
+                    if (string.IsNullOrEmpty(possiblePwshDir))
+                    {
+                        // i.e. module dir is in the drive root
+                        modulePathList.Add(trimmedPath);
+                    }
+                    else
+                    {
+                        if (!File.Exists(Path.Combine(possiblePwshDir, "pwsh.dll")))
+                        {
+                            modulePathList.Add(trimmedPath);
+                        }
+                    }
                 }
             }
 

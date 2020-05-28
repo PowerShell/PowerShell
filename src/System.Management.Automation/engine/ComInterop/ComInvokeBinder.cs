@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !SILVERLIGHT
@@ -545,7 +545,7 @@ namespace System.Management.Automation.ComInterop
                 exprs.Add(System.Management.Automation.Language.ExpressionCache.AutomationNullConstant);
             }
 
-            return Expression.Block(vars, exprs); ;
+            return Expression.Block(vars, exprs);
         }
 
         /// <summary>

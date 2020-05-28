@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -105,7 +105,7 @@ namespace System.Management.Automation
         {
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
             while (commandInfo is AliasInfo)
             {
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw PSTraceSource.NewArgumentNullException("other");
+                throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
 
             Name = other.Name;
@@ -315,7 +315,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(commandName))
             {
-                throw PSTraceSource.NewArgumentException("commandName");
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             CommandMetadata result = null;
@@ -369,7 +369,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(commandName))
             {
-                throw PSTraceSource.NewArgumentException("commandName");
+                throw PSTraceSource.NewArgumentException(nameof(commandName));
             }
 
             Name = commandName;
@@ -412,7 +412,7 @@ namespace System.Management.Automation
         {
             if (scriptblock == null)
             {
-                throw PSTraceSource.NewArgumentException("scriptblock");
+                throw PSTraceSource.NewArgumentException(nameof(scriptblock));
             }
 
             CmdletBindingAttribute cmdletBindingAttribute = scriptblock.CmdletBindingAttribute;
@@ -725,7 +725,7 @@ namespace System.Management.Automation
         {
             if (attribute == null)
             {
-                throw PSTraceSource.NewArgumentNullException("attribute");
+                throw PSTraceSource.NewArgumentNullException(nameof(attribute));
             }
 
             // Process the default parameter set name

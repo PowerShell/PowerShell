@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -126,7 +126,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal static partial class DelegateHelpers
+    internal static class DelegateHelpers
     {
         #region Generated Maximum Delegate Arity
 

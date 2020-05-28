@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
+using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 
 using Microsoft.PowerShell.Commands.Internal.Format;
@@ -97,9 +98,28 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            bool writeOldWay = PowerShellVersion == null ||
-                               PowerShellVersion.Major < 5 ||
-                               (PowerShellVersion.Major == 5 && PowerShellVersion.Minor < 1);
+            // Remoting detection: 
+            //   * Automatic variable $PSSenderInfo is defined in true remoting contexts as well as in background jobs.
+            //   * $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion contains the client version, as a [version] instance.
+            //      Note: Even though $PSVersionTable.PSVersion is of type [semver] in PowerShell 6+, it is of type [version] here,
+            //            presumably because only the latter type deserializes type-faithfully.
+            var clientVersion = PowerShellVersion;
+            PSSenderInfo remotingClientInfo = GetVariableValue("PSSenderInfo") as PSSenderInfo;
+            if (clientVersion == null && remotingClientInfo != null)
+            {
+                clientVersion = PSObject.Base((PSObject.Base(remotingClientInfo.ApplicationArguments["PSVersionTable"]) as PSPrimitiveDictionary)?["PSVersion"]) as Version;
+            }
+
+            // During remoting, remain compatible with v5.0- clients by default.
+            // Passing a -PowerShellVersion argument allows overriding the client version.
+            bool writeOldWay = 
+                (remotingClientInfo != null && clientVersion == null)  // To be safe: Remoting client version could unexpectedly not be determined.
+                || 
+                (clientVersion != null
+                    &&
+                    (clientVersion.Major < 5
+                        ||
+                    (clientVersion.Major == 5 && clientVersion.Minor < 1)));
 
             TypeInfoDataBase db = this.Context.FormatDBManager.Database;
 

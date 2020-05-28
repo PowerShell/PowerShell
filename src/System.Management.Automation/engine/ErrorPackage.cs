@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -420,7 +420,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(errorCategoryString))
             {
                 // this probably indicates an invalid ErrorCategory value
-                errorCategoryString = ErrorCategory.NotSpecified.ToString();
+                errorCategoryString = nameof(ErrorCategory.NotSpecified);
             }
 
             string templateText = ErrorCategoryStrings.ResourceManager.GetString(errorCategoryString, uiCultureInfo);

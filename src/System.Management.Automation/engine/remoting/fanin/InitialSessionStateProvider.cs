@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -528,7 +528,7 @@ namespace System.Management.Automation.Remoting
                 assembly = LoadSsnStateProviderAssembly(applicationBase, assemblyName);
                 if (assembly == null)
                 {
-                    throw PSTraceSource.NewArgumentException("assemblyName", RemotingErrorIdStrings.UnableToLoadAssembly,
+                    throw PSTraceSource.NewArgumentException(nameof(assemblyName), RemotingErrorIdStrings.UnableToLoadAssembly,
                         assemblyName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
                 }
             }
@@ -545,7 +545,7 @@ namespace System.Management.Automation.Remoting
                     Type type = assembly.GetType(typeToLoad, true, true);
                     if (type == null)
                     {
-                        throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
+                        throw PSTraceSource.NewArgumentException(nameof(typeToLoad), RemotingErrorIdStrings.UnableToLoadType,
                             typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
                     }
 
@@ -572,7 +572,7 @@ namespace System.Management.Automation.Remoting
 
                 // if we are here, that means we are unable to load the type specified
                 // in the config xml.. notify the same.
-                throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
+                throw PSTraceSource.NewArgumentException(nameof(typeToLoad), RemotingErrorIdStrings.UnableToLoadType,
                         typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
             }
 
@@ -767,7 +767,7 @@ namespace System.Management.Automation.Remoting
             {
                 s_tracer.TraceError("Mandatory property {0} not specified for registry key {1}",
                         name, registryKey.Name);
-                throw PSTraceSource.NewArgumentException("name", RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
+                throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
             }
 
             string s = value as string;
@@ -775,7 +775,7 @@ namespace System.Management.Automation.Remoting
             {
                 s_tracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
                         name, registryKey.Name);
-                throw PSTraceSource.NewArgumentException("name", RemotingErrorIdStrings.MandatoryValueNotInCorrectFormat, name, registryKey.Name);
+                throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotInCorrectFormat, name, registryKey.Name);
             }
 
             return s;
@@ -812,13 +812,13 @@ namespace System.Management.Automation.Remoting
         public override InitialSessionState GetInitialSessionState(PSSessionConfigurationData sessionConfigurationData, PSSenderInfo senderInfo, string configProviderId)
         {
             if (sessionConfigurationData == null)
-                throw new ArgumentNullException("sessionConfigurationData");
+                throw new ArgumentNullException(nameof(sessionConfigurationData));
 
             if (senderInfo == null)
-                throw new ArgumentNullException("senderInfo");
+                throw new ArgumentNullException(nameof(senderInfo));
 
             if (configProviderId == null)
-                throw new ArgumentNullException("configProviderId");
+                throw new ArgumentNullException(nameof(configProviderId));
 
             InitialSessionState sessionState = InitialSessionState.CreateDefault2();
             // now get all the modules in the specified path and import the same

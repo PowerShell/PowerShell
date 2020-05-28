@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
@@ -475,7 +475,7 @@ namespace System.Management.Automation.Remoting
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             _errorCode = info.GetInt32("ErrorCode");
@@ -494,7 +494,7 @@ namespace System.Management.Automation.Remoting
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -618,7 +618,7 @@ namespace System.Management.Automation.Remoting
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             RedirectLocation = info.GetString("RedirectLocation");
@@ -659,7 +659,7 @@ namespace System.Management.Automation.Remoting
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

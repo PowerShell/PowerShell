@@ -101,7 +101,7 @@ fi
 SUDO=''
 if (( EUID != 0 )); then
     #Check that sudo is available
-    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+    if [[ ("'$*'" =~ skip-sudo-check) || ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
         SUDO='sudo'
     else
         echo "ERROR: You must either be root or be able to use sudo" >&2
@@ -133,10 +133,14 @@ if ! hash curl 2>/dev/null; then
     $SUDO apt-get install -y curl
 fi
 
+# The executable to test.
+PWSH=pwsh
+
 if [[ "'$*'" =~ preview ]] ; then
     echo
     echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
     powershellpackageid=powershell-preview
+    PWSH=pwsh-preview
 fi
 
 currentversion=$(curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g)
@@ -210,8 +214,8 @@ $SUDO apt-get update
 $SUDO apt-get install -y ${powershellpackageid}
 
 # shellcheck disable=SC2016
-pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
-Run `"pwsh`" to start a PowerShell session."'
+$PWSH -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
+Run `"'"$PWSH"'`" to start a PowerShell session."'
 
 success=$?
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -40,7 +40,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             InitialSessionState = InitialSessionState.CreateDefault();
@@ -66,12 +66,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             Host = host;
@@ -104,12 +104,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             Host = host;
@@ -535,7 +535,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, false, false);
@@ -556,7 +556,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, addToHistory, false);
@@ -590,7 +590,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, addToHistory, true);

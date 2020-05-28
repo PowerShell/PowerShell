@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -1074,7 +1074,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
@@ -1083,7 +1083,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginOpen");
@@ -1184,7 +1184,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
@@ -1193,7 +1193,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginOpen");

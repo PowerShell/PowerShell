@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -280,7 +280,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (options == null)
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException(nameof(options));
             }
 
             if (options.Culture != null)
@@ -688,9 +688,9 @@ namespace System.Management.Automation.Runspaces
                     default:
                         string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
                             value,
-                            AuthenticationMechanism.Basic.ToString(),
-                            AuthenticationMechanism.Negotiate.ToString(),
-                            AuthenticationMechanism.Digest.ToString());
+                            nameof(AuthenticationMechanism.Basic),
+                            nameof(AuthenticationMechanism.Negotiate),
+                            nameof(AuthenticationMechanism.Digest));
                         throw new ArgumentException(message);
                 }
             }
@@ -974,7 +974,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (options == null)
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException(nameof(options));
             }
 
             if ((options.ProxyAccessType == ProxyAccessType.None) && (options.ProxyCredential != null))
@@ -1570,7 +1570,7 @@ namespace System.Management.Automation.Runspaces
                 if (value != AuthenticationMechanism.Default)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.IPCSupportsOnlyDefaultAuth,
-                        value.ToString(), AuthenticationMechanism.Default.ToString());
+                        value.ToString(), nameof(AuthenticationMechanism.Default));
                 }
 
                 _authMechanism = value;
@@ -1801,7 +1801,7 @@ namespace System.Management.Automation.Runspaces
                 if (value != Runspaces.AuthenticationMechanism.Default)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.IPCSupportsOnlyDefaultAuth,
-                        value.ToString(), AuthenticationMechanism.Default.ToString());
+                        value.ToString(), nameof(AuthenticationMechanism.Default));
                 }
 
                 _authMechanism = value;
@@ -1912,7 +1912,7 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath)
         {
-            if (computerName == null) { throw new PSArgumentNullException("computerName"); }
+            if (computerName == null) { throw new PSArgumentNullException(nameof(computerName)); }
 
             this.UserName = userName;
             this.ComputerName = computerName;
@@ -2661,7 +2661,7 @@ namespace System.Management.Automation.Runspaces
                 byte[] securityDescBuffer = new byte[securityDesc.BinaryLength];
                 securityDesc.GetBinaryForm(securityDescBuffer, 0);
                 securityDescHandle = GCHandle.Alloc(securityDescBuffer, GCHandleType.Pinned);
-                securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value, true); ;
+                securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value, true);
             }
 
             // Create async named pipe.
@@ -2740,7 +2740,7 @@ namespace System.Management.Automation.Runspaces
                 if (value != AuthenticationMechanism.Default)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.IPCSupportsOnlyDefaultAuth,
-                        value.ToString(), AuthenticationMechanism.Default.ToString());
+                        value.ToString(), nameof(AuthenticationMechanism.Default));
                 }
 
                 _authMechanism = value;
@@ -2864,7 +2864,7 @@ namespace System.Management.Automation.Runspaces
                 if (value != AuthenticationMechanism.Default)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.IPCSupportsOnlyDefaultAuth,
-                        value.ToString(), AuthenticationMechanism.Default.ToString());
+                        value.ToString(), nameof(AuthenticationMechanism.Default));
                 }
 
                 _authMechanism = value;

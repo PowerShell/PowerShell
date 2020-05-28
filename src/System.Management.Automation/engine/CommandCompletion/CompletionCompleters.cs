@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -207,7 +207,7 @@ namespace System.Management.Automation
         }
 
         private static readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand
-            = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { TokenKind.InlineScript.ToString(), TokenKind.Configuration.ToString() };
+            = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { nameof(TokenKind.InlineScript), nameof(TokenKind.Configuration) };
         internal static CompletionResult GetCommandNameCompletionResult(string name, object command, bool addAmpersandIfNecessary, string quote)
         {
             string syntax = name, listItem = name;

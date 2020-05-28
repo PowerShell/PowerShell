@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -927,7 +927,7 @@ namespace System.Management.Automation
                 {
                     // only allow 1 or 2 arguments to -replace
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException), errorPosition,
-                        "BadReplaceArgument", ParserStrings.BadReplaceArgument, ignoreCase ? "-ireplace" : "-replace", rList.Count);
+                        "BadReplaceArgument", ParserStrings.BadReplaceArgument, errorPosition.Text, rList.Count);
                 }
 
                 if (rList.Count > 0)
@@ -1810,7 +1810,7 @@ namespace System.Management.Automation
         {
             // errToken may be null
             if (string.IsNullOrEmpty(resourceIdAndErrorId))
-                throw PSTraceSource.NewArgumentException("resourceIdAndErrorId");
+                throw PSTraceSource.NewArgumentException(nameof(resourceIdAndErrorId));
             // innerException may be null
             // args may be null or empty
 

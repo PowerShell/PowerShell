@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
@@ -341,6 +341,6 @@ function Test-FullyTerminatingError
     It "Recognises invalid assignment" {
         {
             Invoke-Expression -Command '$x = $x, $y += $z = testexe -returncode 0 && testexe -returncode 1'
-        } | Should -Throw -ErrorID 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand'
+        } | Should -Throw -ErrorId 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand'
     }
 }

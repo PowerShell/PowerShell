@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -333,7 +333,7 @@ namespace System.Management.Automation
         {
             if (jobStateInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("jobStateInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(jobStateInfo));
             }
 
             JobStateInfo = jobStateInfo;
@@ -366,7 +366,7 @@ namespace System.Management.Automation
         internal JobIdentifier(int id, Guid instanceId)
         {
             if (id <= 0)
-                PSTraceSource.NewArgumentException("id", RemotingErrorIdStrings.JobSessionIdLessThanOne, id);
+                PSTraceSource.NewArgumentException(nameof(id), RemotingErrorIdStrings.JobSessionIdLessThanOne, id);
             Id = id;
             InstanceId = instanceId;
         }
@@ -463,10 +463,10 @@ namespace System.Management.Automation
         protected Job(string command, string name, JobIdentifier token)
         {
             if (token == null)
-                throw PSTraceSource.NewArgumentNullException("token", RemotingErrorIdStrings.JobIdentifierNull);
+                throw PSTraceSource.NewArgumentNullException(nameof(token), RemotingErrorIdStrings.JobIdentifierNull);
             if (token.Id > s_jobIdSeed)
             {
-                throw PSTraceSource.NewArgumentException("token", RemotingErrorIdStrings.JobIdNotYetAssigned, token.Id);
+                throw PSTraceSource.NewArgumentException(nameof(token), RemotingErrorIdStrings.JobIdNotYetAssigned, token.Id);
             }
 
             Command = command;
@@ -3882,12 +3882,12 @@ namespace System.Management.Automation
         {
             if (debugger == null)
             {
-                throw new PSArgumentNullException("debugger");
+                throw new PSArgumentNullException(nameof(debugger));
             }
 
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             _wrappedDebugger = debugger;

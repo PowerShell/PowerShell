@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Command Tests" -Tags "CI" {
     BeforeAll {
@@ -245,7 +245,7 @@ Describe "Get-Command Tests" -Tags "CI" {
     }
 
     It "verify if get the proper dynamic parameter type skipped by issue #1430" -Pending {
-        $results = Get-Command TestGetCommand-DynamicParametersDCR -TestToRun returngenericparameter -parametertype System.Diagnostics.Process
+        $results = Get-Command TestGetCommand-DynamicParametersDCR -TestToRun returngenericparameter -ParameterType System.Diagnostics.Process
         VerifyParameterType -cmdlet $results[0] -parameterName "TypedValue" -parameterType System.Diagnostics.Process
     }
 

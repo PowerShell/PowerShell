@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "TestWSMan tests" -Tags 'Feature','RequireAdminOnWindows' {
 
@@ -11,7 +11,7 @@ Describe "TestWSMan tests" -Tags 'Feature','RequireAdminOnWindows' {
             $testWsman = [Microsoft.WSMan.Management.TestWSManCommand]::new()
         }
     }
-    
+
     AfterAll {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }

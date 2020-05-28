@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -872,7 +872,7 @@ namespace System.Management.Automation
         {
             if (pbex == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pbex");
+                throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }
 
             Diagnostics.Assert(pbex.ErrorRecord != null, "ErrorRecord should not be null in a ParameterBindingException");

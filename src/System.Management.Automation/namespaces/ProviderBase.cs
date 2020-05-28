@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -98,7 +98,7 @@ namespace System.Management.Automation.Provider
         {
             if (providerInfoToSet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInfoToSet");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInfoToSet));
             }
 
             _providerInformation = providerInfoToSet;
@@ -1425,12 +1425,12 @@ namespace System.Management.Automation.Provider
             {
                 if (string.IsNullOrEmpty(baseName))
                 {
-                    throw PSTraceSource.NewArgumentException("baseName");
+                    throw PSTraceSource.NewArgumentException(nameof(baseName));
                 }
 
                 if (string.IsNullOrEmpty(resourceId))
                 {
-                    throw PSTraceSource.NewArgumentException("resourceId");
+                    throw PSTraceSource.NewArgumentException(nameof(resourceId));
                 }
 
                 ResourceManager manager =
@@ -1447,12 +1447,12 @@ namespace System.Management.Automation.Provider
                 }
                 catch (MissingManifestResourceException)
                 {
-                    throw PSTraceSource.NewArgumentException("baseName", GetErrorText.ResourceBaseNameFailure, baseName);
+                    throw PSTraceSource.NewArgumentException(nameof(baseName), GetErrorText.ResourceBaseNameFailure, baseName);
                 }
 
                 if (retValue == null)
                 {
-                    throw PSTraceSource.NewArgumentException("resourceId", GetErrorText.ResourceIdFailure, resourceId);
+                    throw PSTraceSource.NewArgumentException(nameof(resourceId), GetErrorText.ResourceIdFailure, resourceId);
                 }
 
                 return retValue;
@@ -1468,7 +1468,7 @@ namespace System.Management.Automation.Provider
             {
                 if (errorRecord == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("errorRecord");
+                    throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
                 }
 
                 if (errorRecord.ErrorDetails != null
@@ -1677,7 +1677,7 @@ namespace System.Management.Automation.Provider
 
                 if (progressRecord == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("progressRecord");
+                    throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
                 }
 
                 Context.WriteProgress(progressRecord);
@@ -1801,7 +1801,7 @@ namespace System.Management.Automation.Provider
         {
             if (item == null)
             {
-                throw PSTraceSource.NewArgumentNullException("item");
+                throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
             PSObject result = new PSObject(item);
@@ -2000,7 +2000,7 @@ namespace System.Management.Automation.Provider
 
                 if (errorRecord == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("errorRecord");
+                    throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
                 }
 
                 if (errorRecord.ErrorDetails != null

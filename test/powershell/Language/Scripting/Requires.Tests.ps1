@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Requires tests" -Tags "CI" {
     Context "Parser error" {
@@ -41,7 +41,7 @@ Describe "Requires tests" -Tags "CI" {
         BeforeAll {
             $currentVersion = $PSVersionTable.PSVersion
 
-            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0"
+            $powerShellVersions = "1.0", "2.0", "3.0", "4.0", "5.0", "5.1", "6.0", "6.1", "6.2", "7.0", "7.1"
             $latestVersion = [version]($powerShellVersions | Sort-Object -Descending -Top 1)
             $nonExistingMinor = "$($latestVersion.Major).$($latestVersion.Minor + 1)"
             $nonExistingMajor = "$($latestVersion.Major + 1).0"

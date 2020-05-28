@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.IO;
@@ -120,7 +120,7 @@ namespace System.Management.Automation.Remoting.Server
         protected void OnDataPacketReceived(byte[] rawData, string stream, Guid psGuid)
         {
             string streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_STDIN;
-            if (stream.Equals(DataPriorityType.PromptResponse.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (stream.Equals(nameof(DataPriorityType.PromptResponse), StringComparison.OrdinalIgnoreCase))
             {
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
@@ -603,7 +603,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             if (namedPipeServer == null)
             {
-                throw new PSArgumentNullException("namedPipeServer");
+                throw new PSArgumentNullException(nameof(namedPipeServer));
             }
 
             _namedPipeServer = namedPipeServer;

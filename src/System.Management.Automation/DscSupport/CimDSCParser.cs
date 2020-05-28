@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
 
             if (engineIntrinsics == null)
             {
-                throw PSTraceSource.NewArgumentNullException("engineIntrinsics");
+                throw PSTraceSource.NewArgumentNullException(nameof(engineIntrinsics));
             }
 
             return PsUtils.EvaluatePowerShellDataFileAsModuleManifest(
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
         {
             if (string.IsNullOrEmpty(fullFilePath))
             {
-                throw PSTraceSource.NewArgumentNullException("fullFilePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(fullFilePath));
             }
 
             if (!File.Exists(fullFilePath))
@@ -951,7 +951,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             s_tracer.WriteLine("DSC ClassCache: importing file: {0}", path);
@@ -1179,7 +1179,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
-                throw PSTraceSource.NewArgumentNullException("fileName");
+                throw PSTraceSource.NewArgumentNullException(nameof(fileName));
             }
 
             List<CimClass> listCimClass;
@@ -1197,7 +1197,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (string.IsNullOrWhiteSpace(moduleName))
             {
-                throw PSTraceSource.NewArgumentNullException("moduleName");
+                throw PSTraceSource.NewArgumentNullException(nameof(moduleName));
             }
 
             var moduleFileName = moduleName + ".schema.mof";
@@ -1214,7 +1214,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
@@ -1256,7 +1256,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (string.IsNullOrEmpty(instanceText))
             {
-                throw PSTraceSource.NewArgumentNullException("instanceText");
+                throw PSTraceSource.NewArgumentNullException(nameof(instanceText));
             }
 
             var parser = new Microsoft.PowerShell.DesiredStateConfiguration.CimDSCParser(MyClassCallback);
@@ -2413,7 +2413,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             const string setMethodName = "Set";
             const string testMethodName = "Test";
 
-            methodsLinePosition = new Dictionary<string, int>(); ;
+            methodsLinePosition = new Dictionary<string, int>();
             foreach (var member in typeDefinitionAst.Members)
             {
                 var functionMemberAst = member as FunctionMemberAst;
@@ -3220,12 +3220,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (module == null)
             {
-                throw PSTraceSource.NewArgumentNullException("module");
+                throw PSTraceSource.NewArgumentNullException(nameof(module));
             }
 
             if (resourceName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("resourceName");
+                throw PSTraceSource.NewArgumentNullException(nameof(resourceName));
             }
 
             string dscResourcesPath = Path.Combine(module.ModuleBase, "DscResources");
@@ -3332,12 +3332,12 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         {
             if (module == null)
             {
-                throw PSTraceSource.NewArgumentNullException("module");
+                throw PSTraceSource.NewArgumentNullException(nameof(module));
             }
 
             if (resourceName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("resourceName");
+                throw PSTraceSource.NewArgumentNullException(nameof(resourceName));
             }
 
             schemaFilePath = Path.Combine(Path.Combine(Path.Combine(module.ModuleBase, "DscResources"), resourceName), resourceName + ".Schema.psm1");

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Remove-Item" -Tags "CI" {
     $testpath = $TestDrive
@@ -75,9 +75,9 @@ Describe "Remove-Item" -Tags "CI" {
 	    # Delete the specific string
 	    Remove-Item (Join-Path -Path $testpath -ChildPath "*") -Include file*.txt
 	    # validate that the string under test was deleted, and the nonmatching strings still exist
-	    Test-path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
-	    Test-path (Join-Path -Path $testpath -ChildPath file2.txt) | Should -BeFalse
-	    Test-path (Join-Path -Path $testpath -ChildPath file3.txt) | Should -BeFalse
+	    Test-Path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
+	    Test-Path (Join-Path -Path $testpath -ChildPath file2.txt) | Should -BeFalse
+	    Test-Path (Join-Path -Path $testpath -ChildPath file3.txt) | Should -BeFalse
 	    Test-Path $testfilepath  | Should -BeTrue
 
 	    # Delete the non-matching strings
@@ -131,7 +131,7 @@ Describe "Remove-Item" -Tags "CI" {
 	    New-Item -Name $testfile -Path $testsubdirectory -ItemType "file" -Value "lorem ipsum"
 
 	    $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
-	    test-path $complexDirectory | Should -BeTrue
+	    Test-Path $complexDirectory | Should -BeTrue
 
 	    { Remove-Item $testdirectory -Recurse} | Should -Not -Throw
 

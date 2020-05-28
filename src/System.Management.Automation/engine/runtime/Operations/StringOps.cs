@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Globalization;
@@ -31,7 +31,7 @@ namespace System.Management.Automation
             if (times < 0)
             {
                 // TODO: this should be a runtime error.
-                throw new ArgumentOutOfRangeException("times");
+                throw new ArgumentOutOfRangeException(nameof(times));
             }
 
             if (times == 0 || s.Length == 0)

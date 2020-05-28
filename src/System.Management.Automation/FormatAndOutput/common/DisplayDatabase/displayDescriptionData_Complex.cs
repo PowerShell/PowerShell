@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 // this file contains the data structures for the in memory database
@@ -420,13 +420,13 @@ namespace System.Management.Automation
             // Mutually exclusive
             if (leftIndent != 0 && rightIndent != 0)
             {
-                throw PSTraceSource.NewArgumentException("leftIndent");
+                throw PSTraceSource.NewArgumentException(nameof(leftIndent));
             }
 
             // Mutually exclusive
             if (firstLineHanging != 0 && firstLineIndent != 0)
             {
-                throw PSTraceSource.NewArgumentException("firstLineHanging");
+                throw PSTraceSource.NewArgumentException(nameof(firstLineHanging));
             }
 
             var frame = new CustomItemFrame

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="runspaceId">Runspace local Id.</param>
         public PSRunspaceDebug(bool enabled, bool breakAll, string runspaceName, int runspaceId)
         {
-            if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException("runspaceName"); }
+            if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException(nameof(runspaceName)); }
 
             this.Enabled = enabled;
             this.BreakAll = breakAll;

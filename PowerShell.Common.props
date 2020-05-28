@@ -56,12 +56,12 @@
       <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
 
       <!--
-            We have explicitly assign 'PackageVersion'
-            because there is a bug: 'PackageVersion' is correctly assigned as 'Version' in 'NuGet.targets'
-            but then immediately redefined as '1.0.0'.
-            Tracking Issue https://github.com/dotnet/sdk/issues/1557
+        We have to explicitly assign 'PackageVersion' here because we're changing 'Version' in a target.
+        Before any targets have run (during static evaluation), 'Version' will have defaulted to '1.0.0' and PackageVersion will have defaulted to 'Version'.
+        See https://github.com/dotnet/sdk/issues/1557
       -->
       <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
+
       <ApplicationIcon Condition="$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_av_colors.ico</ApplicationIcon>
       <ApplicationIcon Condition="!$(ProductVersion.Contains('preview'))">..\..\assets\Powershell_black.ico</ApplicationIcon>
 
@@ -93,10 +93,11 @@
   <PropertyGroup>
     <Product>PowerShell</Product>
     <Company>Microsoft Corporation</Company>
-    <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>(c) Microsoft Corporation.</Copyright>
 
-    <TargetFramework>netcoreapp5.0</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
+    <PublishReadyToRun>true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>

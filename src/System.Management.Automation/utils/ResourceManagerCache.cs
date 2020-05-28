@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -43,12 +43,12 @@ namespace System.Management.Automation
         {
             if (assembly == null)
             {
-                throw PSTraceSource.NewArgumentNullException("assembly");
+                throw PSTraceSource.NewArgumentNullException(nameof(assembly));
             }
 
             if (string.IsNullOrEmpty(baseName))
             {
-                throw PSTraceSource.NewArgumentException("baseName");
+                throw PSTraceSource.NewArgumentException(nameof(baseName));
             }
 
             // Check to see if the manager is already in the cache
@@ -153,17 +153,17 @@ namespace System.Management.Automation
         {
             if (assembly == null)
             {
-                throw PSTraceSource.NewArgumentNullException("assembly");
+                throw PSTraceSource.NewArgumentNullException(nameof(assembly));
             }
 
             if (string.IsNullOrEmpty(baseName))
             {
-                throw PSTraceSource.NewArgumentException("baseName");
+                throw PSTraceSource.NewArgumentException(nameof(baseName));
             }
 
             if (string.IsNullOrEmpty(resourceId))
             {
-                throw PSTraceSource.NewArgumentException("resourceId");
+                throw PSTraceSource.NewArgumentException(nameof(resourceId));
             }
 
             ResourceManager resourceManager = null;
@@ -234,7 +234,7 @@ namespace System.Management.Automation
             {
                 // 2004/10/11-JonN Do we need a better error message?  I don't think so,
                 // since this is private.
-                throw PSTraceSource.NewArgumentException("assemblyToUse");
+                throw PSTraceSource.NewArgumentException(nameof(assemblyToUse));
             }
 
             return rm;

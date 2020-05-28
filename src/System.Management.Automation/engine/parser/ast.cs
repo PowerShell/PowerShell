@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 //
@@ -93,7 +93,7 @@ namespace System.Management.Automation.Language
         {
             if (extent == null)
             {
-                throw PSTraceSource.NewArgumentNullException("extent");
+                throw PSTraceSource.NewArgumentNullException(nameof(extent));
             }
 
             this.Extent = extent;
@@ -119,7 +119,7 @@ namespace System.Management.Automation.Language
         {
             if (astVisitor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("astVisitor");
+                throw PSTraceSource.NewArgumentNullException(nameof(astVisitor));
             }
 
             return this.Accept(astVisitor);
@@ -133,7 +133,7 @@ namespace System.Management.Automation.Language
         {
             if (astVisitor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("astVisitor");
+                throw PSTraceSource.NewArgumentNullException(nameof(astVisitor));
             }
 
             this.InternalVisit(astVisitor);
@@ -149,7 +149,7 @@ namespace System.Management.Automation.Language
         {
             if (predicate == null)
             {
-                throw PSTraceSource.NewArgumentNullException("predicate");
+                throw PSTraceSource.NewArgumentNullException(nameof(predicate));
             }
 
             return AstSearcher.FindAll(this, predicate, searchNestedScriptBlocks);
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Language
         {
             if (predicate == null)
             {
-                throw PSTraceSource.NewArgumentNullException("predicate");
+                throw PSTraceSource.NewArgumentNullException(nameof(predicate));
             }
 
             return AstSearcher.FindFirst(this, predicate, searchNestedScriptBlocks);
@@ -449,7 +449,7 @@ namespace System.Management.Automation.Language
         {
             if (kind == null)
             {
-                throw PSTraceSource.NewArgumentNullException("kind");
+                throw PSTraceSource.NewArgumentNullException(nameof(kind));
             }
 
             Kind = kind;
@@ -465,7 +465,7 @@ namespace System.Management.Automation.Language
         {
             if (kind == null)
             {
-                throw PSTraceSource.NewArgumentNullException("kind");
+                throw PSTraceSource.NewArgumentNullException(nameof(kind));
             }
 
             Kind = kind;
@@ -1019,7 +1019,7 @@ namespace System.Management.Automation.Language
 
             if (statements == null)
             {
-                throw PSTraceSource.NewArgumentNullException("statements");
+                throw PSTraceSource.NewArgumentNullException(nameof(statements));
             }
 
             if (paramBlock != null)
@@ -1753,12 +1753,12 @@ namespace System.Management.Automation.Language
             if (!blockName.HasTrait(TokenFlags.ScriptBlockBlockName)
                 || (unnamed && (blockName == TokenKind.Begin || blockName == TokenKind.Dynamicparam)))
             {
-                throw PSTraceSource.NewArgumentException("blockName");
+                throw PSTraceSource.NewArgumentException(nameof(blockName));
             }
 
             if (statementBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("statementBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(statementBlock));
             }
 
             this.Unnamed = unnamed;
@@ -1901,12 +1901,12 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(argumentName))
             {
-                throw PSTraceSource.NewArgumentNullException("argumentName");
+                throw PSTraceSource.NewArgumentNullException(nameof(argumentName));
             }
 
             if (argument == null)
             {
-                throw PSTraceSource.NewArgumentNullException("argument");
+                throw PSTraceSource.NewArgumentNullException(nameof(argument));
             }
 
             this.Argument = argument;
@@ -1979,7 +1979,7 @@ namespace System.Management.Automation.Language
         {
             if (typeName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
 
             this.TypeName = typeName;
@@ -2190,7 +2190,7 @@ namespace System.Management.Automation.Language
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (attributes != null)
@@ -2533,7 +2533,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (attributes != null && attributes.Any())
@@ -2759,12 +2759,12 @@ namespace System.Management.Automation.Language
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (kind == UsingStatementKind.Command || kind == UsingStatementKind.Type)
             {
-                throw PSTraceSource.NewArgumentException("kind");
+                throw PSTraceSource.NewArgumentException(nameof(kind));
             }
 
             UsingStatementKind = kind;
@@ -2783,7 +2783,7 @@ namespace System.Management.Automation.Language
         {
             if (moduleSpecification == null)
             {
-                throw PSTraceSource.NewArgumentNullException("moduleSpecification");
+                throw PSTraceSource.NewArgumentNullException(nameof(moduleSpecification));
             }
 
             UsingStatementKind = UsingStatementKind.Module;
@@ -2807,17 +2807,17 @@ namespace System.Management.Automation.Language
         {
             if (aliasName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("aliasName");
+                throw PSTraceSource.NewArgumentNullException(nameof(aliasName));
             }
 
             if (resolvedAliasAst == null)
             {
-                throw PSTraceSource.NewArgumentNullException("resolvedAliasAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(resolvedAliasAst));
             }
 
             if (kind == UsingStatementKind.Assembly)
             {
-                throw PSTraceSource.NewArgumentException("kind");
+                throw PSTraceSource.NewArgumentException(nameof(kind));
             }
 
             UsingStatementKind = kind;
@@ -2839,7 +2839,7 @@ namespace System.Management.Automation.Language
         {
             if (moduleSpecification == null)
             {
-                throw PSTraceSource.NewArgumentNullException("moduleSpecification");
+                throw PSTraceSource.NewArgumentNullException(nameof(moduleSpecification));
             }
 
             UsingStatementKind = UsingStatementKind.Module;
@@ -3018,13 +3018,13 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if ((propertyAttributes & (PropertyAttributes.Private | PropertyAttributes.Public)) ==
                 (PropertyAttributes.Private | PropertyAttributes.Public))
             {
-                throw PSTraceSource.NewArgumentException("propertyAttributes");
+                throw PSTraceSource.NewArgumentException(nameof(propertyAttributes));
             }
 
             Name = name;
@@ -3205,13 +3205,13 @@ namespace System.Management.Automation.Language
         {
             if (functionDefinitionAst == null)
             {
-                throw PSTraceSource.NewArgumentNullException("functionDefinitionAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(functionDefinitionAst));
             }
 
             if ((methodAttributes & (MethodAttributes.Private | MethodAttributes.Public)) ==
                 (MethodAttributes.Private | MethodAttributes.Public))
             {
-                throw PSTraceSource.NewArgumentException("methodAttributes");
+                throw PSTraceSource.NewArgumentException(nameof(methodAttributes));
             }
 
             if (returnType != null)
@@ -3582,17 +3582,17 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (body == null)
             {
-                throw PSTraceSource.NewArgumentNullException("body");
+                throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
             if (isFilter && isWorkflow)
             {
-                throw PSTraceSource.NewArgumentException("isFilter");
+                throw PSTraceSource.NewArgumentException(nameof(isFilter));
             }
 
             this.IsFilter = isFilter;
@@ -3687,7 +3687,7 @@ namespace System.Management.Automation.Language
         {
             if (scriptBlockTokenCache == null)
             {
-                throw new ArgumentNullException("scriptBlockTokenCache");
+                throw new ArgumentNullException(nameof(scriptBlockTokenCache));
             }
 
             var commentTokens = HelpCommentsParser.GetHelpCommentTokens(this, scriptBlockTokenCache);
@@ -3890,7 +3890,7 @@ namespace System.Management.Automation.Language
         {
             if (clauses == null || !clauses.Any())
             {
-                throw PSTraceSource.NewArgumentException("clauses");
+                throw PSTraceSource.NewArgumentException(nameof(clauses));
             }
 
             this.Clauses = new ReadOnlyCollection<IfClause>(clauses.ToArray());
@@ -3995,7 +3995,7 @@ namespace System.Management.Automation.Language
         {
             if (body == null)
             {
-                throw PSTraceSource.NewArgumentNullException("body");
+                throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
             if (string.IsNullOrWhiteSpace(variableName))
@@ -4137,7 +4137,7 @@ namespace System.Management.Automation.Language
         {
             if (body == null)
             {
-                throw PSTraceSource.NewArgumentNullException("body");
+                throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
             this.Body = body;
@@ -4404,7 +4404,7 @@ namespace System.Management.Automation.Language
         {
             if (condition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("condition");
+                throw PSTraceSource.NewArgumentNullException(nameof(condition));
             }
         }
 
@@ -4460,7 +4460,7 @@ namespace System.Management.Automation.Language
         {
             if (condition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("condition");
+                throw PSTraceSource.NewArgumentNullException(nameof(condition));
             }
         }
 
@@ -4516,7 +4516,7 @@ namespace System.Management.Automation.Language
         {
             if (condition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("condition");
+                throw PSTraceSource.NewArgumentNullException(nameof(condition));
             }
         }
 
@@ -4636,7 +4636,7 @@ namespace System.Management.Automation.Language
             {
                 // Must specify either clauses or default.  If neither, just complain about clauses as that's the most likely
                 // invalid argument.
-                throw PSTraceSource.NewArgumentException("clauses");
+                throw PSTraceSource.NewArgumentException(nameof(clauses));
             }
 
             this.Flags = flags;
@@ -4752,7 +4752,7 @@ namespace System.Management.Automation.Language
         {
             if (body == null)
             {
-                throw PSTraceSource.NewArgumentNullException("body");
+                throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
             if (catchTypes != null)
@@ -4855,13 +4855,13 @@ namespace System.Management.Automation.Language
         {
             if (body == null)
             {
-                throw PSTraceSource.NewArgumentNullException("body");
+                throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
             if ((catchClauses == null || !catchClauses.Any()) && @finally == null)
             {
                 // If no catches and no finally, just complain about catchClauses as that's the most likely invalid argument.
-                throw PSTraceSource.NewArgumentException("catchClauses");
+                throw PSTraceSource.NewArgumentException(nameof(catchClauses));
             }
 
             this.Body = body;
@@ -4964,7 +4964,7 @@ namespace System.Management.Automation.Language
         {
             if (body == null)
             {
-                throw PSTraceSource.NewArgumentNullException("body");
+                throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
             if (trapType != null)
@@ -5520,7 +5520,7 @@ namespace System.Management.Automation.Language
         {
             if (pipelineElements == null || !pipelineElements.Any())
             {
-                throw PSTraceSource.NewArgumentException("pipelineElements");
+                throw PSTraceSource.NewArgumentException(nameof(pipelineElements));
             }
 
             this.Background = background;
@@ -5557,7 +5557,7 @@ namespace System.Management.Automation.Language
         {
             if (commandAst == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandAst));
             }
 
             this.Background = background;
@@ -5830,12 +5830,12 @@ namespace System.Management.Automation.Language
         {
             if (commandElements == null || !commandElements.Any())
             {
-                throw PSTraceSource.NewArgumentException("commandElements");
+                throw PSTraceSource.NewArgumentException(nameof(commandElements));
             }
 
             if (invocationOperator != TokenKind.Dot && invocationOperator != TokenKind.Ampersand && invocationOperator != TokenKind.Unknown)
             {
-                throw PSTraceSource.NewArgumentException("invocationOperator");
+                throw PSTraceSource.NewArgumentException(nameof(invocationOperator));
             }
 
             this.CommandElements = new ReadOnlyCollection<CommandElementAst>(commandElements.ToArray());
@@ -5951,7 +5951,7 @@ namespace System.Management.Automation.Language
         {
             if (expression == null)
             {
-                throw PSTraceSource.NewArgumentNullException("expression");
+                throw PSTraceSource.NewArgumentNullException(nameof(expression));
             }
 
             this.Expression = expression;
@@ -6144,7 +6144,7 @@ namespace System.Management.Automation.Language
         {
             if (file == null)
             {
-                throw PSTraceSource.NewArgumentNullException("file");
+                throw PSTraceSource.NewArgumentNullException(nameof(file));
             }
 
             this.Location = file;
@@ -6220,7 +6220,7 @@ namespace System.Management.Automation.Language
 
             if ((@operator.GetTraits() & TokenFlags.AssignmentOperator) == 0)
             {
-                throw PSTraceSource.NewArgumentException("operator");
+                throw PSTraceSource.NewArgumentException(nameof(@operator));
             }
 
             // If the assignment is just an expression and the expression is not backgrounded then
@@ -6361,17 +6361,17 @@ namespace System.Management.Automation.Language
         {
             if (extent == null)
             {
-                throw PSTraceSource.NewArgumentNullException("extent");
+                throw PSTraceSource.NewArgumentNullException(nameof(extent));
             }
 
             if (body == null)
             {
-                throw PSTraceSource.NewArgumentNullException("body");
+                throw PSTraceSource.NewArgumentNullException(nameof(body));
             }
 
             if (instanceName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instanceName");
+                throw PSTraceSource.NewArgumentNullException(nameof(instanceName));
             }
 
             this.Body = body;
@@ -6842,7 +6842,7 @@ namespace System.Management.Automation.Language
         {
             if (commandElements == null || commandElements.Count() <= 0)
             {
-                throw PSTraceSource.NewArgumentException("commandElements");
+                throw PSTraceSource.NewArgumentException(nameof(commandElements));
             }
 
             this.CommandElements = new ReadOnlyCollection<CommandElementAst>(commandElements.ToArray());
@@ -7348,7 +7348,7 @@ namespace System.Management.Automation.Language
         {
             if ((@operator.GetTraits() & TokenFlags.BinaryOperator) == 0)
             {
-                throw PSTraceSource.NewArgumentException("operator");
+                throw PSTraceSource.NewArgumentException(nameof(@operator));
             }
 
             if (left == null || right == null || errorPosition == null)
@@ -7461,12 +7461,12 @@ namespace System.Management.Automation.Language
         {
             if ((tokenKind.GetTraits() & TokenFlags.UnaryOperator) == 0)
             {
-                throw PSTraceSource.NewArgumentException("tokenKind");
+                throw PSTraceSource.NewArgumentException(nameof(tokenKind));
             }
 
             if (child == null)
             {
-                throw PSTraceSource.NewArgumentNullException("child");
+                throw PSTraceSource.NewArgumentNullException(nameof(child));
             }
 
             this.TokenKind = tokenKind;
@@ -7548,7 +7548,7 @@ namespace System.Management.Automation.Language
 
             if (kind.Kind != TokenKind.Sequence && kind.Kind != TokenKind.Parallel)
             {
-                throw PSTraceSource.NewArgumentException("kind");
+                throw PSTraceSource.NewArgumentException(nameof(kind));
             }
 
             this.Kind = kind;
@@ -8179,7 +8179,7 @@ namespace System.Management.Automation.Language
             var c = name[0];
             if (c == '[' || c == ']' || c == ',')
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             int backtick = name.IndexOf('`');
@@ -8209,7 +8209,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(assembly))
             {
-                throw PSTraceSource.NewArgumentNullException("assembly");
+                throw PSTraceSource.NewArgumentNullException(nameof(assembly));
             }
 
             AssemblyName = assembly;
@@ -8449,7 +8449,7 @@ namespace System.Management.Automation.Language
 
             if (genericArguments == null)
             {
-                throw PSTraceSource.NewArgumentException("genericArguments");
+                throw PSTraceSource.NewArgumentException(nameof(genericArguments));
             }
 
             Extent = extent;
@@ -8458,7 +8458,7 @@ namespace System.Management.Automation.Language
 
             if (this.GenericArguments.Count == 0)
             {
-                throw PSTraceSource.NewArgumentException("genericArguments");
+                throw PSTraceSource.NewArgumentException(nameof(genericArguments));
             }
         }
 
@@ -8746,7 +8746,7 @@ namespace System.Management.Automation.Language
 
             if (rank <= 0)
             {
-                throw PSTraceSource.NewArgumentException("rank");
+                throw PSTraceSource.NewArgumentException(nameof(rank));
             }
 
             Extent = extent;
@@ -8941,7 +8941,7 @@ namespace System.Management.Automation.Language
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             _type = type;
@@ -9042,7 +9042,7 @@ namespace System.Management.Automation.Language
         {
             if (typeName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
 
             this.TypeName = typeName;
@@ -9107,7 +9107,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(variableName))
             {
-                throw PSTraceSource.NewArgumentNullException("variableName");
+                throw PSTraceSource.NewArgumentNullException(nameof(variableName));
             }
 
             this.VariablePath = new VariablePath(variableName);
@@ -9134,7 +9134,7 @@ namespace System.Management.Automation.Language
         {
             if (variablePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variablePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(variablePath));
             }
 
             this.VariablePath = variablePath;
@@ -9429,7 +9429,7 @@ namespace System.Management.Automation.Language
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             this.StringConstantType = stringConstantType;
@@ -9529,13 +9529,13 @@ namespace System.Management.Automation.Language
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             if (type != StringConstantType.DoubleQuoted && type != StringConstantType.DoubleQuotedHereString
                 && type != StringConstantType.BareWord)
             {
-                throw PSTraceSource.NewArgumentException("type");
+                throw PSTraceSource.NewArgumentException(nameof(type));
             }
 
             var ast = Language.Parser.ScanString(value);
@@ -9676,7 +9676,7 @@ namespace System.Management.Automation.Language
         {
             if (scriptBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("scriptBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
             this.ScriptBlock = scriptBlock;
@@ -9748,7 +9748,7 @@ namespace System.Management.Automation.Language
         {
             if (elements == null || !elements.Any())
             {
-                throw PSTraceSource.NewArgumentException("elements");
+                throw PSTraceSource.NewArgumentException(nameof(elements));
             }
 
             this.Elements = new ReadOnlyCollection<ExpressionAst>(elements);
@@ -9921,7 +9921,7 @@ namespace System.Management.Automation.Language
         {
             if (statementBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("statementBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(statementBlock));
             }
 
             this.SubExpression = statementBlock;
@@ -9987,7 +9987,7 @@ namespace System.Management.Automation.Language
         {
             if (pipeline == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pipeline");
+                throw PSTraceSource.NewArgumentNullException(nameof(pipeline));
             }
 
             this.Pipeline = pipeline;
@@ -10053,7 +10053,7 @@ namespace System.Management.Automation.Language
         {
             if (statementBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("statementBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(statementBlock));
             }
 
             this.SubExpression = statementBlock;
@@ -10113,7 +10113,7 @@ namespace System.Management.Automation.Language
         {
             if (expressionAst == null)
             {
-                throw PSTraceSource.NewArgumentNullException("expressionAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(expressionAst));
             }
 
             RuntimeUsingIndex = -1;
@@ -10163,7 +10163,7 @@ namespace System.Management.Automation.Language
         {
             if (usingExpressionAst == null)
             {
-                throw new ArgumentNullException("usingExpressionAst");
+                throw new ArgumentNullException(nameof(usingExpressionAst));
             }
 
             return ExtractUsingVariableImpl(usingExpressionAst);

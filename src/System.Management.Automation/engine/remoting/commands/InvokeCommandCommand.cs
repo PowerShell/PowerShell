@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -2137,7 +2137,7 @@ namespace System.Management.Automation.Internal
 
             if (string.IsNullOrEmpty(computerName))
             {
-                throw new ArgumentNullException("computerName");
+                throw new ArgumentNullException(nameof(computerName));
             }
 
             lock (_syncObject)

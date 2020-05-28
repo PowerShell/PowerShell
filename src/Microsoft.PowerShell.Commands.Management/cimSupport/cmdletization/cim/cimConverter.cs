@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -52,12 +52,12 @@ namespace Microsoft.PowerShell.Cim
             {
                 if ((offset < 0) || (offset >= _string.Length))
                 {
-                    throw new ArgumentOutOfRangeException("offset");
+                    throw new ArgumentOutOfRangeException(nameof(offset));
                 }
 
                 if (offset + charsToCopy > _string.Length)
                 {
-                    throw new ArgumentOutOfRangeException("charsToCopy");
+                    throw new ArgumentOutOfRangeException(nameof(charsToCopy));
                 }
 
                 fixed (char* target = _string)
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Cim
         /// <exception cref="PSInvalidCastException">The only kind of exception this method can throw.</exception>
         internal static object ConvertFromCimToDotNet(object cimObject, Type expectedDotNetType)
         {
-            if (expectedDotNetType == null) { throw new ArgumentNullException("expectedDotNetType"); }
+            if (expectedDotNetType == null) { throw new ArgumentNullException(nameof(expectedDotNetType)); }
 
             if (cimObject == null)
             {

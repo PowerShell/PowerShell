@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -15,6 +15,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// <summary>
     /// Enables the user to remove a CimInstance.
     /// </summary>
+    [Alias("rcim")]
     [Cmdlet(
         VerbsCommon.Remove,
         "CimInstance",

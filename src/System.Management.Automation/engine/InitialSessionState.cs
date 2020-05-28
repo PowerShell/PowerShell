@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1517,9 +1517,9 @@ namespace System.Management.Automation.Runspaces
                 {
                     ss.ImportPSSnapIn(si, out warning);
                 }
-                catch (PSSnapInException pse)
+                catch (PSSnapInException)
                 {
-                    throw pse;
+                    throw;
                 }
 #if DEBUG
                 // NOTE:
@@ -3826,9 +3826,9 @@ namespace System.Management.Automation.Runspaces
                 PSSnapInException warning;
                 this.ImportPSSnapIn(coreSnapin, out warning);
             }
-            catch (PSSnapInException pse)
+            catch (PSSnapInException)
             {
-                throw pse;
+                throw;
             }
 
             return coreSnapin;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
                 WriteError(
                     new ErrorRecord(
                         new ArgumentException(GetMessage(RemotingErrorIdStrings.HostDoesNotSupportPushRunspace)),
-                        PSRemotingErrorId.HostDoesNotSupportPushRunspace.ToString(),
+                        nameof(PSRemotingErrorId.HostDoesNotSupportPushRunspace),
                         ErrorCategory.InvalidArgument,
                         null));
                 return;

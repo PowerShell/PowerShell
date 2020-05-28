@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -19,6 +19,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// cancel the subscription
     /// Should we have the second parameter set with a -Query?
     /// </summary>
+    [Alias("rcie")]
     [Cmdlet(VerbsLifecycle.Register, "CimIndicationEvent", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227960")]
     public class RegisterCimIndicationCommand : ObjectEventRegistrationBase
     {

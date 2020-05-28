@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -96,7 +96,7 @@ namespace System.Management.Automation.Remoting
         {
             if (proc == null)
             {
-                throw new PSArgumentNullException("proc");
+                throw new PSArgumentNullException(nameof(proc));
             }
 
             if (string.IsNullOrEmpty(appDomainName))
@@ -453,7 +453,7 @@ namespace System.Management.Automation.Remoting
         {
             if (pipeName == null)
             {
-                throw new PSArgumentNullException("pipeName");
+                throw new PSArgumentNullException(nameof(pipeName));
             }
 
             _syncObject = new object();
@@ -481,11 +481,11 @@ namespace System.Management.Automation.Remoting
             string coreName,
             CommonSecurityDescriptor securityDesc)
         {
-            if (serverName == null) { throw new PSArgumentNullException("serverName"); }
+            if (serverName == null) { throw new PSArgumentNullException(nameof(serverName)); }
 
-            if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
+            if (namespaceName == null) { throw new PSArgumentNullException(nameof(namespaceName)); }
 
-            if (coreName == null) { throw new PSArgumentNullException("coreName"); }
+            if (coreName == null) { throw new PSArgumentNullException(nameof(coreName)); }
 
 #if !UNIX
             string fullPipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
@@ -560,9 +560,7 @@ namespace System.Management.Automation.Remoting
 
             CreateIPCNamedPipeServerSingleton();
 
-#if !CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
-            CreateAppDomainUnloadHandler();
-#endif
+            CreateProcessExitHandler();
         }
 
         #endregion
@@ -684,7 +682,7 @@ namespace System.Management.Automation.Remoting
         {
             if (clientConnectCallback == null)
             {
-                throw new PSArgumentNullException("clientConnectCallback");
+                throw new PSArgumentNullException(nameof(clientConnectCallback));
             }
 
             lock (_syncObject)
@@ -961,30 +959,31 @@ namespace System.Management.Automation.Remoting
             }
         }
 
-#if !CORECLR // There is only one AppDomain per application in CoreCLR, which would be the default
-        private static void CreateAppDomainUnloadHandler()
+        private static void CreateProcessExitHandler()
         {
-            // Subscribe to the app domain unload event.
-            AppDomain.CurrentDomain.DomainUnload += (sender, args) =>
+            AppDomain.CurrentDomain.ProcessExit += (sender, args) =>
+            {
+                IPCNamedPipeServerEnabled = false;
+                RemoteSessionNamedPipeServer namedPipeServer = IPCNamedPipeServer;
+                if (namedPipeServer != null)
                 {
-                    IPCNamedPipeServerEnabled = false;
-                    RemoteSessionNamedPipeServer namedPipeServer = IPCNamedPipeServer;
-                    if (namedPipeServer != null)
+                    try
                     {
-                        try
-                        {
-                            // Terminate the IPC thread.
-                            namedPipeServer.Dispose();
-                        }
-                        catch (ObjectDisposedException) { }
-                        catch (Exception)
-                        {
-                            // Don't throw an exception on the app domain unload event thread.
-                        }
+                        // Terminate the IPC thread.
+                        namedPipeServer.Dispose();
                     }
-                };
+                    catch (ObjectDisposedException)
+                    {
+                        // Ignore if object already disposed.
+                    }
+                    catch (Exception)
+                    {
+                        // Don't throw an exception on the app domain unload event thread.
+                    }
+                }
+            };
         }
-#endif
+
         private static void OnIPCNamedPipeServerEnded(object sender, ListenerEndedEventArgs args)
         {
             if (args.RestartListener)
@@ -1178,7 +1177,7 @@ namespace System.Management.Automation.Remoting
         {
             if (pipeName == null)
             {
-                throw new PSArgumentNullException("pipeName");
+                throw new PSArgumentNullException(nameof(pipeName));
             }
 
             _pipeName = pipeName;
@@ -1198,11 +1197,11 @@ namespace System.Management.Automation.Remoting
             string namespaceName,
             string coreName)
         {
-            if (serverName == null) { throw new PSArgumentNullException("serverName"); }
+            if (serverName == null) { throw new PSArgumentNullException(nameof(serverName)); }
 
-            if (namespaceName == null) { throw new PSArgumentNullException("namespaceName"); }
+            if (namespaceName == null) { throw new PSArgumentNullException(nameof(namespaceName)); }
 
-            if (coreName == null) { throw new PSArgumentNullException("coreName"); }
+            if (coreName == null) { throw new PSArgumentNullException(nameof(coreName)); }
 
             _pipeName = @"\\" + serverName + @"\" + namespaceName + @"\" + coreName;
 
@@ -1284,7 +1283,7 @@ namespace System.Management.Automation.Remoting
         {
             if (string.IsNullOrEmpty(containerObRoot))
             {
-                throw new PSArgumentNullException("containerObRoot");
+                throw new PSArgumentNullException(nameof(containerObRoot));
             }
 
             //

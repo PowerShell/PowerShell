@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -65,7 +65,7 @@ namespace System.Management.Automation
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             PSDriveInfo result = null;
@@ -140,12 +140,12 @@ namespace System.Management.Automation
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (!IsValidDriveName(drive.Name))
@@ -432,7 +432,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             PSDriveInfo result = null;
@@ -528,7 +528,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             PSDriveInfo result = null;
@@ -994,7 +994,7 @@ namespace System.Management.Automation
         {
             if (driveName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("driveName");
+                throw PSTraceSource.NewArgumentNullException(nameof(driveName));
             }
 
             PSDriveInfo drive = GetDrive(driveName, scopeID);
@@ -1037,7 +1037,7 @@ namespace System.Management.Automation
         {
             if (driveName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("driveName");
+                throw PSTraceSource.NewArgumentNullException(nameof(driveName));
             }
 
             Dbg.Diagnostics.Assert(
@@ -1079,7 +1079,7 @@ namespace System.Management.Automation
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -1241,12 +1241,12 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             s_tracer.WriteLine("Drive name = {0}", drive.Name);

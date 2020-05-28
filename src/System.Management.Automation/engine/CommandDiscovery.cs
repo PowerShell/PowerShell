@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -133,7 +133,7 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             Context = context;
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (newCmdletInfo == null)
@@ -1525,7 +1525,7 @@ namespace System.Management.Automation
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             // check the PSVariable
@@ -1687,7 +1687,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(item))
             {
-                throw PSTraceSource.NewArgumentException("item");
+                throw PSTraceSource.NewArgumentException(nameof(item));
             }
 
             int result = -1;

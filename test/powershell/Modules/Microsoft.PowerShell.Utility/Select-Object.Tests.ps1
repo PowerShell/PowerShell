@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
@@ -15,7 +15,7 @@ Describe "Select-Object" -Tags "CI" {
     }
 
     It "Should treat input as a single object with the inputObject parameter" {
-	$result   = $(Select-Object -inputObject $dirObject -last $TestLength).Length
+	$result   = $(Select-Object -InputObject $dirObject -Last $TestLength).Length
 	$expected = $dirObject.Length
 
 	$result | Should -Be $expected
@@ -131,13 +131,13 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
 	}
 
 	It "Select-Object with empty script block property should throw"{
-		$e = { "bar" | select-object -Prop {} -ErrorAction Stop } |
+		$e = { "bar" | Select-Object -Prop {} -ErrorAction Stop } |
 			Should -Throw -ErrorId "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand" -PassThru
 		$e.CategoryInfo | Should -Match "PSArgumentException"
 	}
 
 	It "Select-Object with string property should work"{
-		$result = "bar" | select-object -Prop foo | Measure-Object
+		$result = "bar" | Select-Object -Prop foo | Measure-Object
 		$result.Count | Should -Be 1
 	}
 

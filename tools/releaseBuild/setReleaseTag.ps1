@@ -65,7 +65,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     # Branch is named release-<semver>
     if($Branch -match '^.*(release[-/])')
     {
-        Write-verbose "release branch:" -verbose
+        Write-Verbose "release branch:" -Verbose
         $releaseTag = $Branch -replace '^.*(release[-/])'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
@@ -79,16 +79,16 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     elseif($branchOnly -eq 'master' -or $branchOnly -like '*dailytest*')
     {
         $isDaily = $true
-        Write-verbose "daily build" -verbose
+        Write-Verbose "daily build" -Verbose
         $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'
-        $metadata = Get-content $metaDataJsonPath | ConvertFrom-Json
+        $metadata = Get-Content $metaDataJsonPath | ConvertFrom-Json
         $versionPart = $metadata.PreviewReleaseTag
         if($versionPart -match '-.*$')
         {
             $versionPart = $versionPart -replace '-.*$'
         }
 
-        $releaseTag = "$versionPart-daily.$((get-date).ToString('yyyyMMdd'))"
+        $releaseTag = "$versionPart-daily.$((Get-Date).ToString('yyyyMMdd'))"
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
         Write-Verbose -Message "setting $Variable to $releaseTag" -Verbose
         Write-Host -Object "##$vstsCommandString"
@@ -100,11 +100,11 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     }
     else
     {
-        Write-verbose "non-release branch" -verbose
+        Write-Verbose "non-release branch" -Verbose
         # Branch is named <previewname>
         # Get version from metadata and append -<previewname>
         $metaDataJsonPath = Join-Path $PSScriptRoot -ChildPath '..\metadata.json'
-        $metadata = Get-content $metaDataJsonPath | ConvertFrom-Json
+        $metadata = Get-Content $metaDataJsonPath | ConvertFrom-Json
         $versionPart = $metadata.PreviewReleaseTag
         if($versionPart -match '-.*$')
         {

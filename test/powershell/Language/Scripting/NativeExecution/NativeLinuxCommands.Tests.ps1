@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "NativeLinuxCommands" -tags "CI" {
     BeforeAll {
@@ -14,7 +14,7 @@ Describe "NativeLinuxCommands" -tags "CI" {
     }
 
     It "Should find Application grep" {
-        (get-command grep).CommandType | Should -Be Application
+        (Get-Command grep).CommandType | Should -Be Application
     }
 
     It "Should pipe to grep and get result" {
@@ -22,7 +22,7 @@ Describe "NativeLinuxCommands" -tags "CI" {
     }
 
     It "Should find Application touch" {
-        (get-command touch).CommandType | Should -Be Application
+        (Get-Command touch).CommandType | Should -Be Application
     }
 
     It "Should not redirect standard input if native command is the first command in pipeline (1)" {

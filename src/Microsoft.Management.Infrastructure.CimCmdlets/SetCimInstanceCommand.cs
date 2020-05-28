@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -17,6 +17,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// CimInstance must have values of all [KEY] properties.
     /// </para>
     /// </summary>
+    [Alias("scim")]
     [Cmdlet(
         VerbsCommon.Set,
         "CimInstance",

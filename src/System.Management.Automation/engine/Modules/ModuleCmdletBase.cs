@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -99,6 +99,12 @@ namespace Microsoft.PowerShell.Commands
             /// This will be allowed when the manifest explicitly exports functions which will limit all visible module functions.
             /// </summary>
             internal bool AllowNestedModuleFunctionsToExport;
+
+            /// <summary>
+            /// Flag that controls Export-PSSession -AllowClobber parameter in generating proxy modules from remote sessions.
+            /// Historically -AllowClobber in these scenarios was set as True.
+            /// </summary>
+            internal bool NoClobberExportPSSession;
         }
 
         /// <summary>
@@ -3082,7 +3088,7 @@ namespace Microsoft.PowerShell.Commands
                 // In that case, the nested module will first be loaded with a different session state, and then when trying to load the RootModule via 'LoadModuleNamedInManifest',
                 // the same loaded nested module will be reused for the RootModule by 'LoadModuleNamedInManifest'.
 
-                // Change the module name to match the manifest name, not the original name
+                // Change the module name to match the manifest name, not the original name.
                 newManifestInfo.SetName(manifestInfo.Name);
 
                 // Copy in any nested modules...
@@ -5068,29 +5074,29 @@ namespace Microsoft.PowerShell.Commands
                         // Remove the imported functions from SessionState...
                         // (can't just go through module.SessionState.Internal.ExportedFunctions,
                         //  because the names of the functions might have been changed by the -Prefix parameter of Import-Module)
-                        foreach (DictionaryEntry entry in ss.GetFunctionTable())
+                        foreach ((var _, FunctionInfo functionInfo) in ss.GetFunctionTable())
                         {
-                            FunctionInfo func = (FunctionInfo)entry.Value;
-                            if (func.Module == null)
+                            if (functionInfo.Module == null)
                             {
                                 continue;
                             }
 
-                            if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                            if (functionInfo.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
+                                string functionName = functionInfo.Name;
                                 try
                                 {
-                                    ss.RemoveFunction(func.Name, true);
+                                    ss.RemoveFunction(functionName, true);
 
-                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, func.Name);
+                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, functionName);
                                     WriteVerbose(memberMessage);
                                 }
                                 catch (SessionStateUnauthorizedAccessException e)
                                 {
-                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, func.Name, module.Name, e.Message);
+                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, functionName, module.Name, e.Message);
                                     InvalidOperationException memberNotRemoved = new InvalidOperationException(message, e);
                                     ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved",
-                                                                     ErrorCategory.PermissionDenied, func.Name);
+                                                                     ErrorCategory.PermissionDenied, functionName);
                                     WriteError(er);
                                 }
                             }
@@ -7142,7 +7148,7 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions options)
         {
             if (sourceModule == null)
-                throw PSTraceSource.NewArgumentNullException("sourceModule");
+                throw PSTraceSource.NewArgumentNullException(nameof(sourceModule));
 
             bool isImportModulePrivate = cmdlet.CommandInfo.Visibility == SessionStateEntryVisibility.Private ||
                 targetSessionState.DefaultCommandVisibility == SessionStateEntryVisibility.Private;

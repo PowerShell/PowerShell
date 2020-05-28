@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -4887,7 +4887,7 @@ namespace System.Management.Automation.Language
             {
                 case TokenKind.EndOfInput:
                 case TokenKind.NewLine:
-                // Example: 'using module ,FooBar'
+                // Example: 'using module ,exampleModuleName'
                 // GetCommandArgument will successfully return an argument for a unary array argument
                 // but we don't want to allow that syntax with a using statement.
                 case TokenKind.Comma:

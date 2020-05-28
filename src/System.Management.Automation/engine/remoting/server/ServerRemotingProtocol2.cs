@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         {
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             Dbg.Assert(receivedData.TargetInterface == RemotingTargetInterface.RunspacePool,
@@ -617,7 +617,7 @@ namespace System.Management.Automation
         {
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             Dbg.Assert(receivedData.TargetInterface == RemotingTargetInterface.PowerShell,

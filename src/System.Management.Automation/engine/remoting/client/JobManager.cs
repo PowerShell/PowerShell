@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -178,7 +178,7 @@ namespace System.Management.Automation
         {
             if (definition == null)
             {
-                throw new ArgumentNullException("definition");
+                throw new ArgumentNullException(nameof(definition));
             }
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);
@@ -218,12 +218,12 @@ namespace System.Management.Automation
         {
             if (specification == null)
             {
-                throw new ArgumentNullException("specification");
+                throw new ArgumentNullException(nameof(specification));
             }
 
             if (specification.Definition == null)
             {
-                throw new ArgumentException(RemotingErrorIdStrings.NewJobSpecificationError, "specification");
+                throw new ArgumentException(RemotingErrorIdStrings.NewJobSpecificationError, nameof(specification));
             }
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(specification.Definition);
@@ -263,12 +263,12 @@ namespace System.Management.Automation
         {
             if (job == null)
             {
-                throw new PSArgumentNullException("job");
+                throw new PSArgumentNullException(nameof(job));
             }
 
             if (definition == null)
             {
-                throw new PSArgumentNullException("definition");
+                throw new PSArgumentNullException(nameof(definition));
             }
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);

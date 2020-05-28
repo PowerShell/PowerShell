@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -18,6 +18,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// specified in the Property parameter, KeysOnly parameter or the Select clause
     /// of the Query parameter.
     /// </summary>
+    [Alias("gcim")]
     [Cmdlet(VerbsCommon.Get, "CimInstance", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227961")]
     [OutputType(typeof(CimInstance))]
     public class GetCimInstanceCommand : CimBaseCommand

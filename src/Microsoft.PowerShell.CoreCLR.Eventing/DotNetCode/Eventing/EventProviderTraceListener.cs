@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -70,7 +70,7 @@ namespace System.Diagnostics.Eventing
             : base(name)
         {
             if (delimiter == null)
-                throw new ArgumentNullException("delimiter");
+                throw new ArgumentNullException(nameof(delimiter));
 
             if (delimiter.Length == 0)
                 throw new ArgumentException(DotNetEventingStrings.Argument_NeedNonemptyDelimiter);

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -19,22 +19,22 @@ namespace Microsoft.PowerShell.Cmdletization
         {
             if (cmdlet == null)
             {
-                throw new ArgumentNullException("cmdlet");
+                throw new ArgumentNullException(nameof(cmdlet));
             }
 
             if (string.IsNullOrEmpty(className))
             {
-                throw new ArgumentNullException("className");
+                throw new ArgumentNullException(nameof(className));
             }
 
             if (classVersion == null) // possible and ok to have classVersion==string.Empty
             {
-                throw new ArgumentNullException("classVersion");
+                throw new ArgumentNullException(nameof(classVersion));
             }
 
             if (privateData == null)
             {
-                throw new ArgumentNullException("privateData");
+                throw new ArgumentNullException(nameof(privateData));
             }
 
             _cmdlet = cmdlet;

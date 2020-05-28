@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Compare-Object" -Tags "CI" {
 	BeforeAll {
@@ -76,10 +76,10 @@ Describe "Compare-Object" -Tags "CI" {
 	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $anonexistentvariable } | Should -Throw
     }
 
-    It "Should give a 0 array when using excludedifferent switch without also using the includeequal switch" {
-	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -ExcludeDifferent
+    It "Should only display equal lines when excludeDifferent switch is used without the includeequal switch" {
+    $actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -ExcludeDifferent
 
-	$actualOutput.Length | Should -Be 0
+    $actualOutput.Length | Should -Be 2
     }
 
     It "Should only display equal lines when excludeDifferent switch is used alongside the includeequal switch" {
@@ -88,8 +88,14 @@ Describe "Compare-Object" -Tags "CI" {
 	$actualOutput.Length | Should -Be 2
     }
 
+    It "Should give a 0 array when using excludedifferent switch when also setting the includeequal switch to false" {
+	$actualOutput = Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -ExcludeDifferent -IncludeEqual:$false
+
+	$actualOutput.Length | Should -Be 0
+    }
+
     It "Should be able to pass objects to pipeline using the passthru switch" {
-	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -Passthru | Format-Wide } | Should -Not -Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -PassThru | Format-Wide } | Should -Not -Throw
     }
 
     It "Should be able to specify the property of two objects to compare" {
@@ -100,15 +106,15 @@ Describe "Compare-Object" -Tags "CI" {
     }
 
     It "Should be able to specify the syncwindow without error" {
-	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -syncWindow 5 } | Should -Not -Throw
-	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -syncWindow 8 } | Should -Not -Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -SyncWindow 5 } | Should -Not -Throw
+	{ Compare-Object -ReferenceObject $(Get-Content $file3) -DifferenceObject $(Get-Content $file4) -SyncWindow 8 } | Should -Not -Throw
     }
 
     It "Should have the expected output when changing the syncwindow" {
 	$var1 = 1..15
 	$var2 = 15..1
 
-	$actualOutput = Compare-Object -ReferenceObject $var1 -DifferenceObject $var2 -syncWindow 6
+	$actualOutput = Compare-Object -ReferenceObject $var1 -DifferenceObject $var2 -SyncWindow 6
 
 	$actualOutput[0].InputObject | Should -Be 15
 	$actualOutput[1].InputObject | Should -Be 1
@@ -226,7 +232,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 			{
 				foreach($passthru in $boolvalues)
 				{
-					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference
+					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -PassThru:$passthru -DifferenceObject $empsDifference
 
 					if(!$excludeDifferent)
 					{
@@ -263,7 +269,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 			{
 				foreach($passthru in $boolvalues)
 				{
-					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference
+					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -PassThru:$passthru -DifferenceObject $empsDifference
 					if($recordEqual)
 					{
 						if(!$excludeDifferent)
@@ -329,7 +335,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 			{
 				foreach($passthru in $boolvalues)
 				{
-					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference -SyncWindow:0
+					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -PassThru:$passthru -DifferenceObject $empsDifference -SyncWindow:0
 					if($recordEqual)
 					{
 						if(!$excludeDifferent)
@@ -395,7 +401,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 			{
 				foreach($passthru in $boolvalues)
 				{
-					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference -SyncWindow:2
+					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -PassThru:$passthru -DifferenceObject $empsDifference -SyncWindow:2
 
 					if($recordEqual)
 					{

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -120,7 +120,7 @@ namespace System.Management.Automation
         {
             if (newDrive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("newDrive");
+                throw PSTraceSource.NewArgumentNullException(nameof(newDrive));
             }
 
             // Ensure that multiple threads do not try to modify the
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             if (_drives == null)
@@ -222,7 +222,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             PSDriveInfo result = null;

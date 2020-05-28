@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Using of ternary operator" -Tags CI {
@@ -40,7 +40,7 @@ Describe "Using of ternary operator" -Tags CI {
             @{ Script = { $IsCoreCLR ? $false ? 'nested-if-true' : $true ? 'nested-nested-if-true' : 'nested-nested-if-false' : 'if-false' }; ExpectedValue = 'nested-nested-if-true' }
 
             ## Binary operator has higher precedence order than ternary
-            @{ Script = { !$IsCoreCLR ? 'Core' : 'Desktop' -eq 'Core' };  ExpectedValue = !$IsCoreCLR ? 'Core' : ('Desktop' -eq 'Core') }
+            @{ Script = { !$IsCoreCLR ? 'Core' : 'Desktop' -EQ 'Core' };  ExpectedValue = !$IsCoreCLR ? 'Core' : ('Desktop' -eq 'Core') }
             @{ Script = { ($IsCoreCLR ? 'Core' : 'Desktop') -eq 'Core' }; ExpectedValue = $true }
         )
     }
@@ -57,7 +57,7 @@ Describe "Using of ternary operator" -Tags CI {
     }
 
     It "Ternary expression which generates a terminating error should halt appropriately" {
-        { (write-error -Message error -ErrorAction Stop) ? 1 : 2 } | Should -Throw -ErrorId Microsoft.PowerShell.Commands.WriteErrorException
+        { (Write-Error -Message error -ErrorAction Stop) ? 1 : 2 } | Should -Throw -ErrorId Microsoft.PowerShell.Commands.WriteErrorException
     }
 
     It "Use ternary operator in parameter default values" {

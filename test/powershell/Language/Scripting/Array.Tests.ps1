@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "ArrayExpression Tests" -Tags "CI" {
     It "@([object[]](1,2,3)) should return a 3-element array of object[]" {

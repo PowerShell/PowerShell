@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'NullCoalesceOperations' -Tags 'CI' {
@@ -171,6 +171,18 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
 
         It 'Lhs is $?' {
             {$???$false} | Should -BeTrue
+        }
+
+        It 'Should only evaluate LHS once when it IS null' {
+            $testState = [pscustomobject]@{ Value = 0 }
+            (& { [void]$testState.Value++ }) ?? 'Nothing' | Should -BeExactly 'Nothing'
+            $testState.Value | Should -Be 1
+        }
+
+        It 'Should only evaluate LHS once when it is NOT null' {
+            $testState = [pscustomobject]@{ Value = 0 }
+            (& { 'Test'; [void]$testState.Value++ }) ?? 'Nothing' | Should -BeExactly 'Test'
+            $testState.Value | Should -Be 1
         }
     }
 

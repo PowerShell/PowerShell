@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 
@@ -32,7 +32,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 	}
 
     AfterEach {
-		remove-item $testfile -Force -ErrorAction SilentlyContinue
+		Remove-Item $testfile -Force -ErrorAction SilentlyContinue
     }
 
  	It "Import with CliXml directive should work" {
