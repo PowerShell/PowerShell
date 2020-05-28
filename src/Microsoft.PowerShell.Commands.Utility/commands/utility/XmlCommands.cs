@@ -208,7 +208,8 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Assert(Path != null, "FileName is mandatory parameter");
 
-            if (!ShouldProcess(Path)) return;
+            if (!ShouldProcess(Path))
+                return;
 
             StreamWriter sw;
             PathUtils.MasterStreamOpen(
@@ -372,6 +373,255 @@ namespace Microsoft.PowerShell.Commands
             _helper.Stop();
         }
     }
+
+    #region ConvertTo-Clixml
+    /// <summary>
+    /// Implements ConvertTo-Clixml command.
+    /// </summary>
+    [Cmdlet(VerbsData.ConvertTo, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "")]
+    public sealed class ConvertToClicmlCommand : PSCmdlet, IDisposable
+    {
+        #region Command Line Parameters
+
+        /// <summary>
+        /// Gets or sets input object to be converted.
+        /// </summary>
+        [Parameter(ValueFromPipeline = true, Mandatory = true)]
+        [AllowNull]
+        public PSObject InputObject { get; set; }
+
+        /// <summary>
+        /// Gets or sets depth of serialization.
+        /// </summary>
+        [Parameter]
+        [ValidateRange(1, int.MaxValue)]
+        public int Depth { get; set; } = 0;
+
+        /// <summary>
+        /// Gets or sets encoding.
+        /// </summary>
+        [Parameter]
+        [ArgumentToEncodingTransformationAttribute]
+        [ArgumentEncodingCompletionsAttribute]
+        [ValidateNotNullOrEmpty]
+        public Encoding Encoding { get; set; } = ClrFacade.GetDefaultEncoding();
+
+        #endregion Command Line Parameters
+
+        #region Overrides
+
+        /// <summary>
+        /// Begin processing.
+        /// </summary>
+        protected override void
+        BeginProcessing()
+        {
+            CreateStream();
+        }
+
+        /// <summary>
+        /// Process record.
+        /// </summary>
+        protected override void
+        ProcessRecord()
+        {
+            if (_serializer != null)
+            {
+                _serializer.Serialize(InputObject);
+                _xmlWriter.Flush();
+            }
+        }
+
+        /// <summary>
+        /// End processing.
+        /// </summary>
+        protected override void
+        EndProcessing()
+        {
+            if (_serializer != null)
+            {
+                _serializer.Done();
+                _serializer = null;
+            }
+
+            WriteObject(_stringWriter.ToString());
+            CleanUp();
+        }
+
+        /// <summary>
+        /// Stop processing.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            base.StopProcessing();
+            _serializer.Stop();
+        }
+
+        #endregion Overrides
+
+        #region stream
+
+        private XmlWriter _xmlWriter;
+        private Serializer _serializer;
+        private StringWriter _stringWriter;
+
+        private void CreateStream()
+        {
+            _stringWriter = new StringWriter();
+
+            // create xml writer
+            XmlWriterSettings xmlSettings = new XmlWriterSettings();
+            xmlSettings.CloseOutput = true;
+            xmlSettings.Encoding = this.Encoding;
+            xmlSettings.Indent = true;
+            xmlSettings.OmitXmlDeclaration = true;
+            _xmlWriter = XmlWriter.Create(_stringWriter, xmlSettings);
+            if (Depth == 0)
+            {
+                _serializer = new Serializer(_xmlWriter);
+            }
+            else
+            {
+                _serializer = new Serializer(_xmlWriter, Depth, true);
+            }
+        }
+
+        private void
+        CleanUp()
+        {
+            if (_xmlWriter != null)
+            {
+                _xmlWriter.Dispose();
+                _xmlWriter = null;
+            }
+
+            if (_stringWriter != null)
+            {
+                _stringWriter.Dispose();
+                _stringWriter = null;
+            }
+        }
+
+        #endregion stream
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Set to true when object is disposed.
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
+        /// Public dispose method.
+        /// </summary>
+        public void
+        Dispose()
+        {
+            if (_disposed == false)
+            {
+                CleanUp();
+            }
+
+            _disposed = true;
+        }
+
+        #endregion IDisposable Members
+    }
+    #endregion ConvertTo-Clixml
+
+    #region ConvertFrom-Clixml
+
+    /// <summary>
+    /// Implements ConvertFrom-Clixml command.
+    /// </summary>
+    [Cmdlet(VerbsData.ConvertFrom, "Clixml", SupportsPaging = true, HelpUri = "")]
+    public sealed class ConvertFromClicmlCommand : PSCmdlet, IDisposable
+    {
+        #region Command Line Parameters
+
+        /// <summary>
+        /// Gets or sets input object which is written Clixml format.
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNull]
+        [ValidateNotNullOrEmpty]
+        public PSObject[] InputObject { get; set; }
+
+        #endregion Command Line Parameters
+
+        private ImportXmlHelper _importXmlHelper;
+        private StringBuilder _stringBuilder;
+
+        #region Overrides
+
+        /// <summary>
+        /// Begin processing.
+        /// </summary>
+        protected override void
+        BeginProcessing()
+        {
+            _stringBuilder = new StringBuilder();
+        }
+
+        /// <summary>
+        /// Process record overload.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            string temp = InputObject[0].ToString();
+            _stringBuilder.AppendLine(temp);
+        }
+
+        /// <summary>
+        /// End processing.
+        /// </summary>
+        protected override void
+        EndProcessing()
+        {
+            _importXmlHelper = new ImportXmlHelper(this, _stringBuilder);
+            _importXmlHelper.Import();
+        }
+
+        /// <summary>
+        /// Stop processing.
+        /// </summary>
+        protected override void StopProcessing()
+        {
+            base.StopProcessing();
+            _importXmlHelper.Stop();
+        }
+
+        #endregion Overrides
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Set to true when object is disposed.
+        /// </summary>
+        private bool _disposed;
+
+        /// <summary>
+        /// Public dispose method.
+        /// </summary>
+        public void
+        Dispose()
+        {
+            if (_disposed == false)
+            {
+                if (_importXmlHelper != null)
+                {
+                    _importXmlHelper.Dispose();
+                    _importXmlHelper = null;
+                }
+            }
+
+            _disposed = true;
+        }
+
+        #endregion IDisposable Members
+    }
+
+    #endregion ConvertFrom-Clixml
 
     /// <summary>
     /// Implementation for the convertto-xml command.
@@ -656,6 +906,14 @@ namespace Microsoft.PowerShell.Commands
             _path = fileName;
             _cmdlet = cmdlet;
             _isLiteralPath = isLiteralPath;
+            CreateFileStream();
+        }
+
+        internal ImportXmlHelper(PSCmdlet cmdlet, StringBuilder stringBuilder)
+        {
+            _cmdlet = cmdlet;
+            _StringBuilder = stringBuilder;
+            CreateStream();
         }
 
         #endregion constructor
@@ -668,7 +926,12 @@ namespace Microsoft.PowerShell.Commands
         internal FileStream _fs;
 
         /// <summary>
-        /// XmlReader used to read file.
+        /// Handle to string builder.
+        /// </summary>
+        internal StringBuilder _StringBuilder;
+
+        /// <summary>
+        /// XmlReader used to read file or string.
         /// </summary>
         internal XmlReader _xr;
 
@@ -690,10 +953,33 @@ namespace Microsoft.PowerShell.Commands
             return XmlReader.Create(textReader, InternalDeserializer.XmlReaderSettingsForCliXml);
         }
 
+        private static XmlReader CreateXmlReader(StringBuilder stringBuilder)
+        {
+            StringReader stringReader = new StringReader(stringBuilder.ToString());
+
+            // skip #< CLIXML directive
+            const string CliXmlDirective = "#< CLIXML";
+            if (stringReader.Peek() == (int)CliXmlDirective[0])
+            {
+                string line = stringReader.ReadLine();
+                if (!line.Equals(CliXmlDirective, StringComparison.Ordinal))
+                {
+                    stringReader = new StringReader(stringBuilder.ToString());
+                }
+            }
+
+            return XmlReader.Create(stringReader, InternalDeserializer.XmlReaderSettingsForCliXml);
+        }
+
         internal void CreateFileStream()
         {
             _fs = PathUtils.OpenFileStream(_path, _cmdlet, _isLiteralPath);
             _xr = CreateXmlReader(_fs);
+        }
+
+        internal void CreateStream()
+        {
+            _xr = CreateXmlReader(_StringBuilder);
         }
 
         private void CleanUp()
@@ -734,7 +1020,6 @@ namespace Microsoft.PowerShell.Commands
 
         internal void Import()
         {
-            CreateFileStream();
             _deserializer = new Deserializer(_xr);
             // If total count has been requested, return a dummy object with zero confidence
             if (_cmdlet.PagingParameters.IncludeTotalCount)

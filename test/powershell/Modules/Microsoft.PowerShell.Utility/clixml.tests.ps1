@@ -181,6 +181,96 @@ Describe "CliXml test" -Tags "CI" {
             $cred.Password | Should -BeOfType System.Security.SecureString
         }
     }
+
+    Context "ConvertTo-Clixml"{
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+        }
+
+        It "Create by passing as parameter" {
+            $content = ConvertTo-Clixml -Depth 1 -InputObject ($gpsList | Select-Object -First 1)
+            $isExisted = $false
+
+            foreach($item in $content)
+            {
+                foreach($gpsItem in $gpsList)
+                {
+                    $checkId = $gpsItem.Id
+                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
+                    {
+                        $isExisted = $true
+                        break;
+                    }
+                }
+            }
+
+            $isExisted | Should -BeTrue
+        }
+
+        It "Create by passing as pipeline" {
+            $content = ($gpsList | Select-Object -First 1) | ConvertTo-Clixml -Depth 1
+
+            $isExisted = $false
+
+            foreach($item in $content)
+            {
+                foreach($gpsItem in $gpsList)
+                {
+                    $checkId = $gpsItem.Id
+                    if (($null -ne $(Select-String -InputObject $item -SimpleMatch $checkId)) -and ($null -ne $(Select-String -InputObject $item -SimpleMatch "Id")))
+                    {
+                        $isExisted = $true
+                        break;
+                    }
+                }
+            }
+
+            $isExisted | Should -BeTrue
+        }
+    }
+
+    Context "ConvertFrom-CliXML" {
+        BeforeAll {
+            $gpsList = Get-Process pwsh
+            $gps = $gpsList | Select-Object -First 1
+        }
+
+        It "Create by passing as parameter" {
+            $content = ConvertTo-Clixml -Depth 1 -InputObject $gps
+
+            $content | Should -Not -Be $null
+
+            $importedProcess = ConvertFrom-CliXML -InputObject $content
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
+        }
+
+        It "Create by passing as pipeline" {
+            $content = $gps | ConvertTo-Clixml -Depth 1
+
+            $content | Should -Not -Be $null
+
+            $importedProcess = $content | ConvertFrom-CliXML
+            $importedProcess.ProcessName | Should -Not -BeNullOrEmpty
+            $gps.ProcessName | Should -Be $importedProcess.ProcessName
+            $importedProcess.Id | Should -Not -BeNullOrEmpty
+            $gps.Id | Should -Be $importedProcess.Id
+        }
+
+        It "should import PSCredential" {
+            $UserName = "Foo"
+            $pass = ConvertTo-SecureString (New-RandomHexString) -AsPlainText -Force
+            $cred =  [PSCredential]::new($UserName, $pass)
+
+            $content = $cred | ConvertTo-Clixml
+            $cred = ConvertFrom-CliXML -InputObject $content
+            $cred.UserName | Should -BeExactly "Foo"
+            $cred.Password | Should -BeOfType System.Security.SecureString
+        }
+    }
 }
 
 ##
