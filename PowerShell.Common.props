@@ -97,7 +97,7 @@
 
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
-    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -115,12 +115,18 @@
     <StronglyTypedOutputFolder>gen</StronglyTypedOutputFolder>
   </PropertyGroup>
 
+  <Target Name = "CreateDirectories" BeforeTargets = "BeforeResGen">
+    <MakeDir
+       Directories = "$(StronglyTypedOutputFolder)"/>
+  </Target>
+
   <ItemGroup>
     <!-- We skip this for Microsoft.Management.UI.Internal because we have to use a workaround for WPF project. -->
     <EmbeddedResource Update = "resources/*.resx" Condition = "'$(MSBuildProjectName)' != 'Microsoft.Management.UI.Internal'">
       <Generator>ResXFileCodeGenerator</Generator>
       <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
 
+      <StronglyTypedFileName>$(StronglyTypedOutputFolder)/%(Filename).cs</StronglyTypedFileName>
       <StronglyTypedClassName>%(Filename)</StronglyTypedClassName>
       <StronglyTypedManifestPrefix>$(RootNamespace).resources</StronglyTypedManifestPrefix>
     </EmbeddedResource>
