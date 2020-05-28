@@ -2101,7 +2101,9 @@ namespace System.Management.Automation
         internal bool isGeneric;
 
         private bool _useReflection;
+
         private delegate object MethodInvoker(object target, object[] arguments);
+
         private MethodInvoker _methodInvoker;
 
         /// <summary>

@@ -391,7 +391,9 @@ namespace System.Management.Automation.Host
         /// make it to the actual host.
         /// </summary>
         internal bool TranscribeOnly => Interlocked.CompareExchange(ref _transcribeOnlyCount, 0, 0) != 0;
+
         private int _transcribeOnlyCount = 0;
+
         internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
         private sealed class TranscribeOnlyCookie : IDisposable
         {

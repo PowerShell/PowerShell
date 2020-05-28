@@ -3177,6 +3177,7 @@ namespace Microsoft.PowerShell.Commands
     {
         private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
         private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
+
         private const string dnsNamePrefix = "DNS Name=";
         private const string distinguishedNamePrefix = "CN=";
 

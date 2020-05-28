@@ -56,7 +56,9 @@ namespace Microsoft.PowerShell.Commands
         private StreamReader _reader;
         private StreamWriter _writer;
         private bool _usingByteEncoding;
+
         private const char DefaultDelimiter = '\n';
+
         private string _delimiter = $"{DefaultDelimiter}";
         private int[] _offsetDictionary;
         private bool _usingDelimiter;
@@ -1156,6 +1158,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly Encoding _defaultAnsiEncoding;
 
         private const int BuffSize = 4096;
+
         private readonly byte[] _byteBuff = new byte[BuffSize];
         private readonly char[] _charBuff = new char[BuffSize];
         private int _byteCount = 0;

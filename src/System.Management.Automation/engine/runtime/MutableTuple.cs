@@ -30,6 +30,7 @@ namespace System.Management.Automation
     internal abstract class MutableTuple
     {
         private const int MaxSize = 128;
+
         private static readonly Dictionary<Type, int> s_sizeDict = new Dictionary<Type, int>();
 
         private int _size;

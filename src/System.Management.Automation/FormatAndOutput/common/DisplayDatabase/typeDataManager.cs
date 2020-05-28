@@ -473,6 +473,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private delegate IEnumerable<ExtendedTypeDefinition> TypeGenerator();
+
         private static Dictionary<string, Tuple<bool, TypeGenerator>> s_builtinGenerators;
 
         private static Tuple<bool, TypeGenerator> GetBuiltin(bool isForHelp, TypeGenerator generator)

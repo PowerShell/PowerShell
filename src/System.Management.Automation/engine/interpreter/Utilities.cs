@@ -375,6 +375,7 @@ namespace System.Management.Automation.Interpreter
         private KeyValuePair<TKey, TValue>[] _keysAndValues;
         private Dictionary<TKey, TValue> _dict;
         private int _count;
+
         private const int _arraySize = 10;
 
         public HybridReferenceDictionary()

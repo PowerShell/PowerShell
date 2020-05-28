@@ -2003,6 +2003,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _inputStreamClosed = false;
 
         private const string InProcParameterSet = "InProcess";
+
         private PSDataCollection<object> _input = new PSDataCollection<object>();
         private bool _needToCollect = false;
         private bool _needToStartSteppablePipelineOnServer = false;

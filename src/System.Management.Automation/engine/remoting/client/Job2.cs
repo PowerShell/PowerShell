@@ -502,9 +502,11 @@ namespace System.Management.Automation
         #region Private Members
 
         private const string TraceClassName = "ContainerParentJob";
+
         private bool _moreData = true;
         private readonly object _syncObject = new object();
         private int _isDisposed = 0;
+
         private const int DisposedTrue = 1;
         private const int DisposedFalse = 0;
         // This variable is set to true if atleast one child job failed.

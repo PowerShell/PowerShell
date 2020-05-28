@@ -634,7 +634,9 @@ namespace Microsoft.PowerShell.Commands
         private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
+
         private const ReportDiagnostic defaultDiagnosticOption = ReportDiagnostic.Error;
+
         private static readonly string[] s_writeInformationTags = new string[] { "PSHOST" };
         private int _syntaxTreesHash;
 

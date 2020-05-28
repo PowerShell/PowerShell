@@ -506,6 +506,7 @@ namespace System.Management.Automation.Runspaces
 
         private RunspacePoolInternal _internalPool;
         private object _syncObject = new object();
+
         private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
         private event EventHandler<PSEventArgs> InternalForwardEvent = null;
         private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated = null;

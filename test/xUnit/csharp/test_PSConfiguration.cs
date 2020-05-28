@@ -18,6 +18,7 @@ namespace PSTests.Sequential
     public class PowerShellPolicyFixture : IDisposable
     {
         private const string ConfigFileName = "powershell.config.json";
+
         private readonly string systemWideConfigFile;
         private readonly string currentUserConfigFile;
 

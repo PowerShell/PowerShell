@@ -353,6 +353,7 @@ namespace System.Management.Automation.Language
             internal object _visitData;
             internal bool _throws;
             internal bool _returns;
+
             internal bool _unreachable { get; private set; }
 
             // Only Entry block, that can be constructed via NewEntryBlock() is reachable initially.

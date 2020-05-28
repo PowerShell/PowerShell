@@ -8679,6 +8679,7 @@ namespace System.Management.Automation.Internal
         internal static class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
+
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }
 
             [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
@@ -8750,6 +8751,7 @@ namespace System.Management.Automation.Internal
         #region PSCopyToSessionHelper
 
         internal const string PSCopyToSessionHelperName = @"PSCopyToSessionHelper";
+
         private static string s_driveMaxSizeErrorFormatString = FileSystemProviderStrings.DriveMaxSizeError;
         private static string s_PSCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
         private static string s_PSCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
@@ -9216,6 +9218,7 @@ namespace System.Management.Automation.Internal
         #region PSCopyFromSessionHelper
 
         internal const string PSCopyFromSessionHelperName = @"PSCopyFromSessionHelper";
+
         private static string s_PSCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
         private static string s_PSCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
         private const string PSCopyFromSessionHelperDefinitionFormat = @"
@@ -9705,6 +9708,7 @@ namespace System.Management.Automation.Internal
         #region PSCopyRemoteUtils
 
         internal const string PSCopyRemoteUtilsName = @"PSCopyRemoteUtils";
+
         internal static string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
         private static string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
         private const string PSCopyRemoteUtilsDefinitionFormat = @"

@@ -58,6 +58,7 @@ namespace System.Management.Automation.Language
         IEnumerable<ExperimentalAttribute> GetExperimentalAttributes();
 
         bool UsesCmdletBinding();
+
         ReadOnlyCollection<ParameterAst> Parameters { get; }
 
         ScriptBlockAst Body { get; }
@@ -6931,6 +6932,7 @@ namespace System.Management.Automation.Language
         }
 
         private DynamicKeyword _keyword;
+
         internal Token LCurly { get; set; }
         internal Token FunctionName { get; set; }
         internal ExpressionAst InstanceName { get; set; }

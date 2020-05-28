@@ -413,6 +413,7 @@ namespace System.Management.Automation
         }
 
         private delegate IEnumerable GetEnumerableDelegate(object obj);
+
         private static Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
 
         private static GetEnumerableDelegate GetOrCalculateEnumerable(Type type)
@@ -1922,6 +1923,7 @@ namespace System.Management.Automation
             // This static is thread safe based on the lock in GetEnumHashEntry
             // It can be shared by Runspaces in different MiniShells
             private static readonly Dictionary<Type, EnumHashEntry> s_enumTable = new Dictionary<Type, EnumHashEntry>();
+
             private const int maxEnumTableSize = 100;
 
             private static EnumHashEntry GetEnumHashEntry(Type enumType)
@@ -3656,6 +3658,7 @@ namespace System.Management.Automation
             private readonly int _matchIndex;
             // Size of the cache. It's rare to have more than 10 overloads for a method.
             private const int CacheSize = 10;
+
             private static readonly PSMethodToDelegateConverter[] s_converterCache = new PSMethodToDelegateConverter[CacheSize];
 
             private PSMethodToDelegateConverter(int matchIndex)

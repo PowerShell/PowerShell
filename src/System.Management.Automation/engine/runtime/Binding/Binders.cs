@@ -4969,6 +4969,7 @@ namespace System.Management.Automation.Language
         internal int _version;
 
         private bool _hasInstanceMember;
+
         internal bool HasInstanceMember { get { return _hasInstanceMember; } }
 
         internal static void SetHasInstanceMember(string memberName)

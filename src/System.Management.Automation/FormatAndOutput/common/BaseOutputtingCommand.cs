@@ -950,7 +950,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             private int _rowCount = 0;
             private int _consoleHeight = -1;
             private int _consoleWidth = -1;
+
             private const int WhitespaceAndPagerLineCount = 2;
+
             private bool _repeatHeader = false;
 
             /// <summary>

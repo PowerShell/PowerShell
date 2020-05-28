@@ -1123,6 +1123,7 @@ $result
         #region Private Members
 
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
+
         private const int forcedShutdown = 5; // See https://msdn.microsoft.com/library/aa394058(v=vs.85).aspx
 
         #endregion

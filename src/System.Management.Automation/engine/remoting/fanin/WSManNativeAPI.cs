@@ -23,7 +23,9 @@ namespace System.Management.Automation.Remoting.Client
         internal const string ResourceURIPrefix = @"http://schemas.microsoft.com/powershell/";
         internal const string NoProfile = "WINRS_NOPROFILE";
         internal const string CodePage = "WINRS_CODEPAGE";
+
         internal static readonly Version WSMAN_STACK_VERSION = new Version(3, 0);
+
         internal const int WSMAN_FLAG_REQUESTED_API_VERSION_1_1 = 1;
         // WSMan's default max env size in V2
         internal const int WSMAN_DEFAULT_MAX_ENVELOPE_SIZE_KB_V2 = 150;

@@ -22,6 +22,7 @@ namespace Microsoft.PowerShell.Commands.Utility
     {
         /// <summary>A bigger default to not get re-allocations in common use cases.</summary>
         private const int DefaultOutputStringCapacity = 256;
+
         private readonly StringBuilder _outputBuilder = new StringBuilder(DefaultOutputStringCapacity);
         private CultureInfo _cultureInfo = CultureInfo.InvariantCulture;
         private string _separator;

@@ -2787,6 +2787,7 @@ $args[0] | ForEach-Object {{
 ";
 
         private const string MODULEPATH = "ModulesToImport";
+
         private static readonly ScriptBlock s_getPluginSb;
 
         #endregion

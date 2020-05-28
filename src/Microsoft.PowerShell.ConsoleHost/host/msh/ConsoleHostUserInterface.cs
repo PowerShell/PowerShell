@@ -1386,6 +1386,7 @@ namespace Microsoft.PowerShell
         // We use System.Environment.NewLine because we are platform-agnostic
 
         internal static string Crlf = System.Environment.NewLine;
+
         private const string Tab = "\x0009";
 
         internal enum ReadLineResult

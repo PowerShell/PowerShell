@@ -448,6 +448,7 @@ namespace System.Management.Automation
 
         private readonly object _alreadyWroteFlowControlBuffersHighMemoryUsageWarningLock = new object();
         private bool _alreadyWroteFlowControlBuffersHighMemoryUsageWarning;
+
         private const long FlowControlBuffersHighMemoryUsageThreshold = 30000;
 
         private void WriteWarningAboutHighUsageOfFlowControlBuffers(long currentCount)

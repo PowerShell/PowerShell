@@ -37,6 +37,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private readonly IDictionary<string, string> _privateData;
 
         private const string QueryLanguageKey = "QueryDialect";
+
         private bool? _useEnumerateInstancesInsteadOfWql;
         public bool UseEnumerateInstancesInsteadOfWql
         {

@@ -173,6 +173,7 @@ namespace System.Management.Automation
     {
         internal object instance;
         internal string name;
+
         internal bool ShouldSerialize { get; set; }
 
         internal virtual void ReplicateInstance(object particularInstance)

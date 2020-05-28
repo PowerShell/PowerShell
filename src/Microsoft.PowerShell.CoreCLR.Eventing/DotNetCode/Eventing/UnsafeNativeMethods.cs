@@ -14,6 +14,7 @@ namespace System.Diagnostics.Eventing
         private const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";
         private const string EventProviderDllName = "api-ms-win-eventing-provider-l1-1-0.dll";
         private const string WEVTAPI = "wevtapi.dll";
+
         private static readonly IntPtr s_NULL = IntPtr.Zero;
 
         // WinError.h codes:

@@ -20,6 +20,7 @@ namespace Microsoft.PowerShell.Commands
         internal const string OriginalObjectPropertyName = "OutGridViewOriginalObject";
         private const string ToStringValuePropertyName = "ToStringValue";
         private const string IndexPropertyName = "IndexValue";
+
         private int _index;
 
         /// <summary> Columns definition of the underlying Management List</summary>

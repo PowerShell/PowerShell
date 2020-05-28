@@ -2349,6 +2349,7 @@ namespace System.Management.Automation
         /// The event generated when a new event is received.
         /// </summary>
         public event PSEventReceivedEventHandler PSEventReceived;
+
         private List<PSEventArgs> _eventCollection = new List<PSEventArgs>();
 
         /// <summary>
