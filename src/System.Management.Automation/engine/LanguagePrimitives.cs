@@ -1519,7 +1519,7 @@ namespace System.Management.Automation
                 // PowerShell is allowed to load only TPA.
                 // Since a type is already loaded we trust to an attribute assigned to the type
                 // and can use Type.GetType() without additional checks.
-                converterType = Type.GetType(assemblyQualifiedTypeName, true, false);
+                converterType = Type.GetType(assemblyQualifiedTypeName, throwOnError: true, ignoreCase: false);
             }
             catch (Exception e)
             {
