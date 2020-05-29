@@ -1896,7 +1896,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // Working Directory not specified -> Assign Current Path.
-                startInfo.WorkingDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, true);
+                startInfo.WorkingDirectory = PathUtils.ResolveFilePath(this.SessionState.Path.CurrentFileSystemLocation.Path, this, isLiteralPath: true);
             }
 
             if (this.ParameterSetName.Equals("Default"))
