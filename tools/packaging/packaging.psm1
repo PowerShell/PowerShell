@@ -3183,9 +3183,18 @@ function New-MSIXPackage
 
     Write-Verbose "Version: $productversion" -Verbose
 
+    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
+    if ($isPreview) {
+        Write-Verbose "Using Preview assets" -Verbose
+    }
+
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
+    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    $releasePublisher = 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
-    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName)
+    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)
     Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
     # Necessary image assets need to be in source assets folder
     $assets = @(
@@ -3198,11 +3207,6 @@ function New-MSIXPackage
 
     if (!(Test-Path "$ProductSourcePath\assets")) {
         $null = New-Item -ItemType Directory -Path "$ProductSourcePath\assets"
-    }
-
-    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
-    if ($isPreview) {
-        Write-Verbose "Using Preview assets" -Verbose
     }
 
     $assets | ForEach-Object {
