@@ -40,59 +40,62 @@ variables:
 resources:
 - repo: self
   clean: true
-jobs:
-- template: templates/ci-build.yml
-  parameters:
-    pool: ubuntu-16.04
-    jobName: linux_build
-    displayName: linux Build
 
-- template: templates/nix-test.yml
-  parameters:
-    name: Linux
-    pool: ubuntu-16.04
-    purpose: UnelevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - linux_build
+stages:
+- stage: BuildLinux
+  displayName: Build for Linux
+  jobs:
+  - template: templates/ci-build.yml
+    parameters:
+      pool: ubuntu-16.04
+      jobName: linux_build
+      displayName: linux Build
 
-- template: templates/nix-test.yml
-  parameters:
-    name: Linux
-    pool: ubuntu-16.04
-    purpose: ElevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - linux_build
+- stage: TestLinux
+  displayName: Test for Linux
+  jobs:
+  - template: templates/nix-test.yml
+    parameters:
+      name: Linux
+      pool: ubuntu-16.04
+      purpose: UnelevatedPesterTests
+      tagSet: CI
 
-- template: templates/nix-test.yml
-  parameters:
-    name: Linux
-    pool: ubuntu-16.04
-    purpose: UnelevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - linux_build
+  - template: templates/nix-test.yml
+    parameters:
+      name: Linux
+      pool: ubuntu-16.04
+      purpose: ElevatedPesterTests
+      tagSet: CI
 
-- template: templates/nix-test.yml
-  parameters:
-    name: Linux
-    pool: ubuntu-16.04
-    purpose: ElevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - linux_build
+  - template: templates/nix-test.yml
+    parameters:
+      name: Linux
+      pool: ubuntu-16.04
+      purpose: UnelevatedPesterTests
+      tagSet: Others
 
-- template: templates/verify-xunit.yml
-  parameters:
-    pool: ubuntu-16.04
-    parentJobs:
-      - linux_build
+  - template: templates/nix-test.yml
+    parameters:
+      name: Linux
+      pool: ubuntu-16.04
+      purpose: ElevatedPesterTests
+      tagSet: Others
 
-- job: CodeCovTestPackage
+  - template: templates/verify-xunit.yml
+    parameters:
+      pool: ubuntu-16.04
+
+- stage: CodeCovTestPackage
   displayName: CodeCoverage and Test Packages
-  steps:
-  - powershell: |
-      Import-Module .\tools\ci.psm1
-      New-CodeCoverageAndTestPackage
-    displayName: CodeCoverage and Test Package
+  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
+  jobs:
+  - job: CodeCovTestPackage
+    displayName: CodeCoverage and Test Packages
+    pool:
+      vmImage: ubuntu-16.04
+    steps:
+    - pwsh: |
+        Import-Module .\tools\ci.psm1
+        New-CodeCoverageAndTestPackage
+      displayName: CodeCoverage and Test Package
