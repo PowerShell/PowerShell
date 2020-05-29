@@ -685,11 +685,6 @@ namespace Microsoft.PowerShell.Commands
             // Add System.Management.Automation.dll
             defaultRefAssemblies.Add(MetadataReference.CreateFromFile(typeof(PSObject).Assembly.Location));
 
-            // We want to avoid reallocating the internal array, so we assert if the list capacity has increased.
-            Diagnostics.Assert(
-                defaultRefAssemblies.Capacity <= capacity,
-                $"defaultRefAssemblies was resized because of insufficient initial capacity! A capacity of {defaultRefAssemblies.Count} is required.");
-
             return defaultRefAssemblies;
         }
 
