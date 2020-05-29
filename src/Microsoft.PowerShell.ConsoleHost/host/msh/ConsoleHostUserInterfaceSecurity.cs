@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell
                 }
 
                 int equal = 0;
-                for(int i =0; i< pwdLength; i++)
+                for(int i = 0; i < pwdLength; i++)
                 {
                     var c1 = Marshal.ReadByte(pwd_ptr + i);
                     var c2 = Marshal.ReadByte(confirmPwd_ptr + i);
@@ -207,4 +207,3 @@ namespace Microsoft.PowerShell
         }
     }
 }
-
