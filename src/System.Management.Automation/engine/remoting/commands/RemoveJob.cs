@@ -1013,6 +1013,7 @@ namespace Microsoft.PowerShell.Commands
 
         private HashSet<Guid> _pendingJobs = new HashSet<Guid>();
         private readonly ManualResetEvent _waitForJobs = new ManualResetEvent(false);
+
         private readonly Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>> _cleanUpActions =
             new Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>>();
 

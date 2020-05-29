@@ -647,6 +647,7 @@ namespace System.Management.Automation
         // The CommandType for a script cmdlet is not CommandTypes.Cmdlet, yet
         // proxy generation needs to know the difference between script and script cmdlet.
         private bool _wrappedAnyCmdlet;
+
         internal bool WrappedAnyCmdlet
         {
             get { return _wrappedAnyCmdlet; }

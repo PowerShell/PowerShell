@@ -29,6 +29,7 @@ namespace Microsoft.PowerShell.Commands
         private const string RandomNumberParameterSet = "RandomNumberParameterSet";
         private const string RandomListItemParameterSet = "RandomListItemParameterSet";
         private const string ShuffleParameterSet = "ShuffleParameterSet";
+
         private static readonly object[] _nullInArray = new object[] { null };
 
         private enum MyParameterSet

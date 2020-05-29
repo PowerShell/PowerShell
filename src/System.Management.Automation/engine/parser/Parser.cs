@@ -39,6 +39,7 @@ namespace System.Management.Automation.Language
         private ParseMode _parseMode;
 
         internal string _fileName;
+
         internal bool ProduceV2Tokens { get; set; }
 
         internal const string VERBATIM_ARGUMENT = "--%";
@@ -8083,6 +8084,7 @@ namespace System.Management.Automation.Language
     internal class ParserEventSource : EventSource
     {
         internal static ParserEventSource Log = new ParserEventSource();
+
         internal const int MaxScriptLengthToLog = 50;
 
         public void ParseStart(string FileName, int Length) { WriteEvent(1, FileName, Length); }

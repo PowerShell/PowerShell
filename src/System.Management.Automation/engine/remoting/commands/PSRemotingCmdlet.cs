@@ -673,6 +673,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private PSSessionOption _sessionOption;
+
         internal const string DEFAULT_SESSION_OPTION = "PSSessionOption";
 
         // Quota related variables.

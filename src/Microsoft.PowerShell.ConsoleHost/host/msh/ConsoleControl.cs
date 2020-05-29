@@ -136,6 +136,7 @@ namespace Microsoft.PowerShell
             internal short FontHeight;
             internal int FontFamily;
             internal int FontWeight;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             internal string FontFace;
         }
@@ -3005,6 +3006,7 @@ namespace Microsoft.PowerShell
         internal static class NativeMethods
         {
             internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);  // WinBase.h
+
             internal const int FontTypeMask = 0x06;
             internal const int TrueTypeFont = 0x04;
 

@@ -1379,6 +1379,7 @@ namespace Microsoft.PowerShell.Commands
         //     any exceptions thrown on this thread. (ThrottleManager will not respond if it doesn't
         //     get a start/stop complete callback).
         private List<EventHandler<OperationStateEventArgs>> _internalCallbacks = new List<EventHandler<OperationStateEventArgs>>();
+
         internal override event EventHandler<OperationStateEventArgs> OperationComplete
         {
             add

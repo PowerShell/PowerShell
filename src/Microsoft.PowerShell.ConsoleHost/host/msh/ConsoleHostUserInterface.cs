@@ -1423,6 +1423,7 @@ namespace Microsoft.PowerShell
         // We use System.Environment.NewLine because we are platform-agnostic
 
         internal static string Crlf = System.Environment.NewLine;
+
         private const string Tab = "\x0009";
 
         internal enum ReadLineResult
@@ -2166,6 +2167,7 @@ namespace Microsoft.PowerShell
         }
 
         private const string CustomReadlineCommand = "PSConsoleHostReadLine";
+
         private bool TryInvokeUserDefinedReadLine(out string input)
         {
             // We're using GetCommands instead of GetCommand so we don't auto-load a module should the command exist, but isn't loaded.

@@ -329,6 +329,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             internal readonly PSObject WrittenObject;
+
             internal int NotePropertyCount { get; }
         }
 

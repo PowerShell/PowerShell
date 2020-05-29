@@ -321,10 +321,13 @@ namespace System.Management.Automation.Remoting.Client
         // operation handles are owned by WSMan
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSessionHandle;
+
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManShellOperationHandle;
+
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManReceiveOperationHandle;
+
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSendOperationHandle;
         // this is used with WSMan callbacks to represent a session transport manager.
@@ -451,6 +454,7 @@ namespace System.Management.Automation.Remoting.Client
         // callbacks.
         private static Dictionary<long, WSManClientSessionTransportManager> s_sessionTMHandles =
             new Dictionary<long, WSManClientSessionTransportManager>();
+
         private static long s_sessionTMSeed;
         // generate unique session id
         private static long GetNextSessionTMHandleId()
@@ -2779,12 +2783,16 @@ namespace System.Management.Automation.Remoting.Client
 
         // operation handles
         private IntPtr _wsManShellOperationHandle;
+
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManCmdOperationHandle;
+
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _cmdSignalOperationHandle;
+
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManReceiveOperationHandle;
+
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private IntPtr _wsManSendOperationHandle;
         // this is used with WSMan callbacks to represent a command transport manager.
@@ -4110,6 +4118,7 @@ namespace System.Management.Automation.Remoting.Client
         // callbacks.
         private static Dictionary<long, WSManClientCommandTransportManager> s_cmdTMHandles =
             new Dictionary<long, WSManClientCommandTransportManager>();
+
         private static long s_cmdTMSeed;
 
         // Generate command transport manager unique id

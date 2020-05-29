@@ -817,6 +817,7 @@ namespace System.Management.Automation
         }
 
         private PSNoteProperty _noteProperty;
+
         internal PSNoteProperty GetNotePropertyForProviderCmdlets(string name)
         {
             if (_noteProperty == null)

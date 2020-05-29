@@ -794,6 +794,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private List<string> _commandsSkippedBecauseOfShadowing = new List<string>();
+
         private void ReportSkippedCommands()
         {
             if (_commandsSkippedBecauseOfShadowing.Count != 0)
@@ -825,6 +826,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Dictionary<string, object> _existingCommands;
+
         private Dictionary<string, object> ExistingCommands
         {
             get
@@ -2119,6 +2121,7 @@ function Write-PSImplicitRemotingMessage
     try { & $script:WriteHost -Object $message -ErrorAction SilentlyContinue } catch { }
 }
 ";
+
         private void GenerateHelperFunctionsWriteMessage(TextWriter writer)
         {
             if (writer == null)
@@ -2173,6 +2176,7 @@ function Set-PSImplicitRemotingSession
 
 if ($PSSessionOverride) {{ Set-PSImplicitRemotingSession $PSSessionOverride }}
 ";
+
         private void GenerateHelperFunctionsSetImplicitRunspace(TextWriter writer)
         {
             if (writer == null)
@@ -2204,6 +2208,7 @@ function Get-PSImplicitRemotingSessionOption
     }}
 }}
 ";
+
         private void GenerateHelperFunctionsGetSessionOption(TextWriter writer)
         {
             if (writer == null)
@@ -2434,6 +2439,7 @@ function Get-PSImplicitRemotingSession
                 }} -ErrorAction SilentlyContinue
             }} catch {{ }}
 ";
+
         private string GenerateReimportingOfModules()
         {
             StringBuilder result = new StringBuilder();
@@ -2543,6 +2549,7 @@ function Get-PSImplicitRemotingSession
 
         private const string ComputerNameParameterTemplate = @"-ComputerName '{0}' `
                     -ApplicationName '{1}' {2} {3} ";
+
         private const string VMIdParameterTemplate = @"-VMId '{0}' ";
         private const string ContainerIdParameterTemplate = @"-ContainerId '{0}' ";
 
@@ -2748,6 +2755,7 @@ function Get-PSImplicitRemotingClientSideParameters
     return $clientSideParameters
 }
 ";
+
         private void GenerateHelperFunctionsClientSideParameters(TextWriter writer)
         {
             if (writer == null)

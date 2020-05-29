@@ -641,6 +641,7 @@ namespace System.Management.Automation
         #endregion OnIdleProcessing
 
         private static Dictionary<string, Type> s_generatedEventHandlers = new Dictionary<string, Type>();
+
         private void ProcessNewSubscriber(PSEventSubscriber subscriber, object source, string eventName, string sourceIdentifier, PSObject data, bool supportEvent, bool forwardEvent)
         {
             Delegate handlerDelegate = null;
@@ -2349,6 +2350,7 @@ namespace System.Management.Automation
         /// The event generated when a new event is received.
         /// </summary>
         public event PSEventReceivedEventHandler PSEventReceived;
+
         private List<PSEventArgs> _eventCollection = new List<PSEventArgs>();
 
         /// <summary>

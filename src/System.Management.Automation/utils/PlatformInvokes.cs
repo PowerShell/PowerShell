@@ -99,6 +99,7 @@ namespace System.Management.Automation
             internal int nLength;
             internal SafeLocalMemHandle lpSecurityDescriptor;
             internal bool bInheritHandle;
+
             internal SecurityAttributes()
             {
                 this.nLength = 12;
@@ -124,6 +125,7 @@ namespace System.Management.Automation
 
             [DllImport(PinvokeDllNames.LocalFreeDllName), ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success)]
             private static extern IntPtr LocalFree(IntPtr hMem);
+
             protected override bool ReleaseHandle()
             {
                 return (LocalFree(base.handle) == IntPtr.Zero);
@@ -602,6 +604,7 @@ namespace System.Management.Automation
             public SafeFileHandle hStdInput;
             public SafeFileHandle hStdOutput;
             public SafeFileHandle hStdError;
+
             public STARTUPINFO()
             {
                 this.lpReserved = IntPtr.Zero;
@@ -650,6 +653,7 @@ namespace System.Management.Automation
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;
             public bool bInheritHandle;
+
             public SECURITY_ATTRIBUTES()
             {
                 this.nLength = 12;
@@ -674,6 +678,7 @@ namespace System.Management.Automation
 
         [DllImport(PinvokeDllNames.ResumeThreadDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern uint ResumeThread(IntPtr threadHandle);
+
         internal static uint RESUME_THREAD_FAILED = System.UInt32.MaxValue; // (DWORD)-1
 
         [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]

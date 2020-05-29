@@ -398,6 +398,7 @@ namespace Microsoft.WSMan.Management
 
         #  region private
         WSManHelper helper;
+
         private string GetFilter()
         {
             string name;

@@ -831,6 +831,7 @@ namespace System.Management.Automation
         }
 
         private Lazy<int> _parentActivityId;
+
         internal void SetParentActivityIdGetter(Func<int> parentActivityIdGetter)
         {
             Dbg.Assert(parentActivityIdGetter != null, "Caller should verify parentActivityIdGetter != null");

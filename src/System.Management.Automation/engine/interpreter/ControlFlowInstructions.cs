@@ -253,6 +253,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class GotoInstruction : IndexedBranchInstruction
     {
         private const int Variants = 4;
+
         private static readonly GotoInstruction[] s_cache = new GotoInstruction[Variants * CacheSize];
 
         private readonly bool _hasResult;

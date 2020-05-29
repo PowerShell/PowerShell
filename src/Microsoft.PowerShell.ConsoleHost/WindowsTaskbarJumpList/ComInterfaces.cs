@@ -56,39 +56,52 @@ namespace Microsoft.PowerShell
                 int cchMaxPath,
                 IntPtr pfd,
                 uint fFlags);
+
             void GetIDList(out IntPtr ppidl);
             void SetIDList(IntPtr pidl);
+
             void GetDescription(
                 [Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszFile,
                 int cchMaxName);
+
             void SetDescription(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszName);
+
             void GetWorkingDirectory(
                 [Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszDir,
                 int cchMaxPath
                 );
+
             void SetWorkingDirectory(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszDir);
+
             void GetArguments(
                 [Out(), MarshalAs(UnmanagedType.LPWStr)] StringBuilder pszArgs,
                 int cchMaxPath);
+
             void SetArguments(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszArgs);
+
             void GetHotKey(out short wHotKey);
             void SetHotKey(short wHotKey);
             void GetShowCmd(out uint iShowCmd);
             void SetShowCmd(uint iShowCmd);
+
             void GetIconLocation(
                 [Out(), MarshalAs(UnmanagedType.LPWStr)] out StringBuilder pszIconPath,
                 int cchIconPath,
                 out int iIcon);
+
             void SetIconLocation(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszIconPath,
                 int iIcon);
+
             void SetRelativePath(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszPathRel,
                 uint dwReserved);
+
             void Resolve(IntPtr hwnd, uint fFlags);
+
             void SetPath(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszFile);
         }
@@ -151,26 +164,34 @@ namespace Microsoft.PowerShell
         {
             void SetAppID(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszAppID);
+
             [PreserveSig]
             HResult BeginList(
                 out uint cMaxSlots,
                 ref Guid riid,
                 [Out(), MarshalAs(UnmanagedType.Interface)] out object ppvObject);
+
             [PreserveSig]
             HResult AppendCategory(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszCategory,
                 [MarshalAs(UnmanagedType.Interface)] IObjectArray poa);
+
             void AppendKnownCategory(
                 [MarshalAs(UnmanagedType.I4)] KnownDestinationCategory category);
+
             [PreserveSig]
             HResult AddUserTasks(
                 [MarshalAs(UnmanagedType.Interface)] IObjectArray poa);
+
             void CommitList();
+
             void GetRemovedDestinations(
                 ref Guid riid,
                 [Out(), MarshalAs(UnmanagedType.Interface)] out object ppvObject);
+
             void DeleteList(
                 [MarshalAs(UnmanagedType.LPWStr)] string pszAppID);
+
             void AbortList();
         }
 
@@ -186,6 +207,7 @@ namespace Microsoft.PowerShell
         internal interface IObjectArray
         {
             void GetCount(out uint cObjects);
+
             void GetAt(
                 uint iIndex,
                 ref Guid riid,
@@ -208,8 +230,10 @@ namespace Microsoft.PowerShell
             // IObjectCollection
             void AddObject(
                 [MarshalAs(UnmanagedType.Interface)] object pvObject);
+
             void AddFromArray(
                 [MarshalAs(UnmanagedType.Interface)] IObjectArray poaSource);
+
             void RemoveObject(uint uiIndex);
             void Clear();
         }

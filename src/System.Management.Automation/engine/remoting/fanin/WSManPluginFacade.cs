@@ -170,6 +170,7 @@ namespace System.Management.Automation.Remoting
 
         // Holds the delegate pointers in a structure that has identical layout to the native structure.
         private WSManPluginEntryDelegatesInternal _unmanagedStruct = new WSManPluginEntryDelegatesInternal();
+
         internal WSManPluginEntryDelegatesInternal UnmanagedStruct
         {
             get { return _unmanagedStruct; }

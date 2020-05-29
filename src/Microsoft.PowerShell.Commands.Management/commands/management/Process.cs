@@ -2776,6 +2776,7 @@ namespace Microsoft.PowerShell.Commands
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;
             public bool bInheritHandle;
+
             public SECURITY_ATTRIBUTES()
             {
                 this.nLength = 12;
@@ -2801,6 +2802,7 @@ namespace Microsoft.PowerShell.Commands
 
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
+
             protected override bool ReleaseHandle()
             {
                 return (LocalFree(base.handle) == IntPtr.Zero);
@@ -2828,6 +2830,7 @@ namespace Microsoft.PowerShell.Commands
             public SafeFileHandle hStdInput;
             public SafeFileHandle hStdOutput;
             public SafeFileHandle hStdError;
+
             public STARTUPINFO()
             {
                 this.lpReserved = IntPtr.Zero;

@@ -510,6 +510,7 @@ namespace System.Management.Automation.Help
                     </xs:complexType>
                 </xs:element>
             </xs:schema>";
+
         private const string HelpInfoXmlNamespace = "http://schemas.microsoft.com/powershell/help/2010/05";
         private const string HelpInfoXmlValidationFailure = "HelpInfoXmlValidationFailure";
 

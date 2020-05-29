@@ -283,6 +283,7 @@ namespace System.Management.Automation
 
         // We delay parsing scripts loaded on startup, so we save the text.
         private string _scriptText;
+
         internal IParameterMetadataProvider Ast { get => _ast ?? DelayParseScriptText(); }
 
         private IParameterMetadataProvider _ast;
@@ -324,6 +325,7 @@ namespace System.Management.Automation
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
 
         internal IScriptExtent[] SequencePoints { get; set; }
+
         private RuntimeDefinedParameterDictionary _runtimeDefinedParameterDictionary;
         private Attribute[] _attributes;
         private bool _usesCmdletBinding;
@@ -331,6 +333,7 @@ namespace System.Management.Automation
         private bool _compiledUnoptimized;
         private bool _hasSuspiciousContent;
         private bool? _isProductCode;
+
         internal bool DebuggerHidden { get; set; }
         internal bool DebuggerStepThrough { get; set; }
         internal Guid Id { get; private set; }
@@ -555,6 +558,7 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<Tuple<string, string>, ScriptBlock> s_cachedScripts =
             new ConcurrentDictionary<Tuple<string, string>, ScriptBlock>();
+
         internal static ScriptBlock TryGetCachedScriptBlock(string fileName, string fileContents)
         {
             if (InternalTestHooks.IgnoreScriptBlockCache)
@@ -1717,6 +1721,7 @@ namespace System.Management.Automation
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
+
         private static Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
             () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);

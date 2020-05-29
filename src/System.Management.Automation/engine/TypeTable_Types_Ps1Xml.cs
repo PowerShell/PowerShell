@@ -12,6 +12,7 @@ namespace System.Management.Automation.Runspaces
     public sealed partial class TypeTable
     {
         private const int ValueFactoryCacheCount = 6;
+
         private static readonly Func<string, PSMemberInfoInternalCollection<PSMemberInfo>>[] s_valueFactoryCache;
 
         private static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> GetValueFactoryBasedOnInitCapacity(int capacity)

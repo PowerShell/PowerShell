@@ -667,6 +667,7 @@ namespace System.Management.Automation
         }
 
         private static readonly ConcurrentDictionary<Type, Func<Cmdlet>> s_constructInstanceCache;
+
         private static Cmdlet ConstructInstance(Type type)
         {
             // Call the default constructor if type derives from Cmdlet.

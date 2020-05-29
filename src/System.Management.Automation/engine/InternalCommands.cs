@@ -1963,6 +1963,7 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly CallSite<Func<CallSite, object, bool>> _toBoolSite =
             CallSite<Func<CallSite, object, bool>>.Create(PSConvertBinder.Get(typeof(bool)));
+
         private Func<object, object, object> _operationDelegate;
 
         private static Func<object, object, object> GetCallSiteDelegate(ExpressionType expressionType, bool ignoreCase)

@@ -20,10 +20,13 @@ namespace System.Diagnostics.Eventing
         //
         //
         private EventProvider _provider;
+
         private const string s_nullStringValue = "null";
         private const string s_nullStringComaValue = "null,";
         private const string s_nullCStringValue = ": null";
+
         private string _delimiter = ";";
+
         private const uint s_keyWordMask = 0xFFFFFF00;
         private const int s_defaultPayloadSize = 512;
 

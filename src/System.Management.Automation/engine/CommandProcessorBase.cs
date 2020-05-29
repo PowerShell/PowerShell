@@ -156,6 +156,7 @@ namespace System.Management.Automation
         /// The command runtime used for this instance of a command processor.
         /// </summary>
         protected MshCommandRuntime commandRuntime;
+
         internal MshCommandRuntime CommandRuntime
         {
             get { return commandRuntime; }
@@ -230,6 +231,7 @@ namespace System.Management.Automation
         /// The execution context used by the system.
         /// </summary>
         protected ExecutionContext _context;
+
         internal ExecutionContext Context
         {
             get { return _context; }

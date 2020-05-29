@@ -125,18 +125,21 @@ namespace System.Management.Automation.Runspaces
     internal class DiscardingPipelineWriter : PipelineWriter
     {
         private ManualResetEvent _waitHandle = new ManualResetEvent(true);
+
         public override WaitHandle WaitHandle
         {
             get { return _waitHandle; }
         }
 
         private bool _isOpen = true;
+
         public override bool IsOpen
         {
             get { return _isOpen; }
         }
 
         private int _count = 0;
+
         public override int Count
         {
             get { return _count; }

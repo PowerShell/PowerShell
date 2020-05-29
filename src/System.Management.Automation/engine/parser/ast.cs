@@ -58,6 +58,7 @@ namespace System.Management.Automation.Language
         IEnumerable<ExperimentalAttribute> GetExperimentalAttributes();
 
         bool UsesCmdletBinding();
+
         ReadOnlyCollection<ParameterAst> Parameters { get; }
 
         ScriptBlockAst Body { get; }
@@ -66,6 +67,7 @@ namespace System.Management.Automation.Language
 
         PowerShell GetPowerShell(ExecutionContext context, Dictionary<string, object> variables, bool isTrustedInput,
             bool filterNonUsingVariables, bool? createLocalScope, params object[] args);
+
         string GetWithInputHandlingForInvokeCommand();
 
         /// <summary>
@@ -693,10 +695,13 @@ namespace System.Management.Automation.Language
     {
         internal static readonly ReadOnlyCollection<PSSnapInSpecification> EmptySnapinCollection =
             Utils.EmptyReadOnlyCollection<PSSnapInSpecification>();
+
         internal static readonly ReadOnlyCollection<string> EmptyAssemblyCollection =
             Utils.EmptyReadOnlyCollection<string>();
+
         internal static readonly ReadOnlyCollection<ModuleSpecification> EmptyModuleCollection =
             Utils.EmptyReadOnlyCollection<ModuleSpecification>();
+
         internal static readonly ReadOnlyCollection<string> EmptyEditionCollection =
             Utils.EmptyReadOnlyCollection<string>();
 
@@ -760,6 +765,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
+
         private static readonly ReadOnlyCollection<UsingStatementAst> s_emptyUsingStatementList =
             Utils.EmptyReadOnlyCollection<UsingStatementAst>();
 
@@ -1603,6 +1609,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
+
         private static readonly ReadOnlyCollection<ParameterAst> s_emptyParameterList =
             Utils.EmptyReadOnlyCollection<ParameterAst>();
 
@@ -2000,6 +2007,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly ReadOnlyCollection<ExpressionAst> s_emptyPositionalArguments =
             Utils.EmptyReadOnlyCollection<ExpressionAst>();
+
         private static readonly ReadOnlyCollection<NamedAttributeArgumentAst> s_emptyNamedAttributeArguments =
             Utils.EmptyReadOnlyCollection<NamedAttributeArgumentAst>();
 
@@ -2514,8 +2522,10 @@ namespace System.Management.Automation.Language
     {
         private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
+
         private static readonly ReadOnlyCollection<MemberAst> s_emptyMembersCollection =
             Utils.EmptyReadOnlyCollection<MemberAst>();
+
         private static readonly ReadOnlyCollection<TypeConstraintAst> s_emptyBaseTypesCollection =
             Utils.EmptyReadOnlyCollection<TypeConstraintAst>();
 
@@ -3187,6 +3197,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly ReadOnlyCollection<AttributeAst> s_emptyAttributeList =
             Utils.EmptyReadOnlyCollection<AttributeAst>();
+
         private static readonly ReadOnlyCollection<ParameterAst> s_emptyParameterList =
             Utils.EmptyReadOnlyCollection<ParameterAst>();
 
@@ -6751,6 +6762,7 @@ namespace System.Management.Automation.Language
         }
 
         private static List<ParameterAst> s_configurationBuildInParameters;
+
         private static IEnumerable<AttributeAst> ConfigurationBuildInParameterAttribAsts
         {
             get
@@ -6931,6 +6943,7 @@ namespace System.Management.Automation.Language
         }
 
         private DynamicKeyword _keyword;
+
         internal Token LCurly { get; set; }
         internal Token FunctionName { get; set; }
         internal ExpressionAst InstanceName { get; set; }
@@ -6939,6 +6952,7 @@ namespace System.Management.Automation.Language
         internal string ElementName { get; set; }
 
         private PipelineAst _commandCallPipelineAst;
+
         internal PipelineAst GenerateCommandCallPipelineAst()
         {
             if (_commandCallPipelineAst != null)

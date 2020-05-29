@@ -404,6 +404,7 @@ namespace System.Management.Automation
         internal static readonly string[] ManifestModuleVersionPropertyName = new[] { "ModuleVersion" };
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
+
         internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]
         {
             "AliasesToExport",
@@ -566,6 +567,7 @@ namespace System.Management.Automation
     {
         // CRC-32C polynomial representations
         private const uint polynomial = 0x1EDC6F41;
+
         private static uint[] table;
 
         static CRC32Hash()

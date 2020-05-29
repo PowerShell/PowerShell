@@ -369,6 +369,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region Handling of dynamic parameters
 
         private RuntimeDefinedParameterDictionary _dynamicParameters;
+
         private const string CimNamespaceParameter = "CimNamespace";
 
         private string GetDynamicNamespace()

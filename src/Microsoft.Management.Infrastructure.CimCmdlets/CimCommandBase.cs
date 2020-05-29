@@ -703,6 +703,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Whether at begin process time, false means in processrecord.
         /// </summary>
         private bool atBeginProcess = true;
+
         internal bool AtBeginProcess
         {
             get

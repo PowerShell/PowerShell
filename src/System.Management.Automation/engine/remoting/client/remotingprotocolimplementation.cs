@@ -17,6 +17,7 @@ namespace System.Management.Automation.Remoting
     {
         [TraceSourceAttribute("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl")]
         private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
+
         private const string resBaseName = "remotingerroridstrings";
 
         private BaseClientSessionTransportManager _transportManager;

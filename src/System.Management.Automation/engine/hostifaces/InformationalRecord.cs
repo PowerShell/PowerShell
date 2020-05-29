@@ -158,6 +158,7 @@ namespace System.Management.Automation
 
         [DataMember()]
         private string _message;
+
         private InvocationInfo _invocationInfo;
         private ReadOnlyCollection<int> _pipelineIterationInfo;
         private bool _serializeExtendedInfo;

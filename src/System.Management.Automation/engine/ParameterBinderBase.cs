@@ -904,6 +904,7 @@ namespace System.Management.Automation
         /// The invocation information for the code that is being bound.
         /// </summary>
         private InvocationInfo _invocationInfo;
+
         internal InvocationInfo InvocationInfo
         {
             get
@@ -916,6 +917,7 @@ namespace System.Management.Automation
         /// The context of the currently running engine.
         /// </summary>
         private ExecutionContext _context;
+
         internal ExecutionContext Context
         {
             get
@@ -928,6 +930,7 @@ namespace System.Management.Automation
         /// An instance of InternalCommand that the binder is binding to.
         /// </summary>
         private InternalCommand _command;
+
         internal InternalCommand Command
         {
             get

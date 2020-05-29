@@ -467,6 +467,7 @@ namespace System.Management.Automation.Remoting
         /// true if data represents EndFragment of an object.
         /// </param>
         internal delegate void OnDataAvailableCallback(byte[] data, bool isEndFragment);
+
         private OnDataAvailableCallback _onDataAvailableCallback;
 
         #endregion

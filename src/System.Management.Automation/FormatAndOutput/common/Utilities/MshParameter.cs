@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal class NameEntryDefinition : HashtableEntryDefinition
     {
         internal const string NameEntryKey = "name";
+
         internal NameEntryDefinition()
             : base(NameEntryKey, new string[] { FormatParameterDefinitionKeys.LabelEntryKey }, new Type[] { typeof(string) }, false)
         {

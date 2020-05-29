@@ -1309,6 +1309,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         protected RemoteSessionHyperVSocketClient _client;
+
         private const string _threadName = "HyperVSocketTransport Reader Thread";
 
         #endregion
@@ -1576,6 +1577,7 @@ namespace System.Management.Automation.Remoting.Client
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
         private bool _connectionEstablished;
+
         private const string _threadName = "SSHTransport Reader Thread";
 
         #endregion
@@ -1986,6 +1988,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private NamedPipeConnectionInfo _connectionInfo;
+
         private const string _threadName = "NamedPipeTransport Reader Thread";
 
         #endregion
@@ -2053,6 +2056,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private ContainerConnectionInfo _connectionInfo;
+
         private const string _threadName = "ContainerNamedPipeTransport Reader Thread";
 
         #endregion

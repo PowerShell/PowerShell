@@ -926,6 +926,7 @@ namespace System.Management.Automation
         /// the cmdlet. Semantically this is equivalent to :  cmd | % { $pipelineVariable = $_; (...) }
         /// </summary>
         internal string PipelineVariable { get; set; }
+
         private PSVariable _pipelineVarReference = null;
 
         internal void SetupOutVariable()

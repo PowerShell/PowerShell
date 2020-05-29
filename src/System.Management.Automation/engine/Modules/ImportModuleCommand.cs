@@ -1709,6 +1709,7 @@ namespace Microsoft.PowerShell.Commands
         #region Cancellation support
 
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
         private CancellationToken CancellationToken
         {
             get

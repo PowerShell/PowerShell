@@ -56,6 +56,7 @@ namespace System.Management.Automation
         public Collection<CompletionResult> CompletionMatches { get; set; }
 
         internal static readonly IList<CompletionResult> EmptyCompletionResult = Array.Empty<CompletionResult>();
+
         private static readonly CommandCompletion s_emptyCommandCompletion = new CommandCompletion(
             new Collection<CompletionResult>(EmptyCompletionResult), -1, -1, -1);
 

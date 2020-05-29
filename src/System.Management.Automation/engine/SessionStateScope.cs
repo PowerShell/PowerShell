@@ -1711,6 +1711,7 @@ namespace System.Management.Automation
         private Dictionary<string, PSDriveInfo> _automountedDrives;
 
         private Dictionary<string, PSVariable> _variables;
+
         private Dictionary<string, PSVariable> GetPrivateVariables()
         {
             if (_variables == null)
