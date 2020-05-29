@@ -229,15 +229,13 @@ namespace System.Management.Automation.Configuration
         internal string[] GetWindowsPowerShellCompatibilityModuleDenyList()
         {
             return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityModuleDenyListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey)
-                ?? null;
+                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityModuleDenyListKey);
         }
 
         internal string[] GetWindowsPowerShellCompatibilityNoClobberModuleList()
         {
             return ReadValueFromFile<string[]>(ConfigScope.CurrentUser, WindowsPowerShellCompatibilityNoClobberModuleListKey)
-                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey)
-                ?? null;
+                ?? ReadValueFromFile<string[]>(ConfigScope.AllUsers, WindowsPowerShellCompatibilityNoClobberModuleListKey);
         }
 
         /// <summary>
