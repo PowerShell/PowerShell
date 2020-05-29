@@ -167,25 +167,30 @@ namespace Microsoft.PowerShell
 
         private static bool SecureStringEquals(SecureString password, SecureString confirmPassword)
         {
-            if(password.Length != confirmPassword.Length)
-            {
-                return false;
-            }
 
-            int length = 2 * password.Length;
             IntPtr pwd_ptr = IntPtr.Zero;
             IntPtr confirmPwd_ptr = IntPtr.Zero;
-            byte[] pwd = new byte[length];
-            byte[] confirmPwd = new byte[length];
             try
             {
                 pwd_ptr = Marshal.SecureStringToBSTR(password);
-                Marshal.Copy(pwd_ptr, pwd, 0, length);
-
                 confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
-                Marshal.Copy(confirmPwd_ptr, confirmPwd, 0, length);
 
-                return pwd.SequenceEqual(confirmPwd);
+                int pwdLength = Marshal.ReadInt32(pwd_ptr, -4);
+                int confirmPwdLength = Marshal.ReadInt32(confirmPwd_ptr, -4);
+                if(pwdLength != confirmPwdLength)
+                {
+                    return false;
+                }
+
+                int equal = 0;
+                for(int i =0; i< pwdLength; i++)
+                {
+                    var c1 = Marshal.ReadByte(pwd_ptr + i);
+                    var c2 = Marshal.ReadByte(confirmPwd_ptr + i);
+                    equal |= c1 ^ c2;
+                }
+
+                return equal == 0;
             }
             finally
             {
@@ -198,10 +203,6 @@ namespace Microsoft.PowerShell
                 {
                     Marshal.ZeroFreeBSTR(confirmPwd_ptr);
                 }
-
-                Array.Clear(pwd, 0, length);
-                Array.Clear(confirmPwd, 0, length);
-                length = 0;
             }
         }
     }
