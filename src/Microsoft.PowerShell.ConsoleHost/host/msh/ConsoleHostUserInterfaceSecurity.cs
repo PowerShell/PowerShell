@@ -3,6 +3,7 @@
 
 using System;
 using System.Globalization;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Runtime.InteropServices;
@@ -143,24 +144,20 @@ namespace Microsoft.PowerShell
             {
                 reenterPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ReenterPassword, userName);
                 passwordMismatch = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_PasswordMismatch);
-                do
+
+                // now, prompt to re-enter the password.
+                WriteToConsole(reenterPasswordPrompt, true);
+                confirmPassword = ReadLineAsSecureString();
+                if (confirmPassword == null)
                 {
-                    // now, prompt to re-enter the password.
-                    WriteToConsole(reenterPasswordPrompt, true);
-                    confirmPassword = ReadLineAsSecureString();
-                    if (confirmPassword == null)
-                    {
-                        return null;
-                    }
-
-                    if (SecureStringEquals(password, confirmPassword))
-                    {
-                        break;
-                    }
-
-                    WriteToConsole(ConsoleColor.Red, ConsoleColor.Black, passwordMismatch, true);
+                    return null;
                 }
-                while (true);
+
+                if (!SecureStringEquals(password, confirmPassword))
+                {
+                    WriteToConsole(ConsoleColor.Red, ConsoleColor.Black, passwordMismatch, false);
+                    return null;
+                }
             }
 
             WriteLineToConsole();
@@ -170,17 +167,25 @@ namespace Microsoft.PowerShell
 
         private static bool SecureStringEquals(SecureString password, SecureString confirmPassword)
         {
+            if(password.Length != confirmPassword.Length)
+            {
+                return false;
+            }
+
+            int length = 2 * password.Length;
             IntPtr pwd_ptr = IntPtr.Zero;
             IntPtr confirmPwd_ptr = IntPtr.Zero;
+            byte[] pwd = new byte[length];
+            byte[] confirmPwd = new byte[length];
             try
             {
                 pwd_ptr = Marshal.SecureStringToBSTR(password);
-                string pwd = Marshal.PtrToStringBSTR(pwd_ptr);
+                Marshal.Copy(pwd_ptr, pwd, 0, length);
 
                 confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
-                string confirmPwd = Marshal.PtrToStringBSTR(confirmPwd_ptr);
+                Marshal.Copy(confirmPwd_ptr, confirmPwd, 0, length);
 
-                return pwd.Equals(confirmPwd, StringComparison.Ordinal);
+                return pwd.SequenceEqual(confirmPwd);
             }
             finally
             {
@@ -193,6 +198,10 @@ namespace Microsoft.PowerShell
                 {
                     Marshal.ZeroFreeBSTR(confirmPwd_ptr);
                 }
+
+                Array.Clear(pwd, 0, length);
+                Array.Clear(confirmPwd, 0, length);
+                length = 0;
             }
         }
     }
