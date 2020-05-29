@@ -1139,6 +1139,24 @@ namespace System.Management.Automation.Runspaces
                 typeMembers,
                 isOverride: false);
 
+            newMembers.Add(@"CommandLine");
+            AddMember(
+                errors,
+                typeName,
+                new PSScriptProperty(
+                    @"CommandLine",
+                    GetScriptBlock(@"
+                        if ($IsWindows) {
+                            (Get-CimInstance Win32_Process -Filter ""ProcessId = $($this.Id)"").CommandLine
+                        } elseif ($IsLinux) {
+                            Get-Content -LiteralPath ""/proc/$($this.Id)/cmdline""
+                        }
+                    "),
+                    setterScript: null,
+                    shouldCloneOnAccess: true),
+                typeMembers,
+                isOverride: false);
+
             newMembers.Add(@"Parent");
             AddMember(
                 errors,
