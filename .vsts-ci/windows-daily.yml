@@ -74,6 +74,26 @@ stages:
         displayName: 'Capture Artifacts Directory'
         continueOnError: true
 
+      - pwsh: |
+          $capRootDir = Join-Path ([System.IO.Path]::GetTempPath()) "CAP"
+          $capUtilDir = Join-Path $capRootDir "Utils"
+
+          if (Test-Path $capRootDir) { Remove-Item $capRootDir -Recurse -Force }
+          New-Item $capUtilDir -ItemType Directory > $null
+
+          $capZipFile = Join-Path $capRootDir "cap.zip"
+          Invoke-WebRequest -Uri https://pscoretestdata.blob.core.windows.net/dotnet-cap/windows.zip -OutFile $capZipFile
+          Unblock-File -Path $capZipFile
+          Expand-Archive -Path $capZipFile -DestinationPath $capUtilDir -Force
+
+          Write-Host "=== Capture CAP Util Directory ==="
+          Get-ChildItem $capUtilDir -Recurse
+
+          Send-VstsCommand "vso[task.setvariable variable=CapRootDir]$capRootDir"
+          Send-VstsCommand "vso[task.setvariable variable=CapUtilDir]$capUtilDir"
+        displayName: 'Download CAP package'
+        condition: succeededOrFailed()
+
       # must be run frow Windows PowerShell
       - powershell: |
           Import-Module .\tools\ci.psm1
@@ -88,6 +108,13 @@ stages:
           $rootPath = Split-Path -Path $path
           Expand-Archive -Path '$(System.ArtifactsDirectory)\build\build.zip' -DestinationPath $rootPath -Force
         displayName: 'Unzip Build'
+        condition: succeeded()
+
+      - pwsh: |
+          Import-Module $(CapUtilDir)\CAPService.psm1
+          $dataDir = Start-TraceCollection -RootDir $(CapRootDir)
+          Send-VstsCommand "vso[task.setvariable variable=CapDataDir]$dataDir"
+        displayName: 'Start CLR Trace Collection'
         condition: succeeded()
 
       - pwsh: |
@@ -124,6 +151,17 @@ stages:
           Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
         displayName: Verify xUnit Test Results
         condition: succeededOrFailed()
+
+      - pwsh: |
+          $capDataDir = '$(CapDataDir)'
+          $capModuleFile = '$(CapUtilDir)\CAPService.psm1'
+
+          if ((Test-Path $capModuleFile) -and (Test-Path $capDataDir)) {
+              Import-Module $capModuleFile
+              Stop-TraceCollection -DataDir $capDataDir -RepoRoot $pwd
+          }
+        displayName: 'Upload CLR Trace'
+        condition: always()
 
 - stage: PackagingWin
   displayName: Packaging for Windows
