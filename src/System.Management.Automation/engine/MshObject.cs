@@ -569,7 +569,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                throw PSTraceSource.NewArgumentNullException("obj");
+                throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
 
             CommonInitialization(obj);
@@ -584,14 +584,14 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             string serializedData = info.GetValue("CliXml", typeof(string)) as string;
 
             if (serializedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             PSObject result = PSObject.AsPSObject(PSSerializer.Deserialize(serializedData));
@@ -1051,7 +1051,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                throw PSTraceSource.NewArgumentNullException("obj");
+                throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
 
             if (obj is PSObject so)
@@ -1815,7 +1815,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             // We create a wrapper PSObject, so that we can successfully deserialize it

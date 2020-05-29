@@ -703,7 +703,7 @@ foo``u{2195}abc
         if ( $IsLinux -or $IsMacOS ) {
             # because we execute on *nix based on executable bit, and the file name doesn't matter
             # so we can use the same filename as for windows, just make sure it's executable with chmod
-            "#!/bin/sh`necho ""Hello World""" | Out-File -encoding ASCII $shellfile
+            "#!/bin/sh`necho ""Hello World""" | Out-File -Encoding ASCII $shellfile
             /bin/chmod +x $shellfile
         }
         else {

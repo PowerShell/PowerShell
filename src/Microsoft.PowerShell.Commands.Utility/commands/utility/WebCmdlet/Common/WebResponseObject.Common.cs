@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void SetResponse(HttpResponseMessage response, Stream contentStream)
         {
-            if (response == null) { throw new ArgumentNullException("response"); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
 
             BaseResponse = response;
 

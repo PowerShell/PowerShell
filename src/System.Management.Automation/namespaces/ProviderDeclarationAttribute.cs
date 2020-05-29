@@ -37,13 +37,13 @@ namespace System.Management.Automation.Provider
 
             if (string.IsNullOrEmpty(providerName))
             {
-                throw PSTraceSource.NewArgumentNullException("providerName");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerName));
             }
 
             if (providerName.IndexOfAny(_illegalCharacters) != -1)
             {
                 throw PSTraceSource.NewArgumentException(
-                    "providerName",
+                    nameof(providerName),
                     SessionStateStrings.ProviderNameNotValid,
                     providerName);
             }

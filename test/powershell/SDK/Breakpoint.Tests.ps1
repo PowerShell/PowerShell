@@ -5,7 +5,7 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
     BeforeAll {
         # Start a job; this will create a runspace in which we can manage breakpoints
-        $job = Start-Job -ScriptBlock {
+        $job = Start-Job -Scriptblock {
             Set-PSBreakpoint -Command Start-Sleep
             1..240 | ForEach-Object {
                 Start-Sleep -Milliseconds 250

@@ -17,30 +17,30 @@ Describe "Select-String" -Tags "CI" {
             $testinputtwo = "hello","Hello"
         }
 
-        it "Should be called without errors" {
+        It "Should be called without errors" {
             { $testinputone | Select-String -Pattern "hello" } | Should -Not -Throw
         }
 
-        it "Should return an array data type when multiple matches are found" {
+        It "Should return an array data type when multiple matches are found" {
             $result = $testinputtwo | Select-String -Pattern "hello"
             ,$result | Should -BeOfType System.Array
         }
 
-        it "Should return an object type when one match is found" {
+        It "Should return an object type when one match is found" {
             $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
             ,$result | Should -BeOfType System.Object
         }
 
-        it "Should return matchinfo type" {
+        It "Should return matchinfo type" {
             $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
             ,$result | Should -BeOfType Microsoft.PowerShell.Commands.MatchInfo
         }
 
-        it "Should be called without an error using ca for casesensitive " {
+        It "Should be called without an error using ca for casesensitive " {
             {$testinputone | Select-String -Pattern "hello" -ca } | Should -Not -Throw
         }
 
-        it "Should use the ca alias for casesensitive" {
+        It "Should use the ca alias for casesensitive" {
             $firstMatch = $testinputtwo  | Select-String -Pattern "hello" -CaseSensitive
             $secondMatch = $testinputtwo | Select-String -Pattern "hello" -ca
 
@@ -48,40 +48,40 @@ Describe "Select-String" -Tags "CI" {
             $equal | Should -BeTrue
         }
 
-        it "Should only return the case sensitive match when the casesensitive switch is used" {
+        It "Should only return the case sensitive match when the casesensitive switch is used" {
             $testinputtwo | Select-String -Pattern "hello" -CaseSensitive | Should -Be "hello"
         }
 
-        it "Should accept a collection of strings from the input object" {
+        It "Should accept a collection of strings from the input object" {
             { Select-String -InputObject "some stuff", "other stuff" -Pattern "other" } | Should -Not -Throw
         }
 
-        it "Should return system.object when the input object switch is used on a collection" {
-            $result = Select-String -InputObject "some stuff", "other stuff" -pattern "other"
+        It "Should return system.object when the input object switch is used on a collection" {
+            $result = Select-String -InputObject "some stuff", "other stuff" -Pattern "other"
             ,$result | Should -BeOfType System.Object
         }
 
-        it "Should return null or empty when the input object switch is used on a collection and the pattern does not exist" {
+        It "Should return null or empty when the input object switch is used on a collection and the pattern does not exist" {
             Select-String -InputObject "some stuff", "other stuff" -Pattern "neither" | Should -BeNullOrEmpty
         }
 
-        it "Should return a bool type when the quiet switch is used" {
+        It "Should return a bool type when the quiet switch is used" {
             ,($testinputtwo | Select-String -Quiet "hello" -CaseSensitive) | Should -BeOfType System.Boolean
         }
 
-        it "Should be true when select string returns a positive result when the quiet switch is used" {
+        It "Should be true when select string returns a positive result when the quiet switch is used" {
             ($testinputtwo | Select-String -Quiet "hello" -CaseSensitive) | Should -BeTrue
         }
 
-        it "Should be empty when select string does not return a result when the quiet switch is used" {
+        It "Should be empty when select string does not return a result when the quiet switch is used" {
             $testinputtwo | Select-String -Quiet "goodbye"  | Should -BeNullOrEmpty
         }
 
-        it "Should return an array of non matching strings when the switch of NotMatch is used and the string do not match" {
+        It "Should return an array of non matching strings when the switch of NotMatch is used and the string do not match" {
             $testinputone | Select-String -Pattern "goodbye" -NotMatch | Should -BeExactly "hello", "Hello"
         }
 
-        it "Should output a string with the first match highlighted" {
+        It "Should output a string with the first match highlighted" {
             if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" | Out-String
@@ -94,7 +94,7 @@ Describe "Select-String" -Tags "CI" {
             }
         }
 
-        it "Should output a string with all matches highlighted when AllMatch is used" {
+        It "Should output a string with all matches highlighted when AllMatch is used" {
             if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" -AllMatch | Out-String
@@ -107,7 +107,7 @@ Describe "Select-String" -Tags "CI" {
             }
         }
 
-        it "Should output a string with the first match highlighted when SimpleMatch is used" {
+        It "Should output a string with the first match highlighted when SimpleMatch is used" {
             if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences))
             {
                 $result = $testinputone | Select-String -Pattern "l" -SimpleMatch | Out-String
@@ -120,12 +120,12 @@ Describe "Select-String" -Tags "CI" {
             }
         }
 
-        it "Should output a string without highlighting when NoEmphasis is used" {
+        It "Should output a string without highlighting when NoEmphasis is used" {
             $result = $testinputone | Select-String -Pattern "l" -NoEmphasis | Out-String
             $result | Should -Be "${nl}hello${nl}Hello${nl}${nl}"
         }
 
-        it "Should return an array of matching strings without virtual terminal sequences" {
+        It "Should return an array of matching strings without virtual terminal sequences" {
             $testinputone | Select-String -Pattern "l" | Should -Be "hello", "hello"
         }
 
@@ -144,7 +144,7 @@ Describe "Select-String" -Tags "CI" {
         $testInputFile = Join-Path -Path $testDirectory -ChildPath testfile1.txt
 
         BeforeEach {
-            New-Item $testInputFile -Itemtype "file" -Force -Value "This is a text string, and another string${nl}This is the second line${nl}This is the third line${nl}This is the fourth line${nl}No matches"
+            New-Item $testInputFile -ItemType "file" -Force -Value "This is a text string, and another string${nl}This is the second line${nl}This is the third line${nl}This is the fourth line${nl}No matches"
         }
 
         AfterEach {

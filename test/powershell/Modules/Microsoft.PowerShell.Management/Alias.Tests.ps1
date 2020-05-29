@@ -76,7 +76,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
 
         It "Verifying Whatif" {
             $before = (Get-Item -Path "Alias:\${testAliasName}").Definition
-            Set-Item -Path "Alias:\${testAliasName}" -Value "Get-Location" -Whatif
+            Set-Item -Path "Alias:\${testAliasName}" -Value "Get-Location" -WhatIf
             $after = (Get-Item -Path "Alias:\${testAliasName}").Definition
             $after | Should -BeExactly $before # Definition should not have changed
         }

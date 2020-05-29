@@ -1,9 +1,9 @@
 {
-  "StableReleaseTag": "v7.0.0",
-  "PreviewReleaseTag": "v7.1.0-preview.2",
-  "ServicingReleaseTag": "v6.2.4",
-  "ReleaseTag": "v7.0.0",
-  "LTSReleaseTag" : ["v7.0.0"],
-  "NextReleaseTag": "v7.1.0-preview.3",
+  "StableReleaseTag": "v7.0.1",
+  "PreviewReleaseTag": "v7.1.0-preview.3",
+  "ServicingReleaseTag": "v6.2.5",
+  "ReleaseTag": "v7.0.1",
+  "LTSReleaseTag" : ["v7.0.1"],
+  "NextReleaseTag": "v7.1.0-preview.4",
   "LTSRelease": false
 }

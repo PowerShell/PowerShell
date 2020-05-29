@@ -35,6 +35,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// DComSessionOptions or WSManSessionOptions, which derive from
     /// CimSessionOptions.
     /// </summary>
+    [Alias("ncso")]
     [Cmdlet(VerbsCommon.New, "CimSessionOption", DefaultParameterSetName = ProtocolNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227969")]
     [OutputType(typeof(CimSessionOptions))]
     public sealed class NewCimSessionOptionCommand : CimBaseCommand
@@ -654,7 +655,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     catch (Exception ex)
                     {
                         DebugHelper.WriteLogEx(ex.ToString(), 1);
-                        throw ex;
+                        throw;
                     }
                 }
             }

@@ -282,9 +282,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal WriteLineHelper(bool lineWrap, WriteCallback wlc, WriteCallback wc, DisplayCells displayCells)
         {
             if (wlc == null)
-                throw PSTraceSource.NewArgumentNullException("wlc");
+                throw PSTraceSource.NewArgumentNullException(nameof(wlc));
             if (displayCells == null)
-                throw PSTraceSource.NewArgumentNullException("displayCells");
+                throw PSTraceSource.NewArgumentNullException(nameof(displayCells));
 
             _displayCells = displayCells;
             _writeLineCall = wlc;
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             : base(culture)
         {
             if (writeCall == null)
-                throw PSTraceSource.NewArgumentNullException("writeCall");
+                throw PSTraceSource.NewArgumentNullException(nameof(writeCall));
 
             _writeCall = writeCall;
         }

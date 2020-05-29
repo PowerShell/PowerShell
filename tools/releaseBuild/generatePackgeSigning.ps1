@@ -69,7 +69,7 @@ function New-FileElement
     }
 }
 
-[xml]$signingXml = get-content (Join-Path -Path $PSScriptRoot -ChildPath 'packagesigning.xml')
+[xml]$signingXml = Get-Content (Join-Path -Path $PSScriptRoot -ChildPath 'packagesigning.xml')
 $job = $signingXml.SignConfigXML.job
 
 foreach($file in $AuthenticodeDualFiles)

@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Offset64 = offset;
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Offset64 = offset;
@@ -179,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Bytes = value;

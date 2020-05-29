@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+param(
+    # Skips a check that prevents building PowerShell on unsupported Linux distributions
+    [parameter(Mandatory = $false)][switch]$SkipLinuxDistroCheck = $false
+)
+
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon
@@ -178,7 +183,11 @@ function Get-EnvironmentInformation
             $environment.IsSUSEFamily -or
             $environment.IsAlpine)
         ) {
-            throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
+            if ($SkipLinuxDistroCheck) {
+                Write-Warning "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
+            } else {
+                throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell. Import this module with '-ArgumentList `$true' to bypass this check."
+            }
         }
     }
 
@@ -538,10 +547,10 @@ Fix steps:
                 $cryptoTarget = "/lib64/libcrypto.so.10"
             }
 
-            if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
+            if ( ! (Test-Path "$publishPath/libssl.so.1.0.0")) {
                 $null = New-Item -Force -ItemType SymbolicLink -Target $sslTarget -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
             }
-            if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
+            if ( ! (Test-Path "$publishPath/libcrypto.so.1.0.0")) {
                 $null = New-Item -Force -ItemType SymbolicLink -Target $cryptoTarget -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
             }
         }
@@ -888,7 +897,7 @@ function Get-PesterTag {
     $alltags = @{}
     $warnings = @()
 
-    get-childitem -Recurse $testbase -File | Where-Object {$_.name -match "tests.ps1"}| ForEach-Object {
+    Get-ChildItem -Recurse $testbase -File | Where-Object {$_.name -match "tests.ps1"}| ForEach-Object {
         $fullname = $_.fullname
         $tok = $err = $null
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok,[ref]$err)
@@ -1276,7 +1285,7 @@ function Start-PSPester {
                     break
                 }
 
-                $count = ($lines | measure-object).Count
+                $count = ($lines | Measure-Object).Count
                 if ($count -eq 0)
                 {
                     Start-Sleep -Seconds 1
@@ -1469,7 +1478,7 @@ function Test-XUnitTestResults
         throw "Cannot convert $TestResultsFile to xml : $($_.message)"
     }
 
-    $failedTests = $results.assemblies.assembly.collection | Where-Object failed -gt 0
+    $failedTests = $results.assemblies.assembly.collection | Where-Object failed -GT 0
 
     if(-not $failedTests)
     {
@@ -1521,7 +1530,7 @@ function Test-PSPesterResults
             throw "Test result file '$testResultsFile' not found for $TestArea."
         }
 
-        $x = [xml](Get-Content -raw $testResultsFile)
+        $x = [xml](Get-Content -Raw $testResultsFile)
         if ([int]$x.'test-results'.failures -gt 0)
         {
             Write-Log -Error "TEST FAILURES"
@@ -2093,7 +2102,7 @@ function script:Use-MSBuild {
     # msbuild v14 and msbuild v4 behaviors are different for XAML generation
     $frameworkMsBuildLocation = "${env:SystemRoot}\Microsoft.Net\Framework\v4.0.30319\msbuild"
 
-    $msbuild = get-command msbuild -ErrorAction Ignore
+    $msbuild = Get-Command msbuild -ErrorAction Ignore
     if ($msbuild) {
         # all good, nothing to do
         return
@@ -2873,17 +2882,17 @@ assembly
     PROCESS {
         #### MAIN ####
         foreach ( $log in $Logfile ) {
-            foreach ( $logpath in (resolve-path $log).path ) {
-                write-progress "converting file $logpath"
+            foreach ( $logpath in (Resolve-Path $log).path ) {
+                Write-Progress "converting file $logpath"
                 if ( ! $logpath) { throw "Cannot resolve $Logfile" }
-                $x = [xml](get-content -raw -readcount 0 $logpath)
+                $x = [xml](Get-Content -Raw -ReadCount 0 $logpath)
 
                 if ( $x.psobject.properties['test-results'] ) {
                     $Logs += convert-pesterlog $x $logpath -includeempty:$includeempty
                 } elseif ( $x.psobject.properties['assemblies'] ) {
                     $Logs += convert-xunitlog $x $logpath -includeEmpty:$includeEmpty
                 } else {
-                    write-error "Cannot determine log type"
+                    Write-Error "Cannot determine log type"
                 }
             }
         }

@@ -349,7 +349,7 @@ namespace System.Management.Automation
             if (experimentAction == ExperimentAction.None)
             {
                 string paramName = nameof(experimentAction);
-                string invalidMember = ExperimentAction.None.ToString();
+                string invalidMember = nameof(ExperimentAction.None);
                 string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
                 throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
             }

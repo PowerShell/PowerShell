@@ -14,7 +14,7 @@ Describe "Export-FormatData" -Tags "CI" {
     It "Can export all types" {
         try
         {
-            $fd | Export-FormatData -path $TESTDRIVE\allformat.ps1xml -IncludeScriptBlock
+            $fd | Export-FormatData -Path $TESTDRIVE\allformat.ps1xml -IncludeScriptBlock
 
             $sessionState = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
             $sessionState.Formats.Clear()

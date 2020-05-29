@@ -69,7 +69,7 @@ Describe "Write-Error Tests" -Tags "CI" {
     }
 
     It "Should be works with all parameters" {
-        $e = write-error -Activity fooAct -Reason fooReason -TargetName fooTargetName -TargetType fooTargetType -Message fooMessage 2>&1
+        $e = Write-Error -Activity fooAct -Reason fooReason -TargetName fooTargetName -TargetType fooTargetType -Message fooMessage 2>&1
         $e.CategoryInfo.Activity | Should -Be 'fooAct'
         $e.CategoryInfo.Reason | Should -Be 'fooReason'
         $e.CategoryInfo.TargetName | Should -Be 'fooTargetName'
@@ -91,7 +91,7 @@ Describe "Write-Error Tests" -Tags "CI" {
 
     It "Should output the error message to the `$error automatic variable" {
         $theError = "Error: Too many input values."
-        write-error -message $theError -category InvalidArgument -ErrorAction SilentlyContinue
+        Write-Error -Message $theError -Category InvalidArgument -ErrorAction SilentlyContinue
 
         [string]$error[0] | Should -Be $theError
     }

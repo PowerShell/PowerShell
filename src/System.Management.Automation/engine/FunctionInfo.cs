@@ -55,7 +55,7 @@ namespace System.Management.Automation
         {
             if (function == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
 
             _scriptBlock = function;

@@ -396,7 +396,7 @@ namespace System.Management.Automation
         {
             if (progressRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("progressRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
             }
 
             if (Host == null || Host.UI == null)
@@ -2053,7 +2053,7 @@ namespace System.Management.Automation
             ThrowIfStopping();
             if (errorRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("errorRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
             }
 
             errorRecord.SetInvocationInfo(MyInvocation);
@@ -2318,7 +2318,7 @@ namespace System.Management.Automation
             internal AllowWrite(InternalCommand permittedToWrite, bool permittedToWriteToPipeline)
             {
                 if (permittedToWrite == null)
-                    throw PSTraceSource.NewArgumentNullException("permittedToWrite");
+                    throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
                 MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
                 if (mcr == null)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
@@ -2368,7 +2368,7 @@ namespace System.Management.Automation
         public Exception ManageException(Exception e)
         {
             if (e == null)
-                throw PSTraceSource.NewArgumentNullException("e");
+                throw PSTraceSource.NewArgumentNullException(nameof(e));
 
             if (PipelineProcessor != null)
             {

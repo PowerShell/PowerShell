@@ -581,8 +581,8 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="passThru"><c>true</c> if successful method invocations should emit downstream the <paramref name="objectInstance"/> being operated on.</param>
         public override void ProcessRecord(TObjectInstance objectInstance, MethodInvocationInfo methodInvocationInfo, bool passThru)
         {
-            if (objectInstance == null) throw new ArgumentNullException("objectInstance");
-            if (methodInvocationInfo == null) throw new ArgumentNullException("methodInvocationInfo");
+            if (objectInstance == null) throw new ArgumentNullException(nameof(objectInstance));
+            if (methodInvocationInfo == null) throw new ArgumentNullException(nameof(methodInvocationInfo));
 
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(objectInstance))
             {
@@ -607,7 +607,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="methodInvocationInfo">Method invocation details.</param>
         public override void ProcessRecord(MethodInvocationInfo methodInvocationInfo)
         {
-            if (methodInvocationInfo == null) throw new ArgumentNullException("methodInvocationInfo");
+            if (methodInvocationInfo == null) throw new ArgumentNullException(nameof(methodInvocationInfo));
 
             foreach (TSession sessionForJob in this.GetSessionsToActAgainst(methodInvocationInfo))
             {

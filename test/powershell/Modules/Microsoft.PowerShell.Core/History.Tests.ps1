@@ -122,7 +122,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
             EndExecutionTime   = $end
         }
         $history | Add-History
-        $h = Get-History -count 1
+        $h = Get-History -Count 1
         $h.Duration | Should -Be $duration
     }
 }

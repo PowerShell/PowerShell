@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             CimQuery query = baseQuery as CimQuery;
             if (query == null)
             {
-                throw new ArgumentNullException("baseQuery");
+                throw new ArgumentNullException(nameof(baseQuery));
             }
 
             TerminatingErrorTracker tracker = TerminatingErrorTracker.GetTracker(this.CmdletInvocationInfo, isStaticCmdlet: false);

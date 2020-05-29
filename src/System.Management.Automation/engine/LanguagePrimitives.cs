@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -638,7 +639,7 @@ namespace System.Management.Automation
             var culture = formatProvider as CultureInfo;
             if (culture == null)
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -786,7 +787,7 @@ namespace System.Management.Automation
             var culture = formatProvider as CultureInfo;
             if (culture == null)
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -813,7 +814,7 @@ namespace System.Management.Automation
                     }
                     catch (PSInvalidCastException e)
                     {
-                        throw PSTraceSource.NewArgumentException("second", ExtendedTypeSystem.ComparisonFailure,
+                        throw PSTraceSource.NewArgumentException(nameof(second), ExtendedTypeSystem.ComparisonFailure,
                                                                  first.ToString(), second.ToString(), e.Message);
                     }
                 }
@@ -838,7 +839,7 @@ namespace System.Management.Automation
             }
             catch (PSInvalidCastException e)
             {
-                throw PSTraceSource.NewArgumentException("second", ExtendedTypeSystem.ComparisonFailure,
+                throw PSTraceSource.NewArgumentException(nameof(second), ExtendedTypeSystem.ComparisonFailure,
                                                          first.ToString(), second.ToString(), e.Message);
             }
 
@@ -854,7 +855,7 @@ namespace System.Management.Automation
 
             // At this point, we know that they aren't equal but we have no way of
             // knowing which should compare greater than the other so we throw an exception.
-            throw PSTraceSource.NewArgumentException("first", ExtendedTypeSystem.NotIcomparable, first.ToString());
+            throw PSTraceSource.NewArgumentException(nameof(first), ExtendedTypeSystem.NotIcomparable, first.ToString());
         }
 
         /// <summary>
@@ -906,7 +907,7 @@ namespace System.Management.Automation
 
             if (!(formatProvider is CultureInfo culture))
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -3307,6 +3308,11 @@ namespace System.Management.Automation
                     return sgl.ToString(SinglePrecision, numberFormat);
                 }
 
+                if (valueToConvert is BigInteger b)
+                {
+                    return b.ToString(numberFormat);
+                }
+
                 return (string)Convert.ChangeType(valueToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
@@ -4380,7 +4386,8 @@ namespace System.Management.Automation
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(sbyte), typeof(byte),
-            typeof(Single), typeof(double), typeof(decimal)
+            typeof(Single), typeof(double), typeof(decimal),
+            typeof(BigInteger)
         };
 
         private static Type[] s_integerTypes = new Type[] {
@@ -4781,7 +4788,7 @@ namespace System.Management.Automation
             {
                 if (resultType == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("resultType");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
 
                 bool debase;

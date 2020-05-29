@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell.Commands
         private bool Matches(ServiceController service, string[] matchList)
         {
             if (matchList == null)
-                throw PSTraceSource.NewArgumentNullException("matchList");
+                throw PSTraceSource.NewArgumentNullException(nameof(matchList));
             string serviceID = (selectionMode == SelectionMode.DisplayName)
                                 ? service.DisplayName
                                 : service.ServiceName;
@@ -2566,7 +2566,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
 
             _serviceName = info.GetString("ServiceName");
@@ -2581,7 +2581,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (info == null)
             {
-                throw new ArgumentNullException("info");
+                throw new ArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

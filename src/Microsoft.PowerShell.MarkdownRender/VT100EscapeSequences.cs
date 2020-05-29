@@ -287,7 +287,7 @@ namespace Microsoft.PowerShell.MarkdownRender
         {
             if (optionInfo == null)
             {
-                throw new ArgumentNullException("optionInfo");
+                throw new ArgumentNullException(nameof(optionInfo));
             }
 
             options = optionInfo;

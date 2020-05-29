@@ -63,7 +63,7 @@ namespace System.Management.Automation.Tracing
         {
             if (transferProvider == null)
             {
-                throw new ArgumentNullException("transferProvider");
+                throw new ArgumentNullException(nameof(transferProvider));
             }
 
             _transferProvider = transferProvider;

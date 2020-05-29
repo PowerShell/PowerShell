@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Name;
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.Name = other.Members["Name"].Value as string;

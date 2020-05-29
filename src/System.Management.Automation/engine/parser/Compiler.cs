@@ -982,19 +982,23 @@ namespace System.Management.Automation.Language
             {
                 return left;
             }
-            else if (leftType == typeof(AutomationNull))
-            {
-                return right;
-            }
             else
             {
-                Expression lhs = left.Cast(typeof(object));
-                Expression rhs = right.Cast(typeof(object));
+                ParameterExpression lhsStoreVar = Expression.Variable(typeof(object));
+                var blockParameters = new ParameterExpression[] { lhsStoreVar };
+                var blockStatements = new Expression[]
+                {
+                    Expression.Assign(lhsStoreVar, left.Cast(typeof(object))),
+                    Expression.Condition(
+                        Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhsStoreVar),
+                        right.Cast(typeof(object)),
+                        lhsStoreVar),
+                };
 
-                return Expression.Condition(
-                    Expression.Call(CachedReflectionInfo.LanguagePrimitives_IsNull, lhs),
-                    rhs,
-                    lhs);
+                return Expression.Block(
+                    typeof(object),
+                    blockParameters,
+                    blockStatements);
             }
         }
 
@@ -2277,7 +2281,7 @@ namespace System.Management.Automation.Language
                     result = resultList;
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException("context");
+                    throw new ArgumentOutOfRangeException(nameof(context));
             }
 
             finallyExprs.Add(Expression.Assign(s_getCurrentPipe, oldPipe));
@@ -4171,7 +4175,9 @@ namespace System.Management.Automation.Language
         private Expression GetCommandArgumentExpression(CommandElementAst element)
         {
             var constElement = element as ConstantExpressionAst;
-            if (constElement != null && LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constElement.StaticType)))
+            if (constElement != null
+                && (LanguagePrimitives.IsNumeric(LanguagePrimitives.GetTypeCode(constElement.StaticType))
+                || constElement.StaticType == typeof(System.Numerics.BigInteger)))
             {
                 var commandArgumentText = constElement.Extent.Text;
                 if (!commandArgumentText.Equals(constElement.Value.ToString(), StringComparison.Ordinal))

@@ -405,7 +405,7 @@ namespace System.Management.Automation
         {
             if (job == null)
             {
-                PSTraceSource.NewArgumentNullException("job", RemotingErrorIdStrings.JobSourceAdapterCannotSaveNullJob);
+                PSTraceSource.NewArgumentNullException(nameof(job), RemotingErrorIdStrings.JobSourceAdapterCannotSaveNullJob);
             }
 
             JobManager.SaveJobId(job.InstanceId, job.Id, this.GetType().Name);

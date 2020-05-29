@@ -60,7 +60,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$()" {
             { Set-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
         }
-        It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -skip:$skipRegistry {
+        It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -Skip:$skipRegistry {
             { Set-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
         }
         #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]

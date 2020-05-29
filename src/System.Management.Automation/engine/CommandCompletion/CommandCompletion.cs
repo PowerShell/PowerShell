@@ -72,7 +72,7 @@ namespace System.Management.Automation
         {
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             Token[] tokens;
@@ -112,17 +112,17 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (positionOfCursor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("positionOfCursor");
+                throw PSTraceSource.NewArgumentNullException(nameof(positionOfCursor));
             }
 
             return CompleteInputImpl(ast, tokens, positionOfCursor, options);
@@ -147,12 +147,12 @@ namespace System.Management.Automation
 
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             if (powershell == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powershell");
+                throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
@@ -216,22 +216,22 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (cursorPosition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cursorPosition");
+                throw PSTraceSource.NewArgumentNullException(nameof(cursorPosition));
             }
 
             if (powershell == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powershell");
+                throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
@@ -334,12 +334,12 @@ namespace System.Management.Automation
 
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             if (debugger == null)
             {
-                throw PSTraceSource.NewArgumentNullException("debugger");
+                throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
 
             Command cmd = new Command("TabExpansion2");
@@ -363,22 +363,22 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (cursorPosition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cursorPosition");
+                throw PSTraceSource.NewArgumentNullException(nameof(cursorPosition));
             }
 
             if (debugger == null)
             {
-                throw PSTraceSource.NewArgumentNullException("debugger");
+                throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
 
             // For remote debugging just pass string input.

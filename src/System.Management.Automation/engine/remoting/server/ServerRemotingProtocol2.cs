@@ -110,7 +110,7 @@ namespace System.Management.Automation
         {
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             Dbg.Assert(receivedData.TargetInterface == RemotingTargetInterface.RunspacePool,
@@ -617,7 +617,7 @@ namespace System.Management.Automation
         {
             if (receivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("receivedData");
+                throw PSTraceSource.NewArgumentNullException(nameof(receivedData));
             }
 
             Dbg.Assert(receivedData.TargetInterface == RemotingTargetInterface.PowerShell,

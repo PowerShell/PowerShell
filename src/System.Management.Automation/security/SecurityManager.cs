@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell
         {
             if (string.IsNullOrEmpty(shellId))
             {
-                throw PSTraceSource.NewArgumentNullException("shellId");
+                throw PSTraceSource.NewArgumentNullException(nameof(shellId));
             }
 
             _shellId = shellId;

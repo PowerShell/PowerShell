@@ -24,7 +24,7 @@ namespace Microsoft.WSMan.Management
     /// WsMan Provider.
     /// </summary>
     [CmdletProvider(WSManStringLiterals.ProviderName, ProviderCapabilities.Credentials)]
-    public sealed partial class WSManConfigProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
+    public sealed class WSManConfigProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
     {
         // Plugin Name Storage
         private PSObject objPluginNames = null;
@@ -3336,7 +3336,7 @@ namespace Microsoft.WSMan.Management
         /// <returns></returns>
         private string NormalizePath(string path, string host)
         {
-            string uri = string.Empty; ;
+            string uri = string.Empty;
             if (path.StartsWith(host, StringComparison.OrdinalIgnoreCase))
             {
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))

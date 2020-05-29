@@ -1846,17 +1846,17 @@ namespace System.Management.Automation
         {
             if (driverInvoker == null)
             {
-                throw new PSArgumentNullException("driverInvoker");
+                throw new PSArgumentNullException(nameof(driverInvoker));
             }
 
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             if (debugger == null)
             {
-                throw new PSArgumentNullException("debugger");
+                throw new PSArgumentNullException(nameof(debugger));
             }
 
             _driverInvoker = driverInvoker;
@@ -2625,15 +2625,15 @@ namespace System.Management.Automation
 
         private void SubscribeWrappedDebugger(Debugger wrappedDebugger)
         {
-            wrappedDebugger.DebuggerStop += HandleDebuggerStop; ;
-            wrappedDebugger.BreakpointUpdated += HandleBreakpointUpdated; ;
+            wrappedDebugger.DebuggerStop += HandleDebuggerStop;
+            wrappedDebugger.BreakpointUpdated += HandleBreakpointUpdated;
             wrappedDebugger.NestedDebuggingCancelledEvent += HandleNestedDebuggingCancelEvent;
         }
 
         private void UnsubscribeWrappedDebugger(Debugger wrappedDebugger)
         {
-            wrappedDebugger.DebuggerStop -= HandleDebuggerStop; ;
-            wrappedDebugger.BreakpointUpdated -= HandleBreakpointUpdated; ;
+            wrappedDebugger.DebuggerStop -= HandleDebuggerStop;
+            wrappedDebugger.BreakpointUpdated -= HandleBreakpointUpdated;
             wrappedDebugger.NestedDebuggingCancelledEvent -= HandleNestedDebuggingCancelEvent;
         }
 

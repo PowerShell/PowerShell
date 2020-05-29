@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (val == null)
             {
-                throw PSTraceSource.NewArgumentNullException("val");
+                throw PSTraceSource.NewArgumentNullException(nameof(val));
             }
 
             // need to check the type:
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return ex;
             }
 
-            PSTraceSource.NewArgumentException("val");
+            PSTraceSource.NewArgumentException(nameof(val));
             return null;
         }
 
