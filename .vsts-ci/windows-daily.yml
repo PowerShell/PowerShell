@@ -89,8 +89,8 @@ stages:
           Write-Host "=== Capture CAP Util Directory ==="
           Get-ChildItem $capUtilDir -Recurse
 
-          Send-VstsCommand "vso[task.setvariable variable=CapRootDir]$capRootDir"
-          Send-VstsCommand "vso[task.setvariable variable=CapUtilDir]$capUtilDir"
+          Write-Host "##vso[task.setvariable variable=CapRootDir]$capRootDir"
+          Write-Host "##vso[task.setvariable variable=CapUtilDir]$capUtilDir"
         displayName: 'Download CAP package'
         condition: succeededOrFailed()
 
@@ -113,7 +113,7 @@ stages:
       - pwsh: |
           Import-Module $(CapUtilDir)\CAPService.psm1
           $dataDir = Start-TraceCollection -RootDir $(CapRootDir)
-          Send-VstsCommand "vso[task.setvariable variable=CapDataDir]$dataDir"
+          Write-Host "##vso[task.setvariable variable=CapDataDir]$dataDir"
         displayName: 'Start CLR Trace Collection'
         condition: succeeded()
 
