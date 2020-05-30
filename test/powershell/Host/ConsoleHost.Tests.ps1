@@ -820,6 +820,99 @@ namespace StackTest {
             $LASTEXITCODE | Should -Be $ExitCodeBadCommandLineParameter
         }
     }
+
+    Context "Console prompt tests" {
+
+        It "Alias PSDrive is displayed correctly"  {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Alias:""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS Alias:\> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+
+        It "Cert PSDrive is displayed correctly" -Skip:(-not $IsWindows) {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Cert:""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS Cert:\> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+
+        It "Environment PSDrive is displayed correctly" {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Env:""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS Env:\> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+
+        It "Function PSDrive is displayed correctly" {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Function:""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS Function:\> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+
+        It "Registry PSDrive is displayed correctly" -Skip:(-not $IsWindows) {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location HKLM:""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS HKLM:\> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+
+        It "Temp PSDrive is displayed correctly" {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Temp:""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS Temp:\> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+
+        It "UNC Path is displayed correctly" -Skip:(-not $IsWindows) {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location \\localhost\c$""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS \\localhost\c$> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+
+        It "Variable PSDrive is displayed correctly" {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Variable:""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS Variable:\> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+
+        It "WSMan PSDrive is displayed correctly" -Skip:(-not $IsWindows) {
+
+            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location WSMan:""" -RedirectStdIn
+            $process = RunPowerShell $si
+            $process.StandardInput.WriteLine("`n")
+            $process.StandardOutput.ReadLine() | Should -Be "PS WSMan:\> "
+            $process.StandardInput.Close()
+            EnsureChildHasExited $process
+        }
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {
