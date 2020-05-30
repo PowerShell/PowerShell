@@ -1167,7 +1167,7 @@ namespace Microsoft.PowerShell.Commands
                 string promptFn = StringUtil.Format(RemotingErrorIdStrings.EnterVMSessionPrompt,
                     @"function global:prompt { """,
                     targetName,
-                    @"PS $($executionContext.SessionState.Path.CurrentLocation)> "" }");
+                    @"PS $($ExecutionContext.SessionState.Path.CurrentLocation.Drive ? $ExecutionContext.SessionState.Path.CurrentLocation : $ExecutionContext.SessionState.Path.CurrentLocation.ProviderPath)> "" }");
 
                 // Set prompt in pushed named pipe runspace.
                 using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())

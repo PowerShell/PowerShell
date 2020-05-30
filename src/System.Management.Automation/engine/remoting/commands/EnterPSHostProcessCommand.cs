@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Commands
             string promptFn = StringUtil.Format(RemotingErrorIdStrings.EnterPSHostProcessPrompt,
                 @"function global:prompt { """,
                 @"$($PID)",
-                @"PS $($executionContext.SessionState.Path.CurrentLocation)> "" }"
+                @"PS $($ExecutionContext.SessionState.Path.CurrentLocation.Drive ? $ExecutionContext.SessionState.Path.CurrentLocation : $ExecutionContext.SessionState.Path.CurrentLocation.ProviderPath)> "" }"
             );
 
             // Set prompt in pushed named pipe runspace.

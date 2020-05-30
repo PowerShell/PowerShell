@@ -4480,7 +4480,7 @@ namespace System.Management.Automation
                 DebuggerStrings.NestedRunspaceDebuggerPromptProcessName,
                 @"$($PID)",
                 @"""");
-            string locationPart = @"""PS $($executionContext.SessionState.Path.CurrentLocation)> """;
+            string locationPart = @"""PS $($ExecutionContext.SessionState.Path.CurrentLocation.Drive ? $ExecutionContext.SessionState.Path.CurrentLocation : $ExecutionContext.SessionState.Path.CurrentLocation.ProviderPath)> """;
             string promptScript = "'[DBG]: '" + " + " + processPart + " + " + "' [" + CodeGeneration.EscapeSingleQuotedStringContent(_runspace.Name) + "]: '" + " + " + locationPart;
 
             // Get the command prompt from the wrapped debugger.
