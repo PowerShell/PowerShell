@@ -15,6 +15,7 @@ namespace Microsoft.Management.UI.Internal
     public class TextEndsWithFilterRule : TextFilterRule
     {
         private static readonly string TextEndsWithCharactersRegexPattern = "{0}$";
+
         private static readonly string TextEndsWithWordsRegexPattern = WordBoundaryRegexPattern + TextEndsWithCharactersRegexPattern;
 
         /// <summary>

@@ -16,9 +16,13 @@ namespace Microsoft.PowerShell.Commands
     internal class OutWindowProxy : IDisposable
     {
         private const string OutGridViewWindowClassName = "Microsoft.Management.UI.Internal.OutGridViewWindow";
+
         private const string OriginalTypePropertyName = "OriginalType";
+
         internal const string OriginalObjectPropertyName = "OutGridViewOriginalObject";
+
         private const string ToStringValuePropertyName = "ToStringValue";
+
         private const string IndexPropertyName = "IndexValue";
 
         private int _index;

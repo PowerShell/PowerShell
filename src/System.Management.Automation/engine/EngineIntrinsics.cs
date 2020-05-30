@@ -109,7 +109,9 @@ namespace System.Management.Automation
         #region private data
 
         private ExecutionContext _context;
+
         private PSHost _host;
+
         private CommandInvocationIntrinsics _invokeCommand;
         #endregion private data
     }

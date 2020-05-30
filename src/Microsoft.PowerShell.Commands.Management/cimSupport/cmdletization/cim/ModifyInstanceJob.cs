@@ -16,8 +16,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal class ModifyInstanceJob : PropertySettingJob<CimInstance>
     {
         private CimInstance _resultFromModifyInstance;
+
         private bool _resultFromModifyInstanceHasBeenPassedThru;
+
         private readonly CimInstance _originalInstance;
+
         private CimInstance _temporaryInstance;
 
         internal ModifyInstanceJob(CimJobContext jobContext, bool passThru, CimInstance managementObject, MethodInvocationInfo methodInvocationInfo)

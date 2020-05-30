@@ -48,9 +48,13 @@ namespace System.Management.Automation.Configuration
     internal sealed class PowerShellConfig
     {
         private const string ConfigFileName = "powershell.config.json";
+
         private const string ExecutionPolicyDefaultShellKey = "Microsoft.PowerShell:ExecutionPolicy";
+
         private const string DisableImplicitWinCompatKey = "DisableImplicitWinCompat";
+
         private const string WindowsPowerShellCompatibilityModuleDenyListKey = "WindowsPowerShellCompatibilityModuleDenyList";
+
         private const string WindowsPowerShellCompatibilityNoClobberModuleListKey = "WindowsPowerShellCompatibilityNoClobberModuleList";
 
         // Provide a singleton
@@ -59,17 +63,21 @@ namespace System.Management.Automation.Configuration
         // The json file containing system-wide configuration settings.
         // When passed as a pwsh command-line option, overrides the system wide configuration file.
         private string systemWideConfigFile;
+
         private string systemWideConfigDirectory;
 
         // The json file containing the per-user configuration settings.
         private readonly string perUserConfigFile;
+
         private readonly string perUserConfigDirectory;
 
         // Note: JObject and JsonSerializer are thread safe.
         // Root Json objects corresponding to the configuration file for 'AllUsers' and 'CurrentUser' respectively.
         // They are used as a cache to avoid hitting the disk for every read operation.
         private readonly JObject[] configRoots;
+
         private readonly JObject emptyConfig;
+
         private readonly JsonSerializer serializer;
 
         /// <summary>
@@ -636,11 +644,17 @@ namespace System.Management.Automation.Configuration
     internal sealed class PowerShellPolicies
     {
         public ScriptExecution ScriptExecution { get; set; }
+
         public ScriptBlockLogging ScriptBlockLogging { get; set; }
+
         public ModuleLogging ModuleLogging { get; set; }
+
         public ProtectedEventLogging ProtectedEventLogging { get; set; }
+
         public Transcription Transcription { get; set; }
+
         public UpdatableHelp UpdatableHelp { get; set; }
+
         public ConsoleSessionConfiguration ConsoleSessionConfiguration { get; set; }
     }
 
@@ -652,6 +666,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ScriptExecution : PolicyBase
     {
         public string ExecutionPolicy { get; set; }
+
         public bool? EnableScripts { get; set; }
     }
 
@@ -661,6 +676,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ScriptBlockLogging : PolicyBase
     {
         public bool? EnableScriptBlockInvocationLogging { get; set; }
+
         public bool? EnableScriptBlockLogging { get; set; }
     }
 
@@ -670,6 +686,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ModuleLogging : PolicyBase
     {
         public bool? EnableModuleLogging { get; set; }
+
         public string[] ModuleNames { get; set; }
     }
 
@@ -679,7 +696,9 @@ namespace System.Management.Automation.Configuration
     internal sealed class Transcription : PolicyBase
     {
         public bool? EnableTranscripting { get; set; }
+
         public bool? EnableInvocationHeader { get; set; }
+
         public string OutputDirectory { get; set; }
     }
 
@@ -689,6 +708,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class UpdatableHelp : PolicyBase
     {
         public bool? EnableUpdateHelpDefaultSourcePath { get; set; }
+
         public string DefaultSourcePath { get; set; }
     }
 
@@ -698,6 +718,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ConsoleSessionConfiguration : PolicyBase
     {
         public bool? EnableConsoleSessionConfiguration { get; set; }
+
         public string ConsoleSessionConfigurationName { get; set; }
     }
 
@@ -707,6 +728,7 @@ namespace System.Management.Automation.Configuration
     internal sealed class ProtectedEventLogging : PolicyBase
     {
         public bool? EnableProtectedEventLogging { get; set; }
+
         public string[] EncryptionCertificate { get; set; }
     }
 

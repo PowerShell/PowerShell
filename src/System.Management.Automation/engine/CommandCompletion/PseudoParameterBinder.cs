@@ -20,9 +20,13 @@ namespace System.Management.Automation.Language
     internal enum AstParameterArgumentType
     {
         AstPair = 0,
+
         Switch = 1,
+
         Fake = 2,
+
         AstArray = 3,
+
         PipeObject = 4
     }
 
@@ -795,6 +799,7 @@ namespace System.Management.Automation.Language
     internal enum PseudoBindingInfoType
     {
         PseudoBindingFail = 0,
+
         PseudoBindingSucceed = 1,
     }
 
@@ -1114,28 +1119,45 @@ namespace System.Management.Automation.Language
 
         // command ast related states
         private CommandAst _commandAst;
+
         private ReadOnlyCollection<CommandElementAst> _commandElements;
 
         // binding related states
         private bool _function = false;
+
         private string _commandName = null;
+
         private CommandInfo _commandInfo = null;
+
         private uint _currentParameterSetFlag = uint.MaxValue;
+
         private uint _defaultParameterSetFlag = 0;
+
         private MergedCommandParameterMetadata _bindableParameters = null;
+
         private Dictionary<string, MergedCompiledCommandParameter> _boundParameters;
+
         private Dictionary<string, AstParameterArgumentPair> _boundArguments;
+
         private Collection<AstParameterArgumentPair> _arguments;
+
         private Collection<string> _boundPositionalParameter;
+
         private List<MergedCompiledCommandParameter> _unboundParameters;
 
         // tab expansion related states
         private Type _pipelineInputType = null;
+
         private bool _bindingEffective = true;
+
         private bool _isPipelineInputExpected = false;
+
         private Collection<CommandParameterAst> _parametersNotFound;
+
         private Collection<CommandParameterAst> _ambiguousParameters;
+
         private Collection<AstParameterArgumentPair> _duplicateParameters;
+
         private Dictionary<CommandParameterAst, ParameterBindingException> _bindingExceptions;
 
         /// <summary>

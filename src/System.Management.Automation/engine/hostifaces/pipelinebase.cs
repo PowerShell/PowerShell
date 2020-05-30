@@ -776,7 +776,9 @@ namespace System.Management.Automation.Runspaces
             }
 
             public PipelineStateInfo PipelineStateInfo;
+
             public RunspaceAvailability CurrentRunspaceAvailability;
+
             public RunspaceAvailability NewRunspaceAvailability;
         }
 

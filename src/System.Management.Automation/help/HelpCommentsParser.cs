@@ -54,24 +54,39 @@ namespace System.Management.Automation
         }
 
         private readonly Language.CommentHelpInfo _sections = new Language.CommentHelpInfo();
+
         private readonly Dictionary<string, string> _parameters = new Dictionary<string, string>();
+
         private readonly List<string> _examples = new List<string>();
+
         private readonly List<string> _inputs = new List<string>();
+
         private readonly List<string> _outputs = new List<string>();
+
         private readonly List<string> _links = new List<string>();
+
         internal bool isExternalHelpSet = false;
 
         private ScriptBlock _scriptBlock;
+
         private CommandMetadata _commandMetadata;
+
         private string _commandName;
+
         private List<string> _parameterDescriptions;
+
         private XmlDocument _doc;
+
         internal static readonly string mshURI = "http://msh";
+
         internal static readonly string mamlURI = "http://schemas.microsoft.com/maml/2004/10";
+
         internal static readonly string commandURI = "http://schemas.microsoft.com/maml/dev/command/2004/10";
+
         internal static readonly string devURI = "http://schemas.microsoft.com/maml/dev/2004/10";
 
         private const string directive = @"^\s*\.(\w+)(\s+(\S.*))?\s*$";
+
         private const string blankline = @"^\s*$";
         // Although "http://msh" is the default namespace, it still must be explicitly qualified with non-empty prefix,
         // because XPath 1.0 will associate empty prefix with "null" namespace (not with "default") and query will fail.

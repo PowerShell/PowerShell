@@ -94,18 +94,25 @@ namespace System.Management.Automation.Remoting
 
         // Commands related to debugger stop events
         internal const string GetDebuggerStopArgs = "__Get-PSDebuggerStopArgs";
+
         internal const string SetDebuggerAction = "__Set-PSDebuggerAction";
 
         // Miscellaneous debug commands
         internal const string SetDebuggerStepMode = "__Set-PSDebuggerStepMode";
+
         internal const string SetDebugMode = "__Set-PSDebugMode";
+
         internal const string SetUnhandledBreakpointMode = "__Set-PSUnhandledBreakpointMode";
 
         // Breakpoint commands
         internal const string GetBreakpoint = "__Get-PSBreakpoint";
+
         internal const string SetBreakpoint = "__Set-PSBreakpoint";
+
         internal const string EnableBreakpoint = "__Enable-PSBreakpoint";
+
         internal const string DisableBreakpoint = "__Disable-PSBreakpoint";
+
         internal const string RemoveBreakpoint = "__Remove-PSBreakpoint";
 
         #endregion

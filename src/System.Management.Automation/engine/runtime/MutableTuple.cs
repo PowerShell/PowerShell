@@ -34,7 +34,9 @@ namespace System.Management.Automation
         private static readonly Dictionary<Type, int> s_sizeDict = new Dictionary<Type, int>();
 
         private int _size;
+
         protected BitArray _valuesSet;
+
         private Dictionary<string, int> _nameToIndexMap;
 
         internal bool IsValueSet(int index)
@@ -149,6 +151,7 @@ namespace System.Management.Automation
         }
 
         protected abstract object GetValueImpl(int index);
+
         protected abstract void SetValueImpl(int index, object value);
 
         /// <summary>

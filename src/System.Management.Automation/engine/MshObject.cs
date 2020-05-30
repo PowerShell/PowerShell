@@ -623,10 +623,15 @@ namespace System.Management.Automation
         private object _immediateBaseObject;
 
         private WeakReference<TypeTable> _typeTable;
+
         private AdapterSet _adapterSet;
+
         private PSMemberInfoInternalCollection<PSMemberInfo> _instanceMembers;
+
         private PSMemberInfoIntegratingCollection<PSMemberInfo> _members;
+
         private PSMemberInfoIntegratingCollection<PSPropertyInfo> _properties;
+
         private PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
 
         private PSObjectFlags _flags;
@@ -638,15 +643,21 @@ namespace System.Management.Automation
         private static readonly ConditionalWeakTable<object, ConsolidatedString> s_typeNamesResurrectionTable = new ConditionalWeakTable<object, ConsolidatedString>();
 
         private static readonly Collection<CollectionEntry<PSMemberInfo>> s_memberCollection = GetMemberCollection(PSMemberViewTypes.All);
+
         private static readonly Collection<CollectionEntry<PSMethodInfo>> s_methodCollection = GetMethodCollection();
+
         private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_propertyCollection = GetPropertyCollection(PSMemberViewTypes.All);
 
         private static readonly DotNetAdapter s_dotNetInstanceAdapter = new DotNetAdapter();
+
         private static readonly DotNetAdapter s_baseAdapterForAdaptedObjects = new BaseDotNetAdapterForAdaptedObjects();
+
         private static readonly DotNetAdapter s_dotNetStaticAdapter = new DotNetAdapter(true);
 
         private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(DotNetInstanceAdapter, null);
+
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
+
         private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
 
         private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
@@ -655,11 +666,15 @@ namespace System.Management.Automation
                                     PSObject.DotNetInstanceAdapter);
 #if !UNIX
         private static readonly AdapterSet s_managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), DotNetInstanceAdapter);
+
         private static readonly AdapterSet s_managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), DotNetInstanceAdapter);
+
         private static readonly AdapterSet s_directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), DotNetInstanceAdapter);
 #endif
         private static readonly AdapterSet s_dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
+
         private static readonly AdapterSet s_dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
+
         private static readonly AdapterSet s_xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects);
 
         #endregion fields
@@ -2430,7 +2445,9 @@ namespace System.Management.Automation
             /// Set to true when the BaseObject is PSCustomObject.
             /// </summary>
             HasGeneratedReservedMembers = 0b00000010,
+
             ImmediateBaseObjectIsEmpty = 0b00000100,
+
             IsHelpObject = 0b00001000,
 
             /// <summary>
@@ -2447,11 +2464,17 @@ namespace System.Management.Automation
     internal enum WriteStreamType : byte
     {
         None,
+
         Output,
+
         Error,
+
         Warning,
+
         Verbose,
+
         Debug,
+
         Information
     }
 
@@ -2486,7 +2509,9 @@ namespace System.Management.Automation
     internal enum SerializationMethod
     {
         AllPublicProperties = 0,
+
         String = 1,
+
         SpecificProperties = 2
     }
 }

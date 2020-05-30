@@ -31,6 +31,7 @@ namespace System.Management.Automation.Language
         };
 
         private readonly Stack<MemberAst> _memberScopeStack;
+
         private readonly Stack<ScriptBlockAst> _scopeStack;
 
         internal static void CheckAst(Parser parser, ScriptBlockAst ast)
@@ -1752,9 +1753,13 @@ namespace System.Management.Automation.Language
     internal class RestrictedLanguageChecker : AstVisitor
     {
         private readonly Parser _parser;
+
         private readonly IEnumerable<string> _allowedCommands;
+
         private readonly IEnumerable<string> _allowedVariables;
+
         private readonly bool _allVariablesAreAllowed;
+
         private readonly bool _allowEnvironmentVariables;
 
         internal RestrictedLanguageChecker(Parser parser, IEnumerable<string> allowedCommands, IEnumerable<string> allowedVariables, bool allowEnvironmentVariables)

@@ -29,6 +29,7 @@ namespace Microsoft.PowerShell.Cim
         private class SensitiveString : IDisposable
         {
             private GCHandle _gcHandle;
+
             private string _string;
 
             public string Value { get { return _string; } }

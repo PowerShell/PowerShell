@@ -23,6 +23,7 @@ namespace System.Management.Automation
         /// it is '\', and on Linux, it is '/', as expected.
         /// </summary>
         internal static readonly char DefaultPathSeparator = System.IO.Path.DirectorySeparatorChar;
+
         internal static readonly string DefaultPathSeparatorString = DefaultPathSeparator.ToString();
 
         /// <summary>
@@ -34,6 +35,7 @@ namespace System.Management.Automation
         /// separator on Linux.
         /// </summary>
         internal static readonly char AlternatePathSeparator = Platform.IsWindows ? '/' : '\\';
+
         internal static readonly string AlternatePathSeparatorString = AlternatePathSeparator.ToString();
 
         /// <summary>

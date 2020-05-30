@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _functionList;
+
         private List<WildcardPattern> _functionPatterns;
 
         /// <summary>
@@ -76,6 +77,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _cmdletList;
+
         private List<WildcardPattern> _cmdletPatterns;
 
         /// <summary>
@@ -105,6 +107,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _variableExportList;
+
         private List<WildcardPattern> _variablePatterns;
 
         /// <summary>
@@ -134,6 +137,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _aliasExportList;
+
         private List<WildcardPattern> _aliasPatterns;
 
         /// <summary>

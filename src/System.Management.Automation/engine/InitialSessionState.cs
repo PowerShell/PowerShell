@@ -1790,6 +1790,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private Microsoft.PowerShell.ExecutionPolicy _executionPolicy = Microsoft.PowerShell.ExecutionPolicy.Default;
+
         private bool _wasExecutionPolicySet = false;
 
         /// <summary>
@@ -4095,6 +4096,7 @@ namespace System.Management.Automation.Runspaces
 
         // Now define a bunch of functions that describe the rest of the default session state...
         internal const string FormatEnumerationLimit = "FormatEnumerationLimit";
+
         internal const int DefaultFormatEnumerationLimit = 4;
 
         /// <summary>
@@ -4425,14 +4427,21 @@ end {
         }
 
         internal const ActionPreference DefaultDebugPreference = ActionPreference.SilentlyContinue;
+
         internal const ActionPreference DefaultErrorActionPreference = ActionPreference.Continue;
+
         internal const ActionPreference DefaultProgressPreference = ActionPreference.Continue;
+
         internal const ActionPreference DefaultVerbosePreference = ActionPreference.SilentlyContinue;
+
         internal const ActionPreference DefaultWarningPreference = ActionPreference.Continue;
+
         internal const ActionPreference DefaultInformationPreference = ActionPreference.SilentlyContinue;
 
         internal const ErrorView DefaultErrorView = ErrorView.ConciseView;
+
         internal const bool DefaultWhatIfPreference = false;
+
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
         internal static readonly SessionStateVariableEntry[] BuiltInVariables = new SessionStateVariableEntry[]
@@ -4844,7 +4853,9 @@ end {
         private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
 
         internal static readonly string CoreSnapin = "Microsoft.PowerShell.Core";
+
         internal static readonly string CoreModule = "Microsoft.PowerShell.Core";
+
         internal Collection<PSSnapInInfo> defaultSnapins = new Collection<PSSnapInInfo>();
 
         // The list of engine modules to create warnings when you try to remove them

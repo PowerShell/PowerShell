@@ -72,10 +72,15 @@ namespace Microsoft.PowerShell
         private struct PROCESS_BASIC_INFORMATION
         {
             public IntPtr ExitStatus;
+
             public IntPtr PebBaseAddress;
+
             public IntPtr AffinityMask;
+
             public IntPtr BasePriority;
+
             public IntPtr UniqueProcessId;
+
             public IntPtr InheritedFromUniqueProcessId;
         }
 

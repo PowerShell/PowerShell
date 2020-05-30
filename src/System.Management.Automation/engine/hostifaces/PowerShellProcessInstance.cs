@@ -17,13 +17,19 @@ namespace System.Management.Automation.Runspaces
         #region Fields
 
         private readonly ProcessStartInfo _startInfo;
+
         private RunspacePool _runspacePool;
+
         private readonly object _syncObject = new object();
+
         private bool _started;
+
         private bool _isDisposed;
+
         private bool _processExited;
 
         internal static readonly string PwshExePath;
+
         internal static readonly string WinPwshExePath;
 
         #endregion Fields

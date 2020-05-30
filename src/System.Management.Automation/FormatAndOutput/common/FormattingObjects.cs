@@ -148,7 +148,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public FormatEntryInfo formatEntryInfo = null;
 
         public bool outOfBand = false;
+
         public WriteStreamType writeStream = WriteStreamType.None;
+
         internal bool isHelpObject = false;
     }
     #endregion
@@ -187,7 +189,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         public bool hideHeader;
+
         public bool repeatHeader;
+
         public List<TableColumnInfo> tableColumnInfoList;
     }
 
@@ -205,7 +209,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public int width = 0;
 
         public int alignment = TextAlignment.Left;
+
         public string label = null;
+
         public string propertyName = null;
     }
 
@@ -261,7 +267,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         public string label = null;
+
         public string propertyName = null;
+
         public FormatPropertyField formatPropertyField = new FormatPropertyField();
     }
 
@@ -272,6 +280,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         public List<FormatPropertyField> formatPropertyFieldList = new List<FormatPropertyField>();
+
         public bool multiLine = false;
     }
 
@@ -357,6 +366,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         public string propertyValue = null;
+
         public int alignment = TextAlignment.Undefined;
     }
 
@@ -386,7 +396,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public override string ClassId2e4f51ef21dd47e99d3c952918aff9cd { get { return CLSID; } }
 
         public int leftIndentation = 0;
+
         public int rightIndentation = 0;
+
         public int firstLine = 0;
     }
 

@@ -202,7 +202,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private int _tableWidth;
+
         private int _minimumColumnWidth;
+
         private int _separatorWidth;
     }
 }

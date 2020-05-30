@@ -49,6 +49,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         private const string ConnectionUriParameterSet = "ConnectionUri";
+
         private const string ConnectionUriInstanceIdParameterSet = "ConnectionUriInstanceId";
 
         /// <summary>

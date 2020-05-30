@@ -339,6 +339,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetLocationCommand : DriveMatchingCoreCommandBase
     {
         private const string LocationParameterSet = "Location";
+
         private const string StackParameterSet = "Stack";
 
         #region Command parameters
@@ -639,7 +640,9 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Command parameters
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
+
         private const string StackParameterSet = "Stack";
 
         /// <summary>
@@ -814,6 +817,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Command parameters
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
@@ -1486,6 +1490,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string NameParameterSet = "Name";
+
         private const string LiteralNameParameterSet = "LiteralName";
 
         /// <summary>
@@ -1664,6 +1669,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string NameParameterSet = "Name";
+
         private const string LiteralNameParameterSet = "LiteralName";
 
         /// <summary>
@@ -1847,6 +1853,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
@@ -2016,6 +2023,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string NameParameterSet = "nameSet";
+
         private const string PathParameterSet = "pathSet";
 
         /// <summary>
@@ -2167,6 +2175,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
@@ -2370,6 +2379,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
@@ -2798,6 +2808,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
@@ -3174,6 +3185,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string ByPathParameterSet = "ByPath";
+
         private const string ByLiteralPathParameterSet = "ByLiteralPath";
 
         /// <summary>
@@ -3515,6 +3527,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
@@ -3685,6 +3698,7 @@ namespace Microsoft.PowerShell.Commands
         /// Determines if the containers should be copied with the items or not.
         /// </summary>
         private bool _container = true;
+
         private bool _containerSpecified;
 
         /// <summary>
@@ -3774,6 +3788,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>
@@ -3963,6 +3978,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command parameters
 
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
 
         /// <summary>

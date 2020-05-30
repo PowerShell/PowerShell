@@ -13,7 +13,9 @@ namespace Microsoft.Management.UI.Internal
     internal enum LogicalDirection
     {
         None,
+
         Left,
+
         Right
     }
 

@@ -189,6 +189,7 @@ namespace Microsoft.PowerShell
         }
 
         private ProgressPane _progPane = null;
+
         private PendingProgress _pendingProgress = null;
         // The timer set up 'progPaneUpdateFlag' every 'UpdateTimerThreshold' milliseconds to update 'ProgressPane'
         private Timer _progPaneUpdateTimer = null;

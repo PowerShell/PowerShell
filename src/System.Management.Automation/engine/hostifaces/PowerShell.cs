@@ -579,28 +579,39 @@ namespace System.Management.Automation
         private PSCommand _psCommand;
         // worker object which does the invoke
         private Worker _worker;
+
         private PowerShellAsyncResult _invokeAsyncResult;
+
         private PowerShellAsyncResult _stopAsyncResult;
+
         private PowerShellAsyncResult _batchAsyncResult;
+
         private PSInvocationSettings _batchInvocationSettings;
+
         private PSCommand _backupPSCommand;
+
         private object _rsConnection;
 
         private PSDataCollection<ErrorRecord> _errorBuffer;
 
         private bool _isDisposed;
+
         private object _syncObject = new object();
 
         // client remote powershell if the powershell
         // is executed with a remote runspace pool
 
         private ConnectCommandInfo _connectCmdInfo;
+
         private bool _commandInvokedSynchronously = false;
+
         private bool _isBatching = false;
+
         private bool _stopBatchExecution = false;
 
         // Delegates for asynchronous invocation/termination of PowerShell commands
         private readonly Func<IAsyncResult, PSDataCollection<PSObject>> _endInvokeMethod;
+
         private readonly Action<IAsyncResult> _endStopMethod;
 
         #endregion
@@ -5316,11 +5327,17 @@ namespace System.Management.Automation
         private sealed class Worker
         {
             private ObjectStreamBase _inputStream;
+
             private ObjectStreamBase _outputStream;
+
             private ObjectStreamBase _errorStream;
+
             private PSInvocationSettings _settings;
+
             private bool _isNotActive;
+
             private PowerShell _shell;
+
             private object _syncObject = new object();
 
             /// <summary>
@@ -6146,7 +6163,9 @@ namespace System.Management.Automation
     internal class PowerShellStopper : IDisposable
     {
         private PipelineBase _pipeline;
+
         private PowerShell _powerShell;
+
         private EventHandler<PipelineStateEventArgs> _eventHandler;
 
         internal PowerShellStopper(ExecutionContext context, PowerShell powerShell)

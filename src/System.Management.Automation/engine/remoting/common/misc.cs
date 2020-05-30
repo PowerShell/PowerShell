@@ -226,37 +226,69 @@ namespace System.Management.Automation
     internal enum RemoteSessionEvent
     {
         InvalidEvent = 0,
+
         CreateSession = 1,
+
         ConnectSession = 2,
+
         NegotiationSending = 3,
+
         NegotiationSendingOnConnect = 4,
+
         NegotiationSendCompleted = 5,
+
         NegotiationReceived = 6,
+
         NegotiationCompleted = 7,
+
         NegotiationPending = 8,
+
         Close = 9,
+
         CloseCompleted = 10,
+
         CloseFailed = 11,
+
         ConnectFailed = 12,
+
         NegotiationFailed = 13,
+
         NegotiationTimeout = 14,
+
         SendFailed = 15,
+
         ReceiveFailed = 16,
+
         FatalError = 17,
+
         MessageReceived = 18,
+
         KeySent = 19,
+
         KeySendFailed = 20,
+
         KeyReceived = 21,
+
         KeyReceiveFailed = 22,
+
         KeyRequested = 23,
+
         KeyRequestFailed = 24,
+
         DisconnectStart = 25,
+
         DisconnectCompleted = 26,
+
         DisconnectFailed = 27,
+
         ReconnectStart = 28,
+
         ReconnectCompleted = 29,
+
         ReconnectFailed = 30,
+
         RCDisconnectStarted = 31,
+
         MaxEvent = 32
     }
 

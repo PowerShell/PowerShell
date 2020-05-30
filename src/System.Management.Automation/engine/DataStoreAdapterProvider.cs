@@ -37,6 +37,7 @@ namespace System.Management.Automation
         private SessionState _sessionState;
 
         private string _fullName;
+
         private string _cachedModuleName;
 
         /// <summary>
@@ -194,6 +195,7 @@ namespace System.Management.Automation
         }
 
         private ProviderCapabilities _capabilities = ProviderCapabilities.None;
+
         private bool _capabilitiesRead;
 
         /// <summary>

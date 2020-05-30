@@ -16,24 +16,40 @@ namespace Microsoft.PowerShell.Commands
         internal static class ClassNames
         {
             internal const string OperatingSystem = "Win32_OperatingSystem";
+
             internal const string PageFileUsage = "Win32_PageFileUsage";
+
             internal const string Bios = "Win32_BIOS";
+
             internal const string BaseBoard = "Win32_BaseBoard";
+
             internal const string ComputerSystem = "Win32_ComputerSystem";
+
             internal const string Keyboard = "Win32_Keyboard";
+
             internal const string DeviceGuard = "Win32_DeviceGuard";
+
             internal const string HotFix = "Win32_QuickFixEngineering";
+
             internal const string MicrosoftNetworkAdapter = "MSFT_NetAdapter";
+
             internal const string NetworkAdapter = "Win32_NetworkAdapter";
+
             internal const string NetworkAdapterConfiguration = "Win32_NetworkAdapterConfiguration";
+
             internal const string Processor = "Win32_Processor";
+
             internal const string PhysicalMemory = "Win32_PhysicalMemory";
+
             internal const string TimeZone = "Win32_TimeZone";
         }
 
         internal const string DefaultNamespace = @"root\cimv2";
+
         internal const string DeviceGuardNamespace = @"root\Microsoft\Windows\DeviceGuard";
+
         internal const string MicrosoftNetworkAdapterNamespace = "root/StandardCimv2";
+
         internal const string DefaultQueryDialect = "WQL";
 
         /// <summary>

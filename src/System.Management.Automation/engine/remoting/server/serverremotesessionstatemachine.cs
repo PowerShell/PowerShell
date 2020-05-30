@@ -35,6 +35,7 @@ namespace System.Management.Automation.Remoting
         private static PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSessionDSHandlerStateMachine", "ServerRemoteSessionDSHandlerStateMachine");
 
         private ServerRemoteSession _session;
+
         private object _syncObject;
 
         private Queue<RemoteSessionStateMachineEventArgs> _processPendingEventsQueue
@@ -48,6 +49,7 @@ namespace System.Management.Automation.Remoting
         private bool _eventsInProcess = false;
 
         private EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
+
         private RemoteSessionState _state;
 
         /// <summary>

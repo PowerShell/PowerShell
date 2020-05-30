@@ -35,8 +35,11 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet parameters
 
         private const string ParameterSet_Loaded = "Loaded";
+
         private const string ParameterSet_AvailableLocally = "Available";
+
         private const string ParameterSet_AvailableInPsrpSession = "PsSession";
+
         private const string ParameterSet_AvailableInCimSession = "CimSession";
 
         /// <summary>

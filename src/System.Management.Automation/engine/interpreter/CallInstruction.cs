@@ -262,6 +262,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed partial class MethodInfoCallInstruction : CallInstruction
     {
         private readonly MethodInfo _target;
+
         private readonly int _argumentCount;
 
         public override MethodInfo Info { get { return _target; } }

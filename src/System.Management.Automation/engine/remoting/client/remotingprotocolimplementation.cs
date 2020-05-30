@@ -21,14 +21,21 @@ namespace System.Management.Automation.Remoting
         private const string resBaseName = "remotingerroridstrings";
 
         private BaseClientSessionTransportManager _transportManager;
+
         private ClientRemoteSessionDSHandlerStateMachine _stateMachine;
+
         private ClientRemoteSession _session;
+
         private RunspaceConnectionInfo _connectionInfo;
         // used for connection redirection.
         private Uri _redirectUri;
+
         private int _maxUriRedirectionCount;
+
         private bool _isCloseCalled;
+
         private object _syncObject = new object();
+
         private PSRemotingCryptoHelper _cryptoHelper;
 
         private ClientRemoteSession.URIDirectionReported _uriRedirectionHandler;

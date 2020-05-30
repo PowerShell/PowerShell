@@ -31,8 +31,11 @@ namespace Microsoft.PowerShell
         internal enum ExecutionOptions
         {
             None = 0x0,
+
             AddOutputter = 0x01,
+
             AddToHistory = 0x02,
+
             ReadInputObjects = 0x04
         }
 
@@ -731,13 +734,19 @@ namespace Microsoft.PowerShell
         // to currentExecutor is guarded by staticStateLock, and static initializers are run by the CLR at program init time.
 
         private static Executor s_currentExecutor;
+
         private static object s_staticStateLock = new object();
 
         private ConsoleHost _parent;
+
         private Pipeline _pipeline;
+
         private bool _cancelled;
+
         internal bool useNestedPipelines;
+
         private object _instanceStateLock = new object();
+
         private bool _isPromptFunctionExecutor;
     }
 }   // namespace

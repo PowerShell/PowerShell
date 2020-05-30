@@ -16,73 +16,120 @@ namespace System.Management.Automation.Remoting
     {
         // Host read-only properties.
         GetName = 1,
+
         GetVersion = 2,
+
         GetInstanceId = 3,
+
         GetCurrentCulture = 4,
+
         GetCurrentUICulture = 5,
 
         // Host methods.
         SetShouldExit = 6,
+
         EnterNestedPrompt = 7,
+
         ExitNestedPrompt = 8,
+
         NotifyBeginApplication = 9,
+
         NotifyEndApplication = 10,
 
         // Host UI methods.
         ReadLine = 11,
+
         ReadLineAsSecureString = 12,
+
         Write1 = 13,
+
         Write2 = 14,
+
         WriteLine1 = 15,
+
         WriteLine2 = 16,
+
         WriteLine3 = 17,
+
         WriteErrorLine = 18,
+
         WriteDebugLine = 19,
+
         WriteProgress = 20,
+
         WriteVerboseLine = 21,
+
         WriteWarningLine = 22,
+
         Prompt = 23,
+
         PromptForCredential1 = 24,
+
         PromptForCredential2 = 25,
+
         PromptForChoice = 26,
 
         // Host Raw UI read-write properties.
         GetForegroundColor = 27,
+
         SetForegroundColor = 28,
+
         GetBackgroundColor = 29,
+
         SetBackgroundColor = 30,
+
         GetCursorPosition = 31,
+
         SetCursorPosition = 32,
+
         GetWindowPosition = 33,
+
         SetWindowPosition = 34,
+
         GetCursorSize = 35,
+
         SetCursorSize = 36,
+
         GetBufferSize = 37,
+
         SetBufferSize = 38,
+
         GetWindowSize = 39,
+
         SetWindowSize = 40,
+
         GetWindowTitle = 41,
+
         SetWindowTitle = 42,
 
         // Host Raw UI read-only properties.
         GetMaxWindowSize = 43,
+
         GetMaxPhysicalWindowSize = 44,
+
         GetKeyAvailable = 45,
 
         // Host Raw UI methods.
         ReadKey = 46,
+
         FlushInputBuffer = 47,
+
         SetBufferContents1 = 48,
+
         SetBufferContents2 = 49,
+
         GetBufferContents = 50,
+
         ScrollBufferContents = 51,
 
         // IHostSupportsInteractiveSession methods.
         PushRunspace = 52,
+
         PopRunspace = 53,
 
         // IHostSupportsInteractiveSession read-only properties.
         GetIsRunspacePushed = 54,
+
         GetRunspace = 55,
 
         // IHostSupportsMultipleChoiceSelection

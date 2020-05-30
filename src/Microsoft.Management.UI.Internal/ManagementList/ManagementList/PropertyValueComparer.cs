@@ -16,7 +16,9 @@ namespace Microsoft.Management.UI.Internal
     internal class PropertyValueComparer : IComparer
     {
         private IPropertyValueGetter propertyValueGetter;
+
         private List<UIPropertyGroupDescription> dataDescriptions;
+
         private bool sortRecursively = true;
 
         /// <summary>

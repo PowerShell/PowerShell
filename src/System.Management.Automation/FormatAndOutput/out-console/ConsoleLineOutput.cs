@@ -499,7 +499,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal enum PromptResponse
             {
                 NextPage,
+
                 NextLine,
+
                 Quit
             }
 

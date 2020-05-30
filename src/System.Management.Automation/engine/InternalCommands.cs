@@ -65,7 +65,9 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         private const string ParallelParameterSet = "ParallelParameterSet";
+
         private const string ScriptBlockSet = "ScriptBlockSet";
+
         private const string PropertyAndMethodSet = "PropertyAndMethodSet";
 
         #endregion
@@ -137,6 +139,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ScriptBlock _endScript;
+
         private bool _setEndScript;
 
         /// <summary>
@@ -209,7 +212,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _propertyOrMethodName;
+
         private string _targetString;
+
         private DynamicPropertyGetter _propGetter;
 
         /// <summary>
@@ -373,12 +378,19 @@ namespace Microsoft.PowerShell.Commands
         #region PSTasks
 
         private PSTaskPool _taskPool;
+
         private PSTaskDataStreamWriter _taskDataStreamWriter;
+
         private Dictionary<string, object> _usingValuesMap;
+
         private Timer _taskTimer;
+
         private PSTaskJob _taskJob;
+
         private PSDataCollection<System.Management.Automation.PSTasks.PSTask> _taskCollection;
+
         private Exception _taskCollectionException;
+
         private string _currentLocationPath;
 
         private void InitParallelParameterSet()
@@ -1358,7 +1370,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private object _convertedValue;
+
         private object _value = true;
+
         private bool _valueNotSpecified = true;
 
         /// <summary>

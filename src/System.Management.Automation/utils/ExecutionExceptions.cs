@@ -735,6 +735,7 @@ namespace System.Management.Automation
         #region Private Data
 
         private readonly Exception _wrapperException;
+
         private string _message;
 
         #endregion

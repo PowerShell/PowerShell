@@ -451,10 +451,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _archivedCerts = false;
+
         private X509StoreLocation _storeLocation = null;
+
         private string _storeName = null;
+
         private CertificateStoreHandle _storeHandle = null;
+
         private bool _valid = false;
+
         private bool _open = false;
     }
 
@@ -3178,9 +3183,11 @@ namespace Microsoft.PowerShell.Commands
     public sealed class DnsNameProperty
     {
         private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
+
         private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
 
         private const string dnsNamePrefix = "DNS Name=";
+
         private const string distinguishedNamePrefix = "CN=";
 
         /// <summary>
@@ -3267,6 +3274,7 @@ namespace Microsoft.PowerShell.Commands
     internal static class DownLevelHelper
     {
         private static bool s_isWin8Set = false;
+
         private static bool s_isWin8 = false;
 
         internal static bool IsWin8AndAbove()

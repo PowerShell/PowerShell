@@ -17,6 +17,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal class CimCustomOptionsDictionary
     {
         private readonly IDictionary<string, object> _dict;
+
         private readonly object _dictModificationLock = new object();
 
         private CimCustomOptionsDictionary(IEnumerable<KeyValuePair<string, object>> wrappedDictionary)

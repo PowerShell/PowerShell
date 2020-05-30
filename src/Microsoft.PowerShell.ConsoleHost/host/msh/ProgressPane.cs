@@ -236,11 +236,17 @@ namespace Microsoft.PowerShell
         }
 
         private Coordinates _location = new Coordinates(0, 0);
+
         private Coordinates _savedCursor;
+
         private Size _bufSize;
+
         private BufferCell[,] _savedRegion;
+
         private BufferCell[,] _progressRegion;
+
         private PSHostRawUserInterface _rawui;
+
         private ConsoleHostUserInterface _ui;
     }
 }   // namespace

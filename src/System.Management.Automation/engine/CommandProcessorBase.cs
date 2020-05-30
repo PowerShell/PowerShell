@@ -377,6 +377,7 @@ namespace System.Management.Automation
         }
 
         private SessionStateScope _previousScope;
+
         private SessionStateInternal _previousCommandSessionState;
 
         /// <summary>

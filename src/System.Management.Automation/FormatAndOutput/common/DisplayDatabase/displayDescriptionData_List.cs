@@ -364,6 +364,7 @@ namespace System.Management.Automation
     public class ListEntryBuilder
     {
         private readonly ListControlBuilder _listBuilder;
+
         internal ListControlEntry _listEntry;
 
         internal ListEntryBuilder(ListControlBuilder listBuilder, ListControlEntry listEntry)

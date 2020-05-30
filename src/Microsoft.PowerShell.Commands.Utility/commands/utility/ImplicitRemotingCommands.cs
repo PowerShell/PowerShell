@@ -319,7 +319,9 @@ namespace Microsoft.PowerShell.Commands
     public class ImplicitRemotingCommandBase : PSCmdlet
     {
         internal const string ImplicitRemotingKey = "ImplicitRemoting";
+
         internal const string ImplicitRemotingHashKey = "Hash";
+
         internal const string ImplicitRemotingCommandsToSkipKey = "CommandsToSkip";
 
         #region Constructor
@@ -362,6 +364,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _commandNameParameter;
+
         private Collection<WildcardPattern> _commandNamePatterns; // initialized to default value in the constructor
 
         /// <summary>
@@ -442,6 +445,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _PSSnapins = Array.Empty<string>();
+
         internal bool IsModuleSpecified = false;
         /// <summary>
         /// Gets or sets the FullyQualifiedModule parameter to the cmdlet.
@@ -468,6 +472,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ModuleSpecification[] _moduleSpecifications = new ModuleSpecification[0];
+
         internal bool IsFullyQualifiedModuleSpecified = false;
 
         private bool _commandParameterSpecified; // initialized to default value in the constructor
@@ -498,7 +503,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _formatTypeNameParameter; // initialized to default value in the constructor
+
         private Collection<WildcardPattern> _formatTypeNamePatterns;
+
         private bool _formatTypeNamesSpecified; // initialized to default value in the constructor
 
         #endregion
@@ -1907,7 +1914,9 @@ namespace Microsoft.PowerShell.Commands
         #region Constructor and shared private data
 
         private PSSession _remoteRunspaceInfo;
+
         private Guid _moduleGuid;
+
         private InvocationInfo _invocationInfo;
 
         internal ImplicitRemotingCodeGenerator(
@@ -2551,6 +2560,7 @@ function Get-PSImplicitRemotingSession
                     -ApplicationName '{1}' {2} {3} ";
 
         private const string VMIdParameterTemplate = @"-VMId '{0}' ";
+
         private const string ContainerIdParameterTemplate = @"-ContainerId '{0}' ";
 
         /// <summary>

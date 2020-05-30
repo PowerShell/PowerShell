@@ -17,7 +17,9 @@ namespace System.Management.Automation
     internal class ExecutionContextForStepping : IDisposable
     {
         private ExecutionContext _executionContext;
+
         private PSInformationalBuffers _originalInformationalBuffers;
+
         private PSHost _originalHost;
 
         private ExecutionContextForStepping(ExecutionContext ctxt)
@@ -78,6 +80,7 @@ namespace System.Management.Automation
 
         // pipeline that runs the actual command.
         private ServerSteppablePipelineSubscriber _eventSubscriber;
+
         private PSDataCollection<object> _powershellInput; // input collection of the PowerShell pipeline
 
         #endregion

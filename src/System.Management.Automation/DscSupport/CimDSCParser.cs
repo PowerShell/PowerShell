@@ -321,6 +321,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration
     internal class CimDSCParser
     {
         private CimMofDeserializer _deserializer;
+
         private CimMofDeserializer.OnClassNeeded _onClassNeeded;
         /// <summary>
         /// </summary>
@@ -527,6 +528,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
     public static class DscClassCache
     {
         private const string InboxDscResourceModulePath = "WindowsPowershell\\v1.0\\Modules\\PsDesiredStateConfiguration";
+
         private const string reservedDynamicKeywords = "^(Synchronization|Certificate|IIS|SQL)$";
 
         private const string reservedProperties = "^(Require|Trigger|Notify|Before|After|Subscribe)$";
@@ -535,8 +537,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
         // Constants for items in the module qualified name (Module\Version\ClassName)
         private const int IndexModuleName = 0;
+
         private const int IndexModuleVersion = 1;
+
         private const int IndexClassName = 2;
+
         private const int IndexFriendlyName = 3;
 
         // Create a list of classes which are not actual DSC resources similar to what we do inside PSDesiredStateConfiguration.psm1

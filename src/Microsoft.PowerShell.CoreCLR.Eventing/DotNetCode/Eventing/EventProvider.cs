@@ -16,11 +16,17 @@ namespace System.Diagnostics.Eventing
         private UnsafeNativeMethods.EtwEnableCallback _etwCallback;  // Trace Callback function
 
         private long _regHandle;                       // Trace Registration Handle
+
         private byte _level;                            // Tracing Level
+
         private long _anyKeywordMask;                  // Trace Enable Flags
+
         private long _allKeywordMask;                  // Match all keyword
+
         private int _enabled;                           // Enabled flag from Trace callback
+
         private Guid _providerId;                       // Control Guid
+
         private int _disposed;                          // when 1, provider has unregister
 
         [ThreadStatic]
@@ -30,10 +36,15 @@ namespace System.Diagnostics.Eventing
         private static Guid t_activityId;
 
         private const int s_basicTypeAllocationBufferSize = 16;
+
         private const int s_etwMaxNumberArguments = 32;
+
         private const int s_etwAPIMaxStringCount = 8;
+
         private const int s_maxEventDataDescriptors = 128;
+
         private const int s_traceEventMaximumSize = 65482;
+
         private const int s_traceEventMaximumStringSize = 32724;
 
         [SuppressMessage("Microsoft.Design", "CA1034:NestedTypesShouldNotBeVisible")]
@@ -41,7 +52,9 @@ namespace System.Diagnostics.Eventing
         {
             // check mapping to runtime codes
             NoError = 0,
+
             NoFreeBuffers = 1,
+
             EventTooBig = 2
         }
 
@@ -61,9 +74,13 @@ namespace System.Diagnostics.Eventing
         private enum ActivityControl : uint
         {
             EVENT_ACTIVITY_CTRL_GET_ID = 1,
+
             EVENT_ACTIVITY_CTRL_SET_ID = 2,
+
             EVENT_ACTIVITY_CTRL_CREATE_ID = 3,
+
             EVENT_ACTIVITY_CTRL_GET_SET_ID = 4,
+
             EVENT_ACTIVITY_CTRL_CREATE_SET_ID = 5
         }
 

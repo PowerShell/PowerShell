@@ -18,6 +18,7 @@ namespace Microsoft.Management.UI.Internal
         #region Properties
 
         private ObservableCollection<FilterRulePanelItem> filterRulePanelItems;
+
         private ReadOnlyObservableCollection<FilterRulePanelItem> readOnlyFilterRulePanelItems;
 
         /// <summary>

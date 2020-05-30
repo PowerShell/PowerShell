@@ -18,7 +18,9 @@ namespace System.Management.Automation
         /// Requested path.
         /// </summary>
         private readonly string _requestedPath;
+
         private readonly ExecutionContext _executionContext;
+
         private readonly PathIntrinsics _pathIntrinsics;
 
         /// <summary>

@@ -32,9 +32,13 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameter Set Names
         private const string DefaultPingParameterSet = "DefaultPing";
+
         private const string RepeatPingParameterSet = "RepeatPing";
+
         private const string TraceRouteParameterSet = "TraceRoute";
+
         private const string TcpPortParameterSet = "TcpPort";
+
         private const string MtuSizeDetectParameterSet = "MtuSizeDetect";
 
         #endregion

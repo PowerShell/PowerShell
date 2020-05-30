@@ -51,6 +51,7 @@ namespace System.Management.Automation
         internal override string Name { get; } = string.Empty;
 
         private string _filename = string.Empty;
+
         private string _synopsis = string.Empty;
         /// <summary>
         /// Synopsis for the help info.

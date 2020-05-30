@@ -131,6 +131,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
+
         private string _errorId = "InvalidOperation";
 
         internal void SetErrorId(string errorId)
@@ -139,6 +140,7 @@ namespace System.Management.Automation
         }
 
         private ErrorCategory _errorCategory = ErrorCategory.InvalidOperation;
+
         private object _target = null;
     }
 }

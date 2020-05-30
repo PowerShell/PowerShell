@@ -57,6 +57,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class NewInstruction : Instruction
     {
         private readonly ConstructorInfo _constructor;
+
         private readonly int _argCount;
 
         public NewInstruction(ConstructorInfo constructor)

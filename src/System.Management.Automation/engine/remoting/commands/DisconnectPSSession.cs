@@ -395,6 +395,7 @@ namespace Microsoft.PowerShell.Commands
         private class DisconnectRunspaceOperation : IThrottleOperation
         {
             private PSSession _remoteSession;
+
             private ObjectStream _writeStream;
 
             internal DisconnectRunspaceOperation(PSSession session, ObjectStream stream)

@@ -12,16 +12,22 @@ namespace System.Diagnostics.Eventing
     internal static class UnsafeNativeMethods
     {
         private const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";
+
         private const string EventProviderDllName = "api-ms-win-eventing-provider-l1-1-0.dll";
+
         private const string WEVTAPI = "wevtapi.dll";
 
         private static readonly IntPtr s_NULL = IntPtr.Zero;
 
         // WinError.h codes:
         internal const int ERROR_SUCCESS = 0x0;
+
         internal const int ERROR_FILE_NOT_FOUND = 0x2;
+
         internal const int ERROR_PATH_NOT_FOUND = 0x3;
+
         internal const int ERROR_ACCESS_DENIED = 0x5;
+
         internal const int ERROR_INVALID_HANDLE = 0x6;
 
         // Can occurs when filled buffers are trying to flush to disk, but disk IOs are not fast enough.
@@ -30,49 +36,83 @@ namespace System.Diagnostics.Eventing
         internal const int ERROR_NOT_ENOUGH_MEMORY = 0x8;
 
         internal const int ERROR_INVALID_DRIVE = 0xF;
+
         internal const int ERROR_NO_MORE_FILES = 0x12;
+
         internal const int ERROR_NOT_READY = 0x15;
+
         internal const int ERROR_BAD_LENGTH = 0x18;
+
         internal const int ERROR_SHARING_VIOLATION = 0x20;
+
         internal const int ERROR_LOCK_VIOLATION = 0x21;  // 33
+
         internal const int ERROR_HANDLE_EOF = 0x26;  // 38
+
         internal const int ERROR_FILE_EXISTS = 0x50;
+
         internal const int ERROR_INVALID_PARAMETER = 0x57;  // 87
+
         internal const int ERROR_BROKEN_PIPE = 0x6D;  // 109
+
         internal const int ERROR_INSUFFICIENT_BUFFER = 0x7A;  // 122
+
         internal const int ERROR_INVALID_NAME = 0x7B;
+
         internal const int ERROR_BAD_PATHNAME = 0xA1;
+
         internal const int ERROR_ALREADY_EXISTS = 0xB7;
+
         internal const int ERROR_ENVVAR_NOT_FOUND = 0xCB;
+
         internal const int ERROR_FILENAME_EXCED_RANGE = 0xCE;  // filename too long
+
         internal const int ERROR_PIPE_BUSY = 0xE7;  // 231
+
         internal const int ERROR_NO_DATA = 0xE8;  // 232
+
         internal const int ERROR_PIPE_NOT_CONNECTED = 0xE9;  // 233
+
         internal const int ERROR_MORE_DATA = 0xEA;
+
         internal const int ERROR_NO_MORE_ITEMS = 0x103;  // 259
+
         internal const int ERROR_PIPE_CONNECTED = 0x217;  // 535
+
         internal const int ERROR_PIPE_LISTENING = 0x218;  // 536
+
         internal const int ERROR_OPERATION_ABORTED = 0x3E3;  // 995; For IO Cancellation
+
         internal const int ERROR_IO_PENDING = 0x3E5;  // 997
+
         internal const int ERROR_NOT_FOUND = 0x490;  // 1168
 
         // The event size is larger than the allowed maximum (64k - header).
         internal const int ERROR_ARITHMETIC_OVERFLOW = 0x216;  // 534
+
         internal const int ERROR_RESOURCE_LANG_NOT_FOUND = 0x717;  // 1815
 
         // Event log specific codes:
         internal const int ERROR_EVT_MESSAGE_NOT_FOUND = 15027;
+
         internal const int ERROR_EVT_MESSAGE_ID_NOT_FOUND = 15028;
+
         internal const int ERROR_EVT_UNRESOLVED_VALUE_INSERT = 15029;
+
         internal const int ERROR_EVT_UNRESOLVED_PARAMETER_INSERT = 15030;
+
         internal const int ERROR_EVT_MAX_INSERTS_REACHED = 15031;
+
         internal const int ERROR_EVT_MESSAGE_LOCALE_NOT_FOUND = 15033;
+
         internal const int ERROR_MUI_FILE_NOT_FOUND = 15100;
 
         // ErrorCode & format
         // for win32 error message formatting
         private const int FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
+
         private const int FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+
         private const int FORMAT_MESSAGE_ARGUMENT_ARRAY = 0x00002000;
 
         [DllImport(FormatMessageDllName, CharSet = CharSet.Unicode, BestFitMapping = false)]
@@ -188,9 +228,13 @@ namespace System.Diagnostics.Eventing
         internal enum EvtQueryFlags
         {
             EvtQueryChannelPath = 0x1,
+
             EvtQueryFilePath = 0x2,
+
             EvtQueryForwardDirection = 0x100,
+
             EvtQueryReverseDirection = 0x200,
+
             EvtQueryTolerateQueryErrors = 0x1000
         }
 
@@ -200,38 +244,62 @@ namespace System.Diagnostics.Eventing
         internal enum EvtVariantType
         {
             EvtVarTypeNull = 0,
+
             EvtVarTypeString = 1,
+
             EvtVarTypeAnsiString = 2,
+
             EvtVarTypeSByte = 3,
+
             EvtVarTypeByte = 4,
+
             EvtVarTypeInt16 = 5,
+
             EvtVarTypeUInt16 = 6,
+
             EvtVarTypeInt32 = 7,
+
             EvtVarTypeUInt32 = 8,
+
             EvtVarTypeInt64 = 9,
+
             EvtVarTypeUInt64 = 10,
+
             EvtVarTypeSingle = 11,
+
             EvtVarTypeDouble = 12,
+
             EvtVarTypeBoolean = 13,
+
             EvtVarTypeBinary = 14,
+
             EvtVarTypeGuid = 15,
+
             EvtVarTypeSizeT = 16,
+
             EvtVarTypeFileTime = 17,
+
             EvtVarTypeSysTime = 18,
+
             EvtVarTypeSid = 19,
+
             EvtVarTypeHexInt32 = 20,
+
             EvtVarTypeHexInt64 = 21,
             // these types used internally
             EvtVarTypeEvtHandle = 32,
+
             EvtVarTypeEvtXml = 35,
             // Array = 128
             EvtVarTypeStringArray = 129,
+
             EvtVarTypeUInt32Array = 136
         }
 
         internal enum EvtMasks
         {
             EVT_VARIANT_TYPE_MASK = 0x7f,
+
             EVT_VARIANT_TYPE_ARRAY = 128
         }
 
@@ -343,6 +411,7 @@ namespace System.Diagnostics.Eventing
         internal enum EvtEventPropertyId
         {
             EvtEventQueryIDs = 0,
+
             EvtEventPath = 1
         }
 
@@ -352,6 +421,7 @@ namespace System.Diagnostics.Eventing
         internal enum EvtQueryPropertyId
         {
             EvtQueryNames = 0,   // String;   // Variant will be array of EvtVarTypeString
+
             EvtQueryStatuses = 1 // UInt32;   // Variant will be Array of EvtVarTypeUInt32
         }
 
@@ -361,38 +431,61 @@ namespace System.Diagnostics.Eventing
         internal enum EvtPublisherMetadataPropertyId
         {
             EvtPublisherMetadataPublisherGuid = 0,      // EvtVarTypeGuid
+
             EvtPublisherMetadataResourceFilePath = 1,       // EvtVarTypeString
+
             EvtPublisherMetadataParameterFilePath = 2,      // EvtVarTypeString
+
             EvtPublisherMetadataMessageFilePath = 3,        // EvtVarTypeString
+
             EvtPublisherMetadataHelpLink = 4,               // EvtVarTypeString
+
             EvtPublisherMetadataPublisherMessageID = 5,     // EvtVarTypeUInt32
 
             EvtPublisherMetadataChannelReferences = 6,      // EvtVarTypeEvtHandle, ObjectArray
+
             EvtPublisherMetadataChannelReferencePath = 7,   // EvtVarTypeString
+
             EvtPublisherMetadataChannelReferenceIndex = 8,  // EvtVarTypeUInt32
+
             EvtPublisherMetadataChannelReferenceID = 9,     // EvtVarTypeUInt32
+
             EvtPublisherMetadataChannelReferenceFlags = 10,  // EvtVarTypeUInt32
+
             EvtPublisherMetadataChannelReferenceMessageID = 11, // EvtVarTypeUInt32
 
             EvtPublisherMetadataLevels = 12,                 // EvtVarTypeEvtHandle, ObjectArray
+
             EvtPublisherMetadataLevelName = 13,              // EvtVarTypeString
+
             EvtPublisherMetadataLevelValue = 14,             // EvtVarTypeUInt32
+
             EvtPublisherMetadataLevelMessageID = 15,         // EvtVarTypeUInt32
 
             EvtPublisherMetadataTasks = 16,                  // EvtVarTypeEvtHandle, ObjectArray
+
             EvtPublisherMetadataTaskName = 17,               // EvtVarTypeString
+
             EvtPublisherMetadataTaskEventGuid = 18,          // EvtVarTypeGuid
+
             EvtPublisherMetadataTaskValue = 19,              // EvtVarTypeUInt32
+
             EvtPublisherMetadataTaskMessageID = 20,          // EvtVarTypeUInt32
 
             EvtPublisherMetadataOpcodes = 21,                // EvtVarTypeEvtHandle, ObjectArray
+
             EvtPublisherMetadataOpcodeName = 22,             // EvtVarTypeString
+
             EvtPublisherMetadataOpcodeValue = 23,            // EvtVarTypeUInt32
+
             EvtPublisherMetadataOpcodeMessageID = 24,        // EvtVarTypeUInt32
 
             EvtPublisherMetadataKeywords = 25,               // EvtVarTypeEvtHandle, ObjectArray
+
             EvtPublisherMetadataKeywordName = 26,            // EvtVarTypeString
+
             EvtPublisherMetadataKeywordValue = 27,           // EvtVarTypeUInt64
+
             EvtPublisherMetadataKeywordMessageID = 28        // EvtVarTypeUInt32
             // EvtPublisherMetadataPropertyIdEND
         }
@@ -405,13 +498,21 @@ namespace System.Diagnostics.Eventing
         internal enum EvtEventMetadataPropertyId
         {
             EventMetadataEventID,       // EvtVarTypeUInt32
+
             EventMetadataEventVersion,  // EvtVarTypeUInt32
+
             EventMetadataEventChannel,  // EvtVarTypeUInt32
+
             EventMetadataEventLevel,    // EvtVarTypeUInt32
+
             EventMetadataEventOpcode,   // EvtVarTypeUInt32
+
             EventMetadataEventTask,     // EvtVarTypeUInt32
+
             EventMetadataEventKeyword,  // EvtVarTypeUInt64
+
             EventMetadataEventMessageID,// EvtVarTypeUInt32
+
             EventMetadataEventTemplate // EvtVarTypeString
             // EvtEventMetadataPropertyIdEND
         }
@@ -420,25 +521,45 @@ namespace System.Diagnostics.Eventing
         internal enum EvtChannelConfigPropertyId
         {
             EvtChannelConfigEnabled = 0,            // EvtVarTypeBoolean
+
             EvtChannelConfigIsolation,              // EvtVarTypeUInt32, EVT_CHANNEL_ISOLATION_TYPE
+
             EvtChannelConfigType,                   // EvtVarTypeUInt32, EVT_CHANNEL_TYPE
+
             EvtChannelConfigOwningPublisher,        // EvtVarTypeString
+
             EvtChannelConfigClassicEventlog,        // EvtVarTypeBoolean
+
             EvtChannelConfigAccess,                 // EvtVarTypeString
+
             EvtChannelLoggingConfigRetention,       // EvtVarTypeBoolean
+
             EvtChannelLoggingConfigAutoBackup,      // EvtVarTypeBoolean
+
             EvtChannelLoggingConfigMaxSize,         // EvtVarTypeUInt64
+
             EvtChannelLoggingConfigLogFilePath,     // EvtVarTypeString
+
             EvtChannelPublishingConfigLevel,        // EvtVarTypeUInt32
+
             EvtChannelPublishingConfigKeywords,     // EvtVarTypeUInt64
+
             EvtChannelPublishingConfigControlGuid,  // EvtVarTypeGuid
+
             EvtChannelPublishingConfigBufferSize,   // EvtVarTypeUInt32
+
             EvtChannelPublishingConfigMinBuffers,   // EvtVarTypeUInt32
+
             EvtChannelPublishingConfigMaxBuffers,   // EvtVarTypeUInt32
+
             EvtChannelPublishingConfigLatency,      // EvtVarTypeUInt32
+
             EvtChannelPublishingConfigClockType,    // EvtVarTypeUInt32, EVT_CHANNEL_CLOCK_TYPE
+
             EvtChannelPublishingConfigSidType,      // EvtVarTypeUInt32, EVT_CHANNEL_SID_TYPE
+
             EvtChannelPublisherList,                // EvtVarTypeString | EVT_VARIANT_TYPE_ARRAY
+
             EvtChannelConfigPropertyIdEND
         }
 
@@ -446,19 +567,28 @@ namespace System.Diagnostics.Eventing
         internal enum EvtLogPropertyId
         {
             EvtLogCreationTime = 0,             // EvtVarTypeFileTime
+
             EvtLogLastAccessTime,               // EvtVarTypeFileTime
+
             EvtLogLastWriteTime,                // EvtVarTypeFileTime
+
             EvtLogFileSize,                     // EvtVarTypeUInt64
+
             EvtLogAttributes,                   // EvtVarTypeUInt32
+
             EvtLogNumberOfLogRecords,           // EvtVarTypeUInt64
+
             EvtLogOldestRecordNumber,           // EvtVarTypeUInt64
+
             EvtLogFull,                         // EvtVarTypeBoolean
         }
 
         internal enum EvtExportLogFlags
         {
             EvtExportLogChannelPath = 1,
+
             EvtExportLogFilePath = 2,
+
             EvtExportLogTolerateQueryErrors = 0x1000
         }
 
@@ -466,50 +596,80 @@ namespace System.Diagnostics.Eventing
         internal enum EvtRenderContextFlags
         {
             EvtRenderContextValues = 0,      // Render specific properties
+
             EvtRenderContextSystem = 1,      // Render all system properties (System)
+
             EvtRenderContextUser = 2         // Render all user properties (User/EventData)
         }
 
         internal enum EvtRenderFlags
         {
             EvtRenderEventValues = 0,       // Variants
+
             EvtRenderEventXml = 1,          // XML
+
             EvtRenderBookmark = 2           // Bookmark
         }
 
         internal enum EvtFormatMessageFlags
         {
             EvtFormatMessageEvent = 1,
+
             EvtFormatMessageLevel = 2,
+
             EvtFormatMessageTask = 3,
+
             EvtFormatMessageOpcode = 4,
+
             EvtFormatMessageKeyword = 5,
+
             EvtFormatMessageChannel = 6,
+
             EvtFormatMessageProvider = 7,
+
             EvtFormatMessageId = 8,
+
             EvtFormatMessageXml = 9
         }
 
         internal enum EvtSystemPropertyId
         {
             EvtSystemProviderName = 0,          // EvtVarTypeString
+
             EvtSystemProviderGuid,              // EvtVarTypeGuid
+
             EvtSystemEventID,                   // EvtVarTypeUInt16
+
             EvtSystemQualifiers,                // EvtVarTypeUInt16
+
             EvtSystemLevel,                     // EvtVarTypeUInt8
+
             EvtSystemTask,                      // EvtVarTypeUInt16
+
             EvtSystemOpcode,                    // EvtVarTypeUInt8
+
             EvtSystemKeywords,                  // EvtVarTypeHexInt64
+
             EvtSystemTimeCreated,               // EvtVarTypeFileTime
+
             EvtSystemEventRecordId,             // EvtVarTypeUInt64
+
             EvtSystemActivityID,                // EvtVarTypeGuid
+
             EvtSystemRelatedActivityID,         // EvtVarTypeGuid
+
             EvtSystemProcessID,                 // EvtVarTypeUInt32
+
             EvtSystemThreadID,                  // EvtVarTypeUInt32
+
             EvtSystemChannel,                   // EvtVarTypeString
+
             EvtSystemComputer,                  // EvtVarTypeString
+
             EvtSystemUserID,                    // EvtVarTypeSid
+
             EvtSystemVersion,                   // EvtVarTypeUInt8
+
             EvtSystemPropertyIdEND
         }
 
@@ -542,10 +702,15 @@ namespace System.Diagnostics.Eventing
         internal enum EvtSeekFlags
         {
             EvtSeekRelativeToFirst = 1,
+
             EvtSeekRelativeToLast = 2,
+
             EvtSeekRelativeToCurrent = 3,
+
             EvtSeekRelativeToBookmark = 4,
+
             EvtSeekOriginMask = 7,
+
             EvtSeekStrict = 0x10000
         }
 

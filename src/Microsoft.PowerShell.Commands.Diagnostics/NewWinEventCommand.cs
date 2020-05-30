@@ -23,9 +23,11 @@ namespace Microsoft.PowerShell.Commands
     public sealed class NewWinEventCommand : PSCmdlet
     {
         private ProviderMetadata _providerMetadata;
+
         private EventDescriptor? _eventDescriptor;
 
         private const string TemplateTag = "template";
+
         private const string DataTag = "data";
 
         private ResourceManager _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
@@ -74,6 +76,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _id;
+
         private bool _idSpecified = false;
 
         /// <summary>
@@ -97,6 +100,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private byte _version;
+
         private bool _versionSpecified = false;
 
         /// <summary>

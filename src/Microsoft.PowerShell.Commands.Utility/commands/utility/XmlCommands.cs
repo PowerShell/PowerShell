@@ -633,6 +633,7 @@ namespace Microsoft.PowerShell.Commands
         /// Reference to cmdlet which is using this helper class.
         /// </summary>
         private readonly PSCmdlet _cmdlet;
+
         private bool _isLiteralPath;
 
         internal ImportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath)
@@ -1085,7 +1086,9 @@ namespace Microsoft.PowerShell.Commands
         /// If the object is InputObject, Input Stream is used.
         /// </summary>
         private const string inputStream = "InputStream";
+
         private const string MatchFormat = "{0}:{1}";
+
         private const string SimpleFormat = "{0}";
 
         /// <summary>

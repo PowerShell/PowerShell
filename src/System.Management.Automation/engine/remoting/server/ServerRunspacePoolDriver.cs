@@ -31,7 +31,9 @@ namespace System.Management.Automation
     internal interface IRSPDriverInvoke
     {
         void EnterNestedPipeline();
+
         void ExitNestedPipeline();
+
         bool HandleStopSignal();
     }
 
@@ -71,10 +73,12 @@ namespace System.Management.Automation
 
         // server capability reported to the client during negotiation (not the actual capability)
         private RemoteSessionCapability _serverCapability;
+
         private Runspace _rsToUseForSteppablePipeline;
 
         // steppable pipeline event subscribers exist per-session
         private ServerSteppablePipelineSubscriber _eventSubscriber = new ServerSteppablePipelineSubscriber();
+
         private PSDataCollection<object> _inputCollection; // PowerShell driver input collection
 
         // Object to invoke nested PowerShell drivers on single pipeline worker thread.
@@ -954,6 +958,7 @@ namespace System.Management.Automation
         }
 
         private bool? _initialSessionStateIncludesGetCommandWithListImportedSwitch;
+
         private object _initialSessionStateIncludesGetCommandWithListImportedSwitchLock = new object();
 
         private bool DoesInitialSessionStateIncludeGetCommandWithListImportedSwitch()
@@ -1702,9 +1707,13 @@ namespace System.Management.Automation
             private sealed class InvokePump
             {
                 private Queue<ServerPowerShellDriver> _driverInvokeQueue;
+
                 private ManualResetEvent _processDrivers;
+
                 private object _syncObject;
+
                 private bool _stopPump;
+
                 private bool _isDisposed;
 
                 public InvokePump()
@@ -1814,14 +1823,21 @@ namespace System.Management.Automation
         #region Private Members
 
         private IRSPDriverInvoke _driverInvoker;
+
         private Runspace _runspace;
+
         private ObjectRef<Debugger> _wrappedDebugger;
+
         private bool _inDebugMode;
+
         private DebuggerStopEventArgs _debuggerStopEventArgs;
 
         private ManualResetEventSlim _nestedDebugStopCompleteEvent;
+
         private bool _nestedDebugging;
+
         private ManualResetEventSlim _processCommandCompleteEvent;
+
         private ThreadCommandProcessing _threadCommandProcessing;
 
         private bool _raiseStopEventLocally;
@@ -2260,10 +2276,15 @@ namespace System.Management.Automation
         {
             // Members
             private ManualResetEventSlim _commandCompleteEvent;
+
             private Debugger _wrappedDebugger;
+
             private PSCommand _command;
+
             private PSDataCollection<PSObject> _output;
+
             private DebuggerCommandResults _results;
+
             private Exception _exception;
 #if !UNIX
             private WindowsIdentity _identityToImpersonate;

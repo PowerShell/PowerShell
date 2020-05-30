@@ -467,9 +467,13 @@ namespace Microsoft.PowerShell.Commands.Internal
     internal sealed class TransactedRegistry
     {
         internal static readonly TransactedRegistryKey LocalMachine;
+
         internal static readonly TransactedRegistryKey ClassesRoot;
+
         internal static readonly TransactedRegistryKey Users;
+
         internal static readonly TransactedRegistryKey CurrentConfig;
+
         internal static readonly TransactedRegistryKey CurrentUser;
     }
 

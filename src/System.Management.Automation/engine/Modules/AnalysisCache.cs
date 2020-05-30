@@ -877,7 +877,9 @@ namespace System.Management.Automation
         }
 
         private const string TruncatedErrorMessage = "module cache file appears truncated";
+
         private const string InvalidSignatureErrorMessage = "module cache signature not valid";
+
         private const string PossibleCorruptionErrorMessage = "possible corruption in module cache";
 
         private static unsafe long ReadLong(FileStream stream, byte[] bytes)
@@ -1129,9 +1131,13 @@ namespace System.Management.Automation
     internal class ModuleCacheEntry
     {
         public DateTime LastWriteTime;
+
         public string ModulePath;
+
         public bool TypesAnalyzed;
+
         public ConcurrentDictionary<string, CommandTypes> Commands;
+
         public ConcurrentDictionary<string, TypeAttributes> Types;
     }
 }

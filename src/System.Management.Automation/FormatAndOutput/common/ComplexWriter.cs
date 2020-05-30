@@ -320,6 +320,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal struct GetWordsResult
     {
         internal string Word;
+
         internal string Delim;
     }
 
@@ -329,8 +330,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class StringManipulationHelper
     {
         private static readonly char s_softHyphen = '\u00AD';
+
         private static readonly char s_hardHyphen = '\u2011';
+
         private static readonly char s_nonBreakingSpace = '\u00A0';
+
         private static Collection<string> s_cultureCollection = new Collection<string>();
 
         static StringManipulationHelper()
@@ -511,8 +515,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             private StringCollection _retVal;
+
             private bool _addedFirstLine;
+
             private int _firstLineLen;
+
             private int _followingLinesLen;
         }
 
@@ -727,6 +734,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private static readonly char[] s_newLineChar = new char[] { '\n' };
+
         private static readonly char[] s_lineBreakChars = new char[] { '\n', '\r' };
     }
 }

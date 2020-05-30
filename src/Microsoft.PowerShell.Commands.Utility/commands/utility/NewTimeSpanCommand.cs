@@ -39,6 +39,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private DateTime _start;
+
         private bool _startSpecified;
 
         /// <summary>
@@ -62,6 +63,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private DateTime _end;
+
         private bool _endSpecified = false;
 
         /// <summary>

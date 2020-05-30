@@ -17,86 +17,151 @@ namespace System.Management.Automation.Remoting
     {
         // OS related 1-9
         DefaultRemotingExceptionMessage = 0,
+
         OutOfMemory = 1,
 
         // Pipeline related range: 10-99
         PipelineIdsDoNotMatch = 10,
+
         PipelineNotFoundOnServer = 11,
+
         PipelineStopped = 12,
 
         // Runspace, Host, UI and RawUI related range: 200-299
         RunspaceAlreadyExists = 200,
+
         RunspaceIdsDoNotMatch = 201,
+
         RemoteRunspaceOpenFailed = 202,
+
         RunspaceCannotBeFound = 203,
+
         ResponsePromptIdCannotBeFound = 204,
+
         RemoteHostCallFailed = 205,
+
         RemoteHostMethodNotImplemented = 206,
+
         RemoteHostDataEncodingNotSupported = 207,
+
         RemoteHostDataDecodingNotSupported = 208,
+
         NestedPipelineNotSupported = 209,
+
         RelativeUriForRunspacePathNotSupported = 210,
+
         RemoteHostDecodingFailed = 211,
+
         MustBeAdminToOverrideThreadOptions = 212,
+
         RemoteHostPromptForCredentialModifiedCaption = 213,
+
         RemoteHostPromptForCredentialModifiedMessage = 214,
+
         RemoteHostReadLineAsSecureStringPrompt = 215,
+
         RemoteHostGetBufferContents = 216,
+
         RemoteHostPromptSecureStringPrompt = 217,
+
         WinPERemotingNotSupported = 218,
 
         // reserved range: 300-399
 
         // Encoding/Decoding and fragmentation related range: 400-499
         ReceivedUnsupportedRemoteHostCall = 400,
+
         ReceivedUnsupportedAction = 401,
+
         ReceivedUnsupportedDataType = 402,
+
         MissingDestination = 403,
+
         MissingTarget = 404,
+
         MissingRunspaceId = 405,
+
         MissingDataType = 406,
+
         MissingCallId = 407,
+
         MissingMethodName = 408,
+
         MissingIsStartFragment = 409,
+
         MissingProperty = 410,
+
         ObjectIdsNotMatching = 411,
+
         FragmentIdsNotInSequence = 412,
+
         ObjectIsTooBig = 413,
+
         MissingIsEndFragment = 414,
+
         DeserializedObjectIsNull = 415,
+
         BlobLengthNotInRange = 416,
+
         DecodingErrorForErrorRecord = 417,
+
         DecodingErrorForPipelineStateInfo = 418,
+
         DecodingErrorForRunspaceStateInfo = 419,
+
         ReceivedUnsupportedRemotingTargetInterfaceType = 420,
+
         UnknownTargetClass = 421,
+
         MissingTargetClass = 422,
+
         DecodingErrorForRunspacePoolStateInfo = 423,
+
         DecodingErrorForMinRunspaces = 424,
+
         DecodingErrorForMaxRunspaces = 425,
+
         DecodingErrorForPowerShellStateInfo = 426,
+
         DecodingErrorForThreadOptions = 427,
+
         CantCastPropertyToExpectedType = 428,
+
         CantCastRemotingDataToPSObject = 429,
+
         CantCastCommandToPSObject = 430,
+
         CantCastParameterToPSObject = 431,
+
         ObjectIdCannotBeLessThanZero = 432,
+
         NotEnoughHeaderForRemoteDataObject = 433,
 
         // reserved range: 500-599
 
         // Remote Session related range: 600-699
         RemotingDestinationNotForMe = 600,
+
         ClientNegotiationTimeout = 601,
+
         ClientNegotiationFailed = 602,
+
         ServerRequestedToCloseSession = 603,
+
         ServerNegotiationFailed = 604,
+
         ServerNegotiationTimeout = 605,
+
         ClientRequestedToCloseSession = 606,
+
         FatalErrorCausingClose = 607,
+
         ClientKeyExchangeFailed = 608,
+
         ServerKeyExchangeFailed = 609,
+
         ClientNotFoundCapabilityProperties = 610,
+
         ServerNotFoundCapabilityProperties = 611,
 
         // reserved range: 700-799
@@ -104,54 +169,95 @@ namespace System.Management.Automation.Remoting
         // Transport related range: 800-899
 
         ConnectFailed = 801,
+
         CloseIsCalled = 802,
+
         ForceClosed = 803,
+
         CloseFailed = 804,
+
         CloseCompleted = 805,
+
         UnsupportedWaitHandleType = 806,
+
         ReceivedDataStreamIsNotStdout = 807,
+
         StdInIsNotOpen = 808,
+
         NativeWriteFileFailed = 809,
+
         NativeReadFileFailed = 810,
+
         InvalidSchemeValue = 811,
+
         ClientReceiveFailed = 812,
+
         ClientSendFailed = 813,
+
         CommandHandleIsNull = 814,
+
         StdInCannotBeSetToNoWait = 815,
+
         PortIsOutOfRange = 816,
+
         ServerProcessExited = 817,
+
         CannotGetStdInHandle = 818,
+
         CannotGetStdOutHandle = 819,
+
         CannotGetStdErrHandle = 820,
+
         CannotSetStdInHandle = 821,
+
         CannotSetStdOutHandle = 822,
+
         CannotSetStdErrHandle = 823,
+
         InvalidConfigurationName = 824,
+
         ConnectSkipCheckFailed = 825,
         // Error codes added to support new WSMan Fan-In Model API
         CreateSessionFailed = 851,
+
         CreateExFailed = 853,
+
         ConnectExCallBackError = 854,
+
         SendExFailed = 855,
+
         SendExCallBackError = 856,
+
         ReceiveExFailed = 857,
+
         ReceiveExCallBackError = 858,
+
         RunShellCommandExFailed = 859,
+
         RunShellCommandExCallBackError = 860,
+
         CommandSendExFailed = 861,
+
         CommandSendExCallBackError = 862,
+
         CommandReceiveExFailed = 863,
+
         CommandReceiveExCallBackError = 864,
+
         CloseExCallBackError = 866,
         // END: Error codes added to support new WSMan Fan-In Model API
         // BEGIN: Error IDs introduced for URI redirection
         RedirectedURINotWellFormatted = 867,
+
         URIEndPointNotResolved = 868,
         // END: Error IDs introduced for URI redirection
         // BEGIN: Error IDs introduced for Quota Management
         ReceivedObjectSizeExceededMaximumClient = 869,
+
         ReceivedDataSizeExceededMaximumClient = 870,
+
         ReceivedObjectSizeExceededMaximumServer = 871,
+
         ReceivedDataSizeExceededMaximumServer = 872,
         // END: Error IDs introduced for Quota Management
         // BEGIN: Error IDs introduced for startup script
@@ -160,96 +266,170 @@ namespace System.Management.Automation.Remoting
         TroubleShootingHelpTopic = 874,
         // BEGIN: Error IDs introduced for disconnect/reconnect
         DisconnectShellExFailed = 875,
+
         DisconnectShellExCallBackErrr = 876,
+
         ReconnectShellExFailed = 877,
+
         ReconnectShellExCallBackErrr = 878,
         // END: Error IDs introduced for disconnect/reconnect
         // Cmdlets related range: 900-999
         RemoteRunspaceInfoHasDuplicates = 900,
+
         RemoteRunspaceInfoLimitExceeded = 901,
+
         RemoteRunspaceOpenUnknownState = 902,
+
         UriSpecifiedNotValid = 903,
+
         RemoteRunspaceClosed = 904,
+
         RemoteRunspaceNotAvailableForSpecifiedComputer = 905,
+
         RemoteRunspaceNotAvailableForSpecifiedRunspaceId = 906,
+
         StopPSJobWhatIfTarget = 907,
+
         InvalidJobStateGeneral = 909,
+
         JobWithSpecifiedNameNotFound = 910,
+
         JobWithSpecifiedInstanceIdNotFound = 911,
+
         JobWithSpecifiedSessionIdNotFound = 912,
+
         JobWithSpecifiedNameNotCompleted = 913,
+
         JobWithSpecifiedSessionIdNotCompleted = 914,
+
         JobWithSpecifiedInstanceIdNotCompleted = 915,
+
         RemovePSJobWhatIfTarget = 916,
+
         ComputerNameParamNotSupported = 917,
+
         RunspaceParamNotSupported = 918,
+
         RemoteRunspaceNotAvailableForSpecifiedName = 919,
+
         RemoteRunspaceNotAvailableForSpecifiedSessionId = 920,
+
         ItemNotFoundInRepository = 921,
+
         CannotRemoveJob = 922,
+
         NewRunspaceAmbiguousAuthentication = 923,
+
         WildCardErrorFilePathParameter = 924,
+
         FilePathNotFromFileSystemProvider = 925,
+
         FilePathShouldPS1Extension = 926,
+
         PSSessionConfigurationName = 927,
+
         PSSessionAppName = 928,
         // Custom Shell commands
         CSCDoubleParameterOutOfRange = 929,
+
         URIRedirectionReported = 930,
+
         NoMoreInputWrites = 931,
+
         InvalidComputerName = 932,
+
         ProxyAmbiguousAuthentication = 933,
+
         ProxyCredentialWithoutAccess = 934,
 
         // Start-PSSession related error codes.
         PushedRunspaceMustBeOpen = 951,
+
         HostDoesNotSupportPushRunspace = 952,
+
         RemoteRunspaceHasMultipleMatchesForSpecifiedRunspaceId = 953,
+
         RemoteRunspaceHasMultipleMatchesForSpecifiedSessionId = 954,
+
         RemoteRunspaceHasMultipleMatchesForSpecifiedName = 955,
+
         RemoteRunspaceDoesNotSupportPushRunspace = 956,
+
         HostInNestedPrompt = 957,
+
         InvalidVMId = 959,
+
         InvalidVMNameNoVM = 960,
+
         InvalidVMNameMultipleVM = 961,
+
         HyperVModuleNotAvailable = 962,
+
         InvalidUsername = 963,
+
         InvalidCredential = 964,
+
         VMSessionConnectFailed = 965,
+
         InvalidContainerId = 966,
+
         CannotCreateProcessInContainer = 967,
+
         CannotTerminateProcessInContainer = 968,
+
         ContainersFeatureNotEnabled = 969,
+
         RemoteSessionHyperVSocketServerConstructorFailure = 970,
+
         ContainerSessionConnectFailed = 973,
+
         RemoteSessionHyperVSocketClientConstructorSetSocketOptionFailure = 974,
+
         InvalidVMState = 975,
 
         // Invoke-Command related error codes.
         InvalidVMIdNotSingle = 981,
+
         InvalidVMNameNotSingle = 982,
 
         // SessionState Description related messages
         WsmanMaxRedirectionCountVariableDescription = 1001,
+
         PSDefaultSessionOptionDescription = 1002,
+
         PSSenderInfoDescription = 1004,
 
         // IPC for Background jobs related errors: 2000
         IPCUnknownNodeType = 2001,
+
         IPCInsufficientDataforElement = 2002,
+
         IPCWrongAttributeCountForDataElement = 2003,
+
         IPCOnlyTextExpectedInDataElement = 2004,
+
         IPCWrongAttributeCountForElement = 2005,
+
         IPCUnknownElementReceived = 2006,
+
         IPCSupportsOnlyDefaultAuth = 2007,
+
         IPCWowComponentNotPresent = 2008,
+
         IPCServerProcessReportedError = 2100,
+
         IPCServerProcessExited = 2101,
+
         IPCErrorProcessingServerData = 2102,
+
         IPCUnknownCommandGuid = 2103,
+
         IPCNoSignalForSession = 2104,
+
         IPCSignalTimedOut = 2105,
+
         IPCCloseTimedOut = 2106,
+
         IPCExceptionLaunchingProcess = 2107,
     }
 
@@ -385,6 +565,7 @@ namespace System.Management.Automation.Remoting
     public class PSRemotingTransportException : RuntimeException
     {
         private int _errorCode;
+
         private string _transportMessage;
 
         #region Constructors

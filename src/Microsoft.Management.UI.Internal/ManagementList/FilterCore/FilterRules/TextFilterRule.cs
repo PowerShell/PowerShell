@@ -23,6 +23,7 @@ namespace Microsoft.Management.UI.Internal
         protected static readonly string WordBoundaryRegexPattern = @"(^|$|\W|\b)";
 
         private bool ignoreCase;
+
         private bool cultureInvariant;
 
         /// <summary>

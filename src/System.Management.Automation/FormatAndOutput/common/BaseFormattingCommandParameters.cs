@@ -82,6 +82,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class TableSpecificParameters : ShapeSpecificParameters
     {
         internal bool? hideHeaders = null;
+
         internal bool? multiLine = null;
     }
 
@@ -312,7 +313,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static readonly string[] s_legalValues = new string[] { LeftAlign, CenterAlign, RightAlign };
 
         private const string LeftAlign = "left";
+
         private const string CenterAlign = "center";
+
         private const string RightAlign = "right";
     }
 
@@ -419,10 +422,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         // common entries
         internal const string ExpressionEntryKey = "expression";
+
         internal const string FormatStringEntryKey = "formatString";
 
         // specific to format-table
         internal const string AlignmentEntryKey = "alignment";
+
         internal const string WidthEntryKey = "width";
 
         // specific to format-table,list and wide

@@ -523,24 +523,41 @@ namespace System.Management.Automation
         private ManualResetEvent _finished = new ManualResetEvent(false);
 
         private string _name;
+
         private IList<Job> _childJobs;
+
         internal readonly object syncObject = new object();   // object used for synchronization
         // ISSUE: Should Result be public property
         private PSDataCollection<PSStreamObject> _results = new PSDataCollection<PSStreamObject>();
+
         private bool _resultsOwner = true;
+
         private PSDataCollection<ErrorRecord> _error = new PSDataCollection<ErrorRecord>();
+
         private bool _errorOwner = true;
+
         private PSDataCollection<ProgressRecord> _progress = new PSDataCollection<ProgressRecord>();
+
         private bool _progressOwner = true;
+
         private PSDataCollection<VerboseRecord> _verbose = new PSDataCollection<VerboseRecord>();
+
         private bool _verboseOwner = true;
+
         private PSDataCollection<WarningRecord> _warning = new PSDataCollection<WarningRecord>();
+
         private bool _warningOwner = true;
+
         private PSDataCollection<DebugRecord> _debug = new PSDataCollection<DebugRecord>();
+
         private bool _debugOwner = true;
+
         private PSDataCollection<InformationRecord> _information = new PSDataCollection<InformationRecord>();
+
         private bool _informationOwner = true;
+
         private PSDataCollection<PSObject> _output = new PSDataCollection<PSObject>();
+
         private bool _outputOwner = true;
 
         /// <summary>
@@ -3841,6 +3858,7 @@ namespace System.Management.Automation
         protected object SyncObject = new object();
 
         private ThrottleManager _throttleManager;
+
         private bool _stopIsCalled = false;
 
         private volatile Debugger _jobDebugger;
@@ -3861,7 +3879,9 @@ namespace System.Management.Automation
         #region Members
 
         private Debugger _wrappedDebugger;
+
         private Runspace _runspace;
+
         private string _jobName;
 
         #endregion
@@ -4183,10 +4203,13 @@ namespace System.Management.Automation
         #region Private Members
 
         private List<ExecutionCmdletHelper> _helpers = new List<ExecutionCmdletHelper>();
+
         private ThrottleManager _throttleManager;
+
         private Dictionary<Guid, PowerShell> _powershells = new Dictionary<Guid, PowerShell>();
 
         private int _pipelineFinishedCount;
+
         private int _pipelineDisconnectedCount;
 
         #endregion Private Members

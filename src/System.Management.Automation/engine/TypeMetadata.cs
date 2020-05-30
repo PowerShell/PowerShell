@@ -22,12 +22,19 @@ namespace System.Management.Automation
         #region Private Data
 
         private bool _isMandatory;
+
         private int _position;
+
         private bool _valueFromPipeline;
+
         private bool _valueFromPipelineByPropertyName;
+
         private bool _valueFromRemainingArguments;
+
         private string _helpMessage;
+
         private string _helpMessageBaseName;
+
         private string _helpMessageResourceId;
 
         #endregion
@@ -255,8 +262,11 @@ namespace System.Management.Automation
         internal enum ParameterFlags : uint
         {
             Mandatory = 0x01,
+
             ValueFromPipeline = 0x02,
+
             ValueFromPipelineByPropertyName = 0x04,
+
             ValueFromRemainingArguments = 0x08,
         }
 
@@ -303,10 +313,15 @@ namespace System.Management.Automation
         #region Proxy Parameter Generation
 
         private const string MandatoryFormat = @"{0}Mandatory=$true";
+
         private const string PositionFormat = @"{0}Position={1}";
+
         private const string ValueFromPipelineFormat = @"{0}ValueFromPipeline=$true";
+
         private const string ValueFromPipelineByPropertyNameFormat = @"{0}ValueFromPipelineByPropertyName=$true";
+
         private const string ValueFromRemainingArgumentsFormat = @"{0}ValueFromRemainingArguments=$true";
+
         private const string HelpMessageFormat = @"{0}HelpMessage='{1}'";
 
         /// <summary>
@@ -371,10 +386,15 @@ namespace System.Management.Automation
         #region Private Data
 
         private string _name;
+
         private Type _parameterType;
+
         private bool _isDynamic;
+
         private Dictionary<string, ParameterSetMetadata> _parameterSets;
+
         private Collection<string> _aliases;
+
         private Collection<Attribute> _attributes;
 
         #endregion
@@ -756,24 +776,43 @@ namespace System.Management.Automation
 
         // The formats are prefixed with {0} to enable easy formatting.
         private const string ParameterNameFormat = @"{0}${{{1}}}";
+
         private const string ParameterTypeFormat = @"{0}[{1}]";
+
         private const string ParameterSetNameFormat = "ParameterSetName='{0}'";
+
         private const string AliasesFormat = @"{0}[Alias({1})]";
+
         private const string ValidateLengthFormat = @"{0}[ValidateLength({1}, {2})]";
+
         private const string ValidateRangeRangeKindFormat = @"{0}[ValidateRange([System.Management.Automation.ValidateRangeKind]::{1})]";
+
         private const string ValidateRangeFloatFormat = @"{0}[ValidateRange({1:R}, {2:R})]";
+
         private const string ValidateRangeFormat = @"{0}[ValidateRange({1}, {2})]";
+
         private const string ValidatePatternFormat = "{0}[ValidatePattern('{1}')]";
+
         private const string ValidateScriptFormat = @"{0}[ValidateScript({{ {1} }})]";
+
         private const string ValidateCountFormat = @"{0}[ValidateCount({1}, {2})]";
+
         private const string ValidateSetFormat = @"{0}[ValidateSet({1})]";
+
         private const string ValidateNotNullFormat = @"{0}[ValidateNotNull()]";
+
         private const string ValidateNotNullOrEmptyFormat = @"{0}[ValidateNotNullOrEmpty()]";
+
         private const string AllowNullFormat = @"{0}[AllowNull()]";
+
         private const string AllowEmptyStringFormat = @"{0}[AllowEmptyString()]";
+
         private const string AllowEmptyCollectionFormat = @"{0}[AllowEmptyCollection()]";
+
         private const string PSTypeNameFormat = @"{0}[PSTypeName('{1}')]";
+
         private const string ObsoleteFormat = @"{0}[Obsolete({1})]";
+
         private const string CredentialAttributeFormat = @"{0}[System.Management.Automation.CredentialAttribute()]";
 
         /// <summary>

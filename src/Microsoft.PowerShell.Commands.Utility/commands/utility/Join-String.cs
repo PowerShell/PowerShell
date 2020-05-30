@@ -24,9 +24,13 @@ namespace Microsoft.PowerShell.Commands.Utility
         private const int DefaultOutputStringCapacity = 256;
 
         private readonly StringBuilder _outputBuilder = new StringBuilder(DefaultOutputStringCapacity);
+
         private CultureInfo _cultureInfo = CultureInfo.InvariantCulture;
+
         private string _separator;
+
         private char _quoteChar;
+
         private bool _firstInputObject = true;
 
         /// <summary>

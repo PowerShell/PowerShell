@@ -13,17 +13,29 @@ namespace System.Management.Automation
     internal static class EncodingConversion
     {
         internal const string Unknown = "unknown";
+
         internal const string String = "string";
+
         internal const string Unicode = "unicode";
+
         internal const string BigEndianUnicode = "bigendianunicode";
+
         internal const string BigEndianUtf32 = "bigendianutf32";
+
         internal const string Ascii = "ascii";
+
         internal const string Utf8 = "utf8";
+
         internal const string Utf8NoBom = "utf8NoBOM";
+
         internal const string Utf8Bom = "utf8BOM";
+
         internal const string Utf7 = "utf7";
+
         internal const string Utf32 = "utf32";
+
         internal const string Default = "default";
+
         internal const string OEM = "oem";
 
         internal static readonly string[] TabCompletionResults = {

@@ -26,7 +26,9 @@ namespace System.Management.Automation
         //     2. Load assembly with culture 'en'    (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en, PublicKeyToken=31bf3856ad364e35)
         // When the first attempt fails, we again need to retrieve the resource string to construct another exception, which ends up with an infinite loop.
         private const string BaseFolderDoesNotExist = "The base directory '{0}' does not exist.";
+
         private const string ManifestDefinitionDoesNotMatch = "Could not load file or assembly '{0}' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference.";
+
         private const string SingletonAlreadyInitialized = "The singleton of PowerShellAssemblyLoadContext has already been initialized.";
 
         #endregion Resource_Strings
@@ -106,12 +108,15 @@ namespace System.Management.Automation
         #region Fields
 
         private static readonly object s_syncObj = new object();
+
         private readonly string[] _probingPaths;
+
         private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
         // CoreCLR type catalog dictionary
         //  - Key: namespace qualified type name (FullName)
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
+
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
 
         private readonly HashSet<string> _denyListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
@@ -120,8 +125,11 @@ namespace System.Management.Automation
 
 #if !UNIX
         private string _winDir;
+
         private string _gacPathMSIL;
+
         private string _gacPath32;
+
         private string _gacPath64;
 #endif
 
@@ -533,6 +541,7 @@ namespace System.Management.Automation
         }
 
         private static string s_nativeDllSubFolder;
+
         private static string s_nativeDllExtension;
 
         private static string GetNativeDllSubFolderName(out string ext)

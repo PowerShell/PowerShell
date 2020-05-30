@@ -7,20 +7,29 @@ namespace System.Management.Automation.Language
     {
         // Uncommon whitespace
         internal const char NoBreakSpace = (char)0x00a0;
+
         internal const char NextLine = (char)0x0085;
 
         // Special dashes
         internal const char EnDash = (char)0x2013;
+
         internal const char EmDash = (char)0x2014;
+
         internal const char HorizontalBar = (char)0x2015;
 
         // Special quotes
         internal const char QuoteSingleLeft = (char)0x2018; // left single quotation mark
+
         internal const char QuoteSingleRight = (char)0x2019; // right single quotation mark
+
         internal const char QuoteSingleBase = (char)0x201a; // single low-9 quotation mark
+
         internal const char QuoteReversed = (char)0x201b; // single high-reversed-9 quotation mark
+
         internal const char QuoteDoubleLeft = (char)0x201c; // left double quotation mark
+
         internal const char QuoteDoubleRight = (char)0x201d; // right double quotation mark
+
         internal const char QuoteLowDoubleLeft = (char)0x201E; // low double left quote used in german.
     }
 

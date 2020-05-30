@@ -98,6 +98,7 @@ namespace Microsoft.Management.UI.Internal
         private class RetryActionAfterLoadedDataQueue
         {
             private Queue<Delegate> callbacks = new Queue<Delegate>();
+
             private Queue<object> parameters = new Queue<object>();
 
             /// <summary>

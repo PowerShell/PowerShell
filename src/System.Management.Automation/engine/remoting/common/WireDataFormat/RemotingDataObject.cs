@@ -17,13 +17,19 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         private const int destinationOffset = 0;
+
         private const int dataTypeOffset = 4;
+
         private const int rsPoolIdOffset = 8;
+
         private const int psIdOffset = 24;
+
         private const int headerLength = 4 + 4 + 16 + 16;
 
         private const int SessionMask = 0x00010000;
+
         private const int RunspacePoolMask = 0x00021000;
+
         private const int PowerShellMask = 0x00041000;
 
         #endregion Private Members

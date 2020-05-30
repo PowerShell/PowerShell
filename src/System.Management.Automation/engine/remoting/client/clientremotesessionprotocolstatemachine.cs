@@ -39,6 +39,7 @@ namespace System.Management.Automation.Remoting
         /// [State,Event]=>Action.
         /// </summary>
         private EventHandler<RemoteSessionStateMachineEventArgs>[,] _stateMachineHandle;
+
         private Queue<RemoteSessionStateEventArgs> _clientRemoteSessionStateChangeQueue;
 
         /// <summary>

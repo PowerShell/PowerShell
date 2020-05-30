@@ -160,7 +160,9 @@ namespace System.Management.Automation
         private string _message;
 
         private InvocationInfo _invocationInfo;
+
         private ReadOnlyCollection<int> _pipelineIterationInfo;
+
         private bool _serializeExtendedInfo;
     }
 

@@ -142,7 +142,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal enum Status
         {
             Default,
+
             Started,
+
             Stopped
         }
 
@@ -390,10 +392,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         private string computerName;
+
         private CimSession cimSession;
+
         private string nameSpace;
+
         private string queryDialect;
+
         private string queryExpression;
+
         private UInt32 operationTimeout;
         #endregion
         #endregion

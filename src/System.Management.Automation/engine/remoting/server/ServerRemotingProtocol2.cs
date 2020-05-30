@@ -436,9 +436,13 @@ namespace System.Management.Automation
         // powershell driver handles all client
         // communication
         private AbstractServerTransportManager _transportManager;
+
         private Guid _clientRunspacePoolId;
+
         private Guid _clientPowerShellId;
+
         private RemoteStreamOptions _streamSerializationOptions;
+
         private Runspace _rsUsedToInvokePowerShell;
 
         #endregion Private Members

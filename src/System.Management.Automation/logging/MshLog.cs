@@ -64,6 +64,7 @@ namespace System.Management.Automation
             new ConcurrentDictionary<string, Collection<LogProvider>>();
 
         private const string _crimsonLogProviderAssemblyName = "MshCrimsonLog";
+
         private const string _crimsonLogProviderTypeName = "System.Management.Automation.Logging.CrimsonLogProvider";
 
         private static Collection<string> s_ignoredCommands = new Collection<string>();

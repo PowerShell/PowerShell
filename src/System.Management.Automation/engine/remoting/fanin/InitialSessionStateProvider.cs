@@ -33,25 +33,45 @@ namespace System.Management.Automation.Remoting
         #region Config XML Constants
 
         internal const string INITPARAMETERSTOKEN = "InitializationParameters";
+
         internal const string PARAMTOKEN = "Param";
+
         internal const string NAMETOKEN = "Name";
+
         internal const string VALUETOKEN = "Value";
+
         internal const string APPBASETOKEN = "applicationbase";
+
         internal const string ASSEMBLYTOKEN = "assemblyname";
+
         internal const string SHELLCONFIGTYPETOKEN = "pssessionconfigurationtypename";
+
         internal const string STARTUPSCRIPTTOKEN = "startupscript";
+
         internal const string MAXRCVDOBJSIZETOKEN = "psmaximumreceivedobjectsizemb";
+
         internal const string MAXRCVDOBJSIZETOKEN_CamelCase = "PSMaximumReceivedObjectSizeMB";
+
         internal const string MAXRCVDCMDSIZETOKEN = "psmaximumreceiveddatasizepercommandmb";
+
         internal const string MAXRCVDCMDSIZETOKEN_CamelCase = "PSMaximumReceivedDataSizePerCommandMB";
+
         internal const string THREADOPTIONSTOKEN = "pssessionthreadoptions";
+
         internal const string THREADAPTSTATETOKEN = "pssessionthreadapartmentstate";
+
         internal const string SESSIONCONFIGTOKEN = "sessionconfigurationdata";
+
         internal const string PSVERSIONTOKEN = "PSVersion";
+
         internal const string MAXPSVERSIONTOKEN = "MaxPSVersion";
+
         internal const string MODULESTOIMPORT = "ModulesToImport";
+
         internal const string HOSTMODE = "hostmode";
+
         internal const string CONFIGFILEPATH = "configfilepath";
+
         internal const string CONFIGFILEPATH_CamelCase = "ConfigFilePath";
 
         #endregion
@@ -59,16 +79,25 @@ namespace System.Management.Automation.Remoting
         internal string StartupScript;
         // this field is used only by an Out-Of-Process (IPC) server process
         internal string InitializationScriptForOutOfProcessRunspace;
+
         internal string ApplicationBase;
+
         internal string AssemblyName;
+
         internal string EndPointConfigurationTypeName;
+
         internal Type EndPointConfigurationType;
+
         internal int? MaxReceivedObjectSizeMB;
+
         internal int? MaxReceivedCommandSizeMB;
         // Used to set properties on the RunspacePool created for this shell.
         internal PSThreadOptions? ShellThreadOptions;
+
         internal ApartmentState? ShellThreadApartmentState;
+
         internal PSSessionConfigurationData SessionConfigurationData;
+
         internal string ConfigFilePath;
 
         /// <summary>
@@ -782,7 +811,9 @@ namespace System.Management.Automation.Remoting
         }
 
         private const string configProvidersKeyName = "PSConfigurationProviders";
+
         private const string configProviderApplicationBaseKeyName = "ApplicationBase";
+
         private const string configProviderAssemblyNameKeyName = "AssemblyName";
 
         private static Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
@@ -885,6 +916,7 @@ namespace System.Management.Automation.Remoting
         internal delegate bool TypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path);
 
         internal string Key;
+
         internal TypeValidationCallback ValidationCallback;
 
         /// <summary>
@@ -904,48 +936,91 @@ namespace System.Management.Automation.Remoting
     internal static class ConfigFileConstants
     {
         internal static readonly string AliasDefinitions = "AliasDefinitions";
+
         internal static readonly string AliasDescriptionToken = "Description";
+
         internal static readonly string AliasNameToken = "Name";
+
         internal static readonly string AliasOptionsToken = "Options";
+
         internal static readonly string AliasValueToken = "Value";
+
         internal static readonly string AssembliesToLoad = "AssembliesToLoad";
+
         internal static readonly string Author = "Author";
+
         internal static readonly string CompanyName = "CompanyName";
+
         internal static readonly string Copyright = "Copyright";
+
         internal static readonly string Description = "Description";
+
         internal static readonly string EnforceInputParameterValidation = "EnforceInputParameterValidation";
+
         internal static readonly string EnvironmentVariables = "EnvironmentVariables";
+
         internal static readonly string ExecutionPolicy = "ExecutionPolicy";
+
         internal static readonly string FormatsToProcess = "FormatsToProcess";
+
         internal static readonly string FunctionDefinitions = "FunctionDefinitions";
+
         internal static readonly string FunctionNameToken = "Name";
+
         internal static readonly string FunctionOptionsToken = "Options";
+
         internal static readonly string FunctionValueToken = "ScriptBlock";
+
         internal static readonly string GMSAAccount = "GroupManagedServiceAccount";
+
         internal static readonly string Guid = "GUID";
+
         internal static readonly string LanguageMode = "LanguageMode";
+
         internal static readonly string ModulesToImport = "ModulesToImport";
+
         internal static readonly string MountUserDrive = "MountUserDrive";
+
         internal static readonly string PowerShellVersion = "PowerShellVersion";
+
         internal static readonly string RequiredGroups = "RequiredGroups";
+
         internal static readonly string RoleDefinitions = "RoleDefinitions";
+
         internal static readonly string SchemaVersion = "SchemaVersion";
+
         internal static readonly string ScriptsToProcess = "ScriptsToProcess";
+
         internal static readonly string SessionType = "SessionType";
+
         internal static readonly string RoleCapabilities = "RoleCapabilities";
+
         internal static readonly string RoleCapabilityFiles = "RoleCapabilityFiles";
+
         internal static readonly string RunAsVirtualAccount = "RunAsVirtualAccount";
+
         internal static readonly string RunAsVirtualAccountGroups = "RunAsVirtualAccountGroups";
+
         internal static readonly string TranscriptDirectory = "TranscriptDirectory";
+
         internal static readonly string TypesToProcess = "TypesToProcess";
+
         internal static readonly string UserDriveMaxSize = "UserDriveMaximumSize";
+
         internal static readonly string VariableDefinitions = "VariableDefinitions";
+
         internal static readonly string VariableNameToken = "Name";
+
         internal static readonly string VariableValueToken = "Value";
+
         internal static readonly string VisibleAliases = "VisibleAliases";
+
         internal static readonly string VisibleCmdlets = "VisibleCmdlets";
+
         internal static readonly string VisibleFunctions = "VisibleFunctions";
+
         internal static readonly string VisibleProviders = "VisibleProviders";
+
         internal static readonly string VisibleExternalCommands = "VisibleExternalCommands";
 
         internal static readonly ConfigTypeEntry[] ConfigFileKeys = new ConfigTypeEntry[] {
@@ -1687,6 +1762,7 @@ namespace System.Management.Automation.Remoting
     internal sealed class DISCPowerShellConfiguration : PSSessionConfiguration
     {
         private string _configFile;
+
         private Hashtable _configHash;
 
         /// <summary>

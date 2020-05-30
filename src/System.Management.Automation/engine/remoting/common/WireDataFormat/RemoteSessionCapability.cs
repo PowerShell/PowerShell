@@ -22,10 +22,15 @@ namespace System.Management.Automation.Remoting
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private Version _psversion;
+
         private Version _serversion;
+
         private Version _protocolVersion;
+
         private RemotingDestination _remotingDestination;
+
         private static byte[] _timeZoneInByteFormat;
+
         private TimeZoneInfo _timeZone;
 
         #endregion
@@ -155,14 +160,23 @@ namespace System.Management.Automation.Remoting
     internal enum HostDefaultDataId
     {
         ForegroundColor,
+
         BackgroundColor,
+
         CursorPosition,
+
         WindowPosition,
+
         CursorSize,
+
         BufferSize,
+
         WindowSize,
+
         MaxWindowSize,
+
         MaxPhysicalWindowSize,
+
         WindowTitle,
     }
 
@@ -381,6 +395,7 @@ namespace System.Management.Automation.Remoting
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private readonly HostDefaultData _hostDefaultData;
+
         private bool _useRunspaceHost;
 
         #endregion

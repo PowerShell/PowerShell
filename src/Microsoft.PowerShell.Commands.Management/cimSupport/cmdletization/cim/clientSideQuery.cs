@@ -624,9 +624,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private int _numberOfResultsFromMi;
+
         private int _numberOfMatchingResults;
 
         private readonly List<CimInstanceFilterBase> _filters = new List<CimInstanceFilterBase>();
+
         private readonly object _myLock = new object();
 
         #region "Public" interface for client-side filtering

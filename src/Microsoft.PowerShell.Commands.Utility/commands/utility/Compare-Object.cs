@@ -82,6 +82,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _includeEqual /* = false */;
+
         private bool _isIncludeEqualSpecified /* = false */;
 
         /// <summary>
@@ -107,15 +108,20 @@ namespace Microsoft.PowerShell.Commands
             = new List<OrderByPropertyEntry>();
 
         private OrderByProperty _orderByProperty = null;
+
         private OrderByPropertyComparer _comparer = null;
 
         private int _referenceObjectIndex /* = 0 */;
 
         // These are programmatic strings, not subject to INTL
         private const string SideIndicatorPropertyName = "SideIndicator";
+
         private const string SideIndicatorMatch = "==";
+
         private const string SideIndicatorReference = "<=";
+
         private const string SideIndicatorDifference = "=>";
+
         private const string InputObjectPropertyName = "InputObject";
 
         /// <summary>

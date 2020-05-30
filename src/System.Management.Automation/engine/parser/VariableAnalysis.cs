@@ -25,12 +25,19 @@ namespace System.Management.Automation.Language
         }
 
         public int BitIndex { get; set; }
+
         public int LocalTupleIndex { get; set; }
+
         public Type Type { get; set; }
+
         public string Name { get; set; }
+
         public bool Automatic { get; set; }
+
         public bool PreferenceVariable { get; set; }
+
         public bool Assigned { get; set; }
+
         public List<Ast> AssociatedAsts { get; private set; }
     }
 
@@ -350,11 +357,15 @@ namespace System.Management.Automation.Language
         private class Block
         {
             internal readonly List<Ast> _asts = new List<Ast>();
+
             private readonly List<Block> _successors = new List<Block>();
+
             internal readonly List<Block> _predecessors = new List<Block>();
 
             internal object _visitData;
+
             internal bool _throws;
+
             internal bool _returns;
 
             internal bool _unreachable { get; private set; }
@@ -435,7 +446,9 @@ namespace System.Management.Automation.Language
         private class AssignmentTarget : Ast
         {
             internal readonly ExpressionAst _targetAst;
+
             internal readonly string _variableName;
+
             internal readonly Type _type;
 
             public AssignmentTarget(ExpressionAst targetExpressionAst)
@@ -499,11 +512,17 @@ namespace System.Management.Automation.Language
         }
 
         private Dictionary<string, VariableAnalysisDetails> _variables;
+
         private Block _entryBlock;
+
         private Block _exitBlock;
+
         private Block _currentBlock;
+
         private bool _disableOptimizations;
+
         private readonly List<LoopGotoTargets> _loopTargets = new List<LoopGotoTargets>();
+
         private int _localsAllocated;
 
         // Used to analyze an expression that is invoked separately, i.e. a default argument.

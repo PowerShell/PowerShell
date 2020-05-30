@@ -311,9 +311,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const string of parameter names
         internal const string nameClassName = "ClassName";
+
         internal const string nameQuery = "Query";
+
         internal const string nameQueryDialect = "QueryDialect";
+
         internal const string nameCimSession = "CimSession";
+
         internal const string nameComputerName = "ComputerName";
         #endregion
 

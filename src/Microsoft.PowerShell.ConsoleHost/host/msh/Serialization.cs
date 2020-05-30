@@ -54,6 +54,7 @@ namespace Microsoft.PowerShell
         protected static string XmlCliTag = "#< CLIXML";
 
         protected string streamName;
+
         protected DataFormat format;
     }
 
@@ -141,8 +142,11 @@ namespace Microsoft.PowerShell
         }
 
         internal TextWriter textWriter;
+
         private XmlWriter _xmlWriter;
+
         private Serializer _xmlSerializer;
+
         private bool _firstCall = true;
     }
 
@@ -271,9 +275,13 @@ namespace Microsoft.PowerShell
         }
 
         internal TextReader textReader;
+
         private XmlReader _xmlReader;
+
         private Deserializer _xmlDeserializer;
+
         private string _firstLine;
+
         private bool _atEnd;
     }
 }   // namespace

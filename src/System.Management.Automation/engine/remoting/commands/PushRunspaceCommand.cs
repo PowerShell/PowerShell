@@ -29,7 +29,9 @@ namespace Microsoft.PowerShell.Commands
         #region Strings
 
         private const string InstanceIdParameterSet = "InstanceId";
+
         private const string IdParameterSet = "Id";
+
         private const string NameParameterSet = "Name";
 
         #endregion
@@ -42,6 +44,7 @@ namespace Microsoft.PowerShell.Commands
         public new int ThrottleLimit { set { } get { return 0; } }
 
         private ObjectStream _stream;
+
         private RemoteRunspace _tempRunspace;
 
         #endregion

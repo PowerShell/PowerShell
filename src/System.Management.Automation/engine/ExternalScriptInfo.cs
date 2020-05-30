@@ -232,6 +232,7 @@ namespace System.Management.Automation
         }
 
         private ScriptBlock _scriptBlock;
+
         private ScriptBlockAst _scriptBlockAst;
 
         private static ScriptBlock ParseScriptContents(Parser parser, string fileName, string fileContents, PSLanguageMode? definingLanguageMode)

@@ -749,6 +749,7 @@ namespace System.Management.Automation
     internal class WildcardPatternToRegexParser : WildcardPatternParser
     {
         private StringBuilder _regexPattern;
+
         private RegexOptions _regexOptions;
 
         private const string regexChars = "()[.?*{}^$+|\\"; // ']' is missing on purpose
@@ -922,6 +923,7 @@ namespace System.Management.Automation
     internal class WildcardPatternMatcher
     {
         private readonly PatternElement[] _patternElements;
+
         private readonly CharacterNormalizer _characterNormalizer;
 
         internal WildcardPatternMatcher(WildcardPattern wildcardPattern)
@@ -1008,6 +1010,7 @@ namespace System.Management.Automation
             private readonly int[] _isPatternPositionVisitedMarker;
 
             private readonly int[] _patternPositionsForFurtherProcessing;
+
             private int _patternPositionsForFurtherProcessingCount;
 
             public PatternPositionsVisitor(int lengthOfPattern)
@@ -1200,8 +1203,11 @@ namespace System.Management.Automation
         private class MyWildcardPatternParser : WildcardPatternParser
         {
             private readonly List<PatternElement> _patternElements = new List<PatternElement>();
+
             private CharacterNormalizer _characterNormalizer;
+
             private RegexOptions _regexOptions;
+
             private StringBuilder _bracketExpressionBuilder;
 
             public static PatternElement[] Parse(
@@ -1267,6 +1273,7 @@ namespace System.Management.Automation
         private struct CharacterNormalizer
         {
             private readonly CultureInfo _cultureInfo;
+
             private readonly bool _caseInsensitive;
 
             public CharacterNormalizer(WildcardOptions options)

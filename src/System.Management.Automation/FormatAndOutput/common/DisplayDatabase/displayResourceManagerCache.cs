@@ -135,6 +135,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private sealed class AssemblyLoadResult
         {
             internal Assembly a;
+
             internal AssemblyBindingStatus status;
         }
 
@@ -220,6 +221,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private AssemblyNameResolver _assemblyNameResolver = new AssemblyNameResolver();
+
         private Hashtable _resourceReferenceToAssemblyCache = new Hashtable();
     }
 }

@@ -120,21 +120,37 @@ namespace System.Management.Automation
             // The strings are stored in a different class to defer loading the resources until as late
             // as possible, e.g. if logging is never on, these strings won't be loaded.
             internal static readonly string LogContextSeverity = EtwLoggingStrings.LogContextSeverity;
+
             internal static readonly string LogContextHostName = EtwLoggingStrings.LogContextHostName;
+
             internal static readonly string LogContextHostVersion = EtwLoggingStrings.LogContextHostVersion;
+
             internal static readonly string LogContextHostId = EtwLoggingStrings.LogContextHostId;
+
             internal static readonly string LogContextHostApplication = EtwLoggingStrings.LogContextHostApplication;
+
             internal static readonly string LogContextEngineVersion = EtwLoggingStrings.LogContextEngineVersion;
+
             internal static readonly string LogContextRunspaceId = EtwLoggingStrings.LogContextRunspaceId;
+
             internal static readonly string LogContextPipelineId = EtwLoggingStrings.LogContextPipelineId;
+
             internal static readonly string LogContextCommandName = EtwLoggingStrings.LogContextCommandName;
+
             internal static readonly string LogContextCommandType = EtwLoggingStrings.LogContextCommandType;
+
             internal static readonly string LogContextScriptName = EtwLoggingStrings.LogContextScriptName;
+
             internal static readonly string LogContextCommandPath = EtwLoggingStrings.LogContextCommandPath;
+
             internal static readonly string LogContextSequenceNumber = EtwLoggingStrings.LogContextSequenceNumber;
+
             internal static readonly string LogContextUser = EtwLoggingStrings.LogContextUser;
+
             internal static readonly string LogContextConnectedUser = EtwLoggingStrings.LogContextConnectedUser;
+
             internal static readonly string LogContextTime = EtwLoggingStrings.LogContextTime;
+
             internal static readonly string LogContextShellId = EtwLoggingStrings.LogContextShellId;
         }
 

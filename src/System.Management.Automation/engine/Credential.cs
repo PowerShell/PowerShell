@@ -178,6 +178,7 @@ namespace System.Management.Automation
         }
 
         private string _userName;
+
         private SecureString _password;
 
         /// <summary>

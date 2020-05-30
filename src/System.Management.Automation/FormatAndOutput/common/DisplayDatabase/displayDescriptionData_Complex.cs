@@ -325,6 +325,7 @@ namespace System.Management.Automation
     public sealed class CustomEntryBuilder
     {
         private readonly Stack<List<CustomItemBase>> _entryStack;
+
         private readonly CustomControlBuilder _controlBuilder;
 
         internal CustomEntryBuilder(CustomControlBuilder controlBuilder, CustomControlEntry entry)

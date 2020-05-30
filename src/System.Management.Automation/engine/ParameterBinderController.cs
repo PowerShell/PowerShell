@@ -1153,6 +1153,7 @@ namespace System.Management.Automation
         }
 
         internal uint _currentParameterSetFlag = uint.MaxValue;
+
         internal uint _prePipelineProcessingParameterSetFlags = uint.MaxValue;
 
         protected IScriptExtent GetErrorExtent(CommandParameterInternal cpi)

@@ -1204,7 +1204,9 @@ namespace System.Management.Automation.Language
     public class Token
     {
         private TokenKind _kind;
+
         private TokenFlags _tokenFlags;
+
         private readonly InternalScriptExtent _scriptExtent;
 
         internal Token(InternalScriptExtent scriptExtent, TokenKind kind, TokenFlags tokenFlags)
@@ -1294,6 +1296,7 @@ namespace System.Management.Automation.Language
     public class ParameterToken : Token
     {
         private readonly string _parameterName;
+
         private readonly bool _usedColon;
 
         internal ParameterToken(InternalScriptExtent scriptExtent, string parameterName, bool usedColon)

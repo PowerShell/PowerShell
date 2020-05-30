@@ -36,17 +36,29 @@ namespace System.Management.Automation.Remoting
     internal enum TransportMethodEnum
     {
         CreateShellEx = 0,
+
         RunShellCommandEx = 1,
+
         SendShellInputEx = 2,
+
         ReceiveShellOutputEx = 3,
+
         CloseShellOperationEx = 4,
+
         CommandInputEx = 5,
+
         ReceiveCommandOutputEx = 6,
+
         DisconnectShellEx = 7,
+
         ReconnectShellEx = 8,
+
         ConnectShellEx = 9,
+
         ReconnectShellCommandEx = 10,
+
         ConnectShellCommandEx = 11,
+
         Unknown = 12,
     }
 
@@ -92,10 +104,15 @@ namespace System.Management.Automation.Remoting
     internal enum ConnectionStatus
     {
         NetworkFailureDetected = 1,
+
         ConnectionRetryAttempt = 2,
+
         ConnectionRetrySucceeded = 3,
+
         AutoDisconnectStarting = 4,
+
         AutoDisconnectSucceeded = 5,
+
         InternalErrorAbort = 6
     };
 
@@ -152,12 +169,14 @@ namespace System.Management.Automation.Remoting
         // This is due to the WinRM implementation on the Listener.
         // So We added a 1 minute network delay to count for this.
         internal const int ServerDefaultKeepAliveTimeoutMs = 4 * 60 * 1000; // milliseconds = 4 minutes
+
         internal const int ClientDefaultOperationTimeoutMs = 3 * 60 * 1000; // milliseconds = 3 minutes
         // Close timeout: to prevent unbounded close operation, we set a 1 minute bound.
         internal const int ClientCloseTimeoutMs = 60 * 1000;
 
         // This value instructs the server to use whatever setting it has for idle timeout.
         internal const int UseServerDefaultIdleTimeout = -1;
+
         internal const uint UseServerDefaultIdleTimeoutUInt = UInt32.MaxValue;
 
         // Minimum allowed idle timeout time is 60 seconds.
@@ -167,10 +186,12 @@ namespace System.Management.Automation.Remoting
 
         // Quota related consts and session variables.
         internal const int MaximumReceivedDataSize = 50 << 20; // 50MB
+
         internal const int MaximumReceivedObjectSize = 10 << 20; // 10MB
 
         // Session variables supporting powershell quotas.
         internal const string MAX_RECEIVED_DATA_PER_COMMAND_MB = "PSMaximumReceivedDataSizePerCommandMB";
+
         internal const string MAX_RECEIVED_OBJECT_SIZE_MB = "PSMaximumReceivedObjectSizeMB";
 
         #endregion
@@ -417,13 +438,19 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         protected bool isClosed;
+
         protected object syncObject = new object();
+
         protected PrioritySendDataCollection dataToBeSent;
         // used to handle callbacks from the server..these are used to synchronize received callbacks
         private Queue<CallbackNotificationInformation> _callbackNotificationQueue;
+
         private ReceiveDataCollection.OnDataAvailableCallback _onDataAvailableCallback;
+
         private bool _isServicingCallbacks;
+
         private bool _suspendQueueServicing;
+
         private bool _isDebuggerSuspend;
 
         // this is used log crimson messages.
@@ -923,6 +950,7 @@ namespace System.Management.Automation.Remoting.Client
             // only one of the following 2 should be present..
             // anyway transportException takes precedence over remoteObject.
             internal RemoteDataObject<PSObject> remoteObject;
+
             internal TransportErrorOccuredEventArgs transportError;
             // Used by ServicePendingCallbacks to give the control to derived classes for
             // processing data that the base class does not understand.
@@ -1108,7 +1136,9 @@ namespace System.Management.Automation.Remoting.Client
 
         // pipeline in the form cmd1 | cmd2.. this is used by authz module for early validation.
         protected StringBuilder cmdText;
+
         protected SerializedDataStream serializedPipeline;
+
         protected Guid powershellInstanceId;
 
         protected Guid PowershellInstanceId
@@ -1222,13 +1252,19 @@ namespace System.Management.Automation.Remoting.Server
         private SerializedDataStream.OnDataAvailableCallback _onDataAvailable;
         // the following variable are used by onDataAvailableCallback.
         private bool _shouldFlushData;
+
         private bool _reportAsPending;
+
         private Guid _runspacePoolInstanceId;
+
         private Guid _powerShellInstanceId;
+
         private RemotingDataType _dataType;
+
         private RemotingTargetInterface _targetInterface;
         // End: the following variable are used by onDataAvailableCallback.
         private Queue<Tuple<RemoteDataObject, bool, bool>> _dataToBeSentQueue;
+
         private bool _isSerializing;
         #endregion
 

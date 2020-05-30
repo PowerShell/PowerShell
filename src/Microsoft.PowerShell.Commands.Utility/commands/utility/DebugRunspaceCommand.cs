@@ -26,8 +26,11 @@ namespace Microsoft.PowerShell.Commands
         #region Strings
 
         private const string RunspaceParameterSet = "RunspaceParameterSet";
+
         private const string NameParameterSet = "NameParameterSet";
+
         private const string IdParameterSet = "IdParameterSet";
+
         private const string InstanceIdParameterSet = "InstanceIdParameterSet";
 
         #endregion
@@ -35,15 +38,22 @@ namespace Microsoft.PowerShell.Commands
         #region Private members
 
         private Runspace _runspace;
+
         private System.Management.Automation.Debugger _debugger;
+
         private PSDataCollection<PSStreamObject> _debugBlockingCollection;
+
         private PSDataCollection<PSStreamObject> _debugAccumulateCollection;
+
         private Pipeline _runningPipeline;
+
         private System.Management.Automation.PowerShell _runningPowerShell;
 
         // Debugging to persist until Ctrl+C or Debugger 'Exit' stops cmdlet.
         private bool _debugging;
+
         private ManualResetEventSlim _newRunningScriptEvent = new ManualResetEventSlim(true);
+
         private RunspaceAvailability _previousRunspaceAvailability = RunspaceAvailability.None;
 
         #endregion

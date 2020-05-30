@@ -13,7 +13,9 @@ namespace System.Management.Automation
     internal class ComMethodInformation : MethodInformation
     {
         internal readonly Type ReturnType;
+
         internal readonly int DispId;
+
         internal readonly COM.INVOKEKIND InvokeKind;
 
         internal ComMethodInformation(bool hasvarargs, bool hasoptional, ParameterInformation[] arguments, Type returnType, int dispId, COM.INVOKEKIND invokekind)
@@ -31,6 +33,7 @@ namespace System.Management.Automation
     internal class ComMethod
     {
         private Collection<int> _methods = new Collection<int>();
+
         private COM.ITypeInfo _typeInfo;
 
         /// <summary>

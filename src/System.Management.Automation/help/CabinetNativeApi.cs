@@ -14,20 +14,35 @@ namespace System.Management.Automation.Internal
         /// GC handle which prevents garbage collector from collecting this delegate.
         /// </summary>
         private CabinetNativeApi.FdiAllocDelegate _allocDelegate;
+
         private GCHandle _fdiAllocHandle;
+
         private CabinetNativeApi.FdiFreeDelegate _freeDelegate;
+
         private GCHandle _fdiFreeHandle;
+
         private CabinetNativeApi.FdiOpenDelegate _openDelegate;
+
         private GCHandle _fdiOpenHandle;
+
         private CabinetNativeApi.FdiReadDelegate _readDelegate;
+
         private GCHandle _fdiReadHandle;
+
         private CabinetNativeApi.FdiWriteDelegate _writeDelegate;
+
         private GCHandle _fdiWriteHandle;
+
         private CabinetNativeApi.FdiCloseDelegate _closeDelegate;
+
         private GCHandle _fdiCloseHandle;
+
         private CabinetNativeApi.FdiSeekDelegate _seekDelegate;
+
         private GCHandle _fdiSeekHandle;
+
         private CabinetNativeApi.FdiNotifyDelegate _notifyDelegate;
+
         private GCHandle _fdiNotifyHandle;
 
         internal CabinetNativeApi.FdiContextHandle fdiContext; // HFDI
@@ -170,7 +185,9 @@ namespace System.Management.Automation.Internal
     internal class CabinetExtractorLoader : ICabinetExtractorLoader
     {
         private static CabinetExtractor s_extractorInstance;
+
         private static CabinetExtractorLoader s_instance;
+
         private static double s_created = 0;
 
         internal static CabinetExtractorLoader GetInstance()
@@ -550,7 +567,9 @@ namespace System.Management.Automation.Internal
         internal enum PermissionMode : int
         {
             None = 0x0000,
+
             Write = 0x0080,
+
             Read = 0x0100
         }
 
@@ -558,18 +577,26 @@ namespace System.Management.Automation.Internal
         internal enum OpFlags : int
         {
             RdOnly = 0x0000,
+
             WrOnly = 0x0001,
+
             RdWr = 0x0002,
+
             Append = 0x0008,
+
             Create = 0x0100,
+
             Truncate = 0x0200,
+
             Excl = 0x0400
         }
 
         internal enum FdiCreateCpuType : int
         {
             CpuUnknown = -1,
+
             Cpu80286 = 0,
+
             Cpu80386 = 1
         }
 
@@ -577,27 +604,44 @@ namespace System.Management.Automation.Internal
         internal class FdiNotification
         {
             internal int cb; // LONG
+
             internal string psz1; // char FAR *
+
             internal string psz2; // char FAR *
+
             internal string psz3; // char FAR *
+
             internal IntPtr pv; // void FAR * // In this case, it is the destination path
+
             internal IntPtr hf; // INT_PTR
+
             internal short date; // USHORT
+
             internal short time; // USHORT
+
             internal short attribs; // USHORT
+
             internal short setID; // USHORT
+
             internal short iCabinet; // USHORT
+
             internal short iFolder; // USHORT
+
             internal int fdie; // FDIERROR
         };
 
         internal enum FdiNotificationType : int
         {
             FdintCABINET_INFO = 0x0,
+
             FdintPARTIAL_FILE = 0x1,
+
             FdintCOPY_FILE = 0x2,
+
             FdintCLOSE_FILE_INFO = 0x3,
+
             FdintNEXT_CABINET = 0x4,
+
             FdintENUMERATE = 0x5
         }
 
@@ -605,7 +649,9 @@ namespace System.Management.Automation.Internal
         internal class FdiERF
         {
             internal int erfOper;
+
             internal int erfType;
+
             internal bool fError;
         };
 

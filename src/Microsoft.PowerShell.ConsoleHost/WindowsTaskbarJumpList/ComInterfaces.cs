@@ -22,22 +22,39 @@ namespace Microsoft.PowerShell
         internal struct StartUpInfo
         {
             public readonly UInt32 cb;
+
             private readonly IntPtr lpReserved;
+
             public readonly IntPtr lpDesktop;
+
             public readonly IntPtr lpTitle;
+
             public readonly UInt32 dwX;
+
             public readonly UInt32 dwY;
+
             public readonly UInt32 dwXSize;
+
             public readonly UInt32 dwYSize;
+
             public readonly UInt32 dwXCountChars;
+
             public readonly UInt32 dwYCountChars;
+
             public readonly UInt32 dwFillAttribute;
+
             public readonly UInt32 dwFlags;
+
             public readonly UInt16 wShowWindow;
+
             private readonly UInt16 cbReserved2;
+
             private readonly IntPtr lpReserved2;
+
             public readonly IntPtr hStdInput;
+
             public readonly IntPtr hStdOutput;
+
             public readonly IntPtr hStdError;
         }
 
@@ -58,6 +75,7 @@ namespace Microsoft.PowerShell
                 uint fFlags);
 
             void GetIDList(out IntPtr ppidl);
+
             void SetIDList(IntPtr pidl);
 
             void GetDescription(
@@ -83,8 +101,11 @@ namespace Microsoft.PowerShell
                 [MarshalAs(UnmanagedType.LPWStr)] string pszArgs);
 
             void GetHotKey(out short wHotKey);
+
             void SetHotKey(short wHotKey);
+
             void GetShowCmd(out uint iShowCmd);
+
             void SetShowCmd(uint iShowCmd);
 
             void GetIconLocation(
@@ -198,6 +219,7 @@ namespace Microsoft.PowerShell
         internal enum KnownDestinationCategory
         {
             Frequent = 1,
+
             Recent
         }
 
@@ -235,6 +257,7 @@ namespace Microsoft.PowerShell
                 [MarshalAs(UnmanagedType.Interface)] IObjectArray poaSource);
 
             void RemoveObject(uint uiIndex);
+
             void Clear();
         }
 
@@ -253,6 +276,7 @@ namespace Microsoft.PowerShell
             Int32 RemoveDataBlock(UInt32 dwSig);
 
             void GetFlags(out uint pdwFlags);
+
             void SetFlags(uint dwFlags);
         }
 

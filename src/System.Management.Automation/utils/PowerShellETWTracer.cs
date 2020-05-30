@@ -809,6 +809,7 @@ namespace System.Management.Automation.Tracing
         private static readonly EventProvider _provider = new EventProvider(PSEtwLogProvider.ProviderGuid);
 
         private bool disposed;
+
         private PowerShellTraceKeywords _keywords;
 
         /// <summary>

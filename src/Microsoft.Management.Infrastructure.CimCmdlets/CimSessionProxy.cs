@@ -174,7 +174,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         public readonly IDisposable operationCancellation;
+
         public readonly IObservable<object> operation;
+
         public readonly bool success;
     }
 

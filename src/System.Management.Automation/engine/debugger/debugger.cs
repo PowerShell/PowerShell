@@ -1598,8 +1598,11 @@ namespace System.Management.Automation
         private class CallStackInfo
         {
             internal InvocationInfo InvocationInfo { get; set; }
+
             internal string File { get; set; }
+
             internal bool DebuggerStepThrough { get; set; }
+
             internal FunctionContext FunctionContext { get; set; }
 
             /// <summary>
@@ -1693,47 +1696,74 @@ namespace System.Management.Automation
         }
 
         private readonly ExecutionContext _context;
+
         private ConcurrentDictionary<int, LineBreakpoint> _pendingBreakpoints;
+
         private readonly ConcurrentDictionary<string, Tuple<WeakReference, ConcurrentDictionary<int, LineBreakpoint>>> _boundBreakpoints;
+
         private readonly ConcurrentDictionary<int, CommandBreakpoint> _commandBreakpoints;
+
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<int, VariableBreakpoint>> _variableBreakpoints;
+
         private readonly ConcurrentDictionary<int, Breakpoint> _idToBreakpoint;
+
         private SteppingMode _steppingMode;
+
         private CallStackInfo _overOrOutFrame;
+
         private CallStackList _callStack;
+
         private static readonly List<Breakpoint> s_emptyBreakpointList = new List<Breakpoint>();
 
         private DebuggerCommandProcessor _commandProcessor = new DebuggerCommandProcessor();
+
         private InvocationInfo _currentInvocationInfo;
+
         private bool _inBreakpoint;
+
         private PowerShell _psDebuggerCommand;
 
         // Job debugger integration.
         private bool _nestedDebuggerStop;
+
         private Dictionary<Guid, PSJobStartEventArgs> _runningJobs;
+
         private ConcurrentStack<Debugger> _activeDebuggers;
+
         private ConcurrentStack<DebuggerStopEventArgs> _debuggerStopEventArgs;
+
         private DebuggerResumeAction _lastActiveDebuggerAction;
+
         private DebuggerResumeAction _currentDebuggerAction;
+
         private DebuggerResumeAction _previousDebuggerAction;
+
         private CallStackInfo _nestedRunningFrame;
+
         private object _syncObject;
+
         private object _syncActiveDebuggerStopObject;
+
         private int _processingOutputCount;
+
         private ManualResetEventSlim _processingOutputCompleteEvent = new ManualResetEventSlim(true);
 
         // Runspace debugger integration.
         private Dictionary<Guid, PSMonitorRunspaceInfo> _runningRunspaces;
 
         private const int _jobCallStackOffset = 2;
+
         private const int _runspaceCallStackOffset = 1;
 
         private bool _preserveUnhandledDebugStopEvent;
+
         private ManualResetEventSlim _preserveDebugStopEvent;
 
         // Process runspace debugger
         private Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>> _runspaceDebugQueue = new Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>>();
+
         private volatile int _processingRunspaceDebugQueue;
+
         private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
         // System is locked down when true. Used to disable debugger on lock down.
@@ -1994,6 +2024,7 @@ namespace System.Management.Automation
         private enum SteppingMode
         {
             StepIn,
+
             None
         }
 
@@ -2096,8 +2127,11 @@ namespace System.Management.Automation
         private enum InternalDebugMode
         {
             InPushedStop = -2,
+
             InScriptStop = -1,
+
             Disabled = 0,
+
             Enabled = 1
         }
 
@@ -2195,7 +2229,9 @@ namespace System.Management.Automation
         private enum EnableNestedType
         {
             None = 0x0,
+
             NestedJob = 0x1,
+
             NestedRunspace = 0x2
         }
 
@@ -4186,7 +4222,9 @@ namespace System.Management.Automation
         #region Members
 
         private bool _isDisposed;
+
         protected Runspace _runspace;
+
         protected Debugger _wrappedDebugger;
 
         #endregion
@@ -4702,8 +4740,11 @@ namespace System.Management.Automation
         #region Members
 
         private PowerShell _command;
+
         private Debugger _rootDebugger;
+
         private ScriptBlockAst _parentScriptBlockAst;
+
         private DebuggerStopEventArgs _sendDebuggerArgs;
 
         #endregion
@@ -5059,21 +5100,37 @@ namespace System.Management.Automation
     {
         // debugger commands
         private const string ContinueCommand = "continue";
+
         private const string ContinueShortcut = "c";
+
         private const string GetStackTraceShortcut = "k";
+
         private const string HelpCommand = "h";
+
         private const string HelpShortcut = "?";
+
         private const string ListCommand = "list";
+
         private const string ListShortcut = "l";
+
         private const string StepCommand = "stepInto";
+
         private const string StepShortcut = "s";
+
         private const string StepOutCommand = "stepOut";
+
         private const string StepOutShortcut = "o";
+
         private const string StepOverCommand = "stepOver";
+
         private const string StepOverShortcut = "v";
+
         private const string StopCommand = "quit";
+
         private const string StopShortcut = "q";
+
         private const string DetachCommand = "detach";
+
         private const string DetachShortcut = "d";
 
         // default line count for the list command

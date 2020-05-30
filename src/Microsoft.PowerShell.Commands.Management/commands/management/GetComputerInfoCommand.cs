@@ -34,53 +34,76 @@ namespace Microsoft.PowerShell.Commands
         private class OSInfoGroup
         {
             public WmiOperatingSystem os;
+
             public HotFix[] hotFixes;
+
             public WmiPageFileUsage[] pageFileUsage;
+
             public string halVersion;
+
             public TimeSpan? upTime;
+
             public RegWinNtCurrentVersion regCurVer;
         }
 
         private class SystemInfoGroup
         {
             public WmiBaseBoard baseboard;
+
             public WmiBios bios;
+
             public WmiComputerSystem computer;
+
             public Processor[] processors;
+
             public NetworkAdapter[] networkAdapters;
         }
 
         private class HyperVInfo
         {
             public bool? Present;
+
             public bool? VMMonitorModeExtensions;
+
             public bool? SecondLevelAddressTranslation;
+
             public bool? VirtualizationFirmwareEnabled;
+
             public bool? DataExecutionPreventionAvailable;
         }
 
         private class DeviceGuardInfo
         {
             public DeviceGuardSmartStatus status;
+
             public DeviceGuard deviceGuard;
         }
 
         private class MiscInfoGroup
         {
             public ulong? physicallyInstalledMemory;
+
             public string timeZone;
+
             public string logonServer;
+
             public FirmwareType? firmwareType;
+
             public PowerPlatformRole? powerPlatformRole;
+
             public WmiKeyboard[] keyboards;
+
             public HyperVInfo hyperV;
+
             public ServerLevel? serverLevel;
+
             public DeviceGuardInfo deviceGuard;
         }
         #endregion Inner Types
 
         #region Static Data and Constants
         private const string activity = "Get-ComputerInfo";
+
         private const string localMachineName = null;
         #endregion Static Data and Constants
 
@@ -1340,32 +1363,59 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiBaseBoard
     {
         public string Caption;
+
         public string[] ConfigOptions;
+
         public float? Depth;
+
         public string Description;
+
         public float? Height;
+
         public bool? HostingBoard;
+
         public bool? HotSwappable;
+
         public DateTime? InstallDate;
+
         public string Manufacturer;
+
         public string Model;
+
         public string Name;
+
         public string OtherIdentifyingInfo;
+
         public string PartNumber;
+
         public bool? PoweredOn;
+
         public string Product;
+
         public bool? Removable;
+
         public bool? Replaceable;
+
         public string RequirementsDescription;
+
         public bool? RequiresDaughterBoard;
+
         public string SerialNumber;
+
         public string SKU;
+
         public string SlotLayout;
+
         public bool? SpecialRequirements;
+
         public string Status;
+
         public string Tag;
+
         public string Version;
+
         public float? Weight;
+
         public float? Width;
     }
 
@@ -1373,34 +1423,63 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiBios : WmiClassBase
     {
         public UInt16[] BiosCharacteristics;
+
         public string[] BIOSVersion;
+
         public string BuildNumber;
+
         public string Caption;
+
         public string CodeSet;
+
         public string CurrentLanguage;
+
         public string Description;
+
         public byte? EmbeddedControllerMajorVersion;
+
         public byte? EmbeddedControllerMinorVersion;
+
         public string IdentificationCode;
+
         public ushort? InstallableLanguages;
+
         public DateTime? InstallDate;
+
         public string LanguageEdition;
+
         public string[] ListOfLanguages;
+
         public string Manufacturer;
+
         public string Name;
+
         public string OtherTargetOS;
+
         public bool? PrimaryBIOS;
+
         public DateTime? ReleaseDate;
+
         public string SerialNumber;
+
         public string SMBIOSBIOSVersion;
+
         public ushort? SMBIOSMajorVersion;
+
         public ushort? SMBIOSMinorVersion;
+
         public bool? SMBIOSPresent;
+
         public ushort? SoftwareElementState;
+
         public string Status;
+
         public byte? SystemBiosMajorVersion;
+
         public byte? SystemBiosMinorVersion;
+
         public ushort? TargetOperatingSystem;
+
         public string Version;
     }
 
@@ -1408,62 +1487,119 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiComputerSystem
     {
         public ushort? AdminPasswordStatus;
+
         public bool? AutomaticManagedPagefile;
+
         public bool? AutomaticResetBootOption;
+
         public bool? AutomaticResetCapability;
+
         public ushort? BootOptionOnLimit;
+
         public ushort? BootOptionOnWatchDog;
+
         public bool? BootROMSupported;
+
         public string BootupState;
+
         public UInt16[] BootStatus;
+
         public string Caption;
+
         public ushort? ChassisBootupState;
+
         public string ChassisSKUNumber;
+
         public Int16? CurrentTimeZone;
+
         public bool? DaylightInEffect;
+
         public string Description;
+
         public string DNSHostName;
+
         public string Domain;
+
         public ushort? DomainRole;
+
         public bool? EnableDaylightSavingsTime;
+
         public ushort? FrontPanelResetStatus;
+
         public bool? HypervisorPresent;
+
         public bool? InfraredSupported;
+
         public string InitialLoadInfo;
+
         public DateTime? InstallDate;
+
         public ushort? KeyboardPasswordStatus;
+
         public string LastLoadInfo;
+
         public string Manufacturer;
+
         public string Model;
+
         public string Name;
+
         public bool? NetworkServerModeEnabled;
+
         public uint? NumberOfLogicalProcessors;
+
         public uint? NumberOfProcessors;
+
         public string[] OEMStringArray;
+
         public bool? PartOfDomain;
+
         public Int64? PauseAfterReset;
+
         public ushort? PCSystemType;
+
         public ushort? PCSystemTypeEx;
+
         public UInt16[] PowerManagementCapabilities;
+
         public bool? PowerManagementSupported;
+
         public ushort? PowerOnPasswordStatus;
+
         public ushort? PowerState;
+
         public ushort? PowerSupplyState;
+
         public string PrimaryOwnerContact;
+
         public string PrimaryOwnerName;
+
         public ushort? ResetCapability;
+
         public Int16? ResetCount;
+
         public Int16? ResetLimit;
+
         public string[] Roles;
+
         public string Status;
+
         public string[] SupportContactDescription;
+
         public string SystemFamily;
+
         public string SystemSKUNumber;
+
         public string SystemType;
+
         public ushort? ThermalState;
+
         public ulong? TotalPhysicalMemory;
+
         public string UserName;
+
         public ushort? WakeUpType;
+
         public string Workgroup;
 
         public PowerManagementCapabilities[] GetPowerManagementCapabilities()
@@ -1491,11 +1627,17 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiDeviceGuard
     {
         public UInt32[] AvailableSecurityProperties;
+
         public uint? CodeIntegrityPolicyEnforcementStatus;
+
         public uint? UsermodeCodeIntegrityPolicyEnforcementStatus;
+
         public UInt32[] RequiredSecurityProperties;
+
         public UInt32[] SecurityServicesConfigured;
+
         public UInt32[] SecurityServicesRunning;
+
         public uint? VirtualizationBasedSecurityStatus;
 
         public DeviceGuard AsOutputType
@@ -1566,26 +1708,47 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiKeyboard
     {
         public ushort? Availability;
+
         public string Caption;
+
         public uint? ConfigManagerErrorCode;
+
         public bool? ConfigManagerUserConfig;
+
         public string Description;
+
         public string DeviceID;
+
         public bool? ErrorCleared;
+
         public string ErrorDescription;
+
         public DateTime? InstallDate;
+
         public bool? IsLocked;
+
         public uint? LastErrorCode;
+
         public string Layout;
+
         public string Name;
+
         public ushort? NumberOfFunctionKeys;
+
         public ushort? Password;
+
         public string PNPDeviceID;
+
         public UInt16[] PowerManagementCapabilities;
+
         public bool? PowerManagementSupported;
+
         public string Status;
+
         public ushort? StatusInfo;
+
         public string SystemCreationClassName;
+
         public string SystemName;
     }
 
@@ -1600,87 +1763,169 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiMsftNetAdapter
     {
         public string Caption;
+
         public string Description;
+
         public DateTime? InstallDate;
+
         public string Name;
+
         public string Status;
+
         public ushort? Availability;
+
         public uint? ConfigManagerErrorCode;
+
         public bool? ConfigManagerUserConfig;
+
         public string DeviceID;
+
         public bool? ErrorCleared;
+
         public string ErrorDescription;
+
         public uint? LastErrorCode;
+
         public string PNPDeviceID;
+
         public UInt16[] PowerManagementCapabilities;
+
         public bool? PowerManagementSupported;
+
         public ushort? StatusInfo;
+
         public string SystemCreationClassName;
+
         public string SystemName;
+
         public ulong? Speed;
+
         public ulong? MaxSpeed;
+
         public ulong? RequestedSpeed;
+
         public ushort? UsageRestriction;
+
         public ushort? PortType;
+
         public string OtherPortType;
+
         public string OtherNetworkPortType;
+
         public ushort? PortNumber;
+
         public ushort? LinkTechnology;
+
         public string OtherLinkTechnology;
+
         public string PermanentAddress;
+
         public string[] NetworkAddresses;
+
         public bool? FullDuplex;
+
         public bool? AutoSense;
+
         public ulong? SupportedMaximumTransmissionUnit;
+
         public ulong? ActiveMaximumTransmissionUnit;
+
         public string InterfaceDescription;
+
         public string InterfaceName;
+
         public ulong? NetLuid;
+
         public string InterfaceGuid;
+
         public uint? InterfaceIndex;
+
         public string DeviceName;
+
         public uint? NetLuidIndex;
+
         public bool? Virtual;
+
         public bool? Hidden;
+
         public bool? NotUserRemovable;
+
         public bool? IMFilter;
+
         public uint? InterfaceType;
+
         public bool? HardwareInterface;
+
         public bool? WdmInterface;
+
         public bool? EndPointInterface;
+
         public bool? iSCSIInterface;
+
         public uint? State;
+
         public uint? NdisMedium;
+
         public uint? NdisPhysicalMedium;
+
         public uint? InterfaceOperationalStatus;
+
         public bool? OperationalStatusDownDefaultPortNotAuthenticated;
+
         public bool? OperationalStatusDownMediaDisconnected;
+
         public bool? OperationalStatusDownInterfacePaused;
+
         public bool? OperationalStatusDownLowPowerState;
+
         public uint? InterfaceAdminStatus;
+
         public uint? MediaConnectState;
+
         public uint? MtuSize;
+
         public ushort? VlanID;
+
         public ulong? TransmitLinkSpeed;
+
         public ulong? ReceiveLinkSpeed;
+
         public bool? PromiscuousMode;
+
         public bool? DeviceWakeUpEnable;
+
         public bool? ConnectorPresent;
+
         public uint? MediaDuplexState;
+
         public string DriverDate;
+
         public ulong? DriverDateData;
+
         public string DriverVersionString;
+
         public string DriverName;
+
         public string DriverDescription;
+
         public ushort? MajorDriverVersion;
+
         public ushort? MinorDriverVersion;
+
         public byte? DriverMajorNdisVersion;
+
         public byte? DriverMinorNdisVersion;
+
         public string PnPDeviceID;
+
         public string DriverProvider;
+
         public string ComponentID;
+
         public UInt32[] LowerLayerInterfaceIndices;
+
         public UInt32[] HigherLayerInterfaceIndices;
+
         public bool? AdminLocked;
     }
 
@@ -1688,43 +1933,81 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiNetworkAdapter
     {
         public string AdapterType;
+
         public ushort? AdapterTypeID;
+
         public bool? AutoSense;
+
         public ushort? Availability;
+
         public string Caption;
+
         public uint? ConfigManagerErrorCode;
+
         public bool? ConfigManagerUserConfig;
+
         public string Description;
+
         public string DeviceID;
+
         public bool? ErrorCleared;
+
         public string ErrorDescription;
+
         public string GUID;
+
         public uint? Index;
+
         public DateTime? InstallDate;
+
         public bool? Installed;
+
         public uint? InterfaceIndex;
+
         public uint? LastErrorCode;
+
         public string MACAddress;
+
         public string Manufacturer;
+
         public uint? MaxNumberControlled;
+
         public ulong? MaxSpeed;
+
         public string Name;
+
         public string NetConnectionID;
+
         public ushort? NetConnectionStatus;
+
         public bool? NetEnabled;
+
         public string[] NetworkAddresses;
+
         public string PermanentAddress;
+
         public bool? PhysicalAdapter;
+
         public string PNPDeviceID;
+
         public UInt16[] PowerManagementCapabilities;
+
         public bool? PowerManagementSupported;
+
         public string ProductName;
+
         public string ServiceName;
+
         public ulong? Speed;
+
         public string Status;
+
         public ushort? StatusInfo;
+
         public string SystemCreationClassName;
+
         public string SystemName;
+
         public DateTime? TimeOfLastReset;
     }
 
@@ -1732,65 +2015,125 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiNetworkAdapterConfiguration
     {
         public bool? ArpAlwaysSourceRoute;
+
         public bool? ArpUseEtherSNAP;
+
         public string Caption;
+
         public string DatabasePath;
+
         public bool? DeadGWDetectEnabled;
+
         public string[] DefaultIPGateway;
+
         public byte? DefaultTOS;
+
         public byte? DefaultTTL;
+
         public string Description;
+
         public bool? DHCPEnabled;
+
         public DateTime? DHCPLeaseExpires;
+
         public DateTime? DHCPLeaseObtained;
+
         public string DHCPServer;
+
         public string DNSDomain;
+
         public string[] DNSDomainSuffixSearchOrder;
+
         public bool? DNSEnabledForWINSResolution;
+
         public string DNSHostName;
+
         public string[] DNSServerSearchOrder;
+
         public bool? DomainDNSRegistrationEnabled;
+
         public uint? ForwardBufferMemory;
+
         public bool? FullDNSRegistrationEnabled;
+
         public UInt16[] GatewayCostMetric;
+
         public byte? IGMPLevel;
+
         public uint? Index;
+
         public uint? InterfaceIndex;
+
         public string[] IPAddress;
+
         public uint? IPConnectionMetric;
+
         public bool? IPEnabled;
+
         public bool? IPFilterSecurityEnabled;
+
         public bool? IPPortSecurityEnabled;
+
         public string[] IPSecPermitIPProtocols;
+
         public string[] IPSecPermitTCPPorts;
+
         public string[] IPSecPermitUDPPorts;
+
         public string[] IPSubnet;
+
         public bool? IPUseZeroBroadcast;
+
         public string IPXAddress;
+
         public bool? IPXEnabled;
+
         public UInt32[] IPXFrameType;
+
         public uint? IPXMediaType;
+
         public string[] IPXNetworkNumber;
+
         public string IPXVirtualNetNumber;
+
         public uint? KeepAliveInterval;
+
         public uint? KeepAliveTime;
+
         public string MACAddress;
+
         public uint? MTU;
+
         public uint? NumForwardPackets;
+
         public bool? PMTUBHDetectEnabled;
+
         public bool? PMTUDiscoveryEnabled;
+
         public string ServiceName;
+
         public string SettingID;
+
         public uint? TcpipNetbiosOptions;
+
         public uint? TcpMaxConnectRetransmissions;
+
         public uint? TcpMaxDataRetransmissions;
+
         public uint? TcpNumConnections;
+
         public bool? TcpUseRFC1122UrgentPointer;
+
         public ushort? TcpWindowSize;
+
         public bool? WINSEnableLMHostsLookup;
+
         public string WINSHostLookupFile;
+
         public string WINSPrimaryServer;
+
         public string WINSScopeID;
+
         public string WINSSecondaryServer;
     }
 
@@ -1799,63 +2142,121 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Fields
         public string BootDevice;
+
         public string BuildNumber;
+
         public string BuildType;
+
         public string Caption;
+
         public string CodeSet;
+
         public string CountryCode;
+
         public string CSDVersion;
+
         public string CSName;
+
         public Int16? CurrentTimeZone;
+
         public bool? DataExecutionPrevention_Available;
+
         public bool? DataExecutionPrevention_32BitApplications;
+
         public bool? DataExecutionPrevention_Drivers;
+
         public byte? DataExecutionPrevention_SupportPolicy;
+
         public bool? Debug;
+
         public string Description;
+
         public bool? Distributed;
+
         public uint? EncryptionLevel;
+
         public byte? ForegroundApplicationBoost;
+
         public ulong? FreePhysicalMemory;
+
         public ulong? FreeSpaceInPagingFiles;
+
         public ulong? FreeVirtualMemory;
+
         public DateTime? InstallDate;
+
         public DateTime? LastBootUpTime;
+
         public DateTime? LocalDateTime;
+
         public string Locale;
+
         public string Manufacturer;
+
         public uint? MaxNumberOfProcesses;
+
         public ulong? MaxProcessMemorySize;
+
         public string[] MUILanguages;
+
         public string Name;
+
         public uint? NumberOfLicensedUsers;
+
         public uint? NumberOfProcesses;
+
         public uint? NumberOfUsers;
+
         public uint? OperatingSystemSKU;
+
         public string Organization;
+
         public string OSArchitecture;
+
         public uint? OSLanguage;
+
         public uint? OSProductSuite;
+
         public ushort? OSType;
+
         public string OtherTypeDescription;
+
         public bool? PAEEnabled;
+
         public bool? PortableOperatingSystem;
+
         public bool? Primary;
+
         public uint? ProductType;
+
         public string RegisteredUser;
+
         public string SerialNumber;
+
         public ushort? ServicePackMajorVersion;
+
         public ushort? ServicePackMinorVersion;
+
         public ulong? SizeStoredInPagingFiles;
+
         public string Status;
+
         public uint? SuiteMask;
+
         public string SystemDevice;
+
         public string SystemDirectory;
+
         public string SystemDrive;
+
         public ulong? TotalSwapSpaceSize;
+
         public ulong? TotalVirtualMemorySize;
+
         public ulong? TotalVisibleMemorySize;
+
         public string Version;
+
         public string WindowsDirectory;
         #endregion Fields
 
@@ -1905,13 +2306,21 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiPageFileUsage
     {
         public uint? AllocatedBaseSize;
+
         public string Caption;
+
         public uint? CurrentUsage;
+
         public string Description;
+
         public DateTime? InstallDate;
+
         public string Name;
+
         public uint? PeakUsage;
+
         public string Status;
+
         public bool? TempPageFile;
     }
 
@@ -1919,59 +2328,113 @@ namespace Microsoft.PowerShell.Commands
     internal class WmiProcessor
     {
         public ushort? AddressWidth;
+
         public ushort? Architecture;
+
         public string AssetTag;
+
         public ushort? Availability;
+
         public string Caption;
+
         public uint? Characteristics;
+
         public uint? ConfigManagerErrorCode;
+
         public bool? ConfigManagerUserConfig;
+
         public ushort? CpuStatus;
+
         public uint? CurrentClockSpeed;
+
         public ushort? CurrentVoltage;
+
         public ushort? DataWidth;
+
         public string Description;
+
         public string DeviceID;
+
         public bool? ErrorCleared;
+
         public string ErrorDescription;
+
         public uint? ExtClock;
+
         public ushort? Family;
+
         public DateTime? InstallDate;
+
         public uint? L2CacheSize;
+
         public uint? L2CacheSpeed;
+
         public uint? L3CacheSize;
+
         public uint? L3CacheSpeed;
+
         public uint? LastErrorCode;
+
         public ushort? Level;
+
         public ushort? LoadPercentage;
+
         public string Manufacturer;
+
         public uint? MaxClockSpeed;
+
         public string Name;
+
         public uint? NumberOfCores;
+
         public uint? NumberOfEnabledCore;
+
         public uint? NumberOfLogicalProcessors;
+
         public string OtherFamilyDescription;
+
         public string PartNumber;
+
         public string PNPDeviceID;
+
         public UInt16[] PowerManagementCapabilities;
+
         public bool? PowerManagementSupported;
+
         public string ProcessorId;
+
         public ushort? ProcessorType;
+
         public ushort? Revision;
+
         public string Role;
+
         public bool? SecondLevelAddressTranslationExtensions;
+
         public string SerialNumber;
+
         public string SocketDesignation;
+
         public string Status;
+
         public ushort? StatusInfo;
+
         public string Stepping;
+
         public string SystemName;
+
         public uint? ThreadCount;
+
         public string UniqueId;
+
         public ushort? UpgradeMethod;
+
         public string Version;
+
         public bool? VirtualizationFirmwareEnabled;
+
         public bool? VMMonitorModeExtensions;
+
         public uint? VoltageCaps;
     }
 
@@ -1982,16 +2445,27 @@ namespace Microsoft.PowerShell.Commands
     internal class RegWinNtCurrentVersion
     {
         public string BuildLabEx;
+
         public string CurrentVersion;
+
         public string EditionId;
+
         public string InstallationType;
+
         public DateTime? InstallDate;
+
         public string ProductId;
+
         public string ProductName;
+
         public string RegisteredOrganization;
+
         public string RegisteredOwner;
+
         public string SystemRoot;
+
         public string ReleaseId;
+
         public int? UBR;
     }
     #endregion Other Intermediate classes
@@ -5090,12 +5564,16 @@ namespace Microsoft.PowerShell.Commands
         private static class PInvokeDllNames
         {
             public const string GetPhysicallyInstalledSystemMemoryDllName = "api-ms-win-core-sysinfo-l1-2-1.dll";
+
             public const string PowerDeterminePlatformRoleExDllName = "api-ms-win-power-base-l1-1-0.dll";
+
             public const string GetFirmwareTypeDllName = "api-ms-win-core-kernel32-legacy-l1-1-1";
         }
 
         public const int LOCALE_NAME_MAX_LENGTH = 85;
+
         public const uint POWER_PLATFORM_ROLE_V1 = 0x1;
+
         public const uint POWER_PLATFORM_ROLE_V2 = 0x2;
 
         public const UInt32 S_OK = 0;

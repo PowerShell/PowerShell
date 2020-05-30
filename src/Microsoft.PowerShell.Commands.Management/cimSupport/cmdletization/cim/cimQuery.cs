@@ -23,8 +23,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private readonly StringBuilder _wqlCondition;
 
         private CimInstance _associatedObject;
+
         private string _associationName;
+
         private string _resultRole;
+
         private string _sourceRole;
 
         internal readonly Dictionary<string, object> queryOptions = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);

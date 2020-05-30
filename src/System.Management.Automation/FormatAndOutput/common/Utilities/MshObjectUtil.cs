@@ -542,6 +542,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class StringFormatError : FormattingError
     {
         internal string formatString;
+
         internal Exception exception;
     }
 

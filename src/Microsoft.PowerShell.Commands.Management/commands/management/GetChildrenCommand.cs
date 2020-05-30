@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands
         ///     -recurse
         /// </remarks>
         private const string childrenSet = "Items";
+
         private const string literalChildrenSet = "LiteralItems";
 
         #region Command parameters

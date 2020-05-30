@@ -24,8 +24,11 @@ namespace Microsoft.PowerShell
     internal static class UpdatesNotification
     {
         private const string UpdateCheckEnvVar = "POWERSHELL_UPDATECHECK";
+
         private const string LTSBuildInfoURL = "https://aka.ms/pwsh-buildinfo-lts";
+
         private const string StableBuildInfoURL = "https://aka.ms/pwsh-buildinfo-stable";
+
         private const string PreviewBuildInfoURL = "https://aka.ms/pwsh-buildinfo-preview";
 
         /// <summary>
@@ -46,7 +49,9 @@ namespace Microsoft.PowerShell
         private static readonly string s_sentinelFileName, s_doneFileNameTemplate, s_doneFileNamePattern;
 
         private static readonly string s_cacheDirectory;
+
         private static readonly EnumerationOptions s_enumOptions;
+
         private static readonly NotificationType s_notificationType;
 
         /// <summary>

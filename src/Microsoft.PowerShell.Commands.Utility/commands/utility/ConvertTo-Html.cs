@@ -175,6 +175,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Uri _cssuri;
+
         private bool _cssuriSpecified;
 
         /// <summary>
@@ -262,6 +263,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Hashtable _meta;
+
         private bool _metaSpecified = false;
 
         /// <summary>
@@ -285,6 +287,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _charset;
+
         private bool _charsetSpecified = false;
 
         /// <summary>
@@ -315,7 +318,9 @@ namespace Microsoft.PowerShell.Commands
         internal static class ConvertHTMLParameterDefinitionKeys
         {
             internal const string LabelEntryKey = "label";
+
             internal const string AlignmentEntryKey = "alignment";
+
             internal const string WidthEntryKey = "width";
         }
 
@@ -760,7 +765,9 @@ namespace Microsoft.PowerShell.Commands
         /// List of incoming objects to compare.
         /// </summary>
         private bool _isTHWritten;
+
         private List<MshParameter> _propertyMshParameterList;
+
         private List<MshParameter> _resolvedNameMshParameters;
         // private string ResourcesBaseName = "ConvertHTMLStrings";
 

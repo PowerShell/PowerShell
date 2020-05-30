@@ -190,9 +190,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const string of parameter names
         internal const string nameCimSession = "CimSession";
+
         internal const string nameComputerName = "ComputerName";
+
         internal const string nameId = "Id";
+
         internal const string nameInstanceId = "InstanceId";
+
         internal const string nameName = "Name";
         #endregion
 

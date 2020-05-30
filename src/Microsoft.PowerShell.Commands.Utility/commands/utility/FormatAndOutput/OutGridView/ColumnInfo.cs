@@ -10,6 +10,7 @@ namespace Microsoft.PowerShell.Commands
     internal abstract class ColumnInfo
     {
         protected string displayName;
+
         protected string staleObjectPropertyName;
 
         internal ColumnInfo(string staleObjectPropertyName, string displayName)

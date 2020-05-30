@@ -23,6 +23,7 @@ namespace Microsoft.PowerShell.Commands
     public class GetFormatDataCommand : PSCmdlet
     {
         private string[] _typename;
+
         private WildcardPattern[] _filter = new WildcardPattern[1];
 
         /// <summary>

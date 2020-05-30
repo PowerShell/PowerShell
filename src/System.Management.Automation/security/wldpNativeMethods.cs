@@ -63,7 +63,9 @@ namespace System.Management.Automation.Security
         }
 
         private static object s_systemLockdownPolicyLock = new object();
+
         private static SystemEnforcementMode? s_systemLockdownPolicy = null;
+
         private static bool s_allowDebugOverridePolicy = false;
 
         /// <summary>
@@ -175,6 +177,7 @@ namespace System.Management.Automation.Security
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
 
         private const string AppLockerTestFileName = "__PSScriptPolicyTest_";
+
         private const string AppLockerTestFileContents = "# PowerShell test file to determine AppLocker lockdown mode ";
 
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
@@ -514,10 +517,15 @@ namespace System.Management.Automation.Security
             internal const uint WLDP_HOST_INFORMATION_REVISION = 0x00000001;
 
             internal const uint WLDP_LOCKDOWN_UNDEFINED = 0;
+
             internal const uint WLDP_LOCKDOWN_DEFINED_FLAG = 0x80000000;
+
             internal const uint WLDP_LOCKDOWN_SECUREBOOT_FLAG = 1;
+
             internal const uint WLDP_LOCKDOWN_DEBUGPOLICY_FLAG = 2;
+
             internal const uint WLDP_LOCKDOWN_UMCIENFORCE_FLAG = 4;
+
             internal const uint WLDP_LOCKDOWN_UMCIAUDIT_FLAG = 8;
         }
 
@@ -527,12 +535,19 @@ namespace System.Management.Automation.Security
         internal enum WLDP_HOST_ID
         {
             WLDP_HOST_ID_UNKNOWN = 0,
+
             WLDP_HOST_ID_GLOBAL = 1,
+
             WLDP_HOST_ID_VBA = 2,
+
             WLDP_HOST_ID_WSH = 3,
+
             WLDP_HOST_ID_POWERSHELL = 4,
+
             WLDP_HOST_ID_IE = 5,
+
             WLDP_HOST_ID_MSI = 6,
+
             WLDP_HOST_ID_MAX = 7,
         }
 

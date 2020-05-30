@@ -321,13 +321,21 @@ namespace System.Management.Automation
         internal struct EXCEPINFO
         {
             public short wCode;
+
             public short wReserved;
+
             public IntPtr bstrSource;
+
             public IntPtr bstrDescription;
+
             public IntPtr bstrHelpFile;
+
             public int dwHelpContext;
+
             public IntPtr pvReserved;
+
             public IntPtr pfnDeferredFillIn;
+
             public int scode;
         }
 
@@ -370,6 +378,7 @@ namespace System.Management.Automation
             internal struct Record
             {
                 internal IntPtr _record;
+
                 internal IntPtr _recordInfo;
             }
 

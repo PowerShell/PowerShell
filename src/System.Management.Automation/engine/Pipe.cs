@@ -13,8 +13,11 @@ namespace System.Management.Automation.Internal
     internal enum VariableStreamKind
     {
         Output,
+
         Error,
+
         Warning,
+
         Information
     };
 
@@ -381,6 +384,7 @@ namespace System.Management.Automation.Internal
         }
 
         private IEnumerator _enumeratorToProcess;
+
         private bool _enumeratorToProcessIsEmpty;
 
         #endregion ctor

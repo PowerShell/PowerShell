@@ -22,6 +22,7 @@ namespace System.Management.Automation.Host
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private int x;
+
         private int y;
 
         #endregion
@@ -214,6 +215,7 @@ namespace System.Management.Automation.Host
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private int width;
+
         private int height;
 
         #endregion
@@ -507,8 +509,11 @@ namespace System.Management.Automation.Host
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private int virtualKeyCode;
+
         private char character;
+
         private ControlKeyStates controlKeyState;
+
         private bool keyDown;
 
         #endregion
@@ -718,8 +723,11 @@ namespace System.Management.Automation.Host
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private int left;
+
         private int top;
+
         private int right;
+
         private int bottom;
 
         #endregion
@@ -991,8 +999,11 @@ namespace System.Management.Automation.Host
         #region DO NOT REMOVE OR RENAME THESE FIELDS - it will break remoting compatibility with Windows PowerShell
 
         private char character;
+
         private ConsoleColor foregroundColor;
+
         private ConsoleColor backgroundColor;
+
         private BufferCellType bufferCellType;
 
         #endregion

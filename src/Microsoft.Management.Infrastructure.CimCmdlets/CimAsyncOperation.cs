@@ -592,6 +592,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const strings
         internal const string ComputerNameArgument = @"ComputerName";
+
         internal const string CimSessionArgument = @"CimSession";
         #endregion
     }

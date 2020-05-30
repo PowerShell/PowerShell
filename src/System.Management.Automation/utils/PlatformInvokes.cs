@@ -16,6 +16,7 @@ namespace System.Management.Automation
         internal class FILETIME
         {
             internal uint dwLowDateTime;
+
             internal uint dwHighDateTime;
 
             internal FILETIME()
@@ -41,8 +42,11 @@ namespace System.Management.Automation
         internal enum FileDesiredAccess : uint
         {
             GenericRead = 0x80000000,
+
             GenericWrite = 0x40000000,
+
             GenericExecute = 0x20000000,
+
             GenericAll = 0x10000000,
         }
 
@@ -51,8 +55,11 @@ namespace System.Management.Automation
         internal enum FileShareMode : uint
         {
             None = 0x00000000,
+
             Read = 0x00000001,
+
             Write = 0x00000002,
+
             Delete = 0x00000004,
         }
 
@@ -60,9 +67,13 @@ namespace System.Management.Automation
         internal enum FileCreationDisposition : uint
         {
             New = 1,
+
             CreateAlways = 2,
+
             OpenExisting = 3,
+
             OpenAlways = 4,
+
             TruncateExisting = 5,
         }
 
@@ -71,25 +82,45 @@ namespace System.Management.Automation
         internal enum FileAttributes : uint
         {
             ReadOnly = 0x00000001,
+
             Hidden = 0x00000002,
+
             System = 0x00000004,
+
             Directory = 0x00000010,
+
             Archive = 0x00000020,
+
             Normal = 0x00000080,
+
             Temporary = 0x00000100,
+
             Offline = 0x00001000,
+
             NotContentIndexed = 0x00002000,
+
             Encrypted = 0x00004000,
+
             Write_Through = 0x80000000,
+
             Overlapped = 0x40000000,
+
             NoBuffering = 0x20000000,
+
             RandomAccess = 0x10000000,
+
             SequentialScan = 0x08000000,
+
             DeleteOnClose = 0x04000000,
+
             BackupSemantics = 0x02000000,
+
             PosixSemantics = 0x01000000,
+
             OpenReparsePoint = 0x00200000,
+
             OpenNoRecall = 0x00100000,
+
             SessionAware = 0x00800000
         }
 
@@ -97,7 +128,9 @@ namespace System.Management.Automation
         internal class SecurityAttributes
         {
             internal int nLength;
+
             internal SafeLocalMemHandle lpSecurityDescriptor;
+
             internal bool bInheritHandle;
 
             internal SecurityAttributes()
@@ -455,6 +488,7 @@ namespace System.Management.Automation
         internal struct TOKEN_PRIVILEGE
         {
             internal uint PrivilegeCount;
+
             internal LUID_AND_ATTRIBUTES Privilege;
         }
 
@@ -462,6 +496,7 @@ namespace System.Management.Automation
         internal struct LUID
         {
             internal uint LowPart;
+
             internal uint HighPart;
         }
 
@@ -469,6 +504,7 @@ namespace System.Management.Automation
         internal struct LUID_AND_ATTRIBUTES
         {
             internal LUID Luid;
+
             internal uint Attributes;
         }
 
@@ -476,7 +512,9 @@ namespace System.Management.Automation
         internal struct PRIVILEGE_SET
         {
             internal uint PrivilegeCount;
+
             internal uint Control;
+
             internal LUID_AND_ATTRIBUTES Privilege;
         }
 
@@ -517,8 +555,11 @@ namespace System.Management.Automation
         internal const int TOKEN_ALL_ACCESS = 0x001f01ff;
 
         internal const uint SE_PRIVILEGE_DISABLED = 0x00000000;
+
         internal const uint SE_PRIVILEGE_ENABLED_BY_DEFAULT = 0x00000001;
+
         internal const uint SE_PRIVILEGE_ENABLED = 0x00000002;
+
         internal const uint SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
         internal const int ERROR_SUCCESS = 0x0;
@@ -529,21 +570,32 @@ namespace System.Management.Automation
 
         // Fields
         internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+
         internal static readonly UInt32 GENERIC_READ = 0x80000000;
+
         internal static readonly UInt32 GENERIC_WRITE = 0x40000000;
+
         internal static readonly UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
+
         internal static readonly UInt32 CREATE_ALWAYS = 2;
+
         internal static readonly UInt32 FILE_SHARE_WRITE = 0x00000002;
+
         internal static readonly UInt32 FILE_SHARE_READ = 0x00000001;
+
         internal static readonly UInt32 OF_READWRITE = 0x00000002;
+
         internal static readonly UInt32 OPEN_EXISTING = 3;
 
         [StructLayout(LayoutKind.Sequential)]
         internal class PROCESS_INFORMATION
         {
             public IntPtr hProcess;
+
             public IntPtr hThread;
+
             public int dwProcessId;
+
             public int dwThreadId;
 
             public PROCESS_INFORMATION()
@@ -587,22 +639,39 @@ namespace System.Management.Automation
         internal class STARTUPINFO
         {
             public int cb;
+
             public IntPtr lpReserved;
+
             public IntPtr lpDesktop;
+
             public IntPtr lpTitle;
+
             public int dwX;
+
             public int dwY;
+
             public int dwXSize;
+
             public int dwYSize;
+
             public int dwXCountChars;
+
             public int dwYCountChars;
+
             public int dwFillAttribute;
+
             public int dwFlags;
+
             public short wShowWindow;
+
             public short cbReserved2;
+
             public IntPtr lpReserved2;
+
             public SafeFileHandle hStdInput;
+
             public SafeFileHandle hStdOutput;
+
             public SafeFileHandle hStdError;
 
             public STARTUPINFO()
@@ -651,7 +720,9 @@ namespace System.Management.Automation
         internal class SECURITY_ATTRIBUTES
         {
             public int nLength;
+
             public SafeLocalMemHandle lpSecurityDescriptor;
+
             public bool bInheritHandle;
 
             public SECURITY_ATTRIBUTES()
@@ -702,7 +773,9 @@ namespace System.Management.Automation
         internal enum StandardHandleId : uint
         {
             Error = unchecked((uint)-12),
+
             Output = unchecked((uint)-11),
+
             Input = unchecked((uint)-10),
         }
 

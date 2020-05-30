@@ -17,6 +17,7 @@ namespace Microsoft.Management.UI.Internal
     public abstract class StateDescriptor<T>
     {
         private Guid id;
+
         private string name;
 
         /// <summary>

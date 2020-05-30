@@ -234,7 +234,9 @@ namespace System.Management.Automation
     public class CommandInvocationIntrinsics
     {
         private ExecutionContext _context;
+
         private PSCmdlet _cmdlet;
+
         private MshCommandRuntime _commandRuntime;
 
         internal CommandInvocationIntrinsics(ExecutionContext context, PSCmdlet cmdlet)

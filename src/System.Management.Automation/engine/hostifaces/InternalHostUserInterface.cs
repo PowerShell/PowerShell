@@ -1077,8 +1077,11 @@ namespace System.Management.Automation.Internal.Host
         }
 
         private PSHostUserInterface _externalUI = null;
+
         private InternalHostRawUserInterface _internalRawUI = null;
+
         private InternalHost _parent = null;
+
         private PSInformationalBuffers _informationalBuffers = null;
     }
 }

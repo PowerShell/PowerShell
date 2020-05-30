@@ -125,6 +125,7 @@ namespace System.Management.Automation
     internal class TypeInferenceContext
     {
         public static readonly PSTypeName[] EmptyPSTypeNameArray = Array.Empty<PSTypeName>();
+
         private readonly PowerShell _powerShell;
 
         public TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))

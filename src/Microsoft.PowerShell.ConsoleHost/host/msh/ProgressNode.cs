@@ -29,7 +29,9 @@ namespace Microsoft.PowerShell
         RenderStyle
         {
             Invisible = 0,
+
             Minimal = 1,
+
             Compact = 2,
 
             /// <summary>

@@ -450,8 +450,11 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private static int s_globalId;
+
         private Stack<PowerShell> _runningPowerShells;
+
         private PowerShell _baseRunningPowerShell;
+
         private object _syncObject;
 
         #endregion
@@ -806,6 +809,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private static SortedDictionary<int, WeakReference<Runspace>> s_runspaceDictionary;
+
         private static object s_syncObject;
 
         /// <summary>

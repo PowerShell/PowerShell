@@ -858,17 +858,25 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Session related parameter set name
 
         internal const string ComputerNameSet = "ComputerNameSet";
+
         internal const string SessionIdSet = "SessionIdSet";
+
         internal const string InstanceIdSet = "InstanceIdSet";
+
         internal const string NameSet = "NameSet";
+
         internal const string CimSessionSet = "CimSessionSet";
+
         internal const string WSManParameterSet = "WSManParameterSet";
+
         internal const string DcomParameterSet = "DcomParameterSet";
+
         internal const string ProtocolNameParameterSet = "ProtocolTypeSet";
         #endregion
 
         #region register cimindication parameter set name
         internal const string QueryExpressionSessionSet = "QueryExpressionSessionSet";
+
         internal const string QueryExpressionComputerSet = "QueryExpressionComputerSet";
         #endregion
 

@@ -5434,13 +5434,16 @@ namespace Microsoft.WSMan.Management
         private enum ProviderMethods
         {
             GetChildItems,
+
             GetChildNames
         };
 
         private enum WsManElementObjectTypes
         {
             WSManConfigElement,
+
             WSManConfigContainerElement,
+
             WSManConfigLeafElement
         };
 
@@ -5458,7 +5461,9 @@ namespace Microsoft.WSMan.Management
 
         // Defining Primarykeys for resource uri's
         private static readonly string[] PKeyListener = new string[] { "Address", "Transport" };
+
         private static readonly string[] PKeyPlugin = new string[] { "Name" };
+
         private static readonly string[] PKeyCertMapping = new string[] { "Issuer", "Subject", "Uri" };
 
         /// <summary>

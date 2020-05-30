@@ -197,19 +197,33 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region internal strings
         internal static readonly string runspaceStateChanged = "Runspace {0} state changed to {1}";
+
         internal static readonly string classDumpInfo = @"Class type is {0}";
+
         internal static readonly string propertyDumpInfo = @"Property name {0} of type {1}, its value is {2}";
+
         internal static readonly string defaultPropertyType = @"It is a default property, default value is {0}";
+
         internal static readonly string propertyValueSet = @"This property value is set by user {0}";
+
         internal static readonly string addParameterSetName = @"Add parameter set {0} name to cache";
+
         internal static readonly string removeParameterSetName = @"Remove parameter set {0} name from cache";
+
         internal static readonly string currentParameterSetNameCount = @"Cache have {0} parameter set names";
+
         internal static readonly string currentParameterSetNameInCache = @"Cache have parameter set {0} valid {1}";
+
         internal static readonly string currentnonMandatoryParameterSetInCache = @"Cache have optional parameter set {0} valid {1}";
+
         internal static readonly string optionalParameterSetNameCount = @"Cache have {0} optional parameter set names";
+
         internal static readonly string finalParameterSetName = @"------Final parameter set name of the cmdlet is {0}";
+
         internal static readonly string addToOptionalParameterSet = @"Add to optional ParameterSetNames {0}";
+
         internal static readonly string startToResolveParameterSet = @"------Resolve ParameterSet Name";
+
         internal static readonly string reservedString = @"------";
         #endregion
 

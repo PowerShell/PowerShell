@@ -124,9 +124,13 @@ namespace Microsoft.PowerShell.Commands
         public PSObject InputObject { get; set; }
 
         private const string IndividualSetting = "IndividualSetting";
+
         private const string InputObjectParamSet = "InputObject";
+
         private const string ThemeParamSet = "Theme";
+
         private const string LightThemeName = "Light";
+
         private const string DarkThemeName = "Dark";
 
         /// <summary>

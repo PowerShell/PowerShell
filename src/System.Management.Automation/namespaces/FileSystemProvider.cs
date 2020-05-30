@@ -2698,10 +2698,15 @@ namespace Microsoft.PowerShell.Commands
         private enum ItemType
         {
             Unknown,
+
             File,
+
             Directory,
+
             SymbolicLink,
+
             Junction,
+
             HardLink
         };
 
@@ -7290,10 +7295,15 @@ namespace Microsoft.PowerShell.Commands
             internal static extern sbyte RtlSetProcessPlaceholderCompatibilityMode(sbyte pcm);
 
             internal const sbyte PHCM_APPLICATION_DEFAULT = 0;
+
             internal const sbyte PHCM_DISGUISE_PLACEHOLDER = 1;
+
             internal const sbyte PHCM_EXPOSE_PLACEHOLDERS = 2;
+
             internal const sbyte PHCM_MAX = 2;
+
             internal const sbyte PHCM_ERROR_INVALID_PARAMETER = -1;
+
             internal const sbyte PHCM_ERROR_NO_TEB = -2;
 #endif
         }
@@ -7305,8 +7315,11 @@ namespace Microsoft.PowerShell.Commands
         private struct NetResource
         {
             public int Scope;
+
             public int Type;
+
             public int DisplayType;
+
             public int Usage;
 
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -7800,9 +7813,13 @@ namespace Microsoft.PowerShell.Commands
         internal enum FileDesiredAccess : uint
         {
             GenericZero = 0,
+
             GenericRead = 0x80000000,
+
             GenericWrite = 0x40000000,
+
             GenericExecute = 0x20000000,
+
             GenericAll = 0x10000000,
         }
 
@@ -7811,8 +7828,11 @@ namespace Microsoft.PowerShell.Commands
         internal enum FileShareMode : uint
         {
             None = 0x00000000,
+
             Read = 0x00000001,
+
             Write = 0x00000002,
+
             Delete = 0x00000004,
         }
 
@@ -7820,9 +7840,13 @@ namespace Microsoft.PowerShell.Commands
         internal enum FileCreationDisposition : uint
         {
             New = 1,
+
             CreateAlways = 2,
+
             OpenExisting = 3,
+
             OpenAlways = 4,
+
             TruncateExisting = 5,
         }
 
@@ -7831,21 +7855,37 @@ namespace Microsoft.PowerShell.Commands
         internal enum FileAttributes : uint
         {
             Readonly = 0x00000001,
+
             Hidden = 0x00000002,
+
             System = 0x00000004,
+
             Archive = 0x00000020,
+
             Encrypted = 0x00004000,
+
             Write_Through = 0x80000000,
+
             Overlapped = 0x40000000,
+
             NoBuffering = 0x20000000,
+
             RandomAccess = 0x10000000,
+
             SequentialScan = 0x08000000,
+
             DeleteOnClose = 0x04000000,
+
             BackupSemantics = 0x02000000,
+
             PosixSemantics = 0x01000000,
+
             OpenReparsePoint = 0x00200000,
+
             OpenNoRecall = 0x00100000,
+
             SessionAware = 0x00800000,
+
             Normal = 0x00000080
         }
 
@@ -7853,12 +7893,19 @@ namespace Microsoft.PowerShell.Commands
         private struct REPARSE_DATA_BUFFER_SYMBOLICLINK
         {
             public uint ReparseTag;
+
             public ushort ReparseDataLength;
+
             public ushort Reserved;
+
             public ushort SubstituteNameOffset;
+
             public ushort SubstituteNameLength;
+
             public ushort PrintNameOffset;
+
             public ushort PrintNameLength;
+
             public uint Flags;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
@@ -7869,11 +7916,17 @@ namespace Microsoft.PowerShell.Commands
         private struct REPARSE_DATA_BUFFER_MOUNTPOINT
         {
             public uint ReparseTag;
+
             public ushort ReparseDataLength;
+
             public ushort Reserved;
+
             public ushort SubstituteNameOffset;
+
             public ushort SubstituteNameLength;
+
             public ushort PrintNameOffset;
+
             public ushort PrintNameLength;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
@@ -7884,8 +7937,11 @@ namespace Microsoft.PowerShell.Commands
         private struct REPARSE_DATA_BUFFER_APPEXECLINK
         {
             public uint ReparseTag;
+
             public ushort ReparseDataLength;
+
             public ushort Reserved;
+
             public uint StringCount;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
@@ -7896,14 +7952,23 @@ namespace Microsoft.PowerShell.Commands
         private struct BY_HANDLE_FILE_INFORMATION
         {
             public uint FileAttributes;
+
             public System.Runtime.InteropServices.ComTypes.FILETIME CreationTime;
+
             public System.Runtime.InteropServices.ComTypes.FILETIME LastAccessTime;
+
             public System.Runtime.InteropServices.ComTypes.FILETIME LastWriteTime;
+
             public uint VolumeSerialNumber;
+
             public uint FileSizeHigh;
+
             public uint FileSizeLow;
+
             public uint NumberOfLinks;
+
             public uint FileIndexHigh;
+
             public uint FileIndexLow;
         }
 
@@ -7911,7 +7976,9 @@ namespace Microsoft.PowerShell.Commands
         private struct GUID
         {
             public uint Data1;
+
             public ushort Data2;
+
             public ushort Data3;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
@@ -7922,8 +7989,11 @@ namespace Microsoft.PowerShell.Commands
         private struct REPARSE_GUID_DATA_BUFFER
         {
             public uint ReparseTag;
+
             public ushort ReparseDataLength;
+
             public ushort Reserved;
+
             public GUID ReparseGuid;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
@@ -7973,15 +8043,20 @@ namespace Microsoft.PowerShell.Commands
         internal enum FINDEX_INFO_LEVELS : uint
         {
             FindExInfoStandard = 0x0u,
+
             FindExInfoBasic = 0x1u,
+
             FindExInfoMaxInfoLevel = 0x2u,
         }
 
         internal enum FINDEX_SEARCH_OPS : uint
         {
             FindExSearchNameMatch = 0x0u,
+
             FindExSearchLimitToDirectories = 0x1u,
+
             FindExSearchLimitToDevices = 0x2u,
+
             FindExSearchMaxSearchOp = 0x3u,
         }
 
@@ -7989,14 +8064,23 @@ namespace Microsoft.PowerShell.Commands
         internal unsafe struct WIN32_FIND_DATA
         {
             internal uint dwFileAttributes;
+
             internal System.Runtime.InteropServices.ComTypes.FILETIME ftCreationTime;
+
             internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastAccessTime;
+
             internal System.Runtime.InteropServices.ComTypes.FILETIME ftLastWriteTime;
+
             internal uint nFileSizeHigh;
+
             internal uint nFileSizeLow;
+
             internal uint dwReserved0;
+
             internal uint dwReserved1;
+
             internal fixed char cFileName[MAX_PATH];
+
             internal fixed char cAlternateFileName[14];
         }
 
@@ -8755,7 +8839,9 @@ namespace System.Management.Automation.Internal
     internal static class CopyFileRemoteUtils
     {
         private const string functionToken = "function ";
+
         private const string nameToken = "Name";
+
         private const string definitionToken = "Definition";
 
         #region PSCopyToSessionHelper
@@ -8763,7 +8849,9 @@ namespace System.Management.Automation.Internal
         internal const string PSCopyToSessionHelperName = @"PSCopyToSessionHelper";
 
         private static string s_driveMaxSizeErrorFormatString = FileSystemProviderStrings.DriveMaxSizeError;
+
         private static string s_PSCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
+
         private static string s_PSCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
 
         private const string PSCopyToSessionHelperDefinitionFormat = @"
@@ -9231,6 +9319,7 @@ namespace System.Management.Automation.Internal
         internal const string PSCopyFromSessionHelperName = @"PSCopyFromSessionHelper";
 
         private static string s_PSCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
+
         private static string s_PSCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
 
         private const string PSCopyFromSessionHelperDefinitionFormat = @"
@@ -9722,6 +9811,7 @@ namespace System.Management.Automation.Internal
         internal const string PSCopyRemoteUtilsName = @"PSCopyRemoteUtils";
 
         internal static readonly string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
+
         private static string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
 
         private const string PSCopyRemoteUtilsDefinitionFormat = @"

@@ -314,10 +314,13 @@ else
 <Param Name='{0}' Value='{1}' />{2}";
 
         private const string privateDataFormat = @"<Param Name='PrivateData'>{0}</Param>";
+
         private const string securityElementFormat = "<Security Uri='{0}' ExactMatch='true' Sddl='{1}' />";
+
         private const string SessionConfigDataFormat = @"<SessionConfigurationData>{0}</SessionConfigurationData>";
 
         private string _gmsaAccount;
+
         private string _configTableSDDL;
 
         // true if there are errors running the wsman's configuration
@@ -1575,9 +1578,13 @@ else
         #region SDDL Update
 
         private const char OpenParenChar = '(';
+
         private const char CloseParenChar = ')';
+
         private const char ACESeparatorChar = ';';
+
         private const string ACESeparator = ";";
+
         private const string ConditionalACEPrefix = "X";
 
         /// <summary>
@@ -1729,9 +1736,13 @@ else
         #region Conditional ACE
 
         private const string AndOperator = "And";
+
         private const string OrOperator = "Or";
+
         private const string AndCondition = " && ";
+
         private const string OrCondition = " || ";
+
         private const string MemberOfFormat = "Member_of {{SID({0})}}";
 
         /// <summary>
@@ -1903,14 +1914,18 @@ else
         #region Private Data
 
         internal const string NameParameterSetName = "NameParameterSet";
+
         internal const string AssemblyNameParameterSetName = "AssemblyNameParameterSet";
+
         internal const string SessionConfigurationFileParameterSetName = "SessionConfigurationFile";
 
         // Deny network access but allow local access
         private const string localSDDL = "O:NSG:BAD:P(D;;GA;;;NU)(A;;GA;;;BA)(A;;GA;;;IU)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)";
+
         private const string localSDDL_Win8 = "O:NSG:BAD:P(D;;GA;;;NU)(A;;GA;;;BA)(A;;GA;;;RM)(A;;GA;;;IU)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)"; // Win8+ only
 
         private const string remoteSDDL = "O:NSG:BAD:P(A;;GA;;;BA)(A;;GA;;;IU)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)";
+
         private const string remoteSDDL_Win8 = "O:NSG:BAD:P(A;;GA;;;BA)(A;;GA;;;RM)(A;;GA;;;IU)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)"; // Win8 only
 
         // Win8 only SID for Remote Management Users group.
@@ -1973,6 +1988,7 @@ else
         }
 
         internal string assemblyName;
+
         internal bool isAssemblyNameSpecified;
 
         /// <summary>
@@ -1995,6 +2011,7 @@ else
         }
 
         internal string applicationBase;
+
         internal bool isApplicationBaseSpecified;
 
         /// <summary>
@@ -2015,6 +2032,7 @@ else
         }
 
         internal string configurationTypeName;
+
         internal bool isConfigurationTypeNameSpecified;
 
         /// <summary>
@@ -2036,6 +2054,7 @@ else
         }
 
         internal PSCredential runAsCredential;
+
         internal bool isRunAsCredentialSpecified;
 
         /// <summary>
@@ -2096,6 +2115,7 @@ else
         }
 
         private PSSessionConfigurationAccessMode _accessMode = PSSessionConfigurationAccessMode.Remote;
+
         internal bool accessModeSpecified = false;
 
         /// <summary>
@@ -2117,6 +2137,7 @@ else
         }
 
         private bool _useSharedProcess;
+
         internal bool isUseSharedProcessSpecified;
 
         /// <summary>
@@ -2135,6 +2156,7 @@ else
         }
 
         internal string configurationScript;
+
         internal bool isConfigurationScriptSpecified;
 
         /// <summary>
@@ -2163,6 +2185,7 @@ else
         }
 
         internal double? maxCommandSizeMB;
+
         internal bool isMaxCommandSizeMBSpecified;
 
         /// <summary>
@@ -2190,6 +2213,7 @@ else
         }
 
         internal double? maxObjectSizeMB;
+
         internal bool isMaxObjectSizeMBSpecified;
 
         /// <summary>
@@ -2221,6 +2245,7 @@ else
         }
 
         internal string sddl;
+
         internal bool isSddlSpecified;
 
         /// <summary>
@@ -2239,6 +2264,7 @@ else
         }
 
         private bool _showUI;
+
         internal bool showUISpecified;
 
         /// <summary>
@@ -2296,6 +2322,7 @@ else
         }
 
         internal Version psVersion;
+
         internal bool isPSVersionSpecified;
 
         /// <summary>
@@ -2394,6 +2421,7 @@ else
         }
 
         internal object[] modulesToImport;
+
         internal bool modulePathSpecified = false;
 
         /// <summary>
@@ -2524,6 +2552,7 @@ else
 ";
 
         private static readonly ScriptBlock s_removePluginSb;
+
         private bool _isErrorReported;
 
         #endregion
@@ -2916,8 +2945,11 @@ $args[0] | ForEach-Object {{
         // To Escape " -- ""
 
         private const string getSessionTypeFormat = @"(get-item 'WSMan::localhost\Plugin\{0}\InitializationParameters\sessiontype' -ErrorAction SilentlyContinue).Value";
+
         private const string getCurrentIdleTimeoutmsFormat = @"(Get-Item 'WSMan:\localhost\Plugin\{0}\Quotas\IdleTimeoutms').Value";
+
         private const string getAssemblyNameDataFormat = @"(Get-Item 'WSMan:\localhost\Plugin\{0}\InitializationParameters\assemblyname').Value";
+
         private const string getSessionConfigurationDataSbFormat = @"(Get-Item 'WSMan:\localhost\Plugin\{0}\InitializationParameters\SessionConfigurationData').Value";
 
         private const string setSessionConfigurationDataSbFormat = @"
@@ -3187,11 +3219,13 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 ";
 
         private const string initParamFormat = @"<Param Name='{0}' Value='{1}' />";
+
         private const string privateDataFormat = @"<Param Name='PrivateData'>{0}</Param>";
 
         private const string SessionConfigDataFormat = @"<SessionConfigurationData>{0}</SessionConfigurationData>";
 
         private const string UseSharedProcessToken = "UseSharedProcess";
+
         private const string AllowRemoteAccessToken = "Enabled";
 
         private static readonly ScriptBlock s_setPluginSb;
@@ -3213,9 +3247,11 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
         private bool _isErrorReported;
 
         private Hashtable _configTable;
+
         private string _configFilePath;
 
         private string _gmsaAccount;
+
         private string _configSddl;
 
         #endregion
@@ -4301,6 +4337,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
         }
 
         internal string sddl;
+
         internal bool isSddlSpecified;
 
         /// <summary>

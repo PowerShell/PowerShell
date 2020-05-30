@@ -27,6 +27,7 @@ namespace System.Management.Automation.Internal
                                         new System.IO.EnumerationOptions() { AttributesToSkip = FileAttributes.Hidden, BufferSize = 16384 };
 
         private static readonly string EnCulturePath = Path.DirectorySeparatorChar + "en";
+
         private static readonly string EnUsCulturePath = Path.DirectorySeparatorChar + "en-us";
 
         /// <summary>
@@ -612,6 +613,7 @@ namespace System.Management.Automation.Internal
         }
 
         public CommandInfo Command;
+
         public int Score;
     }
 }

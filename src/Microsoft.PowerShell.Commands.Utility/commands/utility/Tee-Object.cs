@@ -157,6 +157,7 @@ namespace Microsoft.PowerShell.Commands
         }
         #region private
         private CommandWrapper _commandWrapper;
+
         private bool _alreadyDisposed;
         #endregion private
     }

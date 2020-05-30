@@ -30,14 +30,23 @@ namespace System.Management.Automation
     public class PSVersionInfo
     {
         internal const string PSVersionTableName = "PSVersionTable";
+
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
+
         internal const string PSVersionName = "PSVersion";
+
         internal const string PSEditionName = "PSEdition";
+
         internal const string PSGitCommitIdName = "GitCommitId";
+
         internal const string PSCompatibleVersionsName = "PSCompatibleVersions";
+
         internal const string PSPlatformName = "Platform";
+
         internal const string PSOSName = "OS";
+
         internal const string SerializationVersionName = "SerializationVersion";
+
         internal const string WSManStackVersionName = "WSManStackVersion";
 
         private static readonly PSVersionHashTable s_psVersionTable;
@@ -54,16 +63,27 @@ namespace System.Management.Automation
         /// be updated to reflect the right version.
         /// </remarks>
         private static readonly Version s_psV1Version = new Version(1, 0);
+
         private static readonly Version s_psV2Version = new Version(2, 0);
+
         private static readonly Version s_psV3Version = new Version(3, 0);
+
         private static readonly Version s_psV4Version = new Version(4, 0);
+
         private static readonly Version s_psV5Version = new Version(5, 0);
+
         private static readonly Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
+
         private static readonly SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, preReleaseLabel: null, buildLabel: null);
+
         private static readonly SemanticVersion s_psV61Version = new SemanticVersion(6, 1, 0, preReleaseLabel: null, buildLabel: null);
+
         private static readonly SemanticVersion s_psV62Version = new SemanticVersion(6, 2, 0, preReleaseLabel: null, buildLabel: null);
+
         private static readonly SemanticVersion s_psV7Version = new SemanticVersion(7, 0, 0, preReleaseLabel: null, buildLabel: null);
+
         private static readonly SemanticVersion s_psSemVersion;
+
         private static readonly Version s_psVersion;
 
         /// <summary>
@@ -426,10 +446,15 @@ namespace System.Management.Automation
     public sealed class SemanticVersion : IComparable, IComparable<SemanticVersion>, IEquatable<SemanticVersion>
     {
         private const string VersionSansRegEx = @"^(?<major>\d+)(\.(?<minor>\d+))?(\.(?<patch>\d+))?$";
+
         private const string LabelRegEx = @"^((?<preLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?(\+(?<buildLabel>[0-9A-Za-z][0-9A-Za-z\-\.]*))?$";
+
         private const string LabelUnitRegEx = @"^[0-9A-Za-z][0-9A-Za-z\-\.]*$";
+
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
+
         private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
+
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
 
         private string versionString;
@@ -1004,15 +1029,20 @@ namespace System.Management.Automation
         internal enum ParseFailureKind
         {
             ArgumentException,
+
             ArgumentOutOfRangeException,
+
             FormatException
         }
 
         internal struct VersionResult
         {
             internal SemanticVersion _parsedVersion;
+
             internal ParseFailureKind _failure;
+
             internal string _exceptionArgument;
+
             internal bool _canThrow;
 
             internal void Init(bool canThrow)

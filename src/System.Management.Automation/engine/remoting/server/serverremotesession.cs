@@ -73,16 +73,22 @@ namespace System.Management.Automation.Remoting
         private static PSTraceSource s_trace = PSTraceSource.GetTracer("ServerRemoteSession", "ServerRemoteSession");
 
         private PSSenderInfo _senderInfo;
+
         private string _configProviderId;
+
         private string _initParameters;
+
         private string _initScriptForOutOfProcRS;
+
         private PSSessionConfiguration _sessionConfigProvider;
 
         // used to apply quotas on command and session transportmanagers.
         private int? _maxRecvdObjectSize;
+
         private int? _maxRecvdDataSizeCommand;
 
         private ServerRunspacePoolDriver _runspacePoolDriver;
+
         private PSRemotingCryptoHelperServer _cryptoHelper;
 
         // Specifies an optional endpoint configuration for out-of-proc session use.

@@ -23,7 +23,9 @@ namespace Microsoft.PowerShell.Commands
     public class ClearRecycleBinCommand : PSCmdlet
     {
         private string[] _drivesList;
+
         private DriveInfo[] _availableDrives;
+
         private bool _force;
 
         /// <summary>
@@ -244,7 +246,9 @@ namespace Microsoft.PowerShell.Commands
         internal enum RecycleFlags : uint
         {
             SHERB_NOCONFIRMATION = 0x00000001,
+
             SHERB_NOPROGRESSUI = 0x00000002,
+
             SHERB_NOSOUND = 0x00000004
         }
 

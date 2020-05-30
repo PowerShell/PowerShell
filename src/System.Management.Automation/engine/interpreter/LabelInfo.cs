@@ -276,13 +276,18 @@ namespace System.Management.Automation.Interpreter
 
         // these correspond to the node of the same name
         Block,
+
         Switch,
+
         Lambda,
+
         Try,
 
         // these correspond to the part of the try block we're in
         Catch,
+
         Finally,
+
         Filter,
 
         // the catch-all value for any other expression type
@@ -305,7 +310,9 @@ namespace System.Management.Automation.Interpreter
     internal sealed class LabelScopeInfo
     {
         private HybridReferenceDictionary<LabelTarget, LabelInfo> _labels; // lazily allocated, we typically use this only once every 6th-7th block
+
         internal readonly LabelScopeKind Kind;
+
         internal readonly LabelScopeInfo Parent;
 
         internal LabelScopeInfo(LabelScopeInfo parent, LabelScopeKind kind)

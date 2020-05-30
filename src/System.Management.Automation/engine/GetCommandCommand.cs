@@ -65,6 +65,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _names;
+
         private bool _nameContainsWildcard;
 
         /// <summary>
@@ -145,6 +146,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _modules = Array.Empty<string>();
+
         private bool _isModuleSpecified = false;
 
         /// <summary>
@@ -170,6 +172,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ModuleSpecification[] _moduleSpecifications = Array.Empty<ModuleSpecification>();
+
         private bool _isFullyQualifiedModuleSpecified = false;
 
         /// <summary>
@@ -192,6 +195,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private CommandTypes _commandType = CommandTypes.All;
+
         private bool _isCommandTypeSpecified = false;
 
         /// <summary>
@@ -297,7 +301,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Collection<WildcardPattern> _parameterNameWildcards;
+
         private string[] _parameterNames;
+
         private HashSet<string> _matchedParameterNames;
 
         /// <summary>
@@ -1520,7 +1526,9 @@ namespace Microsoft.PowerShell.Commands
 
         // These members are the collection of wildcard patterns for the "CmdletSet"
         private Collection<WildcardPattern> _verbPatterns;
+
         private Collection<WildcardPattern> _nounPatterns;
+
         private Collection<WildcardPattern> _modulePatterns;
 
 #if LEGACYTELEMETRY

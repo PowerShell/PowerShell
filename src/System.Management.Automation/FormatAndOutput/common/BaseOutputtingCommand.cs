@@ -251,7 +251,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private enum PreprocessingState { raw, processed, error }
 
         private const int DefaultConsoleWidth = 120;
+
         private const int DefaultConsoleHeight = int.MaxValue;
+
         internal const int StackAllocThreshold = 120;
 
         /// <summary>
@@ -946,7 +948,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private sealed class TableOutputContext : TableOutputContextBase
         {
             private int _rowCount = 0;
+
             private int _consoleHeight = -1;
+
             private int _consoleWidth = -1;
 
             private const int WhitespaceAndPagerLineCount = 2;
@@ -1358,6 +1362,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 private string[] _arr;
+
                 private int _lastEmptySpot;
             }
         }

@@ -346,7 +346,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _shouldAppend;
+
         private string _outFilename;
+
         private bool _isFilenameSet;
     }
 }

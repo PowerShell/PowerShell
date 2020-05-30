@@ -575,8 +575,11 @@ namespace System.Management.Automation
     internal enum ParameterCollectionType
     {
         NotCollection,
+
         IList,
+
         Array,
+
         ICollectionGeneric
     }
 

@@ -15,6 +15,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal class CreateInstanceJob : PropertySettingJob<CimInstance>
     {
         private CimInstance _resultFromCreateInstance;
+
         private CimInstance _resultFromGetInstance;
 
         private static CimInstance GetEmptyInstance(CimJobContext jobContext)
@@ -54,6 +55,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
 
 #if DEBUG
         private bool _createInstanceOperationGotStarted;
+
         private bool _getInstanceOperationGotStarted;
 #endif
 

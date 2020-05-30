@@ -3728,8 +3728,11 @@ namespace System.Management.Automation
         private enum CurrentlyBinding
         {
             ValueFromPipelineNoCoercion = 0,
+
             ValueFromPipelineByPropertyNameNoCoercion = 1,
+
             ValueFromPipelineWithCoercion = 2,
+
             ValueFromPipelineByPropertyNameWithCoercion = 3
         }
 
@@ -3995,6 +3998,7 @@ namespace System.Management.Automation
 
         // Hold all user defined default parameter values
         private Dictionary<MergedCompiledCommandParameter, object> _allDefaultParameterValuePairs;
+
         private bool _useDefaultParameterBinding = true;
 
         #endregion DefaultParameterBindingStructures
@@ -4149,7 +4153,9 @@ namespace System.Management.Automation
             // Remember the parameter binder so we know when to invoke the script block
             // and when to use the evaluated argument.
             internal CmdletParameterBinderController _parameterBinder;
+
             internal CommandParameterInternal _argument;
+
             internal Collection<PSObject> _evaluatedArgument;
 
             public override string ToString()

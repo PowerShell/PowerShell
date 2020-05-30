@@ -21,8 +21,11 @@ namespace Microsoft.Management.UI.Internal
     {
         #region Fields
         private Dictionary<string, ColumnStateDescriptor> columns = new Dictionary<string, ColumnStateDescriptor>();
+
         private string searchBoxText;
+
         private List<RuleStateDescriptor> rulesSelected = new List<RuleStateDescriptor>();
+
         private string sortOrderPropertyName;
         #endregion Fields
 
@@ -475,8 +478,11 @@ namespace Microsoft.Management.UI.Internal
         internal class ColumnStateDescriptor
         {
             private int index;
+
             private bool isInUse;
+
             private ListSortDirection sortDirection;
+
             private double width;
 
             /// <summary>

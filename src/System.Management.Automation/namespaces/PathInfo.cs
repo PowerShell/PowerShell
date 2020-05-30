@@ -78,6 +78,7 @@ namespace System.Management.Automation
         }
 
         private string _providerPath;
+
         private SessionState _sessionState;
 
         /// <summary>
@@ -92,7 +93,9 @@ namespace System.Management.Automation
         }
 
         private PSDriveInfo _drive;
+
         private ProviderInfo _provider;
+
         private string _path = string.Empty;
 
         /// <summary>

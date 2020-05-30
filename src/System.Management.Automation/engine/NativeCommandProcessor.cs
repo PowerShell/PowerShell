@@ -32,6 +32,7 @@ namespace System.Management.Automation
     internal enum NativeCommandIOFormat
     {
         Text,
+
         Xml
     };
 
@@ -41,12 +42,19 @@ namespace System.Management.Automation
     internal enum MinishellStream
     {
         Output,
+
         Error,
+
         Verbose,
+
         Warning,
+
         Debug,
+
         Progress,
+
         Information,
+
         Unknown
     }
 
@@ -57,11 +65,17 @@ namespace System.Management.Automation
     internal static class StringToMinishellStreamConverter
     {
         internal const string OutputStream = "output";
+
         internal const string ErrorStream = "error";
+
         internal const string DebugStream = "debug";
+
         internal const string VerboseStream = "verbose";
+
         internal const string WarningStream = "warning";
+
         internal const string ProgressStream = "progress";
+
         internal const string InformationStream = "information";
 
         internal static MinishellStream ToMinishellStream(string stream)
@@ -370,7 +384,9 @@ namespace System.Management.Automation
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
 
         private static bool? s_supportScreenScrape = null;
+
         private bool _isTranscribing;
+
         private Host.Coordinates _startPosition;
 
         /// <summary>
@@ -816,6 +832,7 @@ namespace System.Management.Automation
         internal struct ProcessWithParentId
         {
             public Process OriginalProcessInstance;
+
             private int _parentId;
 
             public int ParentId
@@ -1395,18 +1412,26 @@ namespace System.Management.Automation
         #region Interop for SHGetFileInfo
 
         private const int SCS_32BIT_BINARY = 0;  // A 32-bit Windows-based application
+
         private const int SCS_DOS_BINARY = 1;  // An MS-DOS - based application
+
         private const int SCS_WOW_BINARY = 2;  // A 16-bit Windows-based application
+
         private const int SCS_PIF_BINARY = 3;  // A PIF file that executes an MS-DOS - based application
+
         private const int SCS_POSIX_BINARY = 4;  // A POSIX - based application
+
         private const int SCS_OS216_BINARY = 5;  // A 16-bit OS/2-based application
+
         private const int SCS_64BIT_BINARY = 6;  // A 64-bit Windows-based application.
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct SHFILEINFO
         {
             public IntPtr hIcon;
+
             public int iIcon;
+
             public uint dwAttributes;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
@@ -1462,11 +1487,17 @@ namespace System.Management.Automation
         internal const string XmlCliTag = "#< CLIXML";
 
         private int _refCount;
+
         private BlockingCollection<ProcessOutputObject> _queue;
+
         private bool _isFirstOutput;
+
         private bool _isFirstError;
+
         private bool _isXmlCliOutput;
+
         private bool _isXmlCliError;
+
         private string _processFileName;
 
         public ProcessOutputHandler(Process process, BlockingCollection<ProcessOutputObject> queue)
@@ -1721,6 +1752,7 @@ namespace System.Management.Automation
         #endregion constructor
 
         private SteppablePipeline _pipeline;
+
         private Serializer _xmlSerializer;
 
         /// <summary>
@@ -1918,19 +1950,33 @@ namespace System.Management.Automation
         internal static extern IntPtr GetConsoleWindow();
 
         internal const int SW_HIDE = 0;
+
         internal const int SW_SHOWNORMAL = 1;
+
         internal const int SW_NORMAL = 1;
+
         internal const int SW_SHOWMINIMIZED = 2;
+
         internal const int SW_SHOWMAXIMIZED = 3;
+
         internal const int SW_MAXIMIZE = 3;
+
         internal const int SW_SHOWNOACTIVATE = 4;
+
         internal const int SW_SHOW = 5;
+
         internal const int SW_MINIMIZE = 6;
+
         internal const int SW_SHOWMINNOACTIVE = 7;
+
         internal const int SW_SHOWNA = 8;
+
         internal const int SW_RESTORE = 9;
+
         internal const int SW_SHOWDEFAULT = 10;
+
         internal const int SW_FORCEMINIMIZE = 11;
+
         internal const int SW_MAX = 11;
 
         /// <summary>

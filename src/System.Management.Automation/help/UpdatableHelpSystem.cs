@@ -165,7 +165,9 @@ namespace System.Management.Automation.Help
     internal enum UpdatableHelpCommandType
     {
         UnknownCommand = 0,
+
         UpdateHelpCommand = 1,
+
         SaveHelpCommand = 2
     }
 
@@ -234,10 +236,15 @@ namespace System.Management.Automation.Help
     internal class UpdatableHelpSystem : IDisposable
     {
         private TimeSpan _defaultTimeout;
+
         private Collection<UpdatableHelpProgressEventArgs> _progressEvents;
+
         private bool _stopping;
+
         private object _syncObject;
+
         private UpdatableHelpCommandBase _cmdlet;
+
         private CancellationTokenSource _cancelTokenSource;
 
         internal WebClient WebClient { get; }
@@ -512,6 +519,7 @@ namespace System.Management.Automation.Help
             </xs:schema>";
 
         private const string HelpInfoXmlNamespace = "http://schemas.microsoft.com/powershell/help/2010/05";
+
         private const string HelpInfoXmlValidationFailure = "HelpInfoXmlValidationFailure";
 
         /// <summary>
@@ -1580,6 +1588,7 @@ namespace System.Management.Automation.Help
     internal class UpdatableHelpSystemDrive : IDisposable
     {
         private string _driveName;
+
         private PSCmdlet _cmdlet;
 
         /// <summary>

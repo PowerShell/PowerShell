@@ -27,6 +27,7 @@ namespace System.Management.Automation.Remoting
     internal static class WSManPluginConstants
     {
         internal const int ExitCodeSuccess = 0x00000000;
+
         internal const int ExitCodeFailure = 0x00000001;
 
         internal const string CtrlCSignal = "powershell/signal/crtl_c";
@@ -35,13 +36,19 @@ namespace System.Management.Automation.Remoting
         // see WSManNativeApi.cs. These are duplicated here to save on
         // Marshalling time.
         internal const string SupportedInputStream = "stdin";
+
         internal const string SupportedOutputStream = "stdout";
+
         internal const string SupportedPromptResponseStream = "pr";
+
         internal const string PowerShellStartupProtocolVersionName = "protocolversion";
+
         internal const string PowerShellStartupProtocolVersionValue = "2.0";
+
         internal const string PowerShellOptionPrefix = "PS_";
 
         internal const int WSManPluginParamsGetRequestedLocale = 5;
+
         internal const int WSManPluginParamsGetRequestedDataLocale = 6;
     }
 
@@ -53,31 +60,51 @@ namespace System.Management.Automation.Remoting
     internal enum WSManPluginErrorCodes : int
     {
         NullPluginContext = -2141976624, // 0x805407D0
+
         PluginContextNotFound = -2141976623, // 0x805407D1
 
         NullInvalidInput = -2141975624, // 0x80540BB8
+
         NullInvalidStreamSets = -2141975623, // 0x80540BB9
+
         SessionCreationFailed = -2141975622, // 0x80540BBA
+
         NullShellContext = -2141975621, // 0x80540BBB
+
         InvalidShellContext = -2141975620, // 0x80540BBC
+
         InvalidCommandContext = -2141975619, // 0x80540BBD
+
         InvalidInputStream = -2141975618, // 0x80540BBE
+
         InvalidInputDatatype = -2141975617, // 0x80540BBF
+
         InvalidOutputStream = -2141975616, // 0x80540BC0
+
         InvalidSenderDetails = -2141975615, // 0x80540BC1
+
         ShutdownRegistrationFailed = -2141975614, // 0x80540BC2
+
         ReportContextFailed = -2141975613, // 0x80540BC3
+
         InvalidArgSet = -2141975612, // 0x80540BC4
+
         ProtocolVersionNotMatch = -2141975611, // 0x80540BC5
+
         OptionNotUnderstood = -2141975610, // 0x80540BC6
+
         ProtocolVersionNotFound = -2141975609, // 0x80540BC7
 
         ManagedException = -2141974624, // 0x80540FA0
+
         PluginOperationClose = -2141974623, // 0x80540FA1
+
         PluginConnectNoNegotiationData = -2141974622, // 0x80540FA2
+
         PluginConnectOperationFailed = -2141974621, // 0x80540FA3
 
         NoError = 0,
+
         OutOfMemory = -2147024882  // 0x8007000E
     }
 
@@ -94,9 +121,13 @@ namespace System.Management.Automation.Remoting
         #region Internal Members
 
         internal IntPtr pluginContext;
+
         internal IntPtr shellContext;
+
         internal IntPtr commandContext;
+
         internal bool isReceiveOperation;
+
         internal bool isShuttingDown;
 
         #endregion
@@ -128,7 +159,9 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         private Dictionary<IntPtr, WSManPluginShellSession> _activeShellSessions;
+
         private object _syncObject;
+
         private static Dictionary<IntPtr, WSManPluginInstance> s_activePlugins = new Dictionary<IntPtr, WSManPluginInstance>();
 
         /// <summary>

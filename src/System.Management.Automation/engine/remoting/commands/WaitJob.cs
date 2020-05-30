@@ -77,7 +77,9 @@ namespace Microsoft.PowerShell.Commands
         #region Coordinating how different events (timeout, stopprocessing, job finished, job blocked) affect what happens in EndProcessing
 
         private readonly object _endProcessingActionLock = new object();
+
         private Action _endProcessingAction;
+
         private readonly ManualResetEventSlim _endProcessingActionIsReady = new ManualResetEventSlim(false);
 
         private void SetEndProcessingAction(Action endProcessingAction)
@@ -121,8 +123,11 @@ namespace Microsoft.PowerShell.Commands
         #region Support for triggering EndProcessing when jobs are finished or blocked
 
         private readonly HashSet<Job> _finishedJobs = new HashSet<Job>();
+
         private readonly HashSet<Job> _blockedJobs = new HashSet<Job>();
+
         private readonly List<Job> _jobsToWaitFor = new List<Job>();
+
         private readonly object _jobTrackingLock = new object();
 
         private void HandleJobStateChangedEvent(object source, JobStateEventArgs eventArgs)
@@ -256,6 +261,7 @@ namespace Microsoft.PowerShell.Commands
         #region Support for triggering EndProcessing when timing out
 
         private Timer _timer;
+
         private readonly object _timerLock = new object();
 
         private void StartTimeoutTracking(int timeoutInSeconds)
@@ -432,7 +438,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _isDisposed;
+
         private readonly object _disposableLock = new object();
+
         private bool _warnNotTerminal = false;
 
         #endregion IDisposable Members

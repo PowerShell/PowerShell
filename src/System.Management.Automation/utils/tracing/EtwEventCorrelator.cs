@@ -50,6 +50,7 @@ namespace System.Management.Automation.Tracing
         IEtwEventCorrelator
     {
         private readonly EventProvider _transferProvider;
+
         private readonly EventDescriptor _transferEvent;
 
         /// <summary>

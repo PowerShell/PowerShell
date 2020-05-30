@@ -625,6 +625,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         private PSHostRawUserInterface _externalRawUI;
+
         private InternalHost _parentHost;
     }
 }

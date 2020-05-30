@@ -252,41 +252,77 @@ namespace System.Management.Automation
     internal enum ConversionRank
     {
         None = 0x0000,
+
         UnrelatedArraysS2A = 0x0007,
+
         UnrelatedArrays = 0x000F,
+
         ToStringS2A = 0x0017,
+
         ToString = 0x001F,
+
         CustomS2A = 0x0027,
+
         Custom = 0x002F,
+
         IConvertibleS2A = 0x0037,
+
         IConvertible = 0x003F,
+
         ImplicitCastS2A = 0x0047,
+
         ImplicitCast = 0x004F,
+
         ExplicitCastS2A = 0x0057,
+
         ExplicitCast = 0x005F,
+
         ConstructorS2A = 0x0067,
+
         Constructor = 0x006F,
+
         Create = 0x0073,
+
         ParseS2A = 0x0077,
+
         Parse = 0x007F,
+
         PSObjectS2A = 0x0087,
+
         PSObject = 0x008F,
+
         LanguageS2A = 0x0097,
+
         Language = 0x009F,
+
         NullToValue = 0x00AF,
+
         NullToRef = 0x00BF,
+
         NumericExplicitS2A = 0x00C7,
+
         NumericExplicit = 0x00CF,
+
         NumericExplicit1S2A = 0x00D7,
+
         NumericExplicit1 = 0x00DF,
+
         NumericStringS2A = 0x00E7,
+
         NumericString = 0x00EF,
+
         NumericImplicitS2A = 0x00F7,
+
         NumericImplicit = 0x00FF,
+
         AssignableS2A = 0x0107,
+
         Assignable = 0x010F,
+
         IdentityS2A = 0x0117,
+
         StringToCharArray = 0x011A,
+
         Identity = 0x011F,
 
         ValueDependent = 0xFFF7,
@@ -306,7 +342,9 @@ namespace System.Management.Automation
         internal delegate void MemberSetValueError(SetValueException e);
 
         internal const string OrderedAttribute = "ordered";
+
         internal const string DoublePrecision = "G15";
+
         internal const string SinglePrecision = "G7";
 
         internal static void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
@@ -365,7 +403,9 @@ namespace System.Management.Automation
         private class EnumerableTWrapper : IEnumerable
         {
             private object _enumerable;
+
             private Type _enumerableType;
+
             private DynamicMethod _getEnumerator;
 
             internal EnumerableTWrapper(object enumerable, Type enumerableType)
@@ -1231,13 +1271,19 @@ namespace System.Management.Automation
         private enum TypeCodeTraits
         {
             None = 0x00,
+
             SignedInteger = 0x01,
+
             UnsignedInteger = 0x02,
+
             Floating = 0x04,
+
             CimIntrinsicType = 0x08,
+
             Decimal = 0x10,
 
             Integer = SignedInteger | UnsignedInteger,
+
             Numeric = Integer | Floating | Decimal,
         }
 
@@ -1424,6 +1470,7 @@ namespace System.Management.Automation
         #region type converter
 
         internal static readonly PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
+
         internal static readonly ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
 
         private static TypeConverter GetIntegerSystemConverter(Type type)
@@ -1914,9 +1961,13 @@ namespace System.Management.Automation
                 }
 
                 internal string[] names;
+
                 internal Array values;
+
                 internal UInt64 allValues;
+
                 internal bool hasNegativeValue;
+
                 internal bool hasFlagsAttribute;
             }
 
@@ -3825,9 +3876,11 @@ namespace System.Management.Automation
         private class ConvertViaIEnumerableConstructor
         {
             internal Func<int, IList> ListCtorLambda;
+
             internal Func<IList, object> TargetCtorLambda;
 
             internal Type ElementType;
+
             internal bool IsScalar;
 
             internal object Convert(object valueToConvert,
@@ -4101,6 +4154,7 @@ namespace System.Management.Automation
         private class ConvertCheckingForCustomConverter
         {
             internal PSConverter<object> tryfirstConverter;
+
             internal PSConverter<object> fallbackConverter;
 
             internal object Convert(object valueToConvert,
@@ -4272,6 +4326,7 @@ namespace System.Management.Automation
         private struct ConversionTypePair
         {
             internal Type from;
+
             internal Type to;
 
             internal ConversionTypePair(Type fromType, Type toType)
@@ -4401,6 +4456,7 @@ namespace System.Management.Automation
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
         private static Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
+
         private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
 
         private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
@@ -5064,11 +5120,14 @@ namespace System.Management.Automation
             private enum TypeMatchingContext
             {
                 ReturnType,
+
                 ParameterType,
+
                 OutParameterType
             }
 
             private readonly ParameterInfo[] targetParameters;
+
             private readonly Type targetReturnType;
 
             internal SignatureComparator(MethodInfo targetMethodInfo)

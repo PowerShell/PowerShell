@@ -631,6 +631,7 @@ namespace Microsoft.PowerShell.Commands
         // We don't worry about unbounded growing of the cache because in .Net Core 2.0 we can not unload assemblies.
         // TODO: review if we will be able to unload assemblies after migrating to .Net Core 2.1.
         private static readonly HashSet<string> s_sourceTypesCache = new HashSet<string>();
+
         private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
@@ -638,12 +639,17 @@ namespace Microsoft.PowerShell.Commands
         private const ReportDiagnostic defaultDiagnosticOption = ReportDiagnostic.Error;
 
         private static readonly string[] s_writeInformationTags = new string[] { "PSHOST" };
+
         private int _syntaxTreesHash;
 
         private const string FromMemberParameterSetName = "FromMember";
+
         private const string FromSourceParameterSetName = "FromSource";
+
         private const string FromPathParameterSetName = "FromPath";
+
         private const string FromLiteralPathParameterSetName = "FromLiteralPath";
+
         private const string FromAssemblyNameParameterSetName = "FromAssemblyName";
 
         private void LoadAssemblies(IEnumerable<string> assemblies)
@@ -1099,6 +1105,7 @@ namespace Microsoft.PowerShell.Commands
         private class AllNamedTypeSymbolsVisitor : SymbolVisitor
         {
             public readonly ConcurrentBag<string> DuplicateSymbols = new ConcurrentBag<string>();
+
             public readonly ConcurrentBag<string> UniqueSymbols = new ConcurrentBag<string>();
 
             public override void VisitNamespace(INamespaceSymbol symbol)

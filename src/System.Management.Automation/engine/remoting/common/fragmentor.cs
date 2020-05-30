@@ -29,6 +29,7 @@ namespace System.Management.Automation.Remoting
     internal class FragmentedRemoteObject
     {
         private byte[] _blob;
+
         private int _blobLength;
 
         /// <summary>
@@ -437,12 +438,17 @@ namespace System.Management.Automation.Remoting
         #region Private Data
 
         private bool _isEntered;
+
         private FragmentedRemoteObject _currentFragment;
+
         private long _fragmentId;
 
         private int _fragmentSize;
+
         private object _syncObject;
+
         private bool _isDisposed;
+
         private bool _notifyOnWriteFragmentImmediately;
 
         // MemoryStream does not dynamically resize as data is read. This will waste
@@ -451,10 +457,15 @@ namespace System.Management.Automation.Remoting
         // is created..so after data is sent the MemoryStream is disposed there by
         // clearing resources.
         private Queue<MemoryStream> _queuedStreams;
+
         private MemoryStream _writeStream;
+
         private MemoryStream _readStream;
+
         private int _writeOffset;
+
         private int _readOffSet;
+
         private long _length;
 
         /// <summary>
@@ -963,6 +974,7 @@ namespace System.Management.Automation.Remoting
         #endregion
 
         private int _fragmentSize;
+
         private SerializationContext _serializationContext;
 
         #region Constructor

@@ -36,9 +36,13 @@ namespace System.Management.Automation
 
         // Name for various values under PSEngine
         internal const string MonadEngine_ApplicationBase = "ApplicationBase";
+
         internal const string MonadEngine_ConsoleHostAssemblyName = "ConsoleHostAssemblyName";
+
         internal const string MonadEngine_ConsoleHostModuleName = "ConsoleHostModuleName";
+
         internal const string MonadEngine_RuntimeVersion = "RuntimeVersion";
+
         internal const string MonadEngine_MonadVersion = "PowerShellVersion";
 
         /// <summary>
@@ -48,23 +52,38 @@ namespace System.Management.Automation
 
         // Name of various values for each mshsnapin
         internal const string MshSnapin_ApplicationBase = "ApplicationBase";
+
         internal const string MshSnapin_AssemblyName = "AssemblyName";
+
         internal const string MshSnapin_ModuleName = "ModuleName";
+
         internal const string MshSnapin_MonadVersion = "PowerShellVersion";
+
         internal const string MshSnapin_BuiltInTypes = "Types";
+
         internal const string MshSnapin_BuiltInFormats = "Formats";
+
         internal const string MshSnapin_Description = "Description";
+
         internal const string MshSnapin_Version = "Version";
+
         internal const string MshSnapin_Vendor = "Vendor";
+
         internal const string MshSnapin_DescriptionResource = "DescriptionIndirect";
+
         internal const string MshSnapin_VendorResource = "VendorIndirect";
+
         internal const string MshSnapin_LogPipelineExecutionDetails = "LogPipelineExecutionDetails";
 
         // Name of default mshsnapins
         internal const string CoreMshSnapinName = "Microsoft.PowerShell.Core";
+
         internal const string HostMshSnapinName = "Microsoft.PowerShell.Host";
+
         internal const string ManagementMshSnapinName = "Microsoft.PowerShell.Management";
+
         internal const string SecurityMshSnapinName = "Microsoft.PowerShell.Security";
+
         internal const string UtilityMshSnapinName = "Microsoft.PowerShell.Utility";
     }
 
@@ -263,7 +282,9 @@ namespace System.Management.Automation
         public Collection<string> Formats { get; }
 
         private string _descriptionIndirect;
+
         private string _descriptionFallback = string.Empty;
+
         private string _description;
         /// <summary>
         /// Description of mshsnapin.
@@ -282,7 +303,9 @@ namespace System.Management.Automation
         }
 
         private string _vendorIndirect;
+
         private string _vendorFallback = string.Empty;
+
         private string _vendor;
         /// <summary>
         /// Vendor of mshsnapin.
@@ -1263,9 +1286,13 @@ namespace System.Management.Automation
         {
             // since this is a private structure..making it as simple as possible
             public string PSSnapInName;
+
             public string AssemblyName;
+
             public string Description;
+
             public string DescriptionIndirect;
+
             public string VendorIndirect;
 
             public DefaultPSSnapInInformation(string sName,
@@ -1335,6 +1362,7 @@ namespace System.Management.Automation
         }
 
         private static IList<DefaultPSSnapInInformation> s_defaultMshSnapins = null;
+
         private static object s_syncObject = new object();
 
         #endregion

@@ -748,6 +748,7 @@ namespace System.Management.Automation
     internal class LocalVariable : PSVariable
     {
         private readonly MutableTuple _tuple;
+
         private readonly int _tupleSlot;
 
         public LocalVariable(string name, MutableTuple tuple, int tupleSlot)

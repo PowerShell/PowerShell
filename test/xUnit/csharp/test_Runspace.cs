@@ -14,6 +14,7 @@ namespace PSTests.Sequential
     public class RunspaceTests
     {
         private static int count = 1;
+
         private static string script = string.Format($"get-command get-command");
 
         [Fact]

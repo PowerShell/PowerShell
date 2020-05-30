@@ -98,6 +98,7 @@ namespace System.Management.Automation
         }
 
         private readonly SessionStateScope _initialScope;
+
         private SessionStateScope _currentEnumeratedScope;
     }
 }

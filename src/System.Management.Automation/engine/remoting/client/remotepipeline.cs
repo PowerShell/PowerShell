@@ -20,17 +20,29 @@ namespace System.Management.Automation
         #region Private Members
 
         private PowerShell _powershell;
+
         private bool _addToHistory;
+
         private bool _isNested;
+
         private bool _isSteppable;
+
         private Runspace _runspace;
+
         private object _syncRoot = new object();
+
         private bool _disposed = false;
+
         private string _historyString;
+
         private PipelineStateInfo _pipelineStateInfo = new PipelineStateInfo(PipelineState.NotStarted);
+
         private CommandCollection _commands = new CommandCollection();
+
         private string _computerName;
+
         private Guid _runspaceId;
+
         private ConnectCommandInfo _connectCmdInfo = null;
 
         /// <summary>
@@ -52,7 +64,9 @@ namespace System.Management.Automation
             }
 
             public PipelineStateInfo PipelineStateInfo;
+
             public RunspaceAvailability CurrentRunspaceAvailability;
+
             public RunspaceAvailability NewRunspaceAvailability;
         }
 
@@ -363,10 +377,15 @@ namespace System.Management.Automation
         // a corresponding collection to support
         // streaming behavior of the pipeline.
         private PSDataCollection<PSObject> _outputCollection;
+
         private PSDataCollectionStream<PSObject> _outputStream;
+
         private PSDataCollection<ErrorRecord> _errorCollection;
+
         private PSDataCollectionStream<ErrorRecord> _errorStream;
+
         private PSDataCollection<object> _inputCollection;
+
         private PSDataCollectionStream<object> _inputStream;
 
         /// <summary>

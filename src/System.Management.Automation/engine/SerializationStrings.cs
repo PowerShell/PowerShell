@@ -257,13 +257,21 @@ namespace System.Management.Automation
         #region progress record
 
         internal const string ProgressRecord = "PR";
+
         internal const string ProgressRecordActivityId = "AI";
+
         internal const string ProgressRecordParentActivityId = "PI";
+
         internal const string ProgressRecordActivity = "AV";
+
         internal const string ProgressRecordStatusDescription = "SD";
+
         internal const string ProgressRecordCurrentOperation = "CO";
+
         internal const string ProgressRecordPercentComplete = "PC";
+
         internal const string ProgressRecordSecondsRemaining = "SR";
+
         internal const string ProgressRecordType = "T";
 
         #endregion progress record

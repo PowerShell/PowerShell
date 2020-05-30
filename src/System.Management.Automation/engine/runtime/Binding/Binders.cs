@@ -929,6 +929,7 @@ namespace System.Management.Automation.Language
     internal class PSArrayAssignmentRHSBinder : DynamicMetaObjectBinder
     {
         private static readonly List<PSArrayAssignmentRHSBinder> s_binders = new List<PSArrayAssignmentRHSBinder>();
+
         private readonly int _elements;
 
         internal static PSArrayAssignmentRHSBinder Get(int i)
@@ -1213,9 +1214,13 @@ namespace System.Management.Automation.Language
         }
 
         private readonly CallInfo _callInfo;
+
         private readonly bool _static;
+
         private readonly bool _propertySetter;
+
         private readonly PSMethodInvocationConstraints _constraints;
+
         private readonly Type _classScope;
 
         private PSInvokeDynamicMemberBinder(CallInfo callInfo, bool @static, bool propertySetter, PSMethodInvocationConstraints constraints, Type classScope)
@@ -1305,6 +1310,7 @@ namespace System.Management.Automation.Language
         }
 
         private readonly bool _static;
+
         private readonly Type _classScope;
 
         private PSGetDynamicMemberBinder(Type classScope, bool @static)
@@ -1415,6 +1421,7 @@ namespace System.Management.Automation.Language
         }
 
         private readonly bool _static;
+
         private readonly Type _classScope;
 
         private PSSetDynamicMemberBinder(Type classScope, bool @static)
@@ -1490,6 +1497,7 @@ namespace System.Management.Automation.Language
         //    - Influences evaluation of switch elements
         //    - Is commonly used
         private static readonly PSSwitchClauseEvalBinder[] s_binderCache = new PSSwitchClauseEvalBinder[32];
+
         private readonly SwitchFlags _flags;
 
         internal static PSSwitchClauseEvalBinder Get(SwitchFlags flags)
@@ -1861,6 +1869,7 @@ namespace System.Management.Automation.Language
     internal class PSVariableAssignmentBinder : DynamicMetaObjectBinder
     {
         private static readonly PSVariableAssignmentBinder s_binder = new PSVariableAssignmentBinder();
+
         internal static int s_mutableValueWithInstanceMemberVersion;
 
         internal static PSVariableAssignmentBinder Get()
@@ -2132,7 +2141,9 @@ namespace System.Management.Automation.Language
         }
 
         private readonly bool _ignoreCase;
+
         private readonly bool _scalarCompare;
+
         internal int _version;
 
         private PSBinaryOperationBinder(ExpressionType operation, bool ignoreCase, bool scalarCompare)
@@ -3406,10 +3417,15 @@ namespace System.Management.Automation.Language
     internal class PSUnaryOperationBinder : UnaryOperationBinder
     {
         private static PSUnaryOperationBinder s_notBinder;
+
         private static PSUnaryOperationBinder s_bnotBinder;
+
         private static PSUnaryOperationBinder s_unaryMinus;
+
         private static PSUnaryOperationBinder s_unaryPlusBinder;
+
         private static PSUnaryOperationBinder s_incrementBinder;
+
         private static PSUnaryOperationBinder s_decrementBinder;
 
         internal static PSUnaryOperationBinder Get(ExpressionType operation)
@@ -3722,6 +3738,7 @@ namespace System.Management.Automation.Language
     internal class PSConvertBinder : ConvertBinder
     {
         private static readonly Dictionary<Type, PSConvertBinder> s_binderCache = new Dictionary<Type, PSConvertBinder>();
+
         internal int _version;
 
         public static PSConvertBinder Get(Type type)
@@ -3924,7 +3941,9 @@ namespace System.Management.Automation.Language
                 = new Dictionary<Tuple<CallInfo, PSMethodInvocationConstraints, bool>, PSGetIndexBinder>();
 
         private readonly PSMethodInvocationConstraints _constraints;
+
         private readonly bool _allowSlicing;
+
         internal int _version;
 
         public static PSGetIndexBinder Get(int argCount, PSMethodInvocationConstraints constraints, bool allowSlicing = true)
@@ -4515,6 +4534,7 @@ namespace System.Management.Automation.Language
                 = new Dictionary<Tuple<CallInfo, PSMethodInvocationConstraints>, PSSetIndexBinder>();
 
         private readonly PSMethodInvocationConstraints _constraints;
+
         internal int _version;
 
         public static PSSetIndexBinder Get(int argCount, PSMethodInvocationConstraints constraints = null)
@@ -4965,8 +4985,11 @@ namespace System.Management.Automation.Language
         }
 
         private readonly bool _static;
+
         private readonly bool _nonEnumerating;
+
         private readonly Type _classScope;
+
         internal int _version;
 
         private bool _hasInstanceMember;
@@ -5952,7 +5975,9 @@ namespace System.Management.Automation.Language
             = new Dictionary<PSSetMemberBinderKeyType, PSSetMemberBinder>(new KeyComparer());
 
         private readonly bool _static;
+
         private readonly Type _classScope;
+
         private readonly PSGetMemberBinder _getMemberBinder;
 
         public static PSSetMemberBinder Get(string memberName, TypeDefinitionAst classScopeAst, bool @static)
@@ -6503,9 +6528,13 @@ namespace System.Management.Automation.Language
         internal enum MethodInvocationType
         {
             Ordinary,
+
             Setter,
+
             Getter,
+
             BaseCtor,
+
             NonVirtual,
         }
 
@@ -6539,6 +6568,7 @@ namespace System.Management.Automation.Language
             Dictionary<PSInvokeMemberBinderKeyType, PSInvokeMemberBinder> s_binderCache = new Dictionary<PSInvokeMemberBinderKeyType, PSInvokeMemberBinder>(new KeyComparer());
 
         internal readonly PSMethodInvocationConstraints _invocationConstraints;
+
         internal readonly PSGetMemberBinder _getMemberBinder;
 
         private PSInvokeMemberBinder GetNonEnumeratingBinder()
@@ -6571,8 +6601,11 @@ namespace System.Management.Automation.Language
         }
 
         private readonly bool _static;
+
         private readonly bool _propertySetter;
+
         private readonly bool _nonEnumerating;
+
         private readonly Type _classScope;
 
         private PSInvokeMemberBinder(string name,
@@ -7495,8 +7528,11 @@ namespace System.Management.Automation.Language
     internal class PSCreateInstanceBinder : CreateInstanceBinder
     {
         private readonly CallInfo _callInfo;
+
         private readonly PSMethodInvocationConstraints _constraints;
+
         private readonly bool _publicTypeOnly;
+
         private int _version;
 
         private class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints, bool>>
@@ -7675,6 +7711,7 @@ namespace System.Management.Automation.Language
     internal class PSInvokeBaseCtorBinder : InvokeMemberBinder
     {
         private readonly CallInfo _callInfo;
+
         private readonly PSMethodInvocationConstraints _constraints;
 
         private class KeyComparer : IEqualityComparer<Tuple<CallInfo, PSMethodInvocationConstraints>>

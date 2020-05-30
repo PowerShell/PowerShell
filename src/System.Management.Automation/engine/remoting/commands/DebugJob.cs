@@ -31,8 +31,11 @@ namespace Microsoft.PowerShell.Commands
         #region Strings
 
         private const string JobParameterSet = "JobParameterSet";
+
         private const string JobNameParameterSet = "JobNameParameterSet";
+
         private const string JobIdParameterSet = "JobIdParameterSet";
+
         private const string JobInstanceIdParameterSet = "JobInstanceIdParameterSet";
 
         #endregion
@@ -40,7 +43,9 @@ namespace Microsoft.PowerShell.Commands
         #region Private members
 
         private Job _job;
+
         private Debugger _debugger;
+
         private PSDataCollection<PSStreamObject> _debugCollection;
 
         #endregion

@@ -17,11 +17,17 @@ namespace System.Management.Automation
     internal class ComProperty
     {
         private bool _hasSetter = false;
+
         private bool _hasSetterByRef = false;
+
         private int _dispId;
+
         private int _setterIndex;
+
         private int _setterByRefIndex;
+
         private int _getterIndex;
+
         private COM.ITypeInfo _typeInfo;
 
         /// <summary>

@@ -1312,6 +1312,7 @@ namespace System.Management.Automation
         }
 
         private static Dictionary<string, bool> s_validVerbs = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+
         private static Dictionary<string, string[]> s_recommendedAlternateVerbs = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase);
 
         internal static bool IsStandard(string verb)

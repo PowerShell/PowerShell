@@ -15,11 +15,15 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
     internal static class CommonUtilities
     {
         private const string LibraryLoadDllName = "api-ms-win-core-libraryloader-l1-2-0.dll";
+
         private const string LocalizationDllName = "api-ms-win-core-localization-l1-2-1.dll";
 
         private const uint FORMAT_MESSAGE_IGNORE_INSERTS = 0x00000200;
+
         private const uint FORMAT_MESSAGE_FROM_SYSTEM = 0x00001000;
+
         private const uint LOAD_LIBRARY_AS_DATAFILE = 0x00000002;
+
         private const uint FORMAT_MESSAGE_FROM_HMODULE = 0x00000800;
 
         [DllImport(LocalizationDllName, SetLastError = true, CharSet = CharSet.Unicode)]

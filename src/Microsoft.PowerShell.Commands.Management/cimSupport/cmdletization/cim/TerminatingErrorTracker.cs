@@ -91,6 +91,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region Tracking terminating errors within a single cmdlet invocation
 
         private readonly int _numberOfSessions;
+
         private int _numberOfReportedSessionTerminatingErrors;
 
         private TerminatingErrorTracker(int numberOfSessions)

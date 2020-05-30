@@ -33,11 +33,17 @@ namespace System.Management.Automation
         #region Private Members
 
         private List<RemotePipeline> _runningPipelines = new List<RemotePipeline>();
+
         private object _syncRoot = new object();
+
         private RunspaceStateInfo _runspaceStateInfo = new RunspaceStateInfo(RunspaceState.BeforeOpen);
+
         private bool _bSessionStateProxyCallInProgress = false;
+
         private RunspaceConnectionInfo _connectionInfo;
+
         private RemoteDebugger _remoteDebugger;
+
         private PSPrimitiveDictionary _applicationPrivateData;
 
         private bool _disposed = false;
@@ -45,6 +51,7 @@ namespace System.Management.Automation
         // the following two variables have been added for supporting
         // the Invoke-Command | Invoke-Command scenario
         private InvokeCommandCommand _currentInvokeCommand = null;
+
         private long _currentLocalPipelineId = 0;
 
         /// <summary>
@@ -67,7 +74,9 @@ namespace System.Management.Automation
             }
 
             public RunspaceStateInfo RunspaceStateInfo;
+
             public RunspaceAvailability CurrentRunspaceAvailability;
+
             public RunspaceAvailability NewRunspaceAvailability;
         }
 
@@ -1805,20 +1814,31 @@ namespace System.Management.Automation
         #region Members
 
         private RemoteRunspace _runspace;
+
         private PowerShell _psDebuggerCommand;
+
         private bool _remoteDebugSupported;
+
         private bool _isActive;
+
         private int _breakpointCount;
+
         private RemoteDebuggingCapability _remoteDebuggingCapability;
+
         private bool? _remoteBreakpointManagementIsSupported;
+
         private volatile bool _handleDebuggerStop;
+
         private bool _isDebuggerSteppingEnabled;
+
         private UnhandledBreakpointProcessingMode _unhandledBreakpointMode;
+
         private bool _detachCommand;
 
 #if !UNIX
         // Windows impersonation flow
         private WindowsIdentity _identityToPersonate;
+
         private bool _identityPersonationChecked;
 #endif
 
@@ -1834,9 +1854,13 @@ namespace System.Management.Automation
 
         // Remote debugger settings
         public const string DebugModeSetting = "DebugMode";
+
         public const string DebugStopState = "DebugStop";
+
         public const string DebugBreakpointCount = "DebugBreakpointCount";
+
         public const string BreakAllSetting = "BreakAll";
+
         public const string UnhandledBreakpointModeSetting = "UnhandledBreakpointMode";
 
         #endregion
@@ -2954,7 +2978,9 @@ namespace System.Management.Automation
         }
 
         private Exception _isInNoLanguageModeException = null;
+
         private Exception _getVariableCommandNotFoundException = null;
+
         private Exception _setVariableCommandNotFoundException = null;
 
         /// <summary>

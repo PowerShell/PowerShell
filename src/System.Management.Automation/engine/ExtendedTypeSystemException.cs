@@ -76,9 +76,13 @@ namespace System.Management.Automation
     public class MethodException : ExtendedTypeSystemException
     {
         internal const string MethodArgumentCountExceptionMsg = "MethodArgumentCountException";
+
         internal const string MethodAmbiguousExceptionMsg = "MethodAmbiguousException";
+
         internal const string MethodArgumentConversionExceptionMsg = "MethodArgumentConversionException";
+
         internal const string NonRefArgumentToRefParameterMsg = "NonRefArgumentToRefParameter";
+
         internal const string RefArgumentToNonRefParameterMsg = "RefArgumentToNonRefParameter";
 
         #region ctor
@@ -143,7 +147,9 @@ namespace System.Management.Automation
     public class MethodInvocationException : MethodException
     {
         internal const string MethodInvocationExceptionMsg = "MethodInvocationException";
+
         internal const string CopyToInvocationExceptionMsg = "CopyToInvocationException";
+
         internal const string WMIMethodInvocationException = "WMIMethodInvocationException";
 
         #region ctor
@@ -208,6 +214,7 @@ namespace System.Management.Automation
     public class GetValueException : ExtendedTypeSystemException
     {
         internal const string GetWithoutGetterExceptionMsg = "GetWithoutGetterException";
+
         internal const string WriteOnlyProperty = "WriteOnlyProperty";
         #region ctor
         /// <summary>
@@ -605,6 +612,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
+
         private string _errorId = "PSInvalidCastException";
     }
 }

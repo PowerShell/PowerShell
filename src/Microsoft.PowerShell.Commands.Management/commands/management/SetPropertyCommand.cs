@@ -16,8 +16,11 @@ namespace Microsoft.PowerShell.Commands
     public class SetItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         private const string propertyValuePathSet = "propertyValuePathSet";
+
         private const string propertyValueLiteralPathSet = "propertyValueLiteralPathSet";
+
         private const string propertyPSObjectPathSet = "propertyPSObjectPathSet";
+
         private const string propertyPSObjectLiteralPathSet = "propertyPSObjectLiteralPathSet";
 
         #region Parameters

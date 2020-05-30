@@ -32,14 +32,19 @@ namespace Microsoft.PowerShell.Commands
         #region Members
 
         private IHostSupportsInteractiveSession _interactiveHost;
+
         private RemoteRunspace _connectingRemoteRunspace;
 
         #region Strings
 
         private const string ProcessParameterSet = "ProcessParameterSet";
+
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
+
         private const string ProcessIdParameterSet = "ProcessIdParameterSet";
+
         private const string PipeNameParameterSet = "PipeNameParameterSet";
+
         private const string PSHostProcessInfoParameterSet = "PSHostProcessInfoParameterSet";
 
         private const string NamedPipeRunspaceName = "PSAttachRunspace";
@@ -486,7 +491,9 @@ namespace Microsoft.PowerShell.Commands
         #region Strings
 
         private const string ProcessParameterSet = "ProcessParameterSet";
+
         private const string ProcessIdParameterSet = "ProcessIdParameterSet";
+
         private const string ProcessNameParameterSet = "ProcessNameParameterSet";
 
 #if UNIX

@@ -630,6 +630,7 @@ namespace System.Management.Automation.Remoting
         private object _syncObject;
 
         private bool _submitComplete = false;                    // to check if operations have been submitComplete
+
         private bool _stopping = false;                      // if stop is in process
 
         #endregion Private Members

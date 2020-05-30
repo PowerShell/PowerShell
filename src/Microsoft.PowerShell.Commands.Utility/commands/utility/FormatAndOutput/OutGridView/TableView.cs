@@ -15,7 +15,9 @@ namespace Microsoft.PowerShell.Commands
     internal class TableView
     {
         private PSPropertyExpressionFactory _expressionFactory;
+
         private TypeInfoDataBase _typeInfoDatabase;
+
         private FormatErrorManager _errorManager;
 
         internal void Initialize(PSPropertyExpressionFactory expressionFactory,

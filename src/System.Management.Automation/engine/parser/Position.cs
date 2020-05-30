@@ -688,6 +688,7 @@ namespace System.Management.Automation.Language
     public sealed class ScriptExtent : IScriptExtent
     {
         private ScriptPosition _startPosition;
+
         private ScriptPosition _endPosition;
 
         private ScriptExtent()

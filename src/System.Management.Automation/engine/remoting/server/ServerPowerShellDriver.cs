@@ -37,6 +37,7 @@ namespace System.Management.Automation
 
         // there is no input when this driver was created
         private bool _noInput;
+
         private bool _addToHistory;
 
         // the server remote host instance

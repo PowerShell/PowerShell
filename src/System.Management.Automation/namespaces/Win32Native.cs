@@ -47,34 +47,58 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal enum TOKEN_INFORMATION_CLASS
         {
             TokenUser = 1,
+
             TokenGroups,
+
             TokenPrivileges,
+
             TokenOwner,
+
             TokenPrimaryGroup,
+
             TokenDefaultDacl,
+
             TokenSource,
+
             TokenType,
+
             TokenImpersonationLevel,
+
             TokenStatistics,
+
             TokenRestrictedSids,
+
             TokenSessionId,
+
             TokenGroupsAndPrivileges,
+
             TokenSessionReference,
+
             TokenSandBoxInert,
+
             TokenAuditPolicy,
+
             TokenOrigin
         }
 
         internal enum SID_NAME_USE
         {
             SidTypeUser = 1,
+
             SidTypeGroup,
+
             SidTypeDomain,
+
             SidTypeAlias,
+
             SidTypeWellKnownGroup,
+
             SidTypeDeletedAccount,
+
             SidTypeInvalid,
+
             SidTypeUnknown,
+
             SidTypeComputer
         }
 
@@ -86,6 +110,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal struct SID_AND_ATTRIBUTES
         {
             internal IntPtr Sid;
+
             internal uint Attributes;
         }
 

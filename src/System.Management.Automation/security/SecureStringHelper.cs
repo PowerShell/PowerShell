@@ -420,6 +420,7 @@ namespace Microsoft.PowerShell
     internal enum DataProtectionScope
     {
         CurrentUser = 0x00,
+
         LocalMachine = 0x01
     }
 
@@ -595,15 +596,18 @@ namespace Microsoft.PowerShell
     internal static class CAPI
     {
         internal const uint CRYPTPROTECT_UI_FORBIDDEN = 0x1;
+
         internal const uint CRYPTPROTECT_LOCAL_MACHINE = 0x4;
 
         internal const int E_FILENOTFOUND = unchecked((int)0x80070002); // File not found
+
         internal const int ERROR_FILE_NOT_FOUND = 2;                    // File not found
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         internal struct CRYPTOAPI_BLOB
         {
             internal uint cbData;
+
             internal IntPtr pbData;
         }
 

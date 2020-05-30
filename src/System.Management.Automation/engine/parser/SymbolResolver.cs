@@ -17,8 +17,11 @@ namespace System.Management.Automation.Language
     internal enum ScopeType
     {
         Type,           // class or enum
+
         Method,         // class method
+
         Function,       // function
+
         ScriptBlock     // script or anonymous script block
     }
 
@@ -30,6 +33,7 @@ namespace System.Management.Automation.Language
         }
 
         public TypeDefinitionAst Type { get; set; }
+
         public List<string> ExternalNamespaces { get; set; }
 
         public bool IsAmbiguous()
@@ -41,12 +45,14 @@ namespace System.Management.Automation.Language
     internal class Scope
     {
         internal Ast _ast;
+
         internal ScopeType _scopeType;
         /// <summary>
         /// TypeTable maps namespace (currently it's module name) to the types under this namespace.
         /// For the types defined in the current namespace (module) we use CURRENT_NAMESPACE as a namespace.
         /// </summary>
         private readonly Dictionary<string, TypeLookupResult> _typeTable;
+
         private readonly Dictionary<string, Ast> _variableTable;
 
         internal Scope(IParameterMetadataProvider ast, ScopeType scopeType)
@@ -163,6 +169,7 @@ namespace System.Management.Automation.Language
     internal class SymbolTable
     {
         internal readonly List<Scope> _scopes;
+
         internal readonly Parser _parser;
 
         internal SymbolTable(Parser parser)
@@ -277,8 +284,11 @@ namespace System.Management.Automation.Language
     internal class SymbolResolver : AstVisitor2, IAstPostVisitHandler
     {
         private readonly SymbolResolvePostActionVisitor _symbolResolvePostActionVisitor;
+
         internal readonly SymbolTable _symbolTable;
+
         internal readonly Parser _parser;
+
         internal readonly TypeResolutionState _typeResolutionState;
 
         [ThreadStatic]

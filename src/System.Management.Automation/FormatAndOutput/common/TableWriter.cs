@@ -19,7 +19,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private class ColumnInfo
         {
             internal int startCol = 0;
+
             internal int width = 0;
+
             internal int alignment = TextAlignment.Left;
         }
         /// <summary>
@@ -28,6 +30,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private class ScreenInfo
         {
             internal int screenColumns = 0;
+
             internal int screenRows = 0;
 
             internal const int separatorCharacterCount = 1;
@@ -42,6 +45,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private ScreenInfo _si;
 
         private const char ESC = '\u001b';
+
         private const string ResetConsoleVt100Code = "\u001b[m";
 
         private List<string> _header;

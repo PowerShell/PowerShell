@@ -1407,6 +1407,7 @@ namespace System.Management.Automation
         }
 
         private LocationGlobber _pathResolver;
+
         private SessionStateInternal _sessionState;
 
         #endregion private data

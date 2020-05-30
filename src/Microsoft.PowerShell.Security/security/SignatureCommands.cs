@@ -593,6 +593,7 @@ namespace Microsoft.PowerShell.Commands
         private struct SigningOptionInfo
         {
             internal SigningOption option;
+
             internal string optionName;
 
             internal SigningOptionInfo(SigningOption o, string n)

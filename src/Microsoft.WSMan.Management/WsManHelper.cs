@@ -26,62 +26,95 @@ namespace Microsoft.WSMan.Management
     {
         // regular expressions
         private const string PTRN_URI_LAST = @"([a-z_][-a-z0-9._]*)$";
+
         private const string PTRN_OPT = @"^-([a-z]+):(.*)";
+
         private const string PTRN_HASH_TOK = @"\s*([\w:]+)\s*=\s*(\$null|""([^""]*)"")\s*";
 
         // schemas
         private const string URI_IPMI = @"http://schemas.dmtf.org/wbem/wscim/1/cim-schema";
+
         private const string URI_WMI = @"http://schemas.microsoft.com/wbem/wsman/1/wmi";
+
         private const string NS_IPMI = @"http://schemas.dmtf.org/wbem/wscim/1/cim-schema";
+
         private const string NS_CIMBASE = @"http://schemas.dmtf.org/wbem/wsman/1/base";
+
         private const string NS_WSMANL = @"http://schemas.microsoft.com";
+
         private const string NS_XSI = @"xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance""";
+
         private const string ATTR_NIL = @"xsi:nil=""true""";
+
         private const string ATTR_NIL_NAME = @"xsi:nil";
+
         private const string NS_XSI_URI = @"http://www.w3.org/2001/XMLSchema-instance";
+
         private const string ALIAS_XPATH = @"xpath";
+
         private const string URI_XPATH_DIALECT = @"http://www.w3.org/TR/1999/REC-xpath-19991116";
 
         // credSSP strings
         internal string CredSSP_RUri = "winrm/config/client/auth";
+
         internal string CredSSP_XMLNmsp = "http://schemas.microsoft.com/wbem/wsman/1/config/client/auth";
+
         internal string CredSSP_SNode = "/cfg:Auth/cfg:CredSSP";
+
         internal string Client_uri = "winrm/config/client";
+
         internal string urlprefix_node = "/cfg:Client/cfg:URLPrefix";
+
         internal string Client_XMLNmsp = "http://schemas.microsoft.com/wbem/wsman/1/config/client";
 
         internal string Service_Uri = "winrm/config/service";
+
         internal string Service_UrlPrefix_Node = "/cfg:Service/cfg:URLPrefix";
+
         internal string Service_XMLNmsp = "http://schemas.microsoft.com/wbem/wsman/1/config/service";
+
         internal string Service_CredSSP_Uri = "winrm/config/service/auth";
+
         internal string Service_CredSSP_XMLNmsp = "http://schemas.microsoft.com/wbem/wsman/1/config/service/auth";
 
         // gpo registry path and keys
         internal string Registry_Path_Credentials_Delegation = @"SOFTWARE\Policies\Microsoft\Windows";
+
         internal string Key_Allow_Fresh_Credentials = "AllowFreshCredentials";
+
         internal string Key_Concatenate_Defaults_AllowFresh = "ConcatenateDefaults_AllowFresh";
+
         internal string Delegate = "delegate";
+
         internal string keyAllowcredssp = "AllowCredSSP";
 
         // 'Constants for MS-XML
         private const string NODE_ATTRIBUTE = "2";
+
         private const int NODE_TEXT = 3;
 
         // strings for dialects
         internal string ALIAS_WQL = @"wql";
+
         internal string ALIAS_ASSOCIATION = @"association";
+
         internal string ALIAS_SELECTOR = @"selector";
+
         internal string URI_WQL_DIALECT = @"http://schemas.microsoft.com/wbem/wsman/1/WQL";
+
         internal string URI_SELECTOR_DIALECT = @"http://schemas.dmtf.org/wbem/wsman/1/wsman/SelectorFilter";
+
         internal string URI_ASSOCIATION_DIALECT = @" http://schemas.dmtf.org/wbem/wsman/1/cimbinding/associationFilter";
 
         // string for operation
         internal string WSManOp = null;
 
         private PSCmdlet cmdletname;
+
         private NavigationCmdletProvider _provider;
 
         private FileStream _fs;
+
         private StreamReader _sr;
 
         private static ResourceManager _resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);

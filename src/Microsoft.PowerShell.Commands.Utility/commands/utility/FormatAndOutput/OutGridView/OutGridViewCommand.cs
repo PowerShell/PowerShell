@@ -42,11 +42,15 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         private const string DataNotQualifiedForGridView = "DataNotQualifiedForGridView";
+
         private const string RemotingNotSupported = "RemotingNotSupported";
 
         private TypeInfoDataBase _typeInfoDataBase;
+
         private PSPropertyExpressionFactory _expressionFactory;
+
         private OutWindowProxy _windowProxy;
+
         private GridHeader _gridHeader;
 
         #endregion Properties

@@ -17,8 +17,11 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal class EnumerateAssociatedInstancesJob : QueryJobBase
     {
         private readonly CimInstance _associatedObject;
+
         private readonly string _associationName;
+
         private readonly string _resultRole;
+
         private readonly string _sourceRole;
 
         internal EnumerateAssociatedInstancesJob(CimJobContext jobContext, CimQuery cimQuery, CimInstance associatedObject, string associationName, string resultRole, string sourceRole)

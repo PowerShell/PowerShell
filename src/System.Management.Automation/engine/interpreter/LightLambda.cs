@@ -43,12 +43,16 @@ namespace System.Management.Automation.Interpreter
     internal partial class LightLambda
     {
         private readonly StrongBox<object>[] _closure;
+
         private readonly Interpreter _interpreter;
+
         private static readonly CacheDict<Type, Func<LightLambda, Delegate>> s_runCache = new CacheDict<Type, Func<LightLambda, Delegate>>(100);
 
         // Adaptive compilation support
         private readonly LightDelegateCreator _delegateCreator;
+
         private Delegate _compiled;
+
         private int _compilationThreshold;
 
         /// <summary>

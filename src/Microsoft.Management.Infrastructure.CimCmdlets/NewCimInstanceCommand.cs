@@ -424,13 +424,21 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const string of parameter names
         internal const string nameClassName = "ClassName";
+
         internal const string nameResourceUri = "ResourceUri";
+
         internal const string nameKey = "Key";
+
         internal const string nameCimClass = "CimClass";
+
         internal const string nameProperty = "Property";
+
         internal const string nameNamespace = "Namespace";
+
         internal const string nameCimSession = "CimSession";
+
         internal const string nameComputerName = "ComputerName";
+
         internal const string nameClientOnly = "ClientOnly";
         #endregion
 

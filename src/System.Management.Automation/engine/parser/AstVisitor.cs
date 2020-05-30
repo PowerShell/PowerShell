@@ -407,8 +407,11 @@ namespace System.Management.Automation.Language
         }
 
         private readonly Func<Ast, bool> _callback;
+
         private readonly bool _stopOnFirst;
+
         private readonly bool _searchNestedScriptBlocks;
+
         protected readonly List<Ast> Results;
 
         protected AstVisitAction Check(Ast ast)

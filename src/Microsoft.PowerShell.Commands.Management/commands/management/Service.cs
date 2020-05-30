@@ -2611,25 +2611,45 @@ namespace Microsoft.PowerShell.Commands
     {
         // from winuser.h
         internal const int ERROR_SERVICE_ALREADY_RUNNING = 1056;
+
         internal const int ERROR_SERVICE_NOT_ACTIVE = 1062;
+
         internal const int ERROR_INSUFFICIENT_BUFFER = 122;
+
         internal const DWORD ERROR_ACCESS_DENIED = 0x5;
+
         internal const DWORD SC_MANAGER_CONNECT = 1;
+
         internal const DWORD SC_MANAGER_CREATE_SERVICE = 2;
+
         internal const DWORD SC_MANAGER_ALL_ACCESS = 0xf003f;
+
         internal const DWORD SERVICE_QUERY_CONFIG = 1;
+
         internal const DWORD SERVICE_CHANGE_CONFIG = 2;
+
         internal const DWORD SERVICE_DELETE = 0x10000;
+
         internal const DWORD SERVICE_NO_CHANGE = 0xffffffff;
+
         internal const DWORD SERVICE_AUTO_START = 0x2;
+
         internal const DWORD SERVICE_DEMAND_START = 0x3;
+
         internal const DWORD SERVICE_DISABLED = 0x4;
+
         internal const DWORD SERVICE_CONFIG_DESCRIPTION = 1;
+
         internal const DWORD SERVICE_CONFIG_DELAYED_AUTO_START_INFO = 3;
+
         internal const DWORD SERVICE_CONFIG_SERVICE_SID_INFO = 5;
+
         internal const DWORD WRITE_DAC = 262144;
+
         internal const DWORD WRITE_OWNER = 524288;
+
         internal const DWORD SERVICE_WIN32_OWN_PROCESS = 0x10;
+
         internal const DWORD SERVICE_ERROR_NORMAL = 1;
 
         // from winnt.h
@@ -2715,13 +2735,21 @@ namespace Microsoft.PowerShell.Commands
         internal struct QUERY_SERVICE_CONFIG
         {
             internal uint dwServiceType;
+
             internal uint dwStartType;
+
             internal uint dwErrorControl;
+
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpBinaryPathName;
+
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpLoadOrderGroup;
+
             internal uint dwTagId;
+
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpDependencies;
+
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpServiceStartName;
+
             [MarshalAs(UnmanagedType.LPWStr)] internal string lpDisplayName;
         };
 

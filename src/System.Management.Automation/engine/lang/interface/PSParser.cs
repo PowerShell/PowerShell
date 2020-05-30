@@ -76,6 +76,7 @@ namespace System.Management.Automation
         #region Parsing Logic
 
         private readonly List<Language.Token> _tokenList = new List<Language.Token>();
+
         private Language.ParseError[] _errors;
 
         private void Parse(string script)

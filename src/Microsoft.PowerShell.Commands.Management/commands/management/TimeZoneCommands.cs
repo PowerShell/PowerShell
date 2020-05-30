@@ -440,13 +440,21 @@ namespace Microsoft.PowerShell.Commands
             #region Native DLL locations
 
             private const string SetDynamicTimeZoneApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
+
             private const string GetTimeZoneInformationForYearApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
+
             private const string GetCurrentProcessApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
+
             private const string OpenProcessTokenApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
+
             private const string LookupPrivilegeTokenApiDllName = "api-ms-win-downlevel-advapi32-l4-1-0.dll";
+
             private const string PrivilegeCheckApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
+
             private const string AdjustTokenPrivilegesApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
+
             private const string CloseHandleApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
+
             private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";
 
             #endregion Native DLL locations
@@ -701,8 +709,11 @@ namespace Microsoft.PowerShell.Commands
             public struct PRIVILEGE_SET
             {
                 public int PrivilegeCount;
+
                 public int Control;
+
                 public long Luid;
+
                 public int Attributes;
             }
 
@@ -713,7 +724,9 @@ namespace Microsoft.PowerShell.Commands
             public struct TOKEN_PRIVILEGES
             {
                 public int PrivilegeCount;
+
                 public long Luid;
+
                 public int Attributes;
             }
 
@@ -765,8 +778,11 @@ namespace Microsoft.PowerShell.Commands
         #region Error Ids
 
         internal const string TimeZoneNotFoundError = "TimeZoneNotFound";
+
         internal const string MultipleMatchingTimeZonesError = "MultipleMatchingTimeZones";
+
         internal const string InsufficientPermissionsError = "InsufficientPermissions";
+
         internal const string SetTimeZoneFailedError = "SetTimeZoneFailed";
 
         #endregion Error Ids

@@ -708,6 +708,7 @@ namespace System.Management.Automation
         private static class PSv2CompletionCompleter
         {
             private static readonly Regex s_cmdletTabRegex = new Regex(@"^[\w\*\?]+-[\w\*\?]*");
+
             private static readonly char[] s_charsRequiringQuotedString = "`&@'#{}()$,;|<> \t".ToCharArray();
 
             #region "Handle Command"
@@ -743,6 +744,7 @@ namespace System.Management.Automation
             private struct CommandAndName
             {
                 internal readonly PSObject Command;
+
                 internal readonly PSSnapinQualifiedName CommandName;
 
                 internal CommandAndName(PSObject command, PSSnapinQualifiedName commandName)
@@ -1070,7 +1072,9 @@ namespace System.Management.Automation
             private struct PathItemAndConvertedPath
             {
                 internal readonly string Path;
+
                 internal readonly PSObject Item;
+
                 internal readonly string ConvertedPath;
 
                 internal PathItemAndConvertedPath(string path, PSObject item, string convertedPath)
@@ -1322,10 +1326,15 @@ namespace System.Management.Automation
             }
 
             private readonly string _sentence;
+
             private char[] _wordBuffer;
+
             private int _wordBufferIndex;
+
             private int _replacementIndex;
+
             private int _sentenceIndex;
+
             private bool _sequenceDueToEnd;
         }
 

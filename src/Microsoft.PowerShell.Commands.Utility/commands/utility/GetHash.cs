@@ -222,7 +222,9 @@ namespace Microsoft.PowerShell.Commands
         /// Parameter set names.
         /// </summary>
         private const string PathParameterSet = "Path";
+
         private const string LiteralPathParameterSet = "LiteralPath";
+
         private const string StreamParameterSet = "StreamParameterSet";
     }
 
@@ -270,9 +272,13 @@ namespace Microsoft.PowerShell.Commands
         internal static class HashAlgorithmNames
         {
             public const string MD5 = "MD5";
+
             public const string SHA1 = "SHA1";
+
             public const string SHA256 = "SHA256";
+
             public const string SHA384 = "SHA384";
+
             public const string SHA512 = "SHA512";
         }
 

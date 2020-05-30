@@ -1552,14 +1552,23 @@ namespace System.Management.Automation.Internal
         #region Private Fields
 
         private PSDataCollection<T> _objects;
+
         private Guid _psInstanceId;
+
         private bool _isOpen;
+
         private PipelineWriter _writer;
+
         private PipelineReader<object> _objectReader;
+
         private PipelineReader<PSObject> _psobjectReader;
+
         private PipelineReader<object> _objectReaderForPipeline;
+
         private PipelineReader<PSObject> _psobjectReaderForPipeline;
+
         private object _syncObject = new object();
+
         private bool _disposed = false;
 
         #endregion

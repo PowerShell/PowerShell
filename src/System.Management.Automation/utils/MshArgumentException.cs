@@ -137,6 +137,7 @@ namespace System.Management.Automation
         }
 
         private ErrorRecord _errorRecord;
+
         private string _errorId = "Argument";
 
         /// <summary>

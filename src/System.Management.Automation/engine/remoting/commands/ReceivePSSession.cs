@@ -71,10 +71,15 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         private const string IdParameterSet = "Id";
+
         private const string InstanceIdParameterSet = "InstanceId";
+
         private const string NameParameterSet = "SessionName";
+
         private const string ComputerSessionNameParameterSet = "ComputerSessionName";   // Computer name and session Name.
+
         private const string ConnectionUriSessionNameParameterSet = "ConnectionUriSessionName";
+
         private const string ConnectionUriInstanceIdParameterSet = "ConnectionUriInstanceId";
 
         /// <summary>
@@ -1300,9 +1305,13 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         private bool _stopProcessing;
+
         private RemotePipeline _remotePipeline;
+
         private Job _job;
+
         private ManualResetEvent _stopPipelineReceive;
+
         private object _syncObject = new object();
 
         #endregion

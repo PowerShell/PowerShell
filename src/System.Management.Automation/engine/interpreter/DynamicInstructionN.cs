@@ -20,9 +20,13 @@ namespace System.Management.Automation.Interpreter
     internal sealed partial class DynamicInstructionN : Instruction
     {
         private readonly CallInstruction _target;
+
         private readonly object _targetDelegate;
+
         private readonly CallSite _site;
+
         private readonly int _argumentCount;
+
         private readonly bool _isVoid;
 
         public DynamicInstructionN(Type delegateType, CallSite site)

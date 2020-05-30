@@ -373,7 +373,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private DefaultTraceListener _defaultListener;
+
         private PSHostTraceListener _hostListener;
+
         private Collection<TextWriterTraceListener> _fileListeners;
 
         /// <summary>

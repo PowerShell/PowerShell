@@ -356,6 +356,7 @@ namespace System.Management.Automation
         }
 
         internal bool ToHide => EffectiveAction == ExperimentAction.Hide;
+
         internal bool ToShow => EffectiveAction == ExperimentAction.Show;
 
         /// <summary>

@@ -39,9 +39,11 @@ namespace System.Management.Automation.Interpreter
         internal readonly int _compilationThreshold;
 
         internal readonly object[] _objects;
+
         internal readonly RuntimeLabel[] _labels;
 
         internal readonly string _name;
+
         internal readonly DebugInfo[] _debugInfos;
 
         internal Interpreter(string name, LocalVariables locals, HybridReferenceDictionary<LabelTarget, BranchLabel> labelMapping,

@@ -19,7 +19,9 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GetCultureCommand : PSCmdlet
     {
         private const string CurrentCultureParameterSet = "CurrentCulture";
+
         private const string NameParameterSet = "Name";
+
         private const string ListAvailableParameterSet = "ListAvailable";
 
         /// <summary>

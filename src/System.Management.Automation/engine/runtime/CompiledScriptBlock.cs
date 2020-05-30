@@ -26,15 +26,20 @@ namespace System.Management.Automation
     internal enum CompileInterpretChoice
     {
         NeverCompile,
+
         AlwaysCompile,
+
         CompileOnDemand
     }
 
     internal enum ScriptBlockClauseToInvoke
     {
         Begin,
+
         Process,
+
         End,
+
         ProcessBlockOnly,
     }
 
@@ -310,36 +315,57 @@ namespace System.Management.Automation
         }
 
         internal Type LocalsMutableTupleType { get; set; }
+
         internal Type UnoptimizedLocalsMutableTupleType { get; set; }
+
         internal Func<MutableTuple> LocalsMutableTupleCreator { get; set; }
+
         internal Func<MutableTuple> UnoptimizedLocalsMutableTupleCreator { get; set; }
+
         internal Dictionary<string, int> NameToIndexMap { get; set; }
 
         internal Action<FunctionContext> DynamicParamBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedDynamicParamBlock { get; set; }
+
         internal Action<FunctionContext> BeginBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedBeginBlock { get; set; }
+
         internal Action<FunctionContext> ProcessBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedProcessBlock { get; set; }
+
         internal Action<FunctionContext> EndBlock { get; set; }
+
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
 
         internal IScriptExtent[] SequencePoints { get; set; }
 
         private RuntimeDefinedParameterDictionary _runtimeDefinedParameterDictionary;
+
         private Attribute[] _attributes;
+
         private bool _usesCmdletBinding;
+
         private bool _compiledOptimized;
+
         private bool _compiledUnoptimized;
+
         private bool _hasSuspiciousContent;
+
         private bool? _isProductCode;
 
         internal bool DebuggerHidden { get; set; }
+
         internal bool DebuggerStepThrough { get; set; }
+
         internal Guid Id { get; private set; }
 
         internal bool HasLogged { get; set; }
+
         internal bool SkipLogging { get; set; }
+
         internal bool IsFilter { get; private set; }
 
         internal bool IsProductCode
@@ -1718,8 +1744,11 @@ namespace System.Management.Automation
         }
 
         private static object s_syncObject = new object();
+
         private static string s_lastSeenCertificate = string.Empty;
+
         private static bool s_hasProcessedCertificate = false;
+
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
 
         private static Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
@@ -2182,14 +2211,23 @@ namespace System.Management.Automation
     internal sealed class PSScriptCmdlet : PSCmdlet, IDynamicParameters, IDisposable
     {
         private readonly ArrayList _input = new ArrayList();
+
         private readonly ScriptBlock _scriptBlock;
+
         private readonly bool _fromScriptFile;
+
         private readonly bool _useLocalScope;
+
         private readonly bool _runOptimized;
+
         private bool _rethrowExitException;
+
         private MshCommandRuntime _commandRuntime;
+
         private readonly MutableTuple _localsTuple;
+
         private bool _exitWasCalled;
+
         private readonly FunctionContext _functionContext;
 
         public PSScriptCmdlet(ScriptBlock scriptBlock, bool useNewScope, bool fromScriptFile, ExecutionContext context)

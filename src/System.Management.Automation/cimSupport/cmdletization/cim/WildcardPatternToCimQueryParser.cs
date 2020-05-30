@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     internal class WildcardPatternToCimQueryParser : WildcardPatternParser
     {
         private readonly StringBuilder _result = new StringBuilder();
+
         private bool _needClientSideFiltering;
 
         protected override void AppendLiteralCharacter(char c)

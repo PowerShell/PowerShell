@@ -232,11 +232,17 @@ namespace System.Management.Automation
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {
         private readonly ArrayList _input = new ArrayList();
+
         private readonly object _dollarUnderbar = AutomationNull.Value;
+
         private new ScriptBlock _scriptBlock;
+
         private MutableTuple _localsTuple;
+
         private bool _runOptimizedCode;
+
         private bool _argsBound;
+
         private FunctionContext _functionContext;
 
         internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState, object dollarUnderbar)

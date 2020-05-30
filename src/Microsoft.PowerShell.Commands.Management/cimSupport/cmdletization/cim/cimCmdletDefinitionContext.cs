@@ -113,6 +113,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private Uri _resourceUri;
+
         private bool _resourceUriHasBeenCalculated;
 
         public Uri ResourceUri

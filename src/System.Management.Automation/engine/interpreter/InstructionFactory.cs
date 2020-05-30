@@ -53,11 +53,17 @@ namespace System.Management.Automation.Interpreter
         }
 
         protected internal abstract Instruction GetArrayItem();
+
         protected internal abstract Instruction SetArrayItem();
+
         protected internal abstract Instruction TypeIs();
+
         protected internal abstract Instruction TypeAs();
+
         protected internal abstract Instruction DefaultValue();
+
         protected internal abstract Instruction NewArray();
+
         protected internal abstract Instruction NewArrayInit(int elementCount);
     }
 
@@ -67,11 +73,17 @@ namespace System.Management.Automation.Interpreter
         public static readonly InstructionFactory Factory = new InstructionFactory<T>();
 
         private Instruction _getArrayItem;
+
         private Instruction _setArrayItem;
+
         private Instruction _typeIs;
+
         private Instruction _defaultValue;
+
         private Instruction _newArray;
+
         private Instruction _typeAs;
+
         private Instruction[] _newArrayInit;
         // This number is somewhat arbitrary - trying to avoid some gc without keeping
         // objects (instructions) around that aren't used that often.

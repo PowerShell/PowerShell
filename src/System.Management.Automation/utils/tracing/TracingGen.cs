@@ -38,87 +38,169 @@ namespace System.Management.Automation.Tracing
         public const long KeywordAll = 0xFFFFFFFF;
 
         private static Guid providerId = Guid.Parse("a0c1853b-5c40-4b15-8766-3cf1c58f985a");
+
         private static EventDescriptor WriteTransferEventEvent;
+
         private static EventDescriptor DebugMessageEvent;
+
         private static EventDescriptor M3PAbortingWorkflowExecutionEvent;
+
         private static EventDescriptor M3PActivityExecutionFinishedEvent;
+
         private static EventDescriptor M3PActivityExecutionQueuedEvent;
+
         private static EventDescriptor M3PActivityExecutionStartedEvent;
+
         private static EventDescriptor M3PBeginContainerParentJobExecutionEvent;
+
         private static EventDescriptor M3PBeginCreateNewJobEvent;
+
         private static EventDescriptor M3PBeginJobLogicEvent;
+
         private static EventDescriptor M3PBeginProxyChildJobEventHandlerEvent;
+
         private static EventDescriptor M3PBeginProxyJobEventHandlerEvent;
+
         private static EventDescriptor M3PBeginProxyJobExecutionEvent;
+
         private static EventDescriptor M3PBeginRunGarbageCollectionEvent;
+
         private static EventDescriptor M3PBeginStartWorkflowApplicationEvent;
+
         private static EventDescriptor M3PBeginWorkflowExecutionEvent;
+
         private static EventDescriptor M3PCancellingWorkflowExecutionEvent;
+
         private static EventDescriptor M3PChildWorkflowJobAdditionEvent;
+
         private static EventDescriptor M3PEndContainerParentJobExecutionEvent;
+
         private static EventDescriptor M3PEndCreateNewJobEvent;
+
         private static EventDescriptor M3PEndJobLogicEvent;
+
         private static EventDescriptor M3PEndpointDisabledEvent;
+
         private static EventDescriptor M3PEndpointEnabledEvent;
+
         private static EventDescriptor M3PEndpointModifiedEvent;
+
         private static EventDescriptor M3PEndpointRegisteredEvent;
+
         private static EventDescriptor M3PEndpointUnregisteredEvent;
+
         private static EventDescriptor M3PEndProxyChildJobEventHandlerEvent;
+
         private static EventDescriptor M3PEndProxyJobEventHandlerEvent;
+
         private static EventDescriptor M3PEndProxyJobExecutionEvent;
+
         private static EventDescriptor M3PEndRunGarbageCollectionEvent;
+
         private static EventDescriptor M3PEndStartWorkflowApplicationEvent;
+
         private static EventDescriptor M3PEndWorkflowExecutionEvent;
+
         private static EventDescriptor M3PErrorImportingWorkflowFromXamlEvent;
+
         private static EventDescriptor M3PForcedWorkflowShutdownErrorEvent;
+
         private static EventDescriptor M3PForcedWorkflowShutdownFinishedEvent;
+
         private static EventDescriptor M3PForcedWorkflowShutdownStartedEvent;
+
         private static EventDescriptor M3PImportedWorkflowFromXamlEvent;
+
         private static EventDescriptor M3PImportingWorkflowFromXamlEvent;
+
         private static EventDescriptor M3PJobCreationCompleteEvent;
+
         private static EventDescriptor M3PJobErrorEvent;
+
         private static EventDescriptor M3PJobRemovedEvent;
+
         private static EventDescriptor M3PJobRemoveErrorEvent;
+
         private static EventDescriptor M3PJobStateChangedEvent;
+
         private static EventDescriptor M3PLoadingWorkflowForExecutionEvent;
+
         private static EventDescriptor M3POutOfProcessRunspaceStartedEvent;
+
         private static EventDescriptor M3PParameterSplattingWasPerformedEvent;
+
         private static EventDescriptor M3PParentJobCreatedEvent;
+
         private static EventDescriptor M3PPersistenceStoreMaxSizeReachedEvent;
+
         private static EventDescriptor M3PPersistingWorkflowEvent;
+
         private static EventDescriptor M3PProxyJobRemoteJobAssociationEvent;
+
         private static EventDescriptor M3PRemoveJobStartedEvent;
+
         private static EventDescriptor M3PRunspaceAvailabilityChangedEvent;
+
         private static EventDescriptor M3PRunspaceStateChangedEvent;
+
         private static EventDescriptor M3PTrackingGuidContainerParentJobCorrelationEvent;
+
         private static EventDescriptor M3PUnloadingWorkflowEvent;
+
         private static EventDescriptor M3PWorkflowActivityExecutionFailedEvent;
+
         private static EventDescriptor M3PWorkflowActivityValidatedEvent;
+
         private static EventDescriptor M3PWorkflowActivityValidationFailedEvent;
+
         private static EventDescriptor M3PWorkflowCleanupPerformedEvent;
+
         private static EventDescriptor M3PWorkflowDeletedFromDiskEvent;
+
         private static EventDescriptor M3PWorkflowEngineStartedEvent;
+
         private static EventDescriptor M3PWorkflowExecutionAbortedEvent;
+
         private static EventDescriptor M3PWorkflowExecutionCancelledEvent;
+
         private static EventDescriptor M3PWorkflowExecutionErrorEvent;
+
         private static EventDescriptor M3PWorkflowExecutionFinishedEvent;
+
         private static EventDescriptor M3PWorkflowExecutionStartedEvent;
+
         private static EventDescriptor M3PWorkflowJobCreatedEvent;
+
         private static EventDescriptor M3PWorkflowLoadedForExecutionEvent;
+
         private static EventDescriptor M3PWorkflowLoadedFromDiskEvent;
+
         private static EventDescriptor M3PWorkflowManagerCheckpointEvent;
+
         private static EventDescriptor M3PWorkflowPersistedEvent;
+
         private static EventDescriptor M3PWorkflowPluginRequestedToShutdownEvent;
+
         private static EventDescriptor M3PWorkflowPluginRestartedEvent;
+
         private static EventDescriptor M3PWorkflowPluginStartedEvent;
+
         private static EventDescriptor M3PWorkflowQuotaViolatedEvent;
+
         private static EventDescriptor M3PWorkflowResumedEvent;
+
         private static EventDescriptor M3PWorkflowResumingEvent;
+
         private static EventDescriptor M3PWorkflowRunspacePoolCreatedEvent;
+
         private static EventDescriptor M3PWorkflowStateChangedEvent;
+
         private static EventDescriptor M3PWorkflowUnloadedEvent;
+
         private static EventDescriptor M3PWorkflowValidationErrorEvent;
+
         private static EventDescriptor M3PWorkflowValidationFinishedEvent;
+
         private static EventDescriptor M3PWorkflowValidationStartedEvent;
 
         /// <summary>

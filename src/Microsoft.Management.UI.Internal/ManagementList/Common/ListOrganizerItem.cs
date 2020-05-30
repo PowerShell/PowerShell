@@ -18,6 +18,7 @@ namespace Microsoft.Management.UI.Internal
     public partial class ListOrganizerItem : Control
     {
         private string startingText;
+
         private FrameworkElement templatedParent;
 
         /// <summary>

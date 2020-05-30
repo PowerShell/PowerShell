@@ -43,6 +43,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private PasswordAuthenticationMechanism authentication;
+
         private bool authenticationSet = false;
 
         /// <summary>
@@ -141,6 +142,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private UInt32 operationTimeout;
+
         internal bool operationTimeoutSet = false;
 
         /// <summary>
@@ -180,6 +182,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private UInt32 port;
+
         private bool portSet = false;
 
         /// <summary>

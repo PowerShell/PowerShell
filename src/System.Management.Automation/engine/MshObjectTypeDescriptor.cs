@@ -92,6 +92,7 @@ namespace System.Management.Automation
     public class PSObjectPropertyDescriptor : PropertyDescriptor
     {
         internal event EventHandler<SettingValueExceptionEventArgs> SettingValueException;
+
         internal event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
 
         internal PSObjectPropertyDescriptor(string propertyName, Type propertyType, bool isReadOnly, AttributeCollection propertyAttributes)

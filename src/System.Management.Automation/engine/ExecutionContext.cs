@@ -679,6 +679,7 @@ namespace System.Management.Automation
         #endregion
 
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
+
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
 
         /// <summary>
@@ -773,7 +774,9 @@ namespace System.Management.Automation
         internal class SavedContextData
         {
             private bool _stepScript;
+
             private bool _ignoreScriptDebug;
+
             private int _PSDebug;
 
             private Pipe _shellFunctionErrorOutputPipe;
@@ -1263,6 +1266,7 @@ namespace System.Management.Automation
         }
 
         private TypeTable _typeTable;
+
         private WeakReference<TypeTable> _typeTableWeakReference;
 
         /// <summary>

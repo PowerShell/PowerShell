@@ -69,6 +69,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _backCount = -1;
+
         private bool _tailSpecified = false;
 
         /// <summary>

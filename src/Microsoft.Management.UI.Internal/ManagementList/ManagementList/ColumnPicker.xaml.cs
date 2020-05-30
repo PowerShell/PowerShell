@@ -26,6 +26,7 @@ namespace Microsoft.Management.UI.Internal
     public partial class ColumnPicker : Window
     {
         private ObservableCollection<InnerListColumn> notSelectedColumns = new ObservableCollection<InnerListColumn>();
+
         private ObservableCollection<InnerListColumn> selectedColumns = new ObservableCollection<InnerListColumn>();
 
         #region constructor

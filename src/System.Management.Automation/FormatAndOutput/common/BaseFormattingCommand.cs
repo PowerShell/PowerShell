@@ -537,6 +537,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private TypeInfoDataBase _typeInfoDataBase = null;
 
         private FormattingCommandLineParameters _parameters = null;
+
         private FormatViewManager _viewManager = new FormatViewManager();
 
         private int _enumerationLimit = InitialSessionState.DefaultFormatEnumerationLimit;

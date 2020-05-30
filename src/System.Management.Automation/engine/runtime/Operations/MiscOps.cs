@@ -1290,6 +1290,7 @@ namespace System.Management.Automation
     internal class ScriptBlockExpressionWrapper
     {
         private ScriptBlock _scriptBlock;
+
         private readonly IParameterMetadataProvider _ast;
 
         internal ScriptBlockExpressionWrapper(IParameterMetadataProvider ast)
@@ -1386,8 +1387,11 @@ namespace System.Management.Automation
             }
 
             internal int Handler;
+
             internal int Rank;
+
             internal Exception ExceptionToPass;
+
             internal ErrorRecord ErrorRecordToPass;
         }
 
@@ -3273,6 +3277,7 @@ namespace System.Management.Automation
             }
 
             private object _obj;
+
             private IEnumerator _realEnumerator;
 
             bool IEnumerator.MoveNext()

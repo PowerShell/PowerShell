@@ -20,7 +20,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public enum AsyncResultType
     {
         Result,
+
         Exception,
+
         Completion
     }
     #endregion
@@ -99,7 +101,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         public readonly CimSession session;
+
         public readonly IObservable<object> observable;
+
         public readonly AsyncResultType resultType;
 
         // property ErrorSource

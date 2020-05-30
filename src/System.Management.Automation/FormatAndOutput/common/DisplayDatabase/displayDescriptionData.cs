@@ -36,8 +36,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         // define the sections corresponding the XML file
         internal DefaultSettingsSection defaultSettingsSection = new DefaultSettingsSection();
+
         internal TypeGroupsSection typeGroupSection = new TypeGroupsSection();
+
         internal ViewDefinitionsSection viewDefinitionsSection = new ViewDefinitionsSection();
+
         internal FormatControlDefinitionHolder formatControlDefinitionHolder = new FormatControlDefinitionHolder();
 
         /// <summary>
@@ -49,10 +52,15 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class DatabaseLoadingInfo
     {
         internal string fileDirectory = null;
+
         internal string filePath = null;
+
         internal bool isFullyTrusted = false;
+
         internal bool isProductCode = false;
+
         internal string xPath = null;
+
         internal DateTime loadTime = DateTime.Now;
     }
     #endregion
@@ -121,7 +129,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private bool? _multilineTables;
 
         internal FormatErrorPolicy formatErrorPolicy = new FormatErrorPolicy();
+
         internal ShapeSelectionDirectives shapeSelectionDirectives = new ShapeSelectionDirectives();
+
         internal List<EnumerableExpansionDirective> enumerableExpansionDirectiveList = new List<EnumerableExpansionDirective>();
     }
 
@@ -227,6 +237,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class EnumerableExpansionDirective
     {
         internal EnumerableExpansion enumerableExpansion = EnumerableExpansion.EnumOnly;
+
         internal AppliesTo appliesTo;
     }
 
@@ -242,6 +253,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class TypeGroupDefinition
     {
         internal string name;
+
         internal List<TypeReference> typeReferenceList = new List<TypeReference>();
     }
 
@@ -274,6 +286,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class TextToken : FormatToken
     {
         internal string text;
+
         internal StringResourceReference resource;
     }
 
@@ -331,6 +344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         internal bool isScriptBlock;
+
         internal string expressionValue;
     }
 
@@ -342,6 +356,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal ExpressionToken conditionToken = null;
 
         internal ExpressionToken expression = new ExpressionToken();
+
         internal bool enumerateCollection = false;
     }
 
@@ -579,9 +594,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal sealed class StringResourceReference
     {
         internal DatabaseLoadingInfo loadingInfo = null;
+
         internal string assemblyName = null;
+
         internal string assemblyLocation = null;
+
         internal string baseName = null;
+
         internal string resourceId = null;
     }
 

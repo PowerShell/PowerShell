@@ -4089,7 +4089,9 @@ namespace System.Management.Automation
         private sealed class ArgumentLocation
         {
             internal bool IsPositional { get; set; }
+
             internal int Position { get; set; }
+
             internal AstParameterArgumentPair Argument { get; set; }
         }
 
@@ -4497,14 +4499,20 @@ namespace System.Management.Automation
         private struct SHARE_INFO_1
         {
             public string netname;
+
             public int type;
+
             public string remark;
         }
 
         private const int MAX_PREFERRED_LENGTH = -1;
+
         private const int NERR_Success = 0;
+
         private const int ERROR_MORE_DATA = 234;
+
         private const int STYPE_DISKTREE = 0;
+
         private const int STYPE_MASK = 0x000000FF;
 
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
@@ -4846,7 +4854,9 @@ namespace System.Management.Automation
         private class FindVariablesVisitor : AstVisitor
         {
             internal Ast Top;
+
             internal Ast CompletionVariableAst;
+
             internal readonly List<Tuple<string, Ast>> VariableSources = new List<Tuple<string, Ast>>();
 
             public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
@@ -5444,6 +5454,7 @@ namespace System.Management.Automation
         private abstract class TypeCompletionBase
         {
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix);
+
             internal abstract CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove);
 
             internal static string RemoveBackTick(string typeName)
@@ -5719,6 +5730,7 @@ namespace System.Management.Automation
         {
             // The Key is the string we'll be searching on.  It could complete to various things.
             internal string Key;
+
             internal List<TypeCompletionBase> Completions = new List<TypeCompletionBase>();
         }
 

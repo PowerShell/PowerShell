@@ -307,8 +307,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const string of parameter names
         internal const string nameCimInstance = "InputObject";
+
         internal const string nameComputerName = "ComputerName";
+
         internal const string nameCimSession = "CimSession";
+
         internal const string nameResourceUri = "ResourceUri";
         #endregion
 

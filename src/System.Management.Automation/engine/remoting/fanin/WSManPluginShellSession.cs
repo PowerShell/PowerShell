@@ -27,6 +27,7 @@ namespace System.Management.Automation.Remoting
         private object _syncObject;
 
         protected bool isClosed;
+
         protected bool isContextReported;
         // used to keep track of last error..this will be used
         // for reporting operation complete to WSMan.
@@ -36,11 +37,14 @@ namespace System.Management.Automation.Remoting
         internal WSManNativeApi.WSManPluginRequest creationRequestDetails;
         // request context passed by WSMan while sending Plugin data.
         internal WSManNativeApi.WSManPluginRequest sendRequestDetails;
+
         internal WSManPluginOperationShutdownContext shutDownContext;
         // tracker used in conjunction with WSMan API to identify a particular
         // shell context.
         internal RegisteredWaitHandle registeredShutDownWaitHandle;
+
         internal WSManPluginServerTransportManager transportMgr;
+
         internal int registeredShutdownNotification;
 
         // event that gets raised when session is closed.."source" will provide
@@ -402,6 +406,7 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         private Dictionary<IntPtr, WSManPluginCommandSession> _activeCommandSessions;
+
         private ServerRemoteSession _remoteSession;
 
         #endregion

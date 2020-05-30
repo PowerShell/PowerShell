@@ -101,9 +101,11 @@ namespace Microsoft.PowerShell.Commands
         #endregion helper
 
         private ConsoleColor _fgColor;
+
         private ConsoleColor _bgColor;
 
         private bool _isFgColorSet = false;
+
         private bool _isBgColorSet = false;
 
         private readonly Type _consoleColorEnumType;

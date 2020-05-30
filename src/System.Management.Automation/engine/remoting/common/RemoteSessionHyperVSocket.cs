@@ -18,10 +18,13 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private System.Net.Sockets.AddressFamily _addressFamily;
+
         private Guid _vmId;
+
         private Guid _serviceId;
 
         public const System.Net.Sockets.AddressFamily AF_HYPERV = (System.Net.Sockets.AddressFamily)34;
+
         public const int HYPERV_SOCK_ADDR_SIZE = 36;
 
         #endregion
@@ -138,6 +141,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
+
         private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         #endregion
@@ -337,6 +341,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
+
         private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         private static ManualResetEvent s_connectDone =
@@ -347,6 +352,7 @@ namespace System.Management.Automation.Remoting
         #region constants in hvsocket.h
 
         public const int HV_PROTOCOL_RAW = 1;
+
         public const int HVSOCKET_CONTAINER_PASSTHRU = 2;
 
         #endregion

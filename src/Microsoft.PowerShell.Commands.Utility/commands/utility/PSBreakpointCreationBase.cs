@@ -15,7 +15,9 @@ namespace Microsoft.PowerShell.Commands
     public class PSBreakpointCreationBase : PSCmdlet
     {
         internal const string CommandParameterSetName = "Command";
+
         internal const string LineParameterSetName = "Line";
+
         internal const string VariableParameterSetName = "Variable";
 
         #region parameters

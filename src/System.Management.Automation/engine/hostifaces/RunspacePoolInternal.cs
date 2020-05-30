@@ -21,25 +21,38 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Private data
 
         protected int maxPoolSz;
+
         protected int minPoolSz;
         // we need total active runspaces to avoid lock() statements everywhere
         protected int totalRunspaces;
+
         protected List<Runspace> runspaceList = new List<Runspace>(); // info of all the runspaces in the pool.
+
         protected Stack<Runspace> pool; // stack of runspaces that are available.
+
         protected Queue<GetRunspaceAsyncResult> runspaceRequestQueue; // request queue.
         // let requesters request on the runspaceRequestQueue..internally
         // pool services on this queue.
         protected Queue<GetRunspaceAsyncResult> ultimateRequestQueue;
+
         protected RunspacePoolStateInfo stateInfo;
+
         protected InitialSessionState _initialSessionState;
+
         protected PSHost host;
+
         protected Guid instanceId;
+
         private bool _isDisposed;
+
         protected bool isServicingRequests;
+
         protected object syncObject = new object();
 
         private static readonly TimeSpan s_defaultCleanupPeriod = new TimeSpan(0, 15, 0);   // 15 minutes.
+
         private TimeSpan _cleanupInterval;
+
         private Timer _cleanupTimer;
 
         #endregion

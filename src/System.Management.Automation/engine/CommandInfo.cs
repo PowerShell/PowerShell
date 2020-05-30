@@ -481,6 +481,7 @@ namespace System.Management.Automation
         private class GetMergedCommandParameterMetadataSafelyEventArgs : EventArgs
         {
             public MergedCommandParameterMetadata Result;
+
             public ExceptionDispatchInfo Exception;
         }
 

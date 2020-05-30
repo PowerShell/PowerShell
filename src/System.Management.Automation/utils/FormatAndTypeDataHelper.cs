@@ -67,10 +67,15 @@ namespace System.Management.Automation.Runspaces
     internal static class FormatAndTypeDataHelper
     {
         private const string FileNotFound = "FileNotFound";
+
         private const string CannotFindRegistryKey = "CannotFindRegistryKey";
+
         private const string CannotFindRegistryKeyPath = "CannotFindRegistryKeyPath";
+
         private const string EntryShouldBeMshXml = "EntryShouldBeMshXml";
+
         private const string DuplicateFile = "DuplicateFile";
+
         internal const string ValidationException = "ValidationException";
 
         private static string GetBaseFolder(Collection<string> independentErrors)
@@ -206,6 +211,7 @@ namespace System.Management.Automation.Runspaces
         internal enum Category
         {
             Types,
+
             Formats,
         }
     }

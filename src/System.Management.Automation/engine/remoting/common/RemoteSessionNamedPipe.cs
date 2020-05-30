@@ -35,6 +35,7 @@ namespace System.Management.Automation.Remoting
         internal const string NamedPipeNamePrefixSearch = "CoreFxPipe_PSHost*";
 #else
         internal const string DefaultAppDomainName = "DefaultAppDomain";
+
         internal const string NamedPipeNamePrefixSearch = "PSHost*";
 #endif
         // On non-Windows, .NET named pipes are limited to up to 104 characters
@@ -166,46 +167,74 @@ namespace System.Management.Automation.Remoting
 
         // Pipe open modes
         internal const uint PIPE_ACCESS_DUPLEX = 0x00000003;
+
         internal const uint PIPE_ACCESS_OUTBOUND = 0x00000002;
+
         internal const uint PIPE_ACCESS_INBOUND = 0x00000001;
 
         // Pipe modes
         internal const uint PIPE_TYPE_BYTE = 0x00000000;
+
         internal const uint PIPE_TYPE_MESSAGE = 0x00000004;
+
         internal const uint FILE_FLAG_OVERLAPPED = 0x40000000;
+
         internal const uint FILE_FLAG_FIRST_PIPE_INSTANCE = 0x00080000;
+
         internal const uint PIPE_WAIT = 0x00000000;
+
         internal const uint PIPE_NOWAIT = 0x00000001;
+
         internal const uint PIPE_READMODE_BYTE = 0x00000000;
+
         internal const uint PIPE_READMODE_MESSAGE = 0x00000002;
+
         internal const uint PIPE_ACCEPT_REMOTE_CLIENTS = 0x00000000;
+
         internal const uint PIPE_REJECT_REMOTE_CLIENTS = 0x00000008;
 
         // Pipe errors
         internal const uint ERROR_FILE_NOT_FOUND = 2;
+
         internal const uint ERROR_BROKEN_PIPE = 109;
+
         internal const uint ERROR_PIPE_BUSY = 231;
+
         internal const uint ERROR_NO_DATA = 232;
+
         internal const uint ERROR_MORE_DATA = 234;
+
         internal const uint ERROR_PIPE_CONNECTED = 535;
+
         internal const uint ERROR_IO_INCOMPLETE = 996;
+
         internal const uint ERROR_IO_PENDING = 997;
 
         // File function constants
         internal const uint GENERIC_READ = 0x80000000;
+
         internal const uint GENERIC_WRITE = 0x40000000;
+
         internal const uint GENERIC_EXECUTE = 0x20000000;
+
         internal const uint GENERIC_ALL = 0x10000000;
 
         internal const uint CREATE_NEW = 1;
+
         internal const uint CREATE_ALWAYS = 2;
+
         internal const uint OPEN_EXISTING = 3;
+
         internal const uint OPEN_ALWAYS = 4;
+
         internal const uint TRUNCATE_EXISTING = 5;
 
         internal const uint SECURITY_IMPERSONATIONLEVEL_ANONYMOUS = 0;
+
         internal const uint SECURITY_IMPERSONATIONLEVEL_IDENTIFICATION = 1;
+
         internal const uint SECURITY_IMPERSONATIONLEVEL_IMPERSONATION = 2;
+
         internal const uint SECURITY_IMPERSONATIONLEVEL_DELEGATION = 3;
 
         // Infinite timeout
@@ -350,16 +379,22 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private readonly object _syncObject;
+
         private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         private const string _threadName = "IPC Listener Thread";
+
         private const int _namedPipeBufferSizeForRemoting = 32768;
+
         private const int _maxPipePathLengthLinux = 108;
+
         private const int _maxPipePathLengthMacOS = 104;
 
         // Singleton server.
         private static object s_syncObject;
+
         internal static RemoteSessionNamedPipeServer IPCNamedPipeServer;
+
         internal static bool IPCNamedPipeServerEnabled;
 
         // Optional custom server.
@@ -1019,6 +1054,7 @@ namespace System.Management.Automation.Remoting
         #region Members
 
         private NamedPipeClientStream _clientPipeStream;
+
         private PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
 
         protected string _pipeName;

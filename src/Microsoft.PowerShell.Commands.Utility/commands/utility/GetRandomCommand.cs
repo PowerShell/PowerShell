@@ -27,7 +27,9 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter set handling
 
         private const string RandomNumberParameterSet = "RandomNumberParameterSet";
+
         private const string RandomListItemParameterSet = "RandomListItemParameterSet";
+
         private const string ShuffleParameterSet = "ShuffleParameterSet";
 
         private static readonly object[] _nullInArray = new object[] { null };
@@ -35,7 +37,9 @@ namespace Microsoft.PowerShell.Commands
         private enum MyParameterSet
         {
             Unknown,
+
             RandomNumber,
+
             RandomListItem
         }
 
@@ -273,6 +277,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters and variables for RandomListItemParameterSet
 
         private List<object> _chosenListItems;
+
         private int _numberOfProcessedListItems;
 
         /// <summary>
@@ -598,6 +603,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Random _pseudoGenerator = null;
+
         private RandomNumberGenerator _cryptographicGenerator = null;
 
         /// <summary>

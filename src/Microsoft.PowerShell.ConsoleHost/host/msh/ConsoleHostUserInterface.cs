@@ -993,13 +993,16 @@ namespace Microsoft.PowerShell
         internal enum WordFlags
         {
             IsWhitespace = 0x01,
+
             IsNewline = 0x02
         }
 
         internal struct Word
         {
             internal int CellCount;
+
             internal string Text;
+
             internal WordFlags Flags;
         }
 
@@ -1397,23 +1400,29 @@ namespace Microsoft.PowerShell
 
         // Error colors
         public ConsoleColor ErrorAccentColor { get; set; } = ConsoleColor.Cyan;
+
         public ConsoleColor ErrorForegroundColor { get; set; } = ConsoleColor.Red;
+
         public ConsoleColor ErrorBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Warning colors
         public ConsoleColor WarningForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor WarningBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Debug colors
         public ConsoleColor DebugForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor DebugBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Verbose colors
         public ConsoleColor VerboseForegroundColor { get; set; } = ConsoleColor.Yellow;
+
         public ConsoleColor VerboseBackgroundColor { get; set; } = Console.BackgroundColor;
 
         // Progress colors
         public ConsoleColor ProgressForegroundColor { get; set; } = ConsoleColor.Black;
+
         public ConsoleColor ProgressBackgroundColor { get; set; } = ConsoleColor.Yellow;
 
         #endregion Line-oriented interaction
@@ -1429,8 +1438,11 @@ namespace Microsoft.PowerShell
         internal enum ReadLineResult
         {
             endedOnEnter = 0,
+
             endedOnTab = 1,
+
             endedOnShiftTab = 2,
+
             endedOnBreak = 3
         }
 
@@ -2242,6 +2254,7 @@ namespace Microsoft.PowerShell
         // This instance data is "read-only" and need not have access serialized.
 
         private ConsoleHostRawUserInterface _rawui;
+
         private ConsoleHost _parent;
 
         [TraceSourceAttribute("ConsoleHostUserInterface", "Console host's subclass of S.M.A.Host.Console")]

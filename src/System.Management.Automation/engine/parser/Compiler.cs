@@ -29,8 +29,11 @@ namespace System.Management.Automation.Language
     {
         // ReSharper disable InconsistentNaming
         internal const BindingFlags InstanceFlags = BindingFlags.Instance | BindingFlags.NonPublic;
+
         internal const BindingFlags StaticFlags = BindingFlags.Static | BindingFlags.NonPublic;
+
         internal const BindingFlags StaticPublicFlags = BindingFlags.Static | BindingFlags.Public;
+
         internal const BindingFlags InstancePublicFlags = BindingFlags.Instance | BindingFlags.Public;
 
         internal static readonly ConstructorInfo ObjectList_ctor =
@@ -646,25 +649,45 @@ namespace System.Management.Automation.Language
     internal static class ExpressionCache
     {
         internal static readonly Expression NullConstant = Expression.Constant(null);
+
         internal static readonly Expression NullExecutionContext = Expression.Constant(null, typeof(ExecutionContext));
+
         internal static readonly Expression NullPSObject = Expression.Constant(null, typeof(PSObject));
+
         internal static readonly Expression NullEnumerator = Expression.Constant(null, typeof(IEnumerator));
+
         internal static readonly Expression NullExtent = Expression.Constant(null, typeof(IScriptExtent));
+
         internal static readonly Expression NullTypeTable = Expression.Constant(null, typeof(TypeTable));
+
         internal static readonly Expression NullFormatProvider = Expression.Constant(null, typeof(IFormatProvider));
+
         internal static readonly Expression NullObjectArray = Expression.Constant(null, typeof(object[]));
+
         internal static readonly Expression AutomationNullConstant = Expression.Constant(AutomationNull.Value, typeof(object));
+
         internal static readonly Expression NullCommandRedirections = Expression.Constant(null, typeof(CommandRedirection[][]));
+
         internal static readonly Expression NullTypeArray = Expression.Constant(null, typeof(Type[]));
+
         internal static readonly Expression NullType = Expression.Constant(null, typeof(Type));
+
         internal static readonly Expression NullDelegateArray = Expression.Constant(null, typeof(Action<FunctionContext>[]));
+
         internal static readonly Expression NullPipe = Expression.Constant(new Pipe { NullPipe = true });
+
         internal static readonly Expression ConstEmptyString = Expression.Constant(string.Empty);
+
         internal static readonly Expression CompareOptionsIgnoreCase = Expression.Constant(CompareOptions.IgnoreCase);
+
         internal static readonly Expression CompareOptionsNone = Expression.Constant(CompareOptions.None);
+
         internal static readonly Expression Ordinal = Expression.Constant(StringComparison.Ordinal);
+
         internal static readonly Expression InvariantCulture = Expression.Constant(CultureInfo.InvariantCulture);
+
         internal static readonly Expression OrdinalIgnoreCaseComparer = Expression.Constant(StringComparer.OrdinalIgnoreCase, typeof(StringComparer));
+
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
         // Empty expression is used at the end of blocks to give them the void expression result
         internal static readonly Expression Empty = Expression.Empty();
@@ -673,6 +696,7 @@ namespace System.Management.Automation.Language
             Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
 
         internal static readonly Expression BoxedTrue = Expression.Field(null, typeof(Boxed).GetField("True", BindingFlags.Static | BindingFlags.NonPublic));
+
         internal static readonly Expression BoxedFalse = Expression.Field(null, typeof(Boxed).GetField("False", BindingFlags.Static | BindingFlags.NonPublic));
 
         private static readonly Expression[] s_intConstants = new Expression[102];
@@ -696,6 +720,7 @@ namespace System.Management.Automation.Language
         }
 
         internal static readonly Expression TrueConstant = Expression.Constant(true);
+
         internal static readonly Expression FalseConstant = Expression.Constant(false);
 
         internal static Expression Constant(bool b)
@@ -771,17 +796,29 @@ namespace System.Management.Automation.Language
     internal class FunctionContext
     {
         internal ScriptBlock _scriptBlock;
+
         internal string _file;
+
         internal bool _debuggerHidden;
+
         internal bool _debuggerStepThrough;
+
         internal IScriptExtent[] _sequencePoints;
+
         internal ExecutionContext _executionContext;
+
         internal Pipe _outputPipe;
+
         internal BitArray _breakPoints;
+
         internal List<LineBreakpoint> _boundBreakpoints;
+
         internal int _currentSequencePointIndex;
+
         internal MutableTuple _localsTuple;
+
         internal List<Tuple<Type[], Action<FunctionContext>[], Type[]>> _traps = new List<Tuple<Type[], Action<FunctionContext>[], Type[]>>();
+
         internal string _functionName;
 
         internal IScriptExtent CurrentPosition
@@ -803,17 +840,27 @@ namespace System.Management.Automation.Language
     internal class Compiler : ICustomAstVisitor2
     {
         internal static readonly ParameterExpression s_executionContextParameter;
+
         internal static readonly ParameterExpression s_functionContext;
+
         private static readonly ParameterExpression s_returnPipe;
+
         private static readonly Expression s_notDollarQuestion;
+
         private static readonly Expression s_getDollarQuestion;
+
         private static readonly Expression s_setDollarQuestionToTrue;
+
         private static readonly Expression s_callCheckForInterrupts;
+
         private static readonly Expression s_getCurrentPipe;
+
         private static readonly Expression s_currentExceptionBeingHandled;
+
         private static readonly CatchBlock s_catchFlowControl;
 
         private static readonly CatchBlock[] s_stmtCatchHandlers;
+
         internal static readonly Type DottedLocalsTupleType = MutableTuple.MakeTupleType(SpecialVariables.AutomaticVariableTypes);
 
         internal static readonly Dictionary<string, int> DottedLocalsNameIndexMap =
@@ -904,15 +951,25 @@ namespace System.Management.Automation.Language
         internal ParameterExpression LocalVariablesParameter { get; private set; }
 
         private SymbolDocumentInfo _debugSymbolDocument;
+
         internal TypeDefinitionAst _memberFunctionType;
+
         private bool _compilingTrap;
+
         private bool _compilingSingleExpression;
+
         private bool _compilingScriptCmdlet;
+
         private string _currentFunctionName;
+
         private int _switchTupleIndex = VariableAnalysis.Unanalyzed;
+
         private int _foreachTupleIndex = VariableAnalysis.Unanalyzed;
+
         private readonly List<IScriptExtent> _sequencePoints;
+
         private readonly Dictionary<IScriptExtent, int> _sequencePointIndexMap;
+
         private int _stmtCount;
 
         internal bool CompilingMemberFunction { get; set; }
@@ -1257,6 +1314,7 @@ namespace System.Management.Automation.Language
         }
 
         private static readonly Dictionary<CallInfo, Delegate> s_attributeGeneratorCache = new Dictionary<CallInfo, Delegate>();
+
         private static readonly Dictionary<Type, Func<AttributeAst, Attribute>> s_builtinAttributeGenerator = new Dictionary<Type, Func<AttributeAst, Attribute>>(10);
 
         private static Delegate GetAttributeGenerator(CallInfo callInfo)
@@ -1905,7 +1963,9 @@ namespace System.Management.Automation.Language
             internal ExpressionAst Expression { get; set; }
 
             private Func<FunctionContext, object> _delegate;
+
             private IScriptExtent[] _sequencePoints;
+
             private Type LocalsTupleType;
 
             internal object GetValue(ExecutionContext context, SessionStateInternal sessionStateInternal, IDictionary usingValues = null)
@@ -2204,19 +2264,27 @@ namespace System.Management.Automation.Language
         }
 
         private LabelTarget _returnTarget;
+
         private Expression<Action<FunctionContext>> _dynamicParamBlockLambda;
+
         private Expression<Action<FunctionContext>> _beginBlockLambda;
+
         private Expression<Action<FunctionContext>> _processBlockLambda;
+
         private Expression<Action<FunctionContext>> _endBlockLambda;
 
         private readonly List<LoopGotoTargets> _loopTargets = new List<LoopGotoTargets>();
+
         private bool _generatingWhileOrDoLoop;
 
         private enum CaptureAstContext
         {
             Condition,
+
             Enumerable,
+
             AssignmentWithResultPreservation,
+
             AssignmentWithoutResultPreservation
         }
 
@@ -5145,8 +5213,11 @@ namespace System.Management.Automation.Language
         private class AutomaticVarSaver
         {
             private readonly Compiler _compiler;
+
             private readonly int _automaticVar;
+
             private readonly VariablePath _autoVarPath;
+
             private ParameterExpression _oldValue;
 
             internal AutomaticVarSaver(Compiler compiler, VariablePath autoVarPath, int automaticVar)
@@ -6649,7 +6720,9 @@ namespace System.Management.Automation.Language
         internal InvokeMemberExpressionAst InvokeMemberExpressionAst { get; set; }
 
         private ParameterExpression _targetExprTemp;
+
         private ParameterExpression _memberNameExprTemp;
+
         private IEnumerable<ParameterExpression> _argExprTemps;
 
         private Expression GetTargetExpr(Compiler compiler)
@@ -6728,6 +6801,7 @@ namespace System.Management.Automation.Language
         internal IndexExpressionAst IndexExpressionAst { get; set; }
 
         private ParameterExpression _targetExprTemp;
+
         private ParameterExpression _indexExprTemp;
 
         private PSMethodInvocationConstraints GetInvocationConstraints()
@@ -6947,8 +7021,11 @@ namespace System.Management.Automation.Language
         public override ExpressionType NodeType { get { return ExpressionType.Extension; } }
 
         private readonly IScriptExtent _extent;
+
         private readonly SymbolDocumentInfo _debugSymbolDocument;
+
         private readonly int _sequencePoint;
+
         private readonly bool _checkBreakpoints;
 
         public UpdatePositionExpr(IScriptExtent extent, int sequencePoint, SymbolDocumentInfo debugSymbolDocument, bool checkBreakpoints)

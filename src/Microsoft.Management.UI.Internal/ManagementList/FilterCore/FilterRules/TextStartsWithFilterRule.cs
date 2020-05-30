@@ -15,6 +15,7 @@ namespace Microsoft.Management.UI.Internal
     public class TextStartsWithFilterRule : TextFilterRule
     {
         private static readonly string TextStartsWithCharactersRegexPattern = "^{0}";
+
         private static readonly string TextStartsWithWordsRegexPattern = TextStartsWithCharactersRegexPattern + WordBoundaryRegexPattern;
 
         /// <summary>

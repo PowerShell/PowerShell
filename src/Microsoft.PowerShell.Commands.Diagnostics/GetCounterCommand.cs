@@ -137,6 +137,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Int64 _maxSamples = 1;
+
         private bool _maxSamplesSpecified = false;
 
         //

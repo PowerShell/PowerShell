@@ -859,12 +859,17 @@ namespace System.Management.Automation.Internal
         }
 
         private CertificatePurpose _purpose = 0;
+
         private bool _sslServerAuthentication = false;
+
         private string _dnsName = null;
+
         private string[] _eku = null;
+
         private int _expiringInDays = -1;
 
         internal const string CodeSigningOid = "1.3.6.1.5.5.7.3.3";
+
         internal const string szOID_PKIX_KP_SERVER_AUTH = "1.3.6.1.5.5.7.3.1";
 
         // The OID arc 1.3.6.1.4.1.311.80 is assigned to PowerShell. If we need
@@ -962,9 +967,11 @@ namespace System.Management.Automation
         }
 
         internal static readonly string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
+
         internal static readonly string END_CMS_SIGIL = "-----END CMS-----";
 
         internal static readonly string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
+
         internal static readonly string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
 
         /// <summary>
@@ -1564,6 +1571,7 @@ namespace System.Management.Automation
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
         private static bool s_amsiInitFailed = false;
+
         private static object s_amsiLockObject = new object();
 
         /// <summary>
@@ -1629,7 +1637,9 @@ namespace System.Management.Automation
         }
 
         public static bool AmsiUninitializeCalled = false;
+
         public static bool AmsiInitialized = false;
+
         public static bool AmsiCleanedUp = false;
 
         internal class AmsiNativeMethods
@@ -1644,6 +1654,7 @@ namespace System.Management.Automation
 
                 /// Certain policies set by administrator blocked this content on this machine
                 AMSI_RESULT_BLOCKED_BY_ADMIN_BEGIN = 0x4000,
+
                 AMSI_RESULT_BLOCKED_BY_ADMIN_END = 0x4fff,
 
                 /// AMSI_RESULT_DETECTED -> 32768

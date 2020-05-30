@@ -172,6 +172,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _path;
+
         private bool _specifiedPath = false;
 
         /// <summary>
@@ -233,8 +234,11 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         private bool _shouldProcess;
+
         private IList<string> _propertyNames;
+
         private IList<string> _preexistingPropertyNames;
+
         private ExportCsvHelper _helper;
 
         /// <summary>
@@ -543,6 +547,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _paths;
+
         private bool _specifiedPath = false;
 
         /// <summary>
@@ -853,8 +858,11 @@ namespace Microsoft.PowerShell.Commands
     internal class ExportCsvHelper : IDisposable
     {
         private char _delimiter;
+
         readonly private BaseCsvWritingCommand.QuoteKind _quoteKind;
+
         readonly private HashSet<string> _quoteFields;
+
         readonly private StringBuilder _outputString;
 
         /// <summary>
@@ -1205,6 +1213,7 @@ namespace Microsoft.PowerShell.Commands
         // Set to reasonable initial sizes. They may grow beyond these,
         // but this will prevent a few reallocations.
         private const int ValueCountGuestimate = 16;
+
         private const int LineLengthGuestimate = 256;
 
         internal ImportCsvHelper(PSCmdlet cmdlet, char delimiter, IList<string> header, string typeName, StreamReader streamReader)
@@ -1717,6 +1726,7 @@ namespace Microsoft.PowerShell.Commands
     internal static class ImportExportCSVHelper
     {
         internal const char CSVDelimiter = ',';
+
         internal const string CSVTypePrefix = "CSV:";
 
         internal static char SetDelimiter(PSCmdlet cmdlet, string parameterSetName, char explicitDelimiter, bool useCulture)

@@ -112,7 +112,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region Internal
         private PSObject _lastObject = null;
+
         private string _lastObjectAsString = null;
+
         private ObjectCommandComparer _comparer = null;
         #endregion Internal
     }

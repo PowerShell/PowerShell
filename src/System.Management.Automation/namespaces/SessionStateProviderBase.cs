@@ -1117,6 +1117,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _path;
+
         private SessionStateProviderBase _provider;
 
         /// <summary>

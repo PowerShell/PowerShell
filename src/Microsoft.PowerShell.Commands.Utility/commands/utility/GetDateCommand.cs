@@ -47,6 +47,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter FromUnixTime;
 
         private DateTime _date;
+
         private bool _dateSpecified;
 
         /// <summary>
@@ -69,6 +70,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _year;
+
         private bool _yearSpecified;
 
         /// <summary>
@@ -91,6 +93,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _month;
+
         private bool _monthSpecified;
 
         /// <summary>
@@ -113,6 +116,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _day;
+
         private bool _daySpecified;
 
         /// <summary>
@@ -135,6 +139,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _hour;
+
         private bool _hourSpecified;
 
         /// <summary>
@@ -157,6 +162,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _minute;
+
         private bool _minuteSpecified;
 
         /// <summary>
@@ -179,6 +185,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _second;
+
         private bool _secondSpecified;
 
         /// <summary>
@@ -201,6 +208,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _millisecond;
+
         private bool _millisecondSpecified;
 
         /// <summary>

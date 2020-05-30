@@ -16,6 +16,7 @@ namespace System.Management.Automation
         private readonly HashSet<string> _validVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
+
         internal bool UsesParameter { get; private set; }
 
         internal bool HasUsingExpr { get; private set; }
@@ -206,8 +207,11 @@ namespace System.Management.Automation
     internal class ScriptBlockToPowerShellConverter
     {
         private readonly PowerShell _powershell;
+
         private ExecutionContext _context;
+
         private Dictionary<string, object> _usingValueMap;
+
         private bool? _createLocalScope;
 
         private ScriptBlockToPowerShellConverter()

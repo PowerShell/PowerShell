@@ -1276,6 +1276,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         private ThrottleManager _throttleManager = new ThrottleManager();
+
         private ObjectStream _stream = new ObjectStream();
         // event that signals that all operations are
         // complete (including closing if any)
@@ -1310,6 +1311,7 @@ namespace Microsoft.PowerShell.Commands
         // Member variables to ensure that the ThrottleManager gets StartComplete
         // or StopComplete called only once per Start or Stop operation.
         private bool _startComplete;
+
         private bool _stopComplete;
 
         private object _syncObject = new object();

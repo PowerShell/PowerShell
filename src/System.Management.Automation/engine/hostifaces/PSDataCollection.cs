@@ -122,9 +122,13 @@ namespace System.Management.Automation
         #region Private Data
 
         private IList<T> _data;
+
         private ManualResetEvent _readWaitHandle;
+
         private bool _isOpen = true;
+
         private bool _releaseOnEnumeration;
+
         private bool _isEnumerated;
         // a counter to keep track of active PowerShell instances
         // using this buffer.
@@ -145,7 +149,9 @@ namespace System.Management.Automation
         private bool _refCountIncrementedForBlockingEnumerator = false;
 
         private int _countNewData = 0;
+
         private int _dataAddedFrequency = 1;
+
         private Guid _sourceGuid = Guid.Empty;
 
         #endregion
@@ -1399,6 +1405,7 @@ namespace System.Management.Automation
         }
 
         private Guid _lastPsInstanceId;
+
         private int _lastIndex;
 
         private void RaiseDataAddingEvent(Guid psInstanceId, object itemAdded)
@@ -1842,8 +1849,11 @@ namespace System.Management.Automation
         #region Private Data
 
         private W _currentElement;
+
         private int _index;
+
         private PSDataCollection<W> _collToEnumerate;
+
         private bool _neverBlock;
 
         #endregion

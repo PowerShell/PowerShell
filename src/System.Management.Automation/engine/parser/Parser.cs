@@ -22,6 +22,7 @@ namespace System.Management.Automation.Language
     internal enum ParseMode
     {
         Default = 0,
+
         ModuleAnalysis = 1
     }
 
@@ -32,10 +33,15 @@ namespace System.Management.Automation.Language
     public sealed class Parser
     {
         private readonly Tokenizer _tokenizer;
+
         internal Token _ungotToken;
+
         private bool _disableCommaOperator;
+
         private bool _savingTokens;
+
         private bool _inConfiguration;
+
         private ParseMode _parseMode;
 
         internal string _fileName;
@@ -43,6 +49,7 @@ namespace System.Management.Automation.Language
         internal bool ProduceV2Tokens { get; set; }
 
         internal const string VERBATIM_ARGUMENT = "--%";
+
         internal const string VERBATIM_PARAMETERNAME = "-%";  // Same as VERBATIM_ARGUMENT w/o the first '-'.
 
         internal Parser()
@@ -300,6 +307,7 @@ namespace System.Management.Automation.Language
         }
 
         private string _previousFirstTokenText;
+
         private string _previousLastTokenText;
 
         private static bool IgnoreTokenWhenUpdatingPreviousFirstLast(Token token)
@@ -6220,9 +6228,13 @@ namespace System.Management.Automation.Language
         private enum CommandArgumentContext
         {
             CommandName = 0x01,
+
             CommandNameAfterInvocationOperator = 0x02 | CommandName,
+
             FileName = 0x04,
+
             CommandArgument = 0x08,
+
             SwitchCondition = 0x10,
         }
 

@@ -237,9 +237,11 @@ namespace System.Management.Automation.Interpreter
         }
 
         internal static readonly MethodInfo BooleanToObjectMethod = typeof(ScriptingRuntimeHelpers).GetMethod("BooleanToObject");
+
         internal static readonly MethodInfo Int32ToObjectMethod = typeof(ScriptingRuntimeHelpers).GetMethod("Int32ToObject");
 
         internal static readonly object True = true;
+
         internal static readonly object False = false;
 
         internal static object GetPrimitiveDefaultValue(Type type)
@@ -373,7 +375,9 @@ namespace System.Management.Automation.Interpreter
     internal class HybridReferenceDictionary<TKey, TValue> where TKey : class
     {
         private KeyValuePair<TKey, TValue>[] _keysAndValues;
+
         private Dictionary<TKey, TValue> _dict;
+
         private int _count;
 
         private const int _arraySize = 10;
@@ -580,7 +584,9 @@ namespace System.Management.Automation.Interpreter
     internal class CacheDict<TKey, TValue>
     {
         private readonly Dictionary<TKey, KeyInfo> _dict = new Dictionary<TKey, KeyInfo>();
+
         private readonly LinkedList<TKey> _list = new LinkedList<TKey>();
+
         private readonly int _maxSize;
 
         /// <summary>
@@ -671,6 +677,7 @@ namespace System.Management.Automation.Interpreter
         private struct KeyInfo
         {
             internal readonly TValue Value;
+
             internal readonly LinkedListNode<TKey> List;
 
             internal KeyInfo(TValue value, LinkedListNode<TKey> list)
@@ -684,7 +691,9 @@ namespace System.Management.Automation.Interpreter
     internal class ThreadLocal<T>
     {
         private StorageInfo[] _stores;                                         // array of storage indexed by managed thread ID
+
         private static readonly StorageInfo[] s_updating = Array.Empty<StorageInfo>();   // a marker used when updating the array
+
         private readonly bool _refCounted;
 
         public ThreadLocal()
@@ -886,6 +895,7 @@ namespace System.Management.Automation.Interpreter
         internal sealed class StorageInfo
         {
             internal readonly Thread Thread;                 // the thread that owns the StorageInfo
+
             public T Value;                                // the current value for the owning thread
 
             internal StorageInfo(Thread curThread)
@@ -949,8 +959,11 @@ namespace System.Management.Automation.Interpreter
     internal enum ExpressionAccess
     {
         None = 0,
+
         Read = 1,
+
         Write = 2,
+
         ReadWrite = Read | Write,
     }
 

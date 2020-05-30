@@ -170,6 +170,7 @@ namespace Microsoft.PowerShell.Commands
         #region "Parameters and PrivateData"
 
         private const string DefaultParameterSet = "DefaultSet";
+
         private const int forcedReboot = 6; // see https://msdn.microsoft.com/library/aa394058(v=vs.85).aspx
 
         /// <summary>
@@ -200,7 +201,9 @@ namespace Microsoft.PowerShell.Commands
         public string[] ComputerName { get; set; } = new string[] { "." };
 
         private List<string> _validatedComputerNames = new List<string>();
+
         private readonly List<string> _waitOnComputers = new List<string>();
+
         private readonly HashSet<string> _uniqueComputerNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -248,6 +251,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _timeout = -1;
+
         private bool _timeoutSpecified = false;
 
         /// <summary>
@@ -267,6 +271,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private WaitForServiceTypes _waitFor = WaitForServiceTypes.PowerShell;
+
         private bool _waitForSpecified = false;
 
         /// <summary>
@@ -287,6 +292,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _delay = 5;
+
         private bool _delaySpecified = false;
 
         /// <summary>
@@ -341,12 +347,14 @@ $result
         /// Indicate to exit.
         /// </summary>
         private bool _exit, _timeUp;
+
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
 
         /// <summary>
         /// A waithandler to wait on. Current thread will wait on it during the delay interval.
         /// </summary>
         private readonly ManualResetEventSlim _waitHandler = new ManualResetEventSlim(false);
+
         private readonly Dictionary<string, ComputerInfo> _computerInfos = new Dictionary<string, ComputerInfo>(StringComparer.OrdinalIgnoreCase);
 
         // CLR 4.0 Port note - use https://msdn.microsoft.com/library/system.net.networkinformation.ipglobalproperties.hostname(v=vs.110).aspx
@@ -356,14 +364,21 @@ $result
         private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;
 
         private int _percent;
+
         private string _status;
+
         private string _activity;
+
         private Timer _timer;
+
         private System.Management.Automation.PowerShell _powershell;
 
         private const string StageVerification = "VerifyStage";
+
         private const string WmiConnectionTest = "WMI";
+
         private const string WinrmConnectionTest = "WinRM";
+
         private const string PowerShellConnectionTest = "PowerShell";
 
         #endregion "parameters and PrivateData"
@@ -521,6 +536,7 @@ $result
         private class ComputerInfo
         {
             internal string LastBootUpTime;
+
             internal bool RebootComplete;
         }
 
@@ -1280,9 +1296,11 @@ $result
         #region Private Members
 
         private bool _containsLocalHost = false;
+
         private string _newNameForLocalHost = null;
 
         private readonly string _shortLocalMachineName = Dns.GetHostName();
+
         private readonly string _fullLocalMachineName = Dns.GetHostEntryAsync(string.Empty).Result.HostName;
 
         #endregion

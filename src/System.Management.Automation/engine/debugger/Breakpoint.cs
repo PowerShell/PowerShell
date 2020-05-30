@@ -137,6 +137,7 @@ namespace System.Management.Automation
         internal enum BreakpointAction
         {
             Continue = 0x0,
+
             Break = 0x1
         }
 
@@ -434,7 +435,9 @@ namespace System.Management.Automation
         }
 
         internal int SequencePointIndex { get; set; }
+
         internal IScriptExtent[] SequencePoints { get; set; }
+
         internal BitArray BreakpointBitArray { get; set; }
 
         private class CheckBreakpointInScript : AstVisitor
@@ -447,6 +450,7 @@ namespace System.Management.Automation
             }
 
             private LineBreakpoint _breakpoint;
+
             private bool _result;
 
             public override AstVisitAction VisitFunctionDefinition(FunctionDefinitionAst functionDefinitionAst)

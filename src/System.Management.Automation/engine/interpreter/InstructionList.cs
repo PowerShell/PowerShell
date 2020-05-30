@@ -27,9 +27,13 @@ namespace System.Management.Automation.Interpreter
     internal struct InstructionArray
     {
         internal readonly int MaxStackDepth;
+
         internal readonly int MaxContinuationDepth;
+
         internal readonly Instruction[] Instructions;
+
         internal readonly object[] Objects;
+
         internal readonly RuntimeLabel[] Labels;
 
         // list of (instruction index, cookie) sorted by instruction index:
@@ -85,13 +89,19 @@ namespace System.Management.Automation.Interpreter
     internal sealed class InstructionList
     {
         private readonly List<Instruction> _instructions = new List<Instruction>();
+
         private List<object> _objects;
 
         private int _currentStackDepth;
+
         private int _maxStackDepth;
+
         private int _currentContinuationsDepth;
+
         private int _maxContinuationDepth;
+
         private int _runtimeLabelCount;
+
         private List<BranchLabel> _labels;
 
         // list of (instruction index, cookie) sorted by instruction index:
@@ -159,9 +169,13 @@ namespace System.Management.Automation.Interpreter
             internal struct InstructionView
             {
                 private readonly int _index;
+
                 private readonly int _stackDepth;
+
                 private readonly int _continuationsDepth;
+
                 private readonly string _name;
+
                 private readonly Instruction _instruction;
 
                 internal string GetName()
@@ -323,13 +337,19 @@ namespace System.Management.Automation.Interpreter
         #region Stack Operations
 
         private const int PushIntMinCachedValue = -100;
+
         private const int PushIntMaxCachedValue = 100;
+
         private const int CachedObjectCount = 256;
 
         private static Instruction s_null;
+
         private static Instruction s_true;
+
         private static Instruction s_false;
+
         private static Instruction[] s_ints;
+
         private static Instruction[] s_loadObjectCached;
 
         public void EmitLoad(object value)
@@ -434,17 +454,29 @@ namespace System.Management.Automation.Interpreter
         private const int LocalInstrCacheSize = 64;
 
         private static Instruction[] s_loadLocal;
+
         private static Instruction[] s_loadLocalBoxed;
+
         private static Instruction[] s_loadLocalFromClosure;
+
         private static Instruction[] s_loadLocalFromClosureBoxed;
+
         private static Instruction[] s_assignLocal;
+
         private static Instruction[] s_storeLocal;
+
         private static Instruction[] s_assignLocalBoxed;
+
         private static Instruction[] s_storeLocalBoxed;
+
         private static Instruction[] s_assignLocalToClosure;
+
         private static Instruction[] s_initReference;
+
         private static Instruction[] s_initImmutableRefBox;
+
         private static Instruction[] s_parameterBox;
+
         private static Instruction[] s_parameter;
 
         public void EmitLoadLocal(int index)

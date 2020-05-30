@@ -23,6 +23,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class DynamicSplatInstruction : Instruction
     {
         private readonly CallSite<Func<CallSite, ArgumentArray, object>> _site;
+
         private readonly int _argumentCount;
 
         internal DynamicSplatInstruction(int argumentCount, CallSite<Func<CallSite, ArgumentArray, object>> site)

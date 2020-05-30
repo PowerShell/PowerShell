@@ -30,22 +30,39 @@ namespace System.Diagnostics.Eventing.Reader
             public bool filled = false;
 
             public ushort? Id = null;
+
             public byte? Version = null;
+
             public ushort? Qualifiers = null;
+
             public byte? Level = null;
+
             public ushort? Task = null;
+
             public byte? Opcode = null;
+
             public ulong? Keywords = null;
+
             public ulong? RecordId = null;
+
             public string ProviderName = null;
+
             public Guid? ProviderId = null;
+
             public string ChannelName = null;
+
             public uint? ProcessId = null;
+
             public uint? ThreadId = null;
+
             public string ComputerName = null;
+
             public System.Security.Principal.SecurityIdentifier UserId = null;
+
             public DateTime? TimeCreated = null;
+
             public Guid? ActivityId = null;
+
             public Guid? RelatedActivityId = null;
 
             public SystemProperties()

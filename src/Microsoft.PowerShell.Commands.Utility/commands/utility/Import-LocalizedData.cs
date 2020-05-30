@@ -117,6 +117,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] _commandsAllowed = new string[] { "ConvertFrom-StringData" };
+
         private bool _setSupportedCommand = false;
 
         #endregion Parameters

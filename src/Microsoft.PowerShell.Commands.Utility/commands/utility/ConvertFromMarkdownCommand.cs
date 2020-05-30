@@ -56,10 +56,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsVT100EncodedString { get; set; }
 
         private const string PathParameterSet = "PathParamSet";
+
         private const string LiteralPathParameterSet = "LiteralParamSet";
+
         private const string InputObjParamSet = "InputObjParamSet";
 
         private MarkdownConversionType _conversionType = MarkdownConversionType.HTML;
+
         private PSMarkdownOptionInfo _mdOption = null;
 
         /// <summary>

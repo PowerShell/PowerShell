@@ -15,6 +15,7 @@ namespace Microsoft.Management.UI.Internal
     public class TextContainsFilterRule : TextFilterRule
     {
         private static readonly string TextContainsCharactersRegexPattern = "{0}";
+
         private static readonly string TextContainsWordsRegexPattern = WordBoundaryRegexPattern + TextContainsCharactersRegexPattern + WordBoundaryRegexPattern;
 
         /// <summary>

@@ -398,7 +398,9 @@ namespace Microsoft.PowerShell.Commands
         private class ComCreateInfo
         {
             public object objectCreated;
+
             public bool success;
+
             public Exception e;
         }
 
@@ -492,6 +494,7 @@ namespace Microsoft.PowerShell.Commands
 
         // HResult code '-2147417850' - Cannot change thread mode after it is set.
         private const int RPC_E_CHANGED_MODE = unchecked((int)0x80010106);
+
         private const string netSetName = "Net";
     }
 

@@ -256,21 +256,32 @@ namespace System.Management.Automation
         private static readonly Collection<CommandParameterInternal> s_emptyReturnCollection = new Collection<CommandParameterInternal>();
 
         internal const string CommandParameter = "command";
+
         internal const string EncodedCommandParameter = "encodedCommand";
+
         internal const string ArgsParameter = "args";
+
         internal const string EncodedArgsParameter = "encodedarguments";
+
         internal const string InputFormatParameter = "inputFormat";
+
         internal const string OutputFormatParameter = "outputFormat";
+
         internal const string XmlFormatValue = "xml";
+
         internal const string TextFormatValue = "text";
+
         internal const string NonInteractiveParameter = "noninteractive";
 
         [Flags]
         private enum MinishellParameters
         {
             Command = 0x01,
+
             Arguments = 0x02,
+
             InputFormat = 0x04,
+
             OutputFormat = 0x08
         };
 

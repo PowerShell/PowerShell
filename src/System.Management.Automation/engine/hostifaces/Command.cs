@@ -268,9 +268,13 @@ namespace System.Management.Automation.Runspaces
         internal enum MergeType
         {
             Error = 0,
+
             Warning = 1,
+
             Verbose = 2,
+
             Debug = 3,
+
             Information = 4
         }
 

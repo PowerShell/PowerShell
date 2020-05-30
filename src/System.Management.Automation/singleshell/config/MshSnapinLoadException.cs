@@ -119,6 +119,7 @@ namespace System.Management.Automation.Runspaces
         private bool _warning = false;
 
         private ErrorRecord _errorRecord;
+
         private bool _isErrorRecordOriginallyNull;
 
         /// <summary>
@@ -147,6 +148,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private string _PSSnapin = string.Empty;
+
         private string _reason = string.Empty;
 
         /// <summary>

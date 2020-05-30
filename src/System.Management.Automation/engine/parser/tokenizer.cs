@@ -483,8 +483,11 @@ namespace System.Management.Automation.Language
     internal enum TokenizerMode
     {
         Command,
+
         Expression,
+
         TypeName,
+
         Signature, // i.e. class or method declaration
     }
 
@@ -576,12 +579,19 @@ namespace System.Management.Automation.Language
     internal class TokenizerState
     {
         internal int NestedTokensAdjustment;
+
         internal string Script;
+
         internal int TokenStart;
+
         internal int CurrentIndex;
+
         internal Token FirstToken;
+
         internal Token LastToken;
+
         internal BitArray SkippedCharOffsets;
+
         internal List<Token> TokenList;
     }
 
@@ -595,10 +605,13 @@ namespace System.Management.Automation.Language
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
         private static readonly char s_invalidChar = char.MaxValue;
+
         private static readonly int s_maxNumberOfUnicodeHexDigits = 6;
 
         private readonly Parser _parser;
+
         private PositionHelper _positionHelper;
+
         private int _nestedTokensAdjustment;
 
         // This BitArray is used to help ensure we get the correct extent in a corner case that looks something like:
@@ -610,8 +623,11 @@ namespace System.Management.Automation.Language
         private BitArray _skippedCharOffsets;
 
         private string _script;
+
         private int _tokenStart;
+
         private int _currentIndex;
+
         private InternalScriptExtent _beginSignatureExtent;
 
         #region Tables for initialization
@@ -721,6 +737,7 @@ namespace System.Management.Automation.Language
         }
 
         internal TokenizerMode Mode { get; set; }
+
         internal bool AllowSignedNumbers { get; set; }
 
         // TODO: use auto-properties when making 'ternary operator' an official feature.
@@ -733,8 +750,11 @@ namespace System.Management.Automation.Language
         }
 
         internal bool WantSimpleName { get; set; }
+
         internal bool InWorkflowContext { get; set; }
+
         internal List<Token> TokenList { get; set; }
+
         internal Token FirstToken { get; private set; }
 
         internal Token LastToken { get; private set; }
@@ -1990,11 +2010,17 @@ namespace System.Management.Automation.Language
         }
 
         private const string shellIDToken = "shellid";
+
         private const string PSSnapinToken = "pssnapin";
+
         private const string versionToken = "version";
+
         private const string editionToken = "psedition";
+
         private const string assemblyToken = "assembly";
+
         private const string modulesToken = "modules";
+
         private const string elevationToken = "runasadministrator";
 
         private void HandleRequiresParameter(CommandParameterAst parameter,

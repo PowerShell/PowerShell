@@ -115,6 +115,7 @@ namespace System.Management.Automation
         internal static bool IsUnderbar(string name) { return name.Length == 1 && name[0] == '_'; }
 
         internal const string PSItem = "PSItem";  // simple alias for $_
+
         internal const string Underbar = "_";
 
         internal static readonly VariablePath UnderbarVarPath = new VariablePath(Underbar);
@@ -275,15 +276,25 @@ namespace System.Management.Automation
         #region AllScope variables created in every session
 
         internal const string ExecutionContext = "ExecutionContext";
+
         internal const string Home = "HOME";
+
         internal const string Host = "Host";
+
         internal const string PID = "PID";
+
         internal const string PSCulture = "PSCulture";
+
         internal const string PSHome = "PSHOME";
+
         internal const string PSUICulture = "PSUICulture";
+
         internal const string PSVersionTable = "PSVersionTable";
+
         internal const string PSEdition = "PSEdition";
+
         internal const string ShellId = "ShellId";
+
         internal const string EnabledExperimentalFeatures = "EnabledExperimentalFeatures";
 
         #endregion AllScope variables created in every session
@@ -377,25 +388,40 @@ namespace System.Management.Automation
     internal enum AutomaticVariable
     {
         Underbar = 0,
+
         Args = 1,
+
         This = 2,
+
         Input = 3,
+
         PSCmdlet = 4,
+
         PSBoundParameters = 5,
+
         MyInvocation = 6,
+
         PSScriptRoot = 7,
+
         PSCommandPath = 8,
+
         NumberOfAutomaticVariables // 1 + the last, used to initialize global scope.
     }
 
     internal enum PreferenceVariable
     {
         Debug = 9,
+
         Verbose = 10,
+
         Error = 11,
+
         WhatIf = 12,
+
         Warning = 13,
+
         Information = 14,
+
         Confirm = 15,
     }
 }

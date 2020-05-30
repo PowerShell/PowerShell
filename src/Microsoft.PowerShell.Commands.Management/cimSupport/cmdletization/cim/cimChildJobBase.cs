@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         IObserver<T>
     {
         private static long s_globalJobNumberCounter;
+
         private readonly long _myJobNumber = Interlocked.Increment(ref s_globalJobNumberCounter);
 
         private const string CIMJobType = "CimJob";
@@ -69,16 +70,27 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private enum WsManErrorCode : uint
         {
             ERROR_WSMAN_QUOTA_MAX_SHELLS = 0x803381A5,
+
             ERROR_WSMAN_QUOTA_MAX_OPERATIONS = 0x803381A6,
+
             ERROR_WSMAN_QUOTA_USER = 0x803381A7,
+
             ERROR_WSMAN_QUOTA_SYSTEM = 0x803381A8,
+
             ERROR_WSMAN_QUOTA_MAX_SHELLUSERS = 0x803381AB,
+
             ERROR_WSMAN_QUOTA_MAX_SHELLS_PPQ = 0x803381E4,
+
             ERROR_WSMAN_QUOTA_MAX_USERS_PPQ = 0x803381E5,
+
             ERROR_WSMAN_QUOTA_MAX_PLUGINSHELLS_PPQ = 0x803381E6,
+
             ERROR_WSMAN_QUOTA_MAX_PLUGINOPERATIONS_PPQ = 0x803381E7,
+
             ERROR_WSMAN_QUOTA_MAX_OPERATIONS_USER_PPQ = 0x803381E8,
+
             ERROR_WSMAN_QUOTA_MAX_COMMANDS_PER_SHELL_PPQ = 0x803381E9,
+
             ERROR_WSMAN_QUOTA_MIN_REQUIREMENT_NOT_AVAILABLE_PPQ = 0x803381EA,
         }
 
@@ -160,11 +172,15 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private static readonly Random s_globalRandom = new Random();
+
         private readonly Random _random;
+
         private int _sleepAndRetryDelayRangeMs = 1000;
+
         private int _sleepAndRetryExtraDelayMs = 0;
 
         private const int MaxRetryDelayMs = 15 * 1000;
+
         private const int MinRetryDelayMs = 100;
 
         private Timer _sleepAndRetryTimer;
@@ -580,9 +596,13 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private readonly object _jobStateLock = new object();
+
         private bool _jobHadErrors;
+
         private bool _jobWasStarted;
+
         private bool _jobWasStopped;
+
         private bool _alreadyReachedCompletedState;
 
         internal bool JobHadErrors
@@ -822,7 +842,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private enum MessageChannel
         {
             Warning = 0,
+
             Verbose = 1,
+
             Debug = 2,
         }
 
@@ -890,6 +912,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private bool _userWasPromptedForContinuationOfProcessing;
+
         private bool _userRespondedYesToAtLeastOneShouldProcess;
 
         internal bool DidUserSuppressTheOperation

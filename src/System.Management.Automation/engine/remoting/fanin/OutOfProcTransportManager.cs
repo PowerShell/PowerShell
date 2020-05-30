@@ -39,15 +39,25 @@ namespace System.Management.Automation.Remoting
         #region Helper Fields
 
         internal const string PS_OUT_OF_PROC_DATA_TAG = "Data";
+
         internal const string PS_OUT_OF_PROC_DATA_ACK_TAG = "DataAck";
+
         internal const string PS_OUT_OF_PROC_STREAM_ATTRIBUTE = "Stream";
+
         internal const string PS_OUT_OF_PROC_PSGUID_ATTRIBUTE = "PSGuid";
+
         internal const string PS_OUT_OF_PROC_CLOSE_TAG = "Close";
+
         internal const string PS_OUT_OF_PROC_CLOSE_ACK_TAG = "CloseAck";
+
         internal const string PS_OUT_OF_PROC_COMMAND_TAG = "Command";
+
         internal const string PS_OUT_OF_PROC_COMMAND_ACK_TAG = "CommandAck";
+
         internal const string PS_OUT_OF_PROC_SIGNAL_TAG = "Signal";
+
         internal const string PS_OUT_OF_PROC_SIGNAL_ACK_TAG = "SignalAck";
+
         internal const int EXITCODE_UNHANDLED_EXCEPTION = 0x0FA0;
 
         internal static XmlReaderSettings XmlReaderSettings;
@@ -144,23 +154,37 @@ namespace System.Management.Automation.Remoting
         #region Packet Processing Helper Methods / Delegates
 
         internal delegate void DataPacketReceived(byte[] rawData, string stream, Guid psGuid);
+
         internal delegate void DataAckPacketReceived(Guid psGuid);
+
         internal delegate void CommandCreationPacketReceived(Guid psGuid);
+
         internal delegate void CommandCreationAckReceived(Guid psGuid);
+
         internal delegate void ClosePacketReceived(Guid psGuid);
+
         internal delegate void CloseAckPacketReceived(Guid psGuid);
+
         internal delegate void SignalPacketReceived(Guid psGuid);
+
         internal delegate void SignalAckPacketReceived(Guid psGuid);
 
         internal struct DataProcessingDelegates
         {
             internal DataPacketReceived DataPacketReceived;
+
             internal DataAckPacketReceived DataAckPacketReceived;
+
             internal CommandCreationPacketReceived CommandCreationPacketReceived;
+
             internal CommandCreationAckReceived CommandCreationAckReceived;
+
             internal SignalPacketReceived SignalPacketReceived;
+
             internal SignalAckPacketReceived SignalAckPacketReceived;
+
             internal ClosePacketReceived ClosePacketReceived;
+
             internal CloseAckPacketReceived CloseAckPacketReceived;
         }
 
@@ -403,7 +427,9 @@ namespace System.Management.Automation.Remoting
         #region Private Data
 
         private TextWriter _writer;
+
         private bool _isStopped;
+
         private object _syncObject = new object();
 
         #endregion
@@ -465,13 +491,19 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         private readonly BlockingCollection<string> _sessionMessageQueue;
+
         private readonly BlockingCollection<string> _commandMessageQueue;
+
         private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+
         private OutOfProcessUtils.DataProcessingDelegates _dataProcessingCallbacks;
+
         private Dictionary<Guid, OutOfProcessClientCommandTransportManager> _cmdTransportManagers;
+
         private Timer _closeTimeOutTimer;
 
         protected OutOfProcessTextWriter stdInWriter;
+
         protected PowerShellTraceSource _tracer;
 
         #endregion
@@ -1055,8 +1087,11 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private Process _serverProcess;
+
         private NewProcessConnectionInfo _connectionInfo;
+
         private bool _processCreated = true;
+
         private PowerShellProcessInstance _processInstance;
 
         #endregion
@@ -1427,8 +1462,11 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private Guid _vmGuid;
+
         private string _configurationName;
+
         private VMConnectionInfo _connectionInfo;
+
         private NetworkCredential _networkCredential;
 
         #endregion
@@ -1513,6 +1551,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private Guid _targetGuid; // currently this is the utility vm guid in HyperV container scenario
+
         private ContainerConnectionInfo _connectionInfo;
 
         #endregion
@@ -1572,10 +1611,15 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         private SSHConnectionInfo _connectionInfo;
+
         private int _sshProcessId;
+
         private StreamWriter _stdInWriter;
+
         private StreamReader _stdOutReader;
+
         private StreamReader _stdErrReader;
+
         private bool _connectionEstablished;
 
         private const string _threadName = "SSHTransport Reader Thread";
@@ -1861,7 +1905,9 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         private RunspaceConnectionInfo _connectionInfo;
+
         protected NamedPipeClientBase _clientPipe = new NamedPipeClientBase();
+
         private string _threadName;
 
         #endregion
@@ -2125,7 +2171,9 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private OutOfProcessTextWriter _stdInWriter;
+
         private PrioritySendDataCollection.OnDataAvailableCallback _onDataAvailableToSendCallback;
+
         private Timer _signalTimeOutTimer;
 
         #endregion
@@ -2426,8 +2474,11 @@ namespace System.Management.Automation.Remoting.Server
         #region Private Data
 
         private OutOfProcessTextWriter _stdOutWriter;
+
         private OutOfProcessTextWriter _stdErrWriter;
+
         private Dictionary<Guid, OutOfProcessServerTransportManager> _cmdTransportManagers;
+
         private object _syncObject = new object();
 
         #endregion
@@ -2524,8 +2575,11 @@ namespace System.Management.Automation.Remoting.Server
         #region Private Data
 
         private OutOfProcessTextWriter _stdOutWriter;
+
         private OutOfProcessTextWriter _stdErrWriter;
+
         private Guid _powershellInstanceId;
+
         private bool _isDataAckSendPending;
 
         #endregion

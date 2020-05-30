@@ -14,6 +14,7 @@ namespace System.Management.Automation
     public class MetadataException : RuntimeException
     {
         internal const string MetadataMemberInitialization = "MetadataMemberInitialization";
+
         internal const string BaseName = "Metadata";
 
         /// <summary>
@@ -70,32 +71,51 @@ namespace System.Management.Automation
     public class ValidationMetadataException : MetadataException
     {
         internal const string ValidateRangeElementType = "ValidateRangeElementType";
+
         internal const string ValidateRangePositiveFailure = "ValidateRangePositiveFailure";
+
         internal const string ValidateRangeNonNegativeFailure = "ValidateRangeNonNegativeFailure";
+
         internal const string ValidateRangeNegativeFailure = "ValidateRangeNegativeFailure";
+
         internal const string ValidateRangeNonPositiveFailure = "ValidateRangeNonPositiveFailure";
+
         internal const string ValidateRangeMinRangeMaxRangeType = "ValidateRangeMinRangeMaxRangeType";
+
         internal const string ValidateRangeNotIComparable = "ValidateRangeNotIComparable";
+
         internal const string ValidateRangeMaxRangeSmallerThanMinRange = "ValidateRangeMaxRangeSmallerThanMinRange";
+
         internal const string ValidateRangeGreaterThanMaxRangeFailure = "ValidateRangeGreaterThanMaxRangeFailure";
+
         internal const string ValidateRangeSmallerThanMinRangeFailure = "ValidateRangeSmallerThanMinRangeFailure";
 
         internal const string ValidateFailureResult = "ValidateFailureResult";
 
         internal const string ValidatePatternFailure = "ValidatePatternFailure";
+
         internal const string ValidateScriptFailure = "ValidateScriptFailure";
 
         internal const string ValidateCountNotInArray = "ValidateCountNotInArray";
+
         internal const string ValidateCountMaxLengthSmallerThanMinLength = "ValidateCountMaxLengthSmallerThanMinLength";
+
         internal const string ValidateCountMinLengthFailure = "ValidateCountMinLengthFailure";
+
         internal const string ValidateCountMaxLengthFailure = "ValidateCountMaxLengthFailure";
 
         internal const string ValidateLengthMaxLengthSmallerThanMinLength = "ValidateLengthMaxLengthSmallerThanMinLength";
+
         internal const string ValidateLengthNotString = "ValidateLengthNotString";
+
         internal const string ValidateLengthMinLengthFailure = "ValidateLengthMinLengthFailure";
+
         internal const string ValidateLengthMaxLengthFailure = "ValidateLengthMaxLengthFailure";
+
         internal const string ValidateSetFailure = "ValidateSetFailure";
+
         internal const string ValidateVersionFailure = "ValidateVersionFailure";
+
         internal const string InvalidValueFailure = "InvalidValueFailure";
 
         /// <summary>

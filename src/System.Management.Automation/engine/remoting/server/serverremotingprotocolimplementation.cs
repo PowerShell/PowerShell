@@ -13,7 +13,9 @@ namespace System.Management.Automation.Remoting
     internal class ServerRemoteSessionDSHandlerImpl : ServerRemoteSessionDataStructureHandler
     {
         private AbstractServerSessionTransportManager _transportManager;
+
         private ServerRemoteSessionDSHandlerStateMachine _stateMachine;
+
         private ServerRemoteSession _session;
 
         internal override AbstractServerSessionTransportManager TransportManager

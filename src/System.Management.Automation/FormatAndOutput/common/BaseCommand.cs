@@ -132,7 +132,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private PipelineProcessor _pp = null;
 
         private string _commandName = null;
+
         private Type _commandType;
+
         private List<CommandParameterInternal> _commandParameterList = new List<CommandParameterInternal>();
 
         private ExecutionContext _context = null;

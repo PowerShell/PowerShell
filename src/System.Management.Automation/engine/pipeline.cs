@@ -30,17 +30,25 @@ namespace System.Management.Automation.Internal
         #region private_members
 
         private List<CommandProcessorBase> _commands = new List<CommandProcessorBase>();
+
         private List<PipelineProcessor> _redirectionPipes;
+
         private PipelineReader<object> _externalInputPipe;
+
         private PipelineWriter _externalSuccessOutput;
+
         private PipelineWriter _externalErrorOutput;
+
         private bool _executionStarted = false;
+
         private bool _stopping = false;
+
         private SessionStateScope _executionScope;
 
         private ExceptionDispatchInfo _firstTerminatingError = null;
 
         private bool _linkedSuccessOutput = false;
+
         private bool _linkedErrorOutput = false;
 
 #if !CORECLR // Impersonation Not Supported On CSS
@@ -1453,7 +1461,9 @@ namespace System.Management.Automation.Internal
         // Only this InternalCommand from this Thread is allowed to call
         // WriteObject/WriteError
         internal InternalCommand _permittedToWrite = null;
+
         internal bool _permittedToWriteToPipeline = false;
+
         internal System.Threading.Thread _permittedToWriteThread = null;
 
         #endregion private_methods
@@ -1590,9 +1600,13 @@ namespace System.Management.Automation.Internal
         internal enum PipelineExecutionStatus
         {
             Started,
+
             ParameterBinding,
+
             Complete,
+
             Error,
+
             PipelineComplete
         }
     }

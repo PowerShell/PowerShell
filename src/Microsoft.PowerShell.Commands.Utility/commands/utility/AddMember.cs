@@ -140,6 +140,7 @@ namespace Microsoft.PowerShell.Commands
         #region Simplifying NoteProperty Declaration
 
         private const string NotePropertySingleMemberSet = "NotePropertySingleMemberSet";
+
         private const string NotePropertyMultiMemberSet = "NotePropertyMultiMemberSet";
 
         private string _notePropertyName;

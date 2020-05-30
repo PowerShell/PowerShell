@@ -17,6 +17,7 @@ namespace System.Management.Automation.Language
     internal class TypeDefiner
     {
         internal const string DynamicClassAssemblyName = "PowerShell Class Assembly";
+
         internal const string DynamicClassAssemblyFullNamePrefix = "PowerShell Class Assembly,";
 
         private static int s_globalCounter = 0;
@@ -25,6 +26,7 @@ namespace System.Management.Automation.Language
             new CustomAttributeBuilder(typeof(HiddenAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>());
 
         private static readonly string s_sessionStateKeeperFieldName = "__sessionStateKeeper";
+
         internal static readonly string SessionStateFieldName = "__sessionState";
 
         private static readonly MethodInfo s_sessionStateKeeper_GetSessionState =
@@ -268,16 +270,27 @@ namespace System.Management.Automation.Language
         private class DefineTypeHelper
         {
             private readonly Parser _parser;
+
             internal readonly TypeDefinitionAst _typeDefinitionAst;
+
             internal readonly TypeBuilder _typeBuilder;
+
             internal readonly FieldBuilder _sessionStateField;
+
             internal readonly FieldBuilder _sessionStateKeeperField;
+
             internal readonly ModuleBuilder _moduleBuilder;
+
             internal readonly TypeBuilder _staticHelpersTypeBuilder;
+
             private readonly Dictionary<string, PropertyMemberAst> _definedProperties;
+
             private readonly Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>> _definedMethods;
+
             private HashSet<Tuple<string, Type>> _interfaceProperties;
+
             internal readonly List<(string fieldName, IParameterMetadataProvider bodyAst, bool isStatic)> _fieldsToInitForMemberFunctions;
+
             private bool _baseClassHasDefaultCtor;
 
             /// <summary>
@@ -1011,8 +1024,11 @@ namespace System.Management.Automation.Language
         private class DefineEnumHelper
         {
             private readonly Parser _parser;
+
             private readonly TypeDefinitionAst _enumDefinitionAst;
+
             private readonly ModuleBuilder _moduleBuilder;
+
             private readonly string _typeName;
 
             internal DefineEnumHelper(Parser parser, ModuleBuilder module, TypeDefinitionAst enumDefinitionAst, string typeName)

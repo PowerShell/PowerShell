@@ -172,6 +172,7 @@ namespace System.Management.Automation
     public abstract class PSMemberInfo
     {
         internal object instance;
+
         internal string name;
 
         internal bool ShouldSerialize { get; set; }
@@ -1042,6 +1043,7 @@ namespace System.Management.Automation
         internal string typeOfValue;
 
         internal object serializedValue;
+
         internal bool isDeserialized;
 
         /// <summary>
@@ -1050,6 +1052,7 @@ namespace System.Management.Automation
         internal Adapter adapter;
 
         internal object adapterData;
+
         internal object baseObject;
 
         /// <summary>
@@ -1563,11 +1566,15 @@ namespace System.Management.Automation
         }
 
         private readonly PSLanguageMode? _languageMode;
+
         private readonly string _getterScriptText;
+
         private ScriptBlock _getterScript;
 
         private readonly string _setterScriptText;
+
         private ScriptBlock _setterScript;
+
         private bool _shouldCloneOnAccess;
 
         /// <summary>
@@ -2290,6 +2297,7 @@ namespace System.Management.Automation
         }
 
         private readonly ScriptBlock _script;
+
         private bool _shouldCloneOnAccess;
 
         /// <summary>
@@ -2475,7 +2483,9 @@ namespace System.Management.Automation
         }
 
         internal object adapterData;
+
         internal Adapter _adapter;
+
         internal object baseObject;
 
         /// <summary>
@@ -2788,6 +2798,7 @@ namespace System.Management.Automation
     internal struct PSMethodSignatureEnumerator : IEnumerator<Type>
     {
         private int _currentIndex;
+
         private readonly Type _t;
 
         internal PSMethodSignatureEnumerator(Type t)
@@ -2894,7 +2905,9 @@ namespace System.Management.Automation
         }
 
         internal Adapter adapter;
+
         internal object adapterData;
+
         internal object baseObject;
 
         /// <summary>
@@ -3043,13 +3056,19 @@ namespace System.Management.Automation
         }
 
         private readonly PSMemberInfoIntegratingCollection<PSMemberInfo> _members;
+
         private readonly PSMemberInfoIntegratingCollection<PSPropertyInfo> _properties;
+
         private readonly PSMemberInfoIntegratingCollection<PSMethodInfo> _methods;
+
         internal PSMemberInfoInternalCollection<PSMemberInfo> internalMembers;
+
         private readonly PSObject _constructorPSObject;
 
         private static readonly Collection<CollectionEntry<PSMemberInfo>> s_emptyMemberCollection = new Collection<CollectionEntry<PSMemberInfo>>();
+
         private static readonly Collection<CollectionEntry<PSMethodInfo>> s_emptyMethodCollection = new Collection<CollectionEntry<PSMethodInfo>>();
+
         private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_emptyPropertyCollection = new Collection<CollectionEntry<PSPropertyInfo>>();
 
         /// <summary>
@@ -3127,7 +3146,9 @@ namespace System.Management.Automation
         }
 
         private static readonly Collection<CollectionEntry<PSMemberInfo>> s_typeMemberCollection = GetTypeMemberCollection();
+
         private static readonly Collection<CollectionEntry<PSMethodInfo>> s_typeMethodCollection = GetTypeMethodCollection();
+
         private static readonly Collection<CollectionEntry<PSPropertyInfo>> s_typePropertyCollection = GetTypePropertyCollection();
 
         private static Collection<CollectionEntry<PSMemberInfo>> GetTypeMemberCollection()
@@ -3279,6 +3300,7 @@ namespace System.Management.Automation
     internal class PSInternalMemberSet : PSMemberSet
     {
         private readonly object _syncObject = new object();
+
         private readonly PSObject _psObject;
 
         #region Constructor
@@ -3980,6 +4002,7 @@ namespace System.Management.Automation
     internal class PSMemberInfoInternalCollection<T> : PSMemberInfoCollection<T>, IEnumerable<T> where T : PSMemberInfo
     {
         private OrderedDictionary _members;
+
         private int _countHidden;
 
         /// <summary>
@@ -4495,6 +4518,7 @@ namespace System.Management.Automation
         internal Collection<CollectionEntry<T>> Collections { get; }
 
         private readonly PSObject _mshOwner;
+
         private readonly PSMemberSet _memberSetOwner;
 
         internal PSMemberInfoIntegratingCollection(object owner, Collection<CollectionEntry<T>> collections)
@@ -5027,7 +5051,9 @@ namespace System.Management.Automation
         internal struct Enumerator<S> : IEnumerator<S> where S : PSMemberInfo
         {
             private S _current;
+
             private int _currentIndex;
+
             private readonly PSMemberInfoInternalCollection<S> _allMembers;
 
             /// <summary>

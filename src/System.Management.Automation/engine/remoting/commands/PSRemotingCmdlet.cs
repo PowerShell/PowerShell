@@ -281,9 +281,13 @@ namespace Microsoft.PowerShell.Commands
     internal struct SSHConnection
     {
         public string ComputerName;
+
         public string UserName;
+
         public string KeyFilePath;
+
         public int Port;
+
         public string Subsystem;
     }
 
@@ -844,11 +848,17 @@ namespace Microsoft.PowerShell.Commands
         #region SSH Connection Strings
 
         private const string ComputerNameParameter = "ComputerName";
+
         private const string HostNameAlias = "HostName";
+
         private const string UserNameParameter = "UserName";
+
         private const string KeyFilePathParameter = "KeyFilePath";
+
         private const string IdentityFilePathAlias = "IdentityFilePath";
+
         private const string PortParameter = "Port";
+
         private const string SubsystemParameter = "Subsystem";
 
         #endregion
@@ -1997,10 +2007,13 @@ namespace Microsoft.PowerShell.Commands
         /// PS version of the remote server.
         /// </summary>
         private const string PSv5OrLater = "PSv5OrLater";
+
         private const string PSv3Orv4 = "PSv3Orv4";
+
         private const string PSv2 = "PSv2";
 
         private System.Management.Automation.PowerShell _powershellV2;
+
         private System.Management.Automation.PowerShell _powershellV3;
 
         /// <summary>
@@ -4218,6 +4231,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _stopProcessing;
 
         private static readonly object s_SyncObject = new object();
+
         private static TypeTable s_TypeTable;
 
         #endregion

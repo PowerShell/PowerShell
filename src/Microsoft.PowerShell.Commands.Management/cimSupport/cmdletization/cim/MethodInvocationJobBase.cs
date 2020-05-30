@@ -32,6 +32,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         private readonly bool _passThru;
+
         private readonly MethodInvocationInfo _methodInvocationInfo;
 
         internal string MethodName

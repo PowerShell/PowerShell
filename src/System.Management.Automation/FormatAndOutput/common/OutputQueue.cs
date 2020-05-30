@@ -179,6 +179,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// A positive timespan: use all objects that have been processed within the timeframe.
         /// </summary>
         private TimeSpan _groupingDuration = TimeSpan.MinValue;
+
         private Stopwatch _groupingTimer = null;
 
         /// <summary>

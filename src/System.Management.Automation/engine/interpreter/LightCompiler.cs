@@ -30,10 +30,15 @@ namespace System.Management.Automation.Interpreter
     internal sealed class ExceptionHandler
     {
         public readonly Type ExceptionType;
+
         public readonly int StartIndex;
+
         public readonly int EndIndex;
+
         public readonly int LabelIndex;
+
         public readonly int HandlerStartIndex;
+
         public readonly int HandlerEndIndex;
 
         internal TryCatchFinallyHandler Parent = null;
@@ -103,9 +108,13 @@ namespace System.Management.Automation.Interpreter
     internal sealed class TryCatchFinallyHandler
     {
         internal readonly int TryStartIndex = Instruction.UnknownInstrIndex;
+
         internal readonly int TryEndIndex = Instruction.UnknownInstrIndex;
+
         internal readonly int FinallyStartIndex = Instruction.UnknownInstrIndex;
+
         internal readonly int FinallyEndIndex = Instruction.UnknownInstrIndex;
+
         internal readonly int GotoEndTargetIndex = Instruction.UnknownInstrIndex;
 
         private readonly ExceptionHandler[] _handlers;
@@ -187,9 +196,13 @@ namespace System.Management.Automation.Interpreter
         // TODO: readonly
 
         public int StartLine, EndLine;
+
         public int Index;
+
         public string FileName;
+
         public bool IsClear;
+
         private static readonly DebugInfoComparer s_debugComparer = new DebugInfoComparer();
 
         private class DebugInfoComparer : IComparer<DebugInfo>
@@ -272,10 +285,13 @@ namespace System.Management.Automation.Interpreter
         private readonly int _compilationThreshold;
 
         private readonly InstructionList _instructions;
+
         private readonly LocalVariables _locals = new LocalVariables();
 
         private readonly List<DebugInfo> _debugInfos = new List<DebugInfo>();
+
         private readonly HybridReferenceDictionary<LabelTarget, LabelInfo> _treeLabels = new HybridReferenceDictionary<LabelTarget, LabelInfo>();
+
         private LabelScopeInfo _labelBlock = new LabelScopeInfo(null, LabelScopeKind.Lambda);
 
         private readonly Stack<ParameterExpression> _exceptionForRethrowStack = new Stack<ParameterExpression>();

@@ -147,10 +147,13 @@ namespace System.Management.Automation
 #else
         // Gets the location for cache and config folders.
         internal static readonly string CacheDirectory = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + @"\Microsoft\PowerShell";
+
         internal static readonly string ConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Personal) + @"\PowerShell";
 
         private static bool? _isNanoServer = null;
+
         private static bool? _isIoT = null;
+
         private static bool? _isWindowsDesktop = null;
 #endif
 
@@ -564,6 +567,7 @@ namespace System.Management.Automation
         internal static class Unix
         {
             private static Dictionary<int, string> usernameCache = new Dictionary<int, string>();
+
             private static Dictionary<int, string> groupnameCache = new Dictionary<int, string>();
 
             /// <summary>The type of a Unix file system item.</summary>
@@ -692,7 +696,9 @@ namespace System.Management.Automation
                 public bool IsSticky;
 
                 private const char CanRead = 'r';
+
                 private const char CanWrite = 'w';
+
                 private const char CanExecute = 'x';
 
                 // helper for getting unix mode

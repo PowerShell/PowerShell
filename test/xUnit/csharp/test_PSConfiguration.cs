@@ -20,17 +20,21 @@ namespace PSTests.Sequential
         private const string ConfigFileName = "powershell.config.json";
 
         private readonly string systemWideConfigFile;
+
         private readonly string currentUserConfigFile;
 
         private readonly string systemWideConfigBackupFile;
+
         private readonly string currentUserConfigBackupFile;
 
         private readonly string systemWideConfigDirectory;
+
         private readonly string currentUserConfigDirectory;
 
         private readonly JsonSerializer serializer;
 
         private readonly PowerShellPolicies systemWidePolicies;
+
         private readonly PowerShellPolicies currentUserPolicies;
 
         private readonly bool originalTestHookValue;

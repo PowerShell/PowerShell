@@ -251,7 +251,9 @@ namespace System.Management.Automation
         }
 
         internal const string AddKey = "Add";
+
         internal const string RemoveKey = "Remove";
+
         internal const string ReplaceKey = "Replace";
     }
 

@@ -10,7 +10,9 @@ namespace Microsoft.PowerShell.Commands
     internal static class EnumerableExpansionConversion
     {
         internal const string CoreOnlyString = "CoreOnly";
+
         internal const string EnumOnlyString = "EnumOnly";
+
         internal const string BothString = "Both";
 
         internal static bool Convert(string expansionString, out EnumerableExpansion expansion)

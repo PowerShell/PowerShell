@@ -29,6 +29,7 @@ namespace System.Management.Automation.Interpreter
     internal abstract class OffsetInstruction : Instruction
     {
         internal const int Unknown = Int32.MinValue;
+
         internal const int CacheSize = 32;
 
         // the offset to jump to (relative to this instruction):
@@ -167,6 +168,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         internal readonly bool _hasResult;
+
         internal readonly bool _hasValue;
 
         internal BranchInstruction()
@@ -308,6 +310,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class EnterTryCatchFinallyInstruction : IndexedBranchInstruction
     {
         private readonly bool _hasFinally = false;
+
         private TryCatchFinallyHandler _tryHandler;
 
         internal void SetTryHandler(TryCatchFinallyHandler tryHandler)
@@ -520,6 +523,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class EnterExceptionHandlerInstruction : Instruction
     {
         internal static readonly EnterExceptionHandlerInstruction Void = new EnterExceptionHandlerInstruction(false);
+
         internal static readonly EnterExceptionHandlerInstruction NonVoid = new EnterExceptionHandlerInstruction(true);
 
         // True if try-expression is non-void.
@@ -598,6 +602,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class LeaveFaultInstruction : Instruction
     {
         internal static readonly Instruction NonVoid = new LeaveFaultInstruction(true);
+
         internal static readonly Instruction Void = new LeaveFaultInstruction(false);
 
         private readonly bool _hasValue;
@@ -632,8 +637,11 @@ namespace System.Management.Automation.Interpreter
     internal sealed class ThrowInstruction : Instruction
     {
         internal static readonly ThrowInstruction Throw = new ThrowInstruction(true, false);
+
         internal static readonly ThrowInstruction VoidThrow = new ThrowInstruction(false, false);
+
         internal static readonly ThrowInstruction Rethrow = new ThrowInstruction(true, true);
+
         internal static readonly ThrowInstruction VoidRethrow = new ThrowInstruction(false, true);
 
         private readonly bool _hasResult, _rethrow;
@@ -695,10 +703,15 @@ namespace System.Management.Automation.Interpreter
     internal sealed class EnterLoopInstruction : Instruction
     {
         private readonly int _instructionIndex;
+
         private Dictionary<ParameterExpression, LocalVariable> _variables;
+
         private Dictionary<ParameterExpression, LocalVariable> _closureVariables;
+
         private PowerShellLoopExpression _loop;
+
         private int _loopEnd;
+
         private int _compilationThreshold;
 
         internal EnterLoopInstruction(PowerShellLoopExpression loop, LocalVariables locals, int compilationThreshold, int instructionIndex)

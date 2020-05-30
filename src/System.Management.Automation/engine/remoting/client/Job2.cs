@@ -65,9 +65,13 @@ namespace System.Management.Automation
         private readonly object _syncobject = new object();
 
         private const int StartJobOperation = 1;
+
         private const int StopJobOperation = 2;
+
         private const int SuspendJobOperation = 3;
+
         private const int ResumeJobOperation = 4;
+
         private const int UnblockJobOperation = 5;
 
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
@@ -504,10 +508,13 @@ namespace System.Management.Automation
         private const string TraceClassName = "ContainerParentJob";
 
         private bool _moreData = true;
+
         private readonly object _syncObject = new object();
+
         private int _isDisposed = 0;
 
         private const int DisposedTrue = 1;
+
         private const int DisposedFalse = 0;
         // This variable is set to true if atleast one child job failed.
 
@@ -530,6 +537,7 @@ namespace System.Management.Automation
         private int _stoppedChildJobsCount = 0;
 
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+
         private readonly PSDataCollection<ErrorRecord> _executionError = new PSDataCollection<ErrorRecord>();
 
         private PSEventManager _eventManager;

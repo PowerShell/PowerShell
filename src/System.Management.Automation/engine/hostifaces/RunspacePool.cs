@@ -505,10 +505,13 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private RunspacePoolInternal _internalPool;
+
         private object _syncObject = new object();
 
         private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
+
         private event EventHandler<PSEventArgs> InternalForwardEvent = null;
+
         private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated = null;
 
         #endregion

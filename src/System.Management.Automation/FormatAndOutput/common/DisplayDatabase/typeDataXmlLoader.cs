@@ -28,8 +28,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         internal string fileDirectory = null;
+
         internal string filePath = null;
+
         internal ConcurrentBag<string> errors;
+
         internal string psSnapinName;
     }
 
@@ -53,100 +56,152 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             // top level entries in the XML document
             internal const string DefaultSettingsNode = "DefaultSettings";
+
             internal const string ConfigurationNode = "Configuration";
+
             internal const string SelectionSetsNode = "SelectionSets";
+
             internal const string ViewDefinitionsNode = "ViewDefinitions";
+
             internal const string ControlsNode = "Controls";
 
             // default settings entries
             internal const string MultilineTablesNode = "WrapTables";
+
             internal const string PropertyCountForTableNode = "PropertyCountForTable";
+
             internal const string ShowErrorsAsMessagesNode = "ShowError";
+
             internal const string ShowErrorsInFormattedOutputNode = "DisplayError";
+
             internal const string EnumerableExpansionsNode = "EnumerableExpansions";
+
             internal const string EnumerableExpansionNode = "EnumerableExpansion";
+
             internal const string ExpandNode = "Expand";
 
             // entries identifying the various control types definitions
             internal const string ControlNode = "Control";
+
             internal const string ComplexControlNameNode = "CustomControlName";
 
             // selection sets (a.k.a. Type Groups)
             internal const string SelectionSetNode = "SelectionSet";
+
             internal const string SelectionSetNameNode = "SelectionSetName";
+
             internal const string SelectionConditionNode = "SelectionCondition";
+
             internal const string NameNode = "Name";
+
             internal const string TypesNode = "Types";
+
             internal const string TypeNameNode = "TypeName";
 
             internal const string ViewNode = "View";
 
             // entries identifying the various control types
             internal const string TableControlNode = "TableControl";
+
             internal const string ListControlNode = "ListControl";
+
             internal const string WideControlNode = "WideControl";
+
             internal const string ComplexControlNode = "CustomControl";
+
             internal const string FieldControlNode = "FieldControl";
 
             // view specific tags
             internal const string ViewSelectedByNode = "ViewSelectedBy";
+
             internal const string GroupByNode = "GroupBy";
+
             internal const string OutOfBandNode = "OutOfBand";
 
             // table specific tags
             internal const string HideTableHeadersNode = "HideTableHeaders";
+
             internal const string TableHeadersNode = "TableHeaders";
+
             internal const string TableColumnHeaderNode = "TableColumnHeader";
 
             internal const string TableRowEntriesNode = "TableRowEntries";
+
             internal const string TableRowEntryNode = "TableRowEntry";
+
             internal const string MultiLineNode = "Wrap";
+
             internal const string TableColumnItemsNode = "TableColumnItems";
+
             internal const string TableColumnItemNode = "TableColumnItem";
+
             internal const string WidthNode = "Width";
 
             // list specific tags
             internal const string ListEntriesNode = "ListEntries";
+
             internal const string ListEntryNode = "ListEntry";
+
             internal const string ListItemsNode = "ListItems";
+
             internal const string ListItemNode = "ListItem";
 
             // wide specific tags
             internal const string ColumnNumberNode = "ColumnNumber";
+
             internal const string WideEntriesNode = "WideEntries";
+
             internal const string WideEntryNode = "WideEntry";
+
             internal const string WideItemNode = "WideItem";
 
             // complex specific tags
             internal const string ComplexEntriesNode = "CustomEntries";
+
             internal const string ComplexEntryNode = "CustomEntry";
+
             internal const string ComplexItemNode = "CustomItem";
 
             internal const string ExpressionBindingNode = "ExpressionBinding";
+
             internal const string NewLineNode = "NewLine";
+
             internal const string TextNode = "Text";
+
             internal const string FrameNode = "Frame";
+
             internal const string LeftIndentNode = "LeftIndent";
+
             internal const string RightIndentNode = "RightIndent";
+
             internal const string FirstLineIndentNode = "FirstLineIndent";
+
             internal const string FirstLineHangingNode = "FirstLineHanging";
 
             internal const string EnumerateCollectionNode = "EnumerateCollection";
 
             // general purpose tags
             internal const string AutoSizeNode = "AutoSize"; // valid only for table and wide
+
             internal const string AlignmentNode = "Alignment";
+
             internal const string PropertyNameNode = "PropertyName";
+
             internal const string ScriptBlockNode = "ScriptBlock";
+
             internal const string FormatStringNode = "FormatString";
+
             internal const string LabelNode = "Label";
 
             internal const string EntrySelectedByNode = "EntrySelectedBy";
+
             internal const string ItemSelectionConditionNode = "ItemSelectionCondition";
 
             // attribute tags for resource strings
             internal const string AssemblyNameAttribute = "AssemblyName";
+
             internal const string BaseNameAttribute = "BaseName";
+
             internal const string ResourceIdAttribute = "ResourceId";
         }
 
@@ -156,10 +211,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private static class XMLStringValues
         {
             internal const string True = "TRUE";
+
             internal const string False = "FALSE";
 
             internal const string AlignmentLeft = "left";
+
             internal const string AlignmentCenter = "center";
+
             internal const string AlignmentRight = "right";
         }
 
@@ -2036,7 +2094,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             private TypeInfoDataBaseLoader _loader;
+
             private ExpressionToken _token;
+
             private bool _fatalError = false;
         }
 
@@ -2172,7 +2232,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal ExpressionToken Expression { get { return _expression; } }
 
             private string _formatString;
+
             private TextToken _textToken;
+
             private ExpressionToken _expression;
 
             private TypeInfoDataBaseLoader _loader;
@@ -2228,6 +2290,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             private ControlBase _control;
+
             private TypeInfoDataBaseLoader _loader;
         }
 

@@ -13,14 +13,23 @@ namespace System.Management.Automation
     internal static class Win32Errors
     {
         internal const DWORD NO_ERROR = 0;
+
         internal const DWORD E_FAIL = 0x80004005;
+
         internal const DWORD TRUST_E_NOSIGNATURE = 0x800b0100;
+
         internal const DWORD TRUST_E_BAD_DIGEST = 0x80096010;
+
         internal const DWORD TRUST_E_PROVIDER_UNKNOWN = 0x800b0001;
+
         internal const DWORD TRUST_E_SUBJECT_FORM_UNKNOWN = 0x800B0003;
+
         internal const DWORD CERT_E_UNTRUSTEDROOT = 0x800b0109;
+
         internal const DWORD TRUST_E_EXPLICIT_DISTRUST = 0x800B0111;
+
         internal const DWORD CRYPT_E_BAD_MSG = 0x8009200d;
+
         internal const DWORD NTE_BAD_ALGID = 0x80090008;
     }
 
@@ -102,10 +111,15 @@ namespace System.Management.Automation
     public sealed class Signature
     {
         private string _path;
+
         private SignatureStatus _status = SignatureStatus.UnknownError;
+
         private DWORD _win32Error;
+
         private X509Certificate2 _signerCert;
+
         private string _statusMessage = string.Empty;
+
         private X509Certificate2 _timeStamperCert;
         // private DateTime signedOn = new DateTime(0);
 

@@ -16,6 +16,7 @@ namespace Microsoft.PowerShell.Commands
     internal class FormatXmlWriter
     {
         private XmlWriter _writer;
+
         private bool _exportScriptBlock;
 
         private FormatXmlWriter() { }

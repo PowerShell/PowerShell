@@ -179,8 +179,11 @@ namespace System.Management.Automation
         #region Private Data
 
         private IScriptExtent _scriptPosition;
+
         private string _invocationName;
+
         private Dictionary<string, object> _boundParameters;
+
         private List<object> _unboundArguments;
 
         #endregion Internal or Private

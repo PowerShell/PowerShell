@@ -20,8 +20,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     internal static class TextAlignment
     {
         internal const int Undefined = 0;
+
         internal const int Left = 1;
+
         internal const int Center = 2;
+
         internal const int Right = 3;
     }
 
@@ -496,6 +499,7 @@ namespace System.Management.Automation
     public sealed class TableRowDefinitionBuilder
     {
         internal readonly TableControlBuilder _tcb;
+
         internal readonly TableControlRow _tcr;
 
         internal TableRowDefinitionBuilder(TableControlBuilder tcb, TableControlRow tcr)

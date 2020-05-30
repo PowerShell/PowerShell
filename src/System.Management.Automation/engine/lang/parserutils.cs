@@ -277,11 +277,15 @@ namespace System.Management.Automation
         }
 
         private const int _MinCache = -100;
+
         private const int _MaxCache = 1000;
 
         private static readonly object[] s_integerCache = new object[_MaxCache - _MinCache];
+
         private static readonly string[] s_chars = new string[255];
+
         internal static readonly object _TrueObject = (object)true;
+
         internal static readonly object _FalseObject = (object)false;
 
         internal static string CharToString(char ch)
@@ -424,6 +428,7 @@ namespace System.Management.Automation
         private enum SplitImplOptions
         {
             None = 0x00,
+
             TrimContent = 0x01,
         }
 

@@ -31,13 +31,16 @@ namespace System.Management.Automation.Interpreter
         public static readonly ThreadLocal<InterpretedFrame> CurrentFrame = new ThreadLocal<InterpretedFrame>();
 
         internal readonly Interpreter Interpreter;
+
         internal InterpretedFrame _parent;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
         private int[] _continuations;
 
         private int _continuationIndex;
+
         private int _pendingContinuation;
+
         private object _pendingValue;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
@@ -47,6 +50,7 @@ namespace System.Management.Automation.Interpreter
         public readonly StrongBox<object>[] Closure;
 
         public int StackIndex;
+
         public int InstructionIndex;
 
         internal InterpretedFrame(Interpreter interpreter, StrongBox<object>[] closure)
@@ -291,6 +295,7 @@ namespace System.Management.Automation.Interpreter
         }
 
         private static MethodInfo s_goto;
+
         private static MethodInfo s_voidGoto;
 
         internal static MethodInfo GotoMethod

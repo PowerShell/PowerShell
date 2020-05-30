@@ -119,12 +119,19 @@ namespace Microsoft.PowerShell.Commands
             public struct SystemTime
             {
                 public UInt16 Year;
+
                 public UInt16 Month;
+
                 public UInt16 DayOfWeek;
+
                 public UInt16 Day;
+
                 public UInt16 Hour;
+
                 public UInt16 Minute;
+
                 public UInt16 Second;
+
                 public UInt16 Milliseconds;
             }
 

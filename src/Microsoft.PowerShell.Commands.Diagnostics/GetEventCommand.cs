@@ -372,37 +372,60 @@ namespace Microsoft.PowerShell.Commands
         // Query builder constant strings
         //
         private const string queryListOpen = "<QueryList>";
+
         private const string queryListClose = "</QueryList>";
+
         private const string queryTemplate = "<Query Id=\"{0}\" Path=\"{1}\"><Select Path=\"{1}\">{2}</Select></Query>";
+
         private const string queryOpenerTemplate = "<Query Id=\"{0}\" Path=\"{1}\"><Select Path=\"{1}\">*";
+
         private const string queryCloser = "</Query>";
+
         private const string SelectCloser = "</Select>";
+
         private const string suppressOpener = "<Suppress>*";
+
         private const string suppressCloser = "</Suppress>";
+
         private const string propOpen = "[";
+
         private const string propClose = "]";
+
         private const string filePrefix = "file://";
+
         private const string NamedDataTemplate = "((EventData[Data[@Name='{0}']='{1}']) or (UserData/*/{0}='{1}'))";
+
         private const string DataTemplate = "(EventData/Data='{0}')";
+
         private const string SystemTimePeriodTemplate = "(System/TimeCreated[@SystemTime&gt;='{0}' and @SystemTime&lt;='{1}'])";
+
         private const string SystemTimeStartTemplate = "(System/TimeCreated[@SystemTime&gt;='{0}'])";
+
         private const string SystemTimeEndTemplate = "(System/TimeCreated[@SystemTime&lt;='{0}'])";
+
         private const string SystemLevelTemplate = "(System/Level=";
+
         private const string SystemEventIDTemplate = "(System/EventID=";
+
         private const string SystemSecurityTemplate = "(System/Security[@UserID='{0}'])";
+
         private const string SystemKeywordsTemplate = "System[band(Keywords,{0})]";
 
         //
         // Other private members and constants
         //
         private ResourceManager _resourceMgr = null;
+
         private Dictionary<string, StringCollection> _providersByLogMap = new Dictionary<string, StringCollection>();
 
         private StringCollection _logNamesMatchingWildcard = null;
+
         private StringCollection _resolvedPaths = new StringCollection();
 
         private List<string> _accumulatedLogNames = new List<string>();
+
         private List<string> _accumulatedProviderNames = new List<string>();
+
         private List<string> _accumulatedFileNames = new List<string>();
 
         private const uint MAX_EVENT_BATCH = 100;
@@ -411,15 +434,25 @@ namespace Microsoft.PowerShell.Commands
         // Hashtable query key names
         //
         private const string hashkey_logname_lc = "logname";
+
         private const string hashkey_providername_lc = "providername";
+
         private const string hashkey_path_lc = "path";
+
         private const string hashkey_keywords_lc = "keywords";
+
         private const string hashkey_id_lc = "id";
+
         private const string hashkey_level_lc = "level";
+
         private const string hashkey_starttime_lc = "starttime";
+
         private const string hashkey_endtime_lc = "endtime";
+
         private const string hashkey_userid_lc = "userid";
+
         private const string hashkey_data_lc = "data";
+
         private const string hashkey_supress_lc = "suppresshashfilter";
 
         /// <summary>

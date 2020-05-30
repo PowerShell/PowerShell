@@ -23,7 +23,9 @@ namespace Microsoft.Management.UI.Internal
         #region ValidationRules
 
         private List<DataErrorInfoValidationRule> validationRules = new List<DataErrorInfoValidationRule>();
+
         private ReadOnlyCollection<DataErrorInfoValidationRule> readonlyValidationRules;
+
         private bool isValidationRulesCollectionDirty = true;
 
         [field: NonSerialized]

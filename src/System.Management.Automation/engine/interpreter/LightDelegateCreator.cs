@@ -31,11 +31,14 @@ namespace System.Management.Automation.Interpreter
     {
         // null if we are forced to compile
         private readonly Interpreter _interpreter;
+
         private readonly Expression _lambda;
 
         // Adaptive compilation support:
         private Type _compiledDelegateType;
+
         private Delegate _compiled;
+
         private readonly object _compileLock = new object();
 
         internal LightDelegateCreator(Interpreter interpreter, LambdaExpression lambda)

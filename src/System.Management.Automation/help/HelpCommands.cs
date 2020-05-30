@@ -32,8 +32,11 @@ namespace Microsoft.PowerShell.Commands
         internal enum HelpView
         {
             Default = 0x00, // Default View
+
             DetailedView = 0x01,
+
             FullView = 0x02,
+
             ExamplesView = 0x03
         }
 
@@ -204,6 +207,7 @@ namespace Microsoft.PowerShell.Commands
 
 #if !UNIX
         private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
+
         private bool showWindow;
 
         /// <summary>

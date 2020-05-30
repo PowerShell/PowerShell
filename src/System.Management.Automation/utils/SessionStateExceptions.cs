@@ -537,6 +537,7 @@ namespace System.Management.Automation
 
         #region Private
         private string _errorId = "SessionStateException";
+
         private ErrorCategory _errorCategory = ErrorCategory.InvalidArgument;
 
         private static string BuildMessage(

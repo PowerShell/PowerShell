@@ -498,8 +498,11 @@ namespace System.Management.Automation
         #region CIM
 
         private const string DiscoveryProviderNamespace = "root/Microsoft/Windows/Powershellv3";
+
         private const string DiscoveryProviderModuleClass = "PS_Module";
+
         private const string DiscoveryProviderFileClass = "PS_ModuleFile";
+
         private const string DiscoveryProviderAssociationClass = "PS_ModuleToModuleFile";
 
         private static T GetPropertyValue<T>(CimInstance cimInstance, string propertyName, T defaultValue)
@@ -553,9 +556,13 @@ namespace System.Management.Automation
         internal enum CimFileCode
         {
             Unknown = 0,
+
             PsdV1,
+
             TypesV1,
+
             FormatV1,
+
             CmdletizationV1,
         }
 
@@ -644,6 +651,7 @@ namespace System.Management.Automation
             private enum DiscoveredModuleType : ushort
             {
                 Unknown = 0,
+
                 Cim = 1,
             }
 

@@ -487,7 +487,9 @@ namespace System.Management.Automation
         #region private
 
         private string _resourceString;
+
         private object[] _args = Array.Empty<object>();
+
         private string _commandName;
 
         private string BuildMessage()

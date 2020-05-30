@@ -72,8 +72,11 @@ namespace System.Management.Automation
         #region Support for progress reporting
 
         private readonly DateTime _progressStartTime = DateTime.UtcNow;
+
         private readonly int _progressActivityId;
+
         private readonly object _progressLock = new object();
+
         private DateTime _progressReportLastTime = DateTime.MinValue;
 
         internal int GetProgressActivityId()
@@ -200,6 +203,7 @@ namespace System.Management.Automation
         }
 
         private bool _ownerWontSubmitNewChildJobs = false;
+
         private readonly HashSet<Guid> _setOfChildJobsThatCanAddMoreChildJobs = new HashSet<Guid>();
 
         private bool IsEndOfChildJobs
@@ -231,7 +235,9 @@ namespace System.Management.Automation
         private int _countOfBlockedChildJobs;
 
         private int _countOfFailedChildJobs;
+
         private int _countOfStoppedChildJobs;
+
         private int _countOfSuccessfullyCompletedChildJobs;
 
         private int CountOfFinishedChildJobs
@@ -451,6 +457,7 @@ namespace System.Management.Automation
         }
 
         private readonly object _alreadyWroteFlowControlBuffersHighMemoryUsageWarningLock = new object();
+
         private bool _alreadyWroteFlowControlBuffersHighMemoryUsageWarning;
 
         private const long FlowControlBuffersHighMemoryUsageThreshold = 30000;
@@ -487,14 +494,23 @@ namespace System.Management.Automation
         internal event EventHandler<ThrottlingJobChildAddedEventArgs> ChildJobAdded;
 
         private int _maximumConcurrentChildJobs;
+
         private int _extraCapacityForRunningQueryJobs;
+
         private int _extraCapacityForRunningAllJobs;
+
         private bool _inBoostModeToPreventQueryJobDeadlock;
+
         private Queue<StartableJob> _readyToRunQueryJobs;
+
         private Queue<StartableJob> _readyToRunRegularJobs;
+
         private Queue<Action> _actionsForUnblockingChildAdditions;
+
         private int _maxReadyToRunJobs;
+
         private readonly SemaphoreSlim _jobResultsThrottlingSemaphore;
+
         private long _jobResultsCurrentCount;
 
         private static readonly int s_maximumReadyToRunJobs = 10000;
@@ -684,6 +700,7 @@ namespace System.Management.Automation
         }
 
         private bool _isStopping;
+
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
 
         private void childJob_StateChanged(object sender, JobStateEventArgs e)
@@ -870,10 +887,13 @@ namespace System.Management.Automation
             private readonly ThrottlingJob _throttlingJob;
 
             private readonly object _myLock;
+
             private readonly BlockingCollection<PSStreamObject> _aggregatedResults;
+
             private readonly HashSet<Job> _monitoredJobs;
 
             private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
             private bool _disposed;
 
             private ForwardingHelper(ThrottlingJob throttlingJob)

@@ -22,7 +22,9 @@ namespace System.Management.Automation.Interpreter
     internal struct RuntimeLabel
     {
         public readonly int Index;
+
         public readonly int StackDepth;
+
         public readonly int ContinuationStackDepth;
 
         public RuntimeLabel(int index, int continuationStackDepth, int stackDepth)
@@ -41,11 +43,15 @@ namespace System.Management.Automation.Interpreter
     internal sealed class BranchLabel
     {
         internal const int UnknownIndex = Int32.MinValue;
+
         internal const int UnknownDepth = Int32.MinValue;
 
         internal int _labelIndex = UnknownIndex;
+
         internal int _targetIndex = UnknownIndex;
+
         internal int _stackDepth = UnknownDepth;
+
         internal int _continuationStackDepth = UnknownDepth;
 
         // Offsets of forward branching instructions targeting this label

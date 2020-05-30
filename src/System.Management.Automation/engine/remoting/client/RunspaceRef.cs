@@ -23,8 +23,11 @@ namespace System.Management.Automation.Remoting
         /// Runspace ref.
         /// </summary>
         private ObjectRef<Runspace> _runspaceRef;
+
         private bool _stopInvoke;
+
         private object _localSyncObject;
+
         private static RobustConnectionProgress s_RCProgress = new RobustConnectionProgress();
 
         /// <summary>

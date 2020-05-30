@@ -1640,9 +1640,13 @@ namespace System.Management.Automation
 
         #region Exposed by ErrorCategoryInfo
         internal ErrorCategory _category;
+
         internal string _activityOverride;
+
         internal string _reasonOverride;
+
         internal string _targetNameOverride;
+
         internal string _targetTypeOverride;
         #endregion Exposed by ErrorCategoryInfo
 

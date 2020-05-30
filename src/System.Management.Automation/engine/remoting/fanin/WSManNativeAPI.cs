@@ -13,15 +13,25 @@ namespace System.Management.Automation.Remoting.Client
     internal static class WSManNativeApi
     {
         internal const uint INFINITE = 0xFFFFFFFF;
+
         internal const string PS_CREATION_XML_TAG = "creationXml";
+
         internal const string PS_CONNECT_XML_TAG = "connectXml";
+
         internal const string PS_CONNECTRESPONSE_XML_TAG = "connectResponseXml";
+
         internal const string PS_XML_NAMESPACE = "http://schemas.microsoft.com/powershell";
+
         internal const string WSMAN_STREAM_ID_STDOUT = "stdout";
+
         internal const string WSMAN_STREAM_ID_PROMPTRESPONSE = "pr";
+
         internal const string WSMAN_STREAM_ID_STDIN = "stdin";
+
         internal const string ResourceURIPrefix = @"http://schemas.microsoft.com/powershell/";
+
         internal const string NoProfile = "WINRS_NOPROFILE";
+
         internal const string CodePage = "WINRS_CODEPAGE";
 
         internal static readonly Version WSMAN_STACK_VERSION = new Version(3, 0);
@@ -309,6 +319,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             private WSManUserNameCredentialStruct _cred;
+
             private MarshalledObject _data;
 
             /// <summary>
@@ -608,9 +619,13 @@ namespace System.Management.Automation.Remoting.Client
         internal enum WSManDataType : uint
         {
             WSMAN_DATA_NONE = 0,
+
             WSMAN_DATA_TYPE_TEXT = 1,
+
             WSMAN_DATA_TYPE_BINARY = 2,
+
             WSMAN_DATA_TYPE_WS_XML_READER = 3,
+
             WSMAN_DATA_TYPE_DWORD = 4
         };
 
@@ -618,6 +633,7 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManDataStruct
         {
             internal uint type;
+
             internal WSManBinaryOrTextDataStruct binaryOrTextData;
         }
 
@@ -886,6 +902,7 @@ namespace System.Management.Automation.Remoting.Client
         internal struct WSManDataDWord
         {
             private WSManDataType _type;
+
             private WSManDWordDataInternal _dwordData;
 
             /// <summary>
@@ -918,6 +935,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManDWordDataInternal
             {
                 internal int number;
+
                 internal IntPtr reserved;
             }
         }
@@ -944,6 +962,7 @@ namespace System.Management.Automation.Remoting.Client
         internal struct WSManStreamIDSet_ManToUn
         {
             private WSManStreamIDSetStruct _streamSetInfo;
+
             private MarshalledObject _data;
 
             /// <summary>
@@ -1008,6 +1027,7 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManStreamIDSet_UnToMan
         {
             internal string[] streamIDs;
+
             internal int streamIDsCount;
 
             /// <summary>
@@ -1104,6 +1124,7 @@ namespace System.Management.Automation.Remoting.Client
             #region Managed to Unmanaged
 
             private WSManOptionSetStruct _optionSet;
+
             private MarshalledObject _data;
 
             /// <summary>
@@ -1164,7 +1185,9 @@ namespace System.Management.Automation.Remoting.Client
             #region Unmanaged to Managed
 
             internal int optionsCount;
+
             internal WSManOption[] options;
+
             internal bool optionsMustUnderstand;
 
             /// <summary>
@@ -1289,6 +1312,7 @@ namespace System.Management.Automation.Remoting.Client
             #region Unmanaged to Managed
 
             internal string[] args;
+
             internal int argsCount;
 
             /// <summary>
@@ -1340,6 +1364,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             private WSManShellDisconnectInfoInternal _internalInfo;
+
             internal MarshalledObject data;
 
             #region Constructor / Other methods
@@ -1413,6 +1438,7 @@ namespace System.Management.Automation.Remoting.Client
         internal struct WSManShellStartupInfo_ManToUn : IDisposable
         {
             private WSManShellStartupInfoStruct _internalInfo;
+
             internal MarshalledObject data;
 
             #region Constructor / Other methods
@@ -1471,10 +1497,15 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManShellStartupInfo_UnToMan
         {
             internal WSManStreamIDSet_UnToMan inputStreamSet;
+
             internal WSManStreamIDSet_UnToMan outputStreamSet;
+
             internal uint idleTimeoutMS;
+
             internal string workingDirectory;
+
             internal WSManEnvironmentVariableSet environmentVariableSet;
+
             internal string name;
 
             /// <summary>
@@ -1511,6 +1542,7 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManEnvironmentVariableSet
         {
             internal uint varsCount;
+
             internal WSManEnvironmentVariableInternal[] vars;
 
             /// <summary>
@@ -1552,6 +1584,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManEnvironmentVariableSetInternal
             {
                 internal uint varsCount;
+
                 internal IntPtr vars; // Array of WSManEnvironmentVariableInternal structs
             }
 
@@ -1575,6 +1608,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManProxyInfoInternal
             {
                 public int proxyAccessType;
+
                 public WSManUserNameAuthenticationCredentials.WSManUserNameCredentialStruct proxyAuthCredentialsStruct;
             }
 
@@ -1766,10 +1800,12 @@ namespace System.Management.Automation.Remoting.Client
             internal struct WSManShellAsyncInternal
             {
                 internal IntPtr operationContext;
+
                 internal IntPtr asyncCallback;
             }
 
             private MarshalledObject _data;
+
             private WSManShellAsyncInternal _internalData;
 
             internal WSManShellAsync(IntPtr context, WSManShellAsyncCallback callback)
@@ -1863,6 +1899,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManDataStruct
             {
                 internal uint type;
+
                 internal WSManTextDataInternal textData;
             }
 
@@ -1870,6 +1907,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManTextDataInternal
             {
                 internal int textLength;
+
                 internal IntPtr text;
             }
         }
@@ -1906,6 +1944,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManDataStruct
             {
                 internal uint type;
+
                 internal WSManTextDataInternal textData;
             }
 
@@ -1913,6 +1952,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManTextDataInternal
             {
                 internal int textLength;
+
                 internal IntPtr text;
             }
         }
@@ -1989,6 +2029,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManDataStruct
             {
                 internal uint type;
+
                 internal WSManBinaryDataInternal binaryData;
             }
 
@@ -1996,6 +2037,7 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManBinaryDataInternal
             {
                 internal int bufferLength;
+
                 internal IntPtr buffer;
             }
         }
@@ -2013,7 +2055,9 @@ namespace System.Management.Automation.Remoting.Client
             /// Unmarshaled WSMAN_SENDER_DETAILS struct.
             /// </summary>
             internal WSManSenderDetails senderDetails;
+
             internal string locale;
+
             internal string resourceUri;
             /// <summary>
             /// Unmarshaled WSMAN_OPERATION_INFO struct.
@@ -2094,7 +2138,9 @@ namespace System.Management.Automation.Remoting.Client
                 /// WSManOperationInfo.
                 /// </summary>
                 internal IntPtr operationInfo;
+
                 internal bool shutdownNotification;
+
                 internal IntPtr shutdownNotificationHandle;
             }
         }
@@ -2102,9 +2148,13 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManSenderDetails
         {
             internal string senderName;
+
             internal string authenticationMechanism;
+
             internal WSManCertificateDetails certificateDetails;
+
             internal IntPtr clientToken; // TODO: How should this be marshaled?????
+
             internal string httpUrl;
 
             /// <summary>
@@ -2146,6 +2196,7 @@ namespace System.Management.Automation.Remoting.Client
                 /// WSManCertificateDetails.
                 /// </summary>
                 internal IntPtr certificateDetails;
+
                 internal IntPtr clientToken;
 
                 [MarshalAs(UnmanagedType.LPWStr)]
@@ -2156,8 +2207,11 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManCertificateDetails
         {
             internal string subject;
+
             internal string issuerName;
+
             internal string issuerThumbprint;
+
             internal string subjectName;
 
             /// <summary>
@@ -2205,8 +2259,11 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManOperationInfo
         {
             internal WSManFragmentInternal fragment;
+
             internal WSManFilterInternal filter;
+
             internal WSManSelectorSet selectorSet;
+
             internal WSManOptionSet optionSet;
 
             /// <summary>
@@ -2240,8 +2297,11 @@ namespace System.Management.Automation.Remoting.Client
             private struct WSManOperationInfoInternal
             {
                 internal WSManFragmentInternal fragment;
+
                 internal WSManFilterInternal filter;
+
                 internal WSManSelectorSet.WSManSelectorSetStruct selectorSet;
+
                 internal WSManOptionSetStruct optionSet;
             }
 
@@ -2275,6 +2335,7 @@ namespace System.Management.Automation.Remoting.Client
         internal class WSManSelectorSet
         {
             internal int numberKeys;
+
             internal WSManKeyStruct[] keys;
 
             /// <summary>
@@ -2338,6 +2399,7 @@ namespace System.Management.Automation.Remoting.Client
 
 #if !UNIX
         internal const string WSManClientApiDll = @"WsmSvc.dll";
+
         internal const string WSManProviderApiDll = @"WsmSvc.dll";
 #else
         internal const string WSManClientApiDll = @"libpsrpclient";
@@ -2957,8 +3019,11 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         internal const string WSMAN_SHELL_NAMESPACE = "http://schemas.microsoft.com/wbem/wsman/1/windows/shell";
+
         internal const string WSMAN_COMMAND_STATE_DONE = WSMAN_SHELL_NAMESPACE + "/CommandState/Done";
+
         internal const string WSMAN_COMMAND_STATE_PENDING = WSMAN_SHELL_NAMESPACE + "/CommandState/Pending";
+
         internal const string WSMAN_COMMAND_STATE_RUNNING = WSMAN_SHELL_NAMESPACE + "/CommandState/Running";
 
         /// <summary>

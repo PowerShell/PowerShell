@@ -75,6 +75,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter noEncryption;
+
         private bool noEncryptionSet = false;
 
         /// <summary>
@@ -96,6 +97,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter skipCACheck;
+
         private bool skipCACheckSet = false;
 
         /// <summary>
@@ -117,6 +119,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter skipCNCheck;
+
         private bool skipCNCheckSet = false;
 
         /// <summary>
@@ -138,6 +141,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter skipRevocationCheck;
+
         private bool skipRevocationCheckSet = false;
 
         /// <summary>
@@ -159,6 +163,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter encodeportinserviceprincipalname;
+
         private bool encodeportinserviceprincipalnameSet = false;
 
         /// <summary>
@@ -182,6 +187,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private PacketEncoding encoding;
+
         private bool encodingSet = false;
 
         /// <summary>
@@ -223,6 +229,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private UInt32 maxenvelopesizekb;
+
         private bool maxenvelopesizekbSet = false;
 
         /// <summary>
@@ -244,6 +251,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private PasswordAuthenticationMechanism proxyAuthentication;
+
         private bool proxyauthenticationSet = false;
 
         /// <summary>
@@ -303,6 +311,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private ProxyType proxytype;
+
         private bool proxytypeSet = false;
 
         /// <summary>
@@ -324,6 +333,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter usessl;
+
         private bool usesslSet = false;
 
         /// <summary>
@@ -345,6 +355,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private ImpersonationType impersonation;
+
         private bool impersonationSet = false;
 
         /// <summary>
@@ -366,6 +377,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter packetintegrity;
+
         private bool packetintegritySet = false;
 
         /// <summary>
@@ -387,6 +399,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         private SwitchParameter packetprivacy;
+
         private bool packetprivacySet = false;
 
         /// <summary>
@@ -691,21 +704,37 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region const string of parameter names
         internal const string nameNoEncryption = "NoEncryption";
+
         internal const string nameSkipCACheck = "SkipCACheck";
+
         internal const string nameSkipCNCheck = "SkipCNCheck";
+
         internal const string nameSkipRevocationCheck = "SkipRevocationCheck";
+
         internal const string nameEncodePortInServicePrincipalName = "EncodePortInServicePrincipalName";
+
         internal const string nameEncoding = "Encoding";
+
         internal const string nameHttpPrefix = "HttpPrefix";
+
         internal const string nameMaxEnvelopeSizeKB = "MaxEnvelopeSizeKB";
+
         internal const string nameProxyAuthentication = "ProxyAuthentication";
+
         internal const string nameProxyCertificateThumbprint = "ProxyCertificateThumbprint";
+
         internal const string nameProxyCredential = "ProxyCredential";
+
         internal const string nameProxyType = "ProxyType";
+
         internal const string nameUseSsl = "UseSsl";
+
         internal const string nameImpersonation = "Impersonation";
+
         internal const string namePacketIntegrity = "PacketIntegrity";
+
         internal const string namePacketPrivacy = "PacketPrivacy";
+
         internal const string nameProtocol = "Protocol";
         #endregion
 

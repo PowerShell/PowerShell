@@ -181,6 +181,7 @@ namespace Microsoft.PowerShell
     internal class CommandLineParameterParser
     {
         private const int MaxPipePathLengthLinux = 108;
+
         private const int MaxPipePathLengthMacOS = 104;
 
         internal static readonly string[] validParameters = {
@@ -1414,35 +1415,65 @@ namespace Microsoft.PowerShell
         }
 
         private bool _socketServerMode;
+
         private bool _serverMode;
+
         private bool _namedPipeServerMode;
+
         private bool _sshServerMode;
+
         private bool _showVersion;
+
         private string _configurationName;
+
         private PSHostUserInterface _hostUI;
+
         private bool _showHelp;
+
         private bool _showExtendedHelp;
+
         private bool _showBanner = true;
+
         private bool _noInteractive;
+
         private string _bannerText;
+
         private string _helpText;
+
         private bool _abortStartup;
+
         private bool _skipUserInit;
+
         private string _customPipeName;
+
         private bool? _staMode = null;
+
         private bool _noExit = true;
+
         private bool _explicitReadCommandsFromStdin;
+
         private bool _noPrompt;
+
         private string _commandLineCommand;
+
         private bool _wasCommandEncoded;
+
         private uint _exitCode = ConsoleHost.ExitCodeSuccess;
+
         private bool _dirty;
+
         private Serialization.DataFormat _outFormat = Serialization.DataFormat.Text;
+
         private bool _outputFormatSpecified = false;
+
         private Serialization.DataFormat _inFormat = Serialization.DataFormat.Text;
+
         private Collection<CommandParameter> _collectedArgs = new Collection<CommandParameter>();
+
         private string _file;
+
         private string _executionPolicy;
+
         private string _workingDirectory;
 
 #if !UNIX

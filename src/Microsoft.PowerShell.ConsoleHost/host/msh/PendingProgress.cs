@@ -405,6 +405,7 @@ namespace Microsoft.PowerShell
             IndexWhereFound = -1;
 
             private int _idToFind = -1;
+
             private Int64 _sourceIdToFind;
         }
 
@@ -687,7 +688,9 @@ namespace Microsoft.PowerShell
             }
 
             private PSHostRawUserInterface _rawUi;
+
             private int _maxHeight;
+
             private int _maxWidth;
 
             internal int Tally;
@@ -1018,6 +1021,7 @@ namespace Microsoft.PowerShell
         #endregion
 
         private ArrayList _topLevelNodes = new ArrayList();
+
         private int _nodeCount;
 
         private const int maxNodeCount = 128;

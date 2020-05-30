@@ -25,7 +25,9 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region Special method and parameter names
 
         internal const string CreateInstance_MethodName = "cim:CreateInstance";
+
         internal const string ModifyInstance_MethodName = "cim:ModifyInstance";
+
         internal const string DeleteInstance_MethodName = "cim:DeleteInstance";
 
         #endregion

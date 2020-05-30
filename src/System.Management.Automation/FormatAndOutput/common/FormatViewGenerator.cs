@@ -338,7 +338,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected class DataBaseInfo
         {
             internal TypeInfoDataBase db = null;
+
             internal ViewDefinition view = null;
+
             internal AppliesTo applicableTypes = null;
         }
 
@@ -351,6 +353,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         protected DataBaseInfo dataBaseInfo = new DataBaseInfo();
 
         protected List<MshResolvedExpressionParameterAssociation> activeAssociationList = null;
+
         protected FormattingCommandLineParameters inputParameters = null;
 
         protected string GetExpressionDisplayValue(PSObject so, int enumerationLimit, PSPropertyExpression ex,

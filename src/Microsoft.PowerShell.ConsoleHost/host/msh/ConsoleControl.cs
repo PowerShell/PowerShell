@@ -56,9 +56,13 @@ namespace Microsoft.PowerShell
             // not make sense to have more than one of the INPUT_RECORD union members "in effect" at any one time.
 
             KEY_EVENT = 0x0001,
+
             MOUSE_EVENT = 0x0002,
+
             WINDOW_BUFFER_SIZE_EVENT = 0x0004,
+
             MENU_EVENT = 0x0008,
+
             FOCUS_EVENT = 0x0010
         }
 
@@ -66,6 +70,7 @@ namespace Microsoft.PowerShell
         internal struct INPUT_RECORD
         {
             internal WORD EventType;
+
             internal KEY_EVENT_RECORD KeyEvent;
         }
 
@@ -74,13 +79,21 @@ namespace Microsoft.PowerShell
         {
             // From wincon.h.
             RIGHT_ALT_PRESSED = 0x0001, // the right alt key is pressed.
+
             LEFT_ALT_PRESSED = 0x0002, // the left alt key is pressed.
+
             RIGHT_CTRL_PRESSED = 0x0004, // the right ctrl key is pressed.
+
             LEFT_CTRL_PRESSED = 0x0008, // the left ctrl key is pressed.
+
             SHIFT_PRESSED = 0x0010, // the shift key is pressed.
+
             NUMLOCK_ON = 0x0020, // the numlock light is on.
+
             SCROLLLOCK_ON = 0x0040, // the scrolllock light is on.
+
             CAPSLOCK_ON = 0x0080, // the capslock light is on.
+
             ENHANCED_KEY = 0x0100  // the key is enhanced.
         }
 
@@ -131,10 +144,15 @@ namespace Microsoft.PowerShell
         internal struct CONSOLE_FONT_INFO_EX
         {
             internal int cbSize;
+
             internal int nFont;
+
             internal short FontWidth;
+
             internal short FontHeight;
+
             internal int FontFamily;
+
             internal int FontWeight;
 
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
@@ -204,11 +222,15 @@ namespace Microsoft.PowerShell
 
             // fsUsb*: A 128-bit Unicode subset bitfield (USB) identifying up to 126 Unicode subranges
             internal DWORD fsUsb0;
+
             internal DWORD fsUsb1;
+
             internal DWORD fsUsb2;
+
             internal DWORD fsUsb3;
             // fsCsb*: A 64-bit, code-page bitfield (CPB) that identifies a specific character set or code page.
             internal DWORD fsCsb0;
+
             internal DWORD fsCsb1;
         }
 
@@ -217,7 +239,9 @@ namespace Microsoft.PowerShell
         {
             // From public\sdk\inc\wingdi.h
             internal uint ciCharset;   // Character set value.
+
             internal uint ciACP;       // ANSI code-page identifier.
+
             internal FONTSIGNATURE fs;
         }
 
@@ -226,24 +250,43 @@ namespace Microsoft.PowerShell
         {
             // From public\sdk\inc\wingdi.h
             public int tmHeight;
+
             public int tmAscent;
+
             public int tmDescent;
+
             public int tmInternalLeading;
+
             public int tmExternalLeading;
+
             public int tmAveCharWidth;
+
             public int tmMaxCharWidth;
+
             public int tmWeight;
+
             public int tmOverhang;
+
             public int tmDigitizedAspectX;
+
             public int tmDigitizedAspectY;
+
             public char tmFirstChar;
+
             public char tmLastChar;
+
             public char tmDefaultChar;
+
             public char tmBreakChar;
+
             public byte tmItalic;
+
             public byte tmUnderlined;
+
             public byte tmStruckOut;
+
             public byte tmPitchAndFamily;
+
             public byte tmCharSet;
         }
 
@@ -253,6 +296,7 @@ namespace Microsoft.PowerShell
         internal struct INPUT
         {
             internal DWORD Type;
+
             internal MouseKeyboardHardwareInput Data;
         }
 
@@ -427,19 +471,33 @@ namespace Microsoft.PowerShell
         internal static extern IntPtr GetConsoleWindow();
 
         internal const int SW_HIDE = 0;
+
         internal const int SW_SHOWNORMAL = 1;
+
         internal const int SW_NORMAL = 1;
+
         internal const int SW_SHOWMINIMIZED = 2;
+
         internal const int SW_SHOWMAXIMIZED = 3;
+
         internal const int SW_MAXIMIZE = 3;
+
         internal const int SW_SHOWNOACTIVATE = 4;
+
         internal const int SW_SHOW = 5;
+
         internal const int SW_MINIMIZE = 6;
+
         internal const int SW_SHOWMINNOACTIVE = 7;
+
         internal const int SW_SHOWNA = 8;
+
         internal const int SW_RESTORE = 9;
+
         internal const int SW_SHOWDEFAULT = 10;
+
         internal const int SW_FORCEMINIMIZE = 11;
+
         internal const int SW_MAX = 11;
 
 #if !UNIX
@@ -487,8 +545,11 @@ namespace Microsoft.PowerShell
             // These correspond to the CRTL_XXX_EVENT #defines in public/sdk/inc/wincon.h
 
             CtrlC = 0,
+
             CtrlBreak = 1,
+
             Close = 2,
+
             Logoff = 5,
 
             // This only gets received by services
@@ -635,17 +696,27 @@ namespace Microsoft.PowerShell
             // These values from wincon.h
             // input modes
             ProcessedInput = 0x001,
+
             LineInput = 0x002,
+
             EchoInput = 0x004,
+
             WindowInput = 0x008,
+
             MouseInput = 0x010,
+
             Insert = 0x020,
+
             QuickEdit = 0x040,
+
             Extended = 0x080,
+
             AutoPosition = 0x100,
             // output modes
             ProcessedOutput = 0x001,  // yes, I know they are the same values as some flags defined above.
+
             WrapEndOfLine = 0x002,
+
             VirtualTerminal = 0x004,
             // Error getting console mode
             Unknown = 0xffffffff,
@@ -1219,7 +1290,9 @@ namespace Microsoft.PowerShell
         private struct BufferCellArrayRowTypeRange
         {
             internal int Start;
+
             internal int End;
+
             internal BufferCellArrayRowType Type;
         }
 
@@ -1227,6 +1300,7 @@ namespace Microsoft.PowerShell
         private enum BufferCellArrayRowType : uint
         {
             LeftTrailing = 0x1,
+
             RightLeading = 0x2
         }
 
@@ -3008,6 +3082,7 @@ namespace Microsoft.PowerShell
             internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);  // WinBase.h
 
             internal const int FontTypeMask = 0x06;
+
             internal const int TrueTypeFont = 0x04;
 
             #region CreateFile
@@ -3017,6 +3092,7 @@ namespace Microsoft.PowerShell
             {
                 // From winnt.h
                 GenericRead = 0x80000000,
+
                 GenericWrite = 0x40000000
             }
 
@@ -3025,6 +3101,7 @@ namespace Microsoft.PowerShell
             {
                 // From winnt.h
                 ShareRead = 0x00000001,
+
                 ShareWrite = 0x00000002
             }
 
@@ -3032,9 +3109,13 @@ namespace Microsoft.PowerShell
             {
                 // From winbase.h
                 CreateNew = 1,
+
                 CreateAlways = 2,
+
                 OpenExisting = 3,
+
                 OpenAlways = 4,
+
                 TruncateExisting = 5
             }
 
@@ -3264,6 +3345,7 @@ namespace Microsoft.PowerShell
             internal enum CHAR_INFO_Attributes : uint
             {
                 COMMON_LVB_LEADING_BYTE = 0x0100,
+
                 COMMON_LVB_TRAILING_BYTE = 0x0200
             }
         }

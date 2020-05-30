@@ -36,7 +36,9 @@ namespace Microsoft.Management.UI.Internal
     public partial class Resizer : ContentControl
     {
         private AdornerLayer adornerLayer;
+
         private UIElementAdorner adorner;
+
         private ContentControl adornerContent;
 
         /// <summary>

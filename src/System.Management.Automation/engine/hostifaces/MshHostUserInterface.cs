@@ -423,6 +423,7 @@ namespace System.Management.Automation.Host
         private sealed class TranscribeOnlyCookie : IDisposable
         {
             private PSHostUserInterface _ui;
+
             private bool _disposed = false;
 
             public TranscribeOnlyCookie(PSHostUserInterface ui)
@@ -977,6 +978,7 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
+
         private static object s_systemTranscriptLock = new object();
 
         private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
@@ -1079,8 +1081,11 @@ namespace System.Management.Automation.Host
         }
 
         internal TranscriptionOption SystemTranscript { get; set; }
+
         internal string CommandBeingIgnored { get; set; }
+
         internal bool IsHelperCommand { get; set; }
+
         internal string PromptText { get; set; }
     }
 

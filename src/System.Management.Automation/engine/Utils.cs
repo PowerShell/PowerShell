@@ -739,8 +739,11 @@ namespace System.Management.Automation
         internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
+
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
+
         internal static readonly ConfigScope[] SystemWideThenCurrentUserConfig = new[] { ConfigScope.AllUsers, ConfigScope.CurrentUser };
+
         internal static readonly ConfigScope[] CurrentUserThenSystemWideConfig = new[] { ConfigScope.CurrentUser, ConfigScope.AllUsers };
 
         internal static T GetPolicySetting<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
@@ -1552,23 +1555,37 @@ namespace System.Management.Automation
         internal static class Separators
         {
             internal static readonly char[] Backslash = new char[] { '\\' };
+
             internal static readonly char[] Directory = new char[] { '\\', '/' };
+
             internal static readonly char[] DirectoryOrDrive = new char[] { '\\', '/', ':' };
 
             internal static readonly char[] Colon = new char[] { ':' };
+
             internal static readonly char[] Dot = new char[] { '.' };
+
             internal static readonly char[] Pipe = new char[] { '|' };
+
             internal static readonly char[] Comma = new char[] { ',' };
+
             internal static readonly char[] Semicolon = new char[] { ';' };
+
             internal static readonly char[] StarOrQuestion = new char[] { '*', '?' };
+
             internal static readonly char[] ColonOrBackslash = new char[] { '\\', ':' };
+
             internal static readonly char[] PathSeparator = new char[] { Path.PathSeparator };
 
             internal static readonly char[] QuoteChars = new char[] { '\'', '"' };
+
             internal static readonly char[] Space = new char[] { ' ' };
+
             internal static readonly char[] QuotesSpaceOrTab = new char[] { ' ', '\t', '\'', '"' };
+
             internal static readonly char[] SpaceOrTab = new char[] { ' ', '\t' };
+
             internal static readonly char[] Newline = new char[] { '\n' };
+
             internal static readonly char[] CrLf = new char[] { '\r', '\n' };
 
             // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
@@ -1878,6 +1895,7 @@ namespace System.Management.Automation
     internal class PipelineForBatchingChecker : AstVisitor
     {
         internal readonly HashSet<string> ValidVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         internal readonly HashSet<string> Commands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
@@ -2050,25 +2068,37 @@ namespace System.Management.Automation.Internal
     public static class InternalTestHooks
     {
         internal static bool BypassGroupPolicyCaching;
+
         internal static bool ForceScriptBlockLogging;
+
         internal static bool UseDebugAmsiImplementation;
+
         internal static bool BypassAppLockerPolicyCaching;
+
         internal static bool BypassOnlineHelpRetrieval;
+
         internal static bool ForcePromptForChoiceDefaultOption;
 
         // Stop/Restart/Rename Computer tests
         internal static bool TestStopComputer;
+
         internal static bool TestWaitStopComputer;
+
         internal static bool TestRenameComputer;
+
         internal static int TestStopComputerResults;
+
         internal static int TestRenameComputerResults;
 
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
+
         internal static bool DisableGACLoading;
+
         internal static bool SetConsoleWidthToZero;
+
         internal static bool SetConsoleHeightToZero;
 
         // A location to test PSEdition compatibility functionality for Windows PowerShell modules with
@@ -2129,6 +2159,7 @@ namespace System.Management.Automation.Internal
     internal class HistoryStack<T>
     {
         private readonly BoundedStack<T> _boundedUndoStack;
+
         private readonly BoundedStack<T> _boundedRedoStack;
 
         internal HistoryStack(uint capacity)

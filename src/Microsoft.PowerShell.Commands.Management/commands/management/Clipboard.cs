@@ -151,7 +151,9 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
         private const uint GMEM_MOVEABLE = 0x0002;
+
         private const uint GMEM_ZEROINIT = 0x0040;
+
         private const uint GHND = GMEM_MOVEABLE | GMEM_ZEROINIT;
 
         [DllImport("kernel32.dll")]
@@ -196,6 +198,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private static extern uint RegisterClipboardFormat(string lpszFormat);
 
         private const uint CF_TEXT = 1;
+
         private const uint CF_UNICODETEXT = 13;
 
         private static uint s_CF_RTF;

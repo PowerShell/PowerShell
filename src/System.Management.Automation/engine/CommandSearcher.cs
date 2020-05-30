@@ -1407,9 +1407,13 @@ namespace System.Management.Automation
         private enum CanDoPathLookupResult
         {
             Yes,
+
             PathIsRooted,
+
             WildcardCharacters,
+
             DirectorySeparator,
+
             IllegalCharacters
         }
 
@@ -1673,6 +1677,7 @@ namespace System.Management.Automation
         private CommandInfo? _currentMatch;
 
         private bool _canDoPathLookup;
+
         private CanDoPathLookupResult _canDoPathLookupResult = CanDoPathLookupResult.Yes;
 
         /// <summary>
@@ -1727,9 +1732,13 @@ namespace System.Management.Automation
     internal enum SearchResolutionOptions
     {
         None = 0x0,
+
         ResolveAliasPatterns = 0x01,
+
         ResolveFunctionPatterns = 0x02,
+
         CommandNameIsPattern = 0x04,
+
         SearchAllScopes = 0x08,
 
         /// <summary>Use fuzzy matching.</summary>

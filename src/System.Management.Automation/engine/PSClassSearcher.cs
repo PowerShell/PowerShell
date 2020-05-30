@@ -34,12 +34,19 @@ namespace System.Management.Automation
         #region private properties
 
         private string _className = null;
+
         private ExecutionContext _context = null;
+
         private PSClassInfo _currentMatch = null;
+
         private IEnumerator<PSClassInfo> _matchingClass = null;
+
         private Collection<PSClassInfo> _matchingClassList = null;
+
         private bool _useWildCards = false;
+
         private Dictionary<string, PSModuleInfo> _moduleInfoCache = null;
+
         private object _lockObject = new object();
 
         #endregion

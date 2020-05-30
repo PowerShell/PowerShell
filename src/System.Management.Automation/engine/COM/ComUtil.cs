@@ -372,6 +372,7 @@ namespace System.Management.Automation
     internal class ComEnumerator : IEnumerator
     {
         private COM.IEnumVARIANT _enumVariant;
+
         private object[] _element;
 
         private ComEnumerator(COM.IEnumVARIANT enumVariant)

@@ -23,20 +23,32 @@ namespace Microsoft.PowerShell.Commands
 
         // Parametersets used by job cmdlets
         internal const string JobParameterSet = "JobParameterSet";
+
         internal const string InstanceIdParameterSet = "InstanceIdParameterSet";
+
         internal const string SessionIdParameterSet = "SessionIdParameterSet";
+
         internal const string NameParameterSet = "NameParameterSet";
+
         internal const string StateParameterSet = "StateParameterSet";
+
         internal const string CommandParameterSet = "CommandParameterSet";
+
         internal const string FilterParameterSet = "FilterParameterSet";
 
         // common parameter names
         internal const string JobParameter = "Job";
+
         internal const string InstanceIdParameter = "InstanceId";
+
         internal const string SessionIdParameter = "SessionId";
+
         internal const string NameParameter = "Name";
+
         internal const string StateParameter = "State";
+
         internal const string CommandParameter = "Command";
+
         internal const string FilterParameter = "Filter";
 
         #endregion Strings
@@ -1012,12 +1024,14 @@ namespace Microsoft.PowerShell.Commands
         #region Private Members
 
         private HashSet<Guid> _pendingJobs = new HashSet<Guid>();
+
         private readonly ManualResetEvent _waitForJobs = new ManualResetEvent(false);
 
         private readonly Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>> _cleanUpActions =
             new Dictionary<Job2, EventHandler<AsyncCompletedEventArgs>>();
 
         private readonly object _syncObject = new object();
+
         private bool _needToCheckForWaitingJobs;
 
         #endregion Private Members

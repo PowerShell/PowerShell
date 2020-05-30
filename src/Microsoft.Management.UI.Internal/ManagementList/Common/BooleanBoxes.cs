@@ -9,6 +9,7 @@ namespace Microsoft.Management.UI.Internal
     internal static class BooleanBoxes
     {
         private static object trueBox = true;
+
         private static object falseBox = false;
 
         internal static object TrueBox

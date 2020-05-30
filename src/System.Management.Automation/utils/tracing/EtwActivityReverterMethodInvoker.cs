@@ -12,6 +12,7 @@ namespace System.Management.Automation.Tracing
         #region Instance Data
 
         private readonly IEtwEventCorrelator _eventCorrelator;
+
         private readonly Func<Guid, Delegate, object[], object> _invoker;
 
         #endregion

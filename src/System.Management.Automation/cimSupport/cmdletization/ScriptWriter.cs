@@ -69,15 +69,22 @@ namespace Microsoft.PowerShell.Cmdletization
         internal enum GenerationOptions
         {
             TypesPs1Xml = 1,
+
             FormatPs1Xml = 2,
+
             HelpXml = 4,
         }
 
         private readonly PowerShellMetadata _cmdletizationMetadata;
+
         private readonly string _moduleName;
+
         private readonly Type _objectModelWrapper;
+
         private readonly Type _objectInstanceType;
+
         private readonly InvocationInfo _invocationInfo;
+
         private readonly GenerationOptions _generationOptions;
 
         internal ScriptWriter(
@@ -923,13 +930,17 @@ function __cmdletization_BindCommonParameters
         }
 
         private const string StaticCommonParameterSetTemplate = "{1}"; // "{0}::{1}";
+
         private const string StaticMethodParameterSetTemplate = "{0}"; // "{1}::{0}";
 
         private const string InstanceCommonParameterSetTemplate = "{1}"; // "{0}::{1}::{2}";
+
         private const string InstanceQueryParameterSetTemplate = "{0}"; // "{1}::{0}::{2}";
+
         private const string InstanceMethodParameterSetTemplate = "{2}"; // "{1}::{2}::{0}";
 
         private const string InputObjectQueryParameterSetName = "InputObject (cdxml)";
+
         private const string SingleQueryParameterSetName = "Query (cdxml)";
 
         private static void MultiplyParameterSets(
@@ -2167,8 +2178,11 @@ Microsoft.PowerShell.Core\Export-ModuleMember -Function '{1}' -Alias '*'
         #region PSModuleInfo
 
         internal const string PrivateDataKey_CmdletsOverObjects = "CmdletsOverObjects";
+
         internal const string PrivateDataKey_ClassName = "ClassName";
+
         internal const string PrivateDataKey_ObjectModelWrapper = "CmdletAdapter";
+
         internal const string PrivateDataKey_DefaultSession = "DefaultSession";
 
         internal void PopulatePSModuleInfo(PSModuleInfo moduleInfo)

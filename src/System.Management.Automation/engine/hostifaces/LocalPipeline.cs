@@ -1106,6 +1106,7 @@ namespace System.Management.Automation.Runspaces
         private bool _useExternalInput;
 
         private PipelineWriter _oldExternalErrorOutput;
+
         private PipelineWriter _oldExternalSuccessOutput;
 
 #if !UNIX
@@ -1284,8 +1285,11 @@ namespace System.Management.Automation.Runspaces
         }
 
         private Thread _worker;
+
         private ThreadStart _workItem;
+
         private AutoResetEvent _workItemReady;
+
         private bool _closed;
     }
 
@@ -1306,6 +1310,7 @@ namespace System.Management.Automation.Runspaces
         /// Object used for synchronization.
         /// </summary>
         private object _syncRoot = new object();
+
         private LocalPipeline _localPipeline;
 
         /// <summary>

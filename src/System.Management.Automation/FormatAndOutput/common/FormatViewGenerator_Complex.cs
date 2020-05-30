@@ -384,11 +384,17 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private TypeInfoDataBase _db;
+
         private DatabaseLoadingInfo _loadingInfo;
+
         private PSPropertyExpressionFactory _expressionFactory;
+
         private List<ControlDefinition> _controlDefinitionList;
+
         private FormatErrorManager _errorManager;
+
         private TerminatingErrorContext _errorContext;
+
         private int _enumerationLimit;
     }
 
@@ -413,6 +419,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private int _level;
+
         private int _maxDepth;
     }
 

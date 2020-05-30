@@ -234,7 +234,9 @@ namespace System.Management.Automation.Runspaces
         private int _openTimeout = DefaultOpenTimeout;
 
         internal const int DefaultOpenTimeout = 3 * 60 * 1000; // 3 minutes
+
         internal const int DefaultTimeout = -1;
+
         internal const int InfiniteTimeout = 0;
 
         /// <summary>
@@ -1322,13 +1324,21 @@ namespace System.Management.Automation.Runspaces
         #region Private Members
 
         private string _scheme = HttpScheme;
+
         private string _computerName = DefaultComputerName;
+
         private string _appName = s_defaultAppName;
+
         private Uri _connectionUri = new Uri(LocalHostUriString);          // uri of this connection
+
         private PSCredential _credential;    // credentials to be used for this connection
+
         private string _shellUri = DefaultShellUri;            // shell thats specified by the user
+
         private string _thumbPrint;
+
         private AuthenticationMechanism _proxyAuthentication;
+
         private PSCredential _proxyCredential;
 
         #endregion Private Members
@@ -1362,6 +1372,7 @@ namespace System.Management.Automation.Runspaces
         }
 #else
         private const string DefaultScheme = HttpScheme;
+
         private const string DefaultSslScheme = HttpsScheme;
         /// <summary>
         /// Default appname. This is empty as WSMan configuration has support
@@ -1498,6 +1509,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private PSCredential _credential;
+
         private AuthenticationMechanism _authMechanism;
 
         #endregion
@@ -1644,7 +1656,9 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private PSCredential _credential;
+
         private AuthenticationMechanism _authMechanism;
+
         private string _appDomainName = string.Empty;
 
         private const int _defaultOpenTimeout = 60000;      /* 60 seconds. */
@@ -2487,6 +2501,7 @@ namespace System.Management.Automation.Runspaces
 
         // Process creation flags
         private const int CREATE_NEW_PROCESS_GROUP = 0x00000200;
+
         private const int CREATE_SUSPENDED = 0x00000004;
 
         /// <summary>
@@ -2705,6 +2720,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private AuthenticationMechanism _authMechanism;
+
         private PSCredential _credential;
 
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
@@ -2835,6 +2851,7 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private AuthenticationMechanism _authMechanism;
+
         private PSCredential _credential;
 
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
@@ -3002,8 +3019,11 @@ namespace System.Management.Automation.Runspaces
         #region Private Data
 
         private const uint NoError = 0;
+
         private const uint InvalidContainerId = 1;
+
         private const uint ContainersFeatureNotEnabled = 2;
+
         private const uint OtherError = 9999;
 
         private const uint FileNotFoundHResult = 0x80070002;

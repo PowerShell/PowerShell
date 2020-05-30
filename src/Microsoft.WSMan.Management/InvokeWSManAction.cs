@@ -245,8 +245,11 @@ namespace Microsoft.WSMan.Management
         private Uri resourceuri;
 
         private WSManHelper helper;
+
         private IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+
         private IWSManSession m_session = null;
+
         private string connectionStr = string.Empty;
 
         /// <summary>

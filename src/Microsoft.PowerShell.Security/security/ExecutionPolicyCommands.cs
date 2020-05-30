@@ -40,6 +40,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ExecutionPolicyScope _executionPolicyScope = ExecutionPolicyScope.LocalMachine;
+
         private bool _scopeSpecified = false;
 
         /// <summary>

@@ -9,6 +9,7 @@ namespace System.Management.Automation
     internal static class Boxed
     {
         internal static readonly object True = (object)true;
+
         internal static readonly object False = (object)false;
     }
 

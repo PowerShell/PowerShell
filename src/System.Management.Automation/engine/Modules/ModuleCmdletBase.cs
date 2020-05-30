@@ -4419,7 +4419,9 @@ namespace Microsoft.PowerShell.Commands
         internal enum ModuleLoggingGroupPolicyStatus
         {
             Undefined = 0x00,
+
             Enabled = 0x01,
+
             Disabled = 0x02,
         }
 

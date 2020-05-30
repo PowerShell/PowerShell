@@ -912,22 +912,37 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Protected Members
 
         protected ObjectStreamBase inputstream;
+
         protected ObjectStreamBase errorstream;
+
         protected PSInformationalBuffers informationalBuffers;
+
         protected PowerShell shell;
+
         protected Guid clientRunspacePoolId;
+
         protected bool noInput;
+
         protected PSInvocationSettings settings;
+
         protected ObjectStreamBase outputstream;
+
         protected string computerName;
+
         protected ClientPowerShellDataStructureHandler dataStructureHandler;
+
         protected bool stopCalled = false;
+
         protected PSHost hostToUse;
+
         protected RemoteRunspacePoolInternal runspacePool;
 
         protected const string WRITE_DEBUG_LINE = "WriteDebugLine";
+
         protected const string WRITE_VERBOSE_LINE = "WriteVerboseLine";
+
         protected const string WRITE_WARNING_LINE = "WriteWarningLine";
+
         protected const string WRITE_PROGRESS = "WriteProgress";
 
         protected bool initialized = false;
@@ -978,11 +993,17 @@ namespace System.Management.Automation.Runspaces.Internal
     internal enum PSConnectionRetryStatus
     {
         None = 0,
+
         NetworkFailureDetected = 1,
+
         ConnectionRetryAttempt = 2,
+
         ConnectionRetrySucceeded = 3,
+
         AutoDisconnectStarting = 4,
+
         AutoDisconnectSucceeded = 5,
+
         InternalErrorAbort = 6
     };
 
@@ -992,10 +1013,15 @@ namespace System.Management.Automation.Runspaces.Internal
     internal sealed class PSConnectionRetryStatusEventArgs : EventArgs
     {
         internal const string FQIDNetworkFailureDetected = "PowerShellNetworkFailureDetected";
+
         internal const string FQIDConnectionRetryAttempt = "PowerShellConnectionRetryAttempt";
+
         internal const string FQIDConnectionRetrySucceeded = "PowerShellConnectionRetrySucceeded";
+
         internal const string FQIDAutoDisconnectStarting = "PowerShellNetworkFailedStartDisconnect";
+
         internal const string FQIDAutoDisconnectSucceeded = "PowerShellAutoDisconnectSucceeded";
+
         internal const string FQIDNetworkOrDisconnectFailed = "PowerShellNetworkOrDisconnectFailed";
 
         internal PSConnectionRetryStatusEventArgs(

@@ -36,6 +36,7 @@ namespace Microsoft.WSMan.Management
         #region Protected / Internal Data
 
         internal const string Server = "Server";
+
         internal const string Client = "Client";
 
         #endregion

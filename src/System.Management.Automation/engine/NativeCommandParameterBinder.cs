@@ -473,7 +473,9 @@ namespace System.Management.Automation
         /// The native command to bind to.
         /// </summary>
         private NativeCommand _nativeCommand;
+
         private static readonly string TildeDirectorySeparator = $"~{Path.DirectorySeparatorChar}";
+
         private static readonly string TildeAltDirectorySeparator = $"~{Path.AltDirectorySeparatorChar}";
 
         #endregion private members

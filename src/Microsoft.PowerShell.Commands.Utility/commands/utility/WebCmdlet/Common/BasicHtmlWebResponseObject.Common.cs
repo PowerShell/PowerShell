@@ -21,10 +21,15 @@ namespace Microsoft.PowerShell.Commands
         #region Private Fields
 
         private static Regex s_attribNameValueRegex;
+
         private static Regex s_attribsRegex;
+
         private static Regex s_imageRegex;
+
         private static Regex s_inputFieldRegex;
+
         private static Regex s_linkRegex;
+
         private static Regex s_tagRegex;
 
         #endregion Private Fields

@@ -81,6 +81,7 @@ namespace System.Management.Automation.Internal
     internal class CabinetExtractorFactory
     {
         private static ICabinetExtractorLoader s_cabinetLoader;
+
         internal static readonly ICabinetExtractor EmptyExtractor = new EmptyCabinetExtractor();
 
         /// <summary>

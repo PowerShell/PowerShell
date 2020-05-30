@@ -21,7 +21,9 @@ namespace System.Management.Automation.Runspaces
 
         // Invoke on thread (remote debugging support).
         private AutoResetEvent _invokeOnThreadEvent;
+
         private WaitCallback _invokeCallback;
+
         private object _invokeCallbackState;
 
         #endregion

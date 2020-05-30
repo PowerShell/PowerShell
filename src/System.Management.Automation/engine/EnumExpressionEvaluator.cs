@@ -105,8 +105,11 @@ namespace System.Management.Automation
         internal enum TokenKind
         {
             Identifier,
+
             And,
+
             Or,
+
             Not
         }
 
@@ -157,6 +160,7 @@ namespace System.Management.Automation
             public Node Operand1 { get; set; }
 
             internal abstract bool Eval(object val);
+
             internal abstract bool ExistEnum(object enumVal);
         }
 

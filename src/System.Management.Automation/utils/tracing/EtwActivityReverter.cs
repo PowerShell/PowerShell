@@ -29,6 +29,7 @@ namespace System.Management.Automation.Tracing
         IEtwActivityReverter
     {
         private readonly IEtwEventCorrelator _correlator;
+
         private readonly Guid _oldActivityId;
 
         private bool _isDisposed;

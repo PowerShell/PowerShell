@@ -260,6 +260,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string[] filesToSkip = null;
+
         internal WildcardPattern[] excludedPatterns = null;
 
         /// <summary>

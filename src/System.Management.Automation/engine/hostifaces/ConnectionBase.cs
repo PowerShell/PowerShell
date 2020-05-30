@@ -680,7 +680,9 @@ namespace System.Management.Automation.Runspaces
             }
 
             public RunspaceStateInfo RunspaceStateInfo;
+
             public RunspaceAvailability CurrentRunspaceAvailability;
+
             public RunspaceAvailability NewRunspaceAvailability;
         }
 

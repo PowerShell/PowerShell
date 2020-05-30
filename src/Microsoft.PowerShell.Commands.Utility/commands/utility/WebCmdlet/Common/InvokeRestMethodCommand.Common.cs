@@ -262,7 +262,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             private Stream _baseStream;
+
             private MemoryStream _streamBuffer;
+
             private byte[] _copyBuffer;
 
             public override bool CanRead

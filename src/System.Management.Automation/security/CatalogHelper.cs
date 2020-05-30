@@ -80,7 +80,9 @@ namespace System.Management.Automation
 
         // Hash Algorithms supported by Windows Catalog
         private static string HashAlgorithmSHA1 = "SHA1";
+
         private static string HashAlgorithmSHA256 = "SHA256";
+
         private static PSCmdlet _cmdlet = null;
 
         /// <summary>

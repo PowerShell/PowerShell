@@ -90,6 +90,7 @@ namespace Microsoft.PowerShell.Cmdletization
         }
 
         private TSession[] _session;
+
         private bool _sessionWasSpecified;
 
         /// <summary>
@@ -314,14 +315,21 @@ namespace Microsoft.PowerShell.Cmdletization
         private enum JobOutputs
         {
             Output = 0x1,
+
             Error = 0x2,
+
             Warning = 0x4,
+
             Verbose = 0x8,
+
             Debug = 0x10,
+
             Progress = 0x20,
+
             Results = 0x40,
 
             NonPipelineResults = Output | Error | Warning | Verbose | Debug | Progress,
+
             PipelineResults = Results,
         }
 

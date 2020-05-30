@@ -869,12 +869,19 @@ namespace System.Management.Automation.Internal
         #region Private Members
 
         private Guid _clientRunspacePoolId;
+
         private object _syncObject = new object();
+
         private bool _createRunspaceCalled = false;
+
         private Exception _closingReason;
+
         private int _minRunspaces;
+
         private int _maxRunspaces;
+
         private PSHost _host;
+
         private PSPrimitiveDictionary _applicationArguments;
 
         private Dictionary<Guid, ClientPowerShellDataStructureHandler> _associatedPowerShellDSHandlers
@@ -1476,6 +1483,7 @@ namespace System.Management.Automation.Internal
         #region Protected Members
 
         protected Guid clientRunspacePoolId;
+
         protected Guid clientPowerShellId;
 
         #endregion Protected Members

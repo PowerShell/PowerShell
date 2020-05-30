@@ -1282,8 +1282,11 @@ namespace System.Management.Automation
         }
 
         private HashSet<string> _activePreLookup = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         private HashSet<string> _activeModuleSearch = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         private HashSet<string> _activeCommandNotFound = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         private HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
@@ -1429,8 +1432,11 @@ namespace System.Management.Automation
         #region private members
 
         private static object s_lockObject = new object();
+
         private static string s_pathExtCacheKey;
+
         private static string[] s_cachedPathExtCollection;
+
         private static string[] s_cachedPathExtCollectionWithPs1;
 
         /// <summary>

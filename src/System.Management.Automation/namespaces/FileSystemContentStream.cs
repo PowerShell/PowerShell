@@ -45,33 +45,50 @@ namespace Microsoft.PowerShell.Commands
         #endregion tracer
 
         private string _path;
+
         private string _streamName;
+
         private FileMode _mode;
+
         private FileAccess _access;
+
         private FileShare _share;
+
         private Encoding _encoding;
+
         private CmdletProvider _provider;
 
         private FileStream _stream;
+
         private StreamReader _reader;
+
         private StreamWriter _writer;
+
         private bool _usingByteEncoding;
 
         private const char DefaultDelimiter = '\n';
 
         private string _delimiter = $"{DefaultDelimiter}";
+
         private int[] _offsetDictionary;
+
         private bool _usingDelimiter;
+
         private StringBuilder _currentLineContent;
+
         private bool _waitForChanges;
+
         private bool _isRawStream;
+
         private long _fileOffset;
 
         private FileAttributes _oldAttributes;
+
         private bool _haveOldAttributes;
 
         // The reader to read file content backward
         private FileStreamBackReader _backReader;
+
         private bool _alreadyDetectEncoding = false;
 
         // False to add a newline to the end of the output string, true if not.
@@ -1153,20 +1170,29 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private readonly FileStream _stream;
+
         private readonly Encoding _currentEncoding;
+
         private readonly Encoding _oemEncoding;
+
         private readonly Encoding _defaultAnsiEncoding;
 
         private const int BuffSize = 4096;
 
         private readonly byte[] _byteBuff = new byte[BuffSize];
+
         private readonly char[] _charBuff = new char[BuffSize];
+
         private int _byteCount = 0;
+
         private int _charCount = 0;
+
         private long _currentPosition = 0;
+
         private bool? _singleByteCharSet = null;
 
         private const byte BothTopBitsSet = 0xC0;
+
         private const byte TopBitUnset = 0x80;
 
         /// <summary>
@@ -1502,6 +1528,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Default values
             private const int MAX_DEFAULTCHAR = 2;
+
             private const int MAX_LEADBYTES = 12;
 
             [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]

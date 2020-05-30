@@ -53,6 +53,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         private WildcardPattern _matchPattern;
+
         private bool _foundMatch = false;
 
         /// <summary>

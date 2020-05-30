@@ -78,6 +78,7 @@ namespace System.Management.Automation
 
         // Cache of the current process' parentId
         private static int? s_currentParentProcessId;
+
         private static readonly int s_currentProcessId = Process.GetCurrentProcess().Id;
 
         /// <summary>
@@ -402,7 +403,9 @@ namespace System.Management.Automation
         #endregion EvaluatePowerShellDataFile
 
         internal static readonly string[] ManifestModuleVersionPropertyName = new[] { "ModuleVersion" };
+
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
+
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
 
         internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]

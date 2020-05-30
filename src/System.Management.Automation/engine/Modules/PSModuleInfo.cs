@@ -523,12 +523,17 @@ namespace System.Management.Automation
         }
 
         internal Collection<string> DeclaredFunctionExports = null;
+
         internal Collection<string> DeclaredCmdletExports = null;
+
         internal Collection<string> DeclaredAliasExports = null;
+
         internal Collection<string> DeclaredVariableExports = null;
 
         internal List<string> DetectedFunctionExports = new List<string>();
+
         internal List<string> DetectedCmdletExports = new List<string>();
+
         internal Dictionary<string, string> DetectedAliasExports = new Dictionary<string, string>();
 
         /// <summary>

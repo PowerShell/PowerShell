@@ -108,6 +108,7 @@ namespace Microsoft.PowerShell.Commands
         // We use a Dictionary to optimize the check whether the object
         // is already in the list.
         private List<Process> _matchingProcesses = new List<Process>();
+
         private Dictionary<int, Process> _keys = new Dictionary<int, Process>();
 
         /// <summary>
@@ -461,10 +462,15 @@ namespace Microsoft.PowerShell.Commands
         #region ParameterSetStrings
 
         private const string NameParameterSet = "Name";
+
         private const string IdParameterSet = "Id";
+
         private const string InputObjectParameterSet = "InputObject";
+
         private const string NameWithUserNameParameterSet = "NameWithUserName";
+
         private const string IdWithUserNameParameterSet = "IdWithUserName";
+
         private const string InputObjectWithUserNameParameterSet = "InputObjectWithUserName";
 
         #endregion ParameterSetStrings
@@ -912,6 +918,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _timeout = 0;
+
         private bool _timeOutSpecified;
 
         #endregion Parameters
@@ -959,6 +966,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Wait handle which is used by thread to sleep.
         private ManualResetEvent _waitHandle;
+
         private int _numberOfProcessesToWaitFor;
 
         /// <summary>
@@ -1609,6 +1617,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class StartProcessCommand : PSCmdlet, IDisposable
     {
         private ManualResetEvent _waithandle = null;
+
         private bool _isDefaultSetParameterSpecified = false;
 
         #region Parameters
@@ -1782,6 +1791,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private ProcessWindowStyle _windowstyle = ProcessWindowStyle.Normal;
+
         private bool _windowstyleSpecified = false;
 
         /// <summary>
@@ -2701,12 +2711,19 @@ namespace Microsoft.PowerShell.Commands
     {
         // Fields
         internal static readonly UInt32 GENERIC_READ = 0x80000000;
+
         internal static readonly UInt32 GENERIC_WRITE = 0x40000000;
+
         internal static readonly UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
+
         internal static readonly UInt32 CREATE_ALWAYS = 2;
+
         internal static readonly UInt32 FILE_SHARE_WRITE = 0x00000002;
+
         internal static readonly UInt32 FILE_SHARE_READ = 0x00000001;
+
         internal static readonly UInt32 OF_READWRITE = 0x00000002;
+
         internal static readonly UInt32 OPEN_EXISTING = 3;
 
         // Methods
@@ -2767,6 +2784,7 @@ namespace Microsoft.PowerShell.Commands
         internal enum LogonFlags
         {
             LOGON_NETCREDENTIALS_ONLY = 2,
+
             LOGON_WITH_PROFILE = 1
         }
 
@@ -2774,7 +2792,9 @@ namespace Microsoft.PowerShell.Commands
         internal class SECURITY_ATTRIBUTES
         {
             public int nLength;
+
             public SafeLocalMemHandle lpSecurityDescriptor;
+
             public bool bInheritHandle;
 
             public SECURITY_ATTRIBUTES()
@@ -2813,22 +2833,39 @@ namespace Microsoft.PowerShell.Commands
         internal class STARTUPINFO
         {
             public int cb;
+
             public IntPtr lpReserved;
+
             public IntPtr lpDesktop;
+
             public IntPtr lpTitle;
+
             public int dwX;
+
             public int dwY;
+
             public int dwXSize;
+
             public int dwYSize;
+
             public int dwXCountChars;
+
             public int dwYCountChars;
+
             public int dwFillAttribute;
+
             public int dwFlags;
+
             public short wShowWindow;
+
             public short cbReserved2;
+
             public IntPtr lpReserved2;
+
             public SafeFileHandle hStdInput;
+
             public SafeFileHandle hStdOutput;
+
             public SafeFileHandle hStdError;
 
             public STARTUPINFO()
@@ -2883,8 +2920,11 @@ namespace Microsoft.PowerShell.Commands
         internal class PROCESS_INFORMATION
         {
             public IntPtr hProcess;
+
             public IntPtr hThread;
+
             public int dwProcessId;
+
             public int dwThreadId;
 
             public PROCESS_INFORMATION()

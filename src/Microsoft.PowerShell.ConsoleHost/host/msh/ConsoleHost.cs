@@ -52,9 +52,13 @@ namespace Microsoft.PowerShell
         #region static methods
 
         internal const int ExitCodeSuccess = 0;
+
         internal const int ExitCodeCtrlBreak = 128 + 21; // SIGBREAK
+
         internal const int ExitCodeInitFailure = 70; // Internal Software Error
+
         internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
+
         private const uint SPI_GETSCREENREADER = 0x0046;
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -2232,6 +2236,7 @@ namespace Microsoft.PowerShell
         }
 
         private Exception _lastRunspaceInitializationException = null;
+
         internal uint ExitCode;
 
         /// <summary>
@@ -2841,12 +2846,19 @@ namespace Microsoft.PowerShell
             }
 
             private ConsoleHost _parent;
+
             private bool _isNested;
+
             private bool _shouldExit;
+
             private Executor _exec;
+
             private Executor _promptExec;
+
             private object _syncObject = new object();
+
             private bool _isRunspacePushed = false;
+
             private bool _runspacePopped = false;
 
             // The instance stack is used to keep track of which InputLoop instance should be told to exit
@@ -2909,21 +2921,31 @@ namespace Microsoft.PowerShell
 
         // Set to Unknown so that we avoid saving/restoring the console mode if we don't have a console.
         private ConsoleControl.ConsoleModes _savedConsoleMode = ConsoleControl.ConsoleModes.Unknown;
+
         private ConsoleControl.ConsoleModes _initialConsoleMode = ConsoleControl.ConsoleModes.Unknown;
 #endif
         private Thread _breakHandlerThread;
+
         private bool _isDisposed;
+
         internal ConsoleHostUserInterface ui;
 
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
 
         private string _savedWindowTitle = string.Empty;
+
         private Version _ver = PSVersionInfo.PSVersion;
+
         private int _exitCodeFromRunspace;
+
         private bool _noExit = true;
+
         private bool _setShouldExitCalled;
+
         private bool _isRunningPromptLoop;
+
         private bool _wasInitialCommandEncoded;
+
         private bool? _screenReaderActive;
 
         // hostGlobalLock is used to sync public method calls (in case multiple threads call into the host) and access to
@@ -2936,14 +2958,21 @@ namespace Microsoft.PowerShell
         // thread). We use hostGlobalLock to sync access to them.
 
         private bool _shouldEndSession;
+
         private int _beginApplicationNotifyCount;
 
         private ConsoleTextWriter _consoleWriter;
+
         private WrappedSerializer _outputSerializer;
+
         private WrappedSerializer _errorSerializer;
+
         private bool _displayDebuggerBanner;
+
         private DebuggerStopEventArgs _debuggerStopEventArgs;
+
         private bool _inPushedConfiguredSession;
+
         internal Pipeline runningCmd;
 
         // The ConsoleHost class is a singleton.  Note that there is not a thread-safety issue with these statics as there can
@@ -2985,9 +3014,13 @@ namespace Microsoft.PowerShell
         }
 
         internal string InitialCommand { get; set; }
+
         internal bool SkipProfiles { get; set; }
+
         internal bool StaMode { get; set; }
+
         internal string ConfigurationName { get; set; }
+
         internal Collection<CommandParameter> InitialCommandArgs { get; set; }
     }
 }   // namespace

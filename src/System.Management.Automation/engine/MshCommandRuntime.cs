@@ -35,6 +35,7 @@ namespace System.Management.Automation
         internal ExecutionContext Context { get; set; }
 
         private SessionState _state = null;
+
         internal InternalHost CBhost;
 
         /// <summary>
@@ -44,7 +45,9 @@ namespace System.Management.Automation
 
         // Output pipes.
         private Pipe _inputPipe;
+
         private Pipe _outputPipe;
+
         private Pipe _errorOutputPipe;
 
         /// <summary>
@@ -92,6 +95,7 @@ namespace System.Management.Automation
         internal PipelineProcessor PipelineProcessor { get; set; }
 
         private CommandInfo _commandInfo;
+
         private InternalCommand _thisCommand;
 
         #endregion private_members
@@ -295,6 +299,7 @@ namespace System.Management.Automation
         // Variables needed to generate a unique SourceId for
         // WriteProgress(ProgressRecord).
         private static Int64 s_lastUsedSourceId /* = 0 */;
+
         private Int64 _sourceId /* = 0 */;
 
         /// <summary>
@@ -1589,6 +1594,7 @@ namespace System.Management.Automation
         internal enum ShouldProcessPossibleOptimization
         {
             AutoYes_CanSkipShouldProcessCall,
+
             AutoYes_CanCallShouldProcessAsynchronously,
 
             AutoNo_CanCallShouldProcessAsynchronously,
@@ -2352,8 +2358,11 @@ namespace System.Management.Automation
             // being disposed and always following stack semantics.
 
             private PipelineProcessor _pp = null;
+
             private InternalCommand _wasPermittedToWrite = null;
+
             private bool _wasPermittedToWriteToPipeline = false;
+
             private Thread _wasPermittedToWriteThread = null;
         }
 
@@ -2928,6 +2937,7 @@ namespace System.Management.Automation
         // See "User Feedback Mechanisms - Note.doc" for details.
 
         private bool _isConfirmPreferenceCached = false;
+
         private ConfirmImpact _confirmPreference = InitialSessionState.DefaultConfirmPreference;
         /// <summary>
         /// Preference setting controlling behavior of ShouldProcess()
@@ -2968,7 +2978,9 @@ namespace System.Management.Automation
         }
 
         private bool _isDebugPreferenceSet = false;
+
         private ActionPreference _debugPreference = InitialSessionState.DefaultDebugPreference;
+
         private bool _isDebugPreferenceCached = false;
         /// <summary>
         /// Preference setting.
@@ -3022,6 +3034,7 @@ namespace System.Management.Automation
         }
 
         private bool _isVerbosePreferenceCached = false;
+
         private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         /// <summary>
         /// Preference setting.
@@ -3071,6 +3084,7 @@ namespace System.Management.Automation
         internal bool IsWarningActionSet { get; private set; } = false;
 
         private bool _isWarningPreferenceCached = false;
+
         private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
         /// <summary>
         /// Preference setting.
@@ -3211,6 +3225,7 @@ namespace System.Management.Automation
         internal bool IsDebugFlagSet { get; private set; } = false;
 
         private bool _whatIfFlag = InitialSessionState.DefaultWhatIfPreference;
+
         private bool _isWhatIfPreferenceCached /* = false */;
         /// <summary>
         /// WhatIf indicates that the command should not
@@ -3243,6 +3258,7 @@ namespace System.Management.Automation
         internal bool IsWhatIfFlagSet { get; private set; }
 
         private ActionPreference _errorAction = InitialSessionState.DefaultErrorActionPreference;
+
         private bool _isErrorActionPreferenceCached = false;
         /// <summary>
         /// ErrorAction tells the command what to do when an error occurs.
@@ -3319,7 +3335,9 @@ namespace System.Management.Automation
         }
 
         private ActionPreference _progressPreference = InitialSessionState.DefaultProgressPreference;
+
         private bool _isProgressPreferenceSet = false;
+
         private bool _isProgressPreferenceCached = false;
 
         /// <summary>
@@ -3376,17 +3394,26 @@ namespace System.Management.Automation
         internal enum ContinueStatus
         {
             Yes,
+
             No,
+
             YesToAll,
+
             NoToAll
         };
 
         internal ContinueStatus lastShouldProcessContinueStatus = ContinueStatus.Yes;
+
         internal ContinueStatus lastErrorContinueStatus = ContinueStatus.Yes;
+
         internal ContinueStatus lastDebugContinueStatus = ContinueStatus.Yes;
+
         internal ContinueStatus lastVerboseContinueStatus = ContinueStatus.Yes;
+
         internal ContinueStatus lastWarningContinueStatus = ContinueStatus.Yes;
+
         internal ContinueStatus lastProgressContinueStatus = ContinueStatus.Yes;
+
         internal ContinueStatus lastInformationContinueStatus = ContinueStatus.Yes;
 
         /// <summary>

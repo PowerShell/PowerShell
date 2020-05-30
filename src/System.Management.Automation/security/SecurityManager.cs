@@ -56,9 +56,13 @@ namespace Microsoft.PowerShell
         internal enum RunPromptDecision
         {
             NeverRun = 0,
+
             DoNotRun = 1,
+
             RunOnce = 2,
+
             AlwaysRun = 3,
+
             Suspend = 4
         }
 

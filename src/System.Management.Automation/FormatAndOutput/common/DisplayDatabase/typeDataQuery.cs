@@ -231,14 +231,19 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private PSPropertyExpressionFactory _expressionFactory;
+
         private TypeInfoDataBase _db;
+
         private Collection<string> _typeNameHierarchy;
+
         private bool _useInheritance;
 
         private int _bestMatchIndex = BestMatchIndexUndefined;
+
         private TypeMatchItem _bestMatchItem;
 
         private const int BestMatchIndexUndefined = -1;
+
         private const int BestMatchIndexPerfect = 0;
     }
 

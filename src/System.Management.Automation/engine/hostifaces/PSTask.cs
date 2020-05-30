@@ -313,12 +313,19 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly ScriptBlock _scriptBlockToRun;
+
         private readonly Dictionary<string, object> _usingValuesMap;
+
         private readonly object _dollarUnderbar;
+
         private readonly int _id;
+
         private readonly string _currentLocationPath;
+
         private Runspace _runspace;
+
         protected PowerShell _powershell;
+
         protected PSDataCollection<PSObject> _output;
 
         public const string RunspaceName = "PSTask";
@@ -509,7 +516,9 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly PSCmdlet _cmdlet;
+
         private readonly PSDataCollection<PSStreamObject> _dataStream;
+
         private readonly int _cmdletThreadId;
 
         #endregion
@@ -638,19 +647,31 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly ManualResetEvent _addAvailable;
+
         private readonly int _sizeLimit;
+
         private readonly ManualResetEvent _stopAll;
+
         private readonly object _syncObject;
+
         private readonly Dictionary<int, PSTaskBase> _taskPool;
+
         private readonly ConcurrentQueue<Runspace> _runspacePool;
+
         private readonly ConcurrentDictionary<int, Runspace> _activeRunspaces;
+
         private readonly WaitHandle[] _waitHandles;
+
         private readonly bool _useRunspacePool;
+
         private bool _isOpen;
+
         private bool _stopping;
+
         private int _createdRunspaceCount;
 
         private const int AddAvailable = 0;
+
         private const int Stop = 1;
 
         #endregion
@@ -979,7 +1000,9 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly PSTaskPool _taskPool;
+
         private bool _isOpen;
+
         private bool _stopSignaled;
 
         #endregion
@@ -1172,6 +1195,7 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly Debugger _wrappedDebugger;
+
         private readonly string _jobName;
 
         #endregion
@@ -1433,6 +1457,7 @@ namespace System.Management.Automation.PSTasks
         #region Members
 
         private readonly PSJobTask _task;
+
         private PSTaskChildDebugger _jobDebuggerWrapper;
 
         #endregion

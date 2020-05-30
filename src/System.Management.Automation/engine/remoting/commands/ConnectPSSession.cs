@@ -53,7 +53,9 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         private const string ComputerNameGuidParameterSet = "ComputerNameGuid";
+
         private const string ConnectionUriParameterSet = "ConnectionUri";
+
         private const string ConnectionUriGuidParameterSet = "ConnectionUriGuid";
 
         /// <summary>
@@ -475,11 +477,17 @@ namespace Microsoft.PowerShell.Commands
         private class ConnectRunspaceOperation : IThrottleOperation
         {
             private PSSession _session;
+
             private PSSession _oldSession;
+
             private ObjectStream _writeStream;
+
             private Collection<PSSession> _retryList;
+
             private PSHost _host;
+
             private QueryRunspaces _queryRunspaces;
+
             private static object s_LockObject = new object();
 
             internal ConnectRunspaceOperation(
@@ -1101,6 +1109,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Support for connection retry on failure.
         private ThrottleManager _retryThrottleManager = new ThrottleManager();
+
         private Collection<PSSession> _failedSessions = new Collection<PSSession>();
 
         #endregion

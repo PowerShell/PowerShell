@@ -127,6 +127,7 @@ namespace Microsoft.PowerShell
         }
 
         private StreamWriter _transcriptionWriter;
+
         private object _transcriptionStateLock = new object();
     }
 }   // namespace

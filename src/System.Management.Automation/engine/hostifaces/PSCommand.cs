@@ -16,7 +16,9 @@ namespace System.Management.Automation
         #region Private Fields
 
         private PowerShell _owner;
+
         private CommandCollection _commands;
+
         private Command _currentCommand;
 
         #endregion

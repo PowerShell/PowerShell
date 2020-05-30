@@ -55,8 +55,11 @@ namespace System.Management.Automation.Remoting
         // these callbacks are used to notify when data becomes available under
         // suc circumstances.
         private OnDataAvailableCallback _onDataAvailableCallback;
+
         private SerializedDataStream.OnDataAvailableCallback _onSendCollectionDataAvailable;
+
         private bool _isHandlingCallback;
+
         private object _readSyncObject = new object();
 
         /// <summary>
@@ -306,11 +309,15 @@ namespace System.Management.Automation.Remoting
         // 1 whole object may contain any number of fragments. blob from
         // each fragment is written to this stream.
         private MemoryStream _dataToProcessStream;
+
         private long _currentObjectId;
+
         private long _currentFrgId;
         // max deserialized object size in bytes
         private int? _maxReceivedObjectSize;
+
         private int _totalReceivedObjectSizeSoFar;
+
         private bool _isCreateByClientTM;
 
         // this indicates if any off sync fragments can be ignored
@@ -320,6 +327,7 @@ namespace System.Management.Automation.Remoting
         // objects need to cleanly release resources without
         // locking entire processing logic.
         private object _syncObject;
+
         private bool _isDisposed;
         // holds the number of threads that are currently in
         // ProcessRawData method. This might happen only for
@@ -739,7 +747,9 @@ namespace System.Management.Automation.Remoting
         #region Private Data
 
         private Fragmentor _defragmentor;
+
         private ReceiveDataCollection[] _recvdData;
+
         private bool _isCreateByClientTM;
 
         #endregion

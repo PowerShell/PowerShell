@@ -220,13 +220,16 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private const string MatchFormat = "{0}{1}:{2}:{3}";
+
         private const string SimpleFormat = "{0}{1}";
 
         // Prefixes used by formatting: Match and Context prefixes
         // are used when context-tracking is enabled, otherwise
         // the empty prefix is used.
         private const string MatchPrefix = "> ";
+
         private const string ContextPrefix = "  ";
+
         private const string EmptyPrefix = "";
 
         /// <summary>
@@ -400,10 +403,15 @@ namespace Microsoft.PowerShell.Commands
     public sealed class SelectStringCommand : PSCmdlet
     {
         private const string ParameterSetFile = "File";
+
         private const string ParameterSetFileRaw = "FileRaw";
+
         private const string ParameterSetObject = "Object";
+
         private const string ParameterSetObjectRaw = "ObjectRaw";
+
         private const string ParameterSetLiteralFile = "LiteralFile";
+
         private const string ParameterSetLiteralFileRaw = "LiteralFileRaw";
 
         /// <summary>
@@ -632,12 +640,16 @@ namespace Microsoft.PowerShell.Commands
             private enum ContextState
             {
                 InitialState,
+
                 CollectPre,
+
                 CollectPost,
             }
 
             private ContextState _contextState = ContextState.InitialState;
+
             private readonly int _preContext;
+
             private readonly int _postContext;
 
             // The context leading up to the match.
@@ -792,6 +804,7 @@ namespace Microsoft.PowerShell.Commands
             private class ContextEntry
             {
                 public readonly string Line;
+
                 public readonly MatchInfo Match;
 
                 public ContextEntry(string line)
@@ -814,6 +827,7 @@ namespace Microsoft.PowerShell.Commands
             private bool _hasProcessedPreEntries;
 
             private readonly int _preContext;
+
             private readonly int _postContext;
 
             // A circular buffer tracking both precontext and postcontext.
@@ -992,6 +1006,7 @@ namespace Microsoft.PowerShell.Commands
         private class ContextTracker : IContextTracker
         {
             private readonly IContextTracker _displayTracker;
+
             private readonly IContextTracker _logicalTracker;
 
             /// <summary>
@@ -1122,11 +1137,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         internal const string OrdinalCultureName = "Ordinal";
+
         internal const string InvariantCultureName = "Invariant";
+
         internal const string CurrentCultureName = "Current";
 
         private string _cultureName = CultureInfo.CurrentCulture.Name;
+
         private StringComparison _stringComparison = StringComparison.CurrentCultureIgnoreCase;
+
         private CompareOptions _compareOptions = CompareOptions.IgnoreCase;
 
         private delegate int CultureInfoIndexOf(string source, string value, int startIndex, int count, CompareOptions options);

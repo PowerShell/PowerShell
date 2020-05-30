@@ -33,6 +33,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal object updateDatabaseLock = new object();
         // this is used to throw errors when updating a shared TypeTable.
         internal bool isShared;
+
         private List<string> _formatFileList;
 
         internal bool DisableFormatTableUpdates { get; set; }

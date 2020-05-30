@@ -12,6 +12,7 @@ namespace Microsoft.PowerShell.Commands
     internal class OriginalColumnInfo : ColumnInfo
     {
         private string _liveObjectPropertyName;
+
         private OutGridViewCommand _parentCmdlet;
 
         internal OriginalColumnInfo(string staleObjectPropertyName, string displayName, string liveObjectPropertyName, OutGridViewCommand parentCmdlet)

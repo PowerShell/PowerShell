@@ -78,6 +78,7 @@ namespace Microsoft.PowerShell.MarkdownRender
     public sealed class PSMarkdownOptionInfo
     {
         private const char Esc = (char)0x1b;
+
         private const string EndSequence = "[0m";
 
         /// <summary>
@@ -200,28 +201,49 @@ namespace Microsoft.PowerShell.MarkdownRender
         }
 
         private const string Header1Dark = "[7m";
+
         private const string Header2Dark = "[4;93m";
+
         private const string Header3Dark = "[4;94m";
+
         private const string Header4Dark = "[4;95m";
+
         private const string Header5Dark = "[4;96m";
+
         private const string Header6Dark = "[4;97m";
+
         private const string CodeDark = "[48;2;155;155;155;38;2;30;30;30m";
+
         private const string CodeMacOS = "[107;95m";
+
         private const string LinkDark = "[4;38;5;117m";
+
         private const string ImageDark = "[33m";
+
         private const string EmphasisBoldDark = "[1m";
+
         private const string EmphasisItalicsDark = "[36m";
 
         private const string Header1Light = "[7m";
+
         private const string Header2Light = "[4;33m";
+
         private const string Header3Light = "[4;34m";
+
         private const string Header4Light = "[4;35m";
+
         private const string Header5Light = "[4;36m";
+
         private const string Header6Light = "[4;30m";
+
         private const string CodeLight = "[48;2;155;155;155;38;2;30;30;30m";
+
         private const string LinkLight = "[4;38;5;117m";
+
         private const string ImageLight = "[33m";
+
         private const string EmphasisBoldLight = "[1m";
+
         private const string EmphasisItalicsLight = "[36m";
 
         /// <summary>

@@ -584,6 +584,7 @@ namespace System.Management.Automation
         }
 
         private Dictionary<string, ParameterMetadata> _parameters;
+
         private bool _shouldGenerateCommonParameters;
 
         /// <summary>

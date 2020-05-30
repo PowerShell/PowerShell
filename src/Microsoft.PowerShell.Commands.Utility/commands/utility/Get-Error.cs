@@ -18,9 +18,13 @@ namespace Microsoft.PowerShell.Commands
     public sealed class GetErrorCommand : PSCmdlet
     {
         internal const string ErrorParameterSetName = "Error";
+
         internal const string NewestParameterSetName = "Newest";
+
         internal const string AliasNewest = "Last";
+
         internal const string ErrorRecordPSExtendedError = "System.Management.Automation.ErrorRecord#PSExtendedError";
+
         internal const string ExceptionPSExtendedError = "System.Exception#PSExtendedError";
 
         /// <summary>

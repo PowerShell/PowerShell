@@ -619,7 +619,9 @@ namespace System.Management.Automation
         internal enum ErrorHandlingBehavior
         {
             WriteToCurrentErrorPipe = 1,
+
             WriteToExternalErrorPipe = 2,
+
             SwallowErrors = 3,
         }
 
@@ -1115,7 +1117,9 @@ namespace System.Management.Automation
         }
 
         private PipelineProcessor _pipeline;
+
         private ExecutionContext _context;
+
         private bool _expectInput;
 
         /// <summary>
@@ -1448,13 +1452,21 @@ namespace System.Management.Automation
         }
 
         internal ScriptBlock ScriptBlock { get; set; }
+
         internal bool UseLocalScope { get; set; }
+
         internal ScriptBlock.ErrorHandlingBehavior ErrorHandlingBehavior { get; set; }
+
         internal object DollarUnder { get; set; }
+
         internal object Input { get; set; }
+
         internal object ScriptThis { get; set; }
+
         internal Pipe OutputPipe { get; set; }
+
         internal InvocationInfo InvocationInfo { get; set; }
+
         internal object[] Args { get; set; }
 
         /// <summary>

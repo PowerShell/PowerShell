@@ -576,6 +576,7 @@ namespace System.Management.Automation
         private Func<string[], IEnumerable<string>?> _postProcessEnumeratedFiles;
 
         private string[] _orderedPathExt;
+
         private Collection<string>? _acceptableCommandNames;
 
         private bool _useFuzzyMatch = false;

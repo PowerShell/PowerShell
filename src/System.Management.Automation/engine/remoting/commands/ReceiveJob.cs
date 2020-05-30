@@ -303,20 +303,35 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _autoRemoveJob;
+
         private bool _writeStateChangedEvents;
+
         private bool _wait;
+
         private bool _isStopping;
+
         private bool _isDisposed;
+
         private readonly ReaderWriterLockSlim _resultsReaderWriterLock = new ReaderWriterLockSlim();
+
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
+
         private readonly ManualResetEvent _writeExistingData = new ManualResetEvent(true);
+
         private readonly PSDataCollection<PSStreamObject> _results = new PSDataCollection<PSStreamObject>();
+
         private bool _holdingResultsRef;
+
         private readonly List<Job> _jobsBeingAggregated = new List<Job>();
+
         private readonly List<Guid> _jobsSpecifiedInParameters = new List<Guid>();
+
         private readonly object _syncObject = new object();
+
         private bool _outputJobFirst;
+
         private OutputProcessingState _outputProcessingNotification;
+
         private bool _processingOutput;
 
         private const string ClassNameTrace = "ReceiveJobCommand";

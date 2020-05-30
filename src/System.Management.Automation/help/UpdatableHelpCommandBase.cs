@@ -24,13 +24,17 @@ namespace Microsoft.PowerShell.Commands
     public class UpdatableHelpCommandBase : PSCmdlet
     {
         internal const string PathParameterSetName = "Path";
+
         internal const string LiteralPathParameterSetName = "LiteralPath";
 
         internal UpdatableHelpCommandType _commandType;
+
         internal UpdatableHelpSystem _helpSystem;
+
         internal bool _stopping;
 
         internal int activityId;
+
         private Dictionary<string, UpdatableHelpExceptionContext> _exceptions;
 
         #region Parameters

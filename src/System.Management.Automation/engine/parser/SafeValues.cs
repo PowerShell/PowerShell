@@ -66,6 +66,7 @@ namespace System.Management.Automation.Language
         private uint _visitCount = 0;
 
         private const uint MaxVisitCount = 5000;
+
         private const int MaxHashtableKeyCount = 500;
 
         // Used to determine if we are being called within a GetPowerShell() context,
@@ -361,7 +362,9 @@ namespace System.Management.Automation.Language
         internal enum SafeValueContext
         {
             Default,
+
             GetPowerShell,
+
             ModuleAnalysis
         }
 

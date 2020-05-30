@@ -10,13 +10,21 @@ namespace System.Management.Automation
     internal enum VariablePathFlags
     {
         None = 0x00,
+
         Local = 0x01,
+
         Script = 0x02,
+
         Global = 0x04,
+
         Private = 0x08,
+
         Variable = 0x10,
+
         Function = 0x20,
+
         DriveQualified = 0x40,
+
         Unqualified = 0x80,
 
         // If any of these bits are set, the path does not represent an unscoped variable.

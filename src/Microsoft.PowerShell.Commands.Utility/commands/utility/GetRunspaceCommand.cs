@@ -22,7 +22,9 @@ namespace Microsoft.PowerShell.Commands
         #region Strings
 
         private const string NameParameterSet = "NameParameterSet";
+
         private const string IdParameterSet = "IdParameterSet";
+
         private const string InstanceIdParameterSet = "InstanceIdParameterSet";
 
         #endregion

@@ -1180,8 +1180,11 @@ namespace System.Management.Automation
         private class OverloadCandidate
         {
             internal MethodInformation method;
+
             internal ParameterInformation[] parameters;
+
             internal ParameterInformation[] expandedParameters;
+
             internal ConversionRank[] conversionRanks;
 
             internal OverloadCandidate(MethodInformation method, int argCount)
@@ -2014,6 +2017,7 @@ namespace System.Management.Automation
         /// <see cref="DotNetAdapter.PopulateMethodReflectionTable(Type, CacheTable, BindingFlags)"/>.
         /// </summary>
         internal Collection<object> memberCollection;
+
         private Dictionary<string, int> _indexes;
 
         internal CacheTable()
@@ -2079,6 +2083,7 @@ namespace System.Management.Automation
     internal class MethodInformation
     {
         internal MethodBase method;
+
         private string _cachedMethodDefinition;
 
         internal string methodDefinition
@@ -2097,8 +2102,11 @@ namespace System.Management.Automation
         }
 
         internal ParameterInformation[] parameters;
+
         internal bool hasVarArgs;
+
         internal bool hasOptional;
+
         internal bool isGeneric;
 
         private bool _useReflection;
@@ -2518,9 +2526,13 @@ namespace System.Management.Automation
     internal class ParameterInformation
     {
         internal Type parameterType;
+
         internal object defaultValue;
+
         internal bool isOptional;
+
         internal bool isByRef;
+
         internal bool isParamArray;
 
         internal ParameterInformation(System.Reflection.ParameterInfo parameter)
@@ -2669,10 +2681,15 @@ namespace System.Management.Automation
         internal class ParameterizedPropertyCacheEntry : CacheEntry
         {
             internal MethodInformation[] getterInformation;
+
             internal MethodInformation[] setterInformation;
+
             internal string propertyName;
+
             internal bool readOnly;
+
             internal bool writeOnly;
+
             internal Type propertyType;
             // propertyDefinition is used as a string representation of the property
             internal string[] propertyDefinition;
@@ -2748,6 +2765,7 @@ namespace System.Management.Automation
         internal class PropertyCacheEntry : CacheEntry
         {
             internal delegate object GetterDelegate(object instance);
+
             internal delegate void SetterDelegate(object instance, object setValue);
 
             internal PropertyCacheEntry(PropertyInfo property)
@@ -2980,9 +2998,13 @@ namespace System.Management.Automation
             private SetterDelegate _setterDelegate;
 
             internal bool useReflection;
+
             internal bool readOnly;
+
             internal bool writeOnly;
+
             internal bool isStatic;
+
             internal Type propertyType;
 
             private bool? _isHidden;

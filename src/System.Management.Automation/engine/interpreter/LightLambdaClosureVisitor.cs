@@ -252,6 +252,7 @@ namespace System.Management.Automation.Interpreter
         private sealed class MergedRuntimeVariables : IRuntimeVariables
         {
             private readonly IRuntimeVariables _first;
+
             private readonly IRuntimeVariables _second;
 
             // For reach item, the index into the first or second list

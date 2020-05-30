@@ -15,19 +15,25 @@ namespace System.Management.Automation
         private class Parameter
         {
             internal Ast ast;
+
             internal string parameterName;
+
             internal string parameterText;
         }
 
         private class Argument
         {
             internal Ast ast;
+
             internal object value;
+
             internal bool splatted;
         }
 
         private Parameter _parameter;
+
         private Argument _argument;
+
         private bool _spaceAfterParameter;
 
         internal bool SpaceAfterParameter { get { return _spaceAfterParameter; } }

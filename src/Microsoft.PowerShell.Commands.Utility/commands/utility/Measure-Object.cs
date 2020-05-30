@@ -207,14 +207,20 @@ namespace Microsoft.PowerShell.Commands
 
             // Generic/Numeric statistics
             internal double sum = 0.0;
+
             internal double sumPrevious = 0.0;
+
             internal double variance = 0.0;
+
             internal object max = null;
+
             internal object min = null;
 
             // Text statistics
             internal int characters = 0;
+
             internal int words = 0;
+
             internal int lines = 0;
         }
 

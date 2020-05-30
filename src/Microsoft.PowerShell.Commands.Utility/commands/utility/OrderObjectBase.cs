@@ -19,6 +19,7 @@ namespace Microsoft.PowerShell.Commands
     internal static class SortObjectParameterDefinitionKeys
     {
         internal const string AscendingEntryKey = "ascending";
+
         internal const string DescendingEntryKey = "descending";
     }
 
@@ -624,6 +625,7 @@ namespace Microsoft.PowerShell.Commands
     internal sealed class OrderByPropertyEntry
     {
         internal PSObject inputObject = null;
+
         internal List<ObjectCommandPropertyValue> orderValues = new List<ObjectCommandPropertyValue>();
         // The originalIndex field was added to enable stable heap-sorts (Top N/Bottom N)
         internal int originalIndex = -1;

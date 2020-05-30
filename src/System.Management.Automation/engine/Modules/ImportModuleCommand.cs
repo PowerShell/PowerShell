@@ -46,14 +46,21 @@ namespace Microsoft.PowerShell.Commands
         #region Cmdlet parameters
 
         private const string ParameterSet_Name = "Name";
+
         private const string ParameterSet_FQName = "FullyQualifiedName";
+
         private const string ParameterSet_ModuleInfo = "ModuleInfo";
+
         private const string ParameterSet_Assembly = "Assembly";
 
         private const string ParameterSet_ViaPsrpSession = "PSSession";
+
         private const string ParameterSet_ViaCimSession = "CimSession";
+
         private const string ParameterSet_FQName_ViaPsrpSession = "FullyQualifiedNameAndPSSession";
+
         private const string ParameterSet_ViaWinCompat = "WinCompat";
+
         private const string ParameterSet_FQName_ViaWinCompat = "FullyQualifiedNameAndWinCompat";
 
         /// <summary>
@@ -385,6 +392,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private string _scope = string.Empty;
+
         private bool _isScopeSpecified = false;
 
         /// <summary>

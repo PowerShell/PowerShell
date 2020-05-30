@@ -48,7 +48,9 @@ namespace Microsoft.Management.UI.Internal
         private enum HelpCategory
         {
             Default,
+
             DscResource,
+
             Class
         }
 

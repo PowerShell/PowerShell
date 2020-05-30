@@ -706,6 +706,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         private bool _nameIsFormalParameter;
+
         private bool _valueIsFormalParameter;
         #endregion parameters
 

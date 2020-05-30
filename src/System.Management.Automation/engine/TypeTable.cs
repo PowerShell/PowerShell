@@ -36,7 +36,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         private readonly LoadContext _context;
+
         private readonly XmlReader _reader;
+
         private readonly IXmlLineInfo _readerLineInfo;
 
         #region Helpers
@@ -1535,31 +1537,57 @@ namespace System.Management.Automation.Runspaces
         }
 
         private string _idTypeName;
+
         private string _idSetCodeReference;
+
         private string _idScriptMethod;
+
         private string _idValue;
+
         private string _idScriptProperty;
+
         private string _idIsHidden;
+
         private string _idScript;
+
         private string _idCodeMethod;
+
         private string _idMemberSet;
+
         private string _idCodeProperty;
+
         private string _idMembers;
+
         private string _idName;
+
         private string _idGetCodeReference;
+
         private string _idMethodName;
+
         private string _idInheritMembers;
+
         private string _idNoteProperty;
+
         private string _idTypeAdapter;
+
         private string _idSetScriptBlock;
+
         private string _idPropertySet;
+
         private string _idTypeConverter;
+
         private string _idAliasProperty;
+
         private string _idType;
+
         private string _idCodeReference;
+
         private string _idTypes;
+
         private string _idReferencedProperties;
+
         private string _idGetScriptBlock;
+
         private string _idReferencedMemberName;
 
         protected void InitIDs()
@@ -1700,9 +1728,13 @@ namespace System.Management.Automation.Runspaces
     internal class LoadContext
     {
         internal XmlReader reader;
+
         internal ConcurrentBag<string> errors;
+
         internal string fileName;
+
         internal string PSSnapinName;
+
         internal bool isFullyTrusted;
 
         internal LoadContext(string PSSnapinName, string fileName, ConcurrentBag<string> errors)
@@ -1891,12 +1923,19 @@ namespace System.Management.Automation.Runspaces
     public sealed class TypeData
     {
         internal const string NoteProperty = "NoteProperty";
+
         internal const string AliasProperty = "AliasProperty";
+
         internal const string ScriptProperty = "ScriptProperty";
+
         internal const string CodeProperty = "CodeProperty";
+
         internal const string ScriptMethod = "ScriptMethod";
+
         internal const string CodeMethod = "CodeMethod";
+
         internal const string PropertySet = "PropertySet";
+
         internal const string MemberSet = "MemberSet";
 
         private TypeData()
@@ -2268,8 +2307,11 @@ namespace System.Management.Automation.Runspaces
 
         // They are of NoteProperty
         private string _serializationMethod;
+
         private Type _targetTypeForDeserialization;
+
         private uint _serializationDepth;
+
         private string _defaultDisplayProperty;
 
         // InheritPropertySerializationSet should be true or false
@@ -2283,7 +2325,9 @@ namespace System.Management.Automation.Runspaces
 
         // They are of propertySet
         private PropertySetData _defaultDisplayPropertySet;
+
         private PropertySetData _defaultKeyPropertySet;
+
         private PropertySetData _propertySerializationSet;
 
         #endregion StandardMember
@@ -2818,16 +2862,27 @@ namespace System.Management.Automation.Runspaces
         #region strings
 
         internal const string PSStandardMembers = "PSStandardMembers";
+
         internal const string SerializationDepth = "SerializationDepth";
+
         internal const string StringSerializationSource = "StringSerializationSource";
+
         internal const string SerializationMethodNode = "SerializationMethod";
+
         internal const string TargetTypeForDeserialization = "TargetTypeForDeserialization";
+
         internal const string PropertySerializationSet = "PropertySerializationSet";
+
         internal const string InheritPropertySerializationSet = "InheritPropertySerializationSet";
+
         internal const string Types = "Types";
+
         internal const string Type = "Type";
+
         internal const string DefaultDisplayPropertySet = "DefaultDisplayPropertySet";
+
         internal const string DefaultKeyPropertySet = "DefaultKeyPropertySet";
+
         internal const string DefaultDisplayProperty = "DefaultDisplayProperty";
 
         // this is used for extended properties like Note,Alias,Script,Code
@@ -2874,6 +2929,7 @@ namespace System.Management.Automation.Runspaces
 
         // this is used to throw errors when updating a shared TypeTable.
         internal readonly bool isShared;
+
         private readonly List<string> _typeFileList;
 
         // The member factory is cached to avoid allocating Func<> delegates on each call
@@ -2905,7 +2961,9 @@ namespace System.Management.Automation.Runspaces
 
         // Built-in type file paths.
         internal static readonly string TypesFilePath;
+
         internal static readonly string TypesV3FilePath;
+
         internal static readonly string GetEventTypesFilePath;
 
         #endregion

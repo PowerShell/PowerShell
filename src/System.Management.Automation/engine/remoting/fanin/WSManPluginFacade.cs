@@ -183,14 +183,23 @@ namespace System.Management.Automation.Remoting
         /// GC handle which prevents garbage collector from collecting this delegate.
         /// </summary>
         private GCHandle _pluginShellGCHandle;
+
         private GCHandle _pluginReleaseShellContextGCHandle;
+
         private GCHandle _pluginCommandGCHandle;
+
         private GCHandle _pluginReleaseCommandContextGCHandle;
+
         private GCHandle _pluginSendGCHandle;
+
         private GCHandle _pluginReceiveGCHandle;
+
         private GCHandle _pluginSignalGCHandle;
+
         private GCHandle _pluginConnectGCHandle;
+
         private GCHandle _shutdownPluginGCHandle;
+
         private GCHandle _WSMPluginOperationShutdownGCHandle;
 
         #endregion

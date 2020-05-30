@@ -250,12 +250,19 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsString { get; set; }
 
         private readonly List<GroupInfo> _groups = new List<GroupInfo>();
+
         private readonly OrderByProperty _orderByProperty = new OrderByProperty();
+
         private readonly Dictionary<object, GroupInfo> _tupleToGroupInfoMappingDictionary = new Dictionary<object, GroupInfo>();
+
         private readonly List<OrderByPropertyEntry> _entriesToOrder = new List<OrderByPropertyEntry>();
+
         private OrderByPropertyComparer _orderByPropertyComparer;
+
         private bool _hasProcessedFirstInputObject;
+
         private bool _hasDifferentValueTypes;
+
         private Type[] _propertyTypesCandidate;
 
         #endregion

@@ -332,16 +332,24 @@ namespace System.Management.Automation
         }
 
         private Dictionary<PSEventSubscriber, Delegate> _eventSubscribers;
+
         private Dictionary<string, List<PSEventSubscriber>> _engineEventSubscribers;
+
         private Queue<EventAction> _actionQueue;
+
         private ExecutionContext _context;
+
         private int _nextSubscriptionId = 1;
+
         private double _throttleLimit = 1;
+
         private int _throttleChecks = 0;
 
         // The assembly and module to hold our event registrations
         private AssemblyBuilder _eventAssembly = null;
+
         private ModuleBuilder _eventModule = null;
+
         private int _typeId = 0;
 
         /// <summary>
@@ -554,7 +562,9 @@ namespace System.Management.Automation
         #region OnIdleProcessing
 
         private Timer _timer = null;
+
         private bool _timerInitialized = false;
+
         private bool _isTimerActive = false;
         /// <summary>
         /// We sample every 100ms to check if the engine is idle (currentlyRunningPipeline == null). If it's "idle"
@@ -1169,6 +1179,7 @@ namespace System.Management.Automation
         }
 
         private object _actionProcessingLock = new object();
+
         private EventAction _processingAction = null;
 
         /// <summary>
@@ -2492,7 +2503,9 @@ namespace System.Management.Automation
         }
 
         private PSEventManager _eventManager = null;
+
         private PSEventSubscriber _subscriber = null;
+
         private int _highestErrorIndex = 0;
 
         /// <summary>

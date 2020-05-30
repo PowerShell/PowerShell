@@ -60,6 +60,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class NewArrayBoundsInstruction : Instruction
     {
         private readonly Type _elementType;
+
         private readonly int _rank;
 
         internal NewArrayBoundsInstruction(Type elementType, int rank)

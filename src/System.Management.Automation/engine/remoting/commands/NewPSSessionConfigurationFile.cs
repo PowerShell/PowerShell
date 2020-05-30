@@ -324,6 +324,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private PSLanguageMode _languageMode = PSLanguageMode.NoLanguage;
+
         private bool _isLanguageModeSpecified;
 
         /// <summary>

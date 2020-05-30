@@ -48,12 +48,17 @@ namespace System.Management.Automation.Interpreter
         }
 
         private readonly ParameterExpression _frameDataVar;
+
         private readonly ParameterExpression _frameClosureVar;
+
         private readonly ParameterExpression _frameVar;
+
         private readonly LabelTarget _returnLabel;
         // locals and closure variables defined outside the loop
         private readonly Dictionary<ParameterExpression, LocalVariable> _outerVariables, _closureVariables;
+
         private readonly PowerShellLoopExpression _loop;
+
         private List<ParameterExpression> _temps;
         // tracks variables that flow in and flow out for initialization and
         private readonly Dictionary<ParameterExpression, LoopVariable> _loopVariables;
@@ -61,7 +66,9 @@ namespace System.Management.Automation.Interpreter
         private HashSet<ParameterExpression> _loopLocals;
 
         private readonly HybridReferenceDictionary<LabelTarget, BranchLabel> _labelMapping;
+
         private readonly int _loopStartInstructionIndex;
+
         private readonly int _loopEndInstructionIndex;
 
         internal LoopCompiler(PowerShellLoopExpression loop,

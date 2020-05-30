@@ -541,8 +541,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private TraceListenerCommandBase _cmdlet;
+
         private bool _writeError;
+
         private bool _isOpen = true;
+
         private Collection<PSTraceSource> _matchingSources = new Collection<PSTraceSource>();
     }
 }

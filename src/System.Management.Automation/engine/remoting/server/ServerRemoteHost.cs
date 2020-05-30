@@ -278,7 +278,9 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         private RemoteRunspace _pushedRunspace;
+
         private ServerRemoteDebugger _debugger;
+
         private bool _hostSupportsPSEdit;
 
         #endregion

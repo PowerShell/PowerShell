@@ -17,7 +17,9 @@ namespace System.Management.Automation.Security
     internal partial class NativeConstants
     {
         internal const int CRYPT_OID_INFO_OID_KEY = 1;
+
         internal const int CRYPT_OID_INFO_NAME_KEY = 2;
+
         internal const int CRYPT_OID_INFO_CNG_ALGID_KEY = 5;
     }
 
@@ -187,10 +189,15 @@ namespace System.Management.Automation.Security
         internal enum CertFindType
         {                                                       // pvFindPara:
             CERT_COMPARE_ANY = 0 << 16,         // null
+
             CERT_FIND_ISSUER_STR = (8 << 16) | 4,   // substring
+
             CERT_FIND_SUBJECT_STR = (8 << 16) | 7,   // substring
+
             CERT_FIND_CROSS_CERT_DIST_POINTS = 17 << 16,        // null
+
             CERT_FIND_SUBJECT_INFO_ACCESS = 19 << 16,        // null
+
             CERT_FIND_HASH_STR = 20 << 16,        // thumbprint
         }
 
@@ -203,12 +210,19 @@ namespace System.Management.Automation.Security
         internal enum CertStoreFlags
         {
             CERT_SYSTEM_STORE_CURRENT_USER = 1 << 16,
+
             CERT_SYSTEM_STORE_LOCAL_MACHINE = 2 << 16,
+
             CERT_SYSTEM_STORE_CURRENT_SERVICE = 4 << 16,
+
             CERT_SYSTEM_STORE_SERVICES = 5 << 16,
+
             CERT_SYSTEM_STORE_USERS = 6 << 16,
+
             CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY = 7 << 16,
+
             CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY = 8 << 16,
+
             CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE = 9 << 16,
         }
 
@@ -232,28 +246,49 @@ namespace System.Management.Automation.Security
         internal enum CertOpenStoreFlags
         {
             CERT_STORE_NO_CRYPT_RELEASE_FLAG = 0x00000001,
+
             CERT_STORE_SET_LOCALIZED_NAME_FLAG = 0x00000002,
+
             CERT_STORE_DEFER_CLOSE_UNTIL_LAST_FREE_FLAG = 0x00000004,
+
             CERT_STORE_DELETE_FLAG = 0x00000010,
+
             CERT_STORE_UNSAFE_PHYSICAL_FLAG = 0x00000020,
+
             CERT_STORE_SHARE_STORE_FLAG = 0x00000040,
+
             CERT_STORE_SHARE_CONTEXT_FLAG = 0x00000080,
+
             CERT_STORE_MANIFOLD_FLAG = 0x00000100,
+
             CERT_STORE_ENUM_ARCHIVED_FLAG = 0x00000200,
+
             CERT_STORE_UPDATE_KEYID_FLAG = 0x00000400,
+
             CERT_STORE_BACKUP_RESTORE_FLAG = 0x00000800,
+
             CERT_STORE_READONLY_FLAG = 0x00008000,
+
             CERT_STORE_OPEN_EXISTING_FLAG = 0x00004000,
+
             CERT_STORE_CREATE_NEW_FLAG = 0x00002000,
+
             CERT_STORE_MAXIMUM_ALLOWED_FLAG = 0x00001000,
 
             CERT_SYSTEM_STORE_CURRENT_USER = 1 << 16,
+
             CERT_SYSTEM_STORE_LOCAL_MACHINE = 2 << 16,
+
             CERT_SYSTEM_STORE_CURRENT_SERVICE = 4 << 16,
+
             CERT_SYSTEM_STORE_SERVICES = 5 << 16,
+
             CERT_SYSTEM_STORE_USERS = 6 << 16,
+
             CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY = 7 << 16,
+
             CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY = 8 << 16,
+
             CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE = 9 << 16,
         }
 
@@ -261,7 +296,9 @@ namespace System.Management.Automation.Security
         internal enum CertOpenStoreProvider
         {
             CERT_STORE_PROV_MEMORY = 2,
+
             CERT_STORE_PROV_SYSTEM = 10,
+
             CERT_STORE_PROV_SYSTEM_REGISTRY = 13,
         }
 
@@ -283,7 +320,9 @@ namespace System.Management.Automation.Security
         internal enum CertControlStoreType : uint
         {
             CERT_STORE_CTRL_RESYNC = 1,
+
             CERT_STORE_CTRL_COMMIT = 3,
+
             CERT_STORE_CTRL_AUTO_RESYNC = 4,
         }
 
@@ -291,11 +330,17 @@ namespace System.Management.Automation.Security
         internal enum AddCertificateContext : uint
         {
             CERT_STORE_ADD_NEW = 1,
+
             CERT_STORE_ADD_USE_EXISTING = 2,
+
             CERT_STORE_ADD_REPLACE_EXISTING = 3,
+
             CERT_STORE_ADD_ALWAYS = 4,
+
             CERT_STORE_ADD_REPLACE_EXISTING_INHERIT_PROPERTIES = 5,
+
             CERT_STORE_ADD_NEWER = 6,
+
             CERT_STORE_ADD_NEWER_INHERIT_PROPERTIES = 7
         }
 
@@ -303,9 +348,13 @@ namespace System.Management.Automation.Security
         internal enum CertPropertyId
         {
             CERT_KEY_PROV_HANDLE_PROP_ID = 1,
+
             CERT_KEY_PROV_INFO_PROP_ID = 2,   // CRYPT_KEY_PROV_INFO
+
             CERT_SHA1_HASH_PROP_ID = 3,
+
             CERT_MD5_HASH_PROP_ID = 4,
+
             CERT_SEND_AS_TRUSTED_ISSUER_PROP_ID = 102,
         }
 
@@ -313,6 +362,7 @@ namespace System.Management.Automation.Security
         internal enum NCryptDeletKeyFlag
         {
             NCRYPT_MACHINE_KEY_FLAG = 0x00000020,  // same as CAPI CRYPT_MACHINE_KEYSET
+
             NCRYPT_SILENT_FLAG = 0x00000040,  // same as CAPI CRYPT_SILENT
         }
 
@@ -320,9 +370,13 @@ namespace System.Management.Automation.Security
         internal enum ProviderFlagsEnum : uint
         {
             CRYPT_VERIFYCONTEXT = 0xF0000000,
+
             CRYPT_NEWKEYSET = 0x00000008,
+
             CRYPT_DELETEKEYSET = 0x00000010,
+
             CRYPT_MACHINE_KEYSET = 0x00000020,
+
             CRYPT_SILENT = 0x00000040,
         }
 
@@ -565,18 +619,21 @@ namespace System.Management.Automation.Security
         internal struct CRYPTUI_WIZ_DIGITAL_SIGN_INFO
         {
             internal DWORD dwSize;
+
             internal DWORD dwSubjectChoice;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszFileName;
 
             internal DWORD dwSigningCertChoice;
+
             internal IntPtr pSigningCertContext; // PCCERT_CONTEXT
 
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszTimestampURL;
 
             internal DWORD dwAdditionalCertChoice;
+
             internal IntPtr pSignExtInfo; // PCCRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
         };
 
@@ -599,6 +656,7 @@ namespace System.Management.Automation.Security
         internal enum SignInfoAdditionalCertChoice
         {
             CRYPTUI_WIZ_DIGITAL_SIGN_ADD_CHAIN = 1,
+
             CRYPTUI_WIZ_DIGITAL_SIGN_ADD_CHAIN_NO_ROOT = 2
         };
 
@@ -606,6 +664,7 @@ namespace System.Management.Automation.Security
         internal struct CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
         {
             internal DWORD dwSize;
+
             internal DWORD dwAttrFlagsNotUsed;
 
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -618,8 +677,11 @@ namespace System.Management.Automation.Security
             internal string pszHashAlg;
 
             internal IntPtr pwszSigningCertDisplayStringNotUsed; // LPCWSTR
+
             internal IntPtr hAdditionalCertStoreNotUsed; // HCERTSTORE
+
             internal IntPtr psAuthenticatedNotUsed;      // PCRYPT_ATTRIBUTES
+
             internal IntPtr psUnauthenticatedNotUsed;    // PCRYPT_ATTRIBUTES
         };
 
@@ -714,9 +776,13 @@ namespace System.Management.Automation.Security
         internal struct CERT_CONTEXT
         {
             public int dwCertEncodingType;
+
             public IntPtr pbCertEncoded;
+
             public int cbCertEncoded;
+
             public IntPtr pCertInfo;
+
             public IntPtr hCertStore;
         }
 
@@ -807,6 +873,7 @@ namespace System.Management.Automation.Security
             internal string pcwszFilePath;         // LPCWSTR
 
             internal IntPtr hFileNotUsed;          // optional, HANDLE to pcwszFilePath
+
             internal IntPtr pgKnownSubjectNotUsed; // optional: GUID* : fill if the
                                                    // subject type is known
         };
@@ -871,8 +938,11 @@ namespace System.Management.Automation.Security
         internal enum WintrustUIChoice
         {
             WTD_UI_ALL = 1,
+
             WTD_UI_NONE = 2,
+
             WTD_UI_NOBAD = 3,
+
             WTD_UI_NOGOOD = 4
         };
 
@@ -890,17 +960,29 @@ namespace System.Management.Automation.Security
         internal enum WintrustProviderFlags
         {
             WTD_PROV_FLAGS_MASK = 0x0000FFFF,
+
             WTD_USE_IE4_TRUST_FLAG = 0x00000001,
+
             WTD_NO_IE4_CHAIN_FLAG = 0x00000002,
+
             WTD_NO_POLICY_USAGE_FLAG = 0x00000004,
+
             WTD_REVOCATION_CHECK_NONE = 0x00000010,
+
             WTD_REVOCATION_CHECK_END_CERT = 0x00000020,
+
             WTD_REVOCATION_CHECK_CHAIN = 0x00000040,
+
             WTD_REVOCATION_CHECK_CHAIN_EXCLUDE_ROOT = 0x00000080,
+
             WTD_SAFER_FLAG = 0x00000100,
+
             WTD_HASH_ONLY_FLAG = 0x00000200,
+
             WTD_USE_DEFAULT_OSVER_CHECK = 0x00000400,
+
             WTD_LIFETIME_SIGNING_FLAG = 0x00000800,
+
             WTD_CACHE_ONLY_URL_RETRIEVAL = 0x00001000
         };
 
@@ -908,9 +990,13 @@ namespace System.Management.Automation.Security
         internal enum WintrustAction
         {
             WTD_STATEACTION_IGNORE = 0x00000000,
+
             WTD_STATEACTION_VERIFY = 0x00000001,
+
             WTD_STATEACTION_CLOSE = 0x00000002,
+
             WTD_STATEACTION_AUTO_CACHE = 0x00000003,
+
             WTD_STATEACTION_AUTO_CACHE_FLUSH = 0x00000004
         };
 
@@ -1092,19 +1178,33 @@ namespace System.Management.Automation.Security
         internal struct CRYPT_PROVIDER_CERT
         {
             private DWORD _cbStruct;
+
             internal IntPtr pCert; // PCCERT_CONTEXT
+
             private BOOL _fCommercial;
+
             private BOOL _fTrustedRoot;
+
             private BOOL _fSelfSigned;
+
             private BOOL _fTestCert;
+
             private DWORD _dwRevokedReason;
+
             private DWORD _dwConfidence;
+
             private DWORD _dwError;
+
             private IntPtr _pTrustListContext; // CTL_CONTEXT*
+
             private BOOL _fTrustListSignerCert;
+
             private IntPtr _pCtlContext; // PCCTL_CONTEXT
+
             private DWORD _dwCtlError;
+
             private BOOL _fIsCyclic;
+
             private IntPtr _pChainElement; // PCERT_CHAIN_ELEMENT
         };
 
@@ -1112,14 +1212,23 @@ namespace System.Management.Automation.Security
         internal struct CRYPT_PROVIDER_SGNR
         {
             private DWORD _cbStruct;
+
             private FILETIME _sftVerifyAsOf;
+
             private DWORD _csCertChain;
+
             private IntPtr _pasCertChain; // CRYPT_PROVIDER_CERT*
+
             private DWORD _dwSignerType;
+
             private IntPtr _psSigner; // CMSG_SIGNER_INFO*
+
             private DWORD _dwError;
+
             internal DWORD csCounterSigners;
+
             internal IntPtr pasCounterSigners; // CRYPT_PROVIDER_SGNR*
+
             private IntPtr _pChainContext; // PCCERT_CHAIN_CONTEXT
         };
 
@@ -1441,26 +1550,38 @@ namespace System.Management.Automation.Security
     internal static partial class NativeMethods
     {
         internal const int CRYPT_E_NOT_FOUND = unchecked((int)0x80092004);
+
         internal const int E_INVALID_DATA = unchecked((int)0x8007000d);
+
         internal const int NTE_NOT_SUPPORTED = unchecked((int)0x80090029);
 
         internal enum AltNameType : uint
         {
             CERT_ALT_NAME_OTHER_NAME = 1,
+
             CERT_ALT_NAME_RFC822_NAME = 2,
+
             CERT_ALT_NAME_DNS_NAME = 3,
+
             CERT_ALT_NAME_X400_ADDRESS = 4,
+
             CERT_ALT_NAME_DIRECTORY_NAME = 5,
+
             CERT_ALT_NAME_EDI_PARTY_NAME = 6,
+
             CERT_ALT_NAME_URL = 7,
+
             CERT_ALT_NAME_IP_ADDRESS = 8,
+
             CERT_ALT_NAME_REGISTERED_ID = 9,
         }
 
         internal enum CryptDecodeFlags : uint
         {
             CRYPT_DECODE_ENABLE_PUNYCODE_FLAG = 0x02000000,
+
             CRYPT_DECODE_ENABLE_UTF8PERCENT_FLAG = 0x04000000,
+
             CRYPT_DECODE_ENABLE_IA5CONVERSION_FLAG = (CRYPT_DECODE_ENABLE_PUNYCODE_FLAG | CRYPT_DECODE_ENABLE_UTF8PERCENT_FLAG),
         }
     }
@@ -1616,9 +1737,11 @@ namespace System.Management.Automation.Security
         // namespace = Microsoft.PowerShell.Commands.Internal.Win32Native
         //
         internal const uint ERROR_SUCCESS = 0;
+
         internal const uint ERROR_NO_TOKEN = 0x3f0;
 
         internal const uint STATUS_SUCCESS = 0;
+
         internal const uint STATUS_INVALID_PARAMETER = 0xC000000D;
 
         internal const uint ACL_REVISION = 2;
@@ -1626,53 +1749,88 @@ namespace System.Management.Automation.Security
         internal const uint SYSTEM_SCOPED_POLICY_ID_ACE_TYPE = 0x13;
 
         internal const uint SUB_CONTAINERS_AND_OBJECTS_INHERIT = 0x3;
+
         internal const uint INHERIT_ONLY_ACE = 0x8;
 
         internal const uint TOKEN_ASSIGN_PRIMARY = 0x0001;
+
         internal const uint TOKEN_DUPLICATE = 0x0002;
+
         internal const uint TOKEN_IMPERSONATE = 0x0004;
+
         internal const uint TOKEN_QUERY = 0x0008;
+
         internal const uint TOKEN_QUERY_SOURCE = 0x0010;
+
         internal const uint TOKEN_ADJUST_PRIVILEGES = 0x0020;
+
         internal const uint TOKEN_ADJUST_GROUPS = 0x0040;
+
         internal const uint TOKEN_ADJUST_DEFAULT = 0x0080;
+
         internal const uint TOKEN_ADJUST_SESSIONID = 0x0100;
 
         internal const uint SE_PRIVILEGE_ENABLED_BY_DEFAULT = 0x00000001;
+
         internal const uint SE_PRIVILEGE_ENABLED = 0x00000002;
+
         internal const uint SE_PRIVILEGE_REMOVED = 0X00000004;
+
         internal const uint SE_PRIVILEGE_USED_FOR_ACCESS = 0x80000000;
 
         internal enum SeObjectType : uint
         {
             SE_UNKNOWN_OBJECT_TYPE = 0,
+
             SE_FILE_OBJECT = 1,
+
             SE_SERVICE = 2,
+
             SE_PRINTER = 3,
+
             SE_REGISTRY_KEY = 4,
+
             SE_LMSHARE = 5,
+
             SE_KERNEL_OBJECT = 6,
+
             SE_WINDOW_OBJECT = 7,
+
             SE_DS_OBJECT = 8,
+
             SE_DS_OBJECT_ALL = 9,
+
             SE_PROVIDER_DEFINED_OBJECT = 10,
+
             SE_WMIGUID_OBJECT = 11,
+
             SE_REGISTRY_WOW64_32KEY = 12
         }
 
         internal enum SecurityInformation : uint
         {
             OWNER_SECURITY_INFORMATION = 0x00000001,
+
             GROUP_SECURITY_INFORMATION = 0x00000002,
+
             DACL_SECURITY_INFORMATION = 0x00000004,
+
             SACL_SECURITY_INFORMATION = 0x00000008,
+
             LABEL_SECURITY_INFORMATION = 0x00000010,
+
             ATTRIBUTE_SECURITY_INFORMATION = 0x00000020,
+
             SCOPE_SECURITY_INFORMATION = 0x00000040,
+
             BACKUP_SECURITY_INFORMATION = 0x00010000,
+
             PROTECTED_DACL_SECURITY_INFORMATION = 0x80000000,
+
             PROTECTED_SACL_SECURITY_INFORMATION = 0x40000000,
+
             UNPROTECTED_DACL_SECURITY_INFORMATION = 0x20000000,
+
             UNPROTECTED_SACL_SECURITY_INFORMATION = 0x10000000
         }
 
@@ -1680,6 +1838,7 @@ namespace System.Management.Automation.Security
         internal struct LUID
         {
             internal uint LowPart;
+
             internal uint HighPart;
         }
 
@@ -1687,6 +1846,7 @@ namespace System.Management.Automation.Security
         internal struct LUID_AND_ATTRIBUTES
         {
             internal LUID Luid;
+
             internal uint Attributes;
         }
 
@@ -1694,6 +1854,7 @@ namespace System.Management.Automation.Security
         internal struct TOKEN_PRIVILEGE
         {
             internal uint PrivilegeCount;
+
             internal LUID_AND_ATTRIBUTES Privilege;
         }
 
@@ -1701,9 +1862,13 @@ namespace System.Management.Automation.Security
         internal struct ACL
         {
             internal byte AclRevision;
+
             internal byte Sbz1;
+
             internal ushort AclSize;
+
             internal ushort AceCount;
+
             internal ushort Sbz2;
         }
 
@@ -1711,7 +1876,9 @@ namespace System.Management.Automation.Security
         internal struct ACE_HEADER
         {
             internal byte AceType;
+
             internal byte AceFlags;
+
             internal ushort AceSize;
         }
 
@@ -1719,7 +1886,9 @@ namespace System.Management.Automation.Security
         internal struct SYSTEM_AUDIT_ACE
         {
             internal ACE_HEADER Header;
+
             internal uint Mask;
+
             internal uint SidStart;
         }
 
@@ -1727,7 +1896,9 @@ namespace System.Management.Automation.Security
         internal struct LSA_UNICODE_STRING
         {
             internal ushort Length;
+
             internal ushort MaximumLength;
+
             internal IntPtr Buffer;
         }
 
@@ -1735,11 +1906,17 @@ namespace System.Management.Automation.Security
         internal struct CENTRAL_ACCESS_POLICY
         {
             internal IntPtr CAPID;
+
             internal LSA_UNICODE_STRING Name;
+
             internal LSA_UNICODE_STRING Description;
+
             internal LSA_UNICODE_STRING ChangeId;
+
             internal uint Flags;
+
             internal uint CAPECount;
+
             internal IntPtr CAPEs;
         }
 
@@ -1845,16 +2022,27 @@ namespace System.Management.Automation.Security
         internal static extern IntPtr LocalFree(IntPtr hMem);
 
         internal const uint DONT_RESOLVE_DLL_REFERENCES = 0x00000001;
+
         internal const uint LOAD_LIBRARY_AS_DATAFILE = 0x00000002;
+
         internal const uint LOAD_WITH_ALTERED_SEARCH_PATH = 0x00000008;
+
         internal const uint LOAD_IGNORE_CODE_AUTHZ_LEVEL = 0x00000010;
+
         internal const uint LOAD_LIBRARY_AS_IMAGE_RESOURCE = 0x00000020;
+
         internal const uint LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE = 0x00000040;
+
         internal const uint LOAD_LIBRARY_REQUIRE_SIGNED_TARGET = 0x00000080;
+
         internal const uint LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR = 0x00000100;
+
         internal const uint LOAD_LIBRARY_SEARCH_APPLICATION_DIR = 0x00000200;
+
         internal const uint LOAD_LIBRARY_SEARCH_USER_DIRS = 0x00000400;
+
         internal const uint LOAD_LIBRARY_SEARCH_SYSTEM32 = 0x00000800;
+
         internal const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
 
         [DllImport(PinvokeDllNames.LoadLibraryEx, CharSet = CharSet.Unicode, SetLastError = true)]
@@ -1953,7 +2141,9 @@ namespace System.Management.Automation.Security
         internal struct SIP_INDIRECT_DATA
         {
             internal CRYPT_ATTRIBUTE_TYPE_VALUE Data;
+
             internal CRYPT_ALGORITHM_IDENTIFIER DigestAlgorithm;
+
             internal CRYPT_ATTR_BLOB Digest;
         }
 
@@ -1961,9 +2151,13 @@ namespace System.Management.Automation.Security
         internal struct CRYPTCATCDF
         {
             private DWORD _cbStruct;
+
             private IntPtr _hFile;
+
             private DWORD _dwCurFilePos;
+
             private DWORD _dwLastMemberOffset;
+
             private BOOL _fEOF;
 
             [MarshalAs(UnmanagedType.LPWStr)]
@@ -1984,12 +2178,19 @@ namespace System.Management.Automation.Security
             internal string pwszFileName;
 
             internal Guid gSubjectType;
+
             internal DWORD fdwMemberFlags;
+
             internal IntPtr pIndirectData;
+
             internal DWORD dwCertVersion;
+
             internal DWORD dwReserved;
+
             internal IntPtr hReserved;
+
             internal CRYPT_ATTR_BLOB sEncodedIndirectData;
+
             internal CRYPT_ATTR_BLOB sEncodedMemberInfo;
         };
 
@@ -2002,8 +2203,11 @@ namespace System.Management.Automation.Security
             internal string pwszReferenceTag;
 
             private DWORD _dwAttrTypeAndAction;
+
             internal DWORD cbValue;
+
             internal System.IntPtr pbValue;
+
             private DWORD _dwReserved;
         };
 
@@ -2011,17 +2215,24 @@ namespace System.Management.Automation.Security
         internal struct CRYPTCATSTORE
         {
             private DWORD _cbStruct;
+
             internal DWORD dwPublicVersion;
 
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszP7File;
 
             private IntPtr _hProv;
+
             private DWORD _dwEncodingType;
+
             private DWORD _fdwStoreFlags;
+
             private IntPtr _hReserved;
+
             private IntPtr _hAttrs;
+
             private IntPtr _hCryptMsg;
+
             private IntPtr _hSorted;
         };
 

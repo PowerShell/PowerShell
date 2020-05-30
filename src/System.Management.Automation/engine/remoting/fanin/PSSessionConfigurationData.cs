@@ -150,6 +150,7 @@ namespace System.Management.Automation.Remoting
         #region Private Members
 
         private List<string> _modulesToImport;
+
         private List<object> _modulesToImportInternal;
 
         private string _privateData;
@@ -227,11 +228,17 @@ namespace System.Management.Automation.Remoting
         }
 
         private const string SessionConfigToken = "SessionConfigurationData";
+
         internal const string ModulesToImportToken = "modulestoimport";
+
         internal const string PrivateDataToken = "PrivateData";
+
         internal const string InProcActivityToken = "InProcActivity";
+
         private const string ParamToken = "Param";
+
         private const string NameToken = "Name";
+
         private const string ValueToken = "Value";
 
         #endregion Private Members

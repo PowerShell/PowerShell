@@ -182,6 +182,7 @@ namespace Microsoft.Management.UI.Internal
         protected class SearchableRule
         {
             private SelectorFilterRule selectorFilterRule;
+
             private TextFilterRule childRule;
 
             /// <summary>

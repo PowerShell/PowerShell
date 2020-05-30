@@ -26,6 +26,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Dynamic type set name and type data set name
         private const string DynamicTypeSet = "DynamicTypeSet";
+
         private const string TypeDataSet = "TypeDataSet";
 
         private static object s_notSpecified = new object();
@@ -36,6 +37,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private PSMemberTypes _memberType;
+
         private bool _isMemberTypeSet = false;
         /// <summary>
         /// The member type of to be added.
@@ -239,9 +241,13 @@ namespace Microsoft.PowerShell.Commands
 
         // These members are represented as NoteProperty in types.ps1xml
         private string _serializationMethod;
+
         private Type _targetTypeForDeserialization;
+
         private int _serializationDepth = int.MinValue;
+
         private string _defaultDisplayProperty;
+
         private bool? _inheritPropertySerializationSet;
 
         // These members are represented as AliasProperty in types.ps1xml
@@ -249,7 +255,9 @@ namespace Microsoft.PowerShell.Commands
 
         // These members are represented as PropertySet in types.ps1xml
         private string[] _defaultDisplayPropertySet;
+
         private string[] _defaultKeyPropertySet;
+
         private string[] _propertySerializationSet;
 
         private string _typeName;
@@ -1044,7 +1052,9 @@ namespace Microsoft.PowerShell.Commands
     public class RemoveTypeDataCommand : PSCmdlet
     {
         private const string RemoveTypeSet = "RemoveTypeSet";
+
         private const string RemoveFileSet = "RemoveFileSet";
+
         private const string RemoveTypeDataSet = "RemoveTypeDataSet";
 
         private string _typeName;

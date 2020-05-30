@@ -519,13 +519,19 @@ namespace System.Management.Automation.Language
     internal class TypeResolutionState
     {
         internal static readonly string[] systemNamespace = { "System" };
+
         internal static readonly Assembly[] emptyAssemblies = Array.Empty<Assembly>();
+
         internal static readonly TypeResolutionState UsingSystem = new TypeResolutionState();
 
         internal readonly string[] namespaces;
+
         internal readonly Assembly[] assemblies;
+
         private readonly HashSet<string> _typesDefined;
+
         internal readonly int genericArgumentCount;
+
         internal readonly bool attribute;
 
         private TypeResolutionState()

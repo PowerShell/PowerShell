@@ -33,10 +33,15 @@ namespace System.Management.Automation
     internal enum SerializationOptions
     {
         None = 0,
+
         UseDepthFromTypes = 1,
+
         NoRootElement = 2,
+
         NoNamespace = 4,
+
         NoObjectRefIds = 8,
+
         PreserveSerializationSettingOfOriginal = 16,
 
         RemotingOptions = UseDepthFromTypes | NoRootElement | NoNamespace | PreserveSerializationSettingOfOriginal,
@@ -73,7 +78,9 @@ namespace System.Management.Automation
         }
 
         internal readonly int depth;
+
         internal readonly SerializationOptions options;
+
         internal readonly PSRemotingCryptoHelper cryptoHelper;
 
         internal readonly CimClassSerializationCache<CimClassSerializationId> cimClassSerializationIdCache = new CimClassSerializationCache<CimClassSerializationId>();
@@ -297,8 +304,11 @@ namespace System.Management.Automation
     internal enum DeserializationOptions
     {
         None = 0,
+
         NoRootElement = 256,            // I start at 256 to try not to overlap
+
         NoNamespace = 512,              // with SerializationOptions and to catch bugs early
+
         DeserializeScriptBlocks = 1024,
 
         RemotingOptions = NoRootElement | NoNamespace,
@@ -353,9 +363,11 @@ namespace System.Management.Automation
         private int _totalDataProcessedSoFar;
 
         internal readonly DeserializationOptions options;
+
         internal readonly PSRemotingCryptoHelper cryptoHelper;
 
         internal static readonly int MaxItemsInCimClassCache = 100;
+
         internal readonly CimClassDeserializationCache<CimClassSerializationId> cimClassSerializationIdCache = new CimClassDeserializationCache<CimClassSerializationId>();
     }
 
@@ -457,7 +469,9 @@ namespace System.Management.Automation
         #region constructor
 
         private readonly XmlReader _reader;
+
         private readonly InternalDeserializer _deserializer;
+
         private readonly DeserializationContext _context;
 
         /// <summary>
@@ -786,10 +800,15 @@ namespace System.Management.Automation
     internal enum ContainerType
     {
         Dictionary,
+
         Queue,
+
         Stack,
+
         List,
+
         Enumerable,
+
         None
     };
 
@@ -826,6 +845,7 @@ namespace System.Management.Automation
         private const int MaxDepthBelowTopLevel = 50;
 
         private readonly ReferenceIdHandlerForSerializer<object> _objectRefIdHandler;
+
         private readonly ReferenceIdHandlerForSerializer<ConsolidatedString> _typeRefIdHandler;
 
         internal InternalSerializer(XmlWriter writer, SerializationContext context)
@@ -2985,6 +3005,7 @@ namespace System.Management.Automation
         private const int MaxDepthBelowTopLevel = 50;
 
         private readonly ReferenceIdHandlerForDeserializer<object> _objectRefIdHandler;
+
         private readonly ReferenceIdHandlerForDeserializer<ConsolidatedString> _typeRefIdHandler;
 
         /// <summary>
@@ -3189,12 +3210,19 @@ namespace System.Management.Automation
         }
 
         internal const string CimInstanceMetadataProperty = "__InstanceMetadata";
+
         internal const string CimModifiedProperties = "Modified";
+
         internal const string CimClassMetadataProperty = "__ClassMetadata";
+
         internal const string CimClassNameProperty = "ClassName";
+
         internal const string CimNamespaceProperty = "Namespace";
+
         internal const string CimServerNameProperty = "ServerName";
+
         internal const string CimHashCodeProperty = "Hash";
+
         internal const string CimMiXmlProperty = "MiXml";
 
         private bool RehydrateCimInstanceProperty(
@@ -5680,6 +5708,7 @@ namespace System.Management.Automation
         }
 
         private readonly IEqualityComparer<WeakReference> _weakEqualityComparer;
+
         private Dictionary<WeakReference, T> _dictionary;
 
         public WeakReferenceDictionary()
@@ -6823,10 +6852,13 @@ namespace Microsoft.PowerShell
         internal enum RehydrationFlags
         {
             NullValueBad = 0,
+
             NullValueOk = 0x1,
+
             NullValueMeansEmptyList = 0x3,
 
             MissingPropertyBad = 0,
+
             MissingPropertyOk = 0x4,
         }
 

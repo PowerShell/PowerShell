@@ -66,8 +66,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         internal static readonly ObjectCommandPropertyValue NonExistingProperty = new ObjectCommandPropertyValue();
+
         internal static readonly ObjectCommandPropertyValue ExistingNullProperty = new ObjectCommandPropertyValue(null);
+
         private bool _caseSensitive;
+
         internal CultureInfo cultureInfo = null;
 
         /// <summary>

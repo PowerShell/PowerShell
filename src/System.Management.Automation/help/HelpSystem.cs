@@ -805,7 +805,9 @@ namespace System.Management.Automation
     internal class HelpProgressInfo
     {
         internal bool Completed;
+
         internal string Activity;
+
         internal int PercentComplete;
     }
 
@@ -815,7 +817,9 @@ namespace System.Management.Automation
     internal class HelpProviderInfo
     {
         internal string AssemblyName = string.Empty;
+
         internal string ClassName = string.Empty;
+
         internal HelpCategory HelpCategory = HelpCategory.None;
 
         /// <summary>

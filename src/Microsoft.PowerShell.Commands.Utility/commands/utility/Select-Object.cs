@@ -143,6 +143,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int _first = 0;
+
         private bool _firstOrLastSpecified;
 
         /// <summary>
@@ -215,7 +216,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private int[] _index;
+
         private bool _indexSpecified;
+
         private bool _isIncludeIndex;
 
         #endregion
@@ -304,7 +307,9 @@ namespace Microsoft.PowerShell.Commands
             }
 
             private int _streamedObjectCount;
+
             private int _first, _last, _skip, _skipLast;
+
             private bool _firstOrLastSpecified;
         }
 

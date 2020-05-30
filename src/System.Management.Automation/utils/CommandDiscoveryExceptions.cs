@@ -154,6 +154,7 @@ namespace System.Management.Automation
 
         #region Private
         private string _errorId = "CommandNotFoundException";
+
         private ErrorCategory _errorCategory = ErrorCategory.ObjectNotFound;
 
         private static string BuildMessage(

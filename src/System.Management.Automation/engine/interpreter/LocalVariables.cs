@@ -28,9 +28,11 @@ namespace System.Management.Automation.Interpreter
     internal sealed class LocalVariable
     {
         private const int IsBoxedFlag = 1;
+
         private const int InClosureFlag = 2;
 
         public readonly int Index;
+
         private int _flags;
 
         public bool IsBoxed
@@ -81,6 +83,7 @@ namespace System.Management.Automation.Interpreter
     internal struct LocalDefinition
     {
         private readonly int _index;
+
         private readonly ParameterExpression _parameter;
 
         internal LocalDefinition(int localIndex, ParameterExpression parameter)
@@ -140,6 +143,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class LocalVariables
     {
         private readonly HybridReferenceDictionary<ParameterExpression, VariableScope> _variables = new HybridReferenceDictionary<ParameterExpression, VariableScope>();
+
         private Dictionary<ParameterExpression, LocalVariable> _closureVariables;
 
         private int _localCount, _maxLocalCount;
@@ -309,9 +313,13 @@ namespace System.Management.Automation.Interpreter
         private sealed class VariableScope
         {
             public readonly int Start;
+
             public int Stop = Int32.MaxValue;
+
             public readonly LocalVariable Variable;
+
             public readonly VariableScope Parent;
+
             public List<VariableScope> ChildScopes;
 
             public VariableScope(LocalVariable variable, int start, VariableScope parent)

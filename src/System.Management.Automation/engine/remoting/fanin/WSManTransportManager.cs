@@ -342,14 +342,20 @@ namespace System.Management.Automation.Remoting.Client
 
         // instance callback handlers
         private WSManNativeApi.WSManShellAsync _createSessionCallback;
+
         private WSManNativeApi.WSManShellAsync _receivedFromRemote;
+
         private WSManNativeApi.WSManShellAsync _sendToRemoteCompleted;
+
         private WSManNativeApi.WSManShellAsync _disconnectSessionCompleted;
+
         private WSManNativeApi.WSManShellAsync _reconnectSessionCompleted;
+
         private WSManNativeApi.WSManShellAsync _connectSessionCallback;
         // TODO: This GCHandle is required as it seems WSMan is calling create callback
         // after we call Close. This seems wrong. Opened bug on WSMan to track this.
         private GCHandle _createSessionCallbackGCHandle;
+
         private WSManNativeApi.WSManShellAsync _closeSessionCompleted;
 
         // used by WSManCreateShell call to send additional data (like negotiation)
@@ -358,6 +364,7 @@ namespace System.Management.Automation.Remoting.Client
         // By default WSMan compresses data sent on the network..use this flag to not do
         // this.
         private bool _noCompression;
+
         private bool _noMachineProfile;
 
         private int _connectionRetryCount;
@@ -443,11 +450,17 @@ namespace System.Management.Automation.Remoting.Client
 
         // static callback delegate
         private static WSManNativeApi.WSManShellAsyncCallback s_sessionCreateCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_sessionCloseCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_sessionReceiveCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_sessionSendCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_sessionDisconnectCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_sessionReconnectCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_sessionConnectCallback;
 
         // This dictionary maintains active session transport managers to be used from various
@@ -500,6 +513,7 @@ namespace System.Management.Automation.Remoting.Client
         #region SHIM: Redirection delegates for test purposes
 
         private static Delegate s_sessionSendRedirect = null;
+
         private static Delegate s_protocolVersionRedirect = null;
 
         #endregion
@@ -2642,9 +2656,11 @@ namespace System.Management.Automation.Remoting.Client
             private IntPtr _handle;
             // if any
             private WSManNativeApi.WSManStreamIDSet_ManToUn _inputStreamSet;
+
             private WSManNativeApi.WSManStreamIDSet_ManToUn _outputStreamSet;
             // Dispose
             private bool _isDisposed;
+
             private object _syncObject = new object();
 #if !UNIX
             private WindowsIdentity _identityToImpersonate;
@@ -2805,27 +2821,38 @@ namespace System.Management.Automation.Remoting.Client
 
         // bools used to track and send stop signal only after Create is completed.
         private bool _isCreateCallbackReceived;
+
         private bool _isStopSignalPending;
+
         private bool _isDisconnectPending;
+
         private bool _isSendingInput;
+
         private bool _isDisconnectedOnInvoke;
 
         // callbacks
         private WSManNativeApi.WSManShellAsync _createCmdCompleted;
+
         private WSManNativeApi.WSManShellAsync _receivedFromRemote;
+
         private WSManNativeApi.WSManShellAsync _sendToRemoteCompleted;
+
         private WSManNativeApi.WSManShellAsync _reconnectCmdCompleted;
+
         private WSManNativeApi.WSManShellAsync _connectCmdCompleted;
         // TODO: This GCHandle is required as it seems WSMan is calling create callback
         // after we call Close. This seems wrong. Opened bug on WSMan to track this.
         private GCHandle _createCmdCompletedGCHandle;
+
         private WSManNativeApi.WSManShellAsync _closeCmdCompleted;
+
         private WSManNativeApi.WSManShellAsync _signalCmdCompleted;
         // this is the chunk that got delivered on onDataAvailableToSendCallback
         // will be sent during subsequent SendOneItem()
         private SendDataChunk _chunkToSend;
 
         private string _cmdLine;
+
         private readonly WSManClientSessionTransportManager _sessnTm;
 
         private class SendDataChunk
@@ -2847,11 +2874,17 @@ namespace System.Management.Automation.Remoting.Client
 
         // static callback delegate
         private static WSManNativeApi.WSManShellAsyncCallback s_cmdCreateCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_cmdCloseCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_cmdReceiveCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_cmdSendCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_cmdSignalCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_cmdReconnectCallback;
+
         private static WSManNativeApi.WSManShellAsyncCallback s_cmdConnectCallback;
 
         static WSManClientCommandTransportManager()

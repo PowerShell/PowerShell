@@ -76,8 +76,11 @@ namespace System.Management.Automation
         internal static readonly Version HostVersion = new Version(1, 0, 0, 0);
 
         internal static readonly Version ProtocolVersionWin7RC = new Version(2, 0);
+
         internal static readonly Version ProtocolVersionWin7RTM = new Version(2, 1);
+
         internal static readonly Version ProtocolVersionWin8RTM = new Version(2, 2);
+
         internal static readonly Version ProtocolVersionWin10RTM = new Version(2, 3);
 
         // Minor will be incremented for each change in PSRP client/server stack and new versions will be
@@ -87,18 +90,27 @@ namespace System.Management.Automation
         //      2.103 to 2.2   - Final ship protocol version value, no change to protocol
         //      2.2 to 2.3     - Enabling informational stream
         internal static readonly Version ProtocolVersionCurrent = new Version(2, 3);
+
         internal static readonly Version ProtocolVersion = ProtocolVersionCurrent;
         // Used by remoting commands to add remoting specific note properties.
         internal static readonly string ComputerNameNoteProperty = "PSComputerName";
+
         internal static readonly string RunspaceIdNoteProperty = "RunspaceId";
+
         internal static readonly string ShowComputerNameNoteProperty = "PSShowComputerName";
+
         internal static readonly string SourceJobInstanceId = "PSSourceJobInstanceId";
+
         internal static readonly string EventObject = "PSEventObject";
         // used by Custom Shell related cmdlets.
         internal const string PSSessionConfigurationNoun = "PSSessionConfiguration";
+
         internal const string PSRemotingNoun = "PSRemoting";
+
         internal const string PSPluginDLLName = "pwrshplugin.dll";
+
         internal const string DefaultShellName = "Microsoft.PowerShell";
+
         internal const string MaxIdleTimeoutMS = "2147483647";
     }
 
@@ -109,13 +121,19 @@ namespace System.Management.Automation
     internal static class RemoteDataNameStrings
     {
         internal const string Destination = "Destination";
+
         internal const string RemotingTargetInterface = "RemotingTargetInterface";
+
         internal const string ClientRunspacePoolId = "ClientRunspacePoolId";
+
         internal const string ClientPowerShellId = "ClientPowerShellId";
+
         internal const string Action = "Action";
+
         internal const string DataType = "DataType";
         // used by negotiation algorithm to figure out client's timezone.
         internal const string TimeZone = "TimeZone";
+
         internal const string SenderInfoPreferenceVariable = "PSSenderInfo";
         // used by negotiation algorithm to figure out if the negotiation
         // request (from client) must comply.
@@ -355,21 +373,31 @@ namespace System.Management.Automation
         #region Host Related Strings
 
         internal const string CallId = "ci";
+
         internal const string MethodId = "mi";
+
         internal const string MethodParameters = "mp";
+
         internal const string MethodReturnValue = "mr";
+
         internal const string MethodException = "me";
 
         internal const string PS_STARTUP_PROTOCOL_VERSION_NAME = "protocolversion";
+
         internal const string PublicKeyAsXml = "PublicKeyAsXml";
+
         internal const string PSVersion = "PSVersion";
+
         internal const string SerializationVersion = "SerializationVersion";
 
         internal const string MethodArrayElementType = "mat";
+
         internal const string MethodArrayLengths = "mal";
+
         internal const string MethodArrayElements = "mae";
 
         internal const string ObjectType = "T";
+
         internal const string ObjectValue = "V";
 
         #endregion
@@ -377,10 +405,15 @@ namespace System.Management.Automation
         #region Command discovery pipeline
 
         internal const string DiscoveryName = "Name";
+
         internal const string DiscoveryType = "CommandType";
+
         internal const string DiscoveryModule = "Namespace";
+
         internal const string DiscoveryFullyQualifiedModule = "FullyQualifiedModule";
+
         internal const string DiscoveryArgumentList = "ArgumentList";
+
         internal const string DiscoveryCount = "Count";
 
         #endregion
@@ -388,29 +421,51 @@ namespace System.Management.Automation
         #region PowerShell
 
         internal const string PSInvocationSettings = "PSInvocationSettings";
+
         internal const string ApartmentState = "ApartmentState";
+
         internal const string RemoteStreamOptions = "RemoteStreamOptions";
+
         internal const string AddToHistory = "AddToHistory";
 
         internal const string PowerShell = "PowerShell";
+
         internal const string IsNested = "IsNested";
+
         internal const string HistoryString = "History";
+
         internal const string RedirectShellErrorOutputPipe = "RedirectShellErrorOutputPipe";
+
         internal const string Commands = "Cmds";
+
         internal const string ExtraCommands = "ExtraCmds";
+
         internal const string CommandText = "Cmd";
+
         internal const string IsScript = "IsScript";
+
         internal const string UseLocalScopeNullable = "UseLocalScope";
+
         internal const string MergeUnclaimedPreviousCommandResults = "MergePreviousResults";
+
         internal const string MergeMyResult = "MergeMyResult";
+
         internal const string MergeToResult = "MergeToResult";
+
         internal const string MergeError = "MergeError";
+
         internal const string MergeWarning = "MergeWarning";
+
         internal const string MergeVerbose = "MergeVerbose";
+
         internal const string MergeDebug = "MergeDebug";
+
         internal const string MergeInformation = "MergeInformation";
+
         internal const string Parameters = "Args";
+
         internal const string ParameterName = "N";
+
         internal const string ParameterValue = "V";
 
         internal const string NoInput = "NoInput";
@@ -440,12 +495,19 @@ namespace System.Management.Automation
         /// Properties used for serialization of PSEventArgs.
         /// </summary>
         internal const string PSEventArgsComputerName = "PSEventArgs.ComputerName";
+
         internal const string PSEventArgsRunspaceId = "PSEventArgs.RunspaceId";
+
         internal const string PSEventArgsEventIdentifier = "PSEventArgs.EventIdentifier";
+
         internal const string PSEventArgsSourceIdentifier = "PSEventArgs.SourceIdentifier";
+
         internal const string PSEventArgsTimeGenerated = "PSEventArgs.TimeGenerated";
+
         internal const string PSEventArgsSender = "PSEventArgs.Sender";
+
         internal const string PSEventArgsSourceArgs = "PSEventArgs.SourceArgs";
+
         internal const string PSEventArgsMessageData = "PSEventArgs.MessageData";
 
         #endregion PSEventArgs
@@ -453,14 +515,23 @@ namespace System.Management.Automation
         #region RunspacePool
 
         internal const string MinRunspaces = "MinRunspaces";
+
         internal const string MaxRunspaces = "MaxRunspaces";
+
         internal const string ThreadOptions = "PSThreadOptions";
+
         internal const string HostInfo = "HostInfo";
+
         internal const string RunspacePoolOperationResponse = "SetMinMaxRunspacesResponse";
+
         internal const string AvailableRunspaces = "AvailableRunspaces";
+
         internal const string PublicKey = "PublicKey";
+
         internal const string EncryptedSessionKey = "EncryptedSessionKey";
+
         internal const string ApplicationArguments = "ApplicationArguments";
+
         internal const string ApplicationPrivateData = "ApplicationPrivateData";
 
         #endregion RunspacePool
@@ -468,12 +539,19 @@ namespace System.Management.Automation
         #region ProgressRecord
 
         internal const string ProgressRecord_Activity = "Activity";
+
         internal const string ProgressRecord_ActivityId = "ActivityId";
+
         internal const string ProgressRecord_CurrentOperation = "CurrentOperation";
+
         internal const string ProgressRecord_ParentActivityId = "ParentActivityId";
+
         internal const string ProgressRecord_PercentComplete = "PercentComplete";
+
         internal const string ProgressRecord_Type = "Type";
+
         internal const string ProgressRecord_SecondsRemaining = "SecondsRemaining";
+
         internal const string ProgressRecord_StatusDescription = "StatusDescription";
 
         #endregion
@@ -486,8 +564,11 @@ namespace System.Management.Automation
     internal enum RemotingDestination : uint
     {
         InvalidDestination = 0x0,
+
         Client = 0x1,
+
         Server = 0x2,
+
         Listener = 0x4,
     }
 
@@ -501,8 +582,11 @@ namespace System.Management.Automation
     internal enum RemotingTargetInterface : int
     {
         InvalidTargetInterface = 0,
+
         Session = 1,
+
         RunspacePool = 2,
+
         PowerShell = 3,
     }
 
@@ -529,45 +613,73 @@ namespace System.Management.Automation
 
         // Session messages
         SessionCapability = 0x00010002,
+
         CloseSession = 0x00010003,
+
         CreateRunspacePool = 0x00010004,
+
         PublicKey = 0x00010005,
+
         EncryptedSessionKey = 0x00010006,
+
         PublicKeyRequest = 0x00010007,
+
         ConnectRunspacePool = 0x00010008,
 
         // Runspace Pool messages
         SetMaxRunspaces = 0x00021002,
+
         SetMinRunspaces = 0x00021003,
+
         RunspacePoolOperationResponse = 0x00021004,
+
         RunspacePoolStateInfo = 0x00021005,
+
         CreatePowerShell = 0x00021006,
+
         AvailableRunspaces = 0x00021007,
+
         PSEventArgs = 0x00021008,
+
         ApplicationPrivateData = 0x00021009,
+
         GetCommandMetadata = 0x0002100A,
+
         RunspacePoolInitData = 0x0002100B,
+
         ResetRunspaceState = 0x0002100C,
 
         // Runspace host messages
         RemoteHostCallUsingRunspaceHost = 0x00021100,
+
         RemoteRunspaceHostResponseData = 0x00021101,
 
         // PowerShell messages
         PowerShellInput = 0x00041002,
+
         PowerShellInputEnd = 0x00041003,
+
         PowerShellOutput = 0x00041004,
+
         PowerShellErrorRecord = 0x00041005,
+
         PowerShellStateInfo = 0x00041006,
+
         PowerShellDebug = 0x00041007,
+
         PowerShellVerbose = 0x00041008,
+
         PowerShellWarning = 0x00041009,
+
         PowerShellProgress = 0x00041010,
+
         PowerShellInformationStream = 0x00041011,
+
         StopPowerShell = 0x00041012,
 
         // PowerShell host messages
         RemoteHostCallUsingPowerShellHost = 0x00041100,
+
         RemotePowerShellHostResponseData = 0x00041101,
     }
 

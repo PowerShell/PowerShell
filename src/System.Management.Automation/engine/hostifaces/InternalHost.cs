@@ -217,9 +217,13 @@ namespace System.Management.Automation.Internal.Host
         private struct PromptContextData
         {
             public object SavedCurrentlyExecutingCommandVarValue;
+
             public object SavedPSBoundParametersVarValue;
+
             public ExecutionContext.SavedContextData SavedContextData;
+
             public RunspaceAvailability RunspaceAvailability;
+
             public PSLanguageMode LanguageMode;
         }
 
@@ -566,12 +570,16 @@ namespace System.Management.Automation.Internal.Host
 
         // Masked variables.
         private ObjectRef<PSHost> _externalHostRef;
+
         private ObjectRef<InternalHostUserInterface> _internalUIRef;
 
         // Private variables.
         private string _nameResult;
+
         private Version _versionResult;
+
         private Guid _idResult;
+
         private Stack<PromptContextData> _contextStack = new Stack<PromptContextData>();
 
         private readonly Guid _zeroGuid;
