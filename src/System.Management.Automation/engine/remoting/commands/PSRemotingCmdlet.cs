@@ -812,12 +812,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         public virtual string Subsystem { get; set; }
-        
+
         /// <summary>
-        /// Hashtable containing options to be passed to OpenSSH.
+        /// Gets or sets the Hashtable containing options to be passed to OpenSSH.
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public virtual Hashtable Options { get; set; }
 
         #endregion

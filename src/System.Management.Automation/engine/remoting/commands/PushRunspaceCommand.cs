@@ -59,10 +59,10 @@ namespace Microsoft.PowerShell.Commands
         public new string HostName { get; set; }
 
         /// <summary>
-        /// Host name for an SSH remote connection.
+        /// Gets or sets the Hashtable containing options to be passed to OpenSSH.
         /// </summary>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
-        [ValidateNotNullOrEmpty()]
+        [ValidateNotNullOrEmpty]
         public override Hashtable Options 
         { 
             get 
