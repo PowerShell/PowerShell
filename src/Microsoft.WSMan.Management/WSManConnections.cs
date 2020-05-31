@@ -269,11 +269,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-            string crtComputerName = computername;
-            if (crtComputerName == null)
-            {
-                crtComputerName = "localhost";
-            }
+            string crtComputerName = computername ?? "localhost";
 
             if (this.SessionState.Path.CurrentProviderLocation(WSManStringLiterals.rootpath).Path.StartsWith(this.SessionState.Drive.Current.Name + ":" + WSManStringLiterals.DefaultPathSeparator + crtComputerName, StringComparison.OrdinalIgnoreCase))
             {

@@ -652,11 +652,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // CoreCLR doesn't allow re-load TPA assemblies with different API (i.e. we load them by name and now want to load by path).
                 // LoadAssemblyHelper helps us avoid re-loading them, if they already loaded.
-                Assembly assembly = LoadAssemblyHelper(assemblyName);
-                if (assembly == null)
-                {
-                    assembly = Assembly.LoadFrom(ResolveAssemblyName(assemblyName, false));
-                }
+                Assembly assembly = LoadAssemblyHelper(assemblyName) ?? Assembly.LoadFrom(ResolveAssemblyName(assemblyName, false));
 
                 if (PassThru)
                 {

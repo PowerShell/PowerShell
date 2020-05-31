@@ -960,11 +960,7 @@ namespace Microsoft.WSMan.Management
 
                 IWSManSession m_session = CreateSessionObject(m_wsmanObject, authentication, sessionoption, credential, connectionStr, certificateThumbprint, usessl);
                 m_session.Identify(0);
-                string key = computername;
-                if (key == null)
-                {
-                    key = "localhost";
-                }
+                string key = computername ?? "localhost";
 
                 AddtoDictionary(key, m_session);
             }

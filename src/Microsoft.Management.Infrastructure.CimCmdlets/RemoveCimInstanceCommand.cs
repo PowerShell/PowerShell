@@ -244,11 +244,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         protected override void BeginProcessing()
         {
-            CimRemoveCimInstance cimRemoveInstance = this.GetOperationAgent();
-            if (cimRemoveInstance == null)
-            {
-                cimRemoveInstance = CreateOperationAgent();
-            }
+            CimRemoveCimInstance cimRemoveInstance = this.GetOperationAgent() ?? CreateOperationAgent();
 
             this.CmdletOperation = new CmdletOperationRemoveCimInstance(this, cimRemoveInstance);
             this.AtBeginProcess = false;

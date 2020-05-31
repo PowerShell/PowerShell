@@ -248,11 +248,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void ProcessRecord()
         {
             base.CheckParameterSet();
-            CimGetAssociatedInstance operation = this.GetOperationAgent();
-            if (operation == null)
-            {
-                operation = this.CreateOperationAgent();
-            }
+            CimGetAssociatedInstance operation = this.GetOperationAgent() ?? this.CreateOperationAgent();
 
             operation.GetCimAssociatedInstance(this);
             operation.ProcessActions(this.CmdletOperation);

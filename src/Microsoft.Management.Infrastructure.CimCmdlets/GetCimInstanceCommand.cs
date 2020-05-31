@@ -460,11 +460,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             base.CheckParameterSet();
             this.CheckArgument();
-            CimGetInstance cimGetInstance = this.GetOperationAgent();
-            if (cimGetInstance == null)
-            {
-                cimGetInstance = CreateOperationAgent();
-            }
+            CimGetInstance cimGetInstance = this.GetOperationAgent() ?? CreateOperationAgent();
 
             cimGetInstance.GetCimInstance(this);
             cimGetInstance.ProcessActions(this.CmdletOperation);
