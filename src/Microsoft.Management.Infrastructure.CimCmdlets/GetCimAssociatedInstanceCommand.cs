@@ -278,7 +278,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Get-CimAssociatedInstance operations.
         /// </para>
         /// </summary>
-        CimGetAssociatedInstance GetOperationAgent()
+        private CimGetAssociatedInstance GetOperationAgent()
         {
             return this.AsyncOperation as CimGetAssociatedInstance;
         }
@@ -290,7 +290,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns></returns>
-        CimGetAssociatedInstance CreateOperationAgent()
+        private CimGetAssociatedInstance CreateOperationAgent()
         {
             this.AsyncOperation = new CimGetAssociatedInstance();
             return GetOperationAgent();
@@ -319,7 +319,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameComputerName, new HashSet<ParameterDefinitionEntry> {
@@ -348,7 +348,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.SessionSetName, new ParameterSetEntry(2, false)     },
             {   CimBaseCommand.ComputerSetName, new ParameterSetEntry(1, true)     },

@@ -344,7 +344,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Set-CimInstance operations.
         /// </para>
         /// </summary>
-        CimSetCimInstance GetOperationAgent()
+        private CimSetCimInstance GetOperationAgent()
         {
             return (this.AsyncOperation as CimSetCimInstance);
         }
@@ -356,7 +356,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns></returns>
-        CimSetCimInstance CreateOperationAgent()
+        private CimSetCimInstance CreateOperationAgent()
         {
             CimSetCimInstance cimSetCimInstance = new CimSetCimInstance();
             this.AsyncOperation = cimSetCimInstance;
@@ -381,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameCimSession, new HashSet<ParameterDefinitionEntry> {
@@ -438,7 +438,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.QuerySessionSet, new ParameterSetEntry(3)     },
             {   CimBaseCommand.QueryComputerSet, new ParameterSetEntry(2)     },

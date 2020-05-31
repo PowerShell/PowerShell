@@ -38,17 +38,17 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         private bool clearItemIsCalled = false;
 
-        WSManHelper helper = new WSManHelper();
+        private WSManHelper helper = new WSManHelper();
 
         /// <summary>
         /// Object contains the cache of the enumerate results for the cmdlet to execute.
         /// </summary>
-        Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
+        private Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
 
         /// <summary>
         /// Mapping of ResourceURI with the XML returned by the Get call.
         /// </summary>
-        Dictionary<string, string> getMapping = new Dictionary<string, string>();
+        private Dictionary<string, string> getMapping = new Dictionary<string, string>();
 
         #region ICmdletProviderSupportsHelp Members
 
@@ -5431,13 +5431,13 @@ namespace Microsoft.WSMan.Management
 
         #endregion Plugin private functions
 
-        enum ProviderMethods
+        private enum ProviderMethods
         {
             GetChildItems,
             GetChildNames
         };
 
-        enum WsManElementObjectTypes
+        private enum WsManElementObjectTypes
         {
             WSManConfigElement,
             WSManConfigContainerElement,

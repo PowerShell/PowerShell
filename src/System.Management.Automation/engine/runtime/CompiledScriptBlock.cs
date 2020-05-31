@@ -1779,7 +1779,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        class SuspiciousContentChecker
+        private class SuspiciousContentChecker
         {
             // Based on a (bad) random number generator, but good enough
             // for our simple needs.
@@ -1794,7 +1794,7 @@ namespace System.Management.Automation
             /// code - needed only to generate this switch statement below.)
             /// </summary>
             /// <returns>The string matching the hash, or null.</returns>
-            static string LookupHash(uint h)
+            private static string LookupHash(uint h)
             {
                 switch (h)
                 {

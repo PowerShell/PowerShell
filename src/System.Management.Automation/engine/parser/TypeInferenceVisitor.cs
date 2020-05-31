@@ -109,7 +109,7 @@ namespace System.Management.Automation
         }
     }
 
-    class PSTypeNameComparer : IEqualityComparer<PSTypeName>
+    internal class PSTypeNameComparer : IEqualityComparer<PSTypeName>
     {
         public bool Equals(PSTypeName x, PSTypeName y)
         {
@@ -2347,7 +2347,7 @@ namespace System.Management.Automation
         }
     }
 
-    static class TypeInferenceExtension
+    internal static class TypeInferenceExtension
     {
         public static bool EqualsOrdinalIgnoreCase(this string s, string t)
         {

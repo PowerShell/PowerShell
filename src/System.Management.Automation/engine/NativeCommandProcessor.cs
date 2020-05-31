@@ -1832,7 +1832,7 @@ namespace System.Management.Automation
             }
         }
 
-        bool _stopping = false;
+        private bool _stopping = false;
 
         /// <summary>
         /// Stop writing input to process.

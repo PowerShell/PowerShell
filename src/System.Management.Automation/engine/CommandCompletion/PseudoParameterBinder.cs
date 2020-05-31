@@ -357,7 +357,7 @@ namespace System.Management.Automation.Language
         }
 
         [ThreadStatic]
-        static Runspace t_bindCommandRunspace = null;
+        private static Runspace t_bindCommandRunspace = null;
     }
 
     /// <summary>

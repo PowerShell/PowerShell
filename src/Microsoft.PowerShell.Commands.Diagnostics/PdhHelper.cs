@@ -270,7 +270,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // We access those fields directly. The struct is here for reference only.
         //
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
-        struct PDH_COUNTER_INFO
+        private struct PDH_COUNTER_INFO
         {
             [FieldOffset(0)] public UInt32 dwLength;
             [FieldOffset(4)] public UInt32 dwType;

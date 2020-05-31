@@ -181,7 +181,7 @@ namespace System.Management.Automation.Language
     }
 
 #if DEBUG
-    class CheckAllParentsSet : AstVisitor2
+    internal class CheckAllParentsSet : AstVisitor2
     {
         internal CheckAllParentsSet(Ast root)
         {
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type.
     /// </summary>
-    class CheckTypeBuilder : AstVisitor2
+    internal class CheckTypeBuilder : AstVisitor2
     {
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast)
         {
