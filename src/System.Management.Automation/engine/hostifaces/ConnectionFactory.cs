@@ -62,7 +62,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             return new LocalRunspace(host, InitialSessionState.CreateDefault());
@@ -85,7 +85,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             PSHost host = new DefaultHost(CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
@@ -116,12 +116,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             return new LocalRunspace(host, initialSessionState);
@@ -150,12 +150,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (host == null)
             {
-                throw PSTraceSource.NewArgumentNullException("host");
+                throw PSTraceSource.NewArgumentNullException(nameof(host));
             }
 
             if (initialSessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("initialSessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(initialSessionState));
             }
 
             return new LocalRunspace(host, initialSessionState, true);

@@ -26,7 +26,9 @@ namespace Microsoft.PowerShell.Commands
         public object InputObject { get; set; }
 
         private int _depth = 2;
+
         private const int maxDepthAllowed = 100;
+
         private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
 
         /// <summary>

@@ -30,7 +30,7 @@ namespace System.Management.Automation
         {
             if (variable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variable");
+                throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
             _variable = variable;

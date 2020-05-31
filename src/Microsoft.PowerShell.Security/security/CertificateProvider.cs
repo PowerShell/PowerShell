@@ -627,6 +627,7 @@ namespace Microsoft.PowerShell.Commands
         /// this property.
         /// </remarks>
         private static Regex s_certPathRegex = null;
+
         private static Regex CertPathRegex
         {
             get
@@ -667,7 +668,7 @@ namespace Microsoft.PowerShell.Commands
                     X509StoreLocation user =
                         new X509StoreLocation(StoreLocation.CurrentUser);
                     s_storeLocations.Add(user);
-                    AddItemToCache(StoreLocation.CurrentUser.ToString(),
+                    AddItemToCache(nameof(StoreLocation.CurrentUser),
                                   user);
 
                     //
@@ -676,7 +677,7 @@ namespace Microsoft.PowerShell.Commands
                     X509StoreLocation machine =
                         new X509StoreLocation(StoreLocation.LocalMachine);
                     s_storeLocations.Add(machine);
-                    AddItemToCache(StoreLocation.LocalMachine.ToString(),
+                    AddItemToCache(nameof(StoreLocation.LocalMachine),
                                    machine);
 
                     AddItemToCache(string.Empty, s_storeLocations);
@@ -1382,7 +1383,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             // Normalize the path
@@ -3274,6 +3275,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static readonly char[] s_separators = new char[] { '/', '\\' };
+
         private static string[] GetPathElements(string path)
         {
             string[] allElts = path.Split(s_separators);
@@ -3358,6 +3360,7 @@ namespace Microsoft.PowerShell.Commands
     {
         private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
         private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
+
         private const string dnsNamePrefix = "DNS Name=";
         private const string distinguishedNamePrefix = "CN=";
 
@@ -3564,7 +3567,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static object s_staticLock = new object();
 
-        internal static List<string> storeNames = new List<string>();
+        internal static readonly List<string> storeNames = new List<string>();
 
         /// <summary>
         /// Get a list of store names at the specified location.

@@ -153,7 +153,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("ConsoleLineOutput", "ConsoleLineOutput")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleLineOutput", "ConsoleLineOutput");
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleLineOutput", "ConsoleLineOutput");
         #endregion tracer
 
         #region LineOutput implementation
@@ -252,9 +252,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal ConsoleLineOutput(PSHostUserInterface hostConsole, bool paging, TerminatingErrorContext errorContext)
         {
             if (hostConsole == null)
-                throw PSTraceSource.NewArgumentNullException("hostConsole");
+                throw PSTraceSource.NewArgumentNullException(nameof(hostConsole));
             if (errorContext == null)
-                throw PSTraceSource.NewArgumentNullException("errorContext");
+                throw PSTraceSource.NewArgumentNullException(nameof(errorContext));
 
             _console = hostConsole;
             _errorContext = errorContext;
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal PromptHandler(string s, ConsoleLineOutput cmdlet)
             {
                 if (string.IsNullOrEmpty(s))
-                    throw PSTraceSource.NewArgumentNullException("s");
+                    throw PSTraceSource.NewArgumentNullException(nameof(s));
 
                 _promptString = s;
                 _callingCmdlet = cmdlet;

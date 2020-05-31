@@ -285,12 +285,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (count < -1)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
             }
 
             if (newest.ToString() == null)
             {
-                throw PSTraceSource.NewArgumentNullException("newest");
+                throw PSTraceSource.NewArgumentNullException(nameof(newest));
             }
 
             if (count == -1 || count > _countEntriesAdded || count > _countEntriesInBuffer)
@@ -467,12 +467,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (count < -1)
                 {
-                    throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
                 }
 
                 if (newest.ToString() == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("newest");
+                    throw PSTraceSource.NewArgumentNullException(nameof(newest));
                 }
 
                 if (count > _countEntriesAdded || count == -1)
@@ -560,7 +560,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (id < 0)
                 {
-                    throw PSTraceSource.NewArgumentOutOfRangeException("id", id);
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(id), id);
                 }
                 // no entries are present to clear
                 if (_countEntriesInBuffer == 0)
@@ -610,7 +610,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (entry == null)
             {
-                throw PSTraceSource.NewArgumentNullException("entry");
+                throw PSTraceSource.NewArgumentNullException(nameof(entry));
             }
 
             _buffer[GetIndexForNewEntry()] = entry;
@@ -638,7 +638,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (id <= 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("id", id);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(id), id);
             }
 
             if (_countEntriesInBuffer == 0)

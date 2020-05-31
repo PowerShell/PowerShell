@@ -386,6 +386,7 @@ namespace System.Management.Automation.Remoting
         #region Pure virtual methods
 
         internal abstract void CloseOperation(WSManPluginOperationShutdownContext context, Exception reasonForClose);
+
         internal abstract void ExecuteConnect(
             WSManNativeApi.WSManPluginRequest requestDetails, // in
             int flags, // in

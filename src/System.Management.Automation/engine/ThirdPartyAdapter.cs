@@ -298,7 +298,7 @@ namespace System.Management.Automation
         {
             if (baseObject == null)
             {
-                throw new ArgumentNullException("baseObject");
+                throw new ArgumentNullException(nameof(baseObject));
             }
 
             Collection<string> types = new Collection<string>();

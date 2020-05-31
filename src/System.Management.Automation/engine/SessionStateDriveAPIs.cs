@@ -65,7 +65,7 @@ namespace System.Management.Automation
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             PSDriveInfo result = null;
@@ -140,12 +140,12 @@ namespace System.Management.Automation
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (!IsValidDriveName(drive.Name))
@@ -432,7 +432,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             PSDriveInfo result = null;
@@ -473,13 +473,9 @@ namespace System.Management.Automation
 
             if (result == null && automount)
             {
-                // first try to automount as a file system drive
-                result = AutomountFileSystemDrive(name);
-                // if it didn't work, then try automounting as a BuiltIn drive (e.g. "Cert"/"Certificate"/"WSMan")
-                if (result == null)
-                {
-                    result = AutomountBuiltInDrive(name); // internally this calls GetDrive(name, false)
-                }
+                // Attempt to automount as a file system drive
+                // or as a BuiltIn drive (e.g. "Cert"/"Certificate"/"WSMan")
+                result = AutomountFileSystemDrive(name) ?? AutomountBuiltInDrive(name);
             }
 
             if (result == null)
@@ -528,7 +524,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             PSDriveInfo result = null;
@@ -744,6 +740,9 @@ namespace System.Management.Automation
         /// <summary>
         /// Auto-mounts a built-in drive.
         /// </summary>
+        /// <remarks>
+        /// Calls GetDrive(name, false) internally.
+        /// </remarks>
         /// <param name="name">The name of the drive to load.</param>
         /// <returns></returns>
         internal PSDriveInfo AutomountBuiltInDrive(string name)
@@ -994,7 +993,7 @@ namespace System.Management.Automation
         {
             if (driveName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("driveName");
+                throw PSTraceSource.NewArgumentNullException(nameof(driveName));
             }
 
             PSDriveInfo drive = GetDrive(driveName, scopeID);
@@ -1037,7 +1036,7 @@ namespace System.Management.Automation
         {
             if (driveName == null)
             {
-                throw PSTraceSource.NewArgumentNullException("driveName");
+                throw PSTraceSource.NewArgumentNullException(nameof(driveName));
             }
 
             Dbg.Diagnostics.Assert(
@@ -1079,7 +1078,7 @@ namespace System.Management.Automation
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -1241,12 +1240,12 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             s_tracer.WriteLine("Drive name = {0}", drive.Name);

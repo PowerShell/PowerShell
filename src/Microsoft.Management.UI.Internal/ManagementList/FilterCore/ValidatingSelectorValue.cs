@@ -47,6 +47,7 @@ namespace Microsoft.Management.UI.Internal
         #region SelectedIndex
 
         private const string SelectedIndexPropertyName = "SelectedIndex";
+
         private int selectedIndex;
 
         /// <summary>

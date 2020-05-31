@@ -94,7 +94,7 @@ namespace Microsoft.WSMan.Management
             /// <summary>
             /// Dictionary object to store the connection.
             /// </summary>
-            internal static Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
+            internal static readonly Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
 
             ~Sessions()
             {
@@ -102,7 +102,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        internal static Sessions AutoSession = new Sessions();
+        internal static readonly Sessions AutoSession = new Sessions();
         //
         //
         //
@@ -180,12 +180,12 @@ namespace Microsoft.WSMan.Management
         {
             if (resourceManager == null)
             {
-                throw new ArgumentNullException("resourceManager");
+                throw new ArgumentNullException(nameof(resourceManager));
             }
 
             if (string.IsNullOrEmpty(resourceName))
             {
-                throw new ArgumentNullException("resourceName");
+                throw new ArgumentNullException(nameof(resourceName));
             }
 
             string template = resourceManager.GetString(resourceName);
@@ -478,7 +478,7 @@ namespace Microsoft.WSMan.Management
                                 if (string.IsNullOrEmpty(entry.Key.ToString()))
                                 {
                                     // XmlNode newnode = xmlfile.CreateNode(XmlNodeType.Attribute, ATTR_NIL_NAME, NS_XSI_URI);
-                                    XmlAttribute newnode = xmlfile.CreateAttribute(XmlNodeType.Attribute.ToString(), ATTR_NIL_NAME, NS_XSI_URI);
+                                    XmlAttribute newnode = xmlfile.CreateAttribute(nameof(XmlNodeType.Attribute), ATTR_NIL_NAME, NS_XSI_URI);
                                     newnode.Value = "true";
                                     node.Attributes.Append(newnode);
                                     // (newnode.Attributes.Item(0).FirstChild   );
@@ -960,11 +960,7 @@ namespace Microsoft.WSMan.Management
 
                 IWSManSession m_session = CreateSessionObject(m_wsmanObject, authentication, sessionoption, credential, connectionStr, certificateThumbprint, usessl);
                 m_session.Identify(0);
-                string key = computername;
-                if (key == null)
-                {
-                    key = "localhost";
-                }
+                string key = computername ?? "localhost";
 
                 AddtoDictionary(key, m_session);
             }
@@ -1108,9 +1104,9 @@ namespace Microsoft.WSMan.Management
                     }
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
-                throw (e);
+                throw;
             }
         }
 

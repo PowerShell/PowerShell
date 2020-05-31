@@ -81,7 +81,7 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
 
     AfterEach {
         $m = @('module1','module2','script1','script2')
-        remove-module $m -Force -ErrorAction SilentlyContinue
+        Remove-Module $m -Force -ErrorAction SilentlyContinue
         Remove-Item out.txt -Force -ErrorAction SilentlyContinue
     }
 
@@ -163,7 +163,7 @@ Describe "Import-Module for Binary Modules" -Tags 'CI' {
         try {
             $TestModulePath = Join-Path $TESTDRIVE "System.$extension"
             $job = Start-Job -ScriptBlock {
-                $module = Import-Module $using:TestModulePath -Passthru;
+                $module = Import-Module $using:TestModulePath -PassThru;
                 $module.ImplementingAssembly.Location;
                 Test-BinaryModuleCmdlet1
             }

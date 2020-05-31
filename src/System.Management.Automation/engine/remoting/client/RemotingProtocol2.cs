@@ -876,6 +876,7 @@ namespace System.Management.Automation.Internal
         private int _maxRunspaces;
         private PSHost _host;
         private PSPrimitiveDictionary _applicationArguments;
+
         private Dictionary<Guid, ClientPowerShellDataStructureHandler> _associatedPowerShellDSHandlers
             = new Dictionary<Guid, ClientPowerShellDataStructureHandler>();
         // data structure handlers of all ClientRemotePowerShell which are

@@ -18,7 +18,7 @@ namespace System.Management.Automation
         {
             if (powershell == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powershell");
+                throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
 
             CurrentPowerShell = powershell;

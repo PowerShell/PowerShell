@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (paths == null || paths.Length == 0)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(GetCurrentContext());

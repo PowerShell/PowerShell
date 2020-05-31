@@ -751,7 +751,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Uri CheckProtocol(Uri uri)
         {
-            if (uri == null) { throw new ArgumentNullException("uri"); }
+            if (uri == null) { throw new ArgumentNullException(nameof(uri)); }
 
             if (!uri.IsAbsoluteUri)
             {
@@ -763,14 +763,14 @@ namespace Microsoft.PowerShell.Commands
 
         private string QualifyFilePath(string path)
         {
-            string resolvedFilePath = PathUtils.ResolveFilePath(path, this, false);
+            string resolvedFilePath = PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
             return resolvedFilePath;
         }
 
         private string FormatDictionary(IDictionary content)
         {
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
 
             StringBuilder bodyBuilder = new StringBuilder();
             foreach (string key in content.Keys)
@@ -1165,7 +1165,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void FillRequestStream(HttpRequestMessage request)
         {
-            if (request == null) { throw new ArgumentNullException("request"); }
+            if (request == null) { throw new ArgumentNullException(nameof(request)); }
 
             // set the content type
             if (ContentType != null)
@@ -1338,9 +1338,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
         {
-            if (client == null) { throw new ArgumentNullException("client"); }
+            if (client == null) { throw new ArgumentNullException(nameof(client)); }
 
-            if (request == null) { throw new ArgumentNullException("request"); }
+            if (request == null) { throw new ArgumentNullException(nameof(request)); }
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
@@ -1452,7 +1452,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void UpdateSession(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException("response"); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
         }
 
         #endregion Virtual Methods
@@ -1658,7 +1658,7 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             if (content == null)
                 return 0;
 
@@ -1681,7 +1681,7 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, string content)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
 
             if (content == null)
                 return 0;
@@ -1730,7 +1730,7 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
 
             if (xmlNode == null)
                 return 0;
@@ -1767,9 +1767,9 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             if (contentStream == null)
-                throw new ArgumentNullException("contentStream");
+                throw new ArgumentNullException(nameof(contentStream));
 
             var streamContent = new StreamContent(contentStream);
             request.Content = streamContent;
@@ -1791,12 +1791,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (request == null)
             {
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             }
 
             if (multipartContent == null)
             {
-                throw new ArgumentNullException("multipartContent");
+                throw new ArgumentNullException(nameof(multipartContent));
             }
 
             request.Content = multipartContent;
@@ -1807,9 +1807,9 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
 
             string body = FormatDictionary(content);
             return (SetRequestContent(request, body));

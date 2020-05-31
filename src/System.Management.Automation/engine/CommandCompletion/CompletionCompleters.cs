@@ -207,7 +207,8 @@ namespace System.Management.Automation
         }
 
         private static readonly HashSet<string> s_keywordsToExcludeFromAddingAmpersand
-            = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { TokenKind.InlineScript.ToString(), TokenKind.Configuration.ToString() };
+            = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { nameof(TokenKind.InlineScript), nameof(TokenKind.Configuration) };
+
         internal static CompletionResult GetCommandNameCompletionResult(string name, object command, bool addAmpersandIfNecessary, string quote)
         {
             string syntax = name, listItem = name;
@@ -4505,6 +4506,7 @@ namespace System.Management.Automation
         private const int ERROR_MORE_DATA = 234;
         private const int STYPE_DISKTREE = 0;
         private const int STYPE_MASK = 0x000000FF;
+
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchCasing = MatchCasing.CaseInsensitive,
@@ -4580,6 +4582,7 @@ namespace System.Management.Automation
         }
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
+
         private static readonly char[] s_charactersRequiringQuotes = new char[] {
             '-', '`', '&', '@', '\'', '"', '#', '{', '}', '(', ')', '$', ',', ';', '|', '<', '>', ' ', '.', '\\', '/', '\t', '^',
         };
@@ -5720,6 +5723,7 @@ namespace System.Management.Automation
         }
 
         private static TypeCompletionMapping[][] s_typeCache;
+
         private static TypeCompletionMapping[][] InitializeTypeCache()
         {
             #region Process_TypeAccelerators

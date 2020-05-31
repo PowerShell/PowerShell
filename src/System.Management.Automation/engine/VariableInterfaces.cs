@@ -35,7 +35,7 @@ namespace System.Management.Automation
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentException("sessionState");
+                throw PSTraceSource.NewArgumentException(nameof(sessionState));
             }
 
             _sessionState = sessionState;

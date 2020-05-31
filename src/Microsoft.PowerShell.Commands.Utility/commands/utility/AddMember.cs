@@ -21,6 +21,7 @@ namespace Microsoft.PowerShell.Commands
     public class AddMemberCommand : PSCmdlet
     {
         private static readonly object s_notSpecified = new object();
+
         private static bool HasBeenSpecified(object obj)
         {
             return !System.Object.ReferenceEquals(obj, s_notSpecified);

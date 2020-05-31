@@ -305,7 +305,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (runspace == null)
             {
-                PSTraceSource.NewArgumentNullException("runspace");
+                PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid

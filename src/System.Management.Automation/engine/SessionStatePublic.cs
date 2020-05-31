@@ -28,7 +28,7 @@ namespace System.Management.Automation
         {
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             _sessionState = sessionState;
@@ -273,7 +273,7 @@ namespace System.Management.Automation
                 return true;
             if (variable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variable");
+                throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
             return (variable.Visibility == SessionStateEntryVisibility.Public);
@@ -290,7 +290,7 @@ namespace System.Management.Automation
                 return true;
             if (commandInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandInfo));
             }
 
             return (commandInfo.Visibility == SessionStateEntryVisibility.Public);

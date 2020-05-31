@@ -37,15 +37,16 @@ steps:
     ContainerName: '$(AzureVersion)'
   condition: succeeded()
 
-- task: AzureFileCopy@3
-  displayName: 'upload pbd zip to Azure - ${{ parameters.architecture }}'
-  inputs:
-    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-Symbols-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
-    azureSubscription: '$(AzureFileCopySubscription)'
-    Destination: AzureBlob
-    storage: '$(StorageAccount)'
-    ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq('${{ parameters.pdb }}', 'yes'))
+# Disable upload task as the symbols package is not currently used and we want to avoid publishing this in releases
+#- task: AzureFileCopy@3
+#  displayName: 'upload pbd zip to Azure - ${{ parameters.architecture }}'
+#  inputs:
+#    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-Symbols-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
+#    azureSubscription: '$(AzureFileCopySubscription)'
+#    Destination: AzureBlob
+#    storage: '$(StorageAccount)'
+#    ContainerName: '$(AzureVersion)'
+#  condition: and(succeeded(), eq('${{ parameters.pdb }}', 'yes'))
 
 - template: upload-final-results.yml
   parameters:
@@ -60,5 +61,5 @@ steps:
     azureSubscription: '$(AzureFileCopySubscription)'
     Destination: AzureBlob
     storage: '$(StorageAccount)'
-    ContainerName: '$(AzureVersion)'
+    ContainerName: '$(AzureVersion)-private'
   condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['SHOULD_SIGN'], 'true'))

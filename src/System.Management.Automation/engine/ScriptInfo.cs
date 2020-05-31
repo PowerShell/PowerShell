@@ -33,7 +33,7 @@ namespace System.Management.Automation
         {
             if (script == null)
             {
-                throw PSTraceSource.NewArgumentException("script");
+                throw PSTraceSource.NewArgumentException(nameof(script));
             }
 
             this.ScriptBlock = script;

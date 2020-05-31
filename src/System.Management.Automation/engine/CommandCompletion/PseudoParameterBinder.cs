@@ -75,7 +75,7 @@ namespace System.Management.Automation.Language
         internal PipeObjectPair(string parameterName, Type pipeObjType)
         {
             if (parameterName == null)
-                throw PSTraceSource.NewArgumentNullException("parameterName");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
 
             Parameter = null;
             ParameterArgumentType = AstParameterArgumentType.PipeObject;
@@ -96,9 +96,9 @@ namespace System.Management.Automation.Language
         internal AstArrayPair(string parameterName, ICollection<ExpressionAst> arguments)
         {
             if (parameterName == null)
-                throw PSTraceSource.NewArgumentNullException("parameterName");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterName));
             if (arguments == null || arguments.Count == 0)
-                throw PSTraceSource.NewArgumentNullException("arguments");
+                throw PSTraceSource.NewArgumentNullException(nameof(arguments));
 
             Parameter = null;
             ParameterArgumentType = AstParameterArgumentType.AstArray;
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Language
         internal FakePair(CommandParameterAst parameterAst)
         {
             if (parameterAst == null)
-                throw PSTraceSource.NewArgumentNullException("parameterAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.Fake;
@@ -145,7 +145,7 @@ namespace System.Management.Automation.Language
         internal SwitchPair(CommandParameterAst parameterAst)
         {
             if (parameterAst == null)
-                throw PSTraceSource.NewArgumentNullException("parameterAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.Switch;
@@ -175,7 +175,7 @@ namespace System.Management.Automation.Language
         internal AstPair(CommandParameterAst parameterAst)
         {
             if (parameterAst == null || parameterAst.Argument == null)
-                throw PSTraceSource.NewArgumentException("parameterAst");
+                throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.AstPair;
@@ -192,10 +192,10 @@ namespace System.Management.Automation.Language
         internal AstPair(CommandParameterAst parameterAst, ExpressionAst argumentAst)
         {
             if (parameterAst != null && parameterAst.Argument != null)
-                throw PSTraceSource.NewArgumentException("parameterAst");
+                throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             if (parameterAst == null && argumentAst == null)
-                throw PSTraceSource.NewArgumentNullException("argumentAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(argumentAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.AstPair;
@@ -212,10 +212,10 @@ namespace System.Management.Automation.Language
         internal AstPair(CommandParameterAst parameterAst, CommandElementAst argumentAst)
         {
             if (parameterAst != null && parameterAst.Argument != null)
-                throw PSTraceSource.NewArgumentException("parameterAst");
+                throw PSTraceSource.NewArgumentException(nameof(parameterAst));
 
             if (parameterAst == null || argumentAst == null)
-                throw PSTraceSource.NewArgumentNullException("argumentAst");
+                throw PSTraceSource.NewArgumentNullException(nameof(argumentAst));
 
             Parameter = parameterAst;
             ParameterArgumentType = AstParameterArgumentType.AstPair;
@@ -332,17 +332,17 @@ namespace System.Management.Automation.Language
             {
                 // Handle static binding from a non-PowerShell / C# application
                 // DefaultRunspace is a thread static field, so race condition will not happen because different threads will access different instances of "DefaultRunspace"
-                if (s_bindCommandRunspace == null)
+                if (t_bindCommandRunspace == null)
                 {
                     // Create a mini runspace by remove the types and formats
                     InitialSessionState minimalState = InitialSessionState.CreateDefault2();
                     minimalState.Types.Clear();
                     minimalState.Formats.Clear();
-                    s_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
-                    s_bindCommandRunspace.Open();
+                    t_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
+                    t_bindCommandRunspace.Open();
                 }
 
-                Runspace.DefaultRunspace = s_bindCommandRunspace;
+                Runspace.DefaultRunspace = t_bindCommandRunspace;
                 // Static binding always does argument binding (not argument or parameter completion).
                 pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
                 Runspace.DefaultRunspace = null;
@@ -357,7 +357,7 @@ namespace System.Management.Automation.Language
         }
 
         [ThreadStatic]
-        static Runspace s_bindCommandRunspace = null;
+        private static Runspace t_bindCommandRunspace = null;
     }
 
     /// <summary>
@@ -949,7 +949,7 @@ namespace System.Management.Automation.Language
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             // initialize/reset the private members

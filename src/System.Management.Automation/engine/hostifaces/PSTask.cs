@@ -447,7 +447,16 @@ namespace System.Management.Automation.PSTasks
                 try
                 {
                     Runspace.DefaultRunspace = runspace;
-                    runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath);
+                    var context = new CmdletProviderContext(runspace.ExecutionContext)
+                    {
+                        // _currentLocationPath denotes the current path as-is, and should not be attempted expanded.
+                        SuppressWildcardExpansion = true
+                    };
+                    runspace.ExecutionContext.SessionState.Internal.SetLocation(_currentLocationPath, context);
+                }
+                catch (DriveNotFoundException)
+                {
+                    // Allow task to run if current drive is not available.
                 }
                 finally
                 {
@@ -863,7 +872,7 @@ namespace System.Management.Automation.PSTasks
                     }
 
                     task.StateChanged -= HandleTaskStateChangedDelegate;
-                    if (!_stopping)
+                    if (!_stopping || stateInfo.State != PSInvocationState.Stopped)
                     {
                         // StopAll disposes tasks.
                         task.Dispose();
@@ -1182,7 +1191,7 @@ namespace System.Management.Automation.PSTasks
         {
             if (debugger == null)
             {
-                throw new PSArgumentNullException("debugger");
+                throw new PSArgumentNullException(nameof(debugger));
             }
 
             _wrappedDebugger = debugger;

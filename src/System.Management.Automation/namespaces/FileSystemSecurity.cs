@@ -46,12 +46,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if ((sections & ~AccessControlSections.All) != 0)
             {
-                throw PSTraceSource.NewArgumentException("sections");
+                throw PSTraceSource.NewArgumentException(nameof(sections));
             }
 
             var currentPrivilegeState = new PlatformInvokes.TOKEN_PRIVILEGE();
@@ -103,14 +103,14 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
 
             if (securityDescriptor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("securityDescriptor");
+                throw PSTraceSource.NewArgumentNullException(nameof(securityDescriptor));
             }
 
             if (!File.Exists(path) && !Directory.Exists(path))
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (sd == null)
             {
-                throw PSTraceSource.NewArgumentException("securityDescriptor");
+                throw PSTraceSource.NewArgumentException(nameof(securityDescriptor));
             }
             else
             {

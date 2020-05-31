@@ -22,6 +22,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// Association parameter.
     /// </para>
     /// </summary>
+    [Alias("gcai")]
     [Cmdlet(VerbsCommon.Get,
         GetCimAssociatedInstanceCommand.Noun,
         DefaultParameterSetName = CimBaseCommand.ComputerSetName,
@@ -247,11 +248,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void ProcessRecord()
         {
             base.CheckParameterSet();
-            CimGetAssociatedInstance operation = this.GetOperationAgent();
-            if (operation == null)
-            {
-                operation = this.CreateOperationAgent();
-            }
+            CimGetAssociatedInstance operation = this.GetOperationAgent() ?? this.CreateOperationAgent();
 
             operation.GetCimAssociatedInstance(this);
             operation.ProcessActions(this.CmdletOperation);
@@ -277,7 +274,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all Get-CimAssociatedInstance operations.
         /// </para>
         /// </summary>
-        CimGetAssociatedInstance GetOperationAgent()
+        private CimGetAssociatedInstance GetOperationAgent()
         {
             return this.AsyncOperation as CimGetAssociatedInstance;
         }
@@ -289,7 +286,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns></returns>
-        CimGetAssociatedInstance CreateOperationAgent()
+        private CimGetAssociatedInstance CreateOperationAgent()
         {
             this.AsyncOperation = new CimGetAssociatedInstance();
             return GetOperationAgent();
@@ -318,7 +315,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameComputerName, new HashSet<ParameterDefinitionEntry> {
@@ -347,7 +344,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.SessionSetName, new ParameterSetEntry(2, false)     },
             {   CimBaseCommand.ComputerSetName, new ParameterSetEntry(1, true)     },

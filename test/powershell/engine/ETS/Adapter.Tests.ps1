@@ -21,7 +21,7 @@ Describe "Adapter Tests" -tags "CI" {
             $testmethod = [TestCodeMethodClass].GetMethod("TestCodeMethod")
             $psmemberset | Add-Member -MemberType CodeMethod -Name TestCodeMethod -Value $testmethod
 
-            $document = new-object System.Xml.XmlDocument
+            $document = New-Object System.Xml.XmlDocument
             $document.LoadXml("<book ISBN='12345'><title>Pride And Prejudice</title><price>19.95</price></book>")
             $doc = $document.DocumentElement
         }

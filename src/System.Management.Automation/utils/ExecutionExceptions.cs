@@ -33,7 +33,7 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
             {
-                throw new ArgumentNullException("errorRecord");
+                throw new ArgumentNullException(nameof(errorRecord));
             }
 
             _errorRecord = errorRecord;
@@ -58,7 +58,7 @@ namespace System.Management.Automation
         {
             if (innerException == null)
             {
-                throw new ArgumentNullException("innerException");
+                throw new ArgumentNullException(nameof(innerException));
             }
             // invocationInfo may be null
 
@@ -142,7 +142,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -208,7 +208,7 @@ namespace System.Management.Automation
         {
             if (innerException == null)
             {
-                throw new ArgumentNullException("innerException");
+                throw new ArgumentNullException(nameof(innerException));
             }
 
             _providerInvocationException = innerException;
@@ -473,7 +473,7 @@ namespace System.Management.Automation
         {
             if (error == null)
             {
-                throw new ArgumentNullException("error");
+                throw new ArgumentNullException(nameof(error));
             }
 
             _errorRecord = error;
@@ -501,7 +501,7 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
             {
-                throw new ArgumentNullException("errorRecord");
+                throw new ArgumentNullException(nameof(errorRecord));
             }
 
             _errorRecord = errorRecord;
@@ -725,7 +725,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

@@ -159,7 +159,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             Name = name;
@@ -688,6 +688,7 @@ namespace System.Management.Automation
 
         private readonly CallSite<Func<CallSite, object, object>> _copyMutableValueSite =
             CallSite<Func<CallSite, object, object>>.Create(PSVariableAssignmentBinder.Get());
+
         internal object CopyMutableValues(object o)
         {
             // The variable assignment binder copies mutable values and returns other values as is.

@@ -87,6 +87,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private Collection<PSSnapInException> _PSSnapInExceptions = new Collection<PSSnapInException>();
+
         internal Collection<PSSnapInException> PSSnapInExceptions
         {
             get

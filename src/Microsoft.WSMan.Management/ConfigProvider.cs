@@ -24,7 +24,7 @@ namespace Microsoft.WSMan.Management
     /// WsMan Provider.
     /// </summary>
     [CmdletProvider(WSManStringLiterals.ProviderName, ProviderCapabilities.Credentials)]
-    public sealed partial class WSManConfigProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
+    public sealed class WSManConfigProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
     {
         // Plugin Name Storage
         private PSObject objPluginNames = null;
@@ -38,17 +38,17 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         private bool clearItemIsCalled = false;
 
-        WSManHelper helper = new WSManHelper();
+        private WSManHelper helper = new WSManHelper();
 
         /// <summary>
         /// Object contains the cache of the enumerate results for the cmdlet to execute.
         /// </summary>
-        Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
+        private Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
 
         /// <summary>
         /// Mapping of ResourceURI with the XML returned by the Get call.
         /// </summary>
-        Dictionary<string, string> getMapping = new Dictionary<string, string>();
+        private Dictionary<string, string> getMapping = new Dictionary<string, string>();
 
         #region ICmdletProviderSupportsHelp Members
 
@@ -3336,7 +3336,7 @@ namespace Microsoft.WSMan.Management
         /// <returns></returns>
         private string NormalizePath(string path, string host)
         {
-            string uri = string.Empty; ;
+            string uri = string.Empty;
             if (path.StartsWith(host, StringComparison.OrdinalIgnoreCase))
             {
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -5431,13 +5431,13 @@ namespace Microsoft.WSMan.Management
 
         #endregion Plugin private functions
 
-        enum ProviderMethods
+        private enum ProviderMethods
         {
             GetChildItems,
             GetChildNames
         };
 
-        enum WsManElementObjectTypes
+        private enum WsManElementObjectTypes
         {
             WSManConfigElement,
             WSManConfigContainerElement,
@@ -5446,6 +5446,7 @@ namespace Microsoft.WSMan.Management
 
         #region def
         private static readonly string[] WinrmRootName = new string[] { "winrm/Config" };
+
         private static readonly string[] WinRmRootConfigs = new string[] {
             "Client",
             "Service",

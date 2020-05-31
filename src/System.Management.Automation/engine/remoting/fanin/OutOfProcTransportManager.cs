@@ -196,8 +196,8 @@ namespace System.Management.Automation.Remoting
                     default:
                         throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownNodeType, RemotingErrorIdStrings.IPCUnknownNodeType,
                             reader.NodeType.ToString(),
-                            XmlNodeType.Element.ToString(),
-                            XmlNodeType.EndElement.ToString());
+                            nameof(XmlNodeType.Element),
+                            nameof(XmlNodeType.EndElement));
                 }
             }
         }
@@ -903,7 +903,7 @@ namespace System.Management.Automation.Remoting.Client
         private void OnDataPacketReceived(byte[] rawData, string stream, Guid psGuid)
         {
             string streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_STDOUT;
-            if (stream.Equals(DataPriorityType.PromptResponse.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (stream.Equals(nameof(DataPriorityType.PromptResponse), StringComparison.OrdinalIgnoreCase))
             {
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
@@ -1309,6 +1309,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         protected RemoteSessionHyperVSocketClient _client;
+
         private const string _threadName = "HyperVSocketTransport Reader Thread";
 
         #endregion
@@ -1444,7 +1445,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1478,7 +1479,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.VMSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.VMSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.VMSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1492,7 +1493,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.VMSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.VMSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.VMSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1527,7 +1528,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1551,7 +1552,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ContainerSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.ContainerSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.ContainerSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1576,6 +1577,7 @@ namespace System.Management.Automation.Remoting.Client
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
         private bool _connectionEstablished;
+
         private const string _threadName = "SSHTransport Reader Thread";
 
         #endregion
@@ -1875,7 +1877,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1986,6 +1988,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private NamedPipeConnectionInfo _connectionInfo;
+
         private const string _threadName = "NamedPipeTransport Reader Thread";
 
         #endregion
@@ -2000,7 +2003,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -2053,6 +2056,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private ContainerConnectionInfo _connectionInfo;
+
         private const string _threadName = "ContainerNamedPipeTransport Reader Thread";
 
         #endregion
@@ -2067,7 +2071,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;

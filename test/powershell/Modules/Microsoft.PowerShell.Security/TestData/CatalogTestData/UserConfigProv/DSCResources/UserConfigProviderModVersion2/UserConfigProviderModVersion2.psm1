@@ -38,7 +38,7 @@ function Set-TargetResource
      )
 
  	$path = "$env:SystemDrive\dscTestPath\hello2.txt"
- 	New-Item -Path $path -Type File -force
+ 	New-Item -Path $path -Type File -Force
 	Add-Content -Path $path -Value $text
 }
 

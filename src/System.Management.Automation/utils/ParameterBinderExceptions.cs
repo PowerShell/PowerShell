@@ -86,12 +86,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
             if (string.IsNullOrEmpty(errorId))
             {
-                throw PSTraceSource.NewArgumentException("errorId");
+                throw PSTraceSource.NewArgumentException(nameof(errorId));
             }
 
             _invocationInfo = invocationInfo;
@@ -194,17 +194,17 @@ namespace System.Management.Automation
         {
             if (invocationInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("invocationInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(invocationInfo));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
             if (string.IsNullOrEmpty(errorId))
             {
-                throw PSTraceSource.NewArgumentException("errorId");
+                throw PSTraceSource.NewArgumentException(nameof(errorId));
             }
 
             _invocationInfo = invocationInfo;
@@ -248,12 +248,12 @@ namespace System.Management.Automation
         {
             if (pbex == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pbex");
+                throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }
 
             if (string.IsNullOrEmpty(resourceString))
             {
-                throw PSTraceSource.NewArgumentException("resourceString");
+                throw PSTraceSource.NewArgumentException(nameof(resourceString));
             }
 
             _invocationInfo = pbex.CommandInvocation;
@@ -327,7 +327,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

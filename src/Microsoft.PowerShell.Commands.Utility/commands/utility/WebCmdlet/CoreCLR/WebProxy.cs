@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (address == null)
             {
-                throw new ArgumentNullException("address");
+                throw new ArgumentNullException(nameof(address));
             }
 
             _proxyAddress = address;
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (destination == null)
             {
-                throw new ArgumentNullException("destination");
+                throw new ArgumentNullException(nameof(destination));
             }
 
             if (destination.IsLoopback)

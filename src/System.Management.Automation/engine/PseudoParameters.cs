@@ -53,12 +53,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (parameterType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterType");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterType));
             }
 
             _name = name;
@@ -236,6 +236,6 @@ namespace System.Management.Automation
         /// </summary>
         public object Data { get; set; }
 
-        internal static RuntimeDefinedParameter[] EmptyParameterArray = new RuntimeDefinedParameter[0];
+        internal static readonly RuntimeDefinedParameter[] EmptyParameterArray = new RuntimeDefinedParameter[0];
     }
 }

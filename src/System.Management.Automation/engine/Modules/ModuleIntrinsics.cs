@@ -32,7 +32,7 @@ namespace System.Management.Automation
         /// Tracer for module analysis.
         /// </summary>
         [TraceSource("Modules", "Module loading and analysis")]
-        internal static PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
+        internal static readonly PSTraceSource Tracer = PSTraceSource.GetTracer("Modules", "Module loading and analysis");
 
         // The %WINDIR%\System32\WindowsPowerShell\v1.0\Modules module path,
         // to load forward compatible Windows PowerShell modules from
@@ -895,7 +895,7 @@ namespace System.Management.Automation
         }
 
         // The extensions of all of the files that can be processed with Import-Module, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static string[] PSModuleProcessableExtensions = new string[] {
+        internal static readonly string[] PSModuleProcessableExtensions = new string[] {
                             StringLiterals.PowerShellDataFileExtension,
                             StringLiterals.PowerShellScriptFileExtension,
                             StringLiterals.PowerShellModuleFileExtension,
@@ -906,7 +906,7 @@ namespace System.Management.Automation
                         };
 
         // A list of the extensions to check for implicit module loading and discovery, put the ni.dll in front of .dll to have higher priority to be loaded.
-        internal static string[] PSModuleExtensions = new string[] {
+        internal static readonly string[] PSModuleExtensions = new string[] {
                             StringLiterals.PowerShellDataFileExtension,
                             StringLiterals.PowerShellModuleFileExtension,
                             StringLiterals.PowerShellCmdletizationFileExtension,
@@ -1234,7 +1234,7 @@ namespace System.Management.Automation
 
 #if !UNIX
         /// <summary>
-        /// Returns a PSModulePath suiteable for Windows PowerShell by removing this PowerShell's specific
+        /// Returns a PSModulePath suiteable for Windows PowerShell by removing PowerShell's specific
         /// paths from current PSModulePath.
         /// </summary>
         /// <returns>
@@ -1261,9 +1261,24 @@ namespace System.Management.Automation
             var modulePathList = new List<string>();
             foreach (var path in currentModulePath.Split(';'))
             {
-                if (!excludeModulePaths.Contains(path))
+                var trimmedPath = path.Trim();
+                if (!excludeModulePaths.Contains(trimmedPath))
                 {
-                    modulePathList.Add(path);
+                    // make sure this module path is Not part of other PS Core installation
+                    var possiblePwshDir = Path.GetDirectoryName(trimmedPath);
+
+                    if (string.IsNullOrEmpty(possiblePwshDir))
+                    {
+                        // i.e. module dir is in the drive root
+                        modulePathList.Add(trimmedPath);
+                    }
+                    else
+                    {
+                        if (!File.Exists(Path.Combine(possiblePwshDir, "pwsh.dll")))
+                        {
+                            modulePathList.Add(trimmedPath);
+                        }
+                    }
                 }
             }
 

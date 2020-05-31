@@ -43,17 +43,17 @@ namespace System.Management.Automation
             {
                 // negative Ids are reserved to indicate "no id" for parent Ids.
 
-                throw PSTraceSource.NewArgumentOutOfRangeException("activityId", activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(activityId), activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
             }
 
             if (string.IsNullOrEmpty(activity))
             {
-                throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
+                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
             }
 
             if (string.IsNullOrEmpty(statusDescription))
             {
-                throw PSTraceSource.NewArgumentException("activity", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
+                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
             }
 
             this.id = activityId;
@@ -373,12 +373,12 @@ namespace System.Management.Automation
 
             if (startTime > now)
             {
-                throw new ArgumentOutOfRangeException("startTime");
+                throw new ArgumentOutOfRangeException(nameof(startTime));
             }
 
             if (expectedDuration <= TimeSpan.Zero)
             {
-                throw new ArgumentOutOfRangeException("expectedDuration");
+                throw new ArgumentOutOfRangeException(nameof(expectedDuration));
             }
 
             /*
@@ -474,7 +474,7 @@ namespace System.Management.Automation
         {
             if (progressAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("progressAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(progressAsPSObject));
             }
 
             string activity = RemotingDecoder.GetPropertyValue<string>(progressAsPSObject, RemoteDataNameStrings.ProgressRecord_Activity);

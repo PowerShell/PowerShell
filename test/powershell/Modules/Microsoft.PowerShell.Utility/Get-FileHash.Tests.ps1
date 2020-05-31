@@ -77,4 +77,19 @@ Describe "Get-FileHash" -Tags "CI" {
             $result.Path | Should -Be $testDocument
         }
     }
+
+    Context "File should be closed before Get-FileHash writes pipeline output" {
+        It "Should be able to edit the file without 'file is in use' exceptions" {
+            # This test runs against a copy of the document
+            # because it involves renaming it,
+            # and that might break tests added later on.
+            $testDocumentCopy = "${testDocument}-copy"
+            Copy-Item -Path $testdocument -Destination $testDocumentCopy
+
+            $newPath = Get-FileHash -Path $testDocumentCopy | Rename-Item -NewName {$_.Hash} -PassThru
+            $newPath.FullName | Should -Exist
+
+            Remove-Item -Path $testDocumentCopy -Force
+        }
+    }
 }

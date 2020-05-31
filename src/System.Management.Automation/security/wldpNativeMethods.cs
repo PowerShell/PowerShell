@@ -176,6 +176,7 @@ namespace System.Management.Automation.Security
 
         private const string AppLockerTestFileName = "__PSScriptPolicyTest_";
         private const string AppLockerTestFileContents = "# PowerShell test file to determine AppLocker lockdown mode ";
+
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
             SaferPolicy result = SaferPolicy.Disallowed;
@@ -564,6 +565,7 @@ namespace System.Management.Automation.Security
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*
             /// pdwLockdownState: PDWORD->DWORD*
             /// dwFlags: DWORD->unsigned int
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpGetLockdownPolicy")]
             internal static extern int WldpGetLockdownPolicy(ref WLDP_HOST_INFORMATION pHostInformation, ref uint pdwLockdownState, uint dwFlags);
 
@@ -572,6 +574,7 @@ namespace System.Management.Automation.Security
             /// pHostInformation: PWLDP_HOST_INFORMATION->_WLDP_HOST_INFORMATION*
             /// ptIsApproved: PBOOL->BOOL*
             /// dwFlags: DWORD->unsigned int
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("wldp.dll", EntryPoint = "WldpIsClassInApprovedList")]
             internal static extern int WldpIsClassInApprovedList(ref Guid rclsid, ref WLDP_HOST_INFORMATION pHostInformation, ref int ptIsApproved, uint dwFlags);
 

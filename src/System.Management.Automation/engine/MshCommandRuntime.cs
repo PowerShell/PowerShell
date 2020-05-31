@@ -396,7 +396,7 @@ namespace System.Management.Automation
         {
             if (progressRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("progressRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
             }
 
             if (Host == null || Host.UI == null)
@@ -926,6 +926,7 @@ namespace System.Management.Automation
         /// the cmdlet. Semantically this is equivalent to :  cmd | % { $pipelineVariable = $_; (...) }
         /// </summary>
         internal string PipelineVariable { get; set; }
+
         private PSVariable _pipelineVarReference = null;
 
         internal void SetupOutVariable()
@@ -2053,7 +2054,7 @@ namespace System.Management.Automation
             ThrowIfStopping();
             if (errorRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("errorRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
             }
 
             errorRecord.SetInvocationInfo(MyInvocation);
@@ -2230,7 +2231,7 @@ namespace System.Management.Automation
         /// An empty array that is declared statically so we don't keep
         /// allocating them over and over...
         /// </summary>
-        internal static object[] StaticEmptyArray = Array.Empty<object>();
+        internal static readonly object[] StaticEmptyArray = Array.Empty<object>();
 
         /// <summary>
         /// Gets or sets the error pipe.
@@ -2318,7 +2319,7 @@ namespace System.Management.Automation
             internal AllowWrite(InternalCommand permittedToWrite, bool permittedToWriteToPipeline)
             {
                 if (permittedToWrite == null)
-                    throw PSTraceSource.NewArgumentNullException("permittedToWrite");
+                    throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
                 MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
                 if (mcr == null)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
@@ -2368,7 +2369,7 @@ namespace System.Management.Automation
         public Exception ManageException(Exception e)
         {
             if (e == null)
-                throw PSTraceSource.NewArgumentNullException("e");
+                throw PSTraceSource.NewArgumentNullException(nameof(e));
 
             if (PipelineProcessor != null)
             {

@@ -160,7 +160,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
             $ModuleVersion = '3.0'
             $GUID = New-Guid
 
-            New-ModuleManifest ((join-path $moduleDir.Name $moduleDir.Name) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $ModuleVersion -Guid $GUID
+            New-ModuleManifest ((Join-Path $moduleDir.Name $moduleDir.Name) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $ModuleVersion -Guid $GUID
 
             $lastItem = @{ ModuleName = $moduleDir.Name}
             if ($AddVersion) {$lastItem += @{ ModuleVersion = $ModuleVersion}}
@@ -185,7 +185,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
                 $RequiredModulesSpecs = $lastItem.ModuleName
             }
 
-            New-ModuleManifest ((join-path $firstModuleName $firstModuleName) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $firstModuleVersion -Guid $firstModuleGuid
+            New-ModuleManifest ((Join-Path $firstModuleName $firstModuleName) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $firstModuleVersion -Guid $firstModuleGuid
         }
     }
 
@@ -250,7 +250,7 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
 
     It "Test-ModuleManifest should not load unnessary modules" -Skip:(!(Test-CanWriteToPsHome)) {
 
-        $job = start-job -name "job1" -ScriptBlock {test-modulemanifest "$using:PSHomeModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -verbose} | Wait-Job
+        $job = Start-Job -Name "job1" -ScriptBlock {Test-ModuleManifest "$using:PSHomeModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -Verbose} | Wait-Job
 
         $verbose = $job.ChildJobs[0].Verbose.ReadAll()
         # Before the fix, all modules under $PSHOME will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.

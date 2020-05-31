@@ -420,7 +420,7 @@ namespace System.Management.Automation
             if (string.IsNullOrEmpty(errorCategoryString))
             {
                 // this probably indicates an invalid ErrorCategory value
-                errorCategoryString = ErrorCategory.NotSpecified.ToString();
+                errorCategoryString = nameof(ErrorCategory.NotSpecified);
             }
 
             string templateText = ErrorCategoryStrings.ResourceManager.GetString(errorCategoryString, uiCultureInfo);
@@ -1470,6 +1470,7 @@ namespace System.Management.Automation
         public object TargetObject { get => _target; }
 
         private object _target /* = null */;
+
         internal void SetTargetObject(object target)
         {
             _target = target;

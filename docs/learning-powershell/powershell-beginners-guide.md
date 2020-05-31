@@ -26,205 +26,205 @@ It is shown as `PS C:\>` on  Windows.
 
 1. `Get-Process`: Gets the processes that are running on the local computer or a remote computer.
 
-By default, you will get data back similar to the following:
+    By default, you will get data back similar to the following:
 
-```powershell
-PS /> Get-Process
+    ```powershell
+    PS /> Get-Process
 
-Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
--------  ------     -----     -----     ------     --    -----------
-    -      -          -           1      0.012     12    bash
-    -      -          -          21     20.220    449    powershell
-    -      -          -          11     61.630   8620    code
-    -      -          -          74    403.150   1209    firefox
+    Handles   NPM(K)    PM(K)     WS(K)     CPU(s)     Id    ProcessName
+    -------  ------     -----     -----     ------     --    -----------
+        -      -          -           1      0.012     12    bash
+        -      -          -          21     20.220    449    powershell
+        -      -          -          11     61.630   8620    code
+        -      -          -          74    403.150   1209    firefox
 
-…
-```
+    …
+    ```
 
-Only interested in the instance of Firefox process that is running on your computer?
+    Only interested in the instance of Firefox process that is running on your computer?
 
-Try this:
+    Try this:
 
-```powershell
-PS /> Get-Process -Name firefox
+    ```powershell
+    PS /> Get-Process -Name firefox
 
-Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
--------  ------     -----     -----    ------     --   -----------
-    -      -          -          74   403.150   1209   firefox
+    Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
+    -------  ------     -----     -----    ------     --   -----------
+        -      -          -          74   403.150   1209   firefox
 
-```
+    ```
 
-Want to get back more than one process?
-Then just specify process names and separate them with commas.
+    Want to get back more than one process?
+    Then just specify process names and separate them with commas.
 
-```powershell
-PS /> Get-Process -Name firefox, powershell
-Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
--------  ------     -----     -----    ------     --   -----------
-    -      -          -          74   403.150   1209   firefox
-    -      -          -          21    20.220    449   powershell
+    ```powershell
+    PS /> Get-Process -Name firefox, powershell
+    Handles   NPM(K)    PM(K)     WS(K)    CPU(s)     Id   ProcessName
+    -------  ------     -----     -----    ------     --   -----------
+        -      -          -          74   403.150   1209   firefox
+        -      -          -          21    20.220    449   powershell
 
-```
+    ```
 
 1. `Clear-Host`: Clears the display in the host program.
 
-```powershell
-PS /> Get-Process
-PS /> Clear-Host
-```
+    ```powershell
+    PS /> Get-Process
+    PS /> Clear-Host
+    ```
 
-Type too much just for clearing the screen?
+    Type too much just for clearing the screen?
 
-Here is how the alias can help.
+    Here is how the alias can help.
 
 1. `Get-Alias`: Gets the aliases for the current session.
 
-```powershell
-Get-Alias
+    ```powershell
+    Get-Alias
 
-CommandType     Name
------------     ----
-…
+    CommandType     Name
+    -----------     ----
+    …
 
-Alias           cd -> Set-Location
-Alias           cls -> Clear-Host
-Alias           clear -> Clear-Host
-Alias           copy -> Copy-Item
-Alias           dir -> Get-ChildItem
-Alias           gc -> Get-Content
-Alias           gmo -> Get-Module
-Alias           ri -> Remove-Item
-Alias           type -> Get-Content
-…
-```
+    Alias           cd -> Set-Location
+    Alias           cls -> Clear-Host
+    Alias           clear -> Clear-Host
+    Alias           copy -> Copy-Item
+    Alias           dir -> Get-ChildItem
+    Alias           gc -> Get-Content
+    Alias           gmo -> Get-Module
+    Alias           ri -> Remove-Item
+    Alias           type -> Get-Content
+    …
+    ```
 
-As you can see `cls` or `clear` is an alias of `Clear-Host`.
+    As you can see `cls` or `clear` is an alias of `Clear-Host`.
 
-Now try it:
+    Now try it:
 
-```powershell
-PS /> Get-Process
-PS /> cls
-```
+    ```powershell
+    PS /> Get-Process
+    PS /> cls
+    ```
 
 1. `cd -> Set-Location`: Sets the current working location to a specified location.
 
-```powershell
-PS /> Set-Location /home
-PS /home>
-```
+    ```powershell
+    PS /> Set-Location /home
+    PS /home>
+    ```
 
 1. `dir -> Get-ChildItem`: Gets the items and child items in one or more specified locations.
 
-```powershell
-# Get all files under the current directory:
-PS /> Get-ChildItem
+    ```powershell
+    # Get all files under the current directory:
+    PS /> Get-ChildItem
 
-# Get all files under the current directory as well as its subdirectories:
-PS /> cd $home
-PS /home/jen> dir -Recurse
+    # Get all files under the current directory as well as its subdirectories:
+    PS /> cd $home
+    PS /home/jen> dir -Recurse
 
-# List all files with "txt" file extension.
-PS /> cd $home
-PS /home/jen> dir –Path *.txt -Recurse
-```
+    # List all files with "txt" file extension.
+    PS /> cd $home
+    PS /home/jen> dir –Path *.txt -Recurse
+    ```
 
-*6. `New-Item`: Creates a new item.
+1. `New-Item`: Creates a new item.
 
-```powershell
-# An empty file is created if you type the following:
-PS /home/jen> New-Item -Path ./test.txt
-
-
-    Directory: /home/jen
+    ```powershell
+    # An empty file is created if you type the following:
+    PS /home/jen> New-Item -Path ./test.txt
 
 
-Mode                LastWriteTime         Length  Name
-----                -------------         ------  ----
--a----         7/7/2016   7:17 PM              0  test.txt
-```
-
-You can use the `-Value` parameter to add some data to your file.
-
-For example, the following command adds the phrase `Hello world!` as a file content to the `test.txt`.
-
-Because the test.txt file exists already, we use `-Force` parameter to replace the existing content.
-
-```powershell
-PS /home/jen> New-Item -Path ./test.txt -Value "Hello world!" -Force
-
-    Directory: /home/jen
+        Directory: /home/jen
 
 
-Mode                LastWriteTime         Length  Name
-----                -------------         ------  ----
--a----         7/7/2016   7:19 PM             24  test.txt
+    Mode                LastWriteTime         Length  Name
+    ----                -------------         ------  ----
+    -a----         7/7/2016   7:17 PM              0  test.txt
+    ```
 
-```
+    You can use the `-Value` parameter to add some data to your file.
 
-There are other ways to add some data to a file.
+    For example, the following command adds the phrase `Hello world!` as a file content to the `test.txt`.
 
-For example, you can use `Set-Content` to set the file contents:
+    Because the test.txt file exists already, we use `-Force` parameter to replace the existing content.
 
-```powershell
-PS /home/jen>Set-Content -Path ./test.txt -Value "Hello world again!"
-```
+    ```powershell
+    PS /home/jen> New-Item -Path ./test.txt -Value "Hello world!" -Force
 
-Or simply use `>` as below:
+        Directory: /home/jen
 
-```powershell
-# create an empty file
-"" > test.txt
 
-# set "Hello world!" as content of test.txt file
-"Hello world!!!" > test.txt
+    Mode                LastWriteTime         Length  Name
+    ----                -------------         ------  ----
+    -a----         7/7/2016   7:19 PM             24  test.txt
 
-```
+    ```
 
-The pound sign `#` above is used for comments in PowerShell.
+    There are other ways to add some data to a file.
+
+    For example, you can use `Set-Content` to set the file contents:
+
+    ```powershell
+    PS /home/jen>Set-Content -Path ./test.txt -Value "Hello world again!"
+    ```
+
+    Or simply use `>` as below:
+
+    ```powershell
+    # create an empty file
+    "" > test.txt
+
+    # set "Hello world!" as content of test.txt file
+    "Hello world!!!" > test.txt
+
+    ```
+
+    The pound sign `#` above is used for comments in PowerShell.
 
 1. `type -> Get-Content`: Gets the content of the item at the specified location.
 
-```powershell
-PS /home/jen> Get-Content -Path ./test.txt
-PS /home/jen> type -Path ./test.txt
+    ```powershell
+    PS /home/jen> Get-Content -Path ./test.txt
+    PS /home/jen> type -Path ./test.txt
 
-Hello world again!
-```
+    Hello world again!
+    ```
 
 1. `del -> Remove-Item`: Deletes the specified items.
 
-This cmdlet will delete the file `/home/jen/test.txt`:
+    This cmdlet will delete the file `/home/jen/test.txt`:
 
-```powershell
-PS /home/jen> Remove-Item ./test.txt
-```
+    ```powershell
+    PS /home/jen> Remove-Item ./test.txt
+    ```
 
 1. `$PSVersionTable`: Displays the version of PowerShell you are currently using.
 
-Type `$PSVersionTable` in your PowerShell session, you will see something like below.
-"PSVersion" indicates the PowerShell version that you are using.
+    Type `$PSVersionTable` in your PowerShell session, you will see something like below.
+    "PSVersion" indicates the PowerShell version that you are using.
 
-```powershell
-Name                           Value
-----                           -----
-PSVersion                      6.0.0-alpha
-PSEdition                      Core
-PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
-BuildVersion                   3.0.0.0
-GitCommitId                    v6.0.0-alpha.12
-CLRVersion
-WSManStackVersion              3.0
-PSRemotingProtocolVersion      2.3
-SerializationVersion           1.1.0.1
+    ```powershell
+    Name                           Value
+    ----                           -----
+    PSVersion                      6.0.0-alpha
+    PSEdition                      Core
+    PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
+    BuildVersion                   3.0.0.0
+    GitCommitId                    v6.0.0-alpha.12
+    CLRVersion
+    WSManStackVersion              3.0
+    PSRemotingProtocolVersion      2.3
+    SerializationVersion           1.1.0.1
 
-```
+    ```
 
 1. `Exit`: To exit the PowerShell session, type `exit`.
 
-```powershell
-exit
-```
+    ```powershell
+    exit
+    ```
 
 ## Need Help?
 

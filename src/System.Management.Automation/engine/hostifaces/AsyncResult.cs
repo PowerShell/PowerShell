@@ -241,7 +241,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (callback == null)
             {
-                throw new PSArgumentNullException("callback");
+                throw new PSArgumentNullException(nameof(callback));
             }
 
             _invokeCallback = callback;

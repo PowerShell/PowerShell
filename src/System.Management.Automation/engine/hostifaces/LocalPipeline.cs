@@ -1320,6 +1320,7 @@ namespace System.Management.Automation.Runspaces
         /// This is set true when stop is called.
         /// </summary>
         private bool _stopping;
+
         internal bool IsStopping
         {
             get
@@ -1341,7 +1342,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (item == null)
             {
-                throw PSTraceSource.NewArgumentNullException("item");
+                throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
             lock (_syncRoot)

@@ -31,6 +31,7 @@ namespace System.Management.Automation.Interpreter
     internal sealed class Interpreter
     {
         internal static readonly object NoValue = new object();
+
         internal const int RethrowOnReturn = Int32.MaxValue;
 
         // zero: sync compilation

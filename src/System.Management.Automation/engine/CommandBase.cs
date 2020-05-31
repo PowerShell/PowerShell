@@ -484,7 +484,7 @@ namespace System.Management.Automation
             {
                 if (providerId == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("providerId");
+                    throw PSTraceSource.NewArgumentNullException(nameof(providerId));
                 }
 
                 PathInfo result = SessionState.Path.CurrentProviderLocation(providerId);

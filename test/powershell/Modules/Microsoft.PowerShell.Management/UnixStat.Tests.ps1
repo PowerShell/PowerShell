@@ -29,7 +29,7 @@ Describe "UnixFileSystem additions" -Tag "CI" {
 
         It "The UnixStat property should be the correct type" {
             $expected = "System.Management.Automation.Platform+Unix+CommonStat"
-            $i = (get-item /).psobject.properties['UnixStat'].TypeNameOfValue
+            $i = (Get-Item /).psobject.properties['UnixStat'].TypeNameOfValue
             $i | Should -Be $expected
         }
     }

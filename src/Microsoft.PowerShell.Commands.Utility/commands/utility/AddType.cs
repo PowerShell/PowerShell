@@ -634,7 +634,9 @@ namespace Microsoft.PowerShell.Commands
         private static readonly Dictionary<int, Assembly> s_sourceAssemblyCache = new Dictionary<int, Assembly>();
 
         private static readonly string s_defaultSdkDirectory = Utils.DefaultPowerShellAppBase;
+
         private const ReportDiagnostic defaultDiagnosticOption = ReportDiagnostic.Error;
+
         private static readonly string[] s_writeInformationTags = new string[] { "PSHOST" };
         private int _syntaxTreesHash;
 
@@ -650,11 +652,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // CoreCLR doesn't allow re-load TPA assemblies with different API (i.e. we load them by name and now want to load by path).
                 // LoadAssemblyHelper helps us avoid re-loading them, if they already loaded.
-                Assembly assembly = LoadAssemblyHelper(assemblyName);
-                if (assembly == null)
-                {
-                    assembly = Assembly.LoadFrom(ResolveAssemblyName(assemblyName, false));
-                }
+                Assembly assembly = LoadAssemblyHelper(assemblyName) ?? Assembly.LoadFrom(ResolveAssemblyName(assemblyName, false));
 
                 if (PassThru)
                 {
@@ -668,14 +666,26 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
-            // netcoreapp3.0 currently comes with 148 reference assemblies (maybe more in future), so we use a capacity of '150'.
-            var defaultRefAssemblies = new List<PortableExecutableReference>(150);
+            // Define number of reference assemblies distributed with PowerShell.
+            // This number is accurate as of PowerShell v7.1.0-preview.1 built with .NET v5.0.100-preview.1.20155.7
+            const int numberOfPowershellRefAssemblies = 151;
+
+            const int capacity = numberOfPowershellRefAssemblies + 1;
+            var defaultRefAssemblies = new List<PortableExecutableReference>(capacity);
 
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
             {
                 defaultRefAssemblies.Add(MetadataReference.CreateFromFile(file));
             }
+
+            // Add System.Management.Automation.dll
             defaultRefAssemblies.Add(MetadataReference.CreateFromFile(typeof(PSObject).Assembly.Location));
+
+            // We want to avoid reallocating the internal array, so we assert if the list capacity has increased.
+            Diagnostics.Assert(
+                defaultRefAssemblies.Capacity <= capacity,
+                $"defaultRefAssemblies was resized because of insufficient initial capacity! A capacity of {defaultRefAssemblies.Count} is required.");
+
             return defaultRefAssemblies;
         }
 
@@ -887,7 +897,7 @@ namespace Microsoft.PowerShell.Commands
                 case OutputAssemblyType.WindowsApplication:
                     return OutputKind.WindowsApplication;
                 default:
-                    throw new ArgumentOutOfRangeException("outputType");
+                    throw new ArgumentOutOfRangeException(nameof(outputType));
             }
         }
 

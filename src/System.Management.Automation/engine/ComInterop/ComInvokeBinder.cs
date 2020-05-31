@@ -545,7 +545,7 @@ namespace System.Management.Automation.ComInterop
                 exprs.Add(System.Management.Automation.Language.ExpressionCache.AutomationNullConstant);
             }
 
-            return Expression.Block(vars, exprs); ;
+            return Expression.Block(vars, exprs);
         }
 
         /// <summary>

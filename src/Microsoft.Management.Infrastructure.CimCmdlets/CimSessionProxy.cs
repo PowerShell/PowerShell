@@ -44,7 +44,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Session proxy
+        /// Session proxy.
         /// </para>
         /// </summary>
         internal CimSessionProxy Proxy
@@ -60,7 +60,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// Class provides all information regarding the
-    /// current invocation to .net api.
+    /// current invocation to the .NET API.
     /// </summary>
     internal class InvocationContext
     {
@@ -1066,6 +1066,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
 #if DEBUG
         private static bool isCliXmlTestabilityHookActive = GetIsCliXmlTestabilityHookActive();
+
         private static bool GetIsCliXmlTestabilityHookActive()
         {
             return !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("CDXML_CLIXML_TEST"));
@@ -1514,6 +1515,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Flag controls whether session object should be closed or not.
         /// </summary>
         private bool isTemporaryCimSession;
+
         internal bool IsTemporaryCimSession
         {
             get
@@ -2260,6 +2262,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region private members
 
         private CimNewCimInstance newCimInstance = null;
+
         internal CimNewCimInstance NewCimInstanceOperation
         {
             get

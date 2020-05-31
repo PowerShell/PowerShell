@@ -433,6 +433,13 @@ public enum TestSByteEnum : sbyte {
                 ExpectedResult = "0000000000000000   00 68 00 65 00 6C 00 6C 00 6F                     h e l l o"
             }
             @{
+                Name                 = "Can process BigEndianUTF32 encoding 'fhx -InputObject 'hello' -Encoding BigEndianUTF32'"
+                Encoding             = "BigEndianUTF32"
+                Count                = 2
+                ExpectedResult       = "0000000000000000   00 00 00 68 00 00 00 65 00 00 00 6C 00 00 00 6C     h   e   l   l"
+                ExpectedSecondResult = "0000000000000010   00 00 00 6F                                         o"
+            }           
+            @{
                 Name           = "Can process Unicode encoding 'fhx -InputObject 'hello' -Encoding Unicode'"
                 Encoding       = "Unicode"
                 Count          = 1

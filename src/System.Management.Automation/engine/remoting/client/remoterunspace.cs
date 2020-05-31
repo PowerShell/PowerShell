@@ -1041,7 +1041,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, false, false);
@@ -1062,7 +1062,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, addToHistory, false);
@@ -1097,7 +1097,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             return CoreCreatePipeline(command, addToHistory, true);
@@ -1853,7 +1853,7 @@ namespace System.Management.Automation
         {
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             _runspace = runspace;
@@ -1882,12 +1882,12 @@ namespace System.Management.Automation
 
             if (command == null)
             {
-                throw new PSArgumentNullException("command");
+                throw new PSArgumentNullException(nameof(command));
             }
 
             if (output == null)
             {
-                throw new PSArgumentNullException("output");
+                throw new PSArgumentNullException(nameof(output));
             }
 
             if (!DebuggerStopped)
@@ -2946,6 +2946,7 @@ namespace System.Management.Automation
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
         private RemoteRunspace _runspace;
+
         internal RemoteSessionStateProxy(RemoteRunspace runspace)
         {
             Dbg.Assert(runspace != null, "Caller should validate the parameter");
@@ -2978,7 +2979,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             // Verify the runspace has the Set-Variable command. For performance, throw if we got an error
@@ -3038,7 +3039,7 @@ namespace System.Management.Automation
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             // Verify the runspace has the Get-Variable command. For performance, throw if we got an error

@@ -44,6 +44,11 @@ namespace Microsoft.PowerShell.Commands
         BigEndianUnicode,
 
         /// <summary>
+        /// Big Endian UTF32 encoding.
+        /// </summary>
+        BigEndianUTF32,
+        
+        /// <summary>
         /// UTF8 encoding.
         /// </summary>
         Utf8,
@@ -116,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Offset64 = offset;
@@ -145,7 +150,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Offset64 = offset;
@@ -174,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             Bytes = value;

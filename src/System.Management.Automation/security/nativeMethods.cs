@@ -524,6 +524,7 @@ namespace System.Management.Automation.Security
                           string strKeyName,
                           uint dwLegacySpec,
                           uint dwFlags);
+
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern unsafe
         int NCryptSetProperty(IntPtr hProv, string pszProperty, void* pbInput, int cbInput, int dwFlags);
@@ -565,12 +566,16 @@ namespace System.Management.Automation.Security
         {
             internal DWORD dwSize;
             internal DWORD dwSubjectChoice;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszFileName;
+
             internal DWORD dwSigningCertChoice;
             internal IntPtr pSigningCertContext; // PCCERT_CONTEXT
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszTimestampURL;
+
             internal DWORD dwAdditionalCertChoice;
             internal IntPtr pSignExtInfo; // PCCRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
         };
@@ -602,10 +607,13 @@ namespace System.Management.Automation.Security
         {
             internal DWORD dwSize;
             internal DWORD dwAttrFlagsNotUsed;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszDescription;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszMoreInfoLocation;
+
             [MarshalAs(UnmanagedType.LPStr)]
             internal string pszHashAlg;
 
@@ -794,8 +802,10 @@ namespace System.Management.Automation.Security
         internal struct WINTRUST_FILE_INFO
         {
             internal DWORD cbStruct;               // = sizeof(WINTRUST_FILE_INFO)
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pcwszFilePath;         // LPCWSTR
+
             internal IntPtr hFileNotUsed;          // optional, HANDLE to pcwszFilePath
             internal IntPtr pgKnownSubjectNotUsed; // optional: GUID* : fill if the
                                                    // subject type is known
@@ -1935,6 +1945,7 @@ namespace System.Management.Automation.Security
         {
             [MarshalAs(UnmanagedType.LPStr)]
             internal string pszObjId;
+
             internal CRYPT_ATTR_BLOB Value;
         }
 
@@ -1954,8 +1965,10 @@ namespace System.Management.Automation.Security
             private DWORD _dwCurFilePos;
             private DWORD _dwLastMemberOffset;
             private BOOL _fEOF;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             private string _pwszResultDir;
+
             private IntPtr _hCATStore;
         };
 
@@ -1963,10 +1976,13 @@ namespace System.Management.Automation.Security
         internal struct CRYPTCATMEMBER
         {
             internal DWORD cbStruct;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszReferenceTag;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszFileName;
+
             internal Guid gSubjectType;
             internal DWORD fdwMemberFlags;
             internal IntPtr pIndirectData;
@@ -1981,8 +1997,10 @@ namespace System.Management.Automation.Security
         internal struct CRYPTCATATTRIBUTE
         {
             private DWORD _cbStruct;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszReferenceTag;
+
             private DWORD _dwAttrTypeAndAction;
             internal DWORD cbValue;
             internal System.IntPtr pbValue;
@@ -1994,8 +2012,10 @@ namespace System.Management.Automation.Security
         {
             private DWORD _cbStruct;
             internal DWORD dwPublicVersion;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszP7File;
+
             private IntPtr _hProv;
             private DWORD _dwEncodingType;
             private DWORD _fdwStoreFlags;

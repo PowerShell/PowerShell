@@ -99,10 +99,13 @@ namespace Microsoft.PowerShell.Commands
 
         #region Internal
         private List<OrderByPropertyEntry> _referenceEntries;
+
         private readonly List<OrderByPropertyEntry> _referenceEntryBacklog
             = new List<OrderByPropertyEntry>();
+
         private readonly List<OrderByPropertyEntry> _differenceEntryBacklog
             = new List<OrderByPropertyEntry>();
+
         private OrderByProperty _orderByProperty = null;
         private OrderByPropertyComparer _comparer = null;
 
@@ -372,18 +375,13 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// If the parameter 'ExcludeDifferent' is present, then we need to turn on the
-        /// 'IncludeEqual' switch unless it's turned off by the user specifically.
+        /// If the parameter 'ExcludeDifferent' is present, then the 'IncludeEqual'
+        /// switch is turned on unless it's turned off by the user specifically.
         /// </summary>
         protected override void BeginProcessing()
         {
             if (ExcludeDifferent)
             {
-                if (_isIncludeEqualSpecified == false)
-                {
-                    return;
-                }
-
                 if (_isIncludeEqualSpecified && !_includeEqual)
                 {
                     return;

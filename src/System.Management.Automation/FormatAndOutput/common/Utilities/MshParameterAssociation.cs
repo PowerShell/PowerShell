@@ -16,14 +16,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("MshResolvedExpressionParameterAssociation", "MshResolvedExpressionParameterAssociation")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("MshResolvedExpressionParameterAssociation",
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("MshResolvedExpressionParameterAssociation",
                                                 "MshResolvedExpressionParameterAssociation");
         #endregion tracer
 
         internal MshResolvedExpressionParameterAssociation(MshParameter parameter, PSPropertyExpression expression)
         {
             if (expression == null)
-                throw PSTraceSource.NewArgumentNullException("expression");
+                throw PSTraceSource.NewArgumentNullException(nameof(expression));
 
             OriginatingParameter = parameter;
             ResolvedExpression = expression;

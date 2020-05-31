@@ -8,7 +8,7 @@ $assemblyName = "Microsoft.PowerShell.Security"
 # entries in the csproj for the assembly
 $excludeList = @("SecurityMshSnapinResources.resx")
 # load the module since it isn't there by default
-import-module Microsoft.PowerShell.Security
+Import-Module Microsoft.PowerShell.Security
 
 # run the tests
 Test-ResourceStrings -AssemblyName $AssemblyName -ExcludeList $excludeList

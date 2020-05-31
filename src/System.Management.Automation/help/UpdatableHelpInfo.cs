@@ -93,7 +93,7 @@ namespace System.Management.Automation.Help
                 return true;
             }
 
-            return v1 > v2; ;
+            return v1 > v2;
         }
 
         /// <summary>

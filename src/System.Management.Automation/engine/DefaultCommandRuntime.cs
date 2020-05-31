@@ -21,7 +21,7 @@ namespace System.Management.Automation
         public DefaultCommandRuntime(List<object> outputList)
         {
             if (outputList == null)
-                throw new System.ArgumentNullException("outputList");
+                throw new System.ArgumentNullException(nameof(outputList));
 
             _output = outputList;
         }

@@ -1019,6 +1019,7 @@ namespace Microsoft.PowerShell
 
         private ArrayList _topLevelNodes = new ArrayList();
         private int _nodeCount;
+
         private const int maxNodeCount = 128;
     }
 }   // namespace

@@ -354,7 +354,7 @@ namespace System.Management.Automation
         {
             if (help == null)
             {
-                throw new ArgumentNullException("help");
+                throw new ArgumentNullException(nameof(help));
             }
 
             bool isHelpObject = false;

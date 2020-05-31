@@ -154,6 +154,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         private abstract class CimInstancePropertyBasedFilter : CimInstanceFilterBase
         {
             private readonly List<PropertyValueFilter> _propertyValueFilters = new List<PropertyValueFilter>();
+
             protected IEnumerable<PropertyValueFilter> PropertyValueFilters { get { return _propertyValueFilters; } }
 
             protected void AddPropertyValueFilter(PropertyValueFilter propertyValueFilter)
@@ -357,6 +358,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             }
 
             protected abstract BehaviorOnNoMatch GetDefaultBehaviorWhenNoMatchesFound(object cimTypedExpectedPropertyValue);
+
             private BehaviorOnNoMatch _behaviorOnNoMatch;
 
             public string PropertyName { get; }

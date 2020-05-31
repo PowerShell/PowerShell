@@ -42,7 +42,7 @@ function Test-IsElevated
         # on Windows we can determine whether we're executing in an
         # elevated context
         $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-        $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $identity
+        $windowsPrincipal = New-Object 'Security.Principal.WindowsPrincipal' $identity
         if ($windowsPrincipal.IsInRole("Administrators") -eq 1)
         {
             $IsElevated = $true
@@ -209,7 +209,7 @@ function Send-VstsLogFile {
         $Path
     )
 
-    $logFolder = Join-Path -path $PWD -ChildPath 'logfile'
+    $logFolder = Join-Path -Path $PWD -ChildPath 'logfile'
     if(!(Test-Path -Path $logFolder))
     {
         $null = New-Item -Path $logFolder -ItemType Directory
@@ -222,13 +222,13 @@ function Send-VstsLogFile {
     if($Contents)
     {
         $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + "-$LogName.txt")
-        $name = Split-Path -leaf -Path $logFile
+        $name = Split-Path -Leaf -Path $logFile
 
-        $Contents | out-file -path $logFile -Encoding ascii
+        $Contents | Out-File -path $logFile -Encoding ascii
     }
     else
     {
-        $name = Split-Path -leaf -Path $path
+        $name = Split-Path -Leaf -Path $path
         $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + '-' + $name)
         Copy-Item -Path $Path -Destination $logFile
     }
@@ -355,7 +355,7 @@ function New-ComplexPassword
     $password = [string]::Empty
     # Windows password complexity rule requires minimum 8 characters and using at least 3 of the
     # buckets above, so we just pick one from each bucket twice.
-    # https://docs.microsoft.com/en-us/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+    # https://docs.microsoft.com/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
     1..2 | ForEach-Object {
         $Password += $numbers[(Get-Random $numbers.Length)] + $lowercase[(Get-Random $lowercase.Length)] +
             $uppercase[(Get-Random $uppercase.Length)] + $symbols[(Get-Random $symbols.Length)]

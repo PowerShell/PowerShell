@@ -38,7 +38,7 @@ namespace System.Management.Automation.Host
             if (string.IsNullOrEmpty(label))
             {
                 // "label" is not localizable
-                throw PSTraceSource.NewArgumentException("label", DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
+                throw PSTraceSource.NewArgumentException(nameof(label), DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
             }
 
             this.label = label;
@@ -68,13 +68,13 @@ namespace System.Management.Automation.Host
             if (string.IsNullOrEmpty(label))
             {
                 // "label" is not localizable
-                throw PSTraceSource.NewArgumentException("label", DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
+                throw PSTraceSource.NewArgumentException(nameof(label), DescriptionsStrings.NullOrEmptyErrorTemplate, "label");
             }
 
             if (helpMessage == null)
             {
                 // "helpMessage" is not localizable
-                throw PSTraceSource.NewArgumentNullException("helpMessage");
+                throw PSTraceSource.NewArgumentNullException(nameof(helpMessage));
             }
 
             this.label = label;

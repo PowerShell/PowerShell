@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (pathInfo == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("pathInfo");
+                    throw PSTraceSource.NewArgumentNullException(nameof(pathInfo));
                 }
 
                 PathInfo = pathInfo;
@@ -370,7 +370,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (contentHolders == null)
             {
-                throw PSTraceSource.NewArgumentNullException("contentHolders");
+                throw PSTraceSource.NewArgumentNullException(nameof(contentHolders));
             }
 
             foreach (ContentHolder holder in contentHolders)

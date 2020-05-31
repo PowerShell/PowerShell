@@ -248,7 +248,7 @@ namespace System.Management.Automation
         /// </summary>
         public StartRunspaceDebugProcessingEventArgs(Runspace runspace)
         {
-            if (runspace == null) { throw new PSArgumentNullException("runspace"); }
+            if (runspace == null) { throw new PSArgumentNullException(nameof(runspace)); }
 
             Runspace = runspace;
         }
@@ -274,7 +274,7 @@ namespace System.Management.Automation
         /// <param name="runspace"></param>
         public ProcessRunspaceDebugEndEventArgs(Runspace runspace)
         {
-            if (runspace == null) { throw new PSArgumentNullException("runspace"); }
+            if (runspace == null) { throw new PSArgumentNullException(nameof(runspace)); }
 
             Runspace = runspace;
         }
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         /// <summary/>
         protected void RaiseStartRunspaceDebugProcessingEvent(StartRunspaceDebugProcessingEventArgs args)
         {
-            if (args == null) { throw new PSArgumentNullException("args"); }
+            if (args == null) { throw new PSArgumentNullException(nameof(args)); }
 
             StartRunspaceDebugProcessing.SafeInvoke<StartRunspaceDebugProcessingEventArgs>(this, args);
         }
@@ -533,7 +533,7 @@ namespace System.Management.Automation
         /// <summary/>
         protected void RaiseRunspaceProcessingCompletedEvent(ProcessRunspaceDebugEndEventArgs args)
         {
-            if (args == null) { throw new PSArgumentNullException("args"); }
+            if (args == null) { throw new PSArgumentNullException(nameof(args)); }
 
             RunspaceDebugProcessingCompleted.SafeInvoke<ProcessRunspaceDebugEndEventArgs>(this, args);
         }
@@ -1072,6 +1072,7 @@ namespace System.Management.Automation
         }
 
         private bool? _isLocalSession;
+
         private bool IsLocalSession
         {
             get
@@ -1723,8 +1724,10 @@ namespace System.Management.Automation
 
         // Runspace debugger integration.
         private Dictionary<Guid, PSMonitorRunspaceInfo> _runningRunspaces;
+
         private const int _jobCallStackOffset = 2;
         private const int _runspaceCallStackOffset = 1;
+
         private bool _preserveUnhandledDebugStopEvent;
         private ManualResetEventSlim _preserveDebugStopEvent;
 
@@ -2306,12 +2309,12 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw new PSArgumentNullException("command");
+                throw new PSArgumentNullException(nameof(command));
             }
 
             if (output == null)
             {
-                throw new PSArgumentNullException("output");
+                throw new PSArgumentNullException(nameof(output));
             }
 
             if (!DebuggerStopped)
@@ -2915,7 +2918,7 @@ namespace System.Management.Automation
         /// </param>
         internal override void DebugJob(Job job, bool breakAll)
         {
-            if (job == null) { throw new PSArgumentNullException("job"); }
+            if (job == null) { throw new PSArgumentNullException(nameof(job)); }
 
             lock (_syncObject)
             {
@@ -2989,7 +2992,7 @@ namespace System.Management.Automation
         internal override void StopDebugJob(Job job)
         {
             // Parameter validation.
-            if (job == null) { throw new PSArgumentNullException("job"); }
+            if (job == null) { throw new PSArgumentNullException(nameof(job)); }
 
             SetInternalDebugMode(InternalDebugMode.Disabled);
 
@@ -3036,7 +3039,7 @@ namespace System.Management.Automation
         {
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             if (runspace.RunspaceStateInfo.State != RunspaceState.Opened)
@@ -3079,7 +3082,7 @@ namespace System.Management.Automation
         /// <param name="runspace">Runspace.</param>
         internal override void StopDebugRunspace(Runspace runspace)
         {
-            if (runspace == null) { throw new PSArgumentNullException("runspace"); }
+            if (runspace == null) { throw new PSArgumentNullException(nameof(runspace)); }
 
             SetInternalDebugMode(InternalDebugMode.Disabled);
 
@@ -4225,7 +4228,7 @@ namespace System.Management.Automation
         {
             if (runspace == null || runspace.Debugger == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             _runspace = runspace;
@@ -4725,7 +4728,7 @@ namespace System.Management.Automation
         {
             if (rootDebugger == null)
             {
-                throw new PSArgumentNullException("rootDebugger");
+                throw new PSArgumentNullException(nameof(rootDebugger));
             }
 
             _command = command;
@@ -5474,7 +5477,7 @@ namespace System.Management.Automation
         {
             if (breakpoints == null)
             {
-                throw new PSArgumentNullException("breakpoints");
+                throw new PSArgumentNullException(nameof(breakpoints));
             }
 
             this.InvocationInfo = invocationInfo;
@@ -5526,7 +5529,7 @@ namespace System.Management.Automation
         {
             if (invocationInfo == null)
             {
-                throw new PSArgumentNullException("invocationInfo");
+                throw new PSArgumentNullException(nameof(invocationInfo));
             }
 
             if (functionContext != null)
@@ -5682,7 +5685,7 @@ namespace System.Management.Automation.Internal
         {
             if (command == null)
             {
-                throw new PSArgumentNullException("command");
+                throw new PSArgumentNullException(nameof(command));
             }
 
             lock (s_noHistoryCommandNames)
@@ -5700,12 +5703,12 @@ namespace System.Management.Automation.Internal
         {
             if (debugger == null)
             {
-                throw new PSArgumentNullException("debugger");
+                throw new PSArgumentNullException(nameof(debugger));
             }
 
             if (runspaceInfo == null)
             {
-                throw new PSArgumentNullException("runspaceInfo");
+                throw new PSArgumentNullException(nameof(runspaceInfo));
             }
 
             debugger.StartMonitoringRunspace(runspaceInfo);
@@ -5720,12 +5723,12 @@ namespace System.Management.Automation.Internal
         {
             if (debugger == null)
             {
-                throw new PSArgumentNullException("debugger");
+                throw new PSArgumentNullException(nameof(debugger));
             }
 
             if (runspaceInfo == null)
             {
-                throw new PSArgumentNullException("runspaceInfo");
+                throw new PSArgumentNullException(nameof(runspaceInfo));
             }
 
             debugger.EndMonitoringRunspace(runspaceInfo);
@@ -5791,7 +5794,7 @@ namespace System.Management.Automation.Internal
         {
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             Runspace = runspace;

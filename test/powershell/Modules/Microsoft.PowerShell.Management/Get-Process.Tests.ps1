@@ -50,7 +50,7 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Should have not empty Name flags set for Get-Process object" -Pending:$IsMacOS {
-        $ps | foreach-object { $_.Name | Should -Not -BeNullOrEmpty }
+        $ps | ForEach-Object { $_.Name | Should -Not -BeNullOrEmpty }
     }
 
     It "Should throw an error for non existing process id." {
@@ -59,7 +59,7 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Should throw an exception when process id is null." {
-        { Get-Process -id $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetProcessCommand"
+        { Get-Process -Id $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
     It "Should throw an exception when -InputObject parameter is null." {
@@ -88,6 +88,12 @@ Describe "Get-Process" -Tags "CI" {
 
     It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows) {
         { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
+    }
+
+    It "Should return CommandLine property" -Skip:($IsMacOS)  {
+        $command = "(Get-Process -Id `$pid).CommandLine"
+        $result = & "$PSHOME/pwsh" -NoProfile -NonInteractive -Command $command
+        $result | Should -BeLike "*$command*"
     }
 }
 
@@ -118,12 +124,12 @@ Describe "Get-Process Formatting" -Tags "Feature" {
 
 Describe "Process Parent property" -Tags "CI" {
     It "Has Parent process property" {
-        $powershellexe = (get-process -id $PID).mainmodule.filename
+        $powershellexe = (Get-Process -Id $PID).mainmodule.filename
         & $powershellexe -noprofile -command '(Get-Process -Id $PID).Parent' | Should -Not -BeNullOrEmpty
     }
 
     It "Has valid parent process ID property" {
-        $powershellexe = (get-process -id $PID).mainmodule.filename
+        $powershellexe = (Get-Process -Id $PID).mainmodule.filename
         & $powershellexe -noprofile -command '(Get-Process -Id $PID).Parent.Id' | Should -Be $PID
     }
 }
