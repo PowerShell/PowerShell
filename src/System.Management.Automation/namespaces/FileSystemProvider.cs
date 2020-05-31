@@ -9704,7 +9704,7 @@ namespace System.Management.Automation.Internal
         }}
         ";
 
-        internal static string PSCopyFromSessionHelper = functionToken + PSCopyFromSessionHelperName + @"
+        internal static readonly string PSCopyFromSessionHelper = functionToken + PSCopyFromSessionHelperName + @"
         {
         " + s_PSCopyFromSessionHelperDefinition + @"
         }
@@ -9721,7 +9721,7 @@ namespace System.Management.Automation.Internal
 
         internal const string PSCopyRemoteUtilsName = @"PSCopyRemoteUtils";
 
-        internal static string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
+        internal static readonly string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
         private static string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
 
         private const string PSCopyRemoteUtilsDefinitionFormat = @"
@@ -9878,20 +9878,20 @@ namespace System.Management.Automation.Internal
         return $result
         ";
 
-        internal static string PSCopyRemoteUtils = functionToken + PSCopyRemoteUtilsName + @"
+        internal static readonly string PSCopyRemoteUtils = functionToken + PSCopyRemoteUtilsName + @"
         {
         " + PSCopyRemoteUtilsDefinition + @"
         }
         ";
 
-        internal static Hashtable PSCopyRemoteUtilsFunction = new Hashtable() {
+        internal static readonly Hashtable PSCopyRemoteUtilsFunction = new Hashtable() {
             {nameToken, PSCopyRemoteUtilsName},
             {definitionToken, s_PSCopyRemoteUtilsDefinitionRestricted}
         };
 
         #endregion
 
-        internal static string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
+        internal static readonly string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
 
         internal static IEnumerable<Hashtable> GetAllCopyToRemoteScriptFunctions()
         {
@@ -9899,7 +9899,7 @@ namespace System.Management.Automation.Internal
             yield return PSCopyRemoteUtilsFunction;
         }
 
-        internal static string AllCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
+        internal static readonly string AllCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
 
         internal static IEnumerable<Hashtable> GetAllCopyFromRemoteScriptFunctions()
         {

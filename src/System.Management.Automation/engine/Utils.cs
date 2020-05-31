@@ -302,7 +302,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Allowed PowerShell Editions.
         /// </summary>
-        internal static string[] AllowedEditionValues = { "Desktop", "Core" };
+        internal static readonly string[] AllowedEditionValues = { "Desktop", "Core" };
 
         /// <summary>
         /// Helper fn to check byte[] arg for null.
@@ -736,7 +736,7 @@ namespace System.Management.Automation
         /// The subdirectory of module paths
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
-        internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
+        internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
@@ -1457,11 +1457,11 @@ namespace System.Management.Automation
         }
 
         // BigEndianUTF32 encoding is possible, but requires creation
-        internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
+        internal static readonly Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static Dictionary<string, Encoding> encodingMap =
+        internal static readonly Dictionary<string, Encoding> encodingMap =
             new Dictionary<string, Encoding>()
             {
                 { "255-254", Encoding.Unicode },
@@ -1471,7 +1471,7 @@ namespace System.Management.Automation
                 { "239-187-191", Encoding.UTF8 },
             };
 
-        internal static char[] nonPrintableCharacters = {
+        internal static readonly char[] nonPrintableCharacters = {
             (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8,
             (char) 11, (char) 12, (char) 14, (char) 15, (char) 16, (char) 17, (char) 18, (char) 19, (char) 20,
             (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,

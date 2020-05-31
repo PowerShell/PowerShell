@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell
     {
         // Some random hex characters to identify the beginning of a
         // V2-exported SecureString.
-        internal static string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
+        internal static readonly string SecureStringExportHeader = "76492d1116743f0423413b16050a5345";
 
         /// <summary>
         /// Create a new SecureString based on the specified binary data.

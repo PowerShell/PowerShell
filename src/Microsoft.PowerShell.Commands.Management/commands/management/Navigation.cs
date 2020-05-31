@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// using "NavigationCommands" as the category.
         /// </summary>
         [Dbg.TraceSourceAttribute("NavigationCommands", "The namespace navigation tracer")]
-        internal static Dbg.PSTraceSource tracer = Dbg.PSTraceSource.GetTracer("NavigationCommands", "The namespace navigation tracer");
+        internal static readonly Dbg.PSTraceSource tracer = Dbg.PSTraceSource.GetTracer("NavigationCommands", "The namespace navigation tracer");
 
         #endregion Tracer
 

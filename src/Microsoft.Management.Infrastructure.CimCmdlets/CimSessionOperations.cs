@@ -180,44 +180,44 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// where <int> is the next available session number.
         /// For example, CimSession1, CimSession2, etc...
         /// </summary>
-        internal static string CimSessionClassName = "CimSession";
+        internal static readonly string CimSessionClassName = "CimSession";
 
         /// <summary>
         /// CimSession object name.
         /// </summary>
-        internal static string CimSessionObject = "{CimSession Object}";
+        internal static readonly string CimSessionObject = "{CimSession Object}";
 
         /// <summary>
         /// <para>
         /// CimSession object path, which is identifying a cimsession object
         /// </para>
         /// </summary>
-        internal static string SessionObjectPath = @"CimSession id = {0}, name = {2}, ComputerName = {3}, instance id = {1}";
+        internal static readonly string SessionObjectPath = @"CimSession id = {0}, name = {2}, ComputerName = {3}, instance id = {1}";
 
         /// <summary>
         /// Id property name of cimsession wrapper object.
         /// </summary>
-        internal static string idPropName = "Id";
+        internal static readonly string idPropName = "Id";
 
         /// <summary>
         /// Instanceid property name of cimsession wrapper object.
         /// </summary>
-        internal static string instanceidPropName = "InstanceId";
+        internal static readonly string instanceidPropName = "InstanceId";
 
         /// <summary>
         /// Name property name of cimsession wrapper object.
         /// </summary>
-        internal static string namePropName = "Name";
+        internal static readonly string namePropName = "Name";
 
         /// <summary>
         /// Computer name property name of cimsession object.
         /// </summary>
-        internal static string computernamePropName = "ComputerName";
+        internal static readonly string computernamePropName = "ComputerName";
 
         /// <summary>
         /// Protocol name property name of cimsession object.
         /// </summary>
-        internal static string protocolPropName = "Protocol";
+        internal static readonly string protocolPropName = "Protocol";
 
         /// <summary>
         /// <para>
@@ -813,7 +813,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// can running parallelly under more than one runspace(s).
         /// </para>
         /// </summary>
-        internal static ConcurrentDictionary<Guid, CimSessionState> cimSessions
+        internal static readonly ConcurrentDictionary<Guid, CimSessionState> cimSessions
             = new ConcurrentDictionary<Guid, CimSessionState>();
 
         /// <summary>
@@ -821,7 +821,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Default runspace Id.
         /// </para>
         /// </summary>
-        internal static Guid defaultRunspaceId = Guid.Empty;
+        internal static readonly Guid defaultRunspaceId = Guid.Empty;
 
         /// <summary>
         /// <para>
@@ -1209,7 +1209,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Remove session action string.
         /// </summary>
-        internal static string RemoveCimSessionActionName = "Remove CimSession";
+        internal static readonly string RemoveCimSessionActionName = "Remove CimSession";
 
         /// <summary>
         /// Constructor.

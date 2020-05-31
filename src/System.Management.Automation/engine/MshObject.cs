@@ -2466,7 +2466,8 @@ namespace System.Management.Automation
         /// </summary>
         private PSCustomObject() { }
 
-        internal static PSCustomObject SelfInstance = new PSCustomObject();
+        internal static readonly PSCustomObject SelfInstance = new PSCustomObject();
+
         /// <summary>
         /// Returns an empty string.
         /// </summary>

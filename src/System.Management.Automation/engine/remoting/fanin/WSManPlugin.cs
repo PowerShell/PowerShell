@@ -137,7 +137,7 @@ namespace System.Management.Automation.Remoting
         /// It is static because static instances of this class use the facade. Otherwise,
         /// it would be passed in via a parameterized constructor.
         /// </summary>
-        internal static IWSManNativeApiFacade wsmanPinvokeStatic = new WSManNativeApiFacade();
+        internal static readonly IWSManNativeApiFacade wsmanPinvokeStatic = new WSManNativeApiFacade();
 
         #endregion
 

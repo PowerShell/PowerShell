@@ -723,7 +723,7 @@ namespace System.Management.Automation
         // expose the ability to corrupt or escape PowerShell's environment. The following operations must
         // be safe: type conversion, all constructors, all methods (instance and static), and
         // and properties (instance and static).
-        internal static Lazy<Dictionary<Type, string[]>> Items = new Lazy<Dictionary<Type, string[]>>(
+        internal static readonly Lazy<Dictionary<Type, string[]>> Items = new Lazy<Dictionary<Type, string[]>>(
             () =>
                 new Dictionary<Type, string[]>
                 {
@@ -845,11 +845,11 @@ namespace System.Management.Automation
     internal static class TypeAccelerators
     {
         // builtins are not exposed publicly in a direct manner so they can't be changed at all
-        internal static Dictionary<string, Type> builtinTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
+        internal static readonly Dictionary<string, Type> builtinTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
         // users can add to user added accelerators (but not currently remove any.)  Keeping a separate
         // list allows us to add removing in the future w/o worrying about breaking the builtins.
-        internal static Dictionary<string, Type> userTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
+        internal static readonly Dictionary<string, Type> userTypeAccelerators = new Dictionary<string, Type>(64, StringComparer.OrdinalIgnoreCase);
 
         // We expose this one publicly for programmatic access to our type accelerator table, but it is
         // otherwise unused (so changes to this dictionary don't affect internals.)

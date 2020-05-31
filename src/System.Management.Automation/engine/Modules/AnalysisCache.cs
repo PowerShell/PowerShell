@@ -35,7 +35,7 @@ namespace System.Management.Automation
         private static ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
             new ConcurrentDictionary<string, string>( /*concurrency*/1, /*capacity*/2, StringComparer.OrdinalIgnoreCase);
 
-        internal static char[] InvalidCommandNameCharacters = new[]
+        internal static readonly char[] InvalidCommandNameCharacters = new[]
         {
             '#', ',', '(', ')', '{', '}', '[', ']', '&', '/', '\\', '$', '^', ';', ':',
             '"', '\'', '<', '>', '|', '?', '@', '`', '*', '%', '+', '=', '~'

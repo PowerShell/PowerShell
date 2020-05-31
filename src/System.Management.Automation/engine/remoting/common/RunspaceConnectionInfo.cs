@@ -1349,7 +1349,7 @@ namespace System.Management.Automation.Runspaces
 
 #if NOT_APPLY_PORT_DCR
         private static string DEFAULT_SCHEME = HTTP_SCHEME;
-        internal static string DEFAULT_SSL_SCHEME = HTTPS_SCHEME;
+        internal static readonly string DEFAULT_SSL_SCHEME = HTTPS_SCHEME;
         private static string DEFAULT_APP_NAME = "wsman";
         /// <summary>
         /// See below for explanation.

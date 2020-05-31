@@ -94,7 +94,7 @@ namespace Microsoft.WSMan.Management
             /// <summary>
             /// Dictionary object to store the connection.
             /// </summary>
-            internal static Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
+            internal static readonly Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
 
             ~Sessions()
             {
@@ -102,7 +102,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        internal static Sessions AutoSession = new Sessions();
+        internal static readonly Sessions AutoSession = new Sessions();
         //
         //
         //

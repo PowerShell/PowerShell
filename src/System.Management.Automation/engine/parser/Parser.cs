@@ -8083,7 +8083,7 @@ namespace System.Management.Automation.Language
     [EventSource(Name = "Microsoft-PowerShell-Parser")]
     internal class ParserEventSource : EventSource
     {
-        internal static ParserEventSource Log = new ParserEventSource();
+        internal static readonly ParserEventSource Log = new ParserEventSource();
 
         internal const int MaxScriptLengthToLog = 50;
 

@@ -419,7 +419,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Immutable container that holds the delegates and their unmanaged pointers.
         /// </summary>
-        internal static WSManPluginEntryDelegates workerPtrs = new WSManPluginEntryDelegates();
+        internal static readonly WSManPluginEntryDelegates workerPtrs = new WSManPluginEntryDelegates();
 
         #region Managed Entry Points
 
