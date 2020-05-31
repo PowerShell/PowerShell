@@ -265,6 +265,39 @@ namespace System.Management.Automation.Language
             }
         }
 
+        private class InterfaceExpression
+        {
+            private TypeConstraintAst ast;
+
+            internal bool IsGeneric => ast?.TypeName.IsGeneric ?? false;
+
+            internal InterfaceExpression(TypeConstraintAst ast)
+            {
+                this.ast = ast;
+            }
+
+            internal Type ResolveConcreteInterfaceType(TypeBuilder parameter)
+                => IsGeneric ? ResolveConcreteInterfaceTypeArguments(ast.TypeName, parameter) : ast.TypeName.GetReflectionType();
+
+            private Type ResolveConcreteInterfaceTypeArguments(ITypeName typeName, TypeBuilder parameter)
+            {
+                var typeArgs = new List<Type>();
+                if(typeName.IsGeneric && typeName is GenericTypeName genericName)
+                {
+                    foreach(var typeArg in genericName.GenericArguments)
+                    {
+                        typeArgs.Add(ResolveConcreteInterfaceTypeArguments(typeArg, parameter));
+                    }
+                    return genericName.TypeName.GetReflectionType().MakeGenericType(typeArgs.ToArray());
+                }
+                if(parameter.FullName == typeName.FullName)
+                {
+                    return parameter;
+                }
+                return typeName.GetReflectionType();
+            }
+        }
+
         private class DefineTypeHelper
         {
             private readonly Parser _parser;
@@ -292,10 +325,14 @@ namespace System.Management.Automation.Language
                 _parser = parser;
                 _typeDefinitionAst = typeDefinitionAst;
 
-                List<Type> interfaces;
+                List<InterfaceExpression> interfaces;
                 var baseClass = this.GetBaseTypes(parser, typeDefinitionAst, out interfaces);
 
-                _typeBuilder = module.DefineType(typeName, Reflection.TypeAttributes.Class | Reflection.TypeAttributes.Public, baseClass, interfaces.ToArray());
+                _typeBuilder = module.DefineType(typeName, Reflection.TypeAttributes.Class | Reflection.TypeAttributes.Public, baseClass, null);
+                foreach(var interfaceExpression in interfaces)
+                {
+                    _typeBuilder.AddInterfaceImplementation(interfaceExpression.ResolveConcreteInterfaceType(_typeBuilder));
+                }
                 _staticHelpersTypeBuilder = module.DefineType(string.Format(CultureInfo.InvariantCulture, "{0}_<staticHelpers>", typeName), Reflection.TypeAttributes.Class);
                 DefineCustomAttributes(_typeBuilder, typeDefinitionAst.Attributes, _parser, AttributeTargets.Class);
                 _typeDefinitionAst.Type = _typeBuilder;
@@ -315,11 +352,30 @@ namespace System.Management.Automation.Language
             /// <param name="typeDefinitionAst"></param>
             /// <param name="interfaces">Return declared interfaces.</param>
             /// <returns></returns>
-            private Type GetBaseTypes(Parser parser, TypeDefinitionAst typeDefinitionAst, out List<Type> interfaces)
+            private Type GetBaseTypes(Parser parser, TypeDefinitionAst typeDefinitionAst, out List<InterfaceExpression> interfaces)
             {
                 // Define base types and report errors.
                 Type baseClass = null;
-                interfaces = new List<Type>();
+                interfaces = new List<InterfaceExpression>();
+
+                bool TryGetInterface(TypeConstraintAst ast, out InterfaceExpression interfaceExpression)
+                {
+                    interfaceExpression = new InterfaceExpression(ast);
+                    if(ast.TypeName.IsGeneric && ast.TypeName is GenericTypeName genericTypeName)
+                    {
+                        if(genericTypeName.TypeName.GetReflectionType().IsInterface)
+                        {
+                            return true;
+                        }
+                    }
+                    else if(ast.TypeName.GetReflectionType()?.IsInterface ?? false)
+                    {
+                        return true;
+                    }
+
+                    interfaceExpression = null;
+                    return false;
+                }
 
                 // Default base class is System.Object and it has a default ctor.
                 _baseClassHasDefaultCtor = true;
@@ -339,40 +395,43 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        baseClass = firstBaseTypeAst.TypeName.GetReflectionType();
-                        if (baseClass == null)
+                        if(TryGetInterface(firstBaseTypeAst, out InterfaceExpression interfaceExpression))
                         {
-                            parser.ReportError(firstBaseTypeAst.Extent,
-                                nameof(ParserStrings.TypeNotFound),
-                                ParserStrings.TypeNotFound,
-                                firstBaseTypeAst.TypeName.FullName);
-                            // fall to the default base type
+                            // First Ast can represent interface as well as BaseClass.
+                            interfaces.Add(interfaceExpression);
+                            baseClass = null;
                         }
                         else
                         {
-                            if (baseClass.IsSealed)
+                            baseClass = firstBaseTypeAst.TypeName.GetReflectionType();
+                            if (baseClass == null)
                             {
                                 parser.ReportError(firstBaseTypeAst.Extent,
-                                    nameof(ParserStrings.SealedBaseClass),
-                                    ParserStrings.SealedBaseClass,
-                                    baseClass.Name);
-                                // ignore base type if it's sealed.
-                                baseClass = null;
+                                    nameof(ParserStrings.TypeNotFound),
+                                    ParserStrings.TypeNotFound,
+                                    firstBaseTypeAst.TypeName.FullName);
+                                // fall to the default base type
                             }
-                            else if (baseClass.IsGenericType && !baseClass.IsConstructedGenericType)
+                            else
                             {
-                                parser.ReportError(firstBaseTypeAst.Extent,
-                                    nameof(ParserStrings.SubtypeUnclosedGeneric),
-                                    ParserStrings.SubtypeUnclosedGeneric,
-                                    baseClass.Name);
-                                // ignore base type, we cannot inherit from unclosed generic.
-                                baseClass = null;
-                            }
-                            else if (baseClass.IsInterface)
-                            {
-                                // First Ast can represent interface as well as BaseClass.
-                                interfaces.Add(baseClass);
-                                baseClass = null;
+                                if (baseClass.IsSealed)
+                                {
+                                    parser.ReportError(firstBaseTypeAst.Extent,
+                                        nameof(ParserStrings.SealedBaseClass),
+                                        ParserStrings.SealedBaseClass,
+                                        baseClass.Name);
+                                    // ignore base type if it's sealed.
+                                    baseClass = null;
+                                }
+                                else if (baseClass.IsGenericType && !baseClass.IsConstructedGenericType)
+                                {
+                                    parser.ReportError(firstBaseTypeAst.Extent,
+                                        nameof(ParserStrings.SubtypeUnclosedGeneric),
+                                        ParserStrings.SubtypeUnclosedGeneric,
+                                        baseClass.Name);
+                                    // ignore base type, we cannot inherit from unclosed generic.
+                                    baseClass = null;
+                                }
                             }
                         }
                     }
@@ -416,26 +475,16 @@ namespace System.Management.Automation.Language
                         else
                         {
                             Type interfaceType = baseTypeAsts[i].TypeName.GetReflectionType();
-                            if (interfaceType == null)
+                            if (!TryGetInterface(baseTypeAsts[i], out InterfaceExpression interfaceExpression))
                             {
                                 parser.ReportError(baseTypeAsts[i].Extent,
-                                    nameof(ParserStrings.TypeNotFound),
-                                    ParserStrings.TypeNotFound,
-                                    baseTypeAsts[i].TypeName.FullName);
+                                    nameof(ParserStrings.InterfaceNameExpected),
+                                    ParserStrings.InterfaceNameExpected,
+                                    interfaceType.Name);
                             }
                             else
                             {
-                                if (interfaceType.IsInterface)
-                                {
-                                    interfaces.Add(interfaceType);
-                                }
-                                else
-                                {
-                                    parser.ReportError(baseTypeAsts[i].Extent,
-                                        nameof(ParserStrings.InterfaceNameExpected),
-                                        ParserStrings.InterfaceNameExpected,
-                                        interfaceType.Name);
-                                }
+                                interfaces.Add(interfaceExpression);
                             }
                         }
                     }

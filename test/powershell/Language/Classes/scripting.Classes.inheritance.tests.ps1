@@ -87,6 +87,11 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         { [A]::b = "bla" } | Should -Throw -ErrorId 'ExceptionWhenSetting'
     }
 
+    It 'can implement generic interfaces referencing itself as a type parameter' {
+        $C1 = Invoke-Expression 'class ComparableClass : IComparable[ComparableClass] { [int]$Value; [int]CompareTo([ComparableClass]$obj){ return $this.Value.CompareTo($obj.Value) } } [ComparableClass]'
+        $C1.ImplementedInterfaces[0].TypeParameter | Should -Be $C1
+    }
+
     Context "Inheritance from abstract .NET classes" {
         BeforeAll {
             class TestHost : System.Management.Automation.Host.PSHost
