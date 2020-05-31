@@ -728,6 +728,9 @@ namespace Microsoft.PowerShell.Commands
                             Path = SessionState.Internal.GetSingleProvider(Commands.FileSystemProvider.ProviderName).Home;
                         }
 
+                        // Make sure we have a provider path and not PSPath.
+                        // PSPaths can be used, but break $pwd when used with SetLocation.
+                        Path = SessionState.Path.GetUnresolvedProviderPathFromPSPath(Path);
                         result = SessionState.Path.SetLocation(Path, CmdletProviderContext, ParameterSetName == LiteralPathParameterSet);
                     }
                     catch (PSNotSupportedException notSupported)
