@@ -670,11 +670,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
-            // Define number of reference assemblies distributed with PowerShell.
-            // This number is accurate as of PowerShell v7.1.0-preview.3 built with .NET v5.0.100-preview.5.20278.13
-            const int numberOfPowershellRefAssemblies = 152;
+            const int maxPowershellRefAssemblies = 160;
 
-            const int capacity = numberOfPowershellRefAssemblies + 1;
+            const int capacity = maxPowershellRefAssemblies + 1;
             var defaultRefAssemblies = new List<PortableExecutableReference>(capacity);
 
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
@@ -684,6 +682,11 @@ namespace Microsoft.PowerShell.Commands
 
             // Add System.Management.Automation.dll
             defaultRefAssemblies.Add(MetadataReference.CreateFromFile(typeof(PSObject).Assembly.Location));
+
+            // We want to avoid reallocating the internal array, so we assert if the list capacity has increased.
+            Diagnostics.Assert(
+                defaultRefAssemblies.Capacity <= capacity,
+                $"defaultRefAssemblies was resized because of insufficient initial capacity! A capacity of {defaultRefAssemblies.Count} is required.");
 
             return defaultRefAssemblies;
         }
