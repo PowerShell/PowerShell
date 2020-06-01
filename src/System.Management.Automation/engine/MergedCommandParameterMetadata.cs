@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -604,7 +605,7 @@ namespace System.Management.Automation
         internal IDictionary<string, MergedCompiledCommandParameter> BindableParameters { get { return _bindableParameters; } }
 
         private IDictionary<string, MergedCompiledCommandParameter> _bindableParameters =
-            new Dictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
+            new ConcurrentDictionary<string, MergedCompiledCommandParameter>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
         /// Gets a dictionary of the parameters that have been aliased to other names. The key is
