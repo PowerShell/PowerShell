@@ -298,6 +298,7 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
     }
 
     It "Symlink with relative path to existing directory behaves like a directory" {
+        # PowerShell should normalize '.\someDir' to './someDir' as needed.
         New-Item -Type SymbolicLink someDirLinkRelative -Target .\someDir
         Get-Item someDirLinkRelative | Should -BeOfType System.IO.DirectoryInfo
     }
