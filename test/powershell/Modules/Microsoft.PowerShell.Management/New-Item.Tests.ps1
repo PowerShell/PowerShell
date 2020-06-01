@@ -270,7 +270,20 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
 Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
-        Push-Location TestDrive:/
+        # on macOS, the /tmp directory is a symlink, so we'll resolve it here
+        $TestPath = $TestDrive
+        if ($IsMacOS)
+        {
+            $item = Get-Item $TestPath
+            $dirName = $item.BaseName
+            $item = Get-Item $item.PSParentPath -Force
+            if ($item.LinkType -eq "SymbolicLink")
+            {
+                $TestPath = Join-Path $item.Target $dirName
+            }
+        }
+
+        Push-Location $TestPath
         $null = New-Item -Type Directory someDir
         $null = New-Item -Type File someFile
     }
