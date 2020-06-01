@@ -12,7 +12,7 @@ Describe "FileSystem Provider Extended Tests for Get-ChildItem cmdlet" -Tags "CI
 
         $DirSep = [IO.Path]::DirectorySeparatorChar
 
-        $rootDir = Join-Path "TestDrive:" "TestDir"
+        $rootDir = Join-Path $TestPath "TestDir"
         New-Item -Path $rootDir -ItemType Directory > $null
 
         Set-Location $rootDir
