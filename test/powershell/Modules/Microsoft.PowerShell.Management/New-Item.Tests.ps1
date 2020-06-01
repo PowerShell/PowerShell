@@ -302,10 +302,23 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
 
 Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
     BeforeAll {
+        # on macOS, the /tmp directory is a symlink, so we'll resolve it here
+        $TestPath = $TestDrive
+        if ($IsMacOS)
+        {
+            $item = Get-Item $TestPath
+            $dirName = $item.BaseName
+            $item = Get-Item $item.PSParentPath -Force
+            if ($item.LinkType -eq "SymbolicLink")
+            {
+                $TestPath = Join-Path $item.Target $dirName
+            }
+        }
+
         $testfile             = "testfile.txt"
         $testlink             = "testlink"
-        $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testfile
-        $TestFilePath         = Join-Path -Path $TestDrive -ChildPath $testlink
+        $FullyQualifiedFile   = Join-Path -Path $TestPath -ChildPath $testfile
+        $TestFilePath         = Join-Path -Path $TestPath -ChildPath $testlink
         $developerModeEnabled = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
         $minBuildRequired     = [System.Environment]::OSVersion.Version -ge "10.0.14972"
         $developerMode = $developerModeEnabled -and $minBuildRequired
