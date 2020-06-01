@@ -309,7 +309,7 @@ namespace System.Management.Automation.Language
             internal readonly TypeBuilder _staticHelpersTypeBuilder;
             private readonly Dictionary<string, PropertyMemberAst> _definedProperties;
             private readonly Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>> _definedMethods;
-            private HashSet<Tuple<string, Type>> _interfaceProperties;
+            private Dictionary<string, Type> _interfaceProperties;
             internal readonly List<(string fieldName, IParameterMetadataProvider bodyAst, bool isStatic)> _fieldsToInitForMemberFunctions;
             private bool _baseClassHasDefaultCtor;
 
@@ -497,31 +497,35 @@ namespace System.Management.Automation.Language
             {
                 if (_interfaceProperties == null)
                 {
-                    _interfaceProperties = new HashSet<Tuple<string, Type>>();
+                    _interfaceProperties = new Dictionary<string, Type>();
                     var allInterfaces = new HashSet<Type>();
 
                     // TypeBuilder.GetInterfaces() returns only the interfaces that was explicitly passed to its constructor.
                     // During compilation the interface hierarchy is flattened, so we only need to resolve one level of ancestral interfaces.
                     foreach (var interfaceType in _typeBuilder.GetInterfaces())
                     {
-                        foreach (var parentInterface in interfaceType.GetInterfaces())
+                        var typeDefinition = interfaceType;
+                        if(interfaceType.IsGenericType && interfaceType.GenericTypeArguments.Contains(_typeBuilder))
+                            typeDefinition = interfaceType.GetGenericTypeDefinition();
+
+                        foreach (var parentInterface in typeDefinition.GetInterfaces())
                         {
                             allInterfaces.Add(parentInterface);
                         }
 
-                        allInterfaces.Add(interfaceType);
+                        allInterfaces.Add(typeDefinition);
                     }
 
                     foreach (var interfaceType in allInterfaces)
                     {
                         foreach (var property in interfaceType.GetProperties())
                         {
-                            _interfaceProperties.Add(Tuple.Create(property.Name, property.PropertyType));
+                            _interfaceProperties.Add(property.Name, property.PropertyType);
                         }
                     }
                 }
 
-                return _interfaceProperties.Contains(Tuple.Create(name, type));
+                return _interfaceProperties.TryGetValue(name, out Type returnType) && (returnType == type || (returnType.IsGenericParameter));
             }
 
             public void DefineMembers()
