@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 function runTest() {
     "use strict";
     var gulp = require("gulp");
