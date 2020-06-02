@@ -7,24 +7,24 @@ assignees: ''
 
 ---
 
-# Details of the Distribution
+## Details of the Distribution
 
-- Name of the Distribution: 
+- Name of the Distribution:
 - Version of the Distribution:
 - Package Types
-  - [ ] Deb
-  - [ ] RPM
-  - [ ] Tar.gz
-  - Snap - Please file issue in https://github.com/powershell/powershell-snap.  This issues type is unrelated to snap packages with a distribution neutral.
-- Processor Architecture (One per request): 
+    - [ ] Deb
+    - [ ] RPM
+    - [ ] Tar.gz
+    - Snap - Please file issue in https://github.com/powershell/powershell-snap.  This issues type is unrelated to snap packages with a distribution neutral.
+- Processor Architecture (One per request):
 - [ ] **Required** - An issues has been filed to create a Docker image in https://github.com/powershell/powershell-docker
 - The following is a requirement for supporting a distribution **without exception.**
-  - [ ] The version and architecture of the Distribution is [supported by .NET Core](https://github.com/dotnet/core/blob/master/release-notes/3.0/3.0-supported-os.md#linux).
+    - [ ] The version and architecture of the Distribution is [supported by .NET Core](https://github.com/dotnet/core/blob/master/release-notes/3.0/3.0-supported-os.md#linux).
 - The following are requirements for supporting a distribution.
-  Please write a justification for any exception where these criteria are not met and 
+  Please write a justification for any exception where these criteria are not met and
   the PowerShell committee will review the request.
-  - [ ] The version of the Distribution is supported for at least one year.
-  - [ ] The version of the Distribution is not an [interim release](https://ubuntu.com/about/release-cycle) or equivalent.
+    - [ ] The version of the Distribution is supported for at least one year.
+    - [ ] The version of the Distribution is not an [interim release](https://ubuntu.com/about/release-cycle) or equivalent.
 
 ## Progress - For PowerShell Team **ONLY**
 

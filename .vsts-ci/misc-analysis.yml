@@ -68,3 +68,8 @@ jobs:
       }
     displayName: Run Common Tests
     condition: succeededOrFailed()
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

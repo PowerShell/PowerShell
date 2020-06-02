@@ -12,7 +12,7 @@ This template is for maintainers to create an issues to track the release proces
 Please **only** use this template if you are a maintainer.
 -->
 
-# Release Process for v6.x.x
+## Checklist
 
 - [ ] Verify that `PowerShell-Native` has been updated/released as needed.
 - [ ] Check for `PowerShellGet` and `PackageManagement` release plans.
