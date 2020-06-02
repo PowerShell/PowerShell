@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell
 
         private static bool SecureStringEquals(SecureString password, SecureString confirmPassword)
         {
-            if(password.Length != confirmPassword.Length)
+            if (password.Length != confirmPassword.Length)
             {
                 return false;
             }
@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell
 
                 int pwdLength = Marshal.ReadInt32(pwd_ptr, -4);
                 int equal = 0;
-                for(int i = 0; i < pwdLength; i++)
+                for (int i = 0; i < pwdLength; i++)
                 {
                     byte c1 = Marshal.ReadByte(pwd_ptr + i);
                     byte c2 = Marshal.ReadByte(confirmPwd_ptr + i);
