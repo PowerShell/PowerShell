@@ -101,6 +101,9 @@ stages:
             }
         }
         chmod a+x $output
+
+        Write-Host "=== Capture Unzipped Directory ==="
+        Get-ChildItem $rootPath -Recurse
       displayName: 'Unzip Build and Fix Permissions'
       condition: succeeded()
 
