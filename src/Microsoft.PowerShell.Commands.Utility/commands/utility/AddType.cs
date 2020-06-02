@@ -667,10 +667,9 @@ namespace Microsoft.PowerShell.Commands
         private static IEnumerable<PortableExecutableReference> InitDefaultRefAssemblies()
         {
             // Define number of reference assemblies distributed with PowerShell.
-            // This number is accurate as of PowerShell v7.1.0-preview.1 built with .NET v5.0.100-preview.1.20155.7
-            const int numberOfPowershellRefAssemblies = 151;
+            const int maxPowershellRefAssemblies = 160;
 
-            const int capacity = numberOfPowershellRefAssemblies + 1;
+            const int capacity = maxPowershellRefAssemblies + 1;
             var defaultRefAssemblies = new List<PortableExecutableReference>(capacity);
 
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
