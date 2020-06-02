@@ -10,5 +10,5 @@ FunctionsToExport = @()
 CmdletsToExport="Start-Transcript", "Stop-Transcript"
 AliasesToExport = @()
 NestedModules="Microsoft.PowerShell.ConsoleHost.dll"
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113538'
+HelpInfoURI = 'https://aka.ms/powershell71-help'
 }
