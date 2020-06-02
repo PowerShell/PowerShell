@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [TraceSource("CertificateProvider",
                       "The core command provider for certificates")]
-        private readonly static PSTraceSource s_tracer = PSTraceSource.GetTracer("CertificateProvider",
+        private static readonly PSTraceSource s_tracer = PSTraceSource.GetTracer("CertificateProvider",
                       "The core command provider for certificates");
 
         #endregion tracer
