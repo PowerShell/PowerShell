@@ -454,6 +454,13 @@ namespace Microsoft.PowerShell.Commands
                 ThrowTerminatingError(error);
             }
 
+            if (ProxyUseDefaultCredentials && (ProxyCredential != null))
+            {
+                ErrorRecord error = GetValidationError(WebCmdletStrings.ProxyCredentialConflict,
+                                                       "WebCmdletProxyCredentialConflictException");
+                ThrowTerminatingError(error);
+            }
+
             // request body content
             if ((Body != null) && (InFile != null))
             {
