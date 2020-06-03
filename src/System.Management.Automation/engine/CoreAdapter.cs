@@ -1398,7 +1398,7 @@ namespace System.Management.Automation
                 && !methods[0].hasVarArgs
                 // generic methods need to be double checked in a loop below - generic methods can be rejected if type inference fails
                 && !methods[0].isGeneric
-                && (methods[0].method == null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition))
+                && (methods[0].method is null || !(methods[0].method.DeclaringType.IsGenericTypeDefinition))
                 && methods[0].parameters.Length == arguments.Length)
             {
                 return methods[0];
@@ -1409,17 +1409,17 @@ namespace System.Management.Automation
             List<OverloadCandidate> candidates = new List<OverloadCandidate>();
             for (int i = 0; i < methods.Length; i++)
             {
-                MethodInformation method = methods[i];
+                MethodInformation methodInfo = methods[i];
 
-                if (method.method != null && method.method.DeclaringType.IsGenericTypeDefinition
-                    || !method.isGeneric && genericParameters.Length > 0)
+                if ((methodInfo.method is not null && methodInfo.method.DeclaringType.IsGenericTypeDefinition)
+                    || (!methodInfo.isGeneric && genericParameters.Length > 0))
                 {
                     // If method is defined by an *open* generic type, or
                     // if generic parameters were provided and this method isn't generic, skip it.
                     continue;
                 }
 
-                if (method.isGeneric)
+                if (methodInfo.isGeneric)
                 {
                     Type[] argumentTypesForTypeInference = new Type[argumentTypes.Length];
                     Array.Copy(argumentTypes, argumentTypesForTypeInference, argumentTypes.Length);
@@ -1438,11 +1438,11 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (genericParameters?.Length > 0 && method.method is MethodInfo originalMethod)
+                    if (genericParameters.Length > 0 && methodInfo.method is MethodInfo originalMethod)
                     {
                         try
                         {
-                            method = new MethodInformation(
+                            methodInfo = new MethodInformation(
                                 originalMethod.MakeGenericMethod(genericParameters),
                                 parametersToIgnore: 0);
                         }
@@ -1454,20 +1454,20 @@ namespace System.Management.Automation
                         }
                     }
 
-                    method = TypeInference.Infer(method, argumentTypesForTypeInference);
-                    if (method == null)
+                    methodInfo = TypeInference.Infer(methodInfo, argumentTypesForTypeInference);
+                    if (methodInfo == null)
                     {
                         // Skip generic methods for which we cannot infer type arguments
                         continue;
                     }
                 }
 
-                if (!IsInvocationTargetConstraintSatisfied(method, invocationConstraints))
+                if (!IsInvocationTargetConstraintSatisfied(methodInfo, invocationConstraints))
                 {
                     continue;
                 }
 
-                ParameterInformation[] parameters = method.parameters;
+                ParameterInformation[] parameters = methodInfo.parameters;
                 if (arguments.Length != parameters.Length)
                 {
                     // Skip methods w/ an incorrect # of arguments.
@@ -1475,7 +1475,7 @@ namespace System.Management.Automation
                     if (arguments.Length > parameters.Length)
                     {
                         // If too many args,it's only OK if the method is varargs.
-                        if (!method.hasVarArgs)
+                        if (!methodInfo.hasVarArgs)
                         {
                             continue;
                         }
@@ -1483,12 +1483,12 @@ namespace System.Management.Automation
                     else
                     {
                         // Too few args, OK if there are optionals, or varargs with the param array omitted
-                        if (!method.hasOptional && (!method.hasVarArgs || (arguments.Length + 1) != parameters.Length))
+                        if (!methodInfo.hasOptional && (!methodInfo.hasVarArgs || (arguments.Length + 1) != parameters.Length))
                         {
                             continue;
                         }
 
-                        if (method.hasOptional)
+                        if (methodInfo.hasOptional)
                         {
                             // Count optionals.  This code is rarely hit, mainly when calling code in the
                             // assembly Microsoft.VisualBasic.  If it were more frequent, the optional count
@@ -1511,7 +1511,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                OverloadCandidate candidate = new OverloadCandidate(method, arguments.Length);
+                OverloadCandidate candidate = new OverloadCandidate(methodInfo, arguments.Length);
                 for (int j = 0; candidate != null && j < parameters.Length; j++)
                 {
                     ParameterInformation parameter = parameters[j];

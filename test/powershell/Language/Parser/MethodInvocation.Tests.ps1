@@ -82,7 +82,7 @@ namespace MSFT_716893
     }
 }
 
-Describe 'Generic Method invocation' {
+Describe 'Generic Method invocation' -Tags 'CI' {
 
     BeforeAll {
         $EmptyArrayCases = @(

@@ -2104,8 +2104,8 @@ namespace System.Management.Automation
             replacementLength = completionContext.ReplacementLength;
 
             if (result.Count == 0
-                && lastAst?.Find(a => a is MemberExpressionAst, searchNestedScriptBlocks: false) != null
-                && completionContext.TokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName))
+                && completionContext.TokenAtCursor.TokenFlags.HasFlag(TokenFlags.TypeName)
+                && lastAst?.Find(a => a is MemberExpressionAst, searchNestedScriptBlocks: false) is not null)
             {
                 result = CompletionCompleters.CompleteType(completionContext.TokenAtCursor.Text).ToList();
             }
