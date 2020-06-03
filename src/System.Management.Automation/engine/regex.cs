@@ -752,6 +752,7 @@ namespace System.Management.Automation
         private RegexOptions _regexOptions;
 
         private const string regexChars = "()[.?*{}^$+|\\"; // ']' is missing on purpose
+
         private static bool IsRegexChar(char ch)
         {
             for (int i = 0; i < regexChars.Length; i++)

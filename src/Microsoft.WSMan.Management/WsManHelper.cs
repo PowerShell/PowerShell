@@ -94,7 +94,7 @@ namespace Microsoft.WSMan.Management
             /// <summary>
             /// Dictionary object to store the connection.
             /// </summary>
-            internal static Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
+            internal static readonly Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
 
             ~Sessions()
             {
@@ -102,7 +102,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        internal static Sessions AutoSession = new Sessions();
+        internal static readonly Sessions AutoSession = new Sessions();
         //
         //
         //
@@ -960,11 +960,7 @@ namespace Microsoft.WSMan.Management
 
                 IWSManSession m_session = CreateSessionObject(m_wsmanObject, authentication, sessionoption, credential, connectionStr, certificateThumbprint, usessl);
                 m_session.Identify(0);
-                string key = computername;
-                if (key == null)
-                {
-                    key = "localhost";
-                }
+                string key = computername ?? "localhost";
 
                 AddtoDictionary(key, m_session);
             }
@@ -1108,9 +1104,9 @@ namespace Microsoft.WSMan.Management
                     }
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
-                throw (e);
+                throw;
             }
         }
 

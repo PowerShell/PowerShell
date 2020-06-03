@@ -414,6 +414,7 @@ namespace System.Management.Automation
         // runspace pool driver handles all client
         // communication
         private AbstractServerSessionTransportManager _transportManager;
+
         private Dictionary<Guid, ServerPowerShellDataStructureHandler> _associatedShells
             = new Dictionary<Guid, ServerPowerShellDataStructureHandler>();
         // powershell data structure handlers associated with this

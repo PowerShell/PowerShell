@@ -2080,6 +2080,7 @@ namespace System.Management.Automation
     {
         internal MethodBase method;
         private string _cachedMethodDefinition;
+
         internal string methodDefinition
         {
             get
@@ -2101,7 +2102,9 @@ namespace System.Management.Automation
         internal bool isGeneric;
 
         private bool _useReflection;
+
         private delegate object MethodInvoker(object target, object[] arguments);
+
         private MethodInvoker _methodInvoker;
 
         /// <summary>
@@ -2555,8 +2558,10 @@ namespace System.Management.Automation
 
         private const BindingFlags instanceBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public |
                                                               BindingFlags.IgnoreCase | BindingFlags.Instance);
+
         private const BindingFlags staticBindingFlags = (BindingFlags.FlattenHierarchy | BindingFlags.Public |
                                                               BindingFlags.IgnoreCase | BindingFlags.Static);
+
         private bool _isStatic;
 
         internal DotNetAdapter() { }
@@ -2626,6 +2631,7 @@ namespace System.Management.Automation
             }
 
             private bool? _isHidden;
+
             internal override bool IsHidden
             {
                 get
@@ -2980,6 +2986,7 @@ namespace System.Management.Automation
             internal Type propertyType;
 
             private bool? _isHidden;
+
             internal override bool IsHidden
             {
                 get
@@ -2994,6 +3001,7 @@ namespace System.Management.Automation
             }
 
             private AttributeCollection _attributes;
+
             internal AttributeCollection Attributes
             {
                 get
@@ -4749,6 +4757,7 @@ namespace System.Management.Automation
     internal class DotNetAdapterWithComTypeName : DotNetAdapter
     {
         private ComTypeInfo _comTypeInfo;
+
         internal DotNetAdapterWithComTypeName(ComTypeInfo comTypeInfo)
         {
             _comTypeInfo = comTypeInfo;

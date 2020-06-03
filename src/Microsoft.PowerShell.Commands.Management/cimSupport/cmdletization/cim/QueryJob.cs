@@ -18,6 +18,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     {
         private readonly string _wqlQuery;
         private readonly bool _useEnumerateInstances;
+
         internal QueryInstancesJob(CimJobContext jobContext, CimQuery cimQuery, string wqlCondition)
                 : base(jobContext, cimQuery)
         {

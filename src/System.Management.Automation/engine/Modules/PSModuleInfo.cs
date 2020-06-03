@@ -1093,7 +1093,7 @@ namespace System.Management.Automation
             moduleList.Add(module);
         }
 
-        internal static string[] _builtinVariables = new string[] { "_", "this", "input", "args", "true", "false", "null",
+        internal static readonly string[] _builtinVariables = new string[] { "_", "this", "input", "args", "true", "false", "null",
             "PSDefaultParameterValues", "Error", "PSScriptRoot", "PSCommandPath", "MyInvocation", "ExecutionContext", "StackTrace" };
 
         /// <summary>

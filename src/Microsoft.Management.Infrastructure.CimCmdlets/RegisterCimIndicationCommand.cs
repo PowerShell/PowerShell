@@ -19,6 +19,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// cancel the subscription
     /// Should we have the second parameter set with a -Query?
     /// </summary>
+    [Alias("rcie")]
     [Cmdlet(VerbsLifecycle.Register, "CimIndicationEvent", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227960")]
     public class RegisterCimIndicationCommand : ObjectEventRegistrationBase
     {
@@ -319,7 +320,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameClassName, new HashSet<ParameterDefinitionEntry> {
@@ -356,7 +357,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.QueryExpressionSessionSet, new ParameterSetEntry(2)     },
             {   CimBaseCommand.QueryExpressionComputerSet, new ParameterSetEntry(1)     },

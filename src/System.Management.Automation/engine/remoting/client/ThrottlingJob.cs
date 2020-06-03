@@ -201,6 +201,7 @@ namespace System.Management.Automation
 
         private bool _ownerWontSubmitNewChildJobs = false;
         private readonly HashSet<Guid> _setOfChildJobsThatCanAddMoreChildJobs = new HashSet<Guid>();
+
         private bool IsEndOfChildJobs
         {
             get
@@ -232,6 +233,7 @@ namespace System.Management.Automation
         private int _countOfFailedChildJobs;
         private int _countOfStoppedChildJobs;
         private int _countOfSuccessfullyCompletedChildJobs;
+
         private int CountOfFinishedChildJobs
         {
             get
@@ -318,6 +320,7 @@ namespace System.Management.Automation
         }
 
         private bool _alreadyDisabledFlowControlForPendingJobsQueue = false;
+
         internal void DisableFlowControlForPendingJobsQueue()
         {
             if (!_cmdletMode || _alreadyDisabledFlowControlForPendingJobsQueue)
@@ -343,6 +346,7 @@ namespace System.Management.Automation
         }
 
         private bool _alreadyDisabledFlowControlForPendingCmdletActionsQueue = false;
+
         internal void DisableFlowControlForPendingCmdletActionsQueue()
         {
             if (!_cmdletMode || _alreadyDisabledFlowControlForPendingCmdletActionsQueue)
@@ -448,6 +452,7 @@ namespace System.Management.Automation
 
         private readonly object _alreadyWroteFlowControlBuffersHighMemoryUsageWarningLock = new object();
         private bool _alreadyWroteFlowControlBuffersHighMemoryUsageWarning;
+
         private const long FlowControlBuffersHighMemoryUsageThreshold = 30000;
 
         private void WriteWarningAboutHighUsageOfFlowControlBuffers(long currentCount)
@@ -1153,6 +1158,7 @@ namespace System.Management.Automation
             }
 
             private bool _stoppedMonitoringAllJobs;
+
             private void StopMonitoringAllJobs()
             {
                 _cancellationTokenSource.Cancel();

@@ -78,7 +78,7 @@ namespace System.Management.Automation.Provider
         [TraceSourceAttribute(
              "CmdletProviderClasses",
              "The namespace provider base classes tracer")]
-        internal static PSTraceSource providerBaseTracer = PSTraceSource.GetTracer(
+        internal static readonly PSTraceSource providerBaseTracer = PSTraceSource.GetTracer(
                                                                "CmdletProviderClasses",
                                                                "The namespace provider base classes tracer");
 

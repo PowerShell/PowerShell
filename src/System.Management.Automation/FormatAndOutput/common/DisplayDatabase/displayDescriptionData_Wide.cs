@@ -259,6 +259,7 @@ namespace System.Management.Automation
     public sealed class WideControlBuilder
     {
         private readonly WideControl _control;
+
         internal WideControlBuilder(WideControl control)
         {
             _control = control;

@@ -17,7 +17,7 @@
   This veto power will be used with restraint since it is intended that the community drive the project.
   The Corporate Maintainer is determined by the Corporation both initially and in continuation.
   The initial Corporate Maintainer for PowerShell is Jeffrey Snover ([jpsnover](https://github.com/jpsnover)).
-* [**RFC process**][RFC-repo]: The "review-for-comment" (RFC) process whereby design decisions get made.
+* [**RFC process**][RFC-repo]: The "request-for-comments" (RFC) process whereby design decisions get made.
 
 ## PowerShell Committee
 

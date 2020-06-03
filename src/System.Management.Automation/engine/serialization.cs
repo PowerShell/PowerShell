@@ -355,7 +355,7 @@ namespace System.Management.Automation
         internal readonly DeserializationOptions options;
         internal readonly PSRemotingCryptoHelper cryptoHelper;
 
-        internal static int MaxItemsInCimClassCache = 100;
+        internal static readonly int MaxItemsInCimClassCache = 100;
         internal readonly CimClassDeserializationCache<CimClassSerializationId> cimClassSerializationIdCache = new CimClassDeserializationCache<CimClassSerializationId>();
     }
 
@@ -1888,6 +1888,7 @@ namespace System.Management.Automation
         }
 
         private Collection<CollectionEntry<PSMemberInfo>> _extendedMembersCollection;
+
         private Collection<CollectionEntry<PSMemberInfo>> ExtendedMembersCollection
         {
             get
@@ -1899,6 +1900,7 @@ namespace System.Management.Automation
         }
 
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
+
         private Collection<CollectionEntry<PSPropertyInfo>> AllPropertiesCollection
         {
             get

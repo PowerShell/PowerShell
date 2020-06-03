@@ -105,7 +105,7 @@ Describe "Verify Markdown Links" {
                         $prefix = $url.Substring(0,7)
 
                         # Logging for diagnosability.  Azure DevOps sometimes redacts the full url.
-                        Write-Verbose "prefix: '$prefix'" -Verbose
+                        Write-Verbose "prefix: '$prefix'"
                         if($url -match '^http(s)?:')
                         {
                             # If invoke-WebRequest can handle the URL, re-verify, with 6 retries

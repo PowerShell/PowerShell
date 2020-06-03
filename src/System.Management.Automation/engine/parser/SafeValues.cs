@@ -64,6 +64,7 @@ namespace System.Management.Automation.Language
 
         // This is a check of the number of visits
         private uint _visitCount = 0;
+
         private const uint MaxVisitCount = 5000;
         private const int MaxHashtableKeyCount = 500;
 

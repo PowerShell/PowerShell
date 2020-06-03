@@ -155,7 +155,7 @@ namespace System.Management.Automation
 #endif
 
         // format files
-        internal static List<string> FormatFileNames = new List<string>
+        internal static readonly List<string> FormatFileNames = new List<string>
             {
                 "Certificate.format.ps1xml",
                 "Diagnostics.format.ps1xml",

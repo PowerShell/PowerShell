@@ -173,6 +173,7 @@ namespace System.Management.Automation
     {
         internal object instance;
         internal string name;
+
         internal bool ShouldSerialize { get; set; }
 
         internal virtual void ReplicateInstance(object particularInstance)
@@ -2803,7 +2804,7 @@ namespace System.Management.Automation
             return MoveNext(_t, _currentIndex);
         }
 
-        bool MoveNext(Type type, int index)
+        private bool MoveNext(Type type, int index)
         {
             var genericTypeArguments = type.GenericTypeArguments;
             var length = genericTypeArguments.Length;

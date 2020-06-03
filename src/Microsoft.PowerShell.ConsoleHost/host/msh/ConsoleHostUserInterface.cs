@@ -29,6 +29,12 @@ namespace Microsoft.PowerShell
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     internal partial class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
     {
+
+        /// <summary>
+        /// This is the char that is echoed to the console when the input is masked. This not localizable.
+        /// </summary>
+        private const char PrintToken = '*';
+
         /// <summary>
         /// Command completion implementation object.
         /// </summary>
@@ -177,6 +183,39 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
+        /// <returns>
+        /// The characters typed by the user.
+        /// </returns>
+        /// <exception cref="HostException">
+        /// If obtaining a handle to the active screen buffer failed
+        ///    OR
+        ///    Win32's setting input buffer mode to disregard window and mouse input failed.
+        ///    OR
+        ///    Win32's ReadConsole failed.
+        /// </exception>
+        /// <exception cref="PipelineStoppedException">
+        /// If Ctrl-C is entered by user.
+        /// </exception>
+        public override string ReadLineMaskedAsString()
+        {
+            HandleThrowOnReadAndPrompt();
+
+            // we lock here so that multiple threads won't interleave the various reads and writes here.
+            object result = null;
+            lock (_instanceLock)
+            {
+                result = ReadLineSafe(false, PrintToken);
+            }
+
+            StringBuilder resultSb = result as StringBuilder;
+            Dbg.Assert(resultSb != null, "ReadLineMaskedAsString did not return a stringBuilder");
+
+            return resultSb.ToString();
+        }
+
+        /// <summary>
+        /// See base class.
+        /// </summary>
         /// <returns></returns>
         /// <exception cref="HostException">
         /// If obtaining a handle to the active screen buffer failed
@@ -193,14 +232,12 @@ namespace Microsoft.PowerShell
         {
             HandleThrowOnReadAndPrompt();
 
-            const char printToken = '*'; // This is not localizable
-
             // we lock here so that multiple threads won't interleave the various reads and writes here.
 
             object result = null;
             lock (_instanceLock)
             {
-                result = ReadLineSafe(true, printToken);
+                result = ReadLineSafe(true, PrintToken);
             }
 
             SecureString secureResult = result as SecureString;
@@ -1385,7 +1422,8 @@ namespace Microsoft.PowerShell
 
         // We use System.Environment.NewLine because we are platform-agnostic
 
-        internal static string Crlf = System.Environment.NewLine;
+        internal static readonly string Crlf = System.Environment.NewLine;
+
         private const string Tab = "\x0009";
 
         internal enum ReadLineResult
@@ -2129,6 +2167,7 @@ namespace Microsoft.PowerShell
         }
 
         private const string CustomReadlineCommand = "PSConsoleHostReadLine";
+
         private bool TryInvokeUserDefinedReadLine(out string input)
         {
             // We're using GetCommands instead of GetCommand so we don't auto-load a module should the command exist, but isn't loaded.

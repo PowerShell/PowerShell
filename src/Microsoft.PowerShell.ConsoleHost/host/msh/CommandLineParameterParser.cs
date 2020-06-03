@@ -97,6 +97,17 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
+        /// Null implementation of ReadLineMaskedAsString.
+        /// </summary>
+        /// <returns>
+        /// It throws an exception.
+        /// </returns>
+        public override string ReadLineMaskedAsString()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// ReadLineAsSecureString.
         /// </summary>
         /// <returns></returns>
@@ -172,7 +183,7 @@ namespace Microsoft.PowerShell
         private const int MaxPipePathLengthLinux = 108;
         private const int MaxPipePathLengthMacOS = 104;
 
-        internal static string[] validParameters = {
+        internal static readonly string[] validParameters = {
             "sta",
             "mta",
             "command",

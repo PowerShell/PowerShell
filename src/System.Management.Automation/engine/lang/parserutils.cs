@@ -278,6 +278,7 @@ namespace System.Management.Automation
 
         private const int _MinCache = -100;
         private const int _MaxCache = 1000;
+
         private static readonly object[] s_integerCache = new object[_MaxCache - _MinCache];
         private static readonly string[] s_chars = new string[255];
         internal static readonly object _TrueObject = (object)true;
@@ -1177,13 +1178,10 @@ namespace System.Management.Automation
 
             // if passed an explicit regex, just use it
             // otherwise compile the expression.
-            Regex r = PSObject.Base(rval) as Regex;
-            if (r == null)
-            {
-                // In this situation, creation of Regex should not fail. We are not
-                // processing ArgumentException in this case.
-                r = NewRegex(PSObject.ToStringParser(context, rval), reOptions);
-            }
+            // In this situation, creation of Regex should not fail. We are not
+            // processing ArgumentException in this case.
+            Regex r = PSObject.Base(rval) as Regex
+                ?? NewRegex(PSObject.ToStringParser(context, rval), reOptions);
 
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
@@ -1639,12 +1637,14 @@ namespace System.Management.Automation
     internal class RangeEnumerator : IEnumerator
     {
         private int _lowerBound;
+
         internal int LowerBound
         {
             get { return _lowerBound; }
         }
 
         private int _upperBound;
+
         internal int UpperBound
         {
             get { return _upperBound; }

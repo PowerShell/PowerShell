@@ -1672,6 +1672,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private RunspaceBase _runspace;
+
         internal SessionStateProxy(RunspaceBase runspace)
         {
             Dbg.Assert(runspace != null, "Caller should validate the parameter");

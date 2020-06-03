@@ -232,6 +232,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private int _openTimeout = DefaultOpenTimeout;
+
         internal const int DefaultOpenTimeout = 3 * 60 * 1000; // 3 minutes
         internal const int DefaultTimeout = -1;
         internal const int InfiniteTimeout = 0;
@@ -1348,7 +1349,7 @@ namespace System.Management.Automation.Runspaces
 
 #if NOT_APPLY_PORT_DCR
         private static string DEFAULT_SCHEME = HTTP_SCHEME;
-        internal static string DEFAULT_SSL_SCHEME = HTTPS_SCHEME;
+        internal static readonly string DEFAULT_SSL_SCHEME = HTTPS_SCHEME;
         private static string DEFAULT_APP_NAME = "wsman";
         /// <summary>
         /// See below for explanation.
@@ -1645,6 +1646,7 @@ namespace System.Management.Automation.Runspaces
         private PSCredential _credential;
         private AuthenticationMechanism _authMechanism;
         private string _appDomainName = string.Empty;
+
         private const int _defaultOpenTimeout = 60000;      /* 60 seconds. */
 
         #endregion
@@ -2704,6 +2706,7 @@ namespace System.Management.Automation.Runspaces
 
         private AuthenticationMechanism _authMechanism;
         private PSCredential _credential;
+
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
 
         #endregion
@@ -2833,6 +2836,7 @@ namespace System.Management.Automation.Runspaces
 
         private AuthenticationMechanism _authMechanism;
         private PSCredential _credential;
+
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
 
         #endregion

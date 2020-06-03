@@ -784,8 +784,10 @@ namespace System.Management.Automation.Remoting
         private const string configProvidersKeyName = "PSConfigurationProviders";
         private const string configProviderApplicationBaseKeyName = "ApplicationBase";
         private const string configProviderAssemblyNameKeyName = "AssemblyName";
+
         private static Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
             new Dictionary<string, ConfigurationDataFromXML>(StringComparer.OrdinalIgnoreCase);
+
         private static object s_syncObject = new object();
 
         #endregion
@@ -946,7 +948,7 @@ namespace System.Management.Automation.Remoting
         internal static readonly string VisibleProviders = "VisibleProviders";
         internal static readonly string VisibleExternalCommands = "VisibleExternalCommands";
 
-        internal static ConfigTypeEntry[] ConfigFileKeys = new ConfigTypeEntry[] {
+        internal static readonly ConfigTypeEntry[] ConfigFileKeys = new ConfigTypeEntry[] {
             new ConfigTypeEntry(AliasDefinitions,               new ConfigTypeEntry.TypeValidationCallback(AliasDefinitionsTypeValidationCallback)),
             new ConfigTypeEntry(AssembliesToLoad,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(Author,                         new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
@@ -1786,6 +1788,7 @@ namespace System.Management.Automation.Remoting
 
         // Takes the "RoleCapabilities" node in the config hash, and merges its values into the base configuration.
         private const string PSRCExtension = ".psrc";
+
         private void MergeRoleCapabilitiesIntoConfigHash()
         {
             List<string> psrcFiles = new List<string>();

@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("MshResolvedExpressionParameterAssociation", "MshResolvedExpressionParameterAssociation")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("MshResolvedExpressionParameterAssociation",
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("MshResolvedExpressionParameterAssociation",
                                                 "MshResolvedExpressionParameterAssociation");
         #endregion tracer
 

@@ -169,6 +169,7 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo ExceptionHandlingOps_ConvertToMethodInvocationException =
             typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.ConvertToMethodInvocationException), StaticFlags);
+
         internal static readonly MethodInfo ExceptionHandlingOps_FindMatchingHandler =
             typeof(ExceptionHandlingOps).GetMethod(nameof(ExceptionHandlingOps.FindMatchingHandler), StaticFlags);
 
@@ -221,14 +222,19 @@ namespace System.Management.Automation.Language
 
         internal static readonly FieldInfo FunctionContext__currentSequencePointIndex =
             typeof(FunctionContext).GetField(nameof(FunctionContext._currentSequencePointIndex), InstanceFlags);
+
         internal static readonly FieldInfo FunctionContext__executionContext =
             typeof(FunctionContext).GetField(nameof(FunctionContext._executionContext), InstanceFlags);
+
         internal static readonly FieldInfo FunctionContext__functionName =
             typeof(FunctionContext).GetField(nameof(FunctionContext._functionName), InstanceFlags);
+
         internal static readonly FieldInfo FunctionContext__localsTuple =
             typeof(FunctionContext).GetField(nameof(FunctionContext._localsTuple), InstanceFlags);
+
         internal static readonly FieldInfo FunctionContext__outputPipe =
             typeof(FunctionContext).GetField(nameof(FunctionContext._outputPipe), InstanceFlags);
+
         internal static readonly MethodInfo FunctionContext_PopTrapHandlers =
             typeof(FunctionContext).GetMethod(nameof(FunctionContext.PopTrapHandlers), InstanceFlags);
 
@@ -275,13 +281,16 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo InterpreterError_NewInterpreterException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterException), StaticFlags);
+
         internal static readonly MethodInfo InterpreterError_NewInterpreterExceptionWithInnerException =
             typeof(InterpreterError).GetMethod(nameof(InterpreterError.NewInterpreterExceptionWithInnerException), StaticFlags);
 
         internal static readonly MethodInfo LanguagePrimitives_GetInvalidCastMessages =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.GetInvalidCastMessages), StaticFlags);
+
         internal static readonly MethodInfo LanguagePrimitives_IsNull =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.IsNull), StaticFlags);
+
         internal static readonly MethodInfo LanguagePrimitives_ThrowInvalidCastException =
             typeof(LanguagePrimitives).GetMethod(nameof(LanguagePrimitives.ThrowInvalidCastException), StaticFlags);
 
@@ -455,6 +464,7 @@ namespace System.Management.Automation.Language
 
         internal static readonly MethodInfo PSScriptProperty_InvokeGetter =
             typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeGetter), InstanceFlags);
+
         internal static readonly MethodInfo PSScriptProperty_InvokeSetter =
             typeof(PSScriptProperty).GetMethod(nameof(PSScriptProperty.InvokeSetter), InstanceFlags);
 
@@ -658,7 +668,8 @@ namespace System.Management.Automation.Language
         internal static readonly Expression CatchAllType = Expression.Constant(typeof(ExceptionHandlingOps.CatchAll), typeof(Type));
         // Empty expression is used at the end of blocks to give them the void expression result
         internal static readonly Expression Empty = Expression.Empty();
-        internal static Expression GetExecutionContextFromTLS =
+
+        internal static readonly Expression GetExecutionContextFromTLS =
             Expression.Call(CachedReflectionInfo.LocalPipeline_GetExecutionContextFromTLS);
 
         internal static readonly Expression BoxedTrue = Expression.Field(null, typeof(Boxed).GetField("True", BindingFlags.Static | BindingFlags.NonPublic));
@@ -804,8 +815,10 @@ namespace System.Management.Automation.Language
 
         private static readonly CatchBlock[] s_stmtCatchHandlers;
         internal static readonly Type DottedLocalsTupleType = MutableTuple.MakeTupleType(SpecialVariables.AutomaticVariableTypes);
+
         internal static readonly Dictionary<string, int> DottedLocalsNameIndexMap =
             new Dictionary<string, int>(SpecialVariables.AutomaticVariableTypes.Length, StringComparer.OrdinalIgnoreCase);
+
         internal static readonly Dictionary<string, int> DottedScriptCmdletLocalsNameIndexMap =
             new Dictionary<string, int>(
                 SpecialVariables.AutomaticVariableTypes.Length + SpecialVariables.PreferenceVariableTypes.Length,

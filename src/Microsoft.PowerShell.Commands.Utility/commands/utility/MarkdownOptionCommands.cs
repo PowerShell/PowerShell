@@ -272,6 +272,7 @@ namespace Microsoft.PowerShell.Commands
     internal static class PSMarkdownOptionInfoCache
     {
         private static ConcurrentDictionary<Guid, PSMarkdownOptionInfo> markdownOptionInfoCache;
+
         private const string MarkdownOptionInfoVariableName = "PSMarkdownOptionInfo";
 
         static PSMarkdownOptionInfoCache()

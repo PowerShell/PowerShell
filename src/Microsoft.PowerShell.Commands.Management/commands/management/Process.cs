@@ -2700,14 +2700,14 @@ namespace Microsoft.PowerShell.Commands
     internal static class ProcessNativeMethods
     {
         // Fields
-        internal static UInt32 GENERIC_READ = 0x80000000;
-        internal static UInt32 GENERIC_WRITE = 0x40000000;
-        internal static UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
-        internal static UInt32 CREATE_ALWAYS = 2;
-        internal static UInt32 FILE_SHARE_WRITE = 0x00000002;
-        internal static UInt32 FILE_SHARE_READ = 0x00000001;
-        internal static UInt32 OF_READWRITE = 0x00000002;
-        internal static UInt32 OPEN_EXISTING = 3;
+        internal static readonly UInt32 GENERIC_READ = 0x80000000;
+        internal static readonly UInt32 GENERIC_WRITE = 0x40000000;
+        internal static readonly UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
+        internal static readonly UInt32 CREATE_ALWAYS = 2;
+        internal static readonly UInt32 FILE_SHARE_WRITE = 0x00000002;
+        internal static readonly UInt32 FILE_SHARE_READ = 0x00000001;
+        internal static readonly UInt32 OF_READWRITE = 0x00000002;
+        internal static readonly UInt32 OPEN_EXISTING = 3;
 
         // Methods
 
@@ -2776,6 +2776,7 @@ namespace Microsoft.PowerShell.Commands
             public int nLength;
             public SafeLocalMemHandle lpSecurityDescriptor;
             public bool bInheritHandle;
+
             public SECURITY_ATTRIBUTES()
             {
                 this.nLength = 12;
@@ -2801,6 +2802,7 @@ namespace Microsoft.PowerShell.Commands
 
             [ReliabilityContract(Consistency.WillNotCorruptState, Cer.Success), DllImport(PinvokeDllNames.LocalFreeDllName)]
             private static extern IntPtr LocalFree(IntPtr hMem);
+
             protected override bool ReleaseHandle()
             {
                 return (LocalFree(base.handle) == IntPtr.Zero);
@@ -2828,6 +2830,7 @@ namespace Microsoft.PowerShell.Commands
             public SafeFileHandle hStdInput;
             public SafeFileHandle hStdOutput;
             public SafeFileHandle hStdError;
+
             public STARTUPINFO()
             {
                 this.lpReserved = IntPtr.Zero;

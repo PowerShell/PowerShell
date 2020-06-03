@@ -18,15 +18,18 @@ namespace System.Management.Automation.Language
     internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
+
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
         };
+
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgForClassVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
             CheckingClassAttributeArguments = true
         };
+
         private readonly Stack<MemberAst> _memberScopeStack;
         private readonly Stack<ScriptBlockAst> _scopeStack;
 

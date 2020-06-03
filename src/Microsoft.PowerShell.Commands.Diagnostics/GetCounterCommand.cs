@@ -90,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
                                  @"\memory\cache faults/sec",
                                  @"\physicaldisk(_total)\% disk time",
                                  @"\physicaldisk(_total)\current disk queue length"};
+
         private bool _defaultCounters = true;
 
         private List<string> _accumulatedCounters = new List<string>();
@@ -117,6 +118,7 @@ namespace Microsoft.PowerShell.Commands
         // MaxSamples parameter
         //
         private const Int64 KEEP_ON_SAMPLING = -1;
+
         [Parameter(
                 ParameterSetName = "GetCounterSet",
                 ValueFromPipeline = false,

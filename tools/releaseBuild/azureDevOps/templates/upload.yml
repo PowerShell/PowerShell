@@ -61,5 +61,5 @@ steps:
     azureSubscription: '$(AzureFileCopySubscription)'
     Destination: AzureBlob
     storage: '$(StorageAccount)'
-    ContainerName: '$(AzureVersion)'
+    ContainerName: '$(AzureVersion)-private'
   condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['SHOULD_SIGN'], 'true'))

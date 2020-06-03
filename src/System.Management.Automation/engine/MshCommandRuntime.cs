@@ -926,6 +926,7 @@ namespace System.Management.Automation
         /// the cmdlet. Semantically this is equivalent to :  cmd | % { $pipelineVariable = $_; (...) }
         /// </summary>
         internal string PipelineVariable { get; set; }
+
         private PSVariable _pipelineVarReference = null;
 
         internal void SetupOutVariable()
@@ -2230,7 +2231,7 @@ namespace System.Management.Automation
         /// An empty array that is declared statically so we don't keep
         /// allocating them over and over...
         /// </summary>
-        internal static object[] StaticEmptyArray = Array.Empty<object>();
+        internal static readonly object[] StaticEmptyArray = Array.Empty<object>();
 
         /// <summary>
         /// Gets or sets the error pipe.

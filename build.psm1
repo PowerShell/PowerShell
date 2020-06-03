@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+param(
+    # Skips a check that prevents building PowerShell on unsupported Linux distributions
+    [parameter(Mandatory = $false)][switch]$SkipLinuxDistroCheck = $false
+)
+
 Set-StrictMode -Version 3.0
 
 # On Unix paths is separated by colon
@@ -178,7 +183,11 @@ function Get-EnvironmentInformation
             $environment.IsSUSEFamily -or
             $environment.IsAlpine)
         ) {
-            throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
+            if ($SkipLinuxDistroCheck) {
+                Write-Warning "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell."
+            } else {
+                throw "The current OS : $($LinuxInfo.ID) is not supported for building PowerShell. Import this module with '-ArgumentList `$true' to bypass this check."
+            }
         }
     }
 

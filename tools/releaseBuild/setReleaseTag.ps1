@@ -58,6 +58,8 @@ function New-BuildInfoJson {
 $branchOnly = $Branch -replace '^refs/heads/';
 $branchOnly = $branchOnly -replace '[_\-]'
 
+$msixType = 'preview'
+
 $isDaily = $false
 
 if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
@@ -65,6 +67,7 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
     # Branch is named release-<semver>
     if($Branch -match '^.*(release[-/])')
     {
+        $msixType = 'release'
         Write-Verbose "release branch:" -Verbose
         $releaseTag = $Branch -replace '^.*(release[-/])'
         $vstsCommandString = "vso[task.setvariable variable=$Variable]$releaseTag"
@@ -124,6 +127,10 @@ if($ReleaseTag -eq 'fromBranch' -or !$ReleaseTag)
 }
 
 $vstsCommandString = "vso[task.setvariable variable=IS_DAILY]$($isDaily.ToString().ToLowerInvariant())"
+Write-Verbose -Message "$vstsCommandString" -Verbose
+Write-Host -Object "##$vstsCommandString"
+
+$vstsCommandString = "vso[task.setvariable variable=MSIX_TYPE]$msixType"
 Write-Verbose -Message "$vstsCommandString" -Verbose
 Write-Host -Object "##$vstsCommandString"
 

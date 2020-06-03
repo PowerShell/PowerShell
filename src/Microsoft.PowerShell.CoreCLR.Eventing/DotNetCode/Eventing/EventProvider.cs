@@ -14,6 +14,7 @@ namespace System.Diagnostics.Eventing
     {
         [SecurityCritical]
         private UnsafeNativeMethods.EtwEnableCallback _etwCallback;  // Trace Callback function
+
         private long _regHandle;                       // Trace Registration Handle
         private byte _level;                            // Tracing Level
         private long _anyKeywordMask;                  // Trace Enable Flags
@@ -24,6 +25,7 @@ namespace System.Diagnostics.Eventing
 
         [ThreadStatic]
         private static WriteEventErrorCode t_returnCode; // thread slot to keep last error
+
         [ThreadStatic]
         private static Guid t_activityId;
 
@@ -48,8 +50,10 @@ namespace System.Diagnostics.Eventing
         {
             [FieldOffset(0)]
             internal ulong DataPointer;
+
             [FieldOffset(8)]
             internal uint Size;
+
             [FieldOffset(12)]
             internal int Reserved;
         }

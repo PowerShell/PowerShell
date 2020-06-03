@@ -19,10 +19,10 @@ namespace Microsoft.PowerShell
     {
         // This is actually a VarEnum value, but the VarEnum type requires 4 bytes instead of the expected 2.
         [FieldOffset(0)]
-        ushort _valueType;
+        private ushort _valueType;
 
         [FieldOffset(8)]
-        IntPtr _ptr;
+        private IntPtr _ptr;
 
         /// <summary>
         /// Set a string value.

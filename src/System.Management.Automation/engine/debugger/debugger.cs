@@ -1072,6 +1072,7 @@ namespace System.Management.Automation
         }
 
         private bool? _isLocalSession;
+
         private bool IsLocalSession
         {
             get
@@ -1723,8 +1724,10 @@ namespace System.Management.Automation
 
         // Runspace debugger integration.
         private Dictionary<Guid, PSMonitorRunspaceInfo> _runningRunspaces;
+
         private const int _jobCallStackOffset = 2;
         private const int _runspaceCallStackOffset = 1;
+
         private bool _preserveUnhandledDebugStopEvent;
         private ManualResetEventSlim _preserveDebugStopEvent;
 

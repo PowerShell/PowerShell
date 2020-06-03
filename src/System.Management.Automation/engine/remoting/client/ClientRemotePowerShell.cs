@@ -924,10 +924,12 @@ namespace System.Management.Automation.Runspaces.Internal
         protected bool stopCalled = false;
         protected PSHost hostToUse;
         protected RemoteRunspacePoolInternal runspacePool;
+
         protected const string WRITE_DEBUG_LINE = "WriteDebugLine";
         protected const string WRITE_VERBOSE_LINE = "WriteVerboseLine";
         protected const string WRITE_WARNING_LINE = "WriteWarningLine";
         protected const string WRITE_PROGRESS = "WriteProgress";
+
         protected bool initialized = false;
         /// <summary>
         /// This queue is for the state change events that resulted in closing the underlying

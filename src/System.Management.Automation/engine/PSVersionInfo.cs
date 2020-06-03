@@ -39,6 +39,7 @@ namespace System.Management.Automation
         internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
+
         private static readonly PSVersionHashTable s_psVersionTable;
 
         /// <summary>
@@ -350,6 +351,7 @@ namespace System.Management.Automation
     public sealed class PSVersionHashTable : Hashtable, IEnumerable
     {
         private static readonly PSVersionTableComparer s_keysComparer = new PSVersionTableComparer();
+
         internal PSVersionHashTable(IEqualityComparer equalityComparer) : base(equalityComparer)
         {
         }
@@ -429,6 +431,7 @@ namespace System.Management.Automation
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
         private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
+
         private string versionString;
 
         /// <summary>

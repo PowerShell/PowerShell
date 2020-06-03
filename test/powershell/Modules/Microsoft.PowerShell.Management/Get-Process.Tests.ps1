@@ -89,6 +89,12 @@ Describe "Get-Process" -Tags "CI" {
     It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows) {
         { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
+
+    It "Should return CommandLine property" -Skip:($IsMacOS)  {
+        $command = "(Get-Process -Id `$pid).CommandLine"
+        $result = & "$PSHOME/pwsh" -NoProfile -NonInteractive -Command $command
+        $result | Should -BeLike "*$command*"
+    }
 }
 
 Describe "Get-Process Formatting" -Tags "Feature" {

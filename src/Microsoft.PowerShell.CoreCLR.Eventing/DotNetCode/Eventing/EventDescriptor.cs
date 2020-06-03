@@ -12,16 +12,22 @@ namespace System.Diagnostics.Eventing
     {
         [FieldOffset(0)]
         private ushort _id;
+
         [FieldOffset(2)]
         private byte _version;
+
         [FieldOffset(3)]
         private byte _channel;
+
         [FieldOffset(4)]
         private byte _level;
+
         [FieldOffset(5)]
         private byte _opcode;
+
         [FieldOffset(6)]
         private ushort _task;
+
         [FieldOffset(8)]
         private long _keywords;
 

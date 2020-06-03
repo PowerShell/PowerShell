@@ -113,6 +113,7 @@ namespace System.Management.Automation
         /// Design For Testability -- assert on failed resource lookup.
         /// </summary>
         private static bool s_DFT_monitorFailingResourceLookup = true;
+
         internal static bool DFT_DoMonitorFailingResourceLookup
         {
             get { return ResourceManagerCache.s_DFT_monitorFailingResourceLookup; }

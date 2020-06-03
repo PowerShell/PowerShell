@@ -191,7 +191,7 @@ function Start-PSPackage {
             throw $Script:Options.RootInfo.Warning
         }
 
-        # If ReleaseTag is specified, use the given tag to calculate Vesrion
+        # If ReleaseTag is specified, use the given tag to calculate Version
         if ($PSCmdlet.ParameterSetName -eq "ReleaseTag") {
             $Version = $ReleaseTag -Replace '^v'
         }
@@ -337,8 +337,6 @@ function Start-PSPackage {
                     ProductSourcePath = $Source
                     ProductVersion = $Version
                     AssetsPath = "$RepoRoot\assets"
-                    # Product Code needs to be unique for every PowerShell version since it is a unique identifier for the particular product release
-                    ProductCode = New-Guid
                     ProductTargetArchitecture = $TargetArchitecture
                     Force = $Force
                 }
@@ -2914,7 +2912,7 @@ function New-MSIPatch
         # This example shows how to produce a Debug-x64 installer for development purposes.
         cd $RootPathOfPowerShellRepo
         Import-Module .\build.psm1; Import-Module .\tools\packaging\packaging.psm1
-        New-MSIPackage -Verbose -ProductCode (New-Guid) -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net5.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
+        New-MSIPackage -Verbose -ProductSourcePath '.\src\powershell-win-core\bin\Debug\net5.0\win7-x64\publish' -ProductTargetArchitecture x64 -ProductVersion '1.2.3'
 #>
 function New-MSIPackage
 {
@@ -2932,11 +2930,6 @@ function New-MSIPackage
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
         [string] $ProductVersion,
-
-        # The ProductCode property is a unique identifier for the particular product release
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $ProductCode,
 
         # Source Path to the Product Files - required to package the contents into an MSI
         [Parameter(Mandatory = $true)]
@@ -2971,14 +2964,14 @@ function New-MSIPackage
     $wixPaths = Get-WixPath
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
-    $simpleProductVersion = '7'
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
+
+    $simpleProductVersion = [string]([Version]$ProductVersion).Major
     $isPreview = Test-IsPreview -Version $ProductSemanticVersion
     if ($isPreview)
     {
         $simpleProductVersion += '-preview'
     }
-
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
 
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
 
@@ -2994,35 +2987,23 @@ function New-MSIPackage
 
     $productVersionWithName = $ProductName + '_' + $ProductVersion
     $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
-    $productDirectoryName = 'PowerShell_6'
 
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
     [Environment]::SetEnvironmentVariable("ProductSourcePath", $staging, "Process")
     # These variables are used by Product.wxs in assets directory
-    [Environment]::SetEnvironmentVariable("ProductDirectoryName", $productDirectoryName, "Process")
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
-    [Environment]::SetEnvironmentVariable("ProductCode", $ProductCode, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("SimpleProductVersion", $simpleProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
     if (!$isPreview)
     {
-        [Environment]::SetEnvironmentVariable("PwshPath", "[$productDirectoryName]", "Process")
-        [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '31ab5147-9a97-4452-8443-d9709f0516e1', "Process")
-        [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '1d00683b-0f84-4db8-a64f-2f98ad42fe06', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
-        # The ApplicationProgramsMenuShortcut GUID should be changed when bumping the major version because the installation directory changes
-        [Environment]::SetEnvironmentVariable("ApplicationProgramsMenuShortcut", '6a69de6c-183d-4bf4-a40e-83007d6293bf', "Process")
     }
     else
     {
-        [Environment]::SetEnvironmentVariable("PwshPath", "[$productDirectoryName]preview", "Process")
-        [Environment]::SetEnvironmentVariable("UpgradeCodeX64", '39243d76-adaf-42b1-94fb-16ecf83237c8', "Process")
-        [Environment]::SetEnvironmentVariable("UpgradeCodeX86", '86abcfbd-1ccc-4a88-b8b2-0facfde29094', "Process")
         [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")
-        [Environment]::SetEnvironmentVariable("ApplicationProgramsMenuShortcut", 'ab727c4f-2311-474c-9ade-f2c6fd7f7322', "Process")
     }
     $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
@@ -3056,7 +3037,7 @@ function New-MSIPackage
     }
 
     Write-Log "verifying no new files have been added or removed..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  $productDirectoryName -cg $productDirectoryName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
 
     # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
@@ -3076,7 +3057,7 @@ function New-MSIPackage
     }
 
     Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -dIsPreview="$isPreview" -v}
 
     Write-Log "running light..."
     # suppress ICE61, because we allow same version upgrades
@@ -3202,9 +3183,18 @@ function New-MSIXPackage
 
     Write-Verbose "Version: $productversion" -Verbose
 
+    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
+    if ($isPreview) {
+        Write-Verbose "Using Preview assets" -Verbose
+    }
+
     # Appx manifest needs to be in root of source path, but the embedded version needs to be updated
+    # cp-459155 is 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    # authenticodeFormer is 'CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+    $releasePublisher = 'CN=Microsoft Windows Store Publisher (Store EKU), O=Microsoft Corporation, L=Redmond, S=Washington, C=US'
+
     $appxManifest = Get-Content "$RepoRoot\assets\AppxManifest.xml" -Raw
-    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName)
+    $appxManifest = $appxManifest.Replace('$VERSION$', $ProductVersion).Replace('$ARCH$', $Architecture).Replace('$PRODUCTNAME$', $productName).Replace('$DISPLAYNAME$', $displayName).Replace('$PUBLISHER$', $releasePublisher)
     Set-Content -Path "$ProductSourcePath\AppxManifest.xml" -Value $appxManifest -Force
     # Necessary image assets need to be in source assets folder
     $assets = @(
@@ -3217,11 +3207,6 @@ function New-MSIXPackage
 
     if (!(Test-Path "$ProductSourcePath\assets")) {
         $null = New-Item -ItemType Directory -Path "$ProductSourcePath\assets"
-    }
-
-    $isPreview = Test-IsPreview -Version $ProductSemanticVersion
-    if ($isPreview) {
-        Write-Verbose "Using Preview assets" -Verbose
     }
 
     $assets | ForEach-Object {
@@ -3383,6 +3368,7 @@ function Test-FileWxs
         $newXml | Out-File -FilePath $newXmlFileName -Encoding ascii
         Write-Log -message "Updated xml saved to $newXmlFileName."
         Write-Log -message "If component files were intentionally changed, such as due to moving to a newer .NET Core runtime, update '$FilesWxsPath' with the content from '$newXmlFileName'."
+        Write-Information -MessageData @{FilesWxsPath = $FilesWxsPath; NewFile = $newXmlFileName} -Tags 'PackagingWxs'
         if ($env:TF_BUILD)
         {
             Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$newXmlFileName"

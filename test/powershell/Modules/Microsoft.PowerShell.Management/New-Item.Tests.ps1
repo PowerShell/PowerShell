@@ -268,12 +268,71 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 }
 
+Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        # on macOS, the /tmp directory is a symlink, so we'll resolve it here
+        $TestPath = $TestDrive
+        if ($IsMacOS)
+        {
+            $item = Get-Item $TestPath
+            $dirName = $item.BaseName
+            $item = Get-Item $item.PSParentPath -Force
+            if ($item.LinkType -eq "SymbolicLink")
+            {
+                $TestPath = Join-Path $item.Target $dirName
+            }
+        }
+
+        Push-Location $TestPath
+        $null = New-Item -Type Directory someDir
+        $null = New-Item -Type File someFile
+    }
+
+    AfterAll {
+        Pop-Location
+    }
+
+    It "Symlink with absolute path to existing directory behaves like a directory" {
+        New-Item -Type SymbolicLink someDirLinkAbsolute -Target (Convert-Path someDir)
+        Get-Item someDirLinkAbsolute | Should -BeOfType System.IO.DirectoryInfo
+    }
+
+    It "Symlink with relative path to existing directory behaves like a directory" {
+        # PowerShell should normalize '.\someDir' to './someDir' as needed.
+        New-Item -Type SymbolicLink someDirLinkRelative -Target .\someDir
+        Get-Item someDirLinkRelative | Should -BeOfType System.IO.DirectoryInfo
+    }
+
+    It "Symlink with absolute path to existing file behaves like a file" {
+        New-Item -Type SymbolicLink someFileLinkAbsolute -Target (Convert-Path someFile)
+        Get-Item someFileLinkAbsolute | Should -BeOfType System.IO.FileInfo
+    }
+
+    It "Symlink with relative path to existing file behaves like a file" {
+        New-Item -Type SymbolicLink someFileLinkRelative -Target ./someFile
+        Get-Item someFileLinkRelative | Should -BeOfType System.IO.FileInfo
+    }
+}
+
 Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {
     BeforeAll {
+        # on macOS, the /tmp directory is a symlink, so we'll resolve it here
+        $TestPath = $TestDrive
+        if ($IsMacOS)
+        {
+            $item = Get-Item $TestPath
+            $dirName = $item.BaseName
+            $item = Get-Item $item.PSParentPath -Force
+            if ($item.LinkType -eq "SymbolicLink")
+            {
+                $TestPath = Join-Path $item.Target $dirName
+            }
+        }
+
         $testfile             = "testfile.txt"
         $testlink             = "testlink"
-        $FullyQualifiedFile   = Join-Path -Path $TestDrive -ChildPath $testfile
-        $TestFilePath         = Join-Path -Path $TestDrive -ChildPath $testlink
+        $FullyQualifiedFile   = Join-Path -Path $TestPath -ChildPath $testfile
+        $TestFilePath         = Join-Path -Path $TestPath -ChildPath $testlink
         $developerModeEnabled = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\AppModelUnlock -ErrorAction SilentlyContinue).AllowDevelopmentWithoutDevLicense -eq 1
         $minBuildRequired     = [System.Environment]::OSVersion.Version -ge "10.0.14972"
         $developerMode = $developerModeEnabled -and $minBuildRequired

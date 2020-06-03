@@ -597,11 +597,7 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>An array of objects out of <paramref name="commandObjects"/>.</returns>
         internal static object[] ObjectArrayFromObjectCollection(object commandObjects)
         {
-            object[] objectArray = commandObjects as object[];
-            if (objectArray == null)
-            {
-                objectArray = ((System.Collections.ArrayList)commandObjects).ToArray();
-            }
+            object[] objectArray = commandObjects as object[] ?? ((System.Collections.ArrayList)commandObjects).ToArray();
 
             return objectArray;
         }

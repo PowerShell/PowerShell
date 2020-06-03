@@ -413,6 +413,7 @@ namespace System.Management.Automation
         }
 
         private delegate IEnumerable GetEnumerableDelegate(object obj);
+
         private static Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
 
         private static GetEnumerableDelegate GetOrCalculateEnumerable(Type type)
@@ -1111,7 +1112,7 @@ namespace System.Management.Automation
         /// an exception when converted to decimal.
         /// The order of lines and columns cannot be changed since NumericCompare depends on it.
         /// </summary>
-        internal static Type[][] LargestTypeTable = new Type[][]
+        internal static readonly Type[][] LargestTypeTable = new Type[][]
         {
             //                                       System.Int16            System.Int32            System.Int64            System.UInt16           System.UInt32           System.UInt64           System.SByte            System.Byte             System.Single           System.Double           System.Decimal
             /* System.Int16   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int16),   typeof(System.Int16),   typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
@@ -1422,8 +1423,8 @@ namespace System.Management.Automation
 
         #region type converter
 
-        internal static PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
-        internal static ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
+        internal static readonly PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
+        internal static readonly ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
 
         private static TypeConverter GetIntegerSystemConverter(Type type)
         {
@@ -1922,6 +1923,7 @@ namespace System.Management.Automation
             // This static is thread safe based on the lock in GetEnumHashEntry
             // It can be shared by Runspaces in different MiniShells
             private static readonly Dictionary<Type, EnumHashEntry> s_enumTable = new Dictionary<Type, EnumHashEntry>();
+
             private const int maxEnumTableSize = 100;
 
             private static EnumHashEntry GetEnumHashEntry(Type enumType)
@@ -3656,6 +3658,7 @@ namespace System.Management.Automation
             private readonly int _matchIndex;
             // Size of the cache. It's rare to have more than 10 overloads for a method.
             private const int CacheSize = 10;
+
             private static readonly PSMethodToDelegateConverter[] s_converterCache = new PSMethodToDelegateConverter[CacheSize];
 
             private PSMethodToDelegateConverter(int matchIndex)
@@ -5058,7 +5061,7 @@ namespace System.Management.Automation
 
         private struct SignatureComparator
         {
-            enum TypeMatchingContext
+            private enum TypeMatchingContext
             {
                 ReturnType,
                 ParameterType,
@@ -5732,6 +5735,7 @@ namespace System.Management.Automation
         }
 
         internal class Null { };
+
         private static IConversionData FigureConversionFromNull(Type toType)
         {
             IConversionData data = GetConversionData(typeof(Null), toType);

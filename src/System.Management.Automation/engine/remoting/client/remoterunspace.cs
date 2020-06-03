@@ -2946,6 +2946,7 @@ namespace System.Management.Automation
     internal class RemoteSessionStateProxy : SessionStateProxy
     {
         private RemoteRunspace _runspace;
+
         internal RemoteSessionStateProxy(RemoteRunspace runspace)
         {
             Dbg.Assert(runspace != null, "Caller should validate the parameter");

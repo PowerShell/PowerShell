@@ -83,6 +83,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Collection<WildcardPattern> _excludeMatcher = null;
+
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchType = MatchType.Win32,
@@ -2361,12 +2362,24 @@ namespace Microsoft.PowerShell.Commands
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
-
-                        // Pretend the target exists if we're making a symbolic link.
                         if (itemType == ItemType.SymbolicLink)
                         {
                             exists = true;
+
+                            var normalizedTargetPath = strTargetPath;
+                            if (strTargetPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
+                                strTargetPath.StartsWith("./", StringComparison.OrdinalIgnoreCase))
+                            {
+                                normalizedTargetPath = Path.Join(SessionState.Internal.CurrentLocation.ProviderPath, strTargetPath.AsSpan().Slice(2));
+                            }
+
+                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
+
+                            strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                        }
+                        else
+                        {
+                            exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
                         }
                     }
                     catch (Exception e)
@@ -7307,12 +7320,16 @@ namespace Microsoft.PowerShell.Commands
             public int Type;
             public int DisplayType;
             public int Usage;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string LocalName;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string RemoteName;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Comment;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Provider;
         }
@@ -7855,6 +7872,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort PrintNameOffset;
             public ushort PrintNameLength;
             public uint Flags;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] PathBuffer;
         }
@@ -7869,6 +7887,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort SubstituteNameLength;
             public ushort PrintNameOffset;
             public ushort PrintNameLength;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] PathBuffer;
         }
@@ -7880,6 +7899,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort ReparseDataLength;
             public ushort Reserved;
             public uint StringCount;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] StringList;
         }
@@ -7905,6 +7925,7 @@ namespace Microsoft.PowerShell.Commands
             public uint Data1;
             public ushort Data2;
             public ushort Data3;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public char[] Data4;
         }
@@ -7916,6 +7937,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort ReparseDataLength;
             public ushort Reserved;
             public GUID ReparseGuid;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
             public char[] DataBuffer;
         }
@@ -8679,6 +8701,7 @@ namespace System.Management.Automation.Internal
         internal static class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
+
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }
 
             [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
@@ -8750,9 +8773,11 @@ namespace System.Management.Automation.Internal
         #region PSCopyToSessionHelper
 
         internal const string PSCopyToSessionHelperName = @"PSCopyToSessionHelper";
+
         private static string s_driveMaxSizeErrorFormatString = FileSystemProviderStrings.DriveMaxSizeError;
         private static string s_PSCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
         private static string s_PSCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
+
         private const string PSCopyToSessionHelperDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
@@ -9216,8 +9241,10 @@ namespace System.Management.Automation.Internal
         #region PSCopyFromSessionHelper
 
         internal const string PSCopyFromSessionHelperName = @"PSCopyFromSessionHelper";
+
         private static string s_PSCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
         private static string s_PSCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
+
         private const string PSCopyFromSessionHelperDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
@@ -9689,7 +9716,7 @@ namespace System.Management.Automation.Internal
         }}
         ";
 
-        internal static string PSCopyFromSessionHelper = functionToken + PSCopyFromSessionHelperName + @"
+        internal static readonly string PSCopyFromSessionHelper = functionToken + PSCopyFromSessionHelperName + @"
         {
         " + s_PSCopyFromSessionHelperDefinition + @"
         }
@@ -9705,8 +9732,10 @@ namespace System.Management.Automation.Internal
         #region PSCopyRemoteUtils
 
         internal const string PSCopyRemoteUtilsName = @"PSCopyRemoteUtils";
-        internal static string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
+
+        internal static readonly string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
         private static string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
+
         private const string PSCopyRemoteUtilsDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSRemoteDirectoryExist"", Mandatory=$true)]
@@ -9861,27 +9890,29 @@ namespace System.Management.Automation.Internal
         return $result
         ";
 
-        internal static string PSCopyRemoteUtils = functionToken + PSCopyRemoteUtilsName + @"
+        internal static readonly string PSCopyRemoteUtils = functionToken + PSCopyRemoteUtilsName + @"
         {
         " + PSCopyRemoteUtilsDefinition + @"
         }
         ";
 
-        internal static Hashtable PSCopyRemoteUtilsFunction = new Hashtable() {
+        internal static readonly Hashtable PSCopyRemoteUtilsFunction = new Hashtable() {
             {nameToken, PSCopyRemoteUtilsName},
             {definitionToken, s_PSCopyRemoteUtilsDefinitionRestricted}
         };
 
         #endregion
 
-        internal static string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
+        internal static readonly string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
+
         internal static IEnumerable<Hashtable> GetAllCopyToRemoteScriptFunctions()
         {
             yield return s_PSCopyToSessionHelperFunction;
             yield return PSCopyRemoteUtilsFunction;
         }
 
-        internal static string AllCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
+        internal static readonly string AllCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
+
         internal static IEnumerable<Hashtable> GetAllCopyFromRemoteScriptFunctions()
         {
             yield return s_PSCopyFromSessionHelperFunction;

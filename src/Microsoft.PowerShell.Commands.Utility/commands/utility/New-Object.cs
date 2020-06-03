@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
                                 targetObject: null));
                     }
 
-                    throw e;
+                    throw;
                 }
 
                 Diagnostics.Assert(type != null, "LanguagePrimitives.TryConvertTo failed but returned true");

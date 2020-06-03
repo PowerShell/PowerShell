@@ -273,10 +273,12 @@ namespace Microsoft.PowerShell.MarkdownRender
     public class VT100EscapeSequences
     {
         private const char Esc = (char)0x1B;
+
         private string endSequence = Esc + "[0m";
 
         // For code blocks, [500@ make sure that the whole line has background color.
         private const string LongBackgroundCodeBlock = "[500@";
+
         private PSMarkdownOptionInfo options;
 
         /// <summary>
