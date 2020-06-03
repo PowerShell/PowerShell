@@ -557,6 +557,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Invoke-WebRequest accepts '-ProxyUseDefaultCredentials' parameter" {
+        # use external url, but with proxy the external url should not actually be called
         { Invoke-WebRequest -Uri http://httpbin.org -ProxyUseDefaultCredentials } | Should -Not -Throw
     }
 
@@ -564,6 +565,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
         $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
         $credential = [pscredential]::new("testuser", $token)
+        # use external url, but with proxy the external url should not actually be called
         { Invoke-WebRequest -Uri http://httpbin.org -ProxyCredential $credential } | Should -Not -Throw
     }
 
@@ -2148,6 +2150,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
     }
 
     It "Invoke-RestMethod accepts '-ProxyUseDefaultCredentials' parameter" {
+        # use external url, but with proxy the external url should not actually be called
         { Invoke-RestMethod -Uri http://httpbin.org -ProxyUseDefaultCredentials } | Should -Not -Throw
     }
 
@@ -2155,6 +2158,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         #[SuppressMessage("Microsoft.Security", "CS002:SecretInNextLine", Justification="Demo/doc/test secret.")]
         $token = "testpassword" | ConvertTo-SecureString -AsPlainText -Force
         $credential = [pscredential]::new("testuser", $token)
+        # use external url, but with proxy the external url should not actually be called
         { Invoke-RestMethod -Uri http://httpbin.org -ProxyCredential $credential } | Should -Not -Throw
     }
 
