@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -115,7 +115,7 @@ namespace System.Management.Automation
     internal class CommandDiscovery
     {
         [TraceSource("CommandDiscovery", "Traces the discovery of cmdlets, scripts, functions, applications, etc.")]
-        internal static PSTraceSource discoveryTracer =
+        internal static readonly PSTraceSource discoveryTracer =
             PSTraceSource.GetTracer(
                 "CommandDiscovery",
                 "Traces the discovery of cmdlets, scripts, functions, applications, etc.",
@@ -133,7 +133,7 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             Context = context;
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (newCmdletInfo == null)
@@ -884,6 +884,11 @@ namespace System.Management.Automation
 
         internal static void AutoloadModulesWithJobSourceAdapters(System.Management.Automation.ExecutionContext context, CommandOrigin commandOrigin)
         {
+            /* This function is used by *-Job cmdlets (JobCmdletBase.BeginProcessing(), StartJobCommand.BeginProcessing())
+            It attempts to load modules from a fixed ModulesWithJobSourceAdapters list that currently has only `PSScheduledJob` module that is not PS-Core compatible.
+            Because this function does not check the result of a (currently failing) `PSScheduledJob` module autoload, it provides no value.
+            After discussion it was decided to comment out this code as it may be useful if ModulesWithJobSourceAdapters list changes in the future.
+
             if (!context.IsModuleWithJobSourceAdapterLoaded)
             {
                 PSModuleAutoLoadingPreference moduleAutoLoadingPreference = GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
@@ -906,7 +911,7 @@ namespace System.Management.Automation
                         context.IsModuleWithJobSourceAdapterLoaded = true;
                     }
                 }
-            }
+            }*/
         }
 
         internal static Collection<PSModuleInfo> AutoloadSpecifiedModule(string moduleName, ExecutionContext context, SessionStateEntryVisibility visibility, out Exception exception)
@@ -1182,7 +1187,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith(".", StringComparison.Ordinal))
+            if (string.IsNullOrEmpty(moduleName) || string.IsNullOrEmpty(moduleCommandName) || moduleName.EndsWith('.'))
                 return null;
 
             bool etwEnabled = CommandDiscoveryEventSource.Log.IsEnabled();
@@ -1282,27 +1287,6 @@ namespace System.Management.Automation
         private HashSet<string> _activePostCommand = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// Gets a CommandPathSearch constructed with the specified patterns and
-        /// using the PATH as the lookup directories.
-        /// </summary>
-        /// <param name="patterns">
-        /// The patterns to search for. These patterns must be in the form taken
-        /// by DirectoryInfo.GetFiles().
-        /// </param>
-        /// <returns>
-        /// An instance of CommandPathSearch that is initialized with the specified
-        /// patterns and using the PATH as the lookup directories.
-        /// </returns>
-        internal IEnumerable<string> GetCommandPathSearcher(IEnumerable<string> patterns)
-        {
-            // Get the PATH environment variable
-            IEnumerable<string> lookupPathArray = GetLookupDirectoryPaths();
-
-            // Construct the CommandPathSearch object and return it.
-            return new CommandPathSearch(patterns, lookupPathArray, Context);
-        }
-
-        /// <summary>
         /// Gets the resolved paths contained in the PATH environment
         /// variable.
         /// </summary>
@@ -1312,7 +1296,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// The result is an ordered list of paths with paths starting with "." unresolved until lookup time.
         /// </remarks>
-        internal IEnumerable<string> GetLookupDirectoryPaths()
+        internal LookupPathCollection GetLookupDirectoryPaths()
         {
             LookupPathCollection result = new LookupPathCollection();
 
@@ -1344,6 +1328,15 @@ namespace System.Management.Automation
                     foreach (string directory in tokenizedPath)
                     {
                         string tempDir = directory.TrimStart();
+                        if (tempDir.EqualsOrdinalIgnoreCase("~"))
+                        {
+                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+                        }
+                        else if (tempDir.StartsWith("~" + Path.DirectorySeparatorChar))
+                        {
+                            tempDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + Path.DirectorySeparatorChar + tempDir.Substring(2);
+                        }
+
                         _cachedPath.Add(tempDir);
                         result.Add(tempDir);
                     }
@@ -1532,7 +1525,7 @@ namespace System.Management.Automation
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             // check the PSVariable
@@ -1668,7 +1661,7 @@ namespace System.Management.Automation
             {
                 string path = this[index];
                 if (!string.IsNullOrEmpty(path) &&
-                    path.StartsWith(".", StringComparison.Ordinal))
+                    path.StartsWith('.'))
                 {
                     result.Add(index);
                 }
@@ -1694,7 +1687,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(item))
             {
-                throw PSTraceSource.NewArgumentException("item");
+                throw PSTraceSource.NewArgumentException(nameof(item));
             }
 
             int result = -1;
@@ -1717,7 +1710,7 @@ namespace System.Management.Automation
     [EventSource(Name = "Microsoft-PowerShell-CommandDiscovery")]
     internal class CommandDiscoveryEventSource : EventSource
     {
-        internal static CommandDiscoveryEventSource Log = new CommandDiscoveryEventSource();
+        internal static readonly CommandDiscoveryEventSource Log = new CommandDiscoveryEventSource();
 
         public void CommandLookupStart(string CommandName) { WriteEvent(1, CommandName); }
 

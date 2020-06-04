@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -179,8 +179,7 @@ namespace System.Management.Automation.Runspaces
                         // and support impersonation flow as needed (Windows only).
                         Thread invokeThread = new Thread(new ThreadStart(invokeThreadProcDelegate), DefaultPipelineStackSize);
                         SetupInvokeThread(invokeThread, true);
-#if !CORECLR
-                        // No ApartmentState in CoreCLR
+
                         ApartmentState apartmentState;
 
                         if (InvocationSettings != null && InvocationSettings.ApartmentState != ApartmentState.Unknown)
@@ -192,11 +191,13 @@ namespace System.Management.Automation.Runspaces
                             apartmentState = this.LocalRunspace.ApartmentState; // use the Runspace apartment state
                         }
 
-                        if (apartmentState != ApartmentState.Unknown)
+#if !UNIX
+                        if (apartmentState != ApartmentState.Unknown && !Platform.IsNanoServer && !Platform.IsIoT)
                         {
                             invokeThread.SetApartmentState(apartmentState);
                         }
 #endif
+
                         invokeThread.Start();
 
                         break;
@@ -624,18 +625,11 @@ namespace System.Management.Automation.Runspaces
                 SetPipelineState(PipelineState.Failed, ex);
                 SetHadErrors(true);
             }
-#if !CORECLR // No ThreadAbortException In CoreCLR
-            catch (ThreadAbortException ex)
-            {
-                SetPipelineState(PipelineState.Failed, ex);
-                SetHadErrors(true);
-            }
-#endif
-            // 1021203-2005/05/09-JonN
-            // HaltCommandException will cause the command
-            // to stop, but not be reported as an error.
             catch (HaltCommandException)
             {
+                // 1021203-2005/05/09-JonN
+                // HaltCommandException will cause the command
+                // to stop, but not be reported as an error.
                 SetPipelineState(PipelineState.Completed);
             }
             finally
@@ -1188,15 +1182,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the worker thread and waits for it to be ready.
         /// </summary>
-#if CORECLR
-        internal PipelineThread()
-        {
-            _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
-            _workItem = null;
-            _workItemReady = new AutoResetEvent(false);
-            _closed = false;
-        }
-#else
         internal PipelineThread(ApartmentState apartmentState)
         {
             _worker = new Thread(WorkerProc, LocalPipeline.DefaultPipelineStackSize);
@@ -1204,12 +1189,13 @@ namespace System.Management.Automation.Runspaces
             _workItemReady = new AutoResetEvent(false);
             _closed = false;
 
-            if (apartmentState != ApartmentState.Unknown)
+#if !UNIX
+            if (apartmentState != ApartmentState.Unknown && !Platform.IsNanoServer && !Platform.IsIoT)
             {
                 _worker.SetApartmentState(apartmentState);
             }
-        }
 #endif
+        }
 
         /// <summary>
         /// Returns the worker thread.
@@ -1334,6 +1320,7 @@ namespace System.Management.Automation.Runspaces
         /// This is set true when stop is called.
         /// </summary>
         private bool _stopping;
+
         internal bool IsStopping
         {
             get
@@ -1355,7 +1342,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (item == null)
             {
-                throw PSTraceSource.NewArgumentNullException("item");
+                throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
             lock (_syncRoot)

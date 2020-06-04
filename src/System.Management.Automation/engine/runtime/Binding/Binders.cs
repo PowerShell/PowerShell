@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -79,7 +79,7 @@ namespace System.Management.Automation.Language
 
         internal static BindingRestrictions GetSimpleTypeRestriction(this DynamicMetaObject obj)
         {
-            if (obj.Value == null || ClrFacade.IsTransparentProxy(obj.Value))
+            if (obj.Value == null)
             {
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, obj.Value);
             }
@@ -132,7 +132,7 @@ namespace System.Management.Automation.Language
                 return obj.Restrictions;
             }
 
-            if (obj.Value == null || ClrFacade.IsTransparentProxy(obj.Value))
+            if (obj.Value == null)
             {
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, obj.Value);
             }
@@ -187,7 +187,7 @@ namespace System.Management.Automation.Language
                 return obj.Restrictions;
             }
 
-            if (obj.Value == null || ClrFacade.IsTransparentProxy(obj.Value))
+            if (obj.Value == null)
             {
                 return BindingRestrictions.GetInstanceRestriction(obj.Expression, obj.Value);
             }
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation.Language
             public bool Equals(PSInvokeDynamicMemberBinderKeyType x, PSInvokeDynamicMemberBinderKeyType y)
             {
                 return x.Item1.Equals(y.Item1) &&
-                       x.Item2 == null ? y.Item2 == null : x.Item2.Equals(y.Item2) &&
+                       ((x.Item2 == null) ? y.Item2 == null : x.Item2.Equals(y.Item2)) &&
                        x.Item3 == y.Item3 &&
                        x.Item4 == y.Item4 &&
                        x.Item5 == y.Item5;
@@ -1306,6 +1306,7 @@ namespace System.Management.Automation.Language
 
         private readonly bool _static;
         private readonly Type _classScope;
+
         private PSGetDynamicMemberBinder(Type classScope, bool @static)
         {
             _static = @static;
@@ -2604,7 +2605,7 @@ namespace System.Management.Automation.Language
             bool boolToDecimal = false;
             if (arg.LimitType.IsNumericOrPrimitive() && !arg.LimitType.IsEnum)
             {
-                if (!(targetType == typeof(Decimal) && arg.LimitType == typeof(bool)))
+                if (!(targetType == typeof(decimal) && arg.LimitType == typeof(bool)))
                 {
                     return arg;
                 }
@@ -4969,6 +4970,7 @@ namespace System.Management.Automation.Language
         internal int _version;
 
         private bool _hasInstanceMember;
+
         internal bool HasInstanceMember { get { return _hasInstanceMember; } }
 
         internal static void SetHasInstanceMember(string memberName)
@@ -5023,6 +5025,7 @@ namespace System.Management.Automation.Language
         }
 
         private bool _hasTypeTableMember;
+
         internal static void TypeTableMemberAdded(string memberName)
         {
             var binderList = s_binderCacheIgnoringCase.GetOrAdd(memberName, _ => new List<PSGetMemberBinder>());
@@ -5246,7 +5249,7 @@ namespace System.Management.Automation.Language
 
                         if (adapterData.member.DeclaringType.IsGenericTypeDefinition || adapterData.propertyType.IsByRefLike)
                         {
-                            // This is kinda lame - we really should throw an error, but accessing property getter
+                            // We really should throw an error, but accessing property getter
                             // doesn't throw error in PowerShell since V2, even in strict mode.
                             expr = ExpressionCache.NullConstant;
                         }
@@ -5410,8 +5413,8 @@ namespace System.Management.Automation.Language
             {
                 // Unbox value types (or use Nullable<T>.Value) to avoid a copy in case the value is mutated.
                 // In case that castToType is System.Object and expr.Type is Nullable<ValueType>, expr.Cast(System.Object) will
-                // get the underlying value by default. So "GetTargetExpr(target).Cast(typeof(Object))" is actually the same as
-                // "GetTargetExpr(target, typeof(Object))".
+                // get the underlying value by default. So "GetTargetExpr(target).Cast(typeof(object))" is actually the same as
+                // "GetTargetExpr(target, typeof(object))".
                 expr = type.IsValueType
                            ? (Nullable.GetUnderlyingType(expr.Type) != null
                                   ? (Expression)Expression.Property(expr, "Value")
@@ -5496,7 +5499,7 @@ namespace System.Management.Automation.Language
             return null;
         }
 
-        internal static bool IsAllowedInConstrainedLanguage(Object targetValue, string name, bool isStatic)
+        internal static bool IsAllowedInConstrainedLanguage(object targetValue, string name, bool isStatic)
         {
             // ToString allowed on any type
             if (string.Equals(name, "ToString", StringComparison.OrdinalIgnoreCase))
@@ -6876,14 +6879,6 @@ namespace System.Management.Automation.Language
             {
                 object arg = args[i].Value;
                 argValues[i] = arg == AutomationNull.Value ? null : arg;
-            }
-
-            if (ClrFacade.IsTransparentProxy(target.Value) && (psMethodInvocationConstraints == null || psMethodInvocationConstraints.MethodTargetType == null))
-            {
-                var argTypes = (psMethodInvocationConstraints == null)
-                    ? new Type[numArgs]
-                    : psMethodInvocationConstraints.ParameterTypes.ToArray();
-                psMethodInvocationConstraints = new PSMethodInvocationConstraints(target.Value.GetType(), argTypes);
             }
 
             var result = Adapter.FindBestMethod(

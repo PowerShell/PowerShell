@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -28,7 +28,7 @@ namespace System.Management.Automation.Internal
         {
             if (commandRuntime == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandRuntime");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandRuntime));
             }
 
             _commandRuntime = commandRuntime;
@@ -108,6 +108,12 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This parameter tells the command what to do when an informational record occurs.
         /// </remarks>
+        /// <!--
+        /// NOTE: The "infa" alias name does not follow the same alias naming convention used
+        /// with other common parameter aliases that control stream functionality; however,
+        /// "ia" was already taken as a parameter alias in other commands when this parameter
+        /// was added to PowerShell, so "infa" was chosen instead.
+        /// -->
         [Parameter]
         [Alias("infa")]
         public ActionPreference InformationAction
@@ -237,7 +243,7 @@ namespace System.Management.Automation.Internal
                 string varName = arguments as string;
                 if (varName != null)
                 {
-                    if (varName.StartsWith("+", StringComparison.Ordinal))
+                    if (varName.StartsWith('+'))
                     {
                         varName = varName.Substring(1);
                     }

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Split Operator" -Tags CI {
     Context "Binary split operator" {
@@ -33,12 +33,78 @@ Describe "Split Operator" -Tags CI {
             $res[2] | Should -Be "c"
             $res[3] | Should -Be "d"
 
+            $res = "a b c d" -split " ", -2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "a b c"
+            $res[1] | Should -Be "d"
+
             $res = "a b c d" -split " ", -1
+            $res.count | Should -Be 1
+            $res[0] | Should -Be "a b c d"
+        }
+
+        It "Binary split operator can work with different delimeter than split string" {
+            $res = "a b c d" -split " ",8
             $res.count | Should -Be 4
             $res[0] | Should -Be "a"
             $res[1] | Should -Be "b"
             $res[2] | Should -Be "c"
             $res[3] | Should -Be "d"
+
+            $res = "a b c d" -split " ",-8
+            $res.count | Should -Be 4
+            $res[0] | Should -Be "a"
+            $res[1] | Should -Be "b"
+            $res[2] | Should -Be "c"
+            $res[3] | Should -Be "d"
+
+            $res = " " -split " ",-2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be ""
+            $res[1] | Should -Be ""
+        }
+
+        It "Binary split operator with predicate can work with negative numbers" {
+            $res = "a b c d" -split {$_ -like ' '},-2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "a b c"
+            $res[1] | Should -Be "d"
+
+            $res = "a b c d" -split {$_ -like ' '},-4
+            $res.count | Should -Be 4
+            $res[0] | Should -Be "a"
+            $res[1] | Should -Be "b"
+            $res[2] | Should -Be "c"
+            $res[3] | Should -Be "d"
+
+            $res = "a b c d" -split {$_ -like ' '},-8
+            $res.count | Should -Be 4
+            $res[0] | Should -Be "a"
+            $res[1] | Should -Be "b"
+            $res[2] | Should -Be "c"
+            $res[3] | Should -Be "d"
+
+            $res = " " -split {$_ -like ' '},-4
+            $res.count | Should -Be 2
+            $res[0] | Should -Be ""
+            $res[1] | Should -Be ""
+
+            $res = "folder/path/to/file" -split {$_ -like '/'}, -2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "folder/path/to"
+            $res[1] | Should -Be "file"
+        }
+
+        It "Binary split operator can work with regex expression" {
+            $res = "a2b3c4d" -split '\d+',2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "a"
+            $res[1] | Should -Be "b3c4d"
+
+            $res = "a2b3c4d" -split '\d+',-2
+            $res.count | Should -Be 2
+            $res[0] | Should -Be "a2b3c"
+            $res[1] | Should -Be "d"
         }
 
         It "Binary split operator can works with freeform delimiter" {

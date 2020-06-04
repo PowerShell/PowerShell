@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-set-strictmode -v 2
+Set-StrictMode -v 2
 
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
@@ -262,6 +262,56 @@ Describe 'assignment statement parsing' -Tags "CI" {
     ShouldBeParseError '$a,$b += 1,2' InvalidLeftHandSide 0
 }
 
+Describe 'null coalescing assignment statement parsing' -Tag 'CI' {
+    ShouldBeParseError '1 ??= 1' InvalidLeftHandSide 0
+    ShouldBeParseError '@() ??= 1' InvalidLeftHandSide 0
+    ShouldBeParseError '@{} ??= 1' InvalidLeftHandSide 0
+    ShouldBeParseError '1..2 ??= 1' InvalidLeftHandSide 0
+    ShouldBeParseError '[int] ??= 1' InvalidLeftHandSide 0
+    ShouldBeParseError '$cricket ?= $soccer' ExpectedValueExpression,InvalidLeftHandSide 10,0
+}
+
+Describe 'null coalescing statement parsing' -Tag "CI" {
+    ShouldBeParseError '$x??=' ExpectedValueExpression 5
+    ShouldBeParseError '$x ??Get-Thing' ExpectedValueExpression,UnexpectedToken 5,5
+    ShouldBeParseError '$??=$false' ExpectedValueExpression,InvalidLeftHandSide 3,0
+    ShouldBeParseError '$hello ??? $what' ExpectedValueExpression,MissingColonInTernaryExpression 9,17
+}
+
+Describe 'null conditional member access statement parsing' -Tag 'CI' {
+    BeforeAll {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSNullConditionalOperators')
+
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSNullConditionalOperators' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
+    # We need to add this check as parsing on script block is done before an `It` is called.
+    if (-not $skipTest) {
+        ShouldBeParseError '[datetime]?::now' ExpectedValueExpression, UnexpectedToken 11, 11
+        ShouldBeParseError '$x ?.name' ExpectedValueExpression, UnexpectedToken 4, 4
+        ShouldBeParseError 'Get-Date ?.ToString()' ExpectedExpression 20
+        ShouldBeParseError '${x}?.' MissingPropertyName 6
+        ShouldBeParseError '${x}?.name = "value"' InvalidLeftHandSide 0
+
+        ShouldBeParseError '[datetime]?[0]' MissingTypename, ExpectedValueExpression, UnexpectedToken 12, 11, 11
+        ShouldBeParseError '${x} ?[1]' MissingTypename, ExpectedValueExpression, UnexpectedToken 7, 6, 6
+        ShouldBeParseError '${x}?[]' MissingArrayIndexExpression 6
+        ShouldBeParseError '${x}?[-]' MissingExpressionAfterOperator 7
+        ShouldBeParseError '${x}?[             ]' MissingArrayIndexExpression 6
+        ShouldBeParseError '${x}?[0] = 1' InvalidLeftHandSide 0
+    }
+}
+
 Describe 'splatting parsing' -Tags "CI" {
     ShouldBeParseError '@a' SplattingNotPermitted 0
     ShouldBeParseError 'foreach (@a in $b) {}' SplattingNotPermitted 9
@@ -270,7 +320,9 @@ Describe 'splatting parsing' -Tags "CI" {
 }
 
 Describe 'Pipes parsing' -Tags "CI" {
+    ShouldBeParseError '|gps' EmptyPipeElement 0
     ShouldBeParseError 'gps|' EmptyPipeElement 4
+    ShouldBeParseError 'gps| |foreach name' EmptyPipeElement 4
     ShouldBeParseError '1|1' ExpressionsMustBeFirstInPipeline 2
     ShouldBeParseError '$a=' ExpectedValueExpression 3
 }
@@ -310,4 +362,120 @@ Describe 'Unicode escape sequence parsing' -Tag "CI" {
     ShouldBeParseError '"`u{1' InvalidUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 5,0
     ShouldBeParseError '"`u{123456' MissingUnicodeEscapeSequenceTerminator,TerminatorExpectedAtEndOfString 10,0
     ShouldBeParseError '"`u{1234567' TooManyDigitsInUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 10,0
+}
+
+Describe "Ternary Operator parsing" -Tags CI {
+    BeforeAll {
+        $testCases_basic = @(
+            @{ Script = '$true?2:3'; TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+            @{ Script = '$false?';   TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+            @{ Script = '$:abc';     TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+            @{ Script = '$env:abc';  TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+            @{ Script = '$env:123';  TokenKind = [System.Management.Automation.Language.TokenKind]::Variable; }
+            @{ Script = 'a?2:2';     TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+            @{ Script = '1?2:3';     TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+            @{ Script = 'a?';        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+            @{ Script = 'a?b';       TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+            @{ Script = '1?';        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+            @{ Script = '?2:3';      TokenKind = [System.Management.Automation.Language.TokenKind]::Generic;  }
+        )
+
+        $testCases_incomplete = @(
+            @{ Script = '$true ?';     ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+            @{ Script = '$true ? 3';   ErrorId = "MissingColonInTernaryExpression"; AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+            @{ Script = '$true ? 3 :'; ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.TernaryExpressionAst] }
+            @{ Script = "`$true`t?";     ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+            @{ Script = "`$true`t?`t3";   ErrorId = "MissingColonInTernaryExpression"; AstType = [System.Management.Automation.Language.ErrorExpressionAst] }
+            @{ Script = "`$true`t?`t3`t:"; ErrorId = "ExpectedValueExpression";         AstType = [System.Management.Automation.Language.TernaryExpressionAst] }
+        )
+    }
+
+    It "Question-mark and colon parsed correctly in <Script> when not in ternary expression context" -TestCases $testCases_basic {
+        param($Script, $TokenKind)
+
+        $tks = $null
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+
+        $tks[0].Kind | Should -BeExactly $TokenKind
+        $tks[0].Text | Should -BeExactly $Script
+
+        if ($TokenKind -eq "Variable") {
+            $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType System.Management.Automation.Language.VariableExpressionAst
+            $result.EndBlock.Statements[0].PipelineElements[0].Expression.Extent.Text | Should -BeExactly $Script
+        } else {
+            $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0] | Should -BeOfType System.Management.Automation.Language.StringConstantExpressionAst
+            $result.EndBlock.Statements[0].PipelineElements[0].CommandElements[0].Extent.Text | Should -BeExactly $Script
+        }
+    }
+
+    It "Question-mark and colon can be used as command names" {
+        function a?b:c { 'a?b:c' }
+        function 2?3:4 { '2?3:4' }
+
+        a?b:c | Should -BeExactly 'a?b:c'
+        2?3:4 | Should -BeExactly '2?3:4'
+    }
+
+    It "Incomplete ternary expression <Script> should generate correct error" -TestCases $testCases_incomplete {
+        param($Script, $ErrorId, $AstType)
+
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$ers)
+
+        $ers.Count | Should -Be 1
+        $ers.IncompleteInput | Should -BeTrue
+        $ers.ErrorId | Should -BeExactly $ErrorId
+
+        $result.EndBlock.Statements[0].PipelineElements[0].Expression | Should -BeOfType $AstType
+    }
+
+    It "Generate ternary AST when operands are missing - '`$true ? :'" {
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput('$true ? :', [ref]$null, [ref]$ers)
+        $ers.Count | Should -Be 2
+
+        $ers[0].IncompleteInput | Should -BeFalse
+        $ers[0].ErrorId | Should -BeExactly 'ExpectedValueExpression'
+        $ers[1].IncompleteInput | Should -BeTrue
+        $ers[1].ErrorId | Should -BeExactly 'ExpectedValueExpression'
+
+        $expr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
+        $expr | Should -BeOfType System.Management.Automation.Language.TernaryExpressionAst
+        $expr.IfTrue | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
+        $expr.IfFalse | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
+    }
+
+    It "Generate ternary AST when operands are missing - '`$true ? : 3'" {
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput('$true ? : 3', [ref]$null, [ref]$ers)
+        $ers.Count | Should -Be 1
+
+        $ers.IncompleteInput | Should -BeFalse
+        $ers.ErrorId | Should -BeExactly "ExpectedValueExpression"
+        $expr = $result.EndBlock.Statements[0].PipelineElements[0].Expression
+        $expr | Should -BeOfType System.Management.Automation.Language.TernaryExpressionAst
+        $expr.IfTrue | Should -BeOfType System.Management.Automation.Language.ErrorExpressionAst
+        $expr.IfFalse | Should -BeOfType System.Management.Automation.Language.ConstantExpressionAst
+    }
+}
+
+Describe "ParserError type tests" -Tag CI {
+    # This test was added because there use to be a hardcoded newline in the ToString() method of
+    # the ParseError class. This makes sure the proper newlines are used.
+    It "Should use consistant newline depending on OS" {
+        $ers = $null
+        [System.Management.Automation.Language.Parser]::ParseInput('$x =', [ref]$null, [ref]$ers) | Out-Null
+        $measureResult = $ers[0].ToString() -split [System.Environment]::NewLine | Measure-Object
+
+        # We expect the string to have 4 lines. That means that if we split by NewLine for that platform,
+        # We should have 4 as the count.
+        $measureResult.Count | Should -BeExactly 4
+
+        # Just checking the above is not enough. We should also make sure that on non-Windows, there are no
+        # `r`n
+        if (!$IsWindows) {
+            $measureResult = $ers[0].ToString() | Should -Not -Contain "`r`n"
+        }
+    }
 }

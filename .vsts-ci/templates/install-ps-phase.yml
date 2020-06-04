@@ -1,5 +1,5 @@
 parameters:
-  pool: 'Hosted Ubuntu 1604'
+  pool: 'ubuntu-latest'
   jobName: 'none'
   scriptName: ''
   container: ''
@@ -16,14 +16,14 @@ jobs:
     container: ${{ parameters.container }}
 
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: ${{ parameters.jobName }}
 
   steps:
-  - powershell: |
+  - pwsh: |
       Get-ChildItem -Path env:
-    displayName: Capture environment
+    displayName: Capture Environment
     condition: succeededOrFailed()
 
   - powershell:  Write-Host "##vso[build.updatebuildnumber]$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhmmss"))"
@@ -37,6 +37,6 @@ jobs:
     continueOnError: ${{ parameters.continueOnError }}
 
   - ${{ if ne(parameters.verification, '') }}:
-    - powershell: ${{ parameters.verification }}
+    - pwsh: ${{ parameters.verification }}
       displayName: Verification
       continueOnError: ${{ parameters.continueOnError }}

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 using System;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.Routing.Constraints;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace mvc
 {
@@ -25,11 +26,15 @@ namespace mvc
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(options =>
+                {
+                    options.EnableEndpointRouting = false;
+                })
+                .AddNewtonsoftJson();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -47,37 +52,37 @@ namespace mvc
                 routes.MapRoute(
                     name: "resume_bytes",
                     template: "Resume/Bytes/{NumberBytes?}",
-                    defaults: new {controller = "Resume", action = "Bytes"});
+                    defaults: new { controller = "Resume", action = "Bytes" });
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
                 routes.MapRoute(
                     name: "redirect",
                     template: "Redirect/{count?}",
-                    defaults: new {controller = "Redirect", action = "Index"});
+                    defaults: new { controller = "Redirect", action = "Index" });
                 routes.MapRoute(
                     name: "delay",
                     template: "Delay/{seconds?}",
-                    defaults: new {controller = "Delay", action = "Index"});
+                    defaults: new { controller = "Delay", action = "Index" });
                 routes.MapRoute(
                     name: "post",
                     template: "Post",
-                    defaults: new {controller = "Get", action = "Index"},
+                    defaults: new { controller = "Get", action = "Index" },
                     constraints: new RouteValueDictionary(new { httpMethod = new HttpMethodRouteConstraint("POST") }));
                 routes.MapRoute(
                     name: "put",
                     template: "Put",
-                    defaults: new {controller = "Get", action = "Index"},
+                    defaults: new { controller = "Get", action = "Index" },
                     constraints: new RouteValueDictionary(new { httpMethod = new HttpMethodRouteConstraint("PUT") }));
                 routes.MapRoute(
                     name: "patch",
                     template: "Patch",
-                    defaults: new {controller = "Get", action = "Index"},
+                    defaults: new { controller = "Get", action = "Index" },
                     constraints: new RouteValueDictionary(new { httpMethod = new HttpMethodRouteConstraint("PATCH") }));
                 routes.MapRoute(
                     name: "delete",
                     template: "Delete",
-                    defaults: new {controller = "Get", action = "Index"},
+                    defaults: new { controller = "Get", action = "Index" },
                     constraints: new RouteValueDictionary(new { httpMethod = new HttpMethodRouteConstraint("DELETE") }));
                 routes.MapRoute(
                     name: "retry",

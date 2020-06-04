@@ -4,13 +4,14 @@
 # First, let's start with areas with no filters or paths
 
 # Area: Performance
-# @adityapatwardhan
+# @adityapatwardhan 
 
 # Area: Portability
-# @BrucePay @JamesWTruher
+# @JamesWTruher
 
 # Area: Security
 # @TravisEz13 @PaulHigin
+src/System.Management.Automation/security/wldpNativeMethods.cs @TravisEz13 @PaulHigin
 
 # Area: Documentation
 .github/    @joeyaiello @TravisEz13
@@ -19,7 +20,7 @@
 # @JamesWTruher @TravisEz13 @adityapatwardhan
 
 # Area: Cmdlets Core
-# @JamesWTruher @SteveL-MSFT @anmenaga @chunqingchen
+# @JamesWTruher @SteveL-MSFT @anmenaga
 
 # Now, areas that should have paths or filters, although we might not have them defined
 # According to the docs, order here must be by precedence of the filter, with later rules overwritting
@@ -32,7 +33,7 @@ src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @adityapatwardhan
 src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @PaulHigin
 
 # Area: Console
-src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga
+src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @anmenaga @TylerLeonhardt
 
 # Area: Demos
 demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar
@@ -41,29 +42,26 @@ demos/                                             @joeyaiello @SteveL-MSFT @Hem
 src/System.Management.Automation/DscSupport        @TravisEz13 @SteveL-MSFT
 
 # Area: Engine
-src/System.Management.Automation/engine            @daxian-dbw @BrucePay
+# src/System.Management.Automation/engine            @daxian-dbw
 
 # Area: Debugging
 # Must be below engine to override
-src/System.Management.Automation/engine/debugger/  @BrucePay @PaulHigin
+src/System.Management.Automation/engine/debugger/  @PaulHigin
 
 # Area: Help
-src/System.Management.Automation/help              @Francisco-Gamino @adityapatwardhan
+src/System.Management.Automation/help              @adityapatwardhan
 
 # Area: Intellisense
-# @daxian-dbw @charub
+# @daxian-dbw
 
 # Area: Language
-src/System.Management.Automation/engine/parser     @daxian-dbw @BrucePay
+src/System.Management.Automation/engine/parser     @daxian-dbw
 
 # Area: Providers
-src/System.Management.Automation/namespaces        @BrucePay @anmenaga
+src/System.Management.Automation/namespaces        @anmenaga
 
 # Area: Remoting
-src/System.Management.Automation/engine/remoting    @mirichmo @PaulHigin
-
-# Area: Side-By-Side
-# @mirichmo @charub
+src/System.Management.Automation/engine/remoting    @PaulHigin
 
 # Areas: Build
 # Must be last

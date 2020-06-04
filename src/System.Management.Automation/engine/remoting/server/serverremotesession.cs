@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.IO;
@@ -89,6 +89,9 @@ namespace System.Management.Automation.Remoting
         // Creates a pushed remote runspace session created with this configuration name.
         private string _configurationName;
 
+        // Specifies an initial location of the powershell session.
+        private string _initialLocation;
+
         #region Events
         /// <summary>
         /// Raised when session is closed.
@@ -129,12 +132,8 @@ namespace System.Management.Automation.Remoting
             _senderInfo = senderInfo;
             _configProviderId = configurationProviderId;
             _initParameters = initializationParameters;
-#if !UNIX
             _cryptoHelper = (PSRemotingCryptoHelperServer)transportManager.CryptoHelper;
             _cryptoHelper.Session = this;
-#else
-            _cryptoHelper = null;
-#endif
 
             Context = new ServerRemoteSessionContext();
             SessionDataStructureHandler = new ServerRemoteSessionDSHandlerImpl(this, transportManager);
@@ -176,6 +175,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         /// <param name="transportManager"></param>
         /// <param name="configurationName">Optional configuration endpoint name for OutOfProc sessions.</param>
+        /// <param name="initialLocation">Optional configuration initial location of the powershell session.</param>
         /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// InitialSessionState provider with <paramref name="configurationProviderId"/> does
@@ -188,13 +188,16 @@ namespace System.Management.Automation.Remoting
                     ...
                   </InitializationParameters>
         */
-        internal static ServerRemoteSession CreateServerRemoteSession(PSSenderInfo senderInfo,
+        internal static ServerRemoteSession CreateServerRemoteSession(
+            PSSenderInfo senderInfo,
             string configurationProviderId,
             string initializationParameters,
             AbstractServerSessionTransportManager transportManager,
-            string configurationName = null)
+            string configurationName = null,
+            string initialLocation = null)
         {
-            Dbg.Assert((senderInfo != null) & (senderInfo.UserInfo != null),
+            Dbg.Assert(
+                (senderInfo != null) && (senderInfo.UserInfo != null),
                 "senderInfo and userInfo cannot be null.");
 
             s_trace.WriteLine("Finding InitialSessionState provider for id : {0}", configurationProviderId);
@@ -207,12 +210,14 @@ namespace System.Management.Automation.Remoting
             string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
             int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
             senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
-            ServerRemoteSession result = new ServerRemoteSession(senderInfo,
+            ServerRemoteSession result = new ServerRemoteSession(
+                senderInfo,
                 configurationProviderId,
                 initializationParameters,
                 transportManager)
             {
-                _configurationName = configurationName
+                _configurationName = configurationName,
+                _initialLocation = initialLocation
             };
 
             // start state machine.
@@ -229,14 +234,22 @@ namespace System.Management.Automation.Remoting
         /// <param name="initializationScriptForOutOfProcessRunspace"></param>
         /// <param name="transportManager"></param>
         /// <param name="configurationName"></param>
+        /// <param name="initialLocation"></param>
         /// <returns></returns>
-        internal static ServerRemoteSession CreateServerRemoteSession(PSSenderInfo senderInfo,
+        internal static ServerRemoteSession CreateServerRemoteSession(
+            PSSenderInfo senderInfo,
             string initializationScriptForOutOfProcessRunspace,
             AbstractServerSessionTransportManager transportManager,
-            string configurationName)
+            string configurationName,
+            string initialLocation)
         {
-            ServerRemoteSession result = CreateServerRemoteSession(senderInfo,
-                "Microsoft.PowerShell", string.Empty, transportManager, configurationName);
+            ServerRemoteSession result = CreateServerRemoteSession(
+                senderInfo,
+                "Microsoft.PowerShell",
+                string.Empty,
+                transportManager,
+                configurationName: configurationName,
+                initialLocation: initialLocation);
             result._initScriptForOutOfProcRS = initializationScriptForOutOfProcessRunspace;
             return result;
         }
@@ -285,14 +298,14 @@ namespace System.Management.Automation.Remoting
         {
             if (dataEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataEventArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = dataEventArg.ReceivedData;
 
             if (rcvdData == null)
             {
-                throw PSTraceSource.NewArgumentException("dataEventArg");
+                throw PSTraceSource.NewArgumentException(nameof(dataEventArg));
             }
 
             RemotingDestination destination = rcvdData.Destination;
@@ -621,9 +634,9 @@ namespace System.Management.Automation.Remoting
             {
                 RunServerNegotiationAlgorithm(clientCapability, true);
             }
-            catch (PSRemotingDataStructureException ex)
+            catch (PSRemotingDataStructureException)
             {
-                throw ex;
+                throw;
             }
 
             // validate client connect_runspacepool request
@@ -663,9 +676,9 @@ namespace System.Management.Automation.Remoting
             }
 
             // we currently dont support adjusting runspace count on a connect operation.
-            // there is a potential race here where in the runspace pool driver is still yet to process a queued
+            // there is a potential conflict here where in the runspace pool driver is still yet to process a queued
             // setMax or setMinrunspaces request.
-            // TODO: resolve this race.. probably by letting the runspace pool consume all messages before we execute this.
+            // TODO: resolve this.. probably by letting the runspace pool consume all messages before we execute this.
             if (clientRequestedRunspaceCount
                 && (_runspacePoolDriver.RunspacePool.GetMaxRunspaces() != clientRequestedMaxRunspaces)
                 && (_runspacePoolDriver.RunspacePool.GetMinRunspaces() != clientRequestedMinRunspaces))
@@ -731,7 +744,7 @@ namespace System.Management.Automation.Remoting
         {
             if (createRunspaceEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("createRunspaceEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(createRunspaceEventArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = createRunspaceEventArg.ReceivedData;
@@ -856,9 +869,7 @@ namespace System.Management.Automation.Remoting
             int minRunspaces = RemotingDecoder.GetMinRunspaces(rcvdData.Data);
             int maxRunspaces = RemotingDecoder.GetMaxRunspaces(rcvdData.Data);
             PSThreadOptions threadOptions = RemotingDecoder.GetThreadOptions(rcvdData.Data);
-#if !CORECLR // No ApartmentState In CoreCLR
             ApartmentState apartmentState = RemotingDecoder.GetApartmentState(rcvdData.Data);
-#endif
             HostInfo hostInfo = RemotingDecoder.GetHostInfo(rcvdData.Data);
 
             if (_runspacePoolDriver != null)
@@ -878,9 +889,7 @@ namespace System.Management.Automation.Remoting
                 minRunspaces,
                 maxRunspaces,
                 threadOptions,
-#if !CORECLR // No ApartmentState In CoreCLR
                 apartmentState,
-#endif
                 hostInfo,
                 rsSessionStateToUse,
                 applicationPrivateData,
@@ -889,7 +898,8 @@ namespace System.Management.Automation.Remoting
                 isAdministrator,
                 Context.ServerCapability,
                 psClientVersion,
-                _configurationName);
+                _configurationName,
+                _initialLocation);
 
             // attach the necessary event handlers and start the driver.
             Interlocked.Exchange(ref _runspacePoolDriver, tmpDriver);
@@ -912,7 +922,7 @@ namespace System.Management.Automation.Remoting
         {
             if (negotiationEventArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("negotiationEventArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(negotiationEventArg));
             }
 
             try

@@ -1,7 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -9,10 +10,8 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Internal.Host;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
-using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.RegularExpressions;
 
 using Dbg = System.Management.Automation.Diagnostics;
@@ -21,73 +20,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
-    #region SpecialCharacters
-    /// <summary>
-    /// Define the various unicode special characters that
-    /// the parser has to deal with.
-    /// </summary>
-    internal static class SpecialCharacters
-    {
-        public const char enDash = (char)0x2013;
-        public const char emDash = (char)0x2014;
-        public const char horizontalBar = (char)0x2015;
-
-        public const char quoteSingleLeft = (char)0x2018;   // left single quotation mark
-        public const char quoteSingleRight = (char)0x2019;  // right single quotation mark
-        public const char quoteSingleBase = (char)0x201a;   // single low-9 quotation mark
-        public const char quoteReversed = (char)0x201b;     // single high-reversed-9 quotation mark
-        public const char quoteDoubleLeft = (char)0x201c;   // left double quotation mark
-        public const char quoteDoubleRight = (char)0x201d;  // right double quotation mark
-        public const char quoteLowDoubleLeft = (char)0x201E;// low double left quote used in german.
-
-        public static bool IsDash(char c)
-        {
-            return (c == enDash || c == emDash || c == horizontalBar || c == '-');
-        }
-
-        public static bool IsSingleQuote(char c)
-        {
-            return (c == quoteSingleLeft || c == quoteSingleRight || c == quoteSingleBase ||
-                c == quoteReversed || c == '\'');
-        }
-
-        public static bool IsDoubleQuote(char c)
-        {
-            return (c == '"' || c == quoteDoubleLeft || c == quoteDoubleRight || c == quoteLowDoubleLeft);
-        }
-
-        public static bool IsQuote(char c)
-        {
-            return (IsSingleQuote(c) || IsDoubleQuote(c));
-        }
-
-        public static bool IsDelimiter(char c, char delimiter)
-        {
-            if (delimiter == '"') return IsDoubleQuote(c);
-            if (delimiter == '\'') return IsSingleQuote(c);
-            return (c == delimiter);
-        }
-
-        public static bool IsCurlyBracket(char c)
-        {
-            return (c == '{' || c == '}');
-        }
-        /// <summary>
-        /// Canonicalize the quote character - map all of the aliases for " or '
-        /// into their ascii equivalent.
-        /// </summary>
-        /// <param name="c">The character to map.</param>
-        /// <returns>The mapped character.</returns>
-        public static char AsQuote(char c)
-        {
-            if (IsSingleQuote(c)) return '\'';
-            if (IsDoubleQuote(c)) return '"';
-            return (c);
-        }
-    };
-
-    #endregion SpecialChars
-
     #region Flow Control Exceptions
 
     /// <summary>
@@ -346,6 +278,7 @@ namespace System.Management.Automation
 
         private const int _MinCache = -100;
         private const int _MaxCache = 1000;
+
         private static readonly object[] s_integerCache = new object[_MaxCache - _MinCache];
         private static readonly string[] s_chars = new string[255];
         internal static readonly object _TrueObject = (object)true;
@@ -584,7 +517,7 @@ namespace System.Management.Automation
             return SplitOperatorImpl(context, errorPosition, lval, rval, SplitImplOptions.None, ignoreCase);
         }
 
-        private static object SplitOperatorImpl(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, SplitImplOptions implOptions, bool ignoreCase)
+        private static IReadOnlyList<string> SplitOperatorImpl(ExecutionContext context, IScriptExtent errorPosition, object lval, object rval, SplitImplOptions implOptions, bool ignoreCase)
         {
             IEnumerable<string> content = enumerateContent(context, errorPosition, implOptions, lval);
 
@@ -634,84 +567,167 @@ namespace System.Management.Automation
                 options |= SplitOptions.IgnoreCase;
             }
 
-            if (predicate != null)
+            if (predicate == null)
+            {
+                return SplitWithPattern(context, errorPosition, content, separatorPattern, limit, options);
+            }
+            else if (limit >= 0)
             {
                 return SplitWithPredicate(context, errorPosition, content, predicate, limit);
             }
             else
             {
-                return SplitWithPattern(context, errorPosition, content, separatorPattern, limit, options);
+                return NegativeSplitWithPredicate(context, errorPosition, content, predicate, limit);
             }
         }
 
-        private static object SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
+        private static IReadOnlyList<string> NegativeSplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
         {
-            List<string> results = new List<string>();
+            var results = new List<string>();
+
+            if (limit == -1)
+            {
+                // If the user just wants 1 string
+                // then just return the content
+                return new List<string>(content);
+            }
+
             foreach (string item in content)
             {
-                List<string> split = new List<string>();
+                var split = new List<string>();
 
-                if (limit == 1)
-                {
-                    // Don't bother with looking for any delimiters,
-                    // just return the original string.
-                    results.Add(item);
-                    continue;
-                }
+                // Used to traverse through the item
+                int cursor = item.Length - 1;
 
-                StringBuilder buf = new StringBuilder();
-                for (int strIndex = 0; strIndex < item.Length; strIndex++)
+                int subStringLength = 0;
+
+                for (int charCount = 0; charCount < item.Length; charCount++)
                 {
-                    object isDelimChar = predicate.DoInvokeReturnAsIs(
+                    // Evaluate the predicate using the character at cursor.
+                    object predicateResult = predicate.DoInvokeReturnAsIs(
                         useLocalScope: true,
                         errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
-                        dollarUnder: CharToString(item[strIndex]),
+                        dollarUnder: CharToString(item[cursor]),
                         input: AutomationNull.Value,
                         scriptThis: AutomationNull.Value,
-                        args: new object[] { item, strIndex });
-                    if (LanguagePrimitives.IsTrue(isDelimChar))
+                        args: new object[] { item, cursor });
+
+                    if (!LanguagePrimitives.IsTrue(predicateResult))
                     {
-                        split.Add(buf.ToString());
-                        buf = new StringBuilder();
-
-                        if (limit > 0 && split.Count >= (limit - 1))
-                        {
-                            // We're one item below the limit. If
-                            // we have any string left, go ahead
-                            // and add it as the last item, otherwise
-                            // add an empty string if there was
-                            // a delimiter at the end.
-                            if ((strIndex + 1) < item.Length)
-                            {
-                                split.Add(item.Substring(strIndex + 1));
-                            }
-                            else
-                            {
-                                split.Add(string.Empty);
-                            }
-
-                            break;
-                        }
-
-                        // If this delimiter is at the end of the string,
-                        // add an empty string to denote the item "after"
-                        // it.
-                        if (strIndex == (item.Length - 1))
-                        {
-                            split.Add(string.Empty);
-                        }
+                        subStringLength++;
+                        cursor -= 1;
+                        continue;
                     }
-                    else
+
+                    split.Add(item.Substring(cursor + 1, subStringLength));
+
+                    subStringLength = 0;
+
+                    cursor -= 1;
+
+                    if (System.Math.Abs(limit) == (split.Count + 1))
                     {
-                        buf.Append(item[strIndex]);
+                        break;
                     }
                 }
 
-                // Add any remainder, if we're under the limit.
-                if (buf.Length > 0 &&
-                    (limit <= 0 || split.Count < limit))
+                if (cursor == -1)
                 {
-                    split.Add(buf.ToString());
+                    // Used when the limit is negative
+                    // and the cursor was allowed to go
+                    // all the way to the start of the
+                    // string.
+                    split.Add(item.Substring(0, subStringLength));
+                }
+                else
+                {
+                    // Used to get the rest of the string
+                    // when using a negative limit and
+                    // the cursor doesn't reach the end
+                    // of the string.
+                    split.Add(item.Substring(0, cursor + 1));
+                }
+
+                split.Reverse();
+
+                results.AddRange(split);
+            }
+
+            return results.ToArray();
+        }
+
+        private static IReadOnlyList<string> SplitWithPredicate(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, ScriptBlock predicate, int limit)
+        {
+            var results = new List<string>();
+
+            if (limit == 1)
+            {
+                // If the user just wants 1 string
+                // then just return the content
+                return new List<string>(content);
+            }
+
+            foreach (string item in content)
+            {
+                var split = new List<string>();
+
+                // Used to traverse through the item
+                int cursor = 0;
+
+                // This is used to calculate how much to split from item.
+                int subStringLength = 0;
+
+                for (int charCount = 0; charCount < item.Length; charCount++)
+                {
+                    // Evaluate the predicate using the character at cursor.
+                    object predicateResult = predicate.DoInvokeReturnAsIs(
+                        useLocalScope: true,
+                        errorHandlingBehavior: ScriptBlock.ErrorHandlingBehavior.WriteToExternalErrorPipe,
+                        dollarUnder: CharToString(item[cursor]),
+                        input: AutomationNull.Value,
+                        scriptThis: AutomationNull.Value,
+                        args: new object[] { item, cursor });
+
+                    // If the current character is not a delimiter
+                    // then it must be included into a substring.
+                    if (!LanguagePrimitives.IsTrue(predicateResult))
+                    {
+                        subStringLength++;
+
+                        cursor += 1;
+
+                        continue;
+                    }
+
+                    // Else, if the character is a delimiter
+                    // then add a substring to the split list.
+                    split.Add(item.Substring(cursor - subStringLength, subStringLength));
+
+                    subStringLength = 0;
+
+                    cursor += 1;
+
+                    if (limit == (split.Count + 1))
+                    {
+                        break;
+                    }
+                }
+
+                if (cursor == item.Length)
+                {
+                    // Used to get the rest of the string
+                    // when the limit is not negative and
+                    // the cursor is allowed to make it to
+                    // the end of the string.
+                    split.Add(item.Substring(cursor - subStringLength, subStringLength));
+                }
+                else
+                {
+                    // Used to get the rest of the string
+                    // when the limit is not negative and
+                    // the cursor is not at the end of the
+                    // string.
+                    split.Add(item.Substring(cursor, item.Length - cursor));
                 }
 
                 results.AddRange(split);
@@ -720,7 +736,7 @@ namespace System.Management.Automation
             return results.ToArray();
         }
 
-        private static object SplitWithPattern(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, string separatorPattern, int limit, SplitOptions options)
+        private static IReadOnlyList<string> SplitWithPattern(ExecutionContext context, IScriptExtent errorPosition, IEnumerable<string> content, string separatorPattern, int limit, SplitOptions options)
         {
             // Default to Regex matching if no match specified.
             if ((options & SplitOptions.SimpleMatch) == 0 &&
@@ -743,20 +759,24 @@ namespace System.Management.Automation
                 separatorPattern = Regex.Escape(separatorPattern);
             }
 
-            if (limit < 0)
+            RegexOptions regexOptions = parseRegexOptions(options);
+
+            int calculatedLimit = limit;
+
+            // If the limit is negative then set Regex to read from right to left
+            if (calculatedLimit < 0)
             {
-                // Regex only allows 0 to signify "no limit", whereas
-                // we allow any integer <= 0.
-                limit = 0;
+                regexOptions |= RegexOptions.RightToLeft;
+                calculatedLimit *= -1;
             }
 
-            RegexOptions regexOptions = parseRegexOptions(options);
             Regex regex = NewRegex(separatorPattern, regexOptions);
 
-            List<string> results = new List<string>();
+            var results = new List<string>();
+
             foreach (string item in content)
             {
-                string[] split = regex.Split(item, limit, 0);
+                string[] split = regex.Split(item, calculatedLimit);
                 results.AddRange(split);
             }
 
@@ -908,7 +928,7 @@ namespace System.Management.Automation
                 {
                     // only allow 1 or 2 arguments to -replace
                     throw InterpreterError.NewInterpreterException(rval, typeof(RuntimeException), errorPosition,
-                        "BadReplaceArgument", ParserStrings.BadReplaceArgument, ignoreCase ? "-ireplace" : "-replace", rList.Count);
+                        "BadReplaceArgument", ParserStrings.BadReplaceArgument, errorPosition.Text, rList.Count);
                 }
 
                 if (rList.Count > 0)
@@ -949,7 +969,15 @@ namespace System.Management.Automation
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
             {
-                string lvalString = lval?.ToString() ?? string.Empty;
+                string lvalString;
+                if (ExperimentalFeature.IsEnabled("PSCultureInvariantReplaceOperator"))
+                {
+                    lvalString = PSObject.ToStringParser(context, lval) ?? string.Empty;
+                }
+                else
+                {
+                    lvalString = lval?.ToString() ?? string.Empty;
+                }
 
                 return ReplaceOperatorImpl(context, lvalString, rr, substitute);
             }
@@ -1150,13 +1178,10 @@ namespace System.Management.Automation
 
             // if passed an explicit regex, just use it
             // otherwise compile the expression.
-            Regex r = PSObject.Base(rval) as Regex;
-            if (r == null)
-            {
-                // In this situation, creation of Regex should not fail. We are not
-                // processing ArgumentException in this case.
-                r = NewRegex(PSObject.ToStringParser(context, rval), reOptions);
-            }
+            // In this situation, creation of Regex should not fail. We are not
+            // processing ArgumentException in this case.
+            Regex r = PSObject.Base(rval) as Regex
+                ?? NewRegex(PSObject.ToStringParser(context, rval), reOptions);
 
             IEnumerator list = LanguagePrimitives.GetEnumerator(lval);
             if (list == null)
@@ -1328,35 +1353,37 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Cache regular expressions...
+        /// Cache regular expressions.
         /// </summary>
         /// <param name="patternString">The string to find the pattern for.</param>
-        /// <param name="options">The options used to create the regex...</param>
-        /// <returns>A case-insensitive Regex...</returns>
+        /// <param name="options">The options used to create the regex.</param>
+        /// <returns>New or cached Regex.</returns>
         internal static Regex NewRegex(string patternString, RegexOptions options)
         {
-            if (options != RegexOptions.IgnoreCase)
-                return new Regex(patternString, options);
-
-            lock (s_regexCache)
+            var subordinateRegexCache = s_regexCache.GetOrAdd(options, s_subordinateRegexCacheCreationDelegate);
+            if (subordinateRegexCache.TryGetValue(patternString, out Regex result))
             {
-                Regex result;
-                if (s_regexCache.TryGetValue(patternString, out result))
+                return result;
+            }
+            else
+            {
+                if (subordinateRegexCache.Count > MaxRegexCache)
                 {
-                    return result;
+                    // TODO: it would be useful to get a notice (in telemetry?) if the cache is full.
+                    subordinateRegexCache.Clear();
                 }
-                else
-                {
-                    if (s_regexCache.Count > MaxRegexCache)
-                        s_regexCache.Clear();
-                    Regex re = new Regex(patternString, RegexOptions.IgnoreCase);
-                    s_regexCache.Add(patternString, re);
-                    return re;
-                }
+
+                var regex = new Regex(patternString, options);
+                return subordinateRegexCache.GetOrAdd(patternString, regex);
             }
         }
 
-        private static Dictionary<string, Regex> s_regexCache = new Dictionary<string, Regex>();
+        private static readonly ConcurrentDictionary<RegexOptions, ConcurrentDictionary<string, Regex>> s_regexCache =
+            new ConcurrentDictionary<RegexOptions, ConcurrentDictionary<string, Regex>>();
+
+        private static readonly Func<RegexOptions, ConcurrentDictionary<string, Regex>> s_subordinateRegexCacheCreationDelegate =
+            key => new ConcurrentDictionary<string, Regex>(StringComparer.Ordinal);
+
         private const int MaxRegexCache = 1000;
 
         /// <summary>
@@ -1610,12 +1637,14 @@ namespace System.Management.Automation
     internal class RangeEnumerator : IEnumerator
     {
         private int _lowerBound;
+
         internal int LowerBound
         {
             get { return _lowerBound; }
         }
 
         private int _upperBound;
+
         internal int UpperBound
         {
             get { return _upperBound; }
@@ -1781,7 +1810,7 @@ namespace System.Management.Automation
         {
             // errToken may be null
             if (string.IsNullOrEmpty(resourceIdAndErrorId))
-                throw PSTraceSource.NewArgumentException("resourceIdAndErrorId");
+                throw PSTraceSource.NewArgumentException(nameof(resourceIdAndErrorId));
             // innerException may be null
             // args may be null or empty
 

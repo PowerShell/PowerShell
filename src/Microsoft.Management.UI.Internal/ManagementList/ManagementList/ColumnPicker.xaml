@@ -1,0 +1,210 @@
+<!--=================================================================
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+==================================================================-->
+
+<Window x:Uid="Window_1" x:Class="Microsoft.Management.UI.Internal.ColumnPicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:Microsoft.Management.UI.Internal"
+    xmlns:default="clr-namespace:"
+    xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+    Title="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_5}"
+    ShowInTaskbar="False"
+    KeyboardNavigation.IsTabStop="False"
+    WindowStartupLocation="CenterOwner"
+    AutomationProperties.AutomationId="ColumnPicker"
+    >
+    <Window.Resources>
+        <CollectionViewSource x:Name="SortedAvailableColumns" x:Key="SortedAvailableColumns">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="DataDescription.DisplayName"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+    <Window.Style>
+        <DynamicResource x:Uid="DynamicResource_1" ResourceKey="{ComponentResourceKey ResourceId=CPWindowStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+    </Window.Style>
+    <Grid x:Uid="Grid_1">
+        <Grid.RowDefinitions>
+            <RowDefinition x:Uid="RowDefinition_1"/>
+            <RowDefinition x:Uid="RowDefinition_2" Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid x:Uid="Grid_2" Grid.Row="0">
+            <Grid.Style>
+                <DynamicResource x:Uid="DynamicResource_2" ResourceKey="{ComponentResourceKey ResourceId=CPOuterGridStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition x:Uid="RowDefinition_3" Height="Auto"/>
+                <RowDefinition x:Uid="RowDefinition_4"/>
+                <RowDefinition x:Uid="RowDefinition_5" Height="Auto" MinHeight="40"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Uid="ColumnDefinition_1"/>
+                <ColumnDefinition x:Uid="ColumnDefinition_2" Width="Auto"/>
+                <ColumnDefinition x:Uid="ColumnDefinition_3"/>
+                <ColumnDefinition x:Uid="ColumnDefinition_4" Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Label x:Uid="NotSelectedLabel" Grid.Row="0" Grid.Column="0" Content="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_42}" Name="NotSelectedLabel">
+                <Label.Style>
+                    <DynamicResource x:Uid="DynamicResource_3" ResourceKey="{ComponentResourceKey ResourceId=CPNotSelectedListboxHeaderStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </Label.Style>
+            </Label>
+            <!-- This should be the single column filter list. -->
+            <ListBox x:Uid="PART_NotSelectedList" x:Name="PART_NotSelectedList" Grid.Row="1" Grid.Column="0"
+                     AutomationProperties.Name="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_AutomationPropertiesName_49}"
+                     MouseDoubleClick="NotSelectedList_MouseDoubleClick"
+                     SelectionChanged="ListSelectionChanged"
+                     TextSearch.TextPath="DataDescription.DisplayName"
+                     ItemsSource="{Binding Source={StaticResource SortedAvailableColumns}}"
+                     >
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:Uid="DataTemplate_1">
+                        <local:AutomationTextBlock x:Uid="local:ExtendedTextBlock_1" Text="{Binding Path=DataDescription.DisplayName}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.Style>
+                    <DynamicResource x:Uid="DynamicResource_4" ResourceKey="{ComponentResourceKey ResourceId=CPNotSelectedListboxStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </ListBox.Style>
+                <ListBox.ItemContainerStyle>
+                    <DynamicResource x:Uid="DynamicResource_5" ResourceKey="{ComponentResourceKey ResourceId=CPNotSelectedListboxItemStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+
+            <StackPanel x:Uid="StackPanel_1" Grid.Row="1" Grid.Column="1">
+                <StackPanel.Style>
+                    <DynamicResource x:Uid="DynamicResource_6" ResourceKey="{ComponentResourceKey ResourceId=CPAddRemoveStackPanelStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </StackPanel.Style>
+
+                <Button x:Uid="AddButton" Name="AddButton" Content="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_73}"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.Name="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_AutomationPropertiesName_75}"
+                        Click="AddButtonClick"
+                        ToolTip="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Tooltip_76}">
+                    <Button.Style>
+                        <DynamicResource x:Uid="DynamicResource_7" ResourceKey="{ComponentResourceKey ResourceId=CPAddButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                    </Button.Style>
+                </Button>
+                <Button x:Uid="RemoveButton" Name="RemoveButton" Content="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_84}"
+                        HorizontalAlignment="Stretch"
+                        AutomationProperties.Name="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_AutomationPropertiesName_86}"
+                        Click="RemoveButtonClick"
+                        ToolTip="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Tooltip_84}">
+                    <Button.Style>
+                        <DynamicResource x:Uid="DynamicResource_8" ResourceKey="{ComponentResourceKey ResourceId=CPRemoveButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+
+            <Label x:Uid="SelectedLabel" Grid.Row="0" Grid.Column="2" Name="SelectedLabel" Content="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_93}">
+                <Label.Style>
+                    <DynamicResource x:Uid="DynamicResource_9" ResourceKey="{ComponentResourceKey ResourceId=CPSelectedListboxHeaderStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </Label.Style>
+            </Label>
+            <ListBox x:Uid="PART_SelectedList" x:Name="PART_SelectedList" Grid.Row="1" Grid.Column="2"
+                     AutomationProperties.Name="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_AutomationPropertiesName_104}"
+                     MouseDoubleClick="SelectedList_MouseDoubleClick"
+                     SelectionChanged="ListSelectionChanged"
+                     TextSearch.TextPath="DataDescription.DisplayName"
+                     >
+                <ListBox.ItemTemplate>
+                    <DataTemplate x:Uid="DataTemplate_2">
+                        <!-- This is where you would put a style to color the item based on {Binding Path=Header.Required} -->
+                        <local:AutomationTextBlock x:Uid="local:ExtendedTextBlock_2" Text="{Binding Path=DataDescription.DisplayName}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.Style>
+                    <DynamicResource x:Uid="DynamicResource_10" ResourceKey="{ComponentResourceKey ResourceId=CPSelectedListboxStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </ListBox.Style>
+                <ListBox.ItemContainerStyle>
+                    <DynamicResource x:Uid="DynamicResource_11" ResourceKey="{ComponentResourceKey ResourceId=CPSelectedListboxItemStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </ListBox.ItemContainerStyle>
+            </ListBox>
+
+            <StackPanel x:Uid="StackPanel_2" Grid.Row="1" Grid.Column="3">
+                <StackPanel.Style>
+                    <DynamicResource x:Uid="DynamicResource_12" ResourceKey="{ComponentResourceKey ResourceId=CPUpDownStackPanelStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </StackPanel.Style>
+                <Button x:Uid="MoveUpButton" Name="MoveUpButton" Content="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_127}"
+                        HorizontalAlignment="Stretch"
+                        Click="MoveUpButtonClick">
+                    <Button.Style>
+                        <DynamicResource x:Uid="DynamicResource_13" ResourceKey="{ComponentResourceKey ResourceId=CPMoveUpButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                    </Button.Style>
+                </Button>
+                <Button x:Uid="MoveDownButton" Name="MoveDownButton" Content="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_134}"
+                        HorizontalAlignment="Stretch"
+                        Click="MoveDownButtonClick">
+                    <Button.Style>
+                        <DynamicResource x:Uid="DynamicResource_14" ResourceKey="{ComponentResourceKey ResourceId=CPMoveDownButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+
+            <local:AutomationTextBlock x:Uid="RequiredColumnText" x:Name="RequiredColumnText"
+                       Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2"
+                       Margin="5"
+                       Visibility="Hidden"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Left"
+                       Text="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Text_142}">
+                <TextBlock.Style>
+                    <DynamicResource x:Uid="DynamicResource_15" ResourceKey="{ComponentResourceKey ResourceId=CPWarningTextStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </TextBlock.Style>
+            </local:AutomationTextBlock>
+            <local:AutomationTextBlock x:Uid="LastColumnText" x:Name="LastColumnText"
+                       Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="4"
+                       Margin="5"
+                       Visibility="Hidden"
+                       TextWrapping="Wrap"
+                       HorizontalAlignment="Left"
+                       Text="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Text_152}">
+                <TextBlock.Style>
+                    <DynamicResource x:Uid="DynamicResource_16" ResourceKey="{ComponentResourceKey ResourceId=CPWarningTextStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </TextBlock.Style>
+            </local:AutomationTextBlock>
+        </Grid>
+
+        <Grid x:Uid="Grid_3" Grid.Row="1">
+            <Grid.Style>
+                <DynamicResource x:Uid="DynamicResource_17" ResourceKey="{ComponentResourceKey ResourceId=CPOkCancelGridStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition x:Uid="RowDefinition_6" Height="Auto" />
+                <RowDefinition x:Uid="RowDefinition_7"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Uid="ColumnDefinition_5"/>
+                <ColumnDefinition x:Uid="ColumnDefinition_6" Width="Auto"/>
+                <ColumnDefinition x:Uid="ColumnDefinition_7" Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Rectangle x:Name="Rectangle_1" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Grid.ColumnSpan="3">
+                <Rectangle.Style>
+                    <DynamicResource x:Uid="DynamicResource_18" ResourceKey="{ComponentResourceKey ResourceId=CPOkCancelFooterRectangleStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </Rectangle.Style>
+            </Rectangle>
+
+            <Button Grid.Column="1" Grid.Row="1"
+                    x:Name="OKButton"
+                    Content="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_189}"
+                    IsDefault="True"
+                    Click="OkButtonClick">
+                <Button.Style>
+                    <DynamicResource x:Uid="DynamicResource_19" ResourceKey="{ComponentResourceKey ResourceId=CPOkCancelButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </Button.Style>
+            </Button>
+
+            <Button Grid.Column="2" Grid.Row="1"
+                    x:Name="CancelButton"
+                    Content="{x:Static default:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_199}"
+                    IsCancel="True">
+                <Button.Style>
+                    <DynamicResource x:Uid="DynamicResource_20" ResourceKey="{ComponentResourceKey ResourceId=CPOkCancelButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
+                </Button.Style>
+            </Button>
+        </Grid>
+
+    </Grid>
+</Window>

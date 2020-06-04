@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 using namespace System.Diagnostics
 using namespace System.Management.Automation.Internal
@@ -6,7 +6,7 @@ using namespace System.Management.Automation.Internal
 Describe "PowerShell Command Debugging" -tags "CI" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
     function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
@@ -183,11 +183,11 @@ Describe "PowerShell Command Debugging" -tags "CI" {
 }
 
 # Scripting\Debugging\RunspaceDebuggingTests.cs
-Describe "Runspace Debugging API tests" -tag CI {
+Describe "Runspace Debugging API tests" -Tag CI {
     Context "PSStandaloneMonitorRunspaceInfo tests" {
         BeforeAll {
             $runspace = [runspacefactory]::CreateRunspace()
-            $runspaceType = [PSMonitorRunspaceType]::WorkflowInlineScript
+            $runspaceType = [PSMonitorRunspaceType]::InvokeCommand
             $monitorInfo = [PSStandaloneMonitorRunspaceInfo]::new($runspace)
             $instanceId = $runspace.InstanceId
             $parentDebuggerId = [guid]::newguid()
@@ -204,7 +204,7 @@ Describe "Runspace Debugging API tests" -tag CI {
                 Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
-        it "PSStandaloneMonitorRunspaceInfo properties should have proper values" {
+        It "PSStandaloneMonitorRunspaceInfo properties should have proper values" {
             $monitorInfo.Runspace.InstanceId | Should -Be $InstanceId
             $monitorInfo.RunspaceType | Should -BeExactly "Standalone"
             $monitorInfo.NestedDebugger | Should -BeNullOrEmpty

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -56,6 +56,7 @@ namespace System.Management.Automation
         public Collection<CompletionResult> CompletionMatches { get; set; }
 
         internal static readonly IList<CompletionResult> EmptyCompletionResult = Array.Empty<CompletionResult>();
+
         private static readonly CommandCompletion s_emptyCommandCompletion = new CommandCompletion(
             new Collection<CompletionResult>(EmptyCompletionResult), -1, -1, -1);
 
@@ -72,7 +73,7 @@ namespace System.Management.Automation
         {
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             Token[] tokens;
@@ -112,17 +113,17 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (positionOfCursor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("positionOfCursor");
+                throw PSTraceSource.NewArgumentNullException(nameof(positionOfCursor));
             }
 
             return CompleteInputImpl(ast, tokens, positionOfCursor, options);
@@ -147,12 +148,12 @@ namespace System.Management.Automation
 
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             if (powershell == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powershell");
+                throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
@@ -216,22 +217,22 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (cursorPosition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cursorPosition");
+                throw PSTraceSource.NewArgumentNullException(nameof(cursorPosition));
             }
 
             if (powershell == null)
             {
-                throw PSTraceSource.NewArgumentNullException("powershell");
+                throw PSTraceSource.NewArgumentNullException(nameof(powershell));
             }
 
             // If we are in a debugger stop, let the debugger do the command completion.
@@ -334,12 +335,12 @@ namespace System.Management.Automation
 
             if (cursorIndex > input.Length)
             {
-                throw PSTraceSource.NewArgumentException("cursorIndex");
+                throw PSTraceSource.NewArgumentException(nameof(cursorIndex));
             }
 
             if (debugger == null)
             {
-                throw PSTraceSource.NewArgumentNullException("debugger");
+                throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
 
             Command cmd = new Command("TabExpansion2");
@@ -363,22 +364,22 @@ namespace System.Management.Automation
         {
             if (ast == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ast");
+                throw PSTraceSource.NewArgumentNullException(nameof(ast));
             }
 
             if (tokens == null)
             {
-                throw PSTraceSource.NewArgumentNullException("tokens");
+                throw PSTraceSource.NewArgumentNullException(nameof(tokens));
             }
 
             if (cursorPosition == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cursorPosition");
+                throw PSTraceSource.NewArgumentNullException(nameof(cursorPosition));
             }
 
             if (debugger == null)
             {
-                throw PSTraceSource.NewArgumentNullException("debugger");
+                throw PSTraceSource.NewArgumentNullException(nameof(debugger));
             }
 
             // For remote debugging just pass string input.
@@ -515,9 +516,12 @@ namespace System.Management.Automation
         // This is the start of the real implementation of autocomplete/intellisense/tab completion
         private static CommandCompletion CompleteInputImpl(Ast ast, Token[] tokens, IScriptPosition positionOfCursor, Hashtable options)
         {
+#if LEGACYTELEMETRY
+            // We could start collecting telemetry at a later date.
+            // We will leave the #if to remind us that we did this once.
             var sw = new Stopwatch();
             sw.Start();
-
+#endif
             using (var powershell = PowerShell.Create(RunspaceMode.CurrentRunspace))
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
@@ -590,8 +594,10 @@ namespace System.Management.Automation
                     }
 
                     var completionResults = results ?? EmptyCompletionResult;
-                    sw.Stop();
+
 #if LEGACYTELEMETRY
+                    // no telemetry here. We don't capture tab completion performance.
+                    sw.Stop();
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
 #endif
@@ -887,7 +893,7 @@ namespace System.Management.Automation
 
                 lastWord = lastWord ?? string.Empty;
                 bool isLastWordEmpty = string.IsNullOrEmpty(lastWord);
-                bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith("*", StringComparison.Ordinal);
+                bool lastCharIsStar = !isLastWordEmpty && lastWord.EndsWith('*');
                 bool containsGlobChars = WildcardPattern.ContainsWildcardCharacters(lastWord);
 
                 string wildWord = lastWord + "*";
@@ -1045,9 +1051,9 @@ namespace System.Management.Automation
             {
                 // These are special cases, as they represent cases where the user expects to
                 // see the full path.
-                if (lastWord.StartsWith("~", StringComparison.OrdinalIgnoreCase) ||
-                    lastWord.StartsWith("\\", StringComparison.OrdinalIgnoreCase) ||
-                    lastWord.StartsWith("/", StringComparison.OrdinalIgnoreCase))
+                if (lastWord.StartsWith('~') ||
+                    lastWord.StartsWith('\\') ||
+                    lastWord.StartsWith('/'))
                 {
                     return true;
                 }

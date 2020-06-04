@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -506,6 +506,7 @@ namespace System.Management.Automation.Runspaces
 
         private RunspacePoolInternal _internalPool;
         private object _syncObject = new object();
+
         private event EventHandler<RunspacePoolStateChangedEventArgs> InternalStateChanged = null;
         private event EventHandler<PSEventArgs> InternalForwardEvent = null;
         private event EventHandler<RunspaceCreatedEventArgs> InternalRunspaceCreated = null;
@@ -1259,7 +1260,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         /// <summary>
         /// ApartmentState of the thread used to execute commands within this RunspacePool.
         /// </summary>
@@ -1286,7 +1286,6 @@ namespace System.Management.Automation.Runspaces
                 _internalPool.ApartmentState = value;
             }
         }
-#endif
 
         /// <summary>
         /// Gets Runspace asynchronously from the runspace pool. The caller

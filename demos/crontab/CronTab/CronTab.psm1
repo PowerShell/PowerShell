@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 using namespace System.Collections.Generic
@@ -56,7 +56,7 @@ function Invoke-CronTab ([String] $user, [String[]] $arguments, [Switch] $noThro
 
     Write-Verbose "Running: $crontabcmd $arguments"
     $output = & $crontabcmd @arguments 2>&1
-    if ($LastExitCode -ne 0 -and -not $noThrow) {
+    if ($LASTEXITCODE -ne 0 -and -not $noThrow) {
         $e = New-Object System.InvalidOperationException -ArgumentList $output.Exception.Message
         throw $e
     } else {
@@ -125,7 +125,7 @@ function Remove-CronJob {
             $e = New-Object System.Exception -ArgumentList "Job not found"
             throw $e
         }
-        if ($Force -or $pscmdlet.ShouldProcess($Job.Command,"Remove")) {
+        if ($Force -or $PSCmdlet.ShouldProcess($Job.Command,"Remove")) {
             Import-CronTab -user $UserName -crontab $newcrontab
         }
     }

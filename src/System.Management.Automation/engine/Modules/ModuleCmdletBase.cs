@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,6 +18,7 @@ using System.Management.Automation.Security;
 using System.Reflection;
 using System.Text;
 using System.Xml;
+using System.Diagnostics;
 
 using Microsoft.PowerShell.Cmdletization;
 
@@ -98,6 +99,12 @@ namespace Microsoft.PowerShell.Commands
             /// This will be allowed when the manifest explicitly exports functions which will limit all visible module functions.
             /// </summary>
             internal bool AllowNestedModuleFunctionsToExport;
+
+            /// <summary>
+            /// Flag that controls Export-PSSession -AllowClobber parameter in generating proxy modules from remote sessions.
+            /// Historically -AllowClobber in these scenarios was set as True.
+            /// </summary>
+            internal bool NoClobberExportPSSession;
         }
 
         /// <summary>
@@ -230,10 +237,10 @@ namespace Microsoft.PowerShell.Commands
         private List<WildcardPattern> _matchAll;
 
         // The list of commands permitted in a module manifest
-        internal static string[] PermittedCmdlets = new string[] {
+        internal static readonly string[] PermittedCmdlets = new string[] {
             "Import-LocalizedData", "ConvertFrom-StringData", "Write-Host", "Out-Host", "Join-Path" };
 
-        internal static string[] ModuleManifestMembers = new string[] {
+        internal static readonly string[] ModuleManifestMembers = new string[] {
             "ModuleToProcess",
             "NestedModules",
             "GUID",
@@ -283,6 +290,21 @@ namespace Microsoft.PowerShell.Commands
             "Desktop"
         };
 
+        /// <summary>
+        /// A counter for modules that are loaded using WindowsPS compat session.
+        /// </summary>
+        internal static int s_WindowsPowerShellCompatUsageCounter = 0;
+
+        /// <summary>
+        /// Session name for WindowsPS compat remoting session.
+        /// </summary>
+        internal const string WindowsPowerShellCompatRemotingSessionName = "WinPSCompatSession";
+
+        /// <summary>
+        /// Synchronization object for creation/cleanup of WindowsPS compat remoting session.
+        /// </summary>
+        internal static readonly object s_WindowsPowerShellCompatSyncObject = new object();
+
         private Dictionary<string, PSModuleInfo> _currentlyProcessingModules = new Dictionary<string, PSModuleInfo>();
 
         internal bool LoadUsingModulePath(bool found, IEnumerable<string> modulePath, string name, SessionState ss,
@@ -316,27 +338,27 @@ namespace Microsoft.PowerShell.Commands
                     {
                         fileBaseName = moduleName;
 #endif
-                        string qualifiedPath = Path.Combine(path, fileBaseName);
-                        module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
-                        if (!found)
-                        {
-                            if (name.IndexOfAny(Utils.Separators.Directory) == -1)
-                            {
-                                qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
-                            }
-                            else if (Directory.Exists(qualifiedPath))
-                            {
-                                // if it points to a directory, add the basename back onto the path...
-                                qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
-                            }
+                string qualifiedPath = Path.Combine(path, fileBaseName);
+                module = LoadUsingMultiVersionModuleBase(qualifiedPath, manifestProcessingFlags, options, out found);
+                if (!found)
+                {
+                    if (name.IndexOfAny(Utils.Separators.Directory) == -1)
+                    {
+                        qualifiedPath = Path.Combine(qualifiedPath, fileBaseName);
+                    }
+                    else if (Directory.Exists(qualifiedPath))
+                    {
+                        // if it points to a directory, add the basename back onto the path...
+                        qualifiedPath = Path.Combine(qualifiedPath, Path.GetFileName(fileBaseName));
+                    }
 
-                            module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
-                        }
+                    module = LoadUsingExtensions(parentModule, name, qualifiedPath, extension, null, this.BasePrefix, ss, options, manifestProcessingFlags, out found);
+                }
 
-                        if (found)
-                        {
-                            break;
-                        }
+                if (found)
+                {
+                    break;
+                }
 #if UNIX
                     }
                 }
@@ -585,7 +607,6 @@ namespace Microsoft.PowerShell.Commands
                     // Check for PowerShell Version before checking other keys
                     // If a PowerShellVersion exists and does not match the requirements, then the error is InsufficientPowerShellVersion
                     // Else, the error is InvalidManifestMember
-
                     Version powerShellVersion;
                     Version currentPowerShellVersion = PSVersionInfo.PSVersion;
                     if (GetScalarFromData<Version>(data, moduleManifestPath, "PowerShellVersion", manifestProcessingFlags, out powerShellVersion) &&
@@ -667,9 +688,9 @@ namespace Microsoft.PowerShell.Commands
                                                                 Modules.ManifestMemberNotValid,
                                                                 moduleSpecification.Name,
                                                                 "NestedModules",
-                                                                parentModule.Path,
+                                                                parentModule?.Path,
                                                                 StringUtil.Format(Modules.InvalidModuleExtension, extension, moduleSpecification.Name),
-                                                                                    ModuleIntrinsics.GetModuleName(parentModule.Path));
+                                                                                    ModuleIntrinsics.GetModuleName(parentModule?.Path));
                         invalidOperation.SetErrorId("Modules_InvalidModuleExtension");
                         throw invalidOperation;
                     }
@@ -910,7 +931,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var n in names)
                 {
-                    if (n.IndexOf(StringLiterals.DefaultPathSeparator) != -1 || n.IndexOf(StringLiterals.AlternatePathSeparator) != -1)
+                    if (n.Contains(StringLiterals.DefaultPathSeparator) || n.Contains(StringLiterals.AlternatePathSeparator))
                     {
                         modulePaths.Add(n);
                     }
@@ -1482,21 +1503,16 @@ namespace Microsoft.PowerShell.Commands
 
             // START: Check if the ModuleToProcess is already loaded..if it is, ignore the this load manifest
             // call and return
-
             string moduleToProcess = null;
 
-            if (
-                !GetScalarFromData<string>(data, moduleManifestPath, "ModuleToProcess", manifestProcessingFlags,
-                    out moduleToProcess))
+            if (!GetScalarFromData<string>(data, moduleManifestPath, "ModuleToProcess", manifestProcessingFlags, out moduleToProcess))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
             }
 
             string rootModule = null;
-            if (
-                !GetScalarFromData<string>(data, moduleManifestPath, "RootModule", manifestProcessingFlags,
-                    out rootModule))
+            if (!GetScalarFromData<string>(data, moduleManifestPath, "RootModule", manifestProcessingFlags, out rootModule))
             {
                 containedErrors = true;
                 if (bailOnFirstError) return null;
@@ -1544,40 +1560,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string actualRootModule = moduleToProcess ?? rootModule;
-
-            // If the root module is a workflow module, the 'actualRootModule' is nulled out.
-            // We need to save this name so that we can assign this to the RootModule property of ModuleInfo.
-            string savedActualRootModule = actualRootModule;
-
-            if (string.Equals(System.IO.Path.GetExtension(actualRootModule),
-                StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-            {
-                if (WildcardPattern.ContainsWildcardCharacters(actualRootModule))
-                {
-                    PSInvalidOperationException invalidOperation = PSTraceSource.NewInvalidOperationException(
-                        Modules.WildCardNotAllowedInModuleToProcessAndInNestedModules,
-                        moduleManifestPath);
-                    invalidOperation.SetErrorId("Modules_WildCardNotAllowedInModuleToProcessAndInNestedModules");
-                    throw invalidOperation;
-                }
-
-                if (writingErrors)
-                {
-                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, actualRootModule);
-                    WriteError(new ErrorRecord(
-                                   new NotSupportedException(message),
-                                   "Modules_WorkflowModuleNotSupported",
-                                   ErrorCategory.InvalidOperation, null));
-                }
-
-                // Null out 'actualRootModule' so don't attempt to process the file like a non-workflow module later.
-                actualRootModule = null;
-                containedErrors = true;
-                if (bailOnFirstError)
-                {
-                    return null;
-                }
-            }
 
             // extract defaultCommandPrefix from the manifest
             string defaultCommandPrefix = null;
@@ -1651,7 +1633,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // END: Check if the ModuleToProcess is already loaded..
-
             string author = string.Empty;
             if (!GetScalarFromData(data, moduleManifestPath, "Author", manifestProcessingFlags, out author))
             {
@@ -1878,23 +1859,15 @@ namespace Microsoft.PowerShell.Commands
             else if ((requiredProcessorArchitecture != ProcessorArchitecture.None) &&
                      (requiredProcessorArchitecture != ProcessorArchitecture.MSIL))
             {
-                bool isRunningOnArm = false;
-                ProcessorArchitecture currentArchitecture = PsUtils.GetProcessorArchitecture(out isRunningOnArm);
+                ProcessorArchitecture currentArchitecture = typeof(object).Assembly.GetName().ProcessorArchitecture;
 
-                // For ARM Architectures, we need to do additional string-level comparison
-                if ((currentArchitecture != requiredProcessorArchitecture && !isRunningOnArm) ||
-                    (isRunningOnArm &&
-                     !requiredProcessorArchitecture.ToString()
-                         .Equals(PsUtils.ArmArchitecture, StringComparison.OrdinalIgnoreCase)))
+                if (currentArchitecture != requiredProcessorArchitecture)
                 {
                     containedErrors = true;
                     if (writingErrors)
                     {
-                        string actualCurrentArchitecture = isRunningOnArm
-                            ? PsUtils.ArmArchitecture
-                            : currentArchitecture.ToString();
                         message = StringUtil.Format(Modules.InvalidProcessorArchitecture,
-                            actualCurrentArchitecture, moduleManifestPath, requiredProcessorArchitecture);
+                            currentArchitecture, moduleManifestPath, requiredProcessorArchitecture);
                         InvalidOperationException ioe = new InvalidOperationException(message);
                         ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidProcessorArchitecture",
                             ErrorCategory.ResourceUnavailable, moduleManifestPath);
@@ -2020,28 +1993,7 @@ namespace Microsoft.PowerShell.Commands
                         throw invalidOperation;
                     }
 
-                    if (string.Equals(System.IO.Path.GetExtension(s.Name),
-                        StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-                    {
-                        if (writingErrors)
-                        {
-                            message = StringUtil.Format(Modules.WorkflowModuleNotSupported, s.Name);
-                            WriteError(new ErrorRecord(
-                                           new NotSupportedException(message),
-                                           "Modules_WorkflowModuleNotSupported",
-                                           ErrorCategory.InvalidOperation, null));
-                        }
-
-                        containedErrors = true;
-                        if (bailOnFirstError)
-                        {
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        nestedModules.Add(s);
-                    }
+                    nestedModules.Add(s);
                 }
 
                 Array.Clear(tmpNestedModules, 0, tmpNestedModules.Length);
@@ -2409,43 +2361,59 @@ namespace Microsoft.PowerShell.Commands
             bool isConsideredCompatible = ModuleUtils.IsPSEditionCompatible(moduleManifestPath, inferredCompatiblePSEditions);
             if (!BaseSkipEditionCheck && !isConsideredCompatible)
             {
-                containedErrors = true;
-
-                if (writingErrors)
+                if (PowerShellConfig.Instance.IsImplicitWinCompatEnabled())
                 {
-                    message = StringUtil.Format(
-                        Modules.PSEditionNotSupported,
-                        moduleManifestPath,
-                        PSVersionInfo.PSEdition,
-                        string.Join(',', inferredCompatiblePSEditions));
-
-                    InvalidOperationException ioe = new InvalidOperationException(message);
-
-                    ErrorRecord er = new ErrorRecord(
-                        ioe,
-                        nameof(Modules) + "_" + nameof(Modules.PSEditionNotSupported),
-                        ErrorCategory.ResourceUnavailable,
-                        moduleManifestPath);
-
-                    WriteError(er);
-                }
-
-                if (bailOnFirstError)
-                {
-                    // If we're trying to load the module, return null so that caches
-                    // are not polluted
                     if (importingModule)
                     {
-                        return null;
+                        IList<PSModuleInfo> moduleProxies = ImportModulesUsingWinCompat(new string[] { moduleManifestPath }, null, options);
+
+                        // we are loading by a single ManifestPath so expect max of 1
+                        if (moduleProxies.Count > 0)
+                        {
+                            return moduleProxies[0];
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    containedErrors = true;
+                    if (writingErrors)
+                    {
+                        message = StringUtil.Format(
+                            Modules.ImplicitWinCompatDisabled,
+                            moduleManifestPath,
+                            string.Join(',', inferredCompatiblePSEditions));
+
+                        ErrorRecord er = new ErrorRecord(
+                            new InvalidOperationException(message),
+                            nameof(Modules) + "_" + nameof(Modules.ImplicitWinCompatDisabled),
+                            ErrorCategory.ResourceUnavailable,
+                            moduleManifestPath);
+
+                        WriteError(er);
                     }
 
-                    // If we return null with Get-Module, a fake module info will be created. Since
-                    // we want to suppress output of the module, we need to do that here.
-                    return new PSModuleInfo(moduleManifestPath, context: null, sessionState: null)
+                    if (bailOnFirstError)
                     {
-                        HadErrorsLoading = true,
-                        IsConsideredEditionCompatible = false,
-                    };
+                        // If we're trying to load the module, return null so that caches
+                        // are not polluted
+                        if (importingModule)
+                        {
+                            return null;
+                        }
+
+                        // If we return null with Get-Module, a fake module info will be created. Since
+                        // we want to suppress output of the module, we need to do that here.
+                        return new PSModuleInfo(moduleManifestPath, context: null, sessionState: null)
+                        {
+                            HadErrorsLoading = true,
+                            IsConsideredEditionCompatible = false,
+                        };
+                    }
                 }
             }
 
@@ -2458,7 +2426,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        iss.Bind(Context, /*updateOnly*/ true);
+                        iss.Bind(Context, updateOnly: true, module: null, noClobber: false, local: false, setLocation: false);
                     }
                     catch (Exception e)
                     {
@@ -2600,8 +2568,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            manifestInfo.RootModule = savedActualRootModule;
-            manifestInfo.RootModuleForManifest = savedActualRootModule;
+            manifestInfo.RootModule = actualRootModule;
+            manifestInfo.RootModuleForManifest = actualRootModule;
             if (manifestGuid != null)
             {
                 manifestInfo.SetGuid((Guid)manifestGuid);
@@ -3120,7 +3088,7 @@ namespace Microsoft.PowerShell.Commands
                 // In that case, the nested module will first be loaded with a different session state, and then when trying to load the RootModule via 'LoadModuleNamedInManifest',
                 // the same loaded nested module will be reused for the RootModule by 'LoadModuleNamedInManifest'.
 
-                // Change the module name to match the manifest name, not the original name
+                // Change the module name to match the manifest name, not the original name.
                 newManifestInfo.SetName(manifestInfo.Name);
 
                 // Copy in any nested modules...
@@ -4474,9 +4442,7 @@ namespace Microsoft.PowerShell.Commands
             // After input from GP team for this behavior, need to revisit the commented out part
             // if ((status & ModuleLoggingGroupPolicyStatus.Enabled) != 0)
             // {
-
             // }
-
             if (((status & ModuleLoggingGroupPolicyStatus.Enabled) != 0) && moduleNames != null)
             {
                 foreach (string currentGPModuleName in moduleNames)
@@ -4610,7 +4576,7 @@ namespace Microsoft.PowerShell.Commands
             //     - moduleBase = 'C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.WSMan.Management'
             //     - name = '..\..\WSMan.format.ps1xml'
             //    Check for combinedPath in this case will get us the normalized rooted path 'C:\Windows\System32\WindowsPowerShell\v1.0\WSMan.format.ps1xml'.
-            // The 'Microsoft.WSMan.Management' module in PowerShell Core was updated to not use the relative path for 'FormatsToProcess' entry,
+            // The 'Microsoft.WSMan.Management' module in PowerShell was updated to not use the relative path for 'FormatsToProcess' entry,
             // but it's safer to keep the original behavior to avoid unexpected breaking changes.
             string combinedPath = Path.Combine(moduleBase, name);
             string resolvedPath = IsRooted(name)
@@ -4689,7 +4655,7 @@ namespace Microsoft.PowerShell.Commands
                 filePath.StartsWith(@"../", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~/", StringComparison.Ordinal) ||
                 filePath.StartsWith(@"~\", StringComparison.Ordinal) ||
-                filePath.IndexOf(":", StringComparison.Ordinal) >= 0);
+                filePath.Contains(':'));
         }
 
         /// <summary>
@@ -4832,6 +4798,85 @@ namespace Microsoft.PowerShell.Commands
             return filePaths;
         }
 
+        internal static PSSession GetWindowsPowerShellCompatRemotingSession()
+        {
+            PSSession result = null;
+            var commandInfo = new CmdletInfo("Get-PSSession", typeof(GetPSSessionCommand));
+            using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+            ps.AddCommand(commandInfo);
+            ps.AddParameter("Name", WindowsPowerShellCompatRemotingSessionName);
+            ps.AddParameter("ErrorAction", ActionPreference.Ignore);
+            var results = ps.Invoke<PSSession>();
+            if (results.Count > 0)
+            {
+                result = results[0];
+            }
+            return result;
+        }
+
+        internal static PSSession CreateWindowsPowerShellCompatResources()
+        {
+            PSSession compatSession = null;
+            lock (s_WindowsPowerShellCompatSyncObject)
+            {
+                compatSession = GetWindowsPowerShellCompatRemotingSession();
+                if (compatSession == null)
+                {
+                    var commandInfo = new CmdletInfo("New-PSSession", typeof(NewPSSessionCommand));
+                    using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    ps.AddCommand(commandInfo);
+                    ps.AddParameter("UseWindowsPowerShell", true);
+                    ps.AddParameter("Name", WindowsPowerShellCompatRemotingSessionName);
+                    var results = ps.Invoke<PSSession>();
+                    if (results.Count > 0)
+                    {
+                        compatSession = results[0];
+                        System.Threading.Interlocked.Exchange(ref s_WindowsPowerShellCompatUsageCounter, 0);
+                    }
+                }
+            }
+
+            return compatSession;
+        }
+
+        internal static void CleanupWindowsPowerShellCompatResources(SessionState sessionState)
+        {
+            lock (s_WindowsPowerShellCompatSyncObject)
+            {
+                var compatSession = GetWindowsPowerShellCompatRemotingSession();
+                if (compatSession != null)
+                {
+                    if (sessionState?.InvokeCommand.LocationChangedAction != null)
+                    {
+                        sessionState.InvokeCommand.LocationChangedAction -= SyncCurrentLocationDelegate;
+                    }
+
+                    var commandInfo = new CmdletInfo("Remove-PSSession", typeof(RemovePSSessionCommand));
+                    using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    ps.AddCommand(commandInfo);
+                    ps.AddParameter("Session", compatSession);
+                    ps.Invoke();
+                }
+            }
+        }
+
+        internal static void SyncCurrentLocationHandler(object sender, LocationChangedEventArgs args)
+        {
+            PSSession compatSession = GetWindowsPowerShellCompatRemotingSession();
+            if (compatSession?.Runspace.RunspaceStateInfo.State == RunspaceState.Opened)
+            {
+                using var ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
+                ps.AddCommand(new CmdletInfo("Invoke-Command", typeof(InvokeCommandCommand)));
+                ps.AddParameter("Session", compatSession);
+                ps.AddParameter("ScriptBlock", ScriptBlock.Create(string.Format("Set-Location -Path '{0}'", args.NewPath.Path)));
+                ps.Invoke();
+            }
+        }
+
+        internal static System.EventHandler<LocationChangedEventArgs> SyncCurrentLocationDelegate;
+
+        internal virtual IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions) { throw new System.NotImplementedException(); }
+
         private void RemoveTypesAndFormatting(
             IList<string> formatFilesToRemove,
             IList<string> typeFilesToRemove)
@@ -4924,10 +4969,14 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
+                    if (module.IsWindowsPowerShellCompatModule && (System.Threading.Interlocked.Decrement(ref s_WindowsPowerShellCompatUsageCounter) == 0))
+                    {
+                        CleanupWindowsPowerShellCompatResources(this.SessionState);
+                    }
+
                     // First remove cmdlets from the session state
                     // (can't just go through module.ExportedCmdlets
                     //  because the names of the cmdlets might have been changed by the -Prefix parameter of Import-Module)
-
                     List<string> keysToRemoveFromCmdletCache = new List<string>();
                     foreach (KeyValuePair<string, List<CmdletInfo>> cmdlet in Context.EngineSessionState.GetCmdletTable())
                     {
@@ -5025,29 +5074,29 @@ namespace Microsoft.PowerShell.Commands
                         // Remove the imported functions from SessionState...
                         // (can't just go through module.SessionState.Internal.ExportedFunctions,
                         //  because the names of the functions might have been changed by the -Prefix parameter of Import-Module)
-                        foreach (DictionaryEntry entry in ss.GetFunctionTable())
+                        foreach ((var _, FunctionInfo functionInfo) in ss.GetFunctionTable())
                         {
-                            FunctionInfo func = (FunctionInfo)entry.Value;
-                            if (func.Module == null)
+                            if (functionInfo.Module == null)
                             {
                                 continue;
                             }
 
-                            if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                            if (functionInfo.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
                             {
+                                string functionName = functionInfo.Name;
                                 try
                                 {
-                                    ss.RemoveFunction(func.Name, true);
+                                    ss.RemoveFunction(functionName, true);
 
-                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, func.Name);
+                                    string memberMessage = StringUtil.Format(Modules.RemovingImportedFunction, functionName);
                                     WriteVerbose(memberMessage);
                                 }
                                 catch (SessionStateUnauthorizedAccessException e)
                                 {
-                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, func.Name, module.Name, e.Message);
+                                    string message = StringUtil.Format(Modules.UnableToRemoveModuleMember, functionName, module.Name, e.Message);
                                     InvalidOperationException memberNotRemoved = new InvalidOperationException(message, e);
                                     ErrorRecord er = new ErrorRecord(memberNotRemoved, "Modules_MemberNotRemoved",
-                                                                     ErrorCategory.PermissionDenied, func.Name);
+                                                                     ErrorCategory.PermissionDenied, functionName);
                                     WriteError(er);
                                 }
                             }
@@ -5928,15 +5977,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-                else if (ext.Equals(StringLiterals.WorkflowFileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    found = true;
-                    message = StringUtil.Format(Modules.WorkflowModuleNotSupported, fileName);
-                    WriteError(new ErrorRecord(
-                                   new NotSupportedException(message),
-                                   "Modules_WorkflowModuleNotSupported",
-                                   ErrorCategory.InvalidOperation, null));
-                }
                 else
                 {
                     found = true;
@@ -6009,7 +6049,6 @@ namespace Microsoft.PowerShell.Commands
 
             // If we are in module analysis and the parent module declares non-wildcarded exports, then we don't need to
             // actually process the script module.
-
             if (parentModule != null)
             {
                 if (shouldProcessModule && (parentModule.DeclaredFunctionExports != null) && (parentModule.DeclaredFunctionExports.Count > 0))
@@ -6545,7 +6584,6 @@ namespace Microsoft.PowerShell.Commands
                     // Passing module as a parameter here so that the providers can have the module property populated.
                     // For engine providers, the module should point to top-level module name
                     // For FileSystem, the module is Microsoft.PowerShell.Core and not System.Management.Automation
-
                     if (parentModule != null && InitialSessionState.IsEngineModule(parentModule.Name))
                     {
                         iss.ImportCmdletsFromAssembly(assemblyToLoad, parentModule);
@@ -6653,7 +6691,6 @@ namespace Microsoft.PowerShell.Commands
                         // Passing module as a parameter here so that the providers can have the module property populated.
                         // For engine providers, the module should point to top-level module name
                         // For FileSystem, the module is Microsoft.PowerShell.Core and not System.Management.Automation
-
                         if (parentModule != null && InitialSessionState.IsEngineModule(parentModule.Name))
                         {
                             iss.ImportCmdletsFromAssembly(assembly, parentModule);
@@ -6696,7 +6733,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the types table entries
-
             List<string> typesFileNames = new List<string>();
             foreach (SessionStateTypeEntry sste in iss.Types)
             {
@@ -6709,7 +6745,6 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the format file entries
-
             List<string> formatsFileNames = new List<string>();
             foreach (SessionStateFormatEntry ssfe in iss.Formats)
             {
@@ -6844,7 +6879,7 @@ namespace Microsoft.PowerShell.Commands
                         iss.DisableFormatUpdates = true;
 
                     // Load the cmdlets and providers, bound to the new module...
-                    iss.Bind(Context, /*updateOnly*/ true, module, options.NoClobber, options.Local);
+                    iss.Bind(Context, updateOnly: true, module, options.NoClobber, options.Local, setLocation: false);
 
                     // Scan all of the types in the assembly to register JobSourceAdapters.
                     IEnumerable<Type> allTypes = new Type[] { };
@@ -7113,7 +7148,7 @@ namespace Microsoft.PowerShell.Commands
             ImportModuleOptions options)
         {
             if (sourceModule == null)
-                throw PSTraceSource.NewArgumentNullException("sourceModule");
+                throw PSTraceSource.NewArgumentNullException(nameof(sourceModule));
 
             bool isImportModulePrivate = cmdlet.CommandInfo.Visibility == SessionStateEntryVisibility.Private ||
                 targetSessionState.DefaultCommandVisibility == SessionStateEntryVisibility.Private;

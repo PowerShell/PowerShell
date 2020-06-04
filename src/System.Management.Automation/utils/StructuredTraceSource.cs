@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #define TRACE
@@ -274,7 +274,7 @@ namespace System.Management.Automation
                 // 2005/04/13-JonN In theory this should be ArgumentException,
                 // but I don't want to deal with loading the string in this
                 // low-level code.
-                throw new ArgumentNullException("fullName");
+                throw new ArgumentNullException(nameof(fullName));
             }
 
             try
@@ -346,7 +346,7 @@ namespace System.Management.Automation
             OutputLine(
                 PSTraceSourceOptions.All,
                 "\tCurrent time: {0}",
-                DateTime.Now);
+                DateTime.Now.ToString());
 
             // OS build
 
@@ -429,7 +429,7 @@ namespace System.Management.Automation
                 OutputLine(
                     PSTraceSourceOptions.All,
                     "\tAssembly File Timestamp: {0}",
-                    assemblyFileInfo.CreationTime);
+                    assemblyFileInfo.CreationTime.ToString());
             }
 
             StringBuilder flagBuilder = new StringBuilder();
@@ -924,6 +924,56 @@ namespace System.Management.Automation
             }
         }
 
+        internal void WriteLine(string format, bool arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, byte arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, char arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, decimal arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, double arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, float arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, int arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, long arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, uint arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
+        internal void WriteLine(string format, ulong arg1)
+        {
+            WriteLine(format, (object)arg1.ToString());
+        }
+
         /// <summary>
         /// Traces the formatted output when PSTraceSourceOptions.WriteLine is enabled.
         /// </summary>
@@ -1046,10 +1096,10 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="classFormatter">
         /// This is the trace class formatter. For instance,
-        /// TraceError has a formatter like "ERROR: {0}"
+        /// TraceError has a formatter like "ERROR: {0}".
         /// </param>
         /// <param name="format">
-        /// Additional format string
+        /// Additional format string.
         /// </param>
         /// <param name="args">
         /// Arguments for the additional format string
@@ -1064,7 +1114,6 @@ namespace System.Management.Automation
             {
                 // First format the class format string and the
                 // user provided format string together
-
                 StringBuilder output = new StringBuilder();
 
                 if (classFormatter != null)
@@ -1081,13 +1130,12 @@ namespace System.Management.Automation
                 }
 
                 // finally trace the output
-
                 OutputLine(flag, output.ToString());
             }
             catch
             {
                 // Eat all exceptions
-
+                //
                 // Do not assert here because exceptions can be
                 // raised while a thread is shutting down during
                 // normal operation.
@@ -1108,10 +1156,10 @@ namespace System.Management.Automation
         /// GetCallingMethodNameAndParameters.
         /// </remarks>
         /// <param name="skipFrames">
-        /// The number of frames to skip in the calling stack
+        /// The number of frames to skip in the calling stack.
         /// </param>
         /// <returns>
-        /// The name of the method on the stack
+        /// The name of the method on the stack.
         /// </returns>
         private static string GetCallingMethodNameAndParameters(int skipFrames)
         {
@@ -1251,38 +1299,31 @@ namespace System.Management.Automation
             return prefixBuilder;
         }
 
-        private static void AddTab(ref StringBuilder lineBuilder)
+        private static void AddTab(StringBuilder lineBuilder)
         {
             // The Trace.IndentSize does not change at all
             // through the running of the process so there
             // are no thread issues here.
-
             int indentSize = Trace.IndentSize;
-
             int threadIndentLevel = ThreadIndentLevel;
 
-            for (
-                int index = 0;
-                index < indentSize * threadIndentLevel;
-                index++)
-            {
-                lineBuilder.Append(" ");
-            }
+            lineBuilder.Append(System.Management.Automation.Internal.StringUtil.Padding(indentSize * threadIndentLevel));
         }
 
         // used to find and blocks cyclic-loops in tracing.
+
         private bool _alreadyTracing = false;
         /// <summary>
         /// Composes a line of trace output and then writes it.
         /// </summary>
         /// <param name="flag">
-        /// The flag that caused the line to be traced
+        /// The flag that caused the line to be traced.
         /// </param>
         /// <param name="format">
-        /// The string to write with format symbols if necessary
+        /// The string to write with format symbols if necessary.
         /// </param>
-        /// <param name="args">
-        /// Arguments to the format string
+        /// <param name="arg">
+        /// Arguments to the format string.
         /// </param>
         /// <remarks>
         /// The line is composed by prefixing the process name, thread ID,
@@ -1293,7 +1334,7 @@ namespace System.Management.Automation
         internal void OutputLine(
             PSTraceSourceOptions flag,
             string format,
-            params object[] args)
+            string arg = null)
         {
             // if already tracing something for this current TraceSource,
             // dont trace again. This will block cyclic-loops from happening.
@@ -1315,28 +1356,18 @@ namespace System.Management.Automation
                 {
                     // Get the line prefix string which includes things
                     // like App name, clock tick, thread ID, etc.
-
                     lineBuilder.Append(GetLinePrefix(flag));
                 }
 
                 // Add the spaces for the indent
+                AddTab(lineBuilder);
 
-                AddTab(ref lineBuilder);
-
-                if (args != null && args.Length > 0)
+                if (arg != null)
                 {
-                    for (int index = 0; index < args.Length; ++index)
-                    {
-                        if (args[index] == null)
-                        {
-                            args[index] = "null";
-                        }
-                    }
-
                     lineBuilder.AppendFormat(
                         CultureInfo.CurrentCulture,
                         format,
-                        args);
+                        arg);
                 }
                 else
                 {

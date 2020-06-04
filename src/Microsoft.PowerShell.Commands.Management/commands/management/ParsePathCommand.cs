@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to resolve MSH paths containing glob characters to
     /// MSH paths that match the glob strings.
     /// </summary>
-    [Cmdlet(VerbsCommon.Split, "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113404")]
+    [Cmdlet(VerbsCommon.Split, "Path", DefaultParameterSetName = "ParentSet", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097149")]
     [OutputType(typeof(string), ParameterSetName = new[] { leafSet,
                                                            leafBaseSet,
                                                            extensionSet,
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
 
                     case qualifierSet:
-                        int separatorIndex = pathsToParse[index].IndexOf(":", StringComparison.CurrentCulture);
+                        int separatorIndex = pathsToParse[index].IndexOf(':');
 
                         if (separatorIndex < 0)
                         {
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (SessionState.Path.IsProviderQualified(path))
             {
-                int index = path.IndexOf("::", StringComparison.CurrentCulture);
+                int index = path.IndexOf("::", StringComparison.Ordinal);
 
                 if (index != -1)
                 {

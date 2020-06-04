@@ -1,9 +1,8 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-using System.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Reflection;
 
 namespace System.Management.Automation
 {
@@ -134,7 +133,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This tracks all live TraceFrame objects, which forms a stack.
         /// </summary>
-        private ArrayList _traceFrames = new ArrayList();
+        private readonly List<TraceFrame> _traceFrames = new List<TraceFrame>();
 
         /// <summary>
         /// This is the API to use for starting a help trace scope.
@@ -160,7 +159,7 @@ namespace System.Management.Automation
             if (_traceFrames.Count <= 0)
                 return;
 
-            TraceFrame traceFrame = (TraceFrame)_traceFrames[_traceFrames.Count - 1];
+            TraceFrame traceFrame = _traceFrames[_traceFrames.Count - 1];
 
             traceFrame.TraceError(errorRecord);
         }
@@ -175,7 +174,7 @@ namespace System.Management.Automation
             if (_traceFrames.Count <= 0)
                 return;
 
-            TraceFrame traceFrame = (TraceFrame)_traceFrames[_traceFrames.Count - 1];
+            TraceFrame traceFrame = _traceFrames[_traceFrames.Count - 1];
 
             traceFrame.TraceErrors(errorRecords);
         }
@@ -185,7 +184,7 @@ namespace System.Management.Automation
             if (_traceFrames.Count <= 0)
                 return;
 
-            TraceFrame lastFrame = (TraceFrame)_traceFrames[_traceFrames.Count - 1];
+            TraceFrame lastFrame = _traceFrames[_traceFrames.Count - 1];
 
             if (lastFrame == traceFrame)
             {

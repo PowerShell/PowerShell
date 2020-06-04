@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -39,7 +39,7 @@ namespace System.Management.Automation
         /// <returns>
         /// An IDictionary representing the visible functions.
         /// </returns>
-        internal IDictionary GetFunctionTable()
+        internal IDictionary<string, FunctionInfo> GetFunctionTable()
         {
             SessionStateScopeEnumerator scopeEnumerator =
                 new SessionStateScopeEnumerator(_currentScope);
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             FunctionInfo result = null;
@@ -234,7 +234,7 @@ namespace System.Management.Automation
                     var cvv = new ConstantValueVisitor { AttributeArgument = true };
                     for (int i = 0; i < attributeAst.PositionalArguments.Count; i++)
                     {
-                        yield return Compiler._attrArgToStringConverter.Target(Compiler._attrArgToStringConverter,
+                        yield return Compiler.s_attrArgToStringConverter.Target(Compiler.s_attrArgToStringConverter,
                             attributeAst.PositionalArguments[i].Accept(cvv));
                     }
                 }
@@ -269,12 +269,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (function == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
 
             string originalName = name;
@@ -504,12 +504,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (function == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
 
             string originalName = name;
@@ -583,12 +583,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (function == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(function));
             }
 
             string originalName = name;
@@ -711,7 +711,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             // Use the scope enumerator to find an existing function

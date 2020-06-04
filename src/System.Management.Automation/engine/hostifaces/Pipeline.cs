@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (runspace == null)
             {
-                PSTraceSource.NewArgumentNullException("runspace");
+                PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid
@@ -497,9 +497,6 @@ namespace System.Management.Automation.Runspaces
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
         /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the pipeline was executing was aborted.
-        /// </exception>
         /// <exception cref="RuntimeException">
         /// Pipeline.Invoke can throw a variety of exceptions derived
         /// from RuntimeException. The most likely of these exceptions
@@ -567,9 +564,6 @@ namespace System.Management.Automation.Runspaces
         /// A CLR security violation occurred.  Typically, this happens
         /// because the current CLR permissions do not allow adequate
         /// reflection access to a cmdlet assembly.
-        /// </exception>
-        /// <exception cref="ThreadAbortException">
-        /// The thread in which the pipeline was executing was aborted.
         /// </exception>
         /// <exception cref="RuntimeException">
         /// Pipeline.Invoke can throw a variety of exceptions derived

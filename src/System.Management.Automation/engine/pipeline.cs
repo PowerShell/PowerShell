@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -7,6 +7,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
+using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -155,6 +156,7 @@ namespace System.Management.Automation.Internal
         }
 
         private bool _terminatingErrorLogged = false;
+
         internal void LogExecutionException(Exception exception)
         {
             _executionFailed = true;
@@ -284,7 +286,7 @@ namespace System.Management.Automation.Internal
 
         internal void AddRedirectionPipe(PipelineProcessor pipelineProcessor)
         {
-            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException("pipelineProcessor");
+            if (pipelineProcessor == null) throw PSTraceSource.NewArgumentNullException(nameof(pipelineProcessor));
             if (_redirectionPipes == null)
                 _redirectionPipes = new List<PipelineProcessor>();
             _redirectionPipes.Add(pipelineProcessor);
@@ -316,7 +318,7 @@ namespace System.Management.Automation.Internal
         {
             if (commandProcessor == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandProcessor");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandProcessor));
             }
 
             if (_commands == null)
@@ -348,7 +350,7 @@ namespace System.Management.Automation.Internal
                 {
                     // "First command cannot have input"
                     throw PSTraceSource.NewArgumentException(
-                        "readFromCommand",
+                        nameof(readFromCommand),
                         PipelineStrings.FirstCommandCannotHaveInput);
                 }
 
@@ -359,7 +361,7 @@ namespace System.Management.Automation.Internal
             {
                 // "invalid command number"
                 throw PSTraceSource.NewArgumentException(
-                    "readFromCommand",
+                    nameof(readFromCommand),
                     PipelineStrings.InvalidCommandNumber);
             }
             else
@@ -1025,6 +1027,10 @@ namespace System.Management.Automation.Internal
                     CommandState.Started,
                     commandProcessor.Command.MyInvocation);
 
+                // Telemetry here
+                // the type of command should be sent along
+                // commandProcessor.CommandInfo.CommandType
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ApplicationType, commandProcessor.Command.CommandInfo.CommandType.ToString());
 #if LEGACYTELEMETRY
                 Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.TraceExecutedCommand(commandProcessor.Command.CommandInfo, commandProcessor.Command.CommandOrigin);
 #endif
@@ -1554,6 +1560,7 @@ namespace System.Management.Automation.Internal
         }
 
         private LocalPipeline _localPipeline;
+
         internal LocalPipeline LocalPipeline
         {
             get { return _localPipeline; }

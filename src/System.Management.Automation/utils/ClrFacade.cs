@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -58,19 +58,46 @@ namespace System.Management.Automation
         /// </param>
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
-            return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
-                   AppDomain.CurrentDomain.GetAssemblies().Where(a =>
-                       !TypeDefiner.DynamicClassAssemblyName.Equals(a.GetName().Name, StringComparison.Ordinal));
+            return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ?? GetPSVisibleAssemblies();
         }
 
         /// <summary>
-        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell Core.
+        /// Return assemblies from the default load context and the 'individual' load contexts.
+        /// The 'individual' load contexts are the ones holding assemblies loaded via 'Assembly.Load(byte[])' and 'Assembly.LoadFile'.
+        /// Assemblies loaded in any custom load contexts are not consider visible to PowerShell to avoid type identity issues.
+        /// </summary>
+        private static IEnumerable<Assembly> GetPSVisibleAssemblies()
+        {
+            const string IndividualAssemblyLoadContext = "System.Runtime.Loader.IndividualAssemblyLoadContext";
+
+            foreach (Assembly assembly in AssemblyLoadContext.Default.Assemblies)
+            {
+                if (!assembly.FullName.StartsWith(TypeDefiner.DynamicClassAssemblyFullNamePrefix, StringComparison.Ordinal))
+                {
+                    yield return assembly;
+                }
+            }
+
+            foreach (AssemblyLoadContext context in AssemblyLoadContext.All)
+            {
+                if (IndividualAssemblyLoadContext.Equals(context.GetType().FullName, StringComparison.Ordinal))
+                {
+                    foreach (Assembly assembly in context.Assemblies)
+                    {
+                        yield return assembly;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
         internal static IEnumerable<string> AvailableDotNetTypeNames => PSAssemblyLoadContext.AvailableDotNetTypeNames;
 
         /// <summary>
-        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell Core.
+        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
         internal static HashSet<string> AvailableDotNetAssemblyNames => PSAssemblyLoadContext.AvailableDotNetAssemblyNames;
@@ -204,7 +231,7 @@ namespace System.Management.Automation
                 // has 'dot' in it, the file will be treated as in Internet security zone. Otherwise, it's
                 // in Intranet security zone.
                 string hostName = uri.Host;
-                return hostName.IndexOf('.') == -1 ? SecurityZone.Intranet : SecurityZone.Internet;
+                return hostName.Contains('.') ? SecurityZone.Intranet : SecurityZone.Internet;
             }
 
             string root = Path.GetPathRoot(filePath);
@@ -281,19 +308,6 @@ namespace System.Management.Automation
         #region Misc
 
         /// <summary>
-        /// Facade for RemotingServices.IsTransparentProxy(object)
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool IsTransparentProxy(object obj)
-        {
-#if CORECLR // Namespace System.Runtime.Remoting is not in CoreCLR
-            return false;
-#else
-            return System.Runtime.Remoting.RemotingServices.IsTransparentProxy(obj);
-#endif
-        }
-
-        /// <summary>
         /// Facade for ManagementDateTimeConverter.ToDmtfDateTime(DateTime)
         /// </summary>
         internal static string ToDmtfDateTime(DateTime date)
@@ -359,24 +373,6 @@ namespace System.Management.Automation
 #else
             return ManagementDateTimeConverter.ToDmtfDateTime(date);
 #endif
-        }
-
-        /// <summary>
-        /// Facade for ProfileOptimization.SetProfileRoot.
-        /// </summary>
-        /// <param name="directoryPath">The full path to the folder where profile files are stored for the current application domain.</param>
-        internal static void SetProfileOptimizationRoot(string directoryPath)
-        {
-            PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath);
-        }
-
-        /// <summary>
-        /// Facade for ProfileOptimization.StartProfile.
-        /// </summary>
-        /// <param name="profile">The file name of the profile to use.</param>
-        internal static void StartProfileOptimization(string profile)
-        {
-            PSAssemblyLoadContext.StartProfileOptimizationImpl(profile);
         }
 
         #endregion Misc

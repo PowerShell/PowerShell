@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Globalization;
@@ -18,7 +18,7 @@ namespace System.Management.Automation
         {
             if (commandRuntime == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandRuntime");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandRuntime));
             }
 
             commandRuntime.PagingParameters = this;
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Internal
         {
             if (commandRuntime == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandRuntime");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandRuntime));
             }
 
             _commandRuntime = commandRuntime;
@@ -168,7 +168,7 @@ namespace System.Management.Automation.Internal
     /// <summary>
     /// The declaration of parameters for the Transactions mechanisms. -UseTransaction, and -BypassTransaction.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "These are only exposed by way of the PowerShell core cmdlets that surface them.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "These are only exposed by way of the PowerShell cmdlets that surface them.")]
     public sealed class TransactionParameters
     {
         #region ctor

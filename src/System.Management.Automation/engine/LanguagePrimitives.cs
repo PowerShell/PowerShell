@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -305,6 +306,8 @@ namespace System.Management.Automation
         internal delegate void MemberSetValueError(SetValueException e);
 
         internal const string OrderedAttribute = "ordered";
+        internal const string DoublePrecision = "G15";
+        internal const string SinglePrecision = "G7";
 
         internal static void CreateMemberNotFoundError(PSObject pso, DictionaryEntry property, Type resultType)
         {
@@ -410,6 +413,7 @@ namespace System.Management.Automation
         }
 
         private delegate IEnumerable GetEnumerableDelegate(object obj);
+
         private static Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
 
         private static GetEnumerableDelegate GetOrCalculateEnumerable(Type type)
@@ -636,7 +640,7 @@ namespace System.Management.Automation
             var culture = formatProvider as CultureInfo;
             if (culture == null)
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -644,8 +648,7 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                if (second == null) return true;
-                return false;
+                return second == null;
             }
 
             if (second == null)
@@ -785,7 +788,7 @@ namespace System.Management.Automation
             var culture = formatProvider as CultureInfo;
             if (culture == null)
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -812,7 +815,7 @@ namespace System.Management.Automation
                     }
                     catch (PSInvalidCastException e)
                     {
-                        throw PSTraceSource.NewArgumentException("second", ExtendedTypeSystem.ComparisonFailure,
+                        throw PSTraceSource.NewArgumentException(nameof(second), ExtendedTypeSystem.ComparisonFailure,
                                                                  first.ToString(), second.ToString(), e.Message);
                     }
                 }
@@ -837,7 +840,7 @@ namespace System.Management.Automation
             }
             catch (PSInvalidCastException e)
             {
-                throw PSTraceSource.NewArgumentException("second", ExtendedTypeSystem.ComparisonFailure,
+                throw PSTraceSource.NewArgumentException(nameof(second), ExtendedTypeSystem.ComparisonFailure,
                                                          first.ToString(), second.ToString(), e.Message);
             }
 
@@ -853,7 +856,7 @@ namespace System.Management.Automation
 
             // At this point, we know that they aren't equal but we have no way of
             // knowing which should compare greater than the other so we throw an exception.
-            throw PSTraceSource.NewArgumentException("first", ExtendedTypeSystem.NotIcomparable, first.ToString());
+            throw PSTraceSource.NewArgumentException(nameof(first), ExtendedTypeSystem.NotIcomparable, first.ToString());
         }
 
         /// <summary>
@@ -905,7 +908,7 @@ namespace System.Management.Automation
 
             if (!(formatProvider is CultureInfo culture))
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -1109,7 +1112,7 @@ namespace System.Management.Automation
         /// an exception when converted to decimal.
         /// The order of lines and columns cannot be changed since NumericCompare depends on it.
         /// </summary>
-        internal static Type[][] LargestTypeTable = new Type[][]
+        internal static readonly Type[][] LargestTypeTable = new Type[][]
         {
             //                                       System.Int16            System.Int32            System.Int64            System.UInt16           System.UInt32           System.UInt64           System.SByte            System.Byte             System.Single           System.Double           System.Decimal
             /* System.Int16   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int16),   typeof(System.Int16),   typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
@@ -1191,7 +1194,7 @@ namespace System.Management.Automation
         /// <typeparam name="T">The type for which to convert</typeparam>
         /// <param name="castObject">The object from which to convert.</param>
         /// <returns>An object of the specified type, if the conversion was successful.  Returns null otherwise.</returns>
-        internal static T FromObjectAs<T>(Object castObject)
+        internal static T FromObjectAs<T>(object castObject)
         {
             T returnType = default(T);
 
@@ -1420,8 +1423,8 @@ namespace System.Management.Automation
 
         #region type converter
 
-        internal static PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
-        internal static ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
+        internal static readonly PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
+        internal static readonly ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
 
         private static TypeConverter GetIntegerSystemConverter(Type type)
         {
@@ -1449,11 +1452,11 @@ namespace System.Management.Automation
             {
                 return new UInt64Converter();
             }
-            else if (type == typeof(Byte))
+            else if (type == typeof(byte))
             {
                 return new ByteConverter();
             }
-            else if (type == typeof(SByte))
+            else if (type == typeof(sbyte))
             {
                 return new SByteConverter();
             }
@@ -1503,7 +1506,7 @@ namespace System.Management.Automation
 
         private static object NewConverterInstance(string assemblyQualifiedTypeName)
         {
-            int typeSeparator = assemblyQualifiedTypeName.IndexOf(",", StringComparison.Ordinal);
+            int typeSeparator = assemblyQualifiedTypeName.IndexOf(',');
             if (typeSeparator == -1)
             {
                 typeConversion.WriteLine("Type name \"{0}\" should be assembly qualified.", assemblyQualifiedTypeName);
@@ -1920,6 +1923,7 @@ namespace System.Management.Automation
             // This static is thread safe based on the lock in GetEnumHashEntry
             // It can be shared by Runspaces in different MiniShells
             private static readonly Dictionary<Type, EnumHashEntry> s_enumTable = new Dictionary<Type, EnumHashEntry>();
+
             private const int maxEnumTableSize = 100;
 
             private static EnumHashEntry GetEnumHashEntry(Type enumType)
@@ -2422,23 +2426,7 @@ namespace System.Management.Automation
                     valueToConvert.ToString(), resultType.ToString(), wmiClassException.Message);
             }
         }
-#endif
 
-        // System.Configuration.CommaDelimitedStringCollection is derived from the StringCollection class
-        private static System.Configuration.CommaDelimitedStringCollection ConvertToCommaDelimitedStringCollection(object valueToConvert,
-                                                                                                                   Type resultType,
-                                                                                                                   bool recursion,
-                                                                                                                   PSObject originalValueToConvert,
-                                                                                                                   IFormatProvider formatProvider,
-                                                                                                                   TypeTable backupTable)
-        {
-            typeConversion.WriteLine("Standard type conversion to a CommaDelimitedStringCollection.");
-            var commaDelimitedStringCollection = new System.Configuration.CommaDelimitedStringCollection();
-            AddItemsToCollection(valueToConvert, resultType, formatProvider, backupTable, commaDelimitedStringCollection);
-            return commaDelimitedStringCollection;
-        }
-
-#if !UNIX
         private static DirectoryEntry ConvertToADSI(object valueToConvert,
                                                     Type resultType,
                                                     bool recursion,
@@ -3198,7 +3186,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((SByte)valueToConvert) != default(SByte);
+            return ((sbyte)valueToConvert) != default(sbyte);
         }
 
         private static bool ConvertByteToBool(object valueToConvert,
@@ -3208,7 +3196,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Byte)valueToConvert) != default(Byte);
+            return ((byte)valueToConvert) != default(byte);
         }
 
         private static bool ConvertSingleToBool(object valueToConvert,
@@ -3228,7 +3216,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Double)valueToConvert) != default(Double);
+            return ((double)valueToConvert) != default(double);
         }
 
         private static bool ConvertDecimalToBool(object valueToConvert,
@@ -3311,6 +3299,22 @@ namespace System.Management.Automation
             try
             {
                 // Ignore formatProvider here, the conversion should be culture invariant.
+                var numberFormat = CultureInfo.InvariantCulture.NumberFormat;
+                if (valueToConvert is double dbl)
+                {
+                    return dbl.ToString(DoublePrecision, numberFormat);
+                }
+
+                if (valueToConvert is float sgl)
+                {
+                    return sgl.ToString(SinglePrecision, numberFormat);
+                }
+
+                if (valueToConvert is BigInteger b)
+                {
+                    return b.ToString(numberFormat);
+                }
+
                 return (string)Convert.ChangeType(valueToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
             }
             catch (Exception e)
@@ -3654,6 +3658,7 @@ namespace System.Management.Automation
             private readonly int _matchIndex;
             // Size of the cache. It's rare to have more than 10 overloads for a method.
             private const int CacheSize = 10;
+
             private static readonly PSMethodToDelegateConverter[] s_converterCache = new PSMethodToDelegateConverter[CacheSize];
 
             private PSMethodToDelegateConverter(int matchIndex)
@@ -4383,21 +4388,22 @@ namespace System.Management.Automation
         private static Type[] s_numericTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
-            typeof(SByte), typeof(Byte),
-            typeof(Single), typeof(Double), typeof(Decimal)
+            typeof(sbyte), typeof(byte),
+            typeof(Single), typeof(double), typeof(decimal),
+            typeof(BigInteger)
         };
 
         private static Type[] s_integerTypes = new Type[] {
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
-            typeof(SByte), typeof(Byte)
+            typeof(sbyte), typeof(byte)
         };
 
         // Do not reorder the elements of these arrays, we depend on them being ordered by increasing size.
-        private static Type[] s_signedIntegerTypes = new Type[] { typeof(SByte), typeof(Int16), typeof(Int32), typeof(Int64) };
-        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(Byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
+        private static Type[] s_signedIntegerTypes = new Type[] { typeof(sbyte), typeof(Int16), typeof(Int32), typeof(Int64) };
+        private static Type[] s_unsignedIntegerTypes = new Type[] { typeof(byte), typeof(UInt16), typeof(UInt32), typeof(UInt64) };
 
-        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(Double), typeof(Decimal) };
+        private static Type[] s_realTypes = new Type[] { typeof(Single), typeof(double), typeof(decimal) };
 
         internal static void RebuildConversionCache()
         {
@@ -4409,7 +4415,7 @@ namespace System.Management.Automation
                 Type typeofNull = typeof(Null);
                 Type typeofFloat = typeof(float);
                 Type typeofDouble = typeof(double);
-                Type typeofDecimal = typeof(Decimal);
+                Type typeofDecimal = typeof(decimal);
                 Type typeofBool = typeof(bool);
                 Type typeofChar = typeof(char);
                 foreach (Type type in LanguagePrimitives.s_numericTypes)
@@ -4425,11 +4431,11 @@ namespace System.Management.Automation
                 CacheConversion<bool>(typeof(UInt16), typeofBool, ConvertUInt16ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(UInt32), typeofBool, ConvertUInt32ToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(UInt64), typeofBool, ConvertUInt64ToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(SByte), typeofBool, ConvertSByteToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Byte), typeofBool, ConvertByteToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(sbyte), typeofBool, ConvertSByteToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(byte), typeofBool, ConvertByteToBool, ConversionRank.Language);
                 CacheConversion<bool>(typeof(Single), typeofBool, ConvertSingleToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
-                CacheConversion<bool>(typeof(Decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(double), typeofBool, ConvertDoubleToBool, ConversionRank.Language);
+                CacheConversion<bool>(typeof(decimal), typeofBool, ConvertDecimalToBool, ConversionRank.Language);
 
                 for (int i = 0; i < LanguagePrimitives.s_unsignedIntegerTypes.Length; i++)
                 {
@@ -4785,7 +4791,7 @@ namespace System.Management.Automation
             {
                 if (resultType == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("resultType");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
 
                 bool debase;
@@ -4988,14 +4994,6 @@ namespace System.Management.Automation
                 return CacheConversion<StringCollection>(fromType, toType, LanguagePrimitives.ConvertToStringCollection, rank);
             }
 
-#if !CORECLR // No CommaDelimitedStringCollection In CoreCLR
-            if (toType == typeof(System.Configuration.CommaDelimitedStringCollection))
-            {
-                ConversionRank rank = (fromType.IsArray || IsTypeEnumerable(fromType)) ? ConversionRank.Language : ConversionRank.LanguageS2A;
-                return CacheConversion<System.Configuration.CommaDelimitedStringCollection>(fromType, toType, LanguagePrimitives.ConvertToCommaDelimitedStringCollection, rank);
-            }
-#endif
-
             if (toType.IsSubclassOf(typeof(System.Delegate))
                 && (fromType == typeof(ScriptBlock) || fromType.IsSubclassOf(typeof(ScriptBlock))))
             {
@@ -5063,7 +5061,7 @@ namespace System.Management.Automation
 
         private struct SignatureComparator
         {
-            enum TypeMatchingContext
+            private enum TypeMatchingContext
             {
                 ReturnType,
                 ParameterType,
@@ -5595,8 +5593,8 @@ namespace System.Management.Automation
 
                 if ((context != null) && (context.LanguageMode == PSLanguageMode.ConstrainedLanguage))
                 {
-                    if ((toType != typeof(Object)) &&
-                        (toType != typeof(Object[])) &&
+                    if ((toType != typeof(object)) &&
+                        (toType != typeof(object[])) &&
                         (!CoreTypes.Contains(toType)))
                     {
                         converter = ConvertNotSupportedConversion;
@@ -5737,6 +5735,7 @@ namespace System.Management.Automation
         }
 
         internal class Null { };
+
         private static IConversionData FigureConversionFromNull(Type toType)
         {
             IConversionData data = GetConversionData(typeof(Null), toType);

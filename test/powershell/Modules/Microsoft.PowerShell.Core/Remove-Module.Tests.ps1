@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Remove-Module -Name | -FullyQualifiedName | -ModuleInfo" -Tags "CI" {
@@ -216,42 +216,42 @@ Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
         New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo_ro.psd1"
         New-ModuleManifest -Path "$testdrive\Modules\Foo\Foo_rw.psd1"
         New-ModuleManifest -Path "$testdrive\Modules\Bar\Bar_rw.psd1"
-        New-ModuleManifest -Path "$testdrive\Modules\Baz\Baz_const.psd1"
+        New-ModuleManifest -Path "$testdrive\Modules\Baz\Const_module.psd1"
 
         New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo_ro.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Foo\Foo_rw.psm1" > $null
         New-Item -ItemType File -Path "$testdrive\Modules\Bar\Bar_rw.psm1" > $null
-        New-Item -ItemType File -Path "$testdrive\Modules\Baz\Baz_const.psm1" > $null
+        New-Item -ItemType File -Path "$testdrive\Modules\Baz\Const_module.psm1" > $null
 
         $removeReadOnlyModulesTestCases = @(
             # Simple patterns
-            @{ NamesToRemove = "Foo_ro"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Baz_const", "Foo_ro", "Foo_rw"}
-            @{ NamesToRemove = "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_const", "Foo_ro"}
-            @{ NamesToRemove = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Bar_rw", "Foo_rw"; ShouldBePresent = "Baz_const", "Foo_ro"}
+            @{ NamesToRemove = "Foo_ro"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Const_module", "Foo_ro", "Foo_rw"}
+            @{ NamesToRemove = "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Foo_rw"; ShouldBePresent = "Bar_rw", "Const_module", "Foo_ro"}
+            @{ NamesToRemove = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Bar_rw", "Foo_rw"; ShouldBePresent = "Const_module", "Foo_ro"}
 
             # Regex patterns
-            @{ NamesToRemove = "Foo_*"; ShouldBeRemoved = "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_const", "Foo_ro"}
-            @{ NamesToRemove = "Foo_*", "Bar_*"; ShouldBeRemoved = "Bar_rw", "Foo_rw"; ShouldBePresent = "Baz_const", "Foo_ro"}
+            @{ NamesToRemove = "Foo_*"; ShouldBeRemoved = "Foo_rw"; ShouldBePresent = "Bar_rw", "Const_module", "Foo_ro"}
+            @{ NamesToRemove = "Foo_*", "Bar_*"; ShouldBeRemoved = "Bar_rw", "Foo_rw"; ShouldBePresent = "Const_module", "Foo_ro"}
         )
 
         $removeForceReadOnlyModulesTestCases = @(
             # Simple patterns
-            @{ NamesToRemove = "Foo_ro"; ShouldBeRemoved = "Foo_ro"; ShouldBePresent = "Bar_rw", "Baz_const", "Foo_rw"}
-            @{ NamesToRemove = "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Foo_ro", "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_const"}
-            @{ NamesToRemove = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBePresent = "Baz_const"}
+            @{ NamesToRemove = "Foo_ro"; ShouldBeRemoved = "Foo_ro"; ShouldBePresent = "Bar_rw", "Const_module", "Foo_rw"}
+            @{ NamesToRemove = "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Foo_ro", "Foo_rw"; ShouldBePresent = "Bar_rw", "Const_module"}
+            @{ NamesToRemove = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBePresent = "Const_module"}
 
             # Regex patterns
-            @{ NamesToRemove = "Foo_*"; ShouldBeRemoved = "Foo_ro", "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_const"}
-            @{ NamesToRemove = "Foo_*", "Bar_*"; ShouldBeRemoved = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBePresent = "Baz_const"}
+            @{ NamesToRemove = "Foo_*"; ShouldBeRemoved = "Foo_ro", "Foo_rw"; ShouldBePresent = "Bar_rw", "Const_module"}
+            @{ NamesToRemove = "Foo_*", "Bar_*"; ShouldBeRemoved = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBePresent = "Const_module"}
         )
 
         $removeConstantModulesTestCases = @(
             # Simple patterns
-            @{ NamesToRemove = "Baz_const"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Baz_const", "Foo_ro", "Foo_rw"}
-            @{ NamesToRemove = "Baz_const", "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Foo_ro", "Foo_rw"; ShouldBePresent = "Bar_rw", "Baz_const"}
+            @{ NamesToRemove = "Const_module"; ShouldBeRemoved = ""; ShouldBePresent = "Bar_rw", "Const_module", "Foo_ro", "Foo_rw"}
+            @{ NamesToRemove = "Const_module", "Foo_ro", "Foo_rw"; ShouldBeRemoved = "Foo_ro", "Foo_rw"; ShouldBePresent = "Bar_rw", "Const_module"}
 
             # Regex patterns
-            @{ NamesToRemove = "Foo_*", "Ba*"; ShouldBeRemoved = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBePresent = "Baz_const"}
+            @{ NamesToRemove = "Foo_*", "Ba*", "Const*"; ShouldBeRemoved = "Bar_rw", "Foo_ro", "Foo_rw"; ShouldBePresent = "Const_module"}
         )
     }
 
@@ -264,8 +264,15 @@ Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
         (Get-Module -Name "Foo_ro").AccessMode = "readOnly"
         Import-Module -Name "$testdrive\Modules\Foo\Foo_rw.psd1" -Force
         Import-Module -Name "$testdrive\Modules\Bar\Bar_rw.psd1" -Force
-        Import-Module -Name "$testdrive\Modules\Baz\Baz_const.psd1" -Force
-        (Get-Module -Name "Baz_const").AccessMode = "Constant"
+
+        # If this test is run again in the same session, this test module
+        # will already be loaded and can't be removed because it sets
+        # AccessMode to Constant, so only import this test module and
+        # set AccessMode if it isn't already loaded
+        if ($null -eq (Get-Module -Name "Const_module")) {
+            Import-Module -Name "$testdrive\Modules\Baz\Const_module.psd1" -Force
+            (Get-Module -Name "Const_module").AccessMode = "Constant"
+        }
     }
 
     It "Remove-Module (ReadOnly modules): <NamesToRemove>" -TestCases $removeReadOnlyModulesTestCases {
@@ -304,7 +311,7 @@ Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
     It "Remove-Module -Force (Constant modules): <NamesToRemove>" -TestCases $removeConstantModulesTestCases {
         param([string[]]$NamesToRemove, [string[]]$ShouldBeRemoved, [string[]]$ShouldBePresent)
 
-        (Get-Module -Name "Bar_rw", "Baz_const", "Foo_ro", "Foo_rw").Name | Should -BeExactly "Bar_rw", "Baz_const", "Foo_ro", "Foo_rw"
+        (Get-Module -Name "Bar_rw", "Const_module", "Foo_ro", "Foo_rw").Name | Should -BeExactly "Bar_rw", "Const_module", "Foo_ro", "Foo_rw"
 
         { Remove-Module -Force -Name $NamesToRemove -ErrorAction Stop } | Should -Throw -ErrorId "Modules_ModuleIsConstant,Microsoft.PowerShell.Commands.RemoveModuleCommand"
         { Remove-Module -Force -Name $NamesToRemove -ErrorAction SilentlyContinue } | Should -Not -Throw
@@ -322,7 +329,7 @@ Describe "Remove-Module : module is readOnly | Constant" -Tags "CI" {
 Describe "Remove-Module : module provides the PSDrive for current PS Session" -Tags "CI" {
     It "Remove-Module : module provides the PSDrive for current PS Session" {
 
-        $module = Get-Module (Join-Path $PSHome "System.Management.Automation.dll") -ListAvailable
+        $module = Get-Module (Join-Path $PSHOME "System.Management.Automation.dll") -ListAvailable
         { Remove-Module $module -ErrorAction Stop } | Should -Throw -ErrorId "InvalidOperation,Microsoft.PowerShell.Commands.RemoveModuleCommand"
     }
 }

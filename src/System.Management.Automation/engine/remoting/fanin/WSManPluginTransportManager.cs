@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
@@ -48,7 +48,7 @@ namespace System.Management.Automation.Remoting
             PSRemotingCryptoHelper cryptoHelper)
             : base(fragmentSize, cryptoHelper)
         {
-            _syncObject = new Object();
+            _syncObject = new object();
             _activeCmdTransportManagers = new Dictionary<Guid, WSManPluginServerTransportManager>();
             _waitHandle = new ManualResetEvent(false);
         }

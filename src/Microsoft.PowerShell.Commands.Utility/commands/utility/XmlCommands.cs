@@ -1,11 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -13,7 +12,6 @@ using System.Management.Automation.Internal;
 using System.Security;
 using System.Text;
 using System.Xml;
-
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -21,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Export-Clixml command.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113297")]
+    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096926")]
     public sealed class ExportClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -277,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Import-Clixml command.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113340")]
+    [Cmdlet(VerbsData.Import, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096618")]
     public sealed class ImportClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -293,7 +291,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
         [Alias("PSPath", "LP")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
             get
@@ -366,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implementation for the convertto-xml command.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Xml", SupportsShouldProcess = false,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135204", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096603", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(XmlDocument), typeof(string))]
     public sealed class ConvertToXmlCommand : PSCmdlet, IDisposable
     {
@@ -803,7 +800,7 @@ namespace Microsoft.PowerShell.Commands
     ///<summary>
     ///This cmdlet is used to search an xml document based on the XPath Query.
     ///</summary>
-    [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135255")]
+    [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097031")]
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet
     {
@@ -811,7 +808,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the path which contains the xml files. The default is the current user directory.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 1, Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
                    ParameterSetName = "Path")]
@@ -821,7 +817,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the literal path which contains the xml files. The default is the current user directory.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralPath")]
         [ValidateNotNullOrEmpty]
         [Alias("PSPath", "LP")]
@@ -845,8 +840,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ValueFromPipeline = true,
                    ParameterSetName = "Xml")]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         [Alias("Node")]
         public System.Xml.XmlNode[] Xml { get; set; }
 
@@ -854,7 +847,6 @@ namespace Microsoft.PowerShell.Commands
         /// The following is the definition of the input parameter in string format.
         /// Specifies the string format of a fully qualified xml.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = "Content")]
         [ValidateNotNullOrEmpty]
@@ -874,7 +866,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public Hashtable Namespace { get; set; }
 
         #endregion parameters
@@ -1100,7 +1091,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The XmlNode that matches search.
         /// </summary>
-        [SuppressMessage("Microsoft.Design", "CA1059:MembersShouldNotExposeCertainConcreteTypes", MessageId = "System.Xml.XmlNode")]
         public XmlNode Node { get; set; }
 
         /// <summary>
@@ -1190,7 +1180,7 @@ namespace Microsoft.PowerShell.Commands
             string relPath = _path;
             if (!relPath.Equals(inputStream))
             {
-                if (relPath.StartsWith(directory, StringComparison.CurrentCultureIgnoreCase))
+                if (relPath.StartsWith(directory, StringComparison.OrdinalIgnoreCase))
                 {
                     int offset = directory.Length;
                     if (offset < relPath.Length)

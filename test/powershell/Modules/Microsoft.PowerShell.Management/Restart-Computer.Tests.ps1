@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # the testhook for restart-computer is the same as for stop-computer
@@ -9,7 +9,6 @@ $DefaultResultValue = 0
 try
 {
     # set up for testing
-    $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $restartTesthookName
 
     Describe "Restart-Computer" -Tag Feature,RequireAdminOnWindows {
@@ -26,16 +25,16 @@ try
 
         It "Should restart the local computer" {
             Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-            Restart-Computer -ErrorAction Stop| Should -BeNullOrEmpty
+            Restart-Computer -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
-        It "Should support -computer parameter" {
+        It "Should support -computer parameter" -Skip:(!$IsWindows) {
             Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
-            Restart-Computer -Computer $computerNames -ErrorAction Stop| Should -BeNullOrEmpty
+            Restart-Computer -Computer $computerNames -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
-        It "Should support WsmanAuthentication types" {
+        It "Should support WsmanAuthentication types" -Skip:(!$IsWindows) {
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {
                 Restart-Computer -WsmanAuthentication $auth | Should -BeNullOrEmpty
@@ -45,7 +44,7 @@ try
         # this requires setting a test hook, so we wrap the execution with try/finally of the
         # set operation. Internally, we want to suppress the progress, so
         # that is also wrapped in try/finally
-        It "Should wait for a remote system" {
+        It "Should wait for a remote system" -Skip:(!$IsWindows) {
             try
             {
                 Enable-Testhook -testhookname TestWaitStopComputer
@@ -77,18 +76,26 @@ try
                 $RestartError.Exception.Message | Should -Match 0x300000
             }
 
-            It "Should produce an error when 'Delay' is specified" {
+            It "Should produce an error when 'Delay' is specified" -Skip:(!$IsWindows) {
                 { Restart-Computer -Delay 30 } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
 
-            It "Should not support timeout on localhost" {
-                Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-                { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
+            It "Should not support timeout on Unix" -Skip:($IsWindows) {
+                { Restart-Computer -Timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
 
-            It "Should not support timeout on localhost" {
+            It "Should not support Delay on Unix" -Skip:($IsWindows) {
+                { Restart-Computer -Delay 30 } | Should -Throw -ErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.RestartComputerCommand"
+            }
+
+            It "Should not support timeout on localhost" -Skip:(!$IsWindows) {
                 Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
-                { Restart-Computer -timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
+                { Restart-Computer -Timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
+            }
+
+            It "Should not support timeout on localhost" -Skip:(!$IsWindows) {
+                Set-TesthookResult -testhookName $restartTesthookResultName -value $defaultResultValue
+                { Restart-Computer -Timeout 3 -ErrorAction Stop } | Should -Throw -ErrorId "RestartComputerInvalidParameter,Microsoft.PowerShell.Commands.RestartComputerCommand"
             }
         }
     }

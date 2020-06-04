@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -97,6 +97,13 @@ namespace Microsoft.PowerShell.Commands
             set;
         }
 
+        /// <summary>
+        /// Gets or sets a flag that tells PowerShell to automatically perform a BreakAll when the debugger is attached to the remote target.
+        /// </summary>
+        [Experimental("Microsoft.PowerShell.Utility.PSManageBreakpointsInRunspace", ExperimentAction.Show)]
+        [Parameter]
+        public SwitchParameter BreakAll { get; set; }
+
         #endregion
 
         #region Overrides
@@ -177,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Set up host script debugger to debug the job.
             _debugger = runspace.Debugger;
-            _debugger.DebugJob(_job);
+            _debugger.DebugJob(_job, breakAll: BreakAll);
 
             // Blocking call.  Send job output to host UI while debugging and wait for Job completion.
             WaitAndReceiveJobOutput();
@@ -215,7 +222,7 @@ namespace Microsoft.PowerShell.Commands
         private bool CheckForDebuggableJob()
         {
             // Check passed in job object.
-            bool debuggableJobFound = GetJobDebuggable(_job); ;
+            bool debuggableJobFound = GetJobDebuggable(_job);
 
             if (!debuggableJobFound)
             {

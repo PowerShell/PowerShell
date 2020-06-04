@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -392,8 +392,8 @@ Possible matches are</value>
   <data name="IncompleteSwitchStatement" xml:space="preserve">
     <value>The switch statement was incomplete.</value>
   </data>
-  <data name="ParallelNotSupported" xml:space="preserve">
-    <value>The '-parallel' parameter can be used only within a workflow.</value>
+  <data name="KeywordParameterReservedForFutureUse" xml:space="preserve">
+    <value>The {0} '-{1}' parameter is reserved for future use.</value>
   </data>
   <data name="MissingFilenameOption" xml:space="preserve">
     <value>Cannot process the 'switch' statement because of a missing file name argument to the -file option.</value>
@@ -1203,7 +1203,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Exception occurred when post-parsing dynamic keyword '{0}' with details '{1}'.</value>
   </data>
   <data name="WorkflowNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Workflow is not supported in PowerShell Core.</value>
+    <value>Workflow is not supported in PowerShell 6+.</value>
   </data>
   <data name="MetaConfigurationUsedInRegularConfig" xml:space="preserve">
     <value>Meta Configuration resource {0} is not allowed in the regular configuration. Use meta configuration resources in a configuration with [DscLocalConfigurationManager()] attribute.</value>
@@ -1272,7 +1272,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>Variant.GetAccessor cannot handle {0}.</value>
   </data>
   <data name="ConfigurationNotSupportedInPowerShellCore" xml:space="preserve">
-    <value>Configuration keyword is not supported in PowerShell Core.</value>
+    <value>Configuration keyword is not supported in PowerShell 6+.</value>
   </data>
   <data name="MethodHasCodePathNotReturn" xml:space="preserve">
     <value>Not all code path returns value within method.</value>
@@ -1369,7 +1369,7 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
 '{1}'.</value>
   </data>
   <data name="CantActivateDocumentInPowerShellCore" xml:space="preserve">
-    <value>Cannot run a document in PowerShell Core: {0}.</value>
+    <value>Cannot run a document in PowerShell: {0}.</value>
   </data>
   <data name="MultipleTypeConstraintsOnMethodParam" xml:space="preserve">
     <value>Multiple type constraints are not allowed on a method parameter.</value>
@@ -1499,5 +1499,14 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   </data>
   <data name="ClassesNotAllowedInConstrainedLanguage" xml:space="preserve">
     <value>Class keyword is not allowed in ConstrainedLanguage mode.</value>
+  </data>
+  <data name="MissingColonInTernaryExpression" xml:space="preserve">
+    <value>Missing ':' in the ternary expression.</value>
+  </data>
+  <data name="EmptyPipelineChainElement" xml:space="preserve">
+    <value>A pipeline chain operator must be followed by a pipeline.</value>
+  </data>
+  <data name="BackgroundOperatorInPipelineChain" xml:space="preserve">
+    <value>Background operators can only be used at the end of a pipeline chain.</value>
   </data>
 </root>

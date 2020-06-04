@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -66,6 +66,7 @@ namespace System.Management.Automation
         protected ScriptBlock _scriptBlock;
 
         private ScriptParameterBinderController _scriptParameterBinderController;
+
         internal ScriptParameterBinderController ScriptParameterBinderController
         {
             get
@@ -230,12 +231,20 @@ namespace System.Management.Automation
     /// </remarks>
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {
-        private new ScriptBlock _scriptBlock;
         private readonly ArrayList _input = new ArrayList();
+        private readonly object _dollarUnderbar = AutomationNull.Value;
+        private new ScriptBlock _scriptBlock;
         private MutableTuple _localsTuple;
         private bool _runOptimizedCode;
         private bool _argsBound;
         private FunctionContext _functionContext;
+
+        internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState, object dollarUnderbar)
+            : base(scriptBlock, context, useNewScope, origin, sessionState)
+        {
+            Init();
+            _dollarUnderbar = dollarUnderbar;
+        }
 
         internal DlrScriptCommandProcessor(ScriptBlock scriptBlock, ExecutionContext context, bool useNewScope, CommandOrigin origin, SessionStateInternal sessionState)
             : base(scriptBlock, context, useNewScope, origin, sessionState)
@@ -512,6 +521,10 @@ namespace System.Management.Automation
                     if (dollarUnderbar != AutomationNull.Value)
                     {
                         _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, dollarUnderbar, _context);
+                    }
+                    else if (_dollarUnderbar != AutomationNull.Value)
+                    {
+                        _localsTuple.SetAutomaticVariable(AutomaticVariable.Underbar, _dollarUnderbar, _context);
                     }
 
                     if (inputToProcess != AutomationNull.Value)

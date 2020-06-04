@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -17,13 +17,16 @@ namespace System.Management.Automation.Language
     internal class TypeDefiner
     {
         internal const string DynamicClassAssemblyName = "PowerShell Class Assembly";
+        internal const string DynamicClassAssemblyFullNamePrefix = "PowerShell Class Assembly,";
 
         private static int s_globalCounter = 0;
+
         private static readonly CustomAttributeBuilder s_hiddenCustomAttributeBuilder =
             new CustomAttributeBuilder(typeof(HiddenAttribute).GetConstructor(Type.EmptyTypes), Array.Empty<object>());
 
         private static readonly string s_sessionStateKeeperFieldName = "__sessionStateKeeper";
         internal static readonly string SessionStateFieldName = "__sessionState";
+
         private static readonly MethodInfo s_sessionStateKeeper_GetSessionState =
             typeof(SessionStateKeeper).GetMethod("GetSessionState", BindingFlags.Instance | BindingFlags.Public);
 
@@ -1297,6 +1300,7 @@ namespace System.Management.Automation.Language
         }
 
         private static int counter = 0;
+
         internal static Assembly DefineTypes(Parser parser, Ast rootAst, TypeDefinitionAst[] typeDefinitions)
         {
             Diagnostics.Assert(rootAst.Parent == null, "Caller should only define types from the root ast");

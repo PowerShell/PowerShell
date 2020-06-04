@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma warning disable 1634, 1691
 
@@ -21,7 +21,7 @@ namespace System.Management.Automation
         public DefaultCommandRuntime(List<object> outputList)
         {
             if (outputList == null)
-                throw new System.ArgumentNullException("outputList");
+                throw new System.ArgumentNullException(nameof(outputList));
 
             _output = outputList;
         }

@@ -1,18 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Package IgnorableNamespaces="uap mp rescap desktop6"
-  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" 
-  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" 
-  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" 
-  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" 
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
 
-  <Identity Name="Microsoft.PowerShell" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" Version="$VERSION$" />
+  <Identity Name="Microsoft.$PRODUCTNAME$" ProcessorArchitecture="$ARCH$" Publisher="$PUBLISHER$" Version="$VERSION$" />
 
   <Properties>
-    <DisplayName>PowerShell Core 6</DisplayName>
+    <DisplayName>$DISPLAYNAME$</DisplayName>
     <PublisherDisplayName>Microsoft Corporation</PublisherDisplayName>
     <Logo>assets\StoreLogo.png</Logo>
     <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>
@@ -24,7 +24,7 @@
   </Dependencies>
 
   <Resources>
-    <Resource Language="en-US"/>
+    <Resource Language="en-us"/>
   </Resources>
 
   <Applications>
@@ -36,7 +36,7 @@
           </uap3:AppExecutionAlias>
         </uap3:Extension>
       </Extensions>
-      <uap:VisualElements DisplayName="PowerShell Core 6" Description="PowerShell is an automation and configuration management platform. It consists of a cross-platform (Windows, Linux, and macOS) command-line shell and associated scripting language." BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png">
+      <uap:VisualElements DisplayName="$DISPLAYNAME$" Description="PowerShell is an automation and configuration management platform. It consists of a cross-platform (Windows, Linux, and macOS) command-line shell and associated scripting language." BackgroundColor="transparent" Square150x150Logo="assets\Square150x150Logo.png" Square44x44Logo="assets\Square44x44Logo.png">
       </uap:VisualElements>
     </Application>
   </Applications>

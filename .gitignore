@@ -1,5 +1,6 @@
 bin/
 obj/
+.ionide/
 project.lock.json
 *-tests.xml
 /debug/
@@ -79,6 +80,7 @@ Temporary Items
 # TestsResults
 TestsResults*.xml
 ParallelXUnitResults.xml
+xUnitResults.xml
 
 # Resharper settings
 PowerShell.sln.DotSettings.user

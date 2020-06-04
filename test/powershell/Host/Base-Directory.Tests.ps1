@@ -1,9 +1,9 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Configuration file locations" -tags "CI","Slow" {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
         $profileName = "Microsoft.PowerShell_profile.ps1"
     }
 
@@ -50,7 +50,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         }
 
         It @ItArgs "PSReadLine history save location should be correct" {
-            & $powershell -noprofile { (Get-PSReadlineOption).HistorySavePath } | Should -Be $expectedReadline
+            & $powershell -noprofile { (Get-PSReadLineOption).HistorySavePath } | Should -Be $expectedReadline
         }
 
         # This feature (and thus test) has been disabled because of the AssemblyLoadContext scenario
@@ -104,7 +104,7 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         It @ItArgs "PSReadLine history should respect XDG_DATA_HOME" {
             $env:XDG_DATA_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "PSReadLine", "ConsoleHost_history.txt")
-            & $powershell -noprofile { (Get-PSReadlineOption).HistorySavePath } | Should -Be $expected
+            & $powershell -noprofile { (Get-PSReadLineOption).HistorySavePath } | Should -Be $expected
         }
 
         # This feature (and thus test) has been disabled because of the AssemblyLoadContext scenario

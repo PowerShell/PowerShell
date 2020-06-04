@@ -5,7 +5,7 @@
 #bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-osx.sh) ARGUMENTS
 #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-osx.sh) <ARGUMENTS>
 
-#Usage - if you do not have the ability to run scripts directly from the web, 
+#Usage - if you do not have the ability to run scripts directly from the web,
 #        pull all files in this repo folder and execute, this script
 #        automatically prefers local copies of sub-scripts
 
@@ -14,7 +14,7 @@
 #Switches
 # -includeide         - installs vscode and vscode PowerShell extension (only relevant to machines with desktop environment)
 # -interactivetesting - do a quick launch test of vscode (only relevant when used with -includeide)
-# -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
+# -preview            - installs the latest preview release of PowerShell side-by-side with any existing production releases
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -27,7 +27,7 @@ repobased=true
 gitscriptname="installpsh-osx.sh"
 powershellpackageid=powershell
 
-echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
+echo "*** PowerShell Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo "*** Arguments used: $*"
 
@@ -60,6 +60,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
@@ -83,7 +90,7 @@ fi
 
 ## Check requirements and prerequisites
 
-echo "*** Installing PowerShell Core for $DistroBasedOn..."
+echo "*** Installing PowerShell for $DistroBasedOn..."
 
 if [[ "'$*'" =~ preview ]] ; then
     echo
@@ -103,7 +110,7 @@ if ! hash brew 2>/dev/null; then
     exit 3
 fi
 
-# Suppress output, it's very noisy on travis-ci
+# Suppress output, it's very noisy on Azure DevOps
 echo "Refreshing Homebrew cache..."
 for count in {1..2}; do
     # Try the update twice if the first time fails
@@ -122,15 +129,6 @@ for count in {1..2}; do
     git config --global http.postBuffer 157286400
     sleep 5
 done
-
-# Suppress output, it's very noisy on travis-ci
-if [[ ! -d $(brew --prefix cask) ]]; then
-    echo "Installing cask..."
-    if ! brew tap caskroom/cask >/dev/null; then
-        echo "ERROR: Cask failed to install! Cannot install powershell..." >&2
-        exit 2
-    fi
-fi
 
 if ! hash pwsh 2>/dev/null; then
     echo "Installing PowerShell..."
@@ -173,6 +171,6 @@ if [[ "$success" != 0 ]]; then
 fi
 
 if [[ "$repobased" == true ]] ; then
-  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell Core"
+  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell"
 fi
 echo "*** Install Complete"

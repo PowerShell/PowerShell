@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -11,10 +11,9 @@ namespace System.Management.Automation.Runspaces
         {
             var SignatureTypes_GroupingFormat = CustomControl.Create()
                     .StartEntry()
-                        .StartFrame(leftIndent: 4)
+                        .StartFrame()
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
                             .AddScriptBlockExpressionBinding(@"split-path $_.Path")
-                            .AddNewline()
                         .EndFrame()
                     .EndEntry()
                 .EndControl();
@@ -90,10 +89,10 @@ namespace System.Management.Automation.Runspaces
             yield return new FormatViewDefinition("PathOnly",
                 ListControl.Create()
                     .StartEntry()
-                        .AddItemProperty(@"PSPathPath")
+                        .AddItemProperty(@"PSPath")
                     .EndEntry()
                     .StartEntry(entrySelectedByType: new[] { "Microsoft.PowerShell.Commands.X509StoreLocation" })
-                        .AddItemProperty(@"PSPathPath")
+                        .AddItemProperty(@"PSPath")
                     .EndEntry()
                     .StartEntry(entrySelectedByType: new[] { "System.Security.Cryptography.X509Certificates.X509Store" })
                         .AddItemProperty(@"PSPath")

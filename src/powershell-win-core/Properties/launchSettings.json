@@ -1,0 +1,8 @@
+{ 
+  "profiles": {
+    "powershell-win-core": {
+      "commandName": "Executable",
+      "executablePath": ".\\win7-x64\\publish\\pwsh.exe"
+    }
+  }
+}

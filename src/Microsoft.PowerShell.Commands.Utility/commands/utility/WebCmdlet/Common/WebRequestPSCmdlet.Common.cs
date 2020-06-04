@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -381,6 +381,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public virtual SwitchParameter Resume { get; set; }
 
+        /// <summary>
+        /// Gets or sets whether to skip checking HTTP status for error codes.
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter SkipHttpErrorCheck { get; set; }
+
         #endregion
 
         #endregion Virtual Properties
@@ -657,8 +663,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string key in Headers.Keys)
                 {
-                    // add the header value (or overwrite it if already present)
-                    WebSession.Headers[key] = Headers[key].ToString();
+                    var value = Headers[key];
+
+                    // null is not valid value for header.
+                    // We silently ignore header if value is null.
+                    if (!(value is null))
+                    {
+                        // add the header value (or overwrite it if already present)
+                        WebSession.Headers[key] = value.ToString();
+                    }
                 }
             }
 
@@ -688,6 +701,11 @@ namespace Microsoft.PowerShell.Commands
         internal bool ShouldWriteToPipeline
         {
             get { return (!ShouldSaveToOutFile || PassThru); }
+        }
+
+        internal bool ShouldCheckHttpStatus
+        {
+            get { return !SkipHttpErrorCheck; }
         }
 
         /// <summary>
@@ -733,7 +751,7 @@ namespace Microsoft.PowerShell.Commands
 
         private Uri CheckProtocol(Uri uri)
         {
-            if (uri == null) { throw new ArgumentNullException("uri"); }
+            if (uri == null) { throw new ArgumentNullException(nameof(uri)); }
 
             if (!uri.IsAbsoluteUri)
             {
@@ -745,14 +763,14 @@ namespace Microsoft.PowerShell.Commands
 
         private string QualifyFilePath(string path)
         {
-            string resolvedFilePath = PathUtils.ResolveFilePath(path, this, false);
+            string resolvedFilePath = PathUtils.ResolveFilePath(filePath: path, command: this, isLiteralPath: true);
             return resolvedFilePath;
         }
 
         private string FormatDictionary(IDictionary content)
         {
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
 
             StringBuilder bodyBuilder = new StringBuilder();
             foreach (string key in content.Keys)
@@ -805,7 +823,8 @@ namespace Microsoft.PowerShell.Commands
 
         private string GetBasicAuthorizationHeader()
         {
-            string unencoded = string.Format("{0}:{1}", Credential.UserName, Credential.GetNetworkCredential().Password);
+            var password = new NetworkCredential(null, Credential.Password).Password;
+            string unencoded = string.Format("{0}:{1}", Credential.UserName, password);
             byte[] bytes = Encoding.UTF8.GetBytes(unencoded);
             return string.Format("Basic {0}", Convert.ToBase64String(bytes));
         }
@@ -899,7 +918,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Cancellation token source.
         /// </summary>
-        private CancellationTokenSource _cancelToken = null;
+        internal CancellationTokenSource _cancelToken = null;
 
         /// <summary>
         /// Parse Rel Links.
@@ -1146,7 +1165,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void FillRequestStream(HttpRequestMessage request)
         {
-            if (request == null) { throw new ArgumentNullException("request"); }
+            if (request == null) { throw new ArgumentNullException(nameof(request)); }
 
             // set the content type
             if (ContentType != null)
@@ -1240,9 +1259,15 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Add the content headers
-            if (request.Content != null)
+            if (request.Content == null)
             {
-                foreach (var entry in WebSession.ContentHeaders)
+                request.Content = new StringContent(string.Empty);
+                request.Content.Headers.Clear();
+            }
+
+            foreach (var entry in WebSession.ContentHeaders)
+            {
+                if (!string.IsNullOrWhiteSpace(entry.Value))
                 {
                     if (SkipHeaderValidation)
                     {
@@ -1313,9 +1338,9 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool keepAuthorization)
         {
-            if (client == null) { throw new ArgumentNullException("client"); }
+            if (client == null) { throw new ArgumentNullException(nameof(client)); }
 
-            if (request == null) { throw new ArgumentNullException("request"); }
+            if (request == null) { throw new ArgumentNullException(nameof(request)); }
 
             // Add 1 to account for the first request.
             int totalRequests = WebSession.MaximumRetryCount + 1;
@@ -1427,7 +1452,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal virtual void UpdateSession(HttpResponseMessage response)
         {
-            if (response == null) { throw new ArgumentNullException("response"); }
+            if (response == null) { throw new ArgumentNullException(nameof(response)); }
         }
 
         #endregion Virtual Methods
@@ -1509,7 +1534,7 @@ namespace Microsoft.PowerShell.Commands
                                     OutFile = null;
                                 }
 
-                                if (!_isSuccess)
+                                if (ShouldCheckHttpStatus && !_isSuccess)
                                 {
                                     string message = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                         (int)response.StatusCode, response.ReasonPhrase);
@@ -1633,7 +1658,7 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, byte[] content)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             if (content == null)
                 return 0;
 
@@ -1656,7 +1681,7 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, string content)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
 
             if (content == null)
                 return 0;
@@ -1705,7 +1730,7 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, XmlNode xmlNode)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
 
             if (xmlNode == null)
                 return 0;
@@ -1742,9 +1767,9 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, Stream contentStream)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             if (contentStream == null)
-                throw new ArgumentNullException("contentStream");
+                throw new ArgumentNullException(nameof(contentStream));
 
             var streamContent = new StreamContent(contentStream);
             request.Content = streamContent;
@@ -1766,12 +1791,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (request == null)
             {
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             }
 
             if (multipartContent == null)
             {
-                throw new ArgumentNullException("multipartContent");
+                throw new ArgumentNullException(nameof(multipartContent));
             }
 
             request.Content = multipartContent;
@@ -1782,9 +1807,9 @@ namespace Microsoft.PowerShell.Commands
         internal long SetRequestContent(HttpRequestMessage request, IDictionary content)
         {
             if (request == null)
-                throw new ArgumentNullException("request");
+                throw new ArgumentNullException(nameof(request));
             if (content == null)
-                throw new ArgumentNullException("content");
+                throw new ArgumentNullException(nameof(content));
 
             string body = FormatDictionary(content);
             return (SetRequestContent(request, body));
@@ -1804,7 +1829,7 @@ namespace Microsoft.PowerShell.Commands
 
             // we only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            string pattern = "<(?<url>.*?)>;\\s*rel=\"(?<rel>.*?)\"";
+            string pattern = "<(?<url>.*?)>;\\s*rel=(\"?)(?<rel>.*?)\\1[^\\w -.]?";
             IEnumerable<string> links;
             if (response.Headers.TryGetValues("Link", out links))
             {
@@ -1829,7 +1854,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Adds content to a <see cref="MultipartFormDataContent" />. Object type detection is used to determine if the value is String, File, or Collection.
+        /// Adds content to a <see cref="MultipartFormDataContent" />. Object type detection is used to determine if the value is string, File, or Collection.
         /// </summary>
         /// <param name="fieldName">The Field Name to use.</param>
         /// <param name="fieldValue">The Field Value to use.</param>
@@ -1885,11 +1910,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(Object)" /> to convert the objects to strings.
+        /// Gets a <see cref="StringContent" /> from the supplied field name and field value. Uses <see cref="ConvertTo<T>(object)" /> to convert the objects to strings.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StringContent" /></param>
         /// <param name="fieldValue">The Field Value to use for the <see cref="StringContent" /></param>
-        private StringContent GetMultipartStringContent(Object fieldName, object fieldValue)
+        private StringContent GetMultipartStringContent(object fieldName, object fieldValue)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
@@ -1902,11 +1927,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(Object)" /> to convert the fieldname to a string.
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and <see cref="Stream" />. Uses <see cref="ConvertTo<T>(object)" /> to convert the fieldname to a string.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
         /// <param name="stream">The <see cref="Stream" /> to use for the <see cref="StreamContent" /></param>
-        private StreamContent GetMultipartStreamContent(Object fieldName, Stream stream)
+        private StreamContent GetMultipartStreamContent(object fieldName, Stream stream)
         {
             var contentDisposition = new ContentDispositionHeaderValue("form-data");
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.
@@ -1920,11 +1945,11 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(Object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
+        /// Gets a <see cref="StreamContent" /> from the supplied field name and file. Calls <see cref="GetMultipartStreamContent(object, Stream)" /> to create the <see cref="StreamContent" /> and then sets the file name.
         /// </summary>
         /// <param name="fieldName">The Field Name to use for the <see cref="StreamContent" /></param>
         /// <param name="file">The file to use for the <see cref="StreamContent" /></param>
-        private StreamContent GetMultipartFileContent(Object fieldName, FileInfo file)
+        private StreamContent GetMultipartFileContent(object fieldName, FileInfo file)
         {
             var result = GetMultipartStreamContent(fieldName: fieldName, stream: new FileStream(file.FullName, FileMode.Open));
             // .NET does not enclose field names in quotes, however, modern browsers and curl do.

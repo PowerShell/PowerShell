@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
 
     [Cmdlet(VerbsData.ConvertTo, "Html", DefaultParameterSetName = "Page",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113290", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096595", RemotingCapability = RemotingCapability.None)]
     public sealed
     class ConvertToHtmlCommand : PSCmdlet
     {
@@ -359,7 +359,7 @@ namespace Microsoft.PowerShell.Commands
         private void InitializeResolvedNameMshParameters()
         {
             // temp list of properties with wildcards resolved
-            ArrayList resolvedNameProperty = new ArrayList();
+            var resolvedNameProperty = new List<object>();
 
             foreach (MshParameter p in _propertyMshParameterList)
             {

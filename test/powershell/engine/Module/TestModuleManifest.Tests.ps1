@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -32,27 +32,27 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
     }
 
     It "module manifest containing missing files returns error: <parameter>" -TestCases (
-        @{parameter = "RequiredAssemblies"; error = "Modules_InvalidRequiredAssembliesInModuleManifest"},
-        @{parameter = "NestedModules"; error = "Modules_InvalidNestedModuleinModuleManifest"},
-        @{parameter = "RequiredModules"; error = "Modules_InvalidRequiredModulesinModuleManifest"},
-        @{parameter = "FileList"; error = "Modules_InvalidFilePathinModuleManifest"},
-        @{parameter = "ModuleList"; error = "Modules_InvalidModuleListinModuleManifest"},
-        @{parameter = "TypesToProcess"; error = "Modules_InvalidManifest"},
-        @{parameter = "FormatsToProcess"; error = "Modules_InvalidManifest"},
-        @{parameter = "RootModule"; error = "Modules_InvalidRootModuleInModuleManifest"},
-        @{parameter = "ScriptsToProcess"; error = "Modules_InvalidManifest"}
+        @{parameter = "RequiredAssemblies"; errorId = "Modules_InvalidRequiredAssembliesInModuleManifest"},
+        @{parameter = "NestedModules"; errorId = "Modules_InvalidNestedModuleinModuleManifest"},
+        @{parameter = "RequiredModules"; errorId = "Modules_InvalidRequiredModulesinModuleManifest"},
+        @{parameter = "FileList"; errorId = "Modules_InvalidFilePathinModuleManifest"},
+        @{parameter = "ModuleList"; errorId = "Modules_InvalidModuleListinModuleManifest"},
+        @{parameter = "TypesToProcess"; errorId = "Modules_InvalidManifest"},
+        @{parameter = "FormatsToProcess"; errorId = "Modules_InvalidManifest"},
+        @{parameter = "RootModule"; errorId = "Modules_InvalidRootModuleInModuleManifest"},
+        @{parameter = "ScriptsToProcess"; errorId = "Modules_InvalidManifest"}
      ) {
 
-        param ($parameter, $error)
+        param ($parameter, $errorId)
 
         New-Item -ItemType Directory -Path testdrive:/module/foo > $null
         New-Item -ItemType File -Path testdrive:/module/foo/bar.psm1 > $null
 
         $args = @{$parameter = "doesnotexist.psm1"}
         New-ModuleManifest -Path $testModulePath @args
-        [string]$errorId = "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
 
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $errorId
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
     }
 
     It "module manifest containing valid unprocessed rootmodule file type succeeds: <rootModuleValue>" -TestCases (
@@ -81,15 +81,15 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
     }
 
     It "module manifest containing valid processed empty rootmodule file type fails: <rootModuleValue>" -TestCases (
-        @{rootModuleValue = "foo.cdxml"; error = "System.Xml.XmlException"},  # fails when cmdlet tries to read it as XML
-        @{rootModuleValue = "foo.xaml"; error = "Modules_WorkflowModuleNotSupported"}   # not supported on PowerShell Core
+        @{rootModuleValue = "foo.cdxml"; errorId = "System.Xml.XmlException"}  # fails when cmdlet tries to read it as XML
     ) {
 
-        param($rootModuleValue, $error)
+        param($rootModuleValue, $errorId)
 
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue > $null
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
     }
 
     It "module manifest containing empty rootmodule succeeds: <rootModuleValue>" -TestCases (
@@ -106,25 +106,27 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
     }
 
     It "module manifest containing invalid rootmodule returns error: <rootModuleValue>" -TestCases (
-        @{rootModuleValue = "foo.psd1"; error = "Modules_InvalidManifest"}
+        @{rootModuleValue = "foo.psd1"; errorId = "Modules_InvalidManifest"}
     ) {
 
-        param($rootModuleValue, $error)
+        param($rootModuleValue, $errorId)
 
         New-Item -ItemType File -Path testdrive:/module/$rootModuleValue > $null
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
     }
 
     It "module manifest containing non-existing rootmodule returns error: <rootModuleValue>" -TestCases (
-        @{rootModuleValue = "doesnotexist.psm1"; error = "Modules_InvalidRootModuleInModuleManifest"}
+        @{rootModuleValue = "doesnotexist.psm1"; errorId = "Modules_InvalidRootModuleInModuleManifest"}
     ) {
 
-        param($rootModuleValue, $error)
+        param($rootModuleValue, $errorId)
 
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        $fullyQualifiedErrorId = "$errorId,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | Should -Throw -ErrorId $fullyQualifiedErrorId
     }
 
     It "module manifest containing nested module gets returned: <variation>" -TestCases (
@@ -158,7 +160,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
             $ModuleVersion = '3.0'
             $GUID = New-Guid
 
-            New-ModuleManifest ((join-path $moduleDir.Name $moduleDir.Name) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $ModuleVersion -Guid $GUID
+            New-ModuleManifest ((Join-Path $moduleDir.Name $moduleDir.Name) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $ModuleVersion -Guid $GUID
 
             $lastItem = @{ ModuleName = $moduleDir.Name}
             if ($AddVersion) {$lastItem += @{ ModuleVersion = $ModuleVersion}}
@@ -183,7 +185,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
                 $RequiredModulesSpecs = $lastItem.ModuleName
             }
 
-            New-ModuleManifest ((join-path $firstModuleName $firstModuleName) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $firstModuleVersion -Guid $firstModuleGuid
+            New-ModuleManifest ((Join-Path $firstModuleName $firstModuleName) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $firstModuleVersion -Guid $firstModuleGuid
         }
     }
 
@@ -238,7 +240,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
 Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
     BeforeAll {
         $TestModulesPath = [System.IO.Path]::Combine($PSScriptRoot, 'assets', 'testmodulerunspace')
-        $PSHomeModulesPath = "$pshome\Modules"
+        $PSHomeModulesPath = "$PSHOME\Modules"
 
         # Install the Test Module
         if (Test-CanWriteToPsHome) {
@@ -248,10 +250,10 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
 
     It "Test-ModuleManifest should not load unnessary modules" -Skip:(!(Test-CanWriteToPsHome)) {
 
-        $job = start-job -name "job1" -ScriptBlock {test-modulemanifest "$using:PSHomeModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -verbose} | Wait-Job
+        $job = Start-Job -Name "job1" -ScriptBlock {Test-ModuleManifest "$using:PSHomeModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -Verbose} | Wait-Job
 
         $verbose = $job.ChildJobs[0].Verbose.ReadAll()
-        # Before the fix, all modules under $pshome will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.
+        # Before the fix, all modules under $PSHOME will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.
         $verbose.Count | Should -BeLessThan 15
     }
 
@@ -263,4 +265,3 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
         }
     }
 }
-

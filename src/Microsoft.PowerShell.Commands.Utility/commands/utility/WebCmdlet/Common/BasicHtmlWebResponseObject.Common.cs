@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -57,22 +57,28 @@ namespace Microsoft.PowerShell.Commands
         #region Properties
 
         /// <summary>
-        /// Gets the Content property.
+        /// Gets the text body content of this response.
         /// </summary>
+        /// <value>
+        /// Content of the response body, decoded using <see cref="Encoding"/>,
+        /// if the <c>Content-Type</c> response header is a recognized text
+        /// type.  Otherwise <c>null</c>.
+        /// </value>
         public new string Content { get; private set; }
 
         /// <summary>
-        /// Gets the Encoding that was used to decode the Content.
+        /// Gets the encoding of the text body content of this response.
         /// </summary>
         /// <value>
-        /// The Encoding used to decode the Content; otherwise, a null reference if the content is not text.
+        /// Encoding of the response body from the <c>Content-Type</c> header,
+        /// or <c>null</c> if the encoding could not be determined.
         /// </value>
         public Encoding Encoding { get; private set; }
 
         private WebCmdletElementCollection _inputFields;
 
         /// <summary>
-        /// Gets the Fields property.
+        /// Gets the HTML input field elements parsed from <see cref="Content"/>.
         /// </summary>
         public WebCmdletElementCollection InputFields
         {
@@ -99,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _links;
 
         /// <summary>
-        /// Gets the Links property.
+        /// Gets the HTML a link elements parsed from <see cref="Content"/>.
         /// </summary>
         public WebCmdletElementCollection Links
         {
@@ -126,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
         private WebCmdletElementCollection _images;
 
         /// <summary>
-        /// Gets the Images property.
+        /// Gets the HTML img elements parsed from <see cref="Content"/>.
         /// </summary>
         public WebCmdletElementCollection Images
         {
@@ -226,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (s_imageRegex == null)
             {
-                s_imageRegex = new Regex(@"<img\s+[^>]*>",
+                s_imageRegex = new Regex(@"<img\s[^>]*?>",
                     RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Compiled);
             }
         }

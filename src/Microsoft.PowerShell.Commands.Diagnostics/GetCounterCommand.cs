@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Class that implements the Get-Counter cmdlet.
     ///
-    [Cmdlet(VerbsCommon.Get, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138335")]
+    [Cmdlet(VerbsCommon.Get, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109647")]
     public sealed class GetCounterCommand : PSCmdlet
     {
         //
@@ -90,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
                                  @"\memory\cache faults/sec",
                                  @"\physicaldisk(_total)\% disk time",
                                  @"\physicaldisk(_total)\current disk queue length"};
+
         private bool _defaultCounters = true;
 
         private List<string> _accumulatedCounters = new List<string>();
@@ -117,6 +118,7 @@ namespace Microsoft.PowerShell.Commands
         // MaxSamples parameter
         //
         private const Int64 KEEP_ON_SAMPLING = -1;
+
         [Parameter(
                 ParameterSetName = "GetCounterSet",
                 ValueFromPipeline = false,
@@ -211,19 +213,13 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
 
-#if CORECLR
             if (Platform.IsIoT)
             {
                 // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.
                 throw new PlatformNotSupportedException();
             }
 
-            // PowerShell Core requires at least Windows 7,
-            // so no version test is needed
-            _pdhHelper = new PdhHelper(false);
-#else
-            _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
-#endif
+            _pdhHelper = new PdhHelper();
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
             uint res = _pdhHelper.ConnectToDataSource();
@@ -397,10 +393,7 @@ namespace Microsoft.PowerShell.Commands
                     Dictionary<string, string[]> counterInstanceMapping = new Dictionary<string, string[]>();
                     foreach (string counter in counterSetCounters)
                     {
-                        if (!counterInstanceMapping.ContainsKey(counter))
-                        {
-                            counterInstanceMapping.Add(counter, instanceArray);
-                        }
+                        counterInstanceMapping.TryAdd(counter, instanceArray);
                     }
 
                     PerformanceCounterCategoryType categoryType = PerformanceCounterCategoryType.Unknown;
@@ -570,12 +563,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-#if CORECLR
-                // CoreCLR has no overload of WaitOne with (interval, exitContext)
-                bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000);
-#else
                 bool cancelled = _cancelEventArrived.WaitOne((int)_sampleInterval * 1000, true);
-#endif
                 if (cancelled)
                 {
                     break;
@@ -666,11 +654,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static CultureInfo GetCurrentCulture()
         {
-#if CORECLR
-            return CultureInfo.CurrentCulture;
-#else
             return Thread.CurrentThread.CurrentUICulture;
-#endif
         }
     }
 }

@@ -1,14 +1,14 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 	It "Clear-Variable normal variable Name should works"{
 		Set-Variable foo bar
 		Clear-Variable -Name foo
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeNullOrEmpty
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeNullOrEmpty
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 
 	It "Clear-Variable ReadOnly variable Name should throw exception and force Clear-Variable should works"{
@@ -19,10 +19,10 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 
 		Clear-Variable -Name foo -Force
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeNullOrEmpty
-		$var1.Options|Should -BeExactly "ReadOnly"
-		$var1.Description| Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeNullOrEmpty
+		$var1.Options | Should -BeExactly "ReadOnly"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 
 	It "Clear-Variable normal variable Name with local scope should works"{
@@ -33,17 +33,17 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 			Clear-Variable -Name foo -Scope "local"
 
 			$var1=Get-Variable -Name foo -Scope "local"
-			$var1.Name|Should -BeExactly "foo"
-			$var1.Value|Should -BeNullOrEmpty
-			$var1.Options|Should -BeExactly "None"
-			$var1.Description|Should -BeNullOrEmpty
+			$var1.Name | Should -BeExactly "foo"
+			$var1.Value | Should -BeNullOrEmpty
+			$var1.Options | Should -BeExactly "None"
+			$var1.Description | Should -BeNullOrEmpty
 		}
 
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 
 	It "Clear-Variable Private variable Name should works and Get-Variable with local scope should throw exception"{
@@ -55,10 +55,10 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 		}
 
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "Private"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "Private"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 
 	It "Clear-Variable normal variable Name with local scope should works in different scope"{
@@ -68,23 +68,23 @@ Describe "Clear-Variable DRT Unit Tests" -Tags "CI" {
 			Clear-Variable -Name foo -Scope "local"
 
 			$var1=Get-Variable -Name foo -Scope "local"
-			$var1.Name|Should -BeExactly "foo"
-			$var1.Value|Should -BeNullOrEmpty
-			$var1.Options|Should -BeExactly "None"
-			$var1.Description|Should -BeNullOrEmpty
+			$var1.Name | Should -BeExactly "foo"
+			$var1.Value | Should -BeNullOrEmpty
+			$var1.Options | Should -BeExactly "None"
+			$var1.Description | Should -BeNullOrEmpty
 		}
 
 		$var1=Get-Variable -Name foo
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeNullOrEmpty
 
 		$var1=Get-Variable -Name foo -Scope "local"
-		$var1.Name|Should -BeExactly "foo"
-		$var1.Value|Should -BeExactly "bar"
-		$var1.Options|Should -BeExactly "None"
-		$var1.Description|Should -BeNullOrEmpty
+		$var1.Name | Should -BeExactly "foo"
+		$var1.Value | Should -BeExactly "bar"
+		$var1.Options | Should -BeExactly "None"
+		$var1.Description | Should -BeNullOrEmpty
 	}
 }
 

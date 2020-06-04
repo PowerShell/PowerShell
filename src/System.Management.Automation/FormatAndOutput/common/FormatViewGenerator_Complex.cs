@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (control == null)
             {
-                throw PSTraceSource.NewArgumentNullException("control");
+                throw PSTraceSource.NewArgumentNullException(nameof(control));
             }
 
             ExecuteFormatControl(new TraversalInfo(0, maxTreeDepth), control,
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (so == null)
             {
-                throw PSTraceSource.NewArgumentNullException("so");
+                throw PSTraceSource.NewArgumentNullException(nameof(so));
             }
 
             // guard against infinite loop

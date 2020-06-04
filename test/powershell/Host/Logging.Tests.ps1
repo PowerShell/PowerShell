@@ -1,8 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 using namespace System.Text
 
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 $ErrorActionPreference = 'Stop'
 
 Import-Module HelpersCommon
@@ -155,10 +155,10 @@ Describe 'Basic SysLog tests on Linux' -Tag @('CI','RequireSudoOnUnix') {
                 Write-Warning -Message 'Unsupported Linux syslog configuration.'
                 $IsSupportedEnvironment = $false
             }
-            [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
-            $scriptBlockCreatedRegExTemplate = @'
-Creating Scriptblock text \(1 of 1\):#012{0}(#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
-'@
+            [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
+            $scriptBlockCreatedRegExTemplate = @"
+Creating Scriptblock text \(1 of 1\):#012{0}(⏎|#012)*ScriptBlock ID: [0-9a-z\-]*#012Path:.*
+"@
 
         }
     }
@@ -191,7 +191,7 @@ Creating Scriptblock text \(1 of 1\):#012{0}(#012)*ScriptBlock ID: [0-9a-z\-]*#0
     It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
         $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123' ;Write-verbose 'after'"))
 '@
         $testFileName = 'test01.ps1'
@@ -204,14 +204,14 @@ $pid
 
         $items | Should -Not -Be $null
         $items.Count | Should -BeGreaterThan 2
-        $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
-        $createdEvents.Count | should -BeGreaterOrEqual 3
+        $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+        $createdEvents.Count | Should -BeGreaterOrEqual 3
 
         # Verify we log that we are executing a file
         $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
 
         # Verify we log that we are the script to create the scriptblock
-        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,'#012')))
+        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
         # Verify we log that we are excuting the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123' ;Write\-verbose 'after'")
@@ -220,7 +220,7 @@ $pid
     It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
         $configFile = WriteLogSettings -LogId $logId -ScriptBlockLogging -LogLevel Verbose
         $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
 '@
         $testFileName = 'test01.ps1'
@@ -233,14 +233,14 @@ $pid
 
         $items | Should -Not -Be $null
         $items.Count | Should -BeGreaterThan 2
-        $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
-        $createdEvents.Count | should -BeGreaterOrEqual 3
+        $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+        $createdEvents.Count | Should -BeGreaterOrEqual 3
 
         # Verify we log that we are executing a file
         $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
 
         # Verify we log that we are the script to create the scriptblock
-        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,'#012')))
+        $createdEvents[1].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f (Get-RegEx -SimpleMatch $Script.Replace([System.Environment]::NewLine,"⏎")))
 
         # Verify we log that we are excuting the created scriptblock
         $createdEvents[2].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f "Write\-Verbose 'testheader123␀' ;Write\-verbose 'after'")
@@ -273,7 +273,7 @@ Describe 'Basic os_log tests on MacOS' -Tag @('CI','RequireSudoOnUnix') {
                 Set-OsLogPersistence -Enable
             }
         }
-        [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+        [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
         $scriptBlockCreatedRegExTemplate = @'
 Creating Scriptblock text \(1 of 1\):
 {0}
@@ -338,7 +338,7 @@ Path:.*
     It 'Verifies scriptblock logging' -Skip:(!$IsSupportedEnvironment) {
         try {
             $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123' ;Write-verbose 'after'"))
 '@
             $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId -LogLevel Verbose
@@ -353,8 +353,8 @@ $pid
 
             $items | Should -Not -Be $null
             $items.Count | Should -BeGreaterThan 2
-            $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
-            $createdEvents.Count | should -BeGreaterOrEqual 3
+            $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+            $createdEvents.Count | Should -BeGreaterOrEqual 3
 
             # Verify we log that we are executing a file
             $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
@@ -376,7 +376,7 @@ $pid
     It 'Verifies scriptblock logging with null character' -Skip:(!$IsSupportedEnvironment) {
         try {
             $script = @'
-$pid
+$PID
 & ([scriptblock]::create("Write-Verbose 'testheader123$([char]0x0000)' ;Write-verbose 'after'"))
 '@
             $configFile = WriteLogSettings -ScriptBlockLogging -LogId $logId -LogLevel Verbose
@@ -391,8 +391,8 @@ $pid
 
             $items | Should -Not -Be $null
             $items.Count | Should -BeGreaterThan 2
-            $createdEvents = $items | where-object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
-            $createdEvents.Count | should -BeGreaterOrEqual 3
+            $createdEvents = $items | Where-Object {$_.EventId -eq 'ScriptBlock_Compile_Detail:ExecuteCommand.Create.Verbose'}
+            $createdEvents.Count | Should -BeGreaterOrEqual 3
 
             # Verify we log that we are executing a file
             $createdEvents[0].Message | Should -Match ($scriptBlockCreatedRegExTemplate -f ".*/$testFileName")
@@ -436,7 +436,7 @@ $pid
 Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') {
     BeforeAll {
         [bool] $IsSupportedEnvironment = $IsWindows
-        [string] $powershell = Join-Path -Path $PSHome -ChildPath 'pwsh'
+        [string] $powershell = Join-Path -Path $PSHOME -ChildPath 'pwsh'
         $scriptBlockLoggingCases = @(
             @{
                 name = 'normal script block'
@@ -452,7 +452,7 @@ Describe 'Basic EventLog tests on Windows' -Tag @('CI','RequireAdminOnWindows') 
 
         if ($IsSupportedEnvironment)
         {
-            & "$PSHome\RegisterManifest.ps1"
+            & "$PSHOME\RegisterManifest.ps1"
         }
     }
 

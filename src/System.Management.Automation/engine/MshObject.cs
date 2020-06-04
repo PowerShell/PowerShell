@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -424,6 +424,7 @@ namespace System.Management.Automation
         #region Adapter Mappings
 
         private static readonly ConcurrentDictionary<Type, AdapterSet> s_adapterMapping = new ConcurrentDictionary<Type, AdapterSet>();
+
         private static readonly List<Func<object, AdapterSet>> s_adapterSetMappers = new List<Func<object, AdapterSet>>
                                                                                     {
                                                                                         MappedInternalAdapterSet
@@ -569,7 +570,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                throw PSTraceSource.NewArgumentNullException("obj");
+                throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
 
             CommonInitialization(obj);
@@ -584,14 +585,14 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             string serializedData = info.GetValue("CliXml", typeof(string)) as string;
 
             if (serializedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             PSObject result = PSObject.AsPSObject(PSSerializer.Deserialize(serializedData));
@@ -647,6 +648,7 @@ namespace System.Management.Automation
         private static readonly AdapterSet s_dotNetInstanceAdapterSet = new AdapterSet(DotNetInstanceAdapter, null);
         private static readonly AdapterSet s_mshMemberSetAdapter = new AdapterSet(new PSMemberSetAdapter(), null);
         private static readonly AdapterSet s_mshObjectAdapter = new AdapterSet(new PSObjectAdapter(), null);
+
         private static readonly PSObject.AdapterSet s_cimInstanceAdapter =
             new PSObject.AdapterSet(new ThirdPartyAdapter(typeof(Microsoft.Management.Infrastructure.CimInstance),
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
@@ -1051,7 +1053,7 @@ namespace System.Management.Automation
         {
             if (obj == null)
             {
-                throw PSTraceSource.NewArgumentNullException("obj");
+                throw PSTraceSource.NewArgumentNullException(nameof(obj));
             }
 
             if (obj is PSObject so)
@@ -1269,6 +1271,42 @@ namespace System.Management.Automation
         /// </exception>
         internal static string ToString(ExecutionContext context, object obj, string separator, string format, IFormatProvider formatProvider, bool recurse, bool unravelEnumeratorOnRecurse)
         {
+            bool TryFastTrackPrimitiveTypes(object value, out string str)
+            {
+                switch (Convert.GetTypeCode(value))
+                {
+                    case TypeCode.String:
+                        str = (string)value;
+                        break;
+                    case TypeCode.Byte:
+                    case TypeCode.SByte:
+                    case TypeCode.Int16:
+                    case TypeCode.UInt16:
+                    case TypeCode.Int32:
+                    case TypeCode.UInt32:
+                    case TypeCode.Int64:
+                    case TypeCode.UInt64:
+                    case TypeCode.DateTime:
+                    case TypeCode.Decimal:
+                        var formattable = (IFormattable)value;
+                        str = formattable.ToString(format, formatProvider);
+                        break;
+                    case TypeCode.Double:
+                        var dbl = (double)value;
+                        str = dbl.ToString(format ?? LanguagePrimitives.DoublePrecision, formatProvider);
+                        break;
+                    case TypeCode.Single:
+                        var sgl = (float)value;
+                        str = sgl.ToString(format ?? LanguagePrimitives.SinglePrecision, formatProvider);
+                        break;
+                    default:
+                        str = null;
+                        return false;
+                }
+
+                return true;
+            }
+
             PSObject mshObj = obj as PSObject;
 
             #region plain object
@@ -1279,35 +1317,9 @@ namespace System.Management.Automation
                     return string.Empty;
                 }
 
-                // Fast-track the primitive types...
-                Type objType = obj.GetType();
-                TypeCode code = objType.GetTypeCode();
-                switch (code)
+                if (TryFastTrackPrimitiveTypes(obj, out string objString))
                 {
-                    case TypeCode.String:
-                        return (string)obj;
-                    case TypeCode.Byte:
-                    case TypeCode.SByte:
-                    case TypeCode.Int16:
-                    case TypeCode.UInt16:
-                    case TypeCode.Int32:
-                    case TypeCode.UInt32:
-                    case TypeCode.Int64:
-                    case TypeCode.UInt64:
-                        return obj.ToString();
-                    case TypeCode.DateTime:
-                        DateTime dt = (DateTime)obj;
-                        return dt.ToString(formatProvider);
-                    case TypeCode.Decimal:
-                        Decimal dec = (Decimal)obj;
-                        return dec.ToString(formatProvider);
-                    case TypeCode.Double:
-                        double dbl = (double)obj;
-                        return dbl.ToString(formatProvider);
-
-                    case TypeCode.Single:
-                        float sgl = (float)obj;
-                        return sgl.ToString(formatProvider);
+                    return objString;
                 }
 
                 #region recurse
@@ -1482,6 +1494,12 @@ namespace System.Management.Automation
             // Since we don't have a brokered ToString and the enumerations were not necessary or failed
             // we try the BaseObject's ToString
             object baseObject = mshObj._immediateBaseObject;
+
+            if (TryFastTrackPrimitiveTypes(baseObject, out string baseObjString))
+            {
+                return baseObjString;
+            }
+
             IFormattable msjObjFormattable = baseObject as IFormattable;
             try
             {
@@ -1658,7 +1676,7 @@ namespace System.Management.Automation
             // This ReferenceEquals is not just an optimization.
             // It is necessary so that mshObject.Equals(mshObject) returns 0.
             // Please see the comments inside the Equals implementation.
-            if (Object.ReferenceEquals(this, obj))
+            if (object.ReferenceEquals(this, obj))
             {
                 return 0;
             }
@@ -1689,7 +1707,7 @@ namespace System.Management.Automation
             // BaseObject returns the MshCustomBaseObject.
             // Because we have to call BaseObject here, and LP.Compare uses PSObject.Base
             // we need the reference equals below so that mshObject.Equals(mshObject) returns true.
-            if (Object.ReferenceEquals(this, obj))
+            if (object.ReferenceEquals(this, obj))
             {
                 return true;
             }
@@ -1697,7 +1715,7 @@ namespace System.Management.Automation
             // The above check validates if we are comparing with the same object references
             // This check "shortcuts" the comparison if the first object is a CustomObject
             // since 2 custom objects are not equal.
-            if (Object.ReferenceEquals(this.BaseObject, PSCustomObject.SelfInstance))
+            if (object.ReferenceEquals(this.BaseObject, PSCustomObject.SelfInstance))
             {
                 return false;
             }
@@ -1799,7 +1817,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
 
             // We create a wrapper PSObject, so that we can successfully deserialize it
@@ -1898,7 +1916,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal SerializationMethod GetSerializationMethod(TypeTable backupTypeTable)
         {
-            SerializationMethod result = TypeTable.defaultSerializationMethod;
+            SerializationMethod result = TypeTable.DefaultSerializationMethod;
 
             TypeTable typeTable = backupTypeTable ?? this.GetTypeTable();
             if (typeTable != null)
@@ -1906,7 +1924,7 @@ namespace System.Management.Automation
                 PSMemberSet standardMemberSet = TypeTableGetMemberDelegate<PSMemberSet>(this,
                     typeTable, TypeTable.PSStandardMembers);
                 result = (SerializationMethod)GetNoteSettingValue(standardMemberSet,
-                        TypeTable.SerializationMethodNode, TypeTable.defaultSerializationMethod, typeof(SerializationMethod), true, this);
+                        TypeTable.SerializationMethodNode, TypeTable.DefaultSerializationMethod, typeof(SerializationMethod), true, this);
             }
 
             return result;
@@ -2448,7 +2466,8 @@ namespace System.Management.Automation
         /// </summary>
         private PSCustomObject() { }
 
-        internal static PSCustomObject SelfInstance = new PSCustomObject();
+        internal static readonly PSCustomObject SelfInstance = new PSCustomObject();
+
         /// <summary>
         /// Returns an empty string.
         /// </summary>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -146,30 +146,30 @@ namespace System.Management.Automation.Runspaces
             {
                 lock (this.SyncRoot)
                 {
-                    if (value != _createThreadOptions)
+                    if (value == _createThreadOptions)
                     {
-                        if (this.RunspaceStateInfo.State != RunspaceState.BeforeOpen)
-                        {
-#if CORECLR                 // No ApartmentState.STA Support In CoreCLR
-                            bool allowed = value == PSThreadOptions.ReuseThread;
-#else
-                            // if the runspace is already opened we only allow changing the options if
-                            // the apartment state is MTA and the new value is ReuseThread
-                            bool allowed = (this.ApartmentState == ApartmentState.MTA || this.ApartmentState == ApartmentState.Unknown) // Unknown is the same as MTA
-                                           &&
-                                           value == PSThreadOptions.ReuseThread;
-#endif
-
-                            if (!allowed)
-                            {
-                                throw new InvalidOperationException(StringUtil.Format(RunspaceStrings.InvalidThreadOptionsChange));
-                            }
-                        }
-
-                        _createThreadOptions = value;
+                        return;
                     }
+
+                    if (this.RunspaceStateInfo.State != RunspaceState.BeforeOpen)
+                    {
+                        if (!IsValidThreadOptionsConfiguration(value))
+                        {
+                            throw new InvalidOperationException(StringUtil.Format(RunspaceStrings.InvalidThreadOptionsChange));
+                        }
+                    }
+
+                    _createThreadOptions = value;
                 }
             }
+        }
+
+        private bool IsValidThreadOptionsConfiguration(PSThreadOptions options)
+        {
+            // If the runspace is already opened, we only allow changing options when:
+            //  - The new value is ReuseThread, and
+            //  - The apartment state is not STA
+            return options == PSThreadOptions.ReuseThread && this.ApartmentState != ApartmentState.STA;
         }
 
         private PSThreadOptions _createThreadOptions = PSThreadOptions.Default;
@@ -770,11 +770,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (_pipelineThread == null)
             {
-#if CORECLR     // No ApartmentState In CoreCLR
-                _pipelineThread = new PipelineThread();
-#else
                 _pipelineThread = new PipelineThread(this.ApartmentState);
-#endif
             }
 
             return _pipelineThread;
@@ -1596,7 +1592,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

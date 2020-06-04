@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Get-Command Feature tests" -Tag Feature {
@@ -32,21 +32,10 @@ Describe "Get-Command Feature tests" -Tag Feature {
 
             Set-Content -Path (Join-Path $testModulesPath "test1/test1.psm1") -Value "function Import-FooZedZed {}"
             Set-Content -Path (Join-Path $testModulesPath "test2/test2.psm1") -Value "function Invoke-FooZedZed {}"
-
-            $configFilePath = Join-Path $testdrive "useabbreviationexpansion.json"
-
-            @"
-            {
-                "ExperimentalFeatures": [
-                  "PSUseAbbreviationExpansion"
-                ]
-            }
-"@ > $configFilePath
-
         }
 
         It "Can return multiple results relying on auto module loading" {
-            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
+            $results = & "$PSHOME/pwsh" -outputformat xml -command "`$env:PSModulePath += '$testPSModulePath'; Get-Command i-fzz -UseAbbreviationExpansion"
             $results | Should -HaveCount 2
             $results.Name | Should -Contain "Invoke-FooZedZed"
             $results.Name | Should -Contain "Import-FooZedZed"
@@ -60,21 +49,23 @@ Describe "Get-Command Feature tests" -Tag Feature {
         ) {
             param($name, $expected, $module)
 
-            $command = "Get-Command $name -UseAbbreviationExpansion"
-
-            if ($module) {
-                $command += " -Module $module"
+            $params = @{
+                UseAbbreviationExpansion = $true;
+                Name = $name;
             }
 
-            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "$command"
+            if ($module) {
+                $params += @{ Module = $module }
+            }
+
+            $results = Get-Command @params
             $results | Should -HaveCount 1
             $results.Name | Should -BeExactly $expected
         }
 
         It "Can return multiple results for cmdlets matching abbreviation" {
             # use mixed casing to validate case insensitivity
-            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "Get-Command i-C -UseAbbreviationExpansion"
-            $results.Count | Should -BeGreaterOrEqual 3
+            $results = Get-Command i-C -UseAbbreviationExpansion
             $results.Name | Should -Contain "Invoke-Command"
             $results.Name | Should -Contain "Import-Clixml"
             $results.Name | Should -Contain "Import-Csv"
@@ -84,24 +75,108 @@ Describe "Get-Command Feature tests" -Tag Feature {
             $manifestPath = Join-Path $testdrive "test.psd1"
             $modulePath = Join-Path $testdrive "test.psm1"
 
-            New-ModuleManifest -Path $manifestPath -FunctionsToExport "Get-FooBar","Get-FB" -RootModule test.psm1
+            New-ModuleManifest -Path $manifestPath -FunctionsToExport "Get-FoodBar","Get-FB" -RootModule test.psm1
             @"
-            function Get-FooBar { "foobar" }
+            function Get-FoodBar { "foodbar" }
             function Get-FB { "fb" }
 "@ > $modulePath
 
-            $results = pwsh -outputformat xml -settingsfile $configFilePath -command "Import-Module $manifestPath; Get-Command g-fb -UseAbbreviationExpansion"
-            $results | Should -HaveCount 2
-            $results[0].Name | Should -BeExactly "Get-FB"
-            $results[1].Name | Should -BeExactly "Get-FooBar"
+            try {
+                Import-Module $manifestPath
+                $results = Get-Command g-fb -UseAbbreviationExpansion
+                $results | Should -HaveCount 2
+                $results[0].Name | Should -BeIn "Get-FB","Get-FoodBar"
+                $results[1].Name | Should -BeIn "Get-FB","Get-FoodBar"
+                $results[0].Name | Should -Not -Be $results[1].Name
+            }
+            finally {
+                Remove-Module test
+            }
         }
 
         It "Non-existing cmdlets returns non-terminating error" {
-            pwsh -settingsfile $configFilePath -command 'try { get-command g-adf -ea stop } catch { $_.fullyqualifiederrorid }' | Should -BeExactly "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
+            { Get-Command g-adf -ErrorAction Stop } | Should -Throw -ErrorId "CommandNotFoundException,Microsoft.PowerShell.Commands.GetCommandCommand"
         }
 
         It "No results if wildcard is used" {
-            pwsh -settingsfile $configFilePath -command Get-Command i-psd* -UseAbbreviationExpansion | Should -BeNullOrEmpty
+            Get-Command i-psd* -UseAbbreviationExpansion | Should -BeNullOrEmpty
+        }
+    }
+}
+
+Describe "Get-Command" -Tag CI {
+    BeforeAll {
+        Import-Module Microsoft.PowerShell.Management
+    }
+    Context "-Syntax tests" {
+        It "Should return a string object when -Name is an alias and -Syntax is specified" {
+            $Result = Get-Command -Name del -Syntax
+
+            $Result | Should -BeOfType [String]
+            $Result | Should -Match 'del \[-Path\]'
+        }
+
+        It "Should replace commands with aliases in matching commands when using a wildcard search" {
+            $Result = Get-Command -Name sp* -Syntax
+
+            $Result | Should -BeOfType [String]
+            $Result -join '' | Should -Match 'sp \(alias\) -> Set-ItemProperty'
+            $Result -join '' | Should -Match 'sp \[-Path\]'
+        }
+
+        It "Should not add the alias (alias) -> command decorator for non-alias commands" {
+            $Result = Get-Command -Name sp* -Syntax
+
+            $Result -join '' | Should -Not -Match 'Split-Path \(alias\) -> Split-Path'
+            $Result -join '' | Should -Match 'Split-Path \[-Path\]'
+        }
+
+        It "Should only replace aliases when given multiple entries including a command and an alias" {
+            $Result = Get-Command -Name get-help, del -Syntax
+
+            $Result -join '' | Should -Match 'del \(alias\) -> Remove-Item'
+            $Result -join '' | Should -Match 'del \[-Path\]'
+            $Result -join '' | Should -Match 'Get-Help \[\[-Name\]'
+            $Result -join '' | Should -Not -Match 'del \(alias\) -> Get-Help'
+        }
+
+        It "Should return the path to an aliased script when -Syntax is specified" {
+            # First, create a script file
+            $TestGcmSyntax = @'
+            [CmdletBinding()]
+            param(
+                [Parameter(Position=0, Mandatory, ValueFromPipeline, ValueFromPipelineByPropertyName)]
+                [ValidateNotNullOrEmpty()]
+                [string[]]
+                $Name
+            )
+            process {
+                "Processing ${Name}"
+            }
+'@
+            Set-Content -Path TestDrive:\Test-GcmSyntax.ps1 -Value $TestGcmSyntax
+
+            # Now set up an alias for that file
+            New-Alias -Name tgs -Value TestDrive:\Test-GcmSyntax.ps1
+
+            $Result = Get-Command -Name tgs -Syntax
+
+            $Result | Should -Match "tgs \(alias\) -> $([Regex]::Escape((Get-Item TestDrive:\\Test-GcmSyntax.ps1).FullName))"
+        }
+    }
+
+    Context "-Name tests" {
+        It "Should return a AliasInfo object when -Name is an alias" {
+            $Result = Get-Command -Name del
+
+            $Result | Should -BeOfType [System.Management.Automation.AliasInfo]
+            $Result.DisplayName | Should -Be 'del -> Remove-Item'
+        }
+
+        It "Should return a CommandInfo object when -Name is a command" {
+            $Result = Get-Command -Name Remove-Item
+
+            $Result | Should -BeOfType [System.Management.Automation.CommandInfo]
         }
     }
 }

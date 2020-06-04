@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Native pipeline should have proper encoding' -tags 'CI' {
     It '$OutputEncoding should be set to UTF8 without BOM' {
@@ -10,7 +10,7 @@ Describe 'Native pipeline should have proper encoding' -tags 'CI' {
 Describe 'native commands with pipeline' -tags 'Feature' {
 
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "pwsh"
+        $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
     }
 
     It "native | ps | native doesn't block" {
@@ -126,6 +126,18 @@ Describe "Native Command Processor" -tags "Feature" {
                 $ps.Stop()
             }
             $ps.Dispose()
+        }
+    }
+
+    It "OutputEncoding should be used" -Skip:(!$IsWindows -or !(Get-Command sfc.exe)) {
+
+        $originalOutputEncoding = [Console]::OutputEncoding
+        try {
+            [Console]::OutputEncoding = [System.Text.Encoding]::Unicode
+            sfc | Out-String | Should -Not -Match "`0"
+        }
+        finally {
+            [Console]::OutputEncoding = $originalOutputEncoding
         }
     }
 }

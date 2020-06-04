@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Set-Content cmdlet tests" -Tags "CI" {
     BeforeAll {
@@ -22,7 +22,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should create a file if it does not exist" {
             Set-Content -Path $filePath1 -Value "$file1"
             $result = Get-Content -Path $filePath1
-            $result| Should -Be "$file1"
+            $result | Should -Be "$file1"
         }
     }
     Context "Set-Content/Get-Content should set/get the content of an exisiting file" {
@@ -32,7 +32,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should set-Content of testdrive\$file1" {
             Set-Content -Path $filePath1 -Value "ExpectedContent"
             $result = Get-Content -Path $filePath1
-            $result| Should -Be "ExpectedContent"
+            $result | Should -Be "ExpectedContent"
         }
         It "should return expected string from testdrive\$file1" {
             $result = Get-Content -Path $filePath1
@@ -41,7 +41,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should Set-Content to testdrive\dynamicfile.txt with dynamic parameters" {
             Set-Content -Path $testdrive\dynamicfile.txt -Value "ExpectedContent"
             $result = Get-Content -Path $testdrive\dynamicfile.txt
-            $result| Should -BeExactly "ExpectedContent"
+            $result | Should -BeExactly "ExpectedContent"
         }
         It "should return expected string from testdrive\dynamicfile.txt" {
             $result = Get-Content -Path $testdrive\dynamicfile.txt
@@ -49,10 +49,10 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         }
         It "should remove existing content from testdrive\$file1 when the -Value is `$null" {
             $AsItWas=Get-Content $filePath1
-            $AsItWas |Should -BeExactly "ExpectedContent"
+            $AsItWas | Should -BeExactly "ExpectedContent"
             Set-Content -Path $filePath1 -Value $null -ErrorAction Stop
             $AsItIs=Get-Content $filePath1
-            $AsItIs| Should -Not -Be $AsItWas
+            $AsItIs | Should -Not -Be $AsItWas
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$null" {
             { Set-Content -Path $null -Value "ShouldNotWorkBecausePathIsNull" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
@@ -60,7 +60,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$()" {
             { Set-Content -Path $() -Value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
         }
-        It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -skip:$skipRegistry {
+        It "should throw 'PSNotSupportedException' when you Set-Content to an unsupported provider" -Skip:$skipRegistry {
             { Set-Content -Path HKLM:\\software\\microsoft -Value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop } | Should -Throw -ErrorId "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
         }
         #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
@@ -91,7 +91,7 @@ Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI
             New-PSDrive -Name Foo -Root \\localhost\testshare -PSProvider FileSystem
             Set-Content -Path Foo:\$file1 -Value "$file1"
             $result = Get-Content -Path Foo:\$file1
-            $result| Should -BeExactly "$file1"
+            $result | Should -BeExactly "$file1"
         }
         finally
         {

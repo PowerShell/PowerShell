@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements get-help command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Help", DefaultParameterSetName = "AllUsersView", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113316")]
+    [Cmdlet(VerbsCommon.Get, "Help", DefaultParameterSetName = "AllUsersView", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096483")]
     public sealed class GetHelpCommand : PSCmdlet
     {
         /// <summary>
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateSet(
-            "Alias", "Cmdlet", "Provider", "General", "FAQ", "Glossary", "HelpFile", "ScriptCommand", "Function", "Filter", "ExternalScript", "All", "DefaultHelp", "Workflow", "DscResource", "Class", "Configuration",
+            "Alias", "Cmdlet", "Provider", "General", "FAQ", "Glossary", "HelpFile", "ScriptCommand", "Function", "Filter", "ExternalScript", "All", "DefaultHelp", "DscResource", "Class", "Configuration",
              IgnoreCase = true)]
         public string[] Category { get; set; }
 
@@ -202,6 +202,32 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _showOnlineHelp;
 
+#if !UNIX
+        private GraphicalHostReflectionWrapper graphicalHostReflectionWrapper;
+        private bool showWindow;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the help should be displayed in a separate window.
+        /// </summary>
+        [Parameter(ParameterSetName = "ShowWindow", Mandatory = true)]
+        public SwitchParameter ShowWindow
+        {
+            get
+            {
+                return showWindow;
+            }
+
+            set
+            {
+                showWindow = value;
+                if (showWindow)
+                {
+                    VerifyParameterForbiddenInRemoteRunspace(this, "ShowWindow");
+                }
+            }
+        }
+#endif
+
         // The following variable controls the view.
         private HelpView _viewTokenToAdd = HelpView.Default;
 
@@ -220,19 +246,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             _timer.Start();
-
-            if (!Online.IsPresent && UpdatableHelpSystem.ShouldPromptToUpdateHelp() && HostUtilities.IsProcessInteractive(MyInvocation) && HasInternetConnection())
-            {
-                if (ShouldContinue(HelpDisplayStrings.UpdateHelpPromptBody, HelpDisplayStrings.UpdateHelpPromptTitle))
-                {
-                    System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace).AddCommand("Update-Help").Invoke();
-#if LEGACYTELEMETRY
-                    _updatedHelp = true;
-#endif
-                }
-
-                UpdatableHelpSystem.SetDisablePromptToUpdateHelp();
-            }
         }
 
         /// <summary>
@@ -243,6 +256,12 @@ namespace Microsoft.PowerShell.Commands
             HelpSystem helpSystem = this.Context.HelpSystem;
             try
             {
+#if !UNIX
+                if (this.ShowWindow)
+                {
+                    this.graphicalHostReflectionWrapper = GraphicalHostReflectionWrapper.GetGraphicalHostReflectionWrapper(this, "Microsoft.PowerShell.Commands.Internal.HelpWindowHelper");
+                }
+#endif
                 helpSystem.OnProgress += new HelpSystem.HelpProgressHandler(HelpSystem_OnProgress);
 
                 bool failed = false;
@@ -499,7 +518,7 @@ namespace Microsoft.PowerShell.Commands
             // categories that support -Parameter, -Role, -Functionality, -Component parameters
             HelpCategory supportedCategories =
                 HelpCategory.Alias | HelpCategory.Cmdlet | HelpCategory.ExternalScript |
-                HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand | HelpCategory.Workflow;
+                HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand;
 
             if ((cat & supportedCategories) == 0)
             {
@@ -559,6 +578,12 @@ namespace Microsoft.PowerShell.Commands
                         throw PSTraceSource.NewInvalidOperationException(HelpErrors.NoURIFound);
                     }
                 }
+#if !UNIX
+                else if (showFullHelp && ShowWindow)
+                {
+                    graphicalHostReflectionWrapper.CallStaticMethod("ShowHelpWindow", helpInfo.FullHelp, this);
+                }
+#endif
                 else
                 {
                     // show inline help
@@ -676,15 +701,6 @@ namespace Microsoft.PowerShell.Commands
             };
 
             WriteProgress(record);
-        }
-
-        /// <summary>
-        /// Checks if we can connect to the internet.
-        /// </summary>
-        /// <returns></returns>
-        private bool HasInternetConnection()
-        {
-            return true; // TODO:CORECLR wininet.dll is not present on NanoServer
         }
 
         #region Helper methods for verification of parameters against NoLanguage mode

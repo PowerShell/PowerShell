@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 return;
             }
 
-            // powershell CoreStop would have handled cases
+            // PowerShell CoreStop would have handled cases
             // for NotStarted, Stopping and already Stopped
             // so at this point, there is no need to make any
             // check. The message simply needs to be sent
@@ -924,10 +924,12 @@ namespace System.Management.Automation.Runspaces.Internal
         protected bool stopCalled = false;
         protected PSHost hostToUse;
         protected RemoteRunspacePoolInternal runspacePool;
+
         protected const string WRITE_DEBUG_LINE = "WriteDebugLine";
         protected const string WRITE_VERBOSE_LINE = "WriteVerboseLine";
         protected const string WRITE_WARNING_LINE = "WriteWarningLine";
         protected const string WRITE_PROGRESS = "WriteProgress";
+
         protected bool initialized = false;
         /// <summary>
         /// This queue is for the state change events that resulted in closing the underlying

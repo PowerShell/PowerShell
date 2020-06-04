@@ -1,11 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -13,7 +12,6 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Reflection;
 using System.Text;
-
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
@@ -27,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     /// Cmdlet to create a new module manifest file.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "ModuleManifest", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141555")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096487")]
     [OutputType(typeof(string))]
     public sealed class NewModuleManifestCommand : PSCmdlet
     {
@@ -49,7 +47,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] NestedModules
         {
             get { return _nestedModules; }
@@ -187,7 +184,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the CLR version required by the module.
         /// </summary>
         [Parameter]
-        public Version CLRVersion
+        public Version ClrVersion
         {
             get { return _ClrVersion; }
 
@@ -240,8 +237,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ArgumentTypeConverter(typeof(ModuleSpecification[]))]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] RequiredModules
         {
             get { return _requiredModules; }
@@ -256,8 +251,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] TypesToProcess
         {
             get { return _types; }
@@ -272,8 +265,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] FormatsToProcess
         {
             get { return _formats; }
@@ -288,8 +279,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] ScriptsToProcess
         {
             get { return _scripts; }
@@ -304,8 +293,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] RequiredAssemblies
         {
             get { return _requiredAssemblies; }
@@ -320,8 +307,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] FileList
         {
             get { return _miscFiles; }
@@ -338,8 +323,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [AllowEmptyCollection]
         [ArgumentTypeConverter(typeof(ModuleSpecification[]))]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public object[] ModuleList
         {
             get { return _moduleList; }
@@ -354,8 +337,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] FunctionsToExport
         {
             get { return _exportedFunctions; }
@@ -370,8 +351,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] AliasesToExport
         {
             get { return _exportedAliases; }
@@ -386,8 +365,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] VariablesToExport
         {
             get { return _exportedVariables; }
@@ -402,8 +379,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] CmdletsToExport
         {
             get { return _exportedCmdlets; }
@@ -418,8 +393,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowEmptyCollection]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] DscResourcesToExport
         {
             get { return _dscResourcesToExport; }
@@ -435,8 +408,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         [AllowEmptyCollection]
         [ValidateSet("Desktop", "Core")]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] CompatiblePSEditions
         {
             get { return _compatiblePSEditions; }
@@ -465,8 +436,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = false)]
         [ValidateNotNullOrEmpty]
-        [SuppressMessage("Microsoft.Performance",
-            "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public string[] Tags { get; set; }
 
         /// <summary>
@@ -508,7 +477,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether or not the module requires explicit user acceptance for install/update/save.
         /// </summary>
         [Parameter]
-        public SwitchParameter RequireLicenseAcceptance { get; set; } = true;
+        public SwitchParameter RequireLicenseAcceptance { get; set; }
 
         /// <summary>
         /// Gets or sets the external module dependencies.
@@ -522,7 +491,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [AllowNull]
-        [SuppressMessage("Microsoft.Design", "CA1056:UriPropertiesShouldNotBeStrings")]
         public string HelpInfoUri
         {
             get { return _helpInfoUri; }
@@ -1090,7 +1058,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, nameof(DotNetFrameworkVersion), StringUtil.Format(Modules.DotNetFrameworkVersion, Modules.PrerequisiteForDesktopEditionOnly), _DotNetFrameworkVersion != null && !string.IsNullOrEmpty(_DotNetFrameworkVersion.ToString()), () => QuoteName(_DotNetFrameworkVersion), streamWriter);
 
-                    BuildModuleManifest(result, nameof(CLRVersion), StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
+                    BuildModuleManifest(result, nameof(ClrVersion), StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
 
                     BuildModuleManifest(result, nameof(ProcessorArchitecture), Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture.ToString()), streamWriter);
 

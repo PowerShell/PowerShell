@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 if(-not ("netDumbster.smtp.SimpleSmtpServer" -as [type]))
@@ -6,7 +6,7 @@ if(-not ("netDumbster.smtp.SimpleSmtpServer" -as [type]))
     Register-PackageSource -Name nuget.org -Location https://api.nuget.org/v3/index.json -ProviderName NuGet -ErrorAction SilentlyContinue
 
     $nugetPackage = "netDumbster"
-    Install-Package -Name $nugetPackage -ProviderName NuGet -Scope CurrentUser -Force -Source 'nuget.org'
+    Install-Package -Name $nugetPackage -ProviderName NuGet -Scope CurrentUser -Force -Source 'nuget.org' -RequiredVersion 2.0.0.4
 
     $dll = "$(Split-Path (Get-Package $nugetPackage).Source)\lib\netstandard2.0\netDumbster.dll"
     Add-Type -Path $dll

@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
-    <Description>PowerShell Core's Microsoft.WSMan.Runtime project</Description>
+    <Description>PowerShell's Microsoft.WSMan.Runtime project</Description>
     <AssemblyName>Microsoft.WSMan.Runtime</AssemblyName>
   </PropertyGroup>
 

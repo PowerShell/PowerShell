@@ -1,10 +1,12 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'ConvertFrom-Markdown tests' -Tags 'CI' {
 
     BeforeAll {
         $esc = [char]0x1b
+
+        $hostSupportsVT100 = $Host.UI.SupportsVirtualTerminal
 
         function GetExpectedString
         {
@@ -26,6 +28,10 @@ Describe 'ConvertFrom-Markdown tests' -Tags 'CI' {
 
             [bool] $VT100Support
             )
+
+            # Force VT100Support to be false if the host does not support it.
+            # This makes the expected string to be correct.
+            $VT100Support = $VT100Support -and $hostSupportsVT100
 
             switch($elementType)
             {
@@ -125,7 +131,11 @@ Describe 'ConvertFrom-Markdown tests' -Tags 'CI' {
         BeforeAll {
             $mdFile = New-Item -Path $TestDrive/input.md -Value "Some **test string** to write in a file" -Force
             $mdLiteralPath = New-Item -Path $TestDrive/LiteralPath.md -Value "Some **test string** to write in a file" -Force
-            $expectedStringFromFile = "Some $esc[1mtest string$esc[0m to write in a file`n`n"
+            $expectedStringFromFile = if ($hostSupportsVT100) {
+                "Some $esc[1mtest string$esc[0m to write in a file`n`n"
+            } else {
+                "Some test string to write in a file`n`n"
+            }
 
             $codeBlock = @'
 ```
@@ -294,8 +304,8 @@ bool function()`n{`n}
                 @{Type = "Header4"; Markdown = "#### "; ExpectedOutput = ''}
                 @{Type = "Header5"; Markdown = "##### "; ExpectedOutput = ''}
                 @{Type = "Header6"; Markdown = "###### "; ExpectedOutput = ''}
-                @{Type = "Image"; Markdown = "'![]()'"; ExpectedOutput = "'$esc[33m[Image]$esc[0m'"}
-                @{Type = "Link"; Markdown = "'[]()'"; ExpectedOutput = "'$esc[4;38;5;117m`"`"$esc[0m'"}
+                @{Type = "Image"; Markdown = "'![]()'"; ExpectedOutput = if ($hostSupportsVT100) {"'$esc[33m[Image]$esc[0m'"} else {"'[Image]'"}}
+                @{Type = "Link"; Markdown = "'[]()'"; ExpectedOutput = if ($hostSupportsVT100) {"'$esc[4;38;5;117m`"`"$esc[0m'"} else {"'`"`"'"}}
             )
         }
 

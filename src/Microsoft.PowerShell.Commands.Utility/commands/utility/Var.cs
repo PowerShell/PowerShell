@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements get-variable command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Variable", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113336")]
+    [Cmdlet(VerbsCommon.Get, "Variable", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096711")]
     [OutputType(typeof(PSVariable))]
     public class GetVariableCommand : VariableCommandBase
     {
@@ -378,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
     /// Class implementing new-variable command.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Variable", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113361")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097121")]
     public sealed class NewVariableCommand : VariableCommandBase
     {
         #region parameters
@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements set-variable command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113401")]
+    [Cmdlet(VerbsCommon.Set, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096624")]
     [OutputType(typeof(PSVariable))]
     public sealed class SetVariableCommand : VariableCommandBase
     {
@@ -747,7 +747,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (_valueList == null)
                     {
-                        _valueList = new ArrayList();
+                        _valueList = new List<object>();
                     }
 
                     _valueList.Add(Value);
@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private ArrayList _valueList;
+        private List<object> _valueList;
 
         /// <summary>
         /// Sets the variable if the name was specified as a formal parameter
@@ -1033,7 +1033,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The Remove-Variable cmdlet implementation.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113380")]
+    [Cmdlet(VerbsCommon.Remove, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097123")]
     public sealed class RemoveVariableCommand : VariableCommandBase
     {
         #region parameters
@@ -1184,7 +1184,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements set-variable command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Clear, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113285")]
+    [Cmdlet(VerbsCommon.Clear, "Variable", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096923")]
     [OutputType(typeof(PSVariable))]
     public sealed class ClearVariableCommand : VariableCommandBase
     {

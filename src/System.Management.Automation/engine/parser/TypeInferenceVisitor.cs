@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -109,7 +109,7 @@ namespace System.Management.Automation
         }
     }
 
-    class PSTypeNameComparer : IEqualityComparer<PSTypeName>
+    internal class PSTypeNameComparer : IEqualityComparer<PSTypeName>
     {
         public bool Equals(PSTypeName x, PSTypeName y)
         {
@@ -2326,6 +2326,19 @@ namespace System.Management.Automation
             return dynamicKeywordAst.CommandElements[0].Accept(this);
         }
 
+        object ICustomAstVisitor2.VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst)
+        {
+            return InferTypes(ternaryExpressionAst.IfTrue).Concat(InferTypes(ternaryExpressionAst.IfFalse));
+        }
+
+        object ICustomAstVisitor2.VisitPipelineChain(PipelineChainAst pipelineChainAst)
+        {
+            var types = new List<PSTypeName>();
+            types.AddRange(InferTypes(pipelineChainAst.LhsPipelineChain));
+            types.AddRange(InferTypes(pipelineChainAst.RhsPipeline));
+            return GetArrayType(types);
+        }
+
         private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)
         {
             var pipe = (PipelineAst)commandAst.Parent;
@@ -2334,7 +2347,7 @@ namespace System.Management.Automation
         }
     }
 
-    static class TypeInferenceExtension
+    internal static class TypeInferenceExtension
     {
         public static bool EqualsOrdinalIgnoreCase(this string s, string t)
         {

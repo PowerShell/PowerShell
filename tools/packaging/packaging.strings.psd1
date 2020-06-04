@@ -1,4 +1,4 @@
-﻿@{
+@{
     Description = @'
 PowerShell is an automation and configuration management platform.
 It consists of a cross-platform command-line shell and associated scripting language.
@@ -48,6 +48,16 @@ case "$1" in
         remove-shell "{0}"
         ;;
 esac
+'@
+
+    MacOSAfterInstallScript = @'
+#!/bin/bash
+
+if [ ! -f /etc/shells ] ; then
+    echo "{0}" > /etc/shells
+else
+    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
+fi
 '@
 
     MacOSLauncherScript = @'
@@ -121,18 +131,18 @@ open {0}
         <authors>Microsoft</authors>
         <owners>Microsoft,PowerShell</owners>
         <requireLicenseAcceptance>true</requireLicenseAcceptance>
-        <description>PowerShell runtime for hosting PowerShell Core</description>
+        <description>Runtime for hosting PowerShell</description>
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
         <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation.</copyright>
         <contentFiles>
             <files include="**/*" buildAction="None" copyToOutput="true" flatten="false" />
         </contentFiles>
         <dependencies>
-            <group targetFramework=".NETCoreApp2.1"></group>
+            <group targetFramework="net5.0"></group>
         </dependencies>
     </metadata>
 </package>
@@ -159,11 +169,11 @@ open {0}
         <projectUrl>https://github.com/PowerShell/PowerShell</projectUrl>
         <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_black_64.png?raw=true</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>PowerShell Core global tool</description>
+        <description>PowerShell global tool</description>
         <license type="expression">MIT</license>
         <tags>PowerShell</tags>
         <language>en-US</language>
-        <copyright>© Microsoft Corporation. All rights reserved.</copyright>
+        <copyright>&#169; Microsoft Corporation.</copyright>
         <packageTypes>
             <packageType name="DotnetTool" />
         </packageTypes>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Runtime.Serialization;
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -132,6 +132,7 @@ namespace System.Management.Automation
 
         private ErrorRecord _errorRecord;
         private string _errorId = "InvalidOperation";
+
         internal void SetErrorId(string errorId)
         {
             _errorId = errorId;

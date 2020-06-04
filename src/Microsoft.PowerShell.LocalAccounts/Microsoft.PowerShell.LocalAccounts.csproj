@@ -1,9 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\PowerShell.Common.props"/>
 
   <PropertyGroup>
-    <Description>PowerShell Core's Microsoft.PowerShell.LocalAccounts project</Description>
+    <Description>PowerShell's Microsoft.PowerShell.LocalAccounts project</Description>
     <AssemblyName>Microsoft.PowerShell.LocalAccounts</AssemblyName>
   </PropertyGroup>
 

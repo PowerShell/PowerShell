@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 function Wait-UntilTrue
 {
@@ -37,12 +37,12 @@ function Wait-FileToBePresent
 
 function Test-IsElevated
 {
-    $IsElevated = $False
+    $IsElevated = $false
     if ( $IsWindows ) {
         # on Windows we can determine whether we're executing in an
         # elevated context
         $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-        $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $identity
+        $windowsPrincipal = New-Object 'Security.Principal.WindowsPrincipal' $identity
         if ($windowsPrincipal.IsInRole("Administrators") -eq 1)
         {
             $IsElevated = $true
@@ -209,7 +209,7 @@ function Send-VstsLogFile {
         $Path
     )
 
-    $logFolder = Join-Path -path $pwd -ChildPath 'logfile'
+    $logFolder = Join-Path -Path $PWD -ChildPath 'logfile'
     if(!(Test-Path -Path $logFolder))
     {
         $null = New-Item -Path $logFolder -ItemType Directory
@@ -222,13 +222,13 @@ function Send-VstsLogFile {
     if($Contents)
     {
         $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + "-$LogName.txt")
-        $name = Split-Path -leaf -Path $logFile
+        $name = Split-Path -Leaf -Path $logFile
 
-        $Contents | out-file -path $logFile -Encoding ascii
+        $Contents | Out-File -path $logFile -Encoding ascii
     }
     else
     {
-        $name = Split-Path -leaf -Path $path
+        $name = Split-Path -Leaf -Path $path
         $logFile = Join-Path -Path $logFolder -ChildPath ([System.Io.Path]::GetRandomFileName() + '-' + $name)
         Copy-Item -Path $Path -Destination $logFile
     }
@@ -330,7 +330,7 @@ function Test-CanWriteToPsHome
     $script:CanWriteToPsHome = $true
 
     try {
-        $testFileName = Join-Path $PSHome (New-Guid).Guid
+        $testFileName = Join-Path $PSHOME (New-Guid).Guid
         $null = New-Item -ItemType File -Path $testFileName -ErrorAction Stop
     }
     catch [System.UnauthorizedAccessException] {
@@ -343,4 +343,49 @@ function Test-CanWriteToPsHome
     }
 
     $script:CanWriteToPsHome
+}
+
+# Creates a password meeting Windows complexity rules
+function New-ComplexPassword
+{
+    $numbers = "0123456789"
+    $lowercase = "abcdefghijklmnopqrstuvwxyz"
+    $uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    $symbols = "~!@#$%^&*_-+=``|\(){}[]:;`"'<>,.?/"
+    $password = [string]::Empty
+    # Windows password complexity rule requires minimum 8 characters and using at least 3 of the
+    # buckets above, so we just pick one from each bucket twice.
+    # https://docs.microsoft.com/windows/security/threat-protection/security-policy-settings/password-must-meet-complexity-requirements
+    1..2 | ForEach-Object {
+        $Password += $numbers[(Get-Random $numbers.Length)] + $lowercase[(Get-Random $lowercase.Length)] +
+            $uppercase[(Get-Random $uppercase.Length)] + $symbols[(Get-Random $symbols.Length)]
+    }
+
+    $password
+}
+
+# return a specific string with regard to platform information
+function Get-PlatformInfo {
+    if ( $IsWindows ) {
+        return @{Platform = "windows"; Version = '' }
+    }
+    if ( $IsMacOS ) {
+        return @{Platform = "macos"; Version = '' }
+    }
+    if ( $IsLinux ) {
+        $osrelease = Get-Content /etc/os-release | ConvertFrom-StringData
+        if ( -not [string]::IsNullOrEmpty($osrelease.ID) ) {
+
+            $versionId = if (-not $osrelease.Version_ID ) {
+                ''
+            } else {
+                $osrelease.Version_ID.trim('"')
+            }
+
+            $platform = $osrelease.ID.trim('"')
+
+            return @{Platform = $platform; Version = $versionId }
+        }
+        return "unknown"
+    }
 }

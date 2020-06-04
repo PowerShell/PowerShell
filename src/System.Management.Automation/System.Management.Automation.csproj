@@ -1,29 +1,34 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
-    <Description>PowerShell Core's System.Management.Automation project</Description>
+    <Description>PowerShell's System.Management.Automation project</Description>
     <NoWarn>$(NoWarn);CS1570;CS1734</NoWarn>
     <AssemblyName>System.Management.Automation</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition=" '$(IsWindows)' == 'true' ">
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- the following package(s) are from https://github.com/JamesNK/Newtonsoft.Json -->
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <!-- the Application Insights package -->
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.14.0" />
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.5.0" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.5.0" />
-    <PackageReference Include="System.DirectoryServices" Version="4.5.0" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.5.0" />
-    <PackageReference Include="System.Management" Version="4.5.0" />
-    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="4.5.2" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.5.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.5.2" />
-    <PackageReference Include="System.Security.Permissions" Version="4.5.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.1" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.DirectoryServices" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Management" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Runtime.CompilerServices.Unsafe" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Security.AccessControl" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Security.Permissions" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="5.0.0-preview.5.20278.1" />
     <!-- the following package(s) are from the powershell org -->
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
-    <PackageReference Include="Microsoft.PowerShell.Native" Version="6.2.0" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
+    <PackageReference Include="Microsoft.PowerShell.Native" Version="7.0.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -104,7 +109,6 @@
     <Compile Remove="namespaces\TransactedRegistryKey.cs" />
     <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
     <Compile Remove="utils\BackgroundDispatcher.cs" />
-    <Compile Remove="utils\GraphicalHostReflectionWrapper.cs" />
     <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
     <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
     <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />

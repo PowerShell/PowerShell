@@ -1,60 +1,60 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-
-function Test-Elevated {
-    [CmdletBinding()]
-    [OutputType([bool])]
-    Param()
-
-    # if the current Powershell session was called with administrator privileges,
-    # the Administrator Group's well-known SID will show up in the Groups for the current identity.
-    # Note that the SID won't show up unless the process is elevated.
-    return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains "S-1-5-32-544")
-}
-
-function Invoke-Msiexec {
-    param(
-        [Parameter(ParameterSetName = 'Install', Mandatory)]
-        [Switch]$Install,
-
-        [Parameter(ParameterSetName = 'Uninstall', Mandatory)]
-        [Switch]$Uninstall,
-
-        [Parameter(Mandatory)]
-        [ValidateScript({Test-Path -Path $_})]
-        [String]$MsiPath,
-
-        [Parameter(ParameterSetName = 'Install')]
-        [HashTable] $Properties
-
-    )
-    $action = "$($PsCmdlet.ParameterSetName)ing"
-    if ($Install.IsPresent) {
-        $switch = '/I'
-    } else {
-        $switch = '/x'
-    }
-
-    $additionalOptions = @()
-    if ($Properties) {
-        foreach ($key in $Properties.Keys) {
-            $additionalOptions += "$key=$($Properties.$key)"
-        }
-    }
-
-    $argumentList = "$switch $MsiPath /quiet /l*vx $msiLog $additionalOptions"
-    $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList $argumentList -NoNewWindow -PassThru
-    if ($msiExecProcess.ExitCode -ne 0) {
-        $exitCode = $msiExecProcess.ExitCode
-        throw "$action MSI failed and returned error code $exitCode."
-    }
-}
 
 Describe -Name "Windows MSI" -Fixture {
     BeforeAll {
+        function Test-Elevated {
+            [CmdletBinding()]
+            [OutputType([bool])]
+            Param()
+
+            # if the current Powershell session was called with administrator privileges,
+            # the Administrator Group's well-known SID will show up in the Groups for the current identity.
+            # Note that the SID won't show up unless the process is elevated.
+            return (([Security.Principal.WindowsIdentity]::GetCurrent()).Groups -contains "S-1-5-32-544")
+        }
+
+        function Invoke-Msiexec {
+            param(
+                [Parameter(ParameterSetName = 'Install', Mandatory)]
+                [Switch]$Install,
+
+                [Parameter(ParameterSetName = 'Uninstall', Mandatory)]
+                [Switch]$Uninstall,
+
+                [Parameter(Mandatory)]
+                [ValidateScript({Test-Path -Path $_})]
+                [String]$MsiPath,
+
+                [Parameter(ParameterSetName = 'Install')]
+                [HashTable] $Properties
+
+            )
+            $action = "$($PSCmdlet.ParameterSetName)ing"
+            if ($Install.IsPresent) {
+                $switch = '/I'
+            } else {
+                $switch = '/x'
+            }
+
+            $additionalOptions = @()
+            if ($Properties) {
+                foreach ($key in $Properties.Keys) {
+                    $additionalOptions += "$key=$($Properties.$key)"
+                }
+            }
+
+            $argumentList = "$switch $MsiPath /quiet /l*vx $msiLog $additionalOptions"
+            $msiExecProcess = Start-Process msiexec.exe -Wait -ArgumentList $argumentList -NoNewWindow -PassThru
+            if ($msiExecProcess.ExitCode -ne 0) {
+                $exitCode = $msiExecProcess.ExitCode
+                throw "$action MSI failed and returned error code $exitCode."
+            }
+        }
+
         $msiX64Path = $env:PsMsiX64Path
 
-        # Get any existing powershell core in the path
+        # Get any existing powershell in the path
         $beforePath = @(([System.Environment]::GetEnvironmentVariable('PATH', 'MACHINE')) -split ';' |
                 Where-Object {$_ -like '*files\powershell*'})
 
@@ -70,13 +70,13 @@ Describe -Name "Windows MSI" -Fixture {
         $uploadedLog = $false
     }
     BeforeEach {
-        $Error.Clear()
+        $error.Clear()
     }
     AfterEach {
-        if ($Error.Count -ne 0 -and !$uploadedLog) {
+        if ($error.Count -ne 0 -and !$uploadedLog) {
             Copy-Item -Path $msiLog -Destination $env:temp -Force
             Write-Verbose "MSI log is at $env:temp\msilog.txt" -Verbose
-            $uploadedLog = $true 
+            $uploadedLog = $true
         }
     }
 

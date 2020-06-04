@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -703,6 +703,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Whether at begin process time, false means in processrecord.
         /// </summary>
         private bool atBeginProcess = true;
+
         internal bool AtBeginProcess
         {
             get

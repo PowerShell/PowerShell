@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -6,9 +6,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Management.Automation;
 using System.Threading;
-using System.Globalization;
 
 #endregion
 
@@ -27,7 +27,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region Constructor
 
         /// <summary>
-        /// Constructor.
+        /// The constructor.
         /// </summary>
         public CimAsyncOperation()
         {
@@ -81,14 +81,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cimSession">
-        /// <seealso cref="CimSession"/> object raised the event
+        /// <seealso cref="CimSession"/> object raised the event.
         /// </param>
         /// <param name="actionArgs">Event argument.</param>
         protected void OperationCreatedHandler(object cimSession, OperationEventArgs actionArgs)
         {
             DebugHelper.WriteLogEx();
 
-            lock (this.myLock)
+            lock (this.a_lock)
             {
                 this.operationCount++;
             }
@@ -101,14 +101,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cimSession">
-        /// <seealso cref="CimSession"/> object raised the event
+        /// <seealso cref="CimSession"/> object raised the event.
         /// </param>
         /// <param name="actionArgs">Event argument.</param>
         protected void OperationDeletedHandler(object cimSession, OperationEventArgs actionArgs)
         {
             DebugHelper.WriteLogEx();
 
-            lock (this.myLock)
+            lock (this.a_lock)
             {
                 this.operationCount--;
                 if (this.operationCount == 0)
@@ -126,7 +126,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <param name="cmdletOperation">
-        /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details
+        /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
         public void ProcessActions(CmdletOperationBase cmdletOperation)
         {
@@ -146,12 +146,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// process remaining actions until all operations are completed or
-        /// current cmdlet is terminated by user
+        /// Process remaining actions until all operations are completed or
+        /// current cmdlet is terminated by user.
         /// </para>
         /// </summary>
         /// <param name="cmdletOperation">
-        /// wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details
+        /// Wrapper of cmdlet, <seealso cref="CmdletOperationBase"/> for details.
         /// </param>
         public void ProcessRemainActions(CmdletOperationBase cmdletOperation)
         {
@@ -187,7 +187,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Get action object from action queue
+        /// Get action object from action queue.
         /// </para>
         /// </summary>
         /// <param name="action">Next action to execute.</param>
@@ -202,7 +202,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Add temporary <seealso cref="CimSessionProxy"/> object to cache.
         /// </para>
         /// </summary>
-        /// <param name="computerName">Computer name of the cimsession.</param>
         /// <param name="sessionproxy">Cimsession wrapper object.</param>
         protected void AddCimSessionProxy(CimSessionProxy sessionproxy)
         {
@@ -296,8 +295,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="computerName"></param>
         /// <param name="cimInstance"></param>
         /// <returns></returns>
-        protected CimSessionProxy CreateCimSessionProxy(string computerName,
-            CimInstance cimInstance)
+        protected CimSessionProxy CreateCimSessionProxy(string computerName, CimInstance cimInstance)
         {
             CimSessionProxy proxy = new CimSessionProxy(computerName, cimInstance);
             this.SubscribeEventAndAddProxytoCache(proxy);
@@ -383,7 +381,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </summary>
         /// <param name="value"></param>
         /// <param name="referenceType">Output the cimtype of the value, either Reference or ReferenceArray.</param>
-        /// <returns></returns>
+        /// <returns>The object.</returns>
         protected object GetReferenceOrReferenceArrayObject(object value, ref CimType referenceType)
         {
             PSReference cimReference = value as PSReference;
@@ -445,7 +443,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return (Interlocked.Read(ref this._disposed) == 1);
+                return Interlocked.Read(ref this._disposed) == 1;
             }
         }
 
@@ -461,6 +459,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         public void Dispose()
         {
             Dispose(true);
+
             // This object will be cleaned up by the Dispose method.
             // Therefore, you should call GC.SuppressFinalize to
             // take this object off the finalization queue
@@ -496,7 +495,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Clean up managed resources
+        /// Clean up managed resources.
         /// </para>
         /// </summary>
         private void Cleanup()
@@ -525,6 +524,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     temporaryProxy = new List<CimSessionProxy>(this.cimSessionProxyCache);
                     this.cimSessionProxyCache.Clear();
                 }
+
                 // clean up all proxy objects
                 foreach (CimSessionProxy proxy in temporaryProxy)
                 {
@@ -549,12 +549,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Lock object.
         /// </summary>
-        private readonly object myLock = new object();
+        private readonly object a_lock = new object();
 
         /// <summary>
         /// Number of active operations.
         /// </summary>
-        private UInt32 operationCount = 0;
+        private uint operationCount;
 
         /// <summary>
         /// Event to notify ps thread that more action is available.
@@ -584,7 +584,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region protected members
         /// <summary>
         /// Event to notify ps thread that either a ACK message sent back
-        /// or a error happened. Currently only used by class
+        /// or a error happened. Currently only used by
         /// <see cref="CimRegisterCimIndication"/>.
         /// </summary>
         protected ManualResetEventSlim ackedEvent;
@@ -594,6 +594,5 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal const string ComputerNameArgument = @"ComputerName";
         internal const string CimSessionArgument = @"CimSession";
         #endregion
-
     }
 }

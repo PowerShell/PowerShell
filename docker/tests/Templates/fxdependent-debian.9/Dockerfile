@@ -13,7 +13,8 @@ RUN apt-get update \
         ca-certificates \
         apt-transport-https \
         locales \
-        git
+        git \
+    && apt-get clean
 
 # Setup the locale
 ENV LANG en_US.UTF-8

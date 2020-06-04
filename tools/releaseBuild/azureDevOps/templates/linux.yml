@@ -1,5 +1,6 @@
 parameters:
   buildName: ''
+  uploadDisplayName: 'Upload'
 
 jobs:
 - job: build_${{ parameters.buildName }}
@@ -38,17 +39,20 @@ jobs:
 
   - powershell: |
       tools/releaseBuild/vstsbuild.ps1 -ReleaseTag $(ReleaseTagVar) -Name '$(build)'
+
     displayName: 'Build and package'
     condition: and(succeeded(), ne(variables['SkipBuild'], 'true'))
 
 - job: upload_${{ parameters.buildName }}
-  displayName: Upload ${{ parameters.buildName }}
+  displayName: ${{ parameters.uploadDisplayName }} ${{ parameters.buildName }}
   dependsOn: build_${{ parameters.buildName }}
   condition: succeeded()
   pool: Package ES CodeHub Lab E
   variables:
     buildName: ${{ parameters.buildName }}
   steps:
+
+  - template: shouldSign.yml
 
   - template: SetVersionVariables.yml
     parameters:
@@ -80,7 +84,30 @@ jobs:
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
     displayName: 'Run Defender Scan'
 
-  - task: AzureFileCopy@1
+  - powershell: |
+      $authenticodefiles = @()
+      Get-ChildItem -Path '$(System.ArtifactsDirectory)\rpm\*.rpm' -recurse | ForEach-Object { $authenticodefiles += $_.FullName}
+      tools/releaseBuild/generatePackgeSigning.ps1 -LinuxFiles $authenticodeFiles -path "$(System.ArtifactsDirectory)\package.xml"
+    displayName: 'Generate RPM Signing Xml'
+    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+
+  - powershell: |
+      Get-Content "$(System.ArtifactsDirectory)\package.xml"
+    displayName: 'Capture RPM signing xml'
+    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+
+  - task: PkgESCodeSign@10
+    displayName: 'CodeSign RPM $(System.ArtifactsDirectory)\package.xml'
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      signConfigXml: '$(System.ArtifactsDirectory)\package.xml'
+      outPathRoot: '$(Build.StagingDirectory)\signedPackages'
+      binVersion: $(SigingVersion)
+      binVersionOverride: $(SigningVersionOverride)
+    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+
+  - task: AzureFileCopy@3
     displayName: 'Upload to Azure - DEB and tar.gz'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\finished\release'
@@ -93,19 +120,35 @@ jobs:
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\finished\release
 
-  - task: AzureFileCopy@1
-    displayName: 'Upload to Azure - RPM'
+  - task: AzureFileCopy@3
+    displayName: 'Upload to Azure - RPM - Unsigned'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\rpm\release'
       azureSubscription: '$(AzureFileCopySubscription)'
       Destination: AzureBlob
       storage: '$(StorageAccount)'
-      ContainerName: '$(AzureVersion)-unsigned'
-    condition: and(eq(variables['buildName'], 'RPM'),succeeded())
+      ContainerName: '$(AzureVersion)'
+    condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+
+  - task: AzureFileCopy@3
+    displayName: 'Upload to Azure - RPM - Signed'
+    inputs:
+      SourcePath: '$(Build.StagingDirectory)\signedPackages'
+      azureSubscription: '$(AzureFileCopySubscription)'
+      Destination: AzureBlob
+      storage: '$(StorageAccount)'
+      ContainerName: '$(AzureVersion)'
+    condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
 
   - template: upload-final-results.yml
     parameters:
       artifactPath: $(System.ArtifactsDirectory)\rpm\release
+      condition: and(and(succeeded(), ne(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
+
+  - template: upload-final-results.yml
+    parameters:
+      artifactPath: '$(Build.StagingDirectory)\signedPackages'
+      condition: and(and(succeeded(), eq(variables['SHOULD_SIGN'], 'true')),eq(variables['buildName'], 'RPM'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

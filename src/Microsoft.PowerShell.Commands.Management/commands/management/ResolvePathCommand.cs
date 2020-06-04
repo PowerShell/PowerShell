@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// MSH paths that match the glob strings.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Resolve, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113384")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097143")]
     public class ResolvePathCommand : CoreCommandWithCredentialsBase
     {
         #region Parameters
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
                             // Do not insert './' if result path is not relative
                             if (!adjustedPath.StartsWith(
                                     currentPath.Drive?.Root ?? currentPath.Path, StringComparison.OrdinalIgnoreCase) &&
-                                !adjustedPath.StartsWith(".", StringComparison.OrdinalIgnoreCase))
+                                !adjustedPath.StartsWith('.'))
                             {
                                 adjustedPath = SessionState.Path.Combine(".", adjustedPath);
                             }

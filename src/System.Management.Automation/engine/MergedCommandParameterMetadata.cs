@@ -1,9 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Management.Automation.Language;
 using System.Text;
 
 namespace System.Management.Automation
@@ -80,7 +81,7 @@ namespace System.Management.Automation
         {
             if (parameterMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterMetadata");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
 
             Collection<MergedCompiledCommandParameter> result =
@@ -442,14 +443,14 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             Collection<MergedCompiledCommandParameter> matchingParameters =
                 new Collection<MergedCompiledCommandParameter>();
 
             // Skip the leading '-' if present
-            if (name.Length > 0 && SpecialCharacters.IsDash(name[0]))
+            if (name.Length > 0 && CharExtensions.IsDash(name[0]))
             {
                 name = name.Substring(1);
             }
@@ -512,7 +513,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (filteredParameters.Count == 1)
+                if (tryExactMatching && filteredParameters.Count == 1)
                 {
                     matchingParameters = filteredParameters;
                 }

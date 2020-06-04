@@ -1,13 +1,13 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Management.Automation;
-using System.Management.Automation.Internal;
+using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -27,13 +27,16 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// Command line arguments to the managed MSH
         /// </param>
-#pragma warning disable 1573
+        /// <param name="argc">
+        /// Length of the passed in argument array.
+        /// </param>
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
-#pragma warning restore 1573
         {
+            // Warm up some components concurrently on background threads.
+            EarlyStartup.Init();
+
             // We need to read the settings file before we create the console host
-            Microsoft.PowerShell.CommandLineParameterParser.EarlyParse(args);
-            System.Management.Automation.Runspaces.EarlyStartup.Init();
+            CommandLineParameterParser.EarlyParse(args);
 
 #if !UNIX
             // NOTE: On Unix, logging has to be deferred until after command-line parsing
@@ -63,23 +66,21 @@ namespace Microsoft.PowerShell
                 System.Diagnostics.Debugger.Break();
             }
 #endif
-            ConsoleHost.DefaultInitialSessionState = InitialSessionState.CreateDefault2();
-
             int exitCode = 0;
             try
             {
-                var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
-                var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.GitCommitId);
-                exitCode = Microsoft.PowerShell.ConsoleShell.Start(
-                    formattedBanner,
-                    ManagedEntranceStrings.UsageHelp,
-                    args);
+                var banner = string.Format(
+                    CultureInfo.InvariantCulture,
+                    ManagedEntranceStrings.ShellBannerNonWindowsPowerShell,
+                    PSVersionInfo.GitCommitId);
+
+                exitCode = ConsoleShell.Start(banner, ManagedEntranceStrings.UsageHelp, args);
             }
-            catch (System.Management.Automation.Host.HostException e)
+            catch (HostException e)
             {
-                if (e.InnerException != null && e.InnerException.GetType() == typeof(System.ComponentModel.Win32Exception))
+                if (e.InnerException != null && e.InnerException.GetType() == typeof(Win32Exception))
                 {
-                    System.ComponentModel.Win32Exception win32e = e.InnerException as System.ComponentModel.Win32Exception;
+                    Win32Exception win32e = e.InnerException as Win32Exception;
 
                     // These exceptions are caused by killing conhost.exe
                     // 1236, network connection aborted by local system

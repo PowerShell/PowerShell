@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -56,7 +56,7 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             ExecutionContext = context;
@@ -348,11 +348,11 @@ namespace System.Management.Automation
 
             // $PSCulture
             v = new PSCultureVariable();
-            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariableForce(v, this);
 
             // $PSUICulture
             v = new PSUICultureVariable();
-            this.GlobalScope.SetVariable(v.Name, v, asValue: false, force: true, this, CommandOrigin.Internal, fastPath: true);
+            this.GlobalScope.SetVariableForce(v, this);
 
             // $?
             v = new QuestionMarkVariable(this.ExecutionContext);

@@ -19,7 +19,7 @@ Author = 'PowerShell'
 CompanyName = 'Microsoft Corporation'
 
 # Copyright statement for this module
-Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
+Copyright = 'Copyright (c) Microsoft Corporation.'
 
 # Description of the functionality provided by this module
 Description = 'Sample module for managing CronTab'

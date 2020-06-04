@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace mvc
             if (args.Count() != 6)
             {
                 System.Console.WriteLine("Required: <CertificatePath> <CertificatePassword> <HTTPPortNumber> <HTTPSPortNumberTls2> <HTTPSPortNumberTls11> <HTTPSPortNumberTls>");
-                Environment.Exit(1); 
+                Environment.Exit(1);
             }
 
             BuildWebHost(args).Run();
@@ -33,6 +33,7 @@ namespace mvc
             WebHost.CreateDefaultBuilder()
                 .UseStartup<Startup>().UseKestrel(options =>
                 {
+                   options.AllowSynchronousIO = true;
                    options.Listen(IPAddress.Loopback, int.Parse(args[2]));
                    options.Listen(IPAddress.Loopback, int.Parse(args[3]), listenOptions =>
                    {

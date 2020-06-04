@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw PSTraceSource.NewArgumentNullException("other");
+                throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
 
             _helpMessage = other._helpMessage;
@@ -411,7 +411,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             _name = name;
@@ -431,7 +431,7 @@ namespace System.Management.Automation
         {
             if (other == null)
             {
-                throw PSTraceSource.NewArgumentNullException("other");
+                throw PSTraceSource.NewArgumentNullException(nameof(other));
             }
 
             _isDynamic = other._isDynamic;
@@ -625,7 +625,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             CommandMetadata cmdMetaData = new CommandMetadata(type);
@@ -760,6 +760,7 @@ namespace System.Management.Automation
         private const string ParameterSetNameFormat = "ParameterSetName='{0}'";
         private const string AliasesFormat = @"{0}[Alias({1})]";
         private const string ValidateLengthFormat = @"{0}[ValidateLength({1}, {2})]";
+        private const string ValidateRangeRangeKindFormat = @"{0}[ValidateRange([System.Management.Automation.ValidateRangeKind]::{1})]";
         private const string ValidateRangeFloatFormat = @"{0}[ValidateRange({1:R}, {2:R})]";
         private const string ValidateRangeFormat = @"{0}[ValidateRange({1}, {2})]";
         private const string ValidatePatternFormat = "{0}[ValidatePattern('{1}')]";
@@ -901,31 +902,48 @@ namespace System.Management.Automation
             ValidateLengthAttribute validLengthAttrib = attrib as ValidateLengthAttribute;
             if (validLengthAttrib != null)
             {
-                result = string.Format(CultureInfo.InvariantCulture,
+                result = string.Format(
+                    CultureInfo.InvariantCulture,
                     ValidateLengthFormat, prefix,
-                    validLengthAttrib.MinLength, validLengthAttrib.MaxLength);
+                    validLengthAttrib.MinLength,
+                    validLengthAttrib.MaxLength);
                 return result;
             }
 
             ValidateRangeAttribute validRangeAttrib = attrib as ValidateRangeAttribute;
             if (validRangeAttrib != null)
             {
-                Type rangeType = validRangeAttrib.MinRange.GetType();
-                string format;
-
-                if (rangeType == typeof(float) || rangeType == typeof(double))
+                if (validRangeAttrib.RangeKind.HasValue)
                 {
-                    format = ValidateRangeFloatFormat;
+                    result = string.Format(
+                        CultureInfo.InvariantCulture,
+                        ValidateRangeRangeKindFormat,
+                        prefix,
+                        validRangeAttrib.RangeKind.ToString());
+                    return result;
                 }
                 else
                 {
-                    format = ValidateRangeFormat;
-                }
+                    Type rangeType = validRangeAttrib.MinRange.GetType();
+                    string format;
 
-                result = string.Format(CultureInfo.InvariantCulture,
-                    format, prefix,
-                    validRangeAttrib.MinRange, validRangeAttrib.MaxRange);
-                return result;
+                    if (rangeType == typeof(float) || rangeType == typeof(double))
+                    {
+                        format = ValidateRangeFloatFormat;
+                    }
+                    else
+                    {
+                        format = ValidateRangeFormat;
+                    }
+
+                    result = string.Format(
+                        CultureInfo.InvariantCulture,
+                        format,
+                        prefix,
+                        validRangeAttrib.MinRange,
+                        validRangeAttrib.MaxRange);
+                    return result;
+                }
             }
 
             AllowNullAttribute allowNullAttrib = attrib as AllowNullAttribute;
@@ -1147,7 +1165,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             InternalParameterMetadata result;
@@ -1190,7 +1208,7 @@ namespace System.Management.Automation
         {
             if (runtimeDefinedParameters == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runtimeDefinedParameters");
+                throw PSTraceSource.NewArgumentNullException(nameof(runtimeDefinedParameters));
             }
 
             ConstructCompiledParametersUsingRuntimeDefinedParameters(runtimeDefinedParameters, processingDynamicParameters, checkNames);
@@ -1218,7 +1236,7 @@ namespace System.Management.Automation
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             _type = type;

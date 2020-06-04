@@ -35,6 +35,7 @@ namespace System.Management.Automation.Interpreter
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2105:ArrayFieldsShouldNotBeReadOnly")]
         private int[] _continuations;
+
         private int _continuationIndex;
         private int _pendingContinuation;
         private object _pendingValue;
@@ -47,10 +48,6 @@ namespace System.Management.Automation.Interpreter
 
         public int StackIndex;
         public int InstructionIndex;
-
-        // When a ThreadAbortException is raised from interpreted code this is the first frame that caught it.
-        // No handlers within this handler re-abort the current thread when left.
-        public ExceptionHandler CurrentAbortHandler;
 
         internal InterpretedFrame(Interpreter interpreter, StrongBox<object>[] closure)
         {

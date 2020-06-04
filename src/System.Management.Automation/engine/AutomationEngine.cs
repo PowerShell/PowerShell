@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Linq;
@@ -35,15 +35,33 @@ namespace System.Management.Automation
         /// </summary>
         internal AutomationEngine(PSHost hostInterface, InitialSessionState iss)
         {
+#if !UNIX
+            // Update the env variable PATHEXT to contain .CPL
+            var pathext = Environment.GetEnvironmentVariable("PATHEXT");
+
+            if (string.IsNullOrEmpty(pathext))
+            {
+                Environment.SetEnvironmentVariable("PATHEXT", ".CPL");
+            }
+            else if (!(pathext.EndsWith(";.CPL", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.StartsWith(".CPL;", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.Contains(";.CPL;", StringComparison.OrdinalIgnoreCase) ||
+                       pathext.Equals(".CPL", StringComparison.OrdinalIgnoreCase)))
+            {
+                // Fast skip if we already added the extention as ";.CPL".
+                // Fast skip if user already added the extention.
+                pathext += pathext[pathext.Length - 1] == ';' ? ".CPL" : ";.CPL";
+                Environment.SetEnvironmentVariable("PATHEXT", pathext);
+            }
+#endif
+
             Context = new ExecutionContext(this, hostInterface, iss);
 
             EngineParser = new Language.Parser();
             CommandDiscovery = new CommandDiscovery(Context);
 
             // Load the iss, resetting everything to it's defaults...
-            iss.Bind(Context, /*updateOnly*/ false);
-
-            InitialSessionState.SetSessionStateDrive(Context, true);
+            iss.Bind(Context, updateOnly: false, module: null, noClobber: false, local: false, setLocation: true);
         }
 
         /// <summary>

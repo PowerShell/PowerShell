@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation.Language
@@ -227,6 +227,11 @@ namespace System.Management.Automation.Language
 /*     0x7F */ CharTraits.None,
         };
 
+        public static bool IsCurlyBracket(char c)
+        {
+            return (c == '{' || c == '}');
+        }
+
         // Return true if the character is a whitespace character.
         // Newlines are not whitespace.
         internal static bool IsWhitespace(this char c)
@@ -369,13 +374,26 @@ namespace System.Management.Automation.Language
             return c.IsWhitespace();
         }
 
-        // Return true if the character ends the current number token.  This allows the tokenizer
-        // to scan '7z' as a single token, but '7+' as 2 tokens.
-        internal static bool ForceStartNewTokenAfterNumber(this char c)
+        /// <summary>
+        /// Check if the current character forces to end scanning a number token.
+        /// This allows the tokenizer to scan '7z' as a single token, but '7+' as 2 tokens.
+        /// </summary>
+        /// <param name="c">The character to check.</param>
+        /// <param name="forceEndNumberOnTernaryOperatorChars">
+        /// In some cases, we want '?' and ':' to end a number token too, so they can be
+        /// treated as the ternary operator tokens.
+        /// </param>
+        /// <returns>Return true if the character ends the current number token.</returns>
+        internal static bool ForceStartNewTokenAfterNumber(this char c, bool forceEndNumberOnTernaryOperatorChars)
         {
             if (c < 128)
             {
-                return (s_traits[c] & CharTraits.ForceStartNewTokenAfterNumber) != 0;
+                if ((s_traits[c] & CharTraits.ForceStartNewTokenAfterNumber) != 0)
+                {
+                    return true;
+                }
+
+                return forceEndNumberOnTernaryOperatorChars && (c == '?' || c == ':');
             }
 
             return c.IsDash();

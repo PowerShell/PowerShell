@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -81,19 +81,13 @@ namespace System.Management.Automation
             throw new NotImplementedException();
         }
 
-        internal void LoadFromDefaults(PSSessionType sessionType)
-        {
-            LoadFromDefaults(sessionType, false);
-        }
-
         /// <summary>
         /// Sets all the values to default values.
         /// If keepAssigned is true only those values are set
         /// which are unassigned.
         /// </summary>
-        /// <param name="sessionType"></param>
-        /// <param name="keepAssigned"></param>
-        protected internal virtual void LoadFromDefaults(PSSessionType sessionType, bool keepAssigned)
+        /// <param name="keepAssigned">Keep old values.</param>
+        protected internal virtual void LoadFromDefaults(bool keepAssigned)
         {
             throw new NotImplementedException();
         }

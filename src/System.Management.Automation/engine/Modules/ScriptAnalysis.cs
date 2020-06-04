@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -158,6 +158,7 @@ namespace System.Management.Automation
         }
 
         private readonly bool _forCompletion;
+
         internal List<string> DiscoveredExports { get; set; }
         internal List<RequiredModuleInfo> DiscoveredModules { get; set; }
         internal Dictionary<string, FunctionDefinitionAst> DiscoveredFunctions { get; set; }
@@ -257,6 +258,8 @@ namespace System.Management.Automation
         public override AstVisitAction VisitInvokeMemberExpression(InvokeMemberExpressionAst methodCallAst) { return AstVisitAction.SkipChildren; }
 
         public override AstVisitAction VisitSwitchStatement(SwitchStatementAst switchStatementAst) { return AstVisitAction.SkipChildren; }
+
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return AstVisitAction.SkipChildren; }
 
         // Visit one the other variations:
         //  - Dotting scripts

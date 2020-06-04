@@ -1,8 +1,9 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Export-FormatData" -Tags "CI" {
     BeforeAll {
-        $fd = Get-FormatData
+        $clientVersion = '5.0' # Preliminarily preserve the original test semantics in place before https://github.com/PowerShell/PowerShell/pull/11270
+        $fd = Get-FormatData -PowerShellVersion $clientVersion
         $testOutput = Join-Path -Path $TestDrive -ChildPath "outputfile"
     }
 
@@ -13,7 +14,7 @@ Describe "Export-FormatData" -Tags "CI" {
     It "Can export all types" {
         try
         {
-            $fd | Export-FormatData -path $TESTDRIVE\allformat.ps1xml -IncludeScriptBlock
+            $fd | Export-FormatData -Path $TESTDRIVE\allformat.ps1xml -IncludeScriptBlock
 
             $sessionState = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault()
             $sessionState.Formats.Clear()
@@ -23,7 +24,7 @@ Describe "Export-FormatData" -Tags "CI" {
             $runspace.Open()
 
             $runspace.CreatePipeline("Update-FormatData -AppendPath $TESTDRIVE\allformat.ps1xml").Invoke()
-            $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -TypeName *").Invoke()
+            $actualAllFormat = $runspace.CreatePipeline("Get-FormatData -PowerShellVersion $clientVersion").Invoke()
 
             $fd.Count | Should -Be $actualAllFormat.Count
             Compare-Object $fd $actualAllFormat | Should -Be $null
@@ -152,5 +153,23 @@ Describe "Export-FormatData" -Tags "CI" {
         {
             $runspace.Close()
         }
+    }
+
+    It 'Should be able to export multiple views' {
+        $listControl = [System.Management.Automation.ListControl]::Create().StartEntry().AddItemProperty('test').AddItemProperty('test2').EndEntry().EndList()
+        $tableControl = [System.Management.Automation.TableControl]::Create().StartRowDefinition().AddPropertyColumn('test').AddPropertyColumn('test2').EndRowDefinition().EndTable()
+
+        $listView = [System.Management.Automation.FormatViewDefinition]::new('Default', $listControl)
+        $tableView = [System.Management.Automation.FormatViewDefinition]::new('Default', $tableControl)
+
+        $list = New-Object System.Collections.Generic.List[System.Management.Automation.FormatViewDefinition]
+        $list.Add($listView)
+        $list.Add($tableView)
+
+        $typeDef = [System.Management.Automation.ExtendedTypeDefinition]::new('TestTypeName', $list)
+        $filePath = Join-Path $TestDrive "test.format.ps1xml"
+        $typeDef | Export-FormatData -Path $filePath
+        [xml]$xml = Get-Content -Path $filePath
+        @($xml.Configuration.ViewDefinitions.View).Count | Should -Be 2
     }
 }

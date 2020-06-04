@@ -8,76 +8,55 @@ update_configs:
     update_schedule: "live"
     default_labels:
       - "CL-BuildPackaging"
+    ignored_updates:
+      - match:
+          dependency_name: "System.*"
+      - match:
+          dependency_name: "Microsoft.Win32.Registry.AccessControl"
+      - match:
+          dependency_name: "Microsoft.Windows.Compatibility"
 
   - package_manager: "dotnet:nuget"
     directory: "/tools/packaging/projects/reference/Microsoft.PowerShell.Commands.Utility"
     update_schedule: "live"
     default_labels:
       - "CL-BuildPackaging"
+    ignored_updates:
+      - match:
+          dependency_name: "System.*"
+      - match:
+          dependency_name: "Microsoft.Win32.Registry.AccessControl"
+      - match:
+          dependency_name: "Microsoft.Windows.Compatibility"
 
   - package_manager: "dotnet:nuget"
     directory: "/tools/packaging/projects/reference/System.Management.Automation"
     update_schedule: "live"
     default_labels:
       - "CL-BuildPackaging"
+    ignored_updates:
+      - match:
+          dependency_name: "System.*"
+      - match:
+          dependency_name: "Microsoft.Win32.Registry.AccessControl"
+      - match:
+          dependency_name: "Microsoft.Windows.Compatibility"
 
   - package_manager: "dotnet:nuget"
     directory: "/test/tools/Modules"
     update_schedule: "live"
     default_labels:
       - "CL-BuildPackaging"
+    ignored_updates:
+      - match:
+          dependency_name: "System.*"
+      - match:
+          dependency_name: "Microsoft.Win32.Registry.AccessControl"
+      - match:
+          dependency_name: "Microsoft.Windows.Compatibility"
 
   - package_manager: "dotnet:nuget"
     directory: "/src/Modules"
     update_schedule: "live"
     default_labels:
       - "CL-BuildPackaging"
-
-  - package_manager: "javascript"
-    directory: "/test/common/markdown"
-    update_schedule: "live"
-    default_labels:
-      - "CL-BuildPackaging"
-
-# scans for vNext stable
-  - package_manager: "dotnet:nuget"
-    directory: "/"
-    update_schedule: "live"
-    default_labels:
-      - "CL-BuildPackaging"
-    target_branch: "release/v6.2.1"
-
-  - package_manager: "dotnet:nuget"
-    directory: "/tools/packaging/projects/reference/Microsoft.PowerShell.Commands.Utility"
-    update_schedule: "live"
-    default_labels:
-      - "CL-BuildPackaging"
-    target_branch: "release/v6.2.1"
-
-  - package_manager: "dotnet:nuget"
-    directory: "/tools/packaging/projects/reference/System.Management.Automation"
-    update_schedule: "live"
-    default_labels:
-      - "CL-BuildPackaging"
-    target_branch: "release/v6.2.1"
-
-  - package_manager: "dotnet:nuget"
-    directory: "/test/tools/Modules"
-    update_schedule: "live"
-    default_labels:
-      - "CL-BuildPackaging"
-    target_branch: "release/v6.2.1"
-
-  - package_manager: "dotnet:nuget"
-    directory: "/src/Modules"
-    update_schedule: "live"
-    default_labels:
-      - "CL-BuildPackaging"
-    target_branch: "release/v6.2.1"
-
-  - package_manager: "javascript"
-    directory: "/test/common/markdown"
-    update_schedule: "live"
-    default_labels:
-      - "CL-BuildPackaging"
-    target_branch: "release/v6.2.1"

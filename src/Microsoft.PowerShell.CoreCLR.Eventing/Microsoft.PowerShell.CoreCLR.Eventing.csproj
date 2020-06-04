@@ -1,14 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
   <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
-    <Description>PowerShell Core's Microsoft.PowerShell.CoreCLR.Eventing project</Description>
+    <Description>PowerShell's Microsoft.PowerShell.CoreCLR.Eventing project</Description>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <AssemblyName>Microsoft.PowerShell.CoreCLR.Eventing</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <!-- the following package(s) are from https://github.com/dotnet/corefx -->
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.5.1" />
+    <PackageReference Include="System.Diagnostics.EventLog" Version="5.0.0-preview.5.20278.1" />
   </ItemGroup>
 
 </Project>

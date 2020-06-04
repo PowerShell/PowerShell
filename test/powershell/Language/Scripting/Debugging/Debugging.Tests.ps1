@@ -1,7 +1,57 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-Describe "Breakpoints when set should be hit" -tag "CI" {
+Describe 'Basic debugger tests' -Tag 'CI' {
+
+    BeforeAll {
+        Register-DebuggerHandler
+    }
+
+    AfterAll {
+        Unregister-DebuggerHandler
+    }
+
+    Context 'The value of $? should be preserved when exiting the debugger' {
+        BeforeAll {
+            $testScript = {
+                function Test-DollarQuestionMark {
+                    [CmdletBinding()]
+                    param()
+                    Get-Process -Id ([int]::MaxValue)
+                    if (-not $?) {
+                        'The value of $? was preserved during debugging.'
+                    } else {
+                        'The value of $? was changed to $true during debugging.'
+                    }
+                }
+                $global:DollarQuestionMarkResults = Test-DollarQuestionMark -ErrorAction Break
+            }
+
+            $global:results = @(Test-Debugger -Scriptblock $testScript -CommandQueue '$?')
+        }
+
+        AfterAll {
+            Remove-Variable -Name DollarQuestionMarkResults -Scope Global -ErrorAction Ignore
+        }
+
+        It 'Should show 2 debugger commands were invoked' {
+            # One extra for the implicit 'c' command that keeps the debugger automation moving
+            $results.Count | Should -Be 2
+        }
+
+        It 'Should have $false output from the first $? command' {
+            $results[0].Output | Should -BeOfType bool
+            $results[0].Output | Should -Not -BeTrue
+        }
+
+        It 'Should have string output showing that $? was preserved as $false by the debugger' {
+            $global:DollarQuestionMarkResults | Should -BeOfType string
+            $global:DollarQuestionMarkResults | Should -BeExactly 'The value of $? was preserved during debugging.'
+        }
+    }
+}
+
+Describe "Breakpoints when set should be hit" -Tag "CI" {
     Context "Basic tests" {
         BeforeAll {
             $script = @'
@@ -13,11 +63,11 @@ Describe "Breakpoints when set should be hit" -tag "CI" {
 'bbb'
 '@
             $path = Setup -PassThru -File BasicTest.ps1 -Content $script
-            $bps = 1..6 | ForEach-Object { set-psbreakpoint -script $path -line $_ -Action { continue } }
+            $bps = 1..6 | ForEach-Object { Set-PSBreakpoint -Script $path -Line $_ -Action { continue } }
         }
 
         AfterAll {
-            $bps | Remove-PSBreakPoint
+            $bps | Remove-PSBreakpoint
         }
 
         It "A redirected breakpoint is hit" {
@@ -283,7 +333,7 @@ elseif (Test-Path $PSCommandPath)
     }
 }
 
-Describe "It should be possible to reset runspace debugging" -tag "Feature" {
+Describe "It should be possible to reset runspace debugging" -Tag "Feature" {
     BeforeAll {
         $script = @'
 "line 1"

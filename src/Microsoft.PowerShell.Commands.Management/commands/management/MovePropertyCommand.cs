@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to move a property on an item to another item.
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "ItemProperty", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113351")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096817")]
     public class MoveItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         #region Parameters

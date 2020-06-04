@@ -30,11 +30,11 @@ jobs:
   steps:
   - powershell: |
       Get-ChildItem -Path env:
-    displayName: Capture environment
+    displayName: Capture Environment
     condition: succeededOrFailed()
 
   - powershell: |
-      Install-module pester -Scope CurrentUser -Force
+      Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
     displayName: Install Pester
     condition: succeededOrFailed()
 
@@ -44,10 +44,7 @@ jobs:
     condition: succeededOrFailed()
 
   - bash: |
-      # Installing globally with yarn is a pain, please don't try
-      sudo npm install -g markdown-spellcheck@0.11.0
-      # Sometimes this folder is left behind with root permissions and is needed by later npm installs which don't need sudo
-      sudo rm -rf ~/.npm/_cacache
+      sudo yarn global add markdown-spellcheck@0.11.0
     displayName: Install mdspell
     condition: succeededOrFailed()
 
@@ -71,3 +68,8 @@ jobs:
       }
     displayName: Run Common Tests
     condition: succeededOrFailed()
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

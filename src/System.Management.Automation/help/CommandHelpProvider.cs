@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -566,7 +566,7 @@ namespace System.Management.Automation
 
             if (cmdletInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdletInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdletInfo));
             }
 
             // Get the help file name from the cmdlet metadata
@@ -1253,7 +1253,7 @@ namespace System.Management.Automation
         internal override IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
             HelpCategory categoriesHandled = (HelpCategory.Alias
-                | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand | HelpCategory.Workflow);
+                | HelpCategory.ExternalScript | HelpCategory.Filter | HelpCategory.Function | HelpCategory.ScriptCommand);
 
             if ((helpInfo.HelpCategory & categoriesHandled) != 0)
             {

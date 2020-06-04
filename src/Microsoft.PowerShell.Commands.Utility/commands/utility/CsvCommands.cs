@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Export-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113299")]
+    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096608")]
     public sealed class ExportCsvCommand : BaseCsvWritingCommand, IDisposable
     {
         #region Command Line Parameters
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Import-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "DelimiterPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113341")]
+    [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "DelimiterPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097020")]
     public sealed class ImportCsvCommand : PSCmdlet
     {
         #region Command Line Parameters
@@ -655,8 +655,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertTo-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "DelimiterPath",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135203", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "Delimiter",
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096832", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(string))]
     public sealed class ConvertToCsvCommand : BaseCsvWritingCommand
     {
@@ -744,8 +744,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements ConvertFrom-Csv command.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "DelimiterPath",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135201", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "Delimiter",
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096830", RemotingCapability = RemotingCapability.None)]
     public sealed class ConvertFromCsvCommand : PSCmdlet
     {
         #region Command Line Parameters
@@ -753,7 +753,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Property that sets delimiter.
         /// </summary>
-        [Parameter(Position = 1, ParameterSetName = "DelimiterPath")]
+        [Parameter(Position = 1, ParameterSetName = "Delimiter")]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
         public char Delimiter { get; set; }
@@ -761,8 +761,7 @@ namespace Microsoft.PowerShell.Commands
         ///<summary>
         ///Culture switch for csv conversion
         ///</summary>
-        [Parameter(ParameterSetName = "CulturePath", Mandatory = true)]
-        [Parameter(ParameterSetName = "CultureLiteralPath", Mandatory = true)]
+        [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
         [ValidateNotNull]
         [ValidateNotNullOrEmpty]
         public SwitchParameter UseCulture { get; set; }
@@ -854,9 +853,9 @@ namespace Microsoft.PowerShell.Commands
     internal class ExportCsvHelper : IDisposable
     {
         private char _delimiter;
-        readonly private BaseCsvWritingCommand.QuoteKind _quoteKind;
-        readonly private HashSet<string> _quoteFields;
-        readonly private StringBuilder _outputString;
+        private readonly BaseCsvWritingCommand.QuoteKind _quoteKind;
+        private readonly HashSet<string> _quoteFields;
+        private readonly StringBuilder _outputString;
 
         /// <summary>
         /// Create ExportCsvHelper instance.
@@ -1014,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
                                 AppendStringWithEscapeAlways(_outputString, value);
                                 break;
                             case BaseCsvWritingCommand.QuoteKind.AsNeeded:
-                                if (value.Contains(_delimiter))
+                                if (value != null && value.Contains(_delimiter))
                                 {
                                     AppendStringWithEscapeAlways(_outputString, value);
                                 }
@@ -1301,7 +1300,7 @@ namespace Microsoft.PowerShell.Commands
                     values[0] = values[0].Substring(9);
                     Header = values;
                 }
-                else if (values.Count != 0 && values[0].StartsWith("#"))
+                else if (values.Count != 0 && values[0].StartsWith('#'))
                 {
                     // Skip all lines starting with '#'
                 }

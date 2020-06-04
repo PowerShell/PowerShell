@@ -1,7 +1,11 @@
 {
   "ExperimentalFeatures": {
-    "Microsoft.PowerShell.Utility.PSDebugRunspaceWithBreakpoints": ["test/powershell/Modules/Microsoft.PowerShell.Utility/New-PSBreakpoint.Tests.ps1"],
     "PSWildcardEscapeEscape": [ "test/powershell/engine/Api/WildcardPattern.Tests.ps1" ],
-    "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ]
+    "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
+    "PSNullConditionalOperators": [
+      "test/powershell/Language/Operators/NullConditional.Tests.ps1",
+      "test/powershell/Language/Parser/Parsing.Tests.ps1",
+      "/test/powershell/Host/TabCompletion/TabCompletion.Tests.ps1" ],
+    "PSCultureInvariantReplaceOperator": [ "test/powershell/Language/Operators/ReplaceOperator.Tests.ps1" ]
   }
 }

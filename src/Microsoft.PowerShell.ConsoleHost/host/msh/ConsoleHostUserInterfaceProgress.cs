@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -192,7 +192,9 @@ namespace Microsoft.PowerShell
         private PendingProgress _pendingProgress = null;
         // The timer set up 'progPaneUpdateFlag' every 'UpdateTimerThreshold' milliseconds to update 'ProgressPane'
         private Timer _progPaneUpdateTimer = null;
+
         private const int UpdateTimerThreshold = 200;
+
         private int progPaneUpdateFlag = 0;
     }
 }   // namespace

@@ -15,7 +15,7 @@
 # -includeide         - installs VSCode and VSCode PowerShell extension (only relevant to machines with desktop environment)
 # -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
 # -skip-sudo-check    - use sudo without verifying its availability (hard to accurately do on some distros)
-# -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
+# -preview            - installs the latest preview release of PowerShell side-by-side with any existing production releases
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -28,7 +28,7 @@ gitscriptname="installpsh-debian.psh"
 powershellpackageid=powershell
 
 echo ;
-echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
+echo "*** PowerShell Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo
 echo "*** Arguments used: $*"
@@ -62,6 +62,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
@@ -94,7 +101,7 @@ fi
 SUDO=''
 if (( EUID != 0 )); then
     #Check that sudo is available
-    if [[ ("'$*'" =~ skip-sudo-check) && ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
+    if [[ ("'$*'" =~ skip-sudo-check) || ("$(whereis sudo)" == *'/'* && "$(sudo -nv 2>&1)" != 'Sorry, user'*) ]]; then
         SUDO='sudo'
     else
         echo "ERROR: You must either be root or be able to use sudo" >&2
@@ -104,8 +111,13 @@ fi
 
 #Collect any variation details if required for this distro
 # shellcheck disable=SC1091
-. /etc/lsb-release
-DISTRIB_ID=$(lowercase "$DISTRIB_ID")
+if [[ -f /etc/lsb-release ]]; then
+    . /etc/lsb-release
+    DISTRIB_ID=$(lowercase "$DISTRIB_ID")
+elif [[ -f /etc/debian_version ]]; then
+    DISTRIB_ID="debian"
+    DISTRIB_RELEASE=$(cat /etc/debian_version)
+fi
 #END Collect any variation details if required for this distro
 
 #If there are known incompatible versions of this distro, put the test, message and script exit here:
@@ -115,22 +127,26 @@ DISTRIB_ID=$(lowercase "$DISTRIB_ID")
 ##END Check requirements and prerequisites
 
 echo
-echo "*** Installing PowerShell Core for $DistroBasedOn..."
+echo "*** Installing PowerShell for $DistroBasedOn..."
 if ! hash curl 2>/dev/null; then
     echo "curl not found, installing..."
     $SUDO apt-get install -y curl
 fi
 
+# The executable to test.
+PWSH=pwsh
+
 if [[ "'$*'" =~ preview ]] ; then
     echo
     echo "-preview was used, the latest preview release will be installed (side-by-side with your production release)"
     powershellpackageid=powershell-preview
+    PWSH=pwsh-preview
 fi
 
 currentversion=$(curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g)
 
 echo "*** Current version on git is: $currentversion, repo version may differ slightly..."
-echo "*** Setting up PowerShell Core repo..."
+echo "*** Setting up PowerShell repo..."
 # Import the public repository GPG keys
 curl https://packages.microsoft.com/keys/microsoft.asc | $SUDO apt-key add -
 #Add the Repo
@@ -153,7 +169,7 @@ if [[ "${DISTRIB_ID}" = "linuxmint" ]]; then
             echo "Supported versions: 19" >&2
             echo "For additional versions open an issue or pull request at: https://github.com/powershell/powershell" >&2
             exit 1
-        ;;          
+        ;;
     esac
     echo "Remapping linuxmint version ${LINUXMINT_VERSION} to ubuntu version ${DISTRIB_RELEASE}" >&2
 fi
@@ -174,7 +190,7 @@ case $DISTRIB_ID in
     debian)
         DISTRIB_RELEASE=${DISTRIB_RELEASE%%.*}
         case $DISTRIB_RELEASE in
-            8|9)
+            8|9|10|11)
                 curl https://packages.microsoft.com/config/debian/$DISTRIB_RELEASE/prod.list | $SUDO tee /etc/apt/sources.list.d/microsoft.list
             ;;
             *)
@@ -198,8 +214,8 @@ $SUDO apt-get update
 $SUDO apt-get install -y ${powershellpackageid}
 
 # shellcheck disable=SC2016
-pwsh -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
-Run `"pwsh`" to start a PowerShell session."'
+$PWSH -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME.
+Run `"'"$PWSH"'`" to start a PowerShell session."'
 
 success=$?
 
@@ -230,6 +246,6 @@ fi
 
 if [[ "$repobased" == true ]] ; then
   echo
-  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell Core"
+  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell"
 fi
 echo "*** Install Complete"

@@ -1,15 +1,16 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System.Reflection;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Management.Automation;
-using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
+using System.Runtime.InteropServices;
 
 using Microsoft.Management.Infrastructure;
 using Microsoft.Win32;
@@ -20,11 +21,11 @@ namespace Microsoft.PowerShell.Commands
 
     #region GetComputerInfoCommand cmdlet implementation
     /// <summary>
-    /// The Get=ComputerInfo cmdlet gathers and reports information
+    /// The Get-ComputerInfo cmdlet gathers and reports information
     /// about a computer.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ComputerInfo",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799466")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096810")]
     [Alias("gin")]
     [OutputType(typeof(ComputerInfo), typeof(PSObject))]
     public class GetComputerInfoCommand : PSCmdlet
@@ -286,7 +287,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (adapters != null && configs != null)
             {
-                var configDict = new Dictionary<UInt32, WmiNetworkAdapterConfiguration>();
+                var configDict = new Dictionary<uint, WmiNetworkAdapterConfiguration>();
 
                 foreach (var config in configs)
                 {
@@ -887,9 +888,8 @@ namespace Microsoft.PowerShell.Commands
                     // we display info for only one
 
                     string layout = otherInfo.keyboards[0].Layout;
-                    var culture = Conversion.MakeLocale(layout);
 
-                    output.KeyboardLayout = culture == null ? layout : culture.Name;
+                    output.KeyboardLayout = Conversion.GetLocaleName(layout);
                 }
 
                 if (otherInfo.hyperV != null)
@@ -1097,29 +1097,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        public static string LocaleIdToLocaleName(uint localeID)
-        {
-            // CoreCLR's System.Globalization.Culture does not appear to have a constructor
-            // that accepts an integer LocalID (LCID) value, so we'll PInvoke native code
-            // to get a locale name from an LCID value
-
-            try
-            {
-                var sbName = new System.Text.StringBuilder(Native.LOCALE_NAME_MAX_LENGTH);
-                var len = Native.LCIDToLocaleName(localeID, sbName, sbName.Capacity, 0);
-
-                if (len > 0 && sbName.Length > 0)
-                    return sbName.ToString();
-            }
-            catch (Exception)
-            {
-                // Probably failed to load the DLL or to file the function entry point.
-                // Fail silently
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Attempt to create a <see cref="System.Globalization.CultureInfo"/>
         /// object from a locale string as retrieved from WMI.
@@ -1136,38 +1113,36 @@ namespace Microsoft.PowerShell.Commands
         /// Failing that it attempts to retrieve the CultureInfo object
         /// using the locale string as passed.
         /// </remarks>
-        internal static System.Globalization.CultureInfo MakeLocale(string locale)
+        internal static string GetLocaleName(string locale)
         {
-            System.Globalization.CultureInfo culture = null;
+            CultureInfo culture = null;
 
             if (locale != null)
             {
                 try
                 {
-                    uint localeNum;
-
-                    if (TryParseHex(locale, out localeNum))
+                    // The "locale" must contain a hexadecimal value, with no
+                    // base-indication prefix. For example, the string "0409" will be
+                    // parsed into the base-10 integer value 1033, while the string "0x0409"
+                    // will fail to parse due to the "0x" base-indication prefix.
+                    if (UInt32.TryParse(locale, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out uint localeNum))
                     {
-                        string localeName = LocaleIdToLocaleName(localeNum);
-
-                        if (localeName != null)
-                            culture = new System.Globalization.CultureInfo(localeName);
+                        culture = CultureInfo.GetCultureInfo((int)localeNum);
                     }
 
                     if (culture == null)
                     {
-                        // either the TryParseHex failed, or the LocaleIdToLocaleName
-                        // failed, so we'll try using the original string
-                        culture = new System.Globalization.CultureInfo(locale);
+                        // If TryParse failed we'll try using the original string as culture name
+                        culture = CultureInfo.GetCultureInfo(locale);
                     }
                 }
-                catch (Exception/* ex*/)
+                catch (Exception)
                 {
                     culture = null;
                 }
             }
 
-            return culture;
+            return culture == null ? null : culture.Name;
         }
 
         /// <summary>
@@ -1336,7 +1311,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Get a language name from a language identifier.
         /// </summary>
-        /// <param name="language">
+        /// <param name="lcid">
         /// A nullable integer containing the language ID for the desired language.
         /// </param>
         /// <returns>
@@ -1344,10 +1319,18 @@ namespace Microsoft.PowerShell.Commands
         /// the language parameter. If the language parameter is null or has a
         /// value that is not a valid language ID, the method returns null.
         /// </returns>
-        protected static string GetLanguageName(uint? language)
+        protected static string GetLanguageName(uint? lcid)
         {
-            if (language != null)
-                return Conversion.LocaleIdToLocaleName(language.Value);
+            if (lcid != null && lcid >= 0)
+            {
+                try
+                {
+                    return CultureInfo.GetCultureInfo((int)lcid.Value).Name;
+                }
+                catch
+                {
+                }
+            }
 
             return null;
         }
@@ -1896,12 +1879,7 @@ namespace Microsoft.PowerShell.Commands
         #region Public Methods
         public string GetLocale()
         {
-            System.Globalization.CultureInfo culture = null;
-
-            if (Locale != null)
-                culture = Conversion.MakeLocale(Locale);
-
-            return culture == null ? null : culture.Name;
+            return Conversion.GetLocaleName(Locale);
         }
         #endregion Public Methods
 
@@ -5112,7 +5090,6 @@ namespace Microsoft.PowerShell.Commands
         private static class PInvokeDllNames
         {
             public const string GetPhysicallyInstalledSystemMemoryDllName = "api-ms-win-core-sysinfo-l1-2-1.dll";
-            public const string LCIDToLocaleNameDllName = "kernelbase.dll";
             public const string PowerDeterminePlatformRoleExDllName = "api-ms-win-power-base-l1-1-0.dll";
             public const string GetFirmwareTypeDllName = "api-ms-win-core-kernel32-legacy-l1-1-1";
         }
@@ -5151,17 +5128,6 @@ namespace Microsoft.PowerShell.Commands
         [DllImport(PInvokeDllNames.GetFirmwareTypeDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool GetFirmwareType(out FirmwareType firmwareType);
-
-        /// <summary>
-        /// Convert a Local Identifier to a Locale name.
-        /// </summary>
-        /// <param name="localeID">The Locale ID (LCID) to be converted.</param>
-        /// <param name="localeName">Destination of the Locale name.</param>
-        /// <param name="localeNameSize">Capacity of <paramref name="localeName"/></param>
-        /// <param name="flags"></param>
-        /// <returns></returns>
-        [DllImport(PInvokeDllNames.LCIDToLocaleNameDllName, SetLastError = true, CharSet = CharSet.Unicode)]
-        public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuilder localeName, int localeNameSize, int flags);
 
         /// <summary>
         /// Gets the data specified for the passed in property name from the

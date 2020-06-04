@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
             else
             {
@@ -205,13 +205,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             // Get owner
@@ -245,13 +245,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             // Get Group
@@ -284,13 +284,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                PSTraceSource.NewArgumentException("instance");
+                PSTraceSource.NewArgumentException(nameof(instance));
             }
 
             // Get DACL
@@ -323,13 +323,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                PSTraceSource.NewArgumentException("instance");
+                PSTraceSource.NewArgumentException(nameof(instance));
             }
 
             AuthorizationRuleCollection sacl;
@@ -585,13 +585,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (instance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             ObjectSecurity sd = instance.BaseObject as ObjectSecurity;
             if (sd == null)
             {
-                throw PSTraceSource.NewArgumentNullException("instance");
+                throw PSTraceSource.NewArgumentNullException(nameof(instance));
             }
 
             string sddl = sd.GetSecurityDescriptorSddlForm(AccessControlSections.All);
@@ -621,7 +621,7 @@ namespace Microsoft.PowerShell.Commands
     /// Defines the implementation of the 'get-acl' cmdlet.
     /// This cmdlet gets the security descriptor of an item at the specified path.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Acl", SupportsTransactions = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113305")]
+    [Cmdlet(VerbsCommon.Get, "Acl", SupportsTransactions = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096593")]
     public sealed class GetAclCommand : SecurityDescriptorCommandsBase
     {
         /// <summary>
@@ -901,7 +901,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet sets the security descriptor of an item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Acl", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = "ByPath",
-            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113389")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096600")]
     public sealed class SetAclCommand : SecurityDescriptorCommandsBase
     {
         private string[] _path;

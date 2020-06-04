@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Remoting.Client;
 using System.Management.Automation.Tracing;
 using System.Threading;
+using Microsoft.PowerShell.Telemetry;
 
 using Dbg = System.Management.Automation.Diagnostics;
 #if LEGACYTELEMETRY
@@ -854,6 +855,8 @@ namespace System.Management.Automation.Runspaces.Internal
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspacePoolOpen, PSOpcode.Open,
                             PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational);
 
+            // Telemetry here - remote session
+            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.RemoteSessionOpen, isAsync.ToString());
 #if LEGACYTELEMETRY
             TelemetryAPI.ReportRemoteSessionCreated(_connectionInfo);
 #endif
@@ -1071,7 +1074,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
@@ -1080,7 +1083,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginOpen");
@@ -1181,7 +1184,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (asyncResult == null)
             {
-                throw PSTraceSource.NewArgumentNullException("asyncResult");
+                throw PSTraceSource.NewArgumentNullException(nameof(asyncResult));
             }
 
             RunspacePoolAsyncResult rsAsyncResult = asyncResult as RunspacePoolAsyncResult;
@@ -1190,7 +1193,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 (rsAsyncResult.OwnerId != instanceId) ||
                 (rsAsyncResult.IsAssociatedWithAsyncOpen))
             {
-                throw PSTraceSource.NewArgumentException("asyncResult",
+                throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                                                          RunspacePoolStrings.AsyncResultNotOwned,
                                                          "IAsyncResult",
                                                          "BeginOpen");
@@ -1903,7 +1906,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private RunspacePoolAsyncResult _reconnectAsyncResult;  // async result object generated on CoreReconnect
         private bool _isDisposed;
 
-        private DispatchTable<Object> DispatchTable { get; }
+        private DispatchTable<object> DispatchTable { get; }
 
         private bool _canReconnect;
         private string _friendlyName = string.Empty;
@@ -2148,7 +2151,7 @@ namespace System.Management.Automation.Runspaces.Internal
         private static bool CheckForSSL(WSManConnectionInfo wsmanConnectionInfo)
         {
             return (!string.IsNullOrEmpty(wsmanConnectionInfo.Scheme) &&
-                    wsmanConnectionInfo.Scheme.IndexOf(WSManConnectionInfo.HttpsScheme, StringComparison.OrdinalIgnoreCase) != -1);
+                    wsmanConnectionInfo.Scheme.Contains(WSManConnectionInfo.HttpsScheme, StringComparison.OrdinalIgnoreCase));
         }
 
         private static int ConvertPSAuthToWSManAuth(AuthenticationMechanism psAuth)

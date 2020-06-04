@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
     /// $rs = New-PSSession -computername s1 -port 8061 -ShellName E12.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSession", DefaultParameterSetName = "ComputerName",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135237", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096484", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class NewPSSessionCommand : PSRemotingBaseCmdlet, IDisposable
     {
@@ -162,6 +162,12 @@ namespace Microsoft.PowerShell.Commands
                    ParameterSetName = NewPSSessionCommand.VMNameParameterSet)]
         public string ConfigurationName { get; set; }
 
+        /// <summary>
+        /// Gets or sets parameter value that creates connection to a Windows PowerShell process.
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = NewPSSessionCommand.UseWindowsPowerShellParameterSet)]
+        public SwitchParameter UseWindowsPowerShell { get; set; }
+
         #endregion Parameters
 
         #region Cmdlet Overrides
@@ -253,6 +259,13 @@ namespace Microsoft.PowerShell.Commands
                 case NewPSSessionCommand.SSHHostHashParameterSet:
                     {
                         remoteRunspaces = CreateRunspacesForSSHHostHashParameterSet();
+                    }
+
+                    break;
+
+                case NewPSSessionCommand.UseWindowsPowerShellParameterSet:
+                    {
+                        remoteRunspaces = CreateRunspacesForUseWindowsPowerShellParameterSet();
                     }
 
                     break;
@@ -403,12 +416,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (sender == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sender");
+                throw PSTraceSource.NewArgumentNullException(nameof(sender));
             }
 
             if (stateEventArgs == null)
             {
-                throw PSTraceSource.NewArgumentNullException("stateEventArgs");
+                throw PSTraceSource.NewArgumentNullException(nameof(stateEventArgs));
             }
 
             RunspaceStateEventArgs runspaceStateEventArgs =
@@ -896,7 +909,7 @@ namespace Microsoft.PowerShell.Commands
                     ThrowTerminatingError(
                         new ErrorRecord(
                             new ArgumentException(RemotingErrorIdStrings.HyperVModuleNotAvailable),
-                            PSRemotingErrorId.HyperVModuleNotAvailable.ToString(),
+                            nameof(PSRemotingErrorId.HyperVModuleNotAvailable),
                             ErrorCategory.NotInstalled,
                             null));
 
@@ -914,7 +927,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMIdNotSingle,
                                                                  this.VMId[index].ToString(null))),
-                                PSRemotingErrorId.InvalidVMIdNotSingle.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMIdNotSingle),
                                 ErrorCategory.InvalidArgument,
                                 null));
 
@@ -928,7 +941,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMNameNotSingle,
                                                                  this.VMName[index])),
-                                PSRemotingErrorId.InvalidVMNameNotSingle.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMNameNotSingle),
                                 ErrorCategory.InvalidArgument,
                                 null));
 
@@ -949,7 +962,7 @@ namespace Microsoft.PowerShell.Commands
                             new ErrorRecord(
                                 new ArgumentException(GetMessage(RemotingErrorIdStrings.InvalidVMState,
                                                                  this.VMName[index])),
-                                PSRemotingErrorId.InvalidVMState.ToString(),
+                                nameof(PSRemotingErrorId.InvalidVMState),
                                 ErrorCategory.InvalidArgument,
                                 null));
 
@@ -1133,6 +1146,29 @@ namespace Microsoft.PowerShell.Commands
                                                                    name: rsName) as RemoteRunspace);
             }
 
+            return remoteRunspaces;
+        }
+
+        /// <summary>
+        /// Helper method to create remote runspace based on UseWindowsPowerShell parameter set.
+        /// </summary>
+        /// <returns>Remote runspace that was created.</returns>
+        private List<RemoteRunspace> CreateRunspacesForUseWindowsPowerShellParameterSet()
+        {
+            var remoteRunspaces = new List<RemoteRunspace>();
+
+            NewProcessConnectionInfo connectionInfo = new NewProcessConnectionInfo(this.Credential);
+            connectionInfo.AuthenticationMechanism = this.Authentication;
+#if !UNIX
+            connectionInfo.PSVersion = new Version(5, 1);
+#endif
+            var typeTable = TypeTable.LoadDefaultTypeFiles();
+            string runspaceName = GetRunspaceName(0, out int runspaceIdUnused);
+            remoteRunspaces.Add(RunspaceFactory.CreateRunspace(connectionInfo: connectionInfo,
+                                                               host: this.Host,
+                                                               typeTable: typeTable,
+                                                               applicationArguments: null,
+                                                               name: runspaceName) as RemoteRunspace);
             return remoteRunspaces;
         }
 
@@ -1343,6 +1379,7 @@ namespace Microsoft.PowerShell.Commands
         //     any exceptions thrown on this thread. (ThrottleManager will not respond if it doesn't
         //     get a start/stop complete callback).
         private List<EventHandler<OperationStateEventArgs>> _internalCallbacks = new List<EventHandler<OperationStateEventArgs>>();
+
         internal override event EventHandler<OperationStateEventArgs> OperationComplete
         {
             add

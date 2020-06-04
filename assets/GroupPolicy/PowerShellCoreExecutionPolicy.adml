@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<policyDefinitionResources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" revision="1.0" schemaVersion="1.0" xmlns="http://www.microsoft.com/GroupPolicy/PolicyDefinitions">
+  <displayName>PowerShell Core</displayName>
+  <description>This file contains the configuration options for PowerShell Core</description>
+  <resources>
+    <stringTable>
+      <string id="AllScripts">Allow all scripts</string>
+      <string id="AllScriptsSigned">Allow only signed scripts</string>
+      <string id="EnableScripts">Turn on Script Execution</string>
+      <string id="EnableScripts_Explain">This policy setting lets you configure the script execution policy, controlling which scripts are allowed to run.
+
+If you enable this policy setting, the scripts selected in the drop-down list are allowed to run.
+
+The "Allow only signed scripts" policy setting allows scripts to execute only if they are signed by a trusted publisher.
+
+The "Allow local scripts and remote signed scripts" policy setting allows any local scrips to run; scripts that originate from the internet must be signed by a trusted publisher.
+
+The "Allow all scripts" policy setting allows all scripts to run.
+
+If you disable this policy setting, no scripts are allowed to run.
+
+Note: This policy setting exists under both "Computer Configuration" and "User Configuration" in the Local Group Policy Editor. The "Computer Configuration" has precedence over "User Configuration."
+
+If you disable or do not configure this policy setting, it reverts to a per-machine preference setting; the default if that is not configured is "Allow local scripts and remote signed scripts."</string>
+      <string id="PowerShell">PowerShell Core</string>
+      <string id="RemoteSignedScripts">Allow local scripts and remote signed scripts</string>
+      <string id="SUPPORTED_WIN7">At least Microsoft Windows 7 or Windows Server 2008 family</string>
+       
+      <string id="EnableModuleLogging">Turn on Module Logging</string>
+      <string id="EnableModuleLogging_Explain">
+        This policy setting allows you to turn on logging for PowerShell Core modules.
+
+        If you enable this policy setting, pipeline execution events for members of the specified modules are recorded in the PowerShell Core log in Event Viewer. Enabling this policy setting for a module is equivalent to setting the LogPipelineExecutionDetails property of the module to True.
+
+        If you disable this policy setting, logging of execution events is disabled for all PowerShell Core modules. Disabling this policy setting for a module is equivalent to setting the LogPipelineExecutionDetails property of the module to False.
+
+        If this policy setting is not configured, the LogPipelineExecutionDetails property of a module determines whether the execution events of a module are logged. By default, the LogPipelineExecutionDetails property of all modules is set to False.
+
+        To add modules to the policy setting list, click Show, and then type the module names in the list. The modules in the list must be installed on the computer.
+
+        Note: This policy setting exists under both Computer Configuration and User Configuration in the Group Policy Editor. The Computer Configuration policy setting takes precedence over the User Configuration policy setting.
+      </string>
+
+      <string id="EnableTranscripting">Turn on PowerShell Transcription</string>
+      <string id="EnableTranscripting_Explain">
+        This policy setting lets you capture the input and output of PowerShell Core commands into text-based transcripts.
+
+        If you enable this policy setting, PowerShell Core will enable transcription logging for PowerShell Core and any other
+        applications that leverage the PowerShell Core engine. By default, PowerShell Core will record transcript output to each users' My Documents
+        directory, with a file name that includes 'PowerShell_transcript', along with the computer name and time started. Enabling this policy is equivalent
+        to calling the Start-Transcript cmdlet on each PowerShell Core session.
+
+        If you disable this policy setting, transcription logging of PowerShell-based applications is disabled by default, although transcripting can still be enabled
+        through the Start-Transcript cmdlet.
+        
+        If you use the OutputDirectory setting to enable transcription logging to a shared location, be sure to limit access to that directory to prevent users
+        from viewing the transcripts of other users or computers.
+
+        Note: This policy setting exists under both Computer Configuration and User Configuration in the Group Policy Editor. The Computer Configuration policy setting takes precedence over the User Configuration policy setting.
+      </string>
+
+      <string id="EnableScriptBlockLogging">Turn on PowerShell Script Block Logging</string>
+      <string id="EnableScriptBlockLogging_Explain">
+        This policy setting enables logging of all PowerShell script input to the Microsoft-Windows-PowerShell/Operational event log. If you enable this policy setting,
+        PowerShell Core will log the processing of commands, script blocks, functions, and scripts - whether invoked interactively, or through automation.
+        
+        If you disable this policy setting, logging of PowerShell script input is disabled.
+        
+        If you enable the Script Block Invocation Logging, PowerShell additionally logs events when invocation of a command, script block, function, or script
+        starts or stops. Enabling Invocation Logging generates a high volume of event logs.
+        
+        Note: This policy setting exists under both Computer Configuration and User Configuration in the Group Policy Editor. The Computer Configuration policy setting takes precedence over the User Configuration policy setting.
+      </string>
+      
+      <string id="EnableUpdateHelpDefaultSourcePath">Set the default source path for Update-Help</string>
+      <string id="EnableUpdateHelpDefaultSourcePath_Explain">This policy setting allows you to set the default value of the SourcePath parameter on the Update-Help cmdlet.
+
+If you enable this policy setting, the Update-Help cmdlet will use the specified value as the default value for the SourcePath parameter. This default value can be overridden by specifying a different value with the SourcePath parameter on the Update-Help cmdlet.
+
+If this policy setting is disabled or not configured, this policy setting does not set a default value for the SourcePath parameter of the Update-Help cmdlet.
+
+Note: This policy setting exists under both Computer Configuration and User Configuration in the Group Policy Editor. The Computer Configuration policy setting takes precedence over the User Configuration policy setting.
+      </string>
+      <string id="ConsoleSessionConfiguration">Console session configuration</string>
+      <string id="ConsoleSessionConfiguration_Explain">Specifies a configuration endpoint in which PowerShell is run. This can be any endpoint registered on the local machine including the default PowerShell remoting endpoints or a custom endpoint having specific user role capabilities.</string>
+      
+      <!--<string id="PowerShell">PowerShell Core</string>-->
+    </stringTable>
+    <presentationTable>
+      <presentation id="EnableScripts">
+        <checkBox refId="UseWindowsPowerShellPolicySetting">Use Windows PowerShell Policy setting.</checkBox>
+        <dropdownList refId="ExecutionPolicy" noSort="true">Execution Policy</dropdownList>
+      </presentation>
+      <presentation id="EnableModuleLogging">
+        <checkBox refId="UseWindowsPowerShellPolicySetting">Use Windows PowerShell Policy setting.</checkBox>
+        <text>To turn on logging for one or more modules, click Show, and then type the module names in the list. Wildcards are supported.</text>
+        <listBox refId="Listbox_ModuleNames" required="false">Module Names</listBox>
+        <text>To turn on logging for the PowerShell Core core modules, type the following module names in the list:</text>
+        <text>Microsoft.PowerShell.*</text>
+        <text>Microsoft.WSMan.Management</text>
+      </presentation>
+      <presentation id="EnableTranscripting">
+        <checkBox refId="UseWindowsPowerShellPolicySetting">Use Windows PowerShell Policy setting.</checkBox>
+        <textBox refId="OutputDirectory"><label>Transcript output directory</label></textBox>
+        <checkBox refId="EnableInvocationHeader">Include invocation headers:</checkBox>
+      </presentation>     
+      <presentation id="EnableScriptBlockLogging">
+        <checkBox refId="UseWindowsPowerShellPolicySetting">Use Windows PowerShell Policy setting.</checkBox>
+        <checkBox refId="EnableScriptBlockInvocationLogging">Log script block invocation start / stop events:</checkBox>
+      </presentation>           
+      <presentation id="EnableUpdateHelpDefaultSourcePath">
+        <checkBox refId="UseWindowsPowerShellPolicySetting">Use Windows PowerShell Policy setting.</checkBox>
+        <textBox refId="SourcePathForUpdateHelp">
+          <label>Default Source Path</label>
+        </textBox>
+      </presentation>
+      <presentation id="ConsoleSessionConfiguration">
+        <textBox refId="ConsoleSessionConfigurationName">
+          <label>ConsoleSessionConfigurationName</label>
+        </textBox>
+      </presentation>
+    </presentationTable>    
+  </resources>
+
+</policyDefinitionResources>

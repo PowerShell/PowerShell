@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -266,6 +266,23 @@ namespace System.Management.Automation.Internal
 
 namespace System.Management.Automation
 {
+    #region ErrorView
+    /// <summary>
+    /// Defines the potential ErrorView options.
+    /// </summary>
+    public enum ErrorView
+    {
+        /// <summary>Existing all red multi-line output.</summary>
+        NormalView = 0,
+
+        /// <summary>Only show category information.</summary>
+        CategoryView = 1,
+
+        /// <summary>Concise shows more information on the context of the error or just the message if not a script or parser error.</summary>
+        ConciseView = 2,
+    }
+    #endregion ErrorView
+
     #region ActionPreference
     /// <summary>
     /// Defines the Action Preference options.  These options determine
@@ -277,18 +294,26 @@ namespace System.Management.Automation
     public enum ActionPreference
     {
         /// <summary>Ignore this event and continue</summary>
-        SilentlyContinue,
+        SilentlyContinue = 0,
+
         /// <summary>Stop the command</summary>
-        Stop,
+        Stop = 1,
+
         /// <summary>Handle this event as normal and continue</summary>
-        Continue,
+        Continue = 2,
+
         /// <summary>Ask whether to stop or continue</summary>
-        Inquire,
+        Inquire = 3,
+
         /// <summary>Ignore the event completely (not even logging it to the target stream)</summary>
-        Ignore,
-        /// <summary>Suspend the command for further diagnosis. Supported only for workflows.</summary>
-        Suspend,
-    }
+        Ignore = 4,
+
+        /// <summary>Reserved for future use.</summary>
+        Suspend = 5,
+
+        /// <summary>Enter the debugger.</summary>
+        Break = 6,
+    } // enum ActionPreference
     #endregion ActionPreference
 
     #region ConfirmImpact
@@ -459,7 +484,7 @@ namespace System.Management.Automation
             {
                 if (providerId == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("providerId");
+                    throw PSTraceSource.NewArgumentNullException(nameof(providerId));
                 }
 
                 PathInfo result = SessionState.Path.CurrentProviderLocation(providerId);

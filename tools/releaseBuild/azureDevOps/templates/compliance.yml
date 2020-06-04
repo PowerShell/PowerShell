@@ -32,17 +32,17 @@ jobs:
 
   - template: expand-compliance.yml
     parameters:
+      architecture: fxdependent
+      version: $(version)
+
+  - template: expand-compliance.yml
+    parameters:
       architecture: x86
       version: $(version)
 
   - template: expand-compliance.yml
     parameters:
       architecture: x64
-      version: $(version)
-
-  - template: expand-compliance.yml
-    parameters:
-      architecture: fxdependent
       version: $(version)
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
@@ -114,11 +114,10 @@ jobs:
     continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
-    displayName: 'TSA upload to Codebase: PowerShellCore_201807 Stamp: Azure'
+    displayName: 'TSA upload to Codebase: PowerShellCore_201906'
     inputs:
-      tsaStamp: $(TsaStamp)
-      codeBaseName: $(CodeBaseName)
-      tsaVersion: TsaV1
+      tsaVersion: TsaV2
+      codeBaseName: 'PowerShellCore_201906'
       uploadFortifySCA: false
       uploadFxCop: false
       uploadModernCop: false

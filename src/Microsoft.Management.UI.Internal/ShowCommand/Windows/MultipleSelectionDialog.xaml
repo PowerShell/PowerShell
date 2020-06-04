@@ -1,0 +1,31 @@
+<!--=================================================================
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+==================================================================-->
+
+<Window x:Class="Microsoft.PowerShell.Commands.ShowCommandInternal.MultipleSelectionDialog"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:default="clr-namespace:"
+             mc:Ignorable="d"
+             Title="MemberType" Height="200" Width="404" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"></RowDefinition>
+            <RowDefinition Height="Auto"></RowDefinition>
+        </Grid.RowDefinitions>
+        <ListBox x:Name="listboxParameter" Margin="3" VerticalAlignment="Top" SelectionMode="Multiple" Grid.Row="0" ItemsSource="{Binding}" AutomationProperties.AutomationId="listboxParameter">
+        </ListBox>
+        <Grid Grid.Row="1" IsSharedSizeScope="True" HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition SharedSizeGroup="OKCancel"></ColumnDefinition>
+                <ColumnDefinition SharedSizeGroup="OKCancel"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="OK" Margin="3" Grid.Column="0" IsDefault="True" Click="ButtonOK_Click" Content="{x:Static default:ShowCommandResources.ActionButtons_Button_Ok}" AutomationProperties.AutomationId="ButtonOK"></Button>
+            <Button x:Name="Cancel" Margin="3" Grid.Column="1" IsCancel="True" Click="ButtonCancel_Click" Content="{x:Static default:ShowCommandResources.ActionButtons_Button_Cancel}" AutomationProperties.AutomationId="ButtonCancel"></Button>
+        </Grid>
+    </Grid>
+</Window>
+

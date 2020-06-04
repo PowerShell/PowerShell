@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Remove-Item" -Tags "CI" {
     $testpath = $TestDrive
@@ -12,13 +12,13 @@ Describe "Remove-Item" -Tags "CI" {
 
 	}
 
-	It "Should be able to be called on a regular file without error using the Path switch" {
+	It "Should be able to be called on a regular file without error using the Path parameter" {
 	    { Remove-Item -Path $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
-	It "Should be able to be called on a file without the Path switch" {
+	It "Should be able to be called on a file without the Path parameter" {
 	    { Remove-Item $testfilepath } | Should -Not -Throw
 
 	    Test-Path $testfilepath | Should -BeFalse
@@ -65,7 +65,7 @@ Describe "Remove-Item" -Tags "CI" {
 	    Test-Path $testfilepath | Should -BeFalse
 	}
 
-	It "Should be able to remove all files matching a regular expression with the include switch" {
+	It "Should be able to remove all files matching a regular expression with the include parameter" {
 	    # Create multiple files with specific string
 	    New-Item -Name file1.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
 	    New-Item -Name file2.txt -Path $testpath -ItemType "file" -Value "lorem ipsum"
@@ -75,9 +75,9 @@ Describe "Remove-Item" -Tags "CI" {
 	    # Delete the specific string
 	    Remove-Item (Join-Path -Path $testpath -ChildPath "*") -Include file*.txt
 	    # validate that the string under test was deleted, and the nonmatching strings still exist
-	    Test-path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
-	    Test-path (Join-Path -Path $testpath -ChildPath file2.txt) | Should -BeFalse
-	    Test-path (Join-Path -Path $testpath -ChildPath file3.txt) | Should -BeFalse
+	    Test-Path (Join-Path -Path $testpath -ChildPath file1.txt) | Should -BeFalse
+	    Test-Path (Join-Path -Path $testpath -ChildPath file2.txt) | Should -BeFalse
+	    Test-Path (Join-Path -Path $testpath -ChildPath file3.txt) | Should -BeFalse
 	    Test-Path $testfilepath  | Should -BeTrue
 
 	    # Delete the non-matching strings
@@ -86,7 +86,7 @@ Describe "Remove-Item" -Tags "CI" {
 	    Test-Path $testfilepath  | Should -BeFalse
 	}
 
-	It "Should be able to not remove any files matching a regular expression with the exclude switch" {
+	It "Should be able to not remove any files matching a regular expression with the exclude parameter" {
 	    # Create multiple files with specific string
 	    New-Item -Name file1.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
 	    New-Item -Name file2.wav -Path $testpath -ItemType "file" -Value "lorem ipsum"
@@ -131,7 +131,7 @@ Describe "Remove-Item" -Tags "CI" {
 	    New-Item -Name $testfile -Path $testsubdirectory -ItemType "file" -Value "lorem ipsum"
 
 	    $complexDirectory = Join-Path -Path $testsubdirectory -ChildPath $testfile
-	    test-path $complexDirectory | Should -BeTrue
+	    Test-Path $complexDirectory | Should -BeTrue
 
 	    { Remove-Item $testdirectory -Recurse} | Should -Not -Throw
 

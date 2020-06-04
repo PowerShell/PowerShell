@@ -7,11 +7,15 @@ jobs:
     ${{ parameters.parentJobs }}
   displayName: Build NuGet packages
   condition: succeeded()
-  pool: PowerShell
+  pool: Package ES Standard Build
+
+  timeoutInMinutes: 90
+
   variables:
     GenAPIToolPath: '$(System.ArtifactsDirectory)/GenAPI'
     PackagePath: '$(System.ArtifactsDirectory)/UnifiedPackagePath'
     winFxdPath: '$(System.ArtifactsDirectory)/winFxd'
+    winFxdWinDesktopPath: '$(System.ArtifactsDirectory)/winFxdWinDesktop'
     linuxFxdPath: '$(System.ArtifactsDirectory)/linuxFxd'
 
   steps:
@@ -54,6 +58,12 @@ jobs:
       destinationFolder: '$(winFxdPath)'
 
   - task: ExtractFiles@1
+    displayName: 'Extract files win-fxdependentWinDesktop'
+    inputs:
+      archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/PowerShell-*-win-fxdependentWinDesktop.zip'
+      destinationFolder: '$(winFxdWinDesktopPath)'
+
+  - task: ExtractFiles@1
     displayName: 'Extract files linux-fxdependent'
     inputs:
       archiveFilePatterns: '$(System.ArtifactsDirectory)/packages/powershell-*-linux-x64-fxdependent.tar.gz'
@@ -66,6 +76,8 @@ jobs:
       packageVersion: '1.0.0-beta-00081'
       packageSources: 'https://nuget.org/api/v2'
       installRoot: '$(GenAPIToolPath)'
+
+  - template: shouldSign.yml
 
   - template: SetVersionVariables.yml
     parameters:
@@ -85,6 +97,7 @@ jobs:
   - powershell: |
       Get-ChildItem $(linuxFxdPath)
       Get-ChildItem $(winFxdPath)
+      Get-ChildItem $(winFxdWinDesktopPath)
     displayName: Capture fxd folders
 
   - powershell: |
@@ -92,10 +105,10 @@ jobs:
       Import-Module $env:BUILD_SOURCESDIRECTORY\tools\packaging
 
       # Create unified package first
-      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
+      New-GlobalToolNupkg -UnifiedPackage -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
 
       # Create packages for dotnet sdk
-      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
+      New-GlobalToolNupkg -LinuxBinPath "$(linuxFxdPath)" -WindowsBinPath "$(winFxdPath)" -WindowsDesktopBinPath "$(winFxdWinDesktopPath)" -PackageVersion "$(Version)" -DestinationPath "$(PackagePath)\globaltool"
     displayName: 'Create Global tool packages'
 
   - powershell: |
@@ -123,6 +136,7 @@ jobs:
       outPathRoot: '$(System.ArtifactsDirectory)\signed'
       binVersion: $(SigingVersion)
       binVersionOverride: $(SigningVersionOverride)
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - powershell: |
       Import-Module $(Build.SourcesDirectory)\build.psm1 -Force
@@ -148,7 +162,7 @@ jobs:
       Get-ChildItem "$(System.ArtifactsDirectory)\signed\globaltool" -Recurse
     displayName: Move global tool packages to subfolder and capture
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@3
     displayName: 'Upload NuGet packages to Azure'
     inputs:
       SourcePath: '$(System.ArtifactsDirectory)\signed\'
@@ -156,9 +170,9 @@ jobs:
       Destination: AzureBlob
       storage: '$(StorageAccount)'
       ContainerName: '$(AzureVersion)-nuget'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
-  - task: AzureFileCopy@1
+  - task: AzureFileCopy@3
     displayName: 'Upload global tool packages to Azure'
     inputs:
       sourcePath: '$(System.ArtifactsDirectory)\signed\globaltool'
@@ -167,7 +181,7 @@ jobs:
       storage: '$(GlobalToolStorageAccount)'
       ContainerName: 'tool'
       blobPrefix: '$(Version)'
-    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+    condition: and(succeeded(), eq(variables['SHOULD_SIGN'], 'true'))
 
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component Detection'

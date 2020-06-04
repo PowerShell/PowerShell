@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -56,7 +56,9 @@ namespace Microsoft.PowerShell.Commands
         private StreamReader _reader;
         private StreamWriter _writer;
         private bool _usingByteEncoding;
+
         private const char DefaultDelimiter = '\n';
+
         private string _delimiter = $"{DefaultDelimiter}";
         private int[] _offsetDictionary;
         private bool _usingDelimiter;
@@ -156,7 +158,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (s_tracer.IsEnabled)
@@ -344,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("blocks requested = {0}", readCount);
 
-            ArrayList blocks = new ArrayList();
+            var blocks = new List<object>();
             bool readToEnd = (readCount <= 0);
 
             if (_alreadyDetectEncoding && _reader.BaseStream.Position == 0)
@@ -367,19 +369,19 @@ namespace Microsoft.PowerShell.Commands
 
                     if (_usingByteEncoding)
                     {
-                        if (!ReadByteEncoded(waitChanges, blocks, false))
+                        if (!ReadByteEncoded(waitChanges, blocks, readBackward: false))
                             break;
                     }
                     else
                     {
                         if (_usingDelimiter || _isRawStream)
                         {
-                            if (!ReadDelimited(waitChanges, blocks, false, _delimiter))
+                            if (!ReadDelimited(waitChanges, blocks, readBackward: false, _delimiter))
                                 break;
                         }
                         else
                         {
-                            if (!ReadByLine(waitChanges, blocks, false))
+                            if (!ReadByLine(waitChanges, blocks, readBackward: false))
                                 break;
                         }
                     }
@@ -435,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
             if (backCount < 0)
             {
                 // The caller needs to guarantee that 'backCount' is greater or equals to 0
-                throw PSTraceSource.NewArgumentException("backCount");
+                throw PSTraceSource.NewArgumentException(nameof(backCount));
             }
 
             if (_isRawStream && _waitForChanges)
@@ -445,7 +447,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("blocks seek backwards = {0}", backCount);
 
-            ArrayList blocks = new ArrayList();
+            var blocks = new List<object>();
             if (_reader != null)
             {
                 // Make the reader automatically detect the encoding
@@ -463,13 +465,17 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            StringBuilder builder = new StringBuilder();
-            foreach (char character in _delimiter)
-            {
-                builder.Insert(0, character);
-            }
+            string actualDelimiter = string.Create(
+                _delimiter.Length,
+                _delimiter,
+                (chars, buf) =>
+                {
+                    for (int i = 0, j = buf.Length - 1; i < chars.Length; i++, j--)
+                    {
+                        chars[i] = buf[j];
+                    }
+                });
 
-            string actualDelimiter = builder.ToString();
             long currentBlock = 0;
             string lastDelimiterMatch = null;
 
@@ -488,14 +494,14 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (_usingByteEncoding)
                     {
-                        if (!ReadByteEncoded(false, blocks, true))
+                        if (!ReadByteEncoded(waitChanges: false, blocks, readBackward: true))
                             break;
                     }
                     else
                     {
                         if (_usingDelimiter)
                         {
-                            if (!ReadDelimited(false, blocks, true, actualDelimiter))
+                            if (!ReadDelimited(waitChanges: false, blocks, readBackward: true, actualDelimiter))
                                 break;
                             // If the delimiter is at the end of the file, we need to read one more
                             // to get to the right position. For example:
@@ -508,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            if (!ReadByLine(false, blocks, true))
+                            if (!ReadByLine(waitChanges: false, blocks, readBackward: true))
                                 break;
                         }
                     }
@@ -553,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool ReadByLine(bool waitChanges, ArrayList blocks, bool readBackward)
+        private bool ReadByLine(bool waitChanges, List<object> blocks, bool readBackward)
         {
             // Reading lines as strings
             string line = readBackward ? _backReader.ReadLine() : _reader.ReadLine();
@@ -567,21 +573,28 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WaitForChanges(_path, _mode, _access, _share, _reader.CurrentEncoding);
                         line = _reader.ReadLine();
-                    } while ((line == null) && (!_provider.Stopping));
+                    }
+                    while ((line == null) && (!_provider.Stopping));
                 }
             }
 
             if (line != null)
+            {
                 blocks.Add(line);
+            }
 
             int peekResult = readBackward ? _backReader.Peek() : _reader.Peek();
             if (peekResult == -1)
+            {
                 return false;
+            }
             else
+            {
                 return true;
+            }
         }
 
-        private bool ReadDelimited(bool waitChanges, ArrayList blocks, bool readBackward, string actualDelimiter)
+        private bool ReadDelimited(bool waitChanges, List<object> blocks, bool readBackward, string actualDelimiter)
         {
             if (_isRawStream)
             {
@@ -631,7 +644,7 @@ namespace Microsoft.PowerShell.Commands
                             // We only wait for changes when read forwards, so here we don't need to check if 'readBackward' is
                             // true or false, we only use 'reader'. The member 'reader' will be updated by WaitForChanges.
                             WaitForChanges(_path, _mode, _access, _share, _reader.CurrentEncoding);
-                            numRead += _reader.Read(readBuffer.Slice(0, (currentOffset - numRead)));
+                            numRead += _reader.Read(readBuffer.Slice(0, currentOffset - numRead));
                         }
                     }
                 }
@@ -674,7 +687,8 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                 }
-            } while (delimiterNotFound && (numRead != 0));
+            }
+            while (delimiterNotFound && (numRead != 0));
 
             // We've reached the end of file or end of line.
             if (_currentLineContent.Length > 0)
@@ -687,13 +701,14 @@ namespace Microsoft.PowerShell.Commands
                 blocks.Add(
                     !readBackward && !delimiterNotFound
                         ? _currentLineContent.ToString(0, _currentLineContent.Length - actualDelimiter.Length)
-                        : _currentLineContent.ToString()
-                );
+                        : _currentLineContent.ToString());
             }
 
             int peekResult = readBackward ? _backReader.Peek() : _reader.Peek();
             if (peekResult != -1)
+            {
                 return true;
+            }
             else
             {
                 if (readBackward && _currentLineContent.Length > 0)
@@ -705,7 +720,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private bool ReadByteEncoded(bool waitChanges, ArrayList blocks, bool readBack)
+        private bool ReadByteEncoded(bool waitChanges, List<object> blocks, bool readBackward)
         {
             if (_isRawStream)
             {
@@ -721,7 +736,9 @@ namespace Microsoft.PowerShell.Commands
 
                     // Break when the end of the file is reached.
                     if (n == 0)
+                    {
                         break;
+                    }
 
                     numBytesRead += n;
                     numBytesToRead -= n;
@@ -738,7 +755,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            if (readBack)
+            if (readBackward)
             {
                 if (_stream.Position == 0)
                 {
@@ -773,7 +790,9 @@ namespace Microsoft.PowerShell.Commands
                 return true;
             }
             else
+            {
                 return false;
+            }
         }
 
         private void CreateStreams(string filePath, string streamName, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, Encoding fileEncoding)
@@ -1071,7 +1090,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (InvalidCastException)
                 {
-                    throw PSTraceSource.NewArgumentException("content", FileSystemProviderStrings.ByteEncodingError);
+                    throw PSTraceSource.NewArgumentException(nameof(content), FileSystemProviderStrings.ByteEncodingError);
                 }
             }
             else
@@ -1139,6 +1158,7 @@ namespace Microsoft.PowerShell.Commands
         private readonly Encoding _defaultAnsiEncoding;
 
         private const int BuffSize = 4096;
+
         private readonly byte[] _byteBuff = new byte[BuffSize];
         private readonly char[] _charBuff = new char[BuffSize];
         private int _byteCount = 0;
@@ -1417,7 +1437,7 @@ namespace Microsoft.PowerShell.Commands
             int toRead = lengthLeft > BuffSize ? BuffSize : (int)lengthLeft;
             _stream.Seek(-toRead, SeekOrigin.Current);
 
-            if (_currentEncoding.Equals(Encoding.UTF8))
+            if (_currentEncoding is UTF8Encoding)
             {
                 // It's UTF-8, we need to detect the starting byte of a character
                 do
@@ -1443,14 +1463,12 @@ namespace Microsoft.PowerShell.Commands
                 _byteCount += _stream.Read(_byteBuff, _byteCount, (int)(lengthLeft - _stream.Position));
                 _stream.Position = _currentPosition;
             }
-            else if (_currentEncoding.Equals(Encoding.Unicode) ||
-                _currentEncoding.Equals(Encoding.BigEndianUnicode) ||
-                _currentEncoding.Equals(Encoding.UTF32) ||
-                _currentEncoding.Equals(Encoding.ASCII) ||
+            else if (_currentEncoding is UnicodeEncoding ||
+                _currentEncoding is UTF32Encoding ||
+                _currentEncoding is ASCIIEncoding ||
                 IsSingleByteCharacterSet())
             {
                 // Unicode -- two bytes per character
-                // BigEndianUnicode -- two types per character
                 // UTF-32 -- four bytes per character
                 // ASCII -- one byte per character
                 // The BufferSize will be a multiple of 4, so we can just read toRead number of bytes

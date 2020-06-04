@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using Dbg = System.Management.Automation;
@@ -145,17 +145,17 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (sessionState == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sessionState");
+                throw PSTraceSource.NewArgumentNullException(nameof(sessionState));
             }
 
             _drive = drive;

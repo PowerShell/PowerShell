@@ -6,24 +6,29 @@
             "windows": "PowerShell-CI-Windows",
             "macos": "PowerShell-CI-macOS",
             "linux": "PowerShell-CI-Linux",
+            "ssh": "PowerShell-CI-SSH",
             "all": [
                 "PowerShell-CI-static-analysis",
                 "PowerShell-CI-Windows",
                 "PowerShell-CI-macOS",
-                "PowerShell-CI-Linux"
+                "PowerShell-CI-Linux",
+                "PowerShell-CI-SSH"
             ]
         },
         "authorized_users": [
             "adityapatwardhan",
             "anmenaga",
+            "bergmeister",
             "daxian-dbw",
             "iSazonov",
             "JamesWTruher",
+            "KirkMunro",
             "PaulHigin",
             "rjmholt",
             "SteveL-MSFT",
             "TravisEz13",
-            "TylerLeonhardt"
+            "TylerLeonhardt",
+            "vexx32"
         ]
     },
     "failures": {

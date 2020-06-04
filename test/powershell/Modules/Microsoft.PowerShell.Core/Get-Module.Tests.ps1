@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Get-Module -ListAvailable" -Tags "CI" {
@@ -31,6 +31,35 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
             @{ ModPath = "$TestDrive\Modules/Foo\1.1/Foo.psd1"; Name = 'Foo'; Version = '1.1'; Count = 1 }
             @{ ModPath = "$TestDrive\Modules/Bar.psd1"; Name = 'Bar'; Version = '0.0'; Count = 1 }
             @{ ModPath = "$TestDrive\Modules\Zoo\Too\Zoo.psm1"; Name = 'Zoo'; Version = '0.0'; Count = 1 }
+        )
+
+        $listModuleNameTestCases = @(
+            @{
+                Name = 'Foo'
+                TestCaseName = 'Match case'
+                ExpectedName = 'Foo'
+                ModuleVersion = '2.0'
+            }
+            @{
+                Name = 'foo'
+                TestCaseName = 'Mismatched case'
+                ExpectedName = 'Foo'
+                ModuleVersion = '2.0'
+            }
+        )
+        $loadedModuleNameTestCases = @(
+            @{
+                Name = 'Microsoft.PowerShell.Managemen*'
+                TestCaseName = 'Wildcard'
+                ExpectedName = 'Microsoft.PowerShell.Management'
+                ModuleVersion = '7.0.0.0'
+            }
+            @{
+                Name = 'microsoft.powershell.managemen*'
+                TestCaseName = 'Mismatched case'
+                ExpectedName = 'Microsoft.PowerShell.Management'
+                ModuleVersion = '7.0.0.0'
+            }
         )
 
         $env:PSModulePath = Join-Path $testdrive "Modules"
@@ -114,12 +143,38 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
         $modules[4].Path | Should -BeExactly (Resolve-Path "$testdrive\Modules\Zoo\Too\Zoo.psm1").Path
     }
 
-    It "Get-Module -FullyQualifiedName <FullyQualifiedName> -ListAvailable" {
-        $moduleSpecification  = @{ModuleName = "Foo"; ModuleVersion = "2.0"}
+    It "Get-Module -FullyQualifiedName @{ModuleName = '<Name>' ; ModuleVersion = '<ModuleVersion>'} -ListAvailable - <TestCaseName>" -TestCases $listModuleNameTestCases {
+        param(
+            [Parameter(Mandatory = $true)]
+            $Name,
+            $TestCaseName,
+            [Parameter(Mandatory = $true)]
+            $ExpectedName,
+            $ModuleVersion
+        )
+
+        $moduleSpecification  = @{ModuleName = $name ; ModuleVersion = $ModuleVersion}
         $modules = Get-Module -FullyQualifiedName $moduleSpecification -ListAvailable
         $modules | Should -HaveCount 1
-        $modules.Name | Should -BeExactly "Foo"
-        $modules.Version | Should -BeExactly "2.0"
+        $modules.Name | Should -BeExactly $ExpectedName
+        $modules.Version | Should -BeExactly $ModuleVersion
+    }
+
+    It "Get-Module -FullyQualifiedName @{ModuleName = '<Name>' ; ModuleVersion = '<ModuleVersion>'} - <TestCaseName>" -TestCases $loadedModuleNameTestCases {
+        param(
+            [Parameter(Mandatory = $true)]
+            $Name,
+            $TestCaseName,
+            [Parameter(Mandatory = $true)]
+            $ExpectedName,
+            $ModuleVersion
+        )
+
+        $moduleSpecification  = @{ModuleName = $name ; ModuleVersion = $ModuleVersion}
+        $modules = Get-Module -FullyQualifiedName $moduleSpecification
+        $modules | Should -HaveCount 1
+        $modules.Name | Should -BeExactly $ExpectedName
+        $modules.Version | Should -BeExactly $ModuleVersion
     }
 
     It "Get-Module <Name> -Refresh -ListAvailable" {
@@ -219,7 +274,7 @@ Describe "Get-Module -ListAvailable" -Tags "CI" {
 
         It "'Get-Module -ListAvailable' should not load the module assembly" {
             ## $fullName should be null and thus the result should just be the module's name.
-            $result = pwsh -c "`$env:PSModulePath = '$tempModulePath'; `$module = Get-Module -ListAvailable; `$fullName = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName; `$module.Name + `$fullName"
+            $result = & "$PSHOME/pwsh" -noprofile -c "`$env:PSModulePath = '$tempModulePath'; `$module = Get-Module -ListAvailable; `$fullName = [System.AppDomain]::CurrentDomain.GetAssemblies() | Where-Object Location -eq $assemblyPath | Foreach-Object FullName; `$module.Name + `$fullName"
             $result | Should -BeExactly "MyModuelTest"
         }
     }

@@ -145,6 +145,6 @@
     <value>Cannot create type. Only core types are supported in this language mode.</value>
   </data>
   <data name="ApartmentNotSupported" xml:space="preserve">
-    <value>{0} Please note that Single-Threaded Apartment is not supported in PowerShell Core.</value>
+    <value>{0} Please note that Single-Threaded Apartment is not supported in PowerShell.</value>
   </data>
 </root>

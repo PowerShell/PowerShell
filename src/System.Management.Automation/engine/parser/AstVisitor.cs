@@ -1,10 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Reflection;
 using System.Reflection.Emit;
 
 namespace System.Management.Automation.Language
@@ -151,6 +150,8 @@ namespace System.Management.Automation.Language
     /// <summary/>
     public interface ICustomAstVisitor2 : ICustomAstVisitor
     {
+        private object DefaultVisit(Ast ast) => null;
+
         /// <summary/>
         object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst);
 
@@ -171,10 +172,16 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst);
+
+        /// <summary/>
+        object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) => DefaultVisit(ternaryExpressionAst);
+
+        /// <summary/>
+        object VisitPipelineChain(PipelineChainAst statementChainAst) => DefaultVisit(statementChainAst);
     }
 
 #if DEBUG
-    class CheckAllParentsSet : AstVisitor2
+    internal class CheckAllParentsSet : AstVisitor2
     {
         internal CheckAllParentsSet(Ast root)
         {
@@ -312,12 +319,16 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst ast) { return CheckParent(ast); }
 
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return CheckParent(ast); }
+
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) => CheckParent(ast);
+
+        public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) => CheckParent(ast);
     }
 
     /// <summary>
     /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type.
     /// </summary>
-    class CheckTypeBuilder : AstVisitor2
+    internal class CheckTypeBuilder : AstVisitor2
     {
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast)
         {
@@ -544,6 +555,10 @@ namespace System.Management.Automation.Language
         public override AstVisitAction VisitConfigurationDefinition(ConfigurationDefinitionAst ast) { return Check(ast); }
 
         public override AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst ast) { return Check(ast); }
+
+        public override AstVisitAction VisitTernaryExpression(TernaryExpressionAst ast) { return Check(ast); }
+
+        public override AstVisitAction VisitPipelineChain(PipelineChainAst ast) { return Check(ast); }
     }
 
     /// <summary>
@@ -680,5 +695,9 @@ namespace System.Management.Automation.Language
         public virtual object VisitTypeDefinition(TypeDefinitionAst typeDefinitionAst) { return null; }
         /// <summary/>
         public virtual object VisitFunctionMember(FunctionMemberAst functionMemberAst) { return null; }
+        /// <summary/>
+        public virtual object VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return null; }
+        /// <summary/>
+        public virtual object VisitPipelineChain(PipelineChainAst statementChainAst) { return null; }
     }
 }

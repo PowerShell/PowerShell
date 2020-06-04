@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -20,14 +20,17 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     /// <!-- author: LukaszA -->
     [Cmdlet(VerbsCommon.Get, "Random", DefaultParameterSetName = GetRandomCommand.RandomNumberParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113446", RemotingCapability = RemotingCapability.None)]
-    [OutputType(typeof(Int32), typeof(Int64), typeof(Double))]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097016", RemotingCapability = RemotingCapability.None)]
+    [OutputType(typeof(Int32), typeof(Int64), typeof(double))]
     public class GetRandomCommand : PSCmdlet
     {
         #region Parameter set handling
 
         private const string RandomNumberParameterSet = "RandomNumberParameterSet";
         private const string RandomListItemParameterSet = "RandomListItemParameterSet";
+        private const string ShuffleParameterSet = "ShuffleParameterSet";
+
+        private static readonly object[] _nullInArray = new object[] { null };
 
         private enum MyParameterSet
         {
@@ -49,7 +52,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
-                    else if (ParameterSetName.Equals(GetRandomCommand.RandomListItemParameterSet, StringComparison.OrdinalIgnoreCase))
+                    else if (ParameterSetName == GetRandomCommand.RandomListItemParameterSet
+                        || ParameterSetName == GetRandomCommand.ShuffleParameterSet)
                     {
                         _effectiveParameterSet = MyParameterSet.RandomListItem;
                     }
@@ -275,16 +279,28 @@ namespace Microsoft.PowerShell.Commands
         /// List from which random elements are chosen.
         /// </summary>
         [Parameter(ParameterSetName = RandomListItemParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
-        [ValidateNotNullOrEmpty]
+        [Parameter(ParameterSetName = ShuffleParameterSet, ValueFromPipeline = true, Position = 0, Mandatory = true)]
+        [System.Management.Automation.AllowNull]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public object[] InputObject { get; set; }
 
         /// <summary>
         /// Number of items to output (number of list items or of numbers).
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = RandomNumberParameterSet)]
+        [Parameter(ParameterSetName = RandomListItemParameterSet)]
         [ValidateRange(1, int.MaxValue)]
         public int Count { get; set; } = 1;
+
+        #endregion
+
+        #region Shuffle parameter
+
+        /// <summary>
+        /// Gets or sets whether the command should return all input objects in randomized order.
+        /// </summary>
+        [Parameter(ParameterSetName = ShuffleParameterSet, Mandatory = true)]
+        public SwitchParameter Shuffle { get; set; }
 
         #endregion
 
@@ -491,24 +507,39 @@ namespace Microsoft.PowerShell.Commands
         {
             if (EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                foreach (object item in InputObject)
+                if (ParameterSetName == ShuffleParameterSet)
                 {
-                    if (_numberOfProcessedListItems < Count) // (3)
+                    // this allows for $null to be in an array passed to InputObject
+                    foreach (object item in InputObject ?? _nullInArray)
                     {
-                        Debug.Assert(_chosenListItems.Count == _numberOfProcessedListItems, "Initial K elements should all be included in chosenListItems");
                         _chosenListItems.Add(item);
                     }
-                    else
+                }
+                else
+                {
+                    foreach (object item in InputObject ?? _nullInArray)
                     {
-                        Debug.Assert(_chosenListItems.Count == Count, "After processing K initial elements, the length of chosenItems should stay equal to K");
-                        if (Generator.Next(_numberOfProcessedListItems + 1) < Count) // (1)
+                        // (3)
+                        if (_numberOfProcessedListItems < Count)
                         {
-                            int indexToReplace = Generator.Next(_chosenListItems.Count); // (2)
-                            _chosenListItems[indexToReplace] = item;
+                            Debug.Assert(_chosenListItems.Count == _numberOfProcessedListItems, "Initial K elements should all be included in chosenListItems");
+                            _chosenListItems.Add(item);
                         }
-                    }
+                        else
+                        {
+                            Debug.Assert(_chosenListItems.Count == Count, "After processing K initial elements, the length of chosenItems should stay equal to K");
 
-                    _numberOfProcessedListItems++;
+                            // (1)
+                            if (Generator.Next(_numberOfProcessedListItems + 1) < Count)
+                            {
+                                // (2)
+                                int indexToReplace = Generator.Next(_chosenListItems.Count);
+                                _chosenListItems[indexToReplace] = item;
+                            }
+                        }
+
+                        _numberOfProcessedListItems++;
+                    }
                 }
             }
         }
@@ -614,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (maxValue < 0)
             {
-                throw new ArgumentOutOfRangeException("maxValue", GetRandomCommandStrings.MaxMustBeGreaterThanZeroApi);
+                throw new ArgumentOutOfRangeException(nameof(maxValue), GetRandomCommandStrings.MaxMustBeGreaterThanZeroApi);
             }
 
             return Next(0, maxValue);
@@ -630,7 +661,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (minValue > maxValue)
             {
-                throw new ArgumentOutOfRangeException("minValue", GetRandomCommandStrings.MinGreaterThanOrEqualMaxApi);
+                throw new ArgumentOutOfRangeException(nameof(minValue), GetRandomCommandStrings.MinGreaterThanOrEqualMaxApi);
             }
 
             int randomNumber = 0;

@@ -1,11 +1,10 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Management.Automation;
@@ -27,13 +26,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the lines found before a match.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] PreContext { get; set; }
 
         /// <summary>
         /// Gets or sets the lines found after a match.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] PostContext { get; set; }
 
         /// <summary>
@@ -41,7 +38,6 @@ namespace Microsoft.PowerShell.Commands
         /// overlapping context and thus can be used to
         /// display contiguous match regions.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] DisplayPreContext { get; set; }
 
         /// <summary>
@@ -49,7 +45,6 @@ namespace Microsoft.PowerShell.Commands
         /// overlapping context and thus can be used to
         /// display contiguous match regions.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] DisplayPostContext { get; set; }
 
         /// <summary>
@@ -92,6 +87,43 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <value>The text of the matching line.</value>
         public string Line { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the matched portion of the string is highlighted.
+        /// </summary>
+        /// <value>Whether the matched portion of the string is highlighted with the negative VT sequence.</value>
+        private readonly bool _emphasize;
+
+        /// <summary>
+        /// Stores the starting index of each match within the line.
+        /// </summary>
+        private readonly IReadOnlyList<int> _matchIndexes;
+
+        /// <summary>
+        /// Stores the length of each match within the line.
+        /// </summary>
+        private readonly IReadOnlyList<int> _matchLengths;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class with emphasis disabled.
+        /// </summary>
+        public MatchInfo()
+        {
+            this._emphasize = false;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatchInfo"/> class with emphasized matched text.
+        /// Used when virtual terminal sequences are supported.
+        /// </summary>
+        /// <param name="matchIndexes">Sets the matchIndexes.</param>
+        /// <param name="matchLengths">Sets the matchLengths.</param>
+        public MatchInfo(IReadOnlyList<int> matchIndexes, IReadOnlyList<int> matchLengths)
+        {
+            this._emphasize = true;
+            this._matchIndexes = matchIndexes;
+            this._matchLengths = matchLengths;
+        }
 
         /// <summary>
         /// Gets the base name of the file containing the matching line.
@@ -220,13 +252,26 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The string representation of the match object.</returns>
         public string ToString(string directory)
         {
+            return ToString(directory, Line);
+        }
+
+        /// <summary>
+        /// Returns the string representation of the match object with the matched line passed
+        /// in as <paramref name="line"/> and trims the path to be relative to
+        /// the<paramref name="directory"/> argument.
+        /// </summary>
+        /// <param name="directory">Directory to use as the root when calculating the relative path.</param>
+        /// <param name="line">Line that the match occurs in.</param>
+        /// <returns>The string representation of the match object.</returns>
+        private string ToString(string directory, string line)
+        {
             string displayPath = (directory != null) ? RelativePath(directory) : _path;
 
             // Just return a single line if the user didn't
             // enable context-tracking.
             if (Context == null)
             {
-                return FormatLine(Line, this.LineNumber, displayPath, EmptyPrefix);
+                return FormatLine(line, this.LineNumber, displayPath, EmptyPrefix);
             }
 
             // Otherwise, render the full context.
@@ -238,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
                 lines.Add(FormatLine(contextLine, displayLineNumber++, displayPath, ContextPrefix));
             }
 
-            lines.Add(FormatLine(Line, displayLineNumber++, displayPath, MatchPrefix));
+            lines.Add(FormatLine(line, displayLineNumber++, displayPath, MatchPrefix));
 
             foreach (string contextLine in Context.DisplayPostContext)
             {
@@ -246,6 +291,61 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return string.Join(System.Environment.NewLine, lines.ToArray());
+        }
+
+        /// <summary>
+        /// Returns the string representation of the match object same format as ToString()
+        /// and inverts the color of the matched text if virtual terminal is supported.
+        /// </summary>
+        /// <param name="directory">Directory to use as the root when calculating the relative path.</param>
+        /// <returns>The string representation of the match object with matched text inverted.</returns>
+        public string ToEmphasizedString(string directory)
+        {
+            if (!_emphasize)
+            {
+                return ToString(directory);
+            }
+
+            return ToString(directory, EmphasizeLine());
+        }
+
+        /// <summary>
+        /// Surrounds the matched text with virtual terminal sequences to invert it's color. Used in ToEmphasizedString.
+        /// </summary>
+        /// <returns>The matched line with matched text inverted.</returns>
+        private string EmphasizeLine()
+        {
+            string invertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
+            string resetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
+
+            char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
+            int lineIndex = 0;
+            int charsIndex = 0;
+            for (int i = 0; i < _matchIndexes.Count; i++)
+            {
+                // Adds characters before match
+                Line.CopyTo(lineIndex, chars, charsIndex, _matchIndexes[i] - lineIndex);
+                charsIndex += _matchIndexes[i] - lineIndex;
+                lineIndex = _matchIndexes[i];
+
+                // Adds opening vt sequence
+                invertColorsVT100.CopyTo(0, chars, charsIndex, invertColorsVT100.Length);
+                charsIndex += invertColorsVT100.Length;
+
+                // Adds characters being emphasized
+                Line.CopyTo(lineIndex, chars, charsIndex, _matchLengths[i]);
+                lineIndex += _matchLengths[i];
+                charsIndex += _matchLengths[i];
+
+                // Adds closing vt sequence
+                resetVT100.CopyTo(0, chars, charsIndex, resetVT100.Length);
+                charsIndex += resetVT100.Length;
+            }
+
+            // Adds remaining characters in line
+            Line.CopyTo(lineIndex, chars, charsIndex, Line.Length - lineIndex);
+
+            return new string(chars);
         }
 
         /// <summary>
@@ -266,7 +366,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a list of all Regex matches on the matching line.
         /// </summary>
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Match[] Matches { get; set; } = new Match[] { };
 
         /// <summary>
@@ -295,10 +394,18 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A cmdlet to search through strings and files for particular patterns.
     /// </summary>
-    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
-    [OutputType(typeof(MatchInfo), typeof(bool))]
+    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = ParameterSetFile, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097119")]
+    [OutputType(typeof(bool), typeof(MatchInfo), ParameterSetName = new[] { ParameterSetFile, ParameterSetObject, ParameterSetLiteralFile })]
+    [OutputType(typeof(string), ParameterSetName = new[] { ParameterSetFileRaw, ParameterSetObjectRaw, ParameterSetLiteralFileRaw })]
     public sealed class SelectStringCommand : PSCmdlet
     {
+        private const string ParameterSetFile = "File";
+        private const string ParameterSetFileRaw = "FileRaw";
+        private const string ParameterSetObject = "Object";
+        private const string ParameterSetObjectRaw = "ObjectRaw";
+        private const string ParameterSetLiteralFile = "LiteralFile";
+        private const string ParameterSetLiteralFileRaw = "LiteralFileRaw";
+
         /// <summary>
         /// A generic circular buffer.
         /// </summary>
@@ -423,7 +530,6 @@ namespace Microsoft.PowerShell.Commands
                 throw new NotImplementedException();
             }
 
-            [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
             public void CopyTo(T[] array, int arrayIndex)
             {
                 if (array == null)
@@ -970,9 +1076,108 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets a culture name.
+        /// </summary>
+        [Parameter]
+        [ValidateSet(typeof(ValidateMatchStringCultureNamesGenerator))]
+        [ValidateNotNull]
+        public string Culture
+        {
+            get
+            {
+                switch (_stringComparison)
+                {
+                    case StringComparison.Ordinal:
+                    case StringComparison.OrdinalIgnoreCase:
+                        {
+                            return OrdinalCultureName;
+                        }
+
+                    case StringComparison.InvariantCulture:
+                    case StringComparison.InvariantCultureIgnoreCase:
+                        {
+                            return InvariantCultureName;
+                        }
+
+                    case StringComparison.CurrentCulture:
+                    case StringComparison.CurrentCultureIgnoreCase:
+                        {
+                            return CurrentCultureName;
+                        }
+
+                    default:
+                        {
+                            break;
+                        }
+                }
+
+                return _cultureName;
+            }
+
+            set
+            {
+                _cultureName = value;
+                InitCulture();
+            }
+        }
+
+        internal const string OrdinalCultureName = "Ordinal";
+        internal const string InvariantCultureName = "Invariant";
+        internal const string CurrentCultureName = "Current";
+
+        private string _cultureName = CultureInfo.CurrentCulture.Name;
+        private StringComparison _stringComparison = StringComparison.CurrentCultureIgnoreCase;
+        private CompareOptions _compareOptions = CompareOptions.IgnoreCase;
+
+        private delegate int CultureInfoIndexOf(string source, string value, int startIndex, int count, CompareOptions options);
+
+        private CultureInfoIndexOf _cultureInfoIndexOf = CultureInfo.CurrentCulture.CompareInfo.IndexOf;
+
+        private void InitCulture()
+        {
+            _stringComparison = default;
+
+            switch (_cultureName)
+            {
+                case OrdinalCultureName:
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.Ordinal : CompareOptions.OrdinalIgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
+                        break;
+                    }
+
+                case InvariantCultureName:
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
+                        break;
+                    }
+
+                case CurrentCultureName:
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.CurrentCulture.CompareInfo.IndexOf;
+                        break;
+                    }
+
+                default:
+                    {
+                        var _cultureInfo = CultureInfo.GetCultureInfo(_cultureName);
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = _cultureInfo.CompareInfo.IndexOf;
+                        break;
+                    }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the current pipeline object.
         /// </summary>
-        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "Object")]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = ParameterSetObject)]
+        [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = ParameterSetObjectRaw)]
         [AllowNull]
         [AllowEmptyString]
         public PSObject InputObject
@@ -995,7 +1200,8 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets files to read from.
         /// Globbing is done on these.
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "File")]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetFile)]
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetFileRaw)]
         [FileinfoToString]
         public string[] Path { get; set; }
 
@@ -1003,10 +1209,10 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets literal files to read from.
         /// Globbing is not done on these.
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "LiteralFile")]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetLiteralFile)]
+        [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = ParameterSetLiteralFileRaw)]
         [FileinfoToString]
         [Alias("PSPath", "LP")]
-        [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath
         {
             get => Path;
@@ -1018,6 +1224,15 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private bool _isLiteralPath;
+
+        /// <summary>
+        /// Gets or sets a value indicating if only string values containing matched lines should be returned.
+        /// If not (default) return MatchInfo (or bool objects, when Quiet is passed).
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetObjectRaw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetFileRaw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSetLiteralFileRaw)]
+        public SwitchParameter Raw { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating if a pattern string should be matched literally.
@@ -1036,7 +1251,9 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a value indicating if the cmdlet will stop processing at the first successful match and
         /// return true.  If both List and Quiet parameters are given, an exception is thrown.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = ParameterSetObject)]
+        [Parameter(ParameterSetName = ParameterSetFile)]
+        [Parameter(ParameterSetName = ParameterSetLiteralFile)]
         public SwitchParameter Quiet { get; set; }
 
         /// <summary>
@@ -1047,6 +1264,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public SwitchParameter List { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating if highlighting should be disabled.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter NoEmphasis { get; set; }
 
         /// <summary>
         /// Gets or sets files to include. Files matching
@@ -1168,7 +1391,10 @@ namespace Microsoft.PowerShell.Commands
 
         private int _postContext = 0;
 
-        private IContextTracker GetContextTracker() => (_preContext == 0 && _postContext == 0) ? _noContextTracker : new ContextTracker(_preContext, _postContext);
+        // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
+        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0))
+            ? _noContextTracker
+            : new ContextTracker(_preContext, _postContext);
 
         // This context tracker is only used for strings which are piped
         // directly into the cmdlet. File processing doesn't need
@@ -1194,6 +1420,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(Culture)) && !this.MyInvocation.BoundParameters.ContainsKey(nameof(SimpleMatch)))
+            {
+                InvalidOperationException exception = new InvalidOperationException(MatchStringStrings.CannotSpecifyCultureWithoutSimpleMatch);
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyCultureWithoutSimpleMatch", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
+            InitCulture();
+
+            string suppressVt = Environment.GetEnvironmentVariable("__SuppressAnsiEscapeSequences");
+            if (!string.IsNullOrEmpty(suppressVt))
+            {
+                NoEmphasis = true;
+            }
+
             if (!SimpleMatch)
             {
                 RegexOptions regexOptions = CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
@@ -1433,8 +1674,14 @@ namespace Microsoft.PowerShell.Commands
                 return false;
             }
 
-            // If -quiet is specified but not -list return true on first match
-            if (Quiet && !List)
+            if (Raw)
+            {
+                foreach (MatchInfo match in contextTracker.EmitQueue)
+                {
+                    WriteObject(match.Line);
+                }
+            }
+            else if (Quiet && !List)
             {
                 WriteObject(true);
             }
@@ -1518,6 +1765,20 @@ namespace Microsoft.PowerShell.Commands
             int patternIndex = 0;
             matchResult = null;
 
+            List<int> indexes = null;
+            List<int> lengths = null;
+
+            bool shouldEmphasize = !NoEmphasis && Host.UI.SupportsVirtualTerminal;
+
+            // If Emphasize is set and VT is supported,
+            // the lengths and starting indexes of regex matches
+            // need to be passed in to the matchInfo object.
+            if (shouldEmphasize)
+            {
+                indexes = new List<int>();
+                lengths = new List<int>();
+            }
+
             if (!SimpleMatch)
             {
                 while (patternIndex < Pattern.Length)
@@ -1534,6 +1795,16 @@ namespace Microsoft.PowerShell.Commands
                         {
                             matches = new Match[mc.Count];
                             ((ICollection)mc).CopyTo(matches, 0);
+
+                            if (shouldEmphasize)
+                            {
+                                foreach (Match match in matches)
+                                {
+                                    indexes.Add(match.Index);
+                                    lengths.Add(match.Length);
+                                }
+                            }
+
                             gotMatch = true;
                         }
                     }
@@ -1544,6 +1815,12 @@ namespace Microsoft.PowerShell.Commands
 
                         if (match.Success)
                         {
+                            if (shouldEmphasize)
+                            {
+                                indexes.Add(match.Index);
+                                lengths.Add(match.Length);
+                            }
+
                             matches = new Match[] { match };
                         }
                     }
@@ -1558,14 +1835,19 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                StringComparison compareOption = CaseSensitive ?
-                    StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
                 while (patternIndex < Pattern.Length)
                 {
                     string pat = Pattern[patternIndex];
 
-                    if (operandString.IndexOf(pat, compareOption) >= 0)
+                    int index = _cultureInfoIndexOf(operandString, pat, 0, operandString.Length, _compareOptions);
+                    if (index >= 0)
                     {
+                        if (shouldEmphasize)
+                        {
+                            indexes.Add(index);
+                            lengths.Add(pat.Length);
+                        }
+
                         gotMatch = true;
                         break;
                     }
@@ -1614,12 +1896,12 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // otherwise construct and populate a new MatchInfo object
-                matchResult = new MatchInfo
-                {
-                    IgnoreCase = !CaseSensitive,
-                    Line = operandString,
-                    Pattern = Pattern[patternIndex]
-                };
+                matchResult = shouldEmphasize
+                    ? new MatchInfo(indexes, lengths)
+                    : new MatchInfo();
+                matchResult.IgnoreCase = !CaseSensitive;
+                matchResult.Line = operandString;
+                matchResult.Pattern = Pattern[patternIndex];
 
                 if (_preContext > 0 || _postContext > 0)
                 {
@@ -1793,6 +2075,27 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return ok;
+        }
+    }
+
+    /// <summary>
+    /// Get list of valid culture names for ValidateSet attribute.
+    /// </summary>
+    public class ValidateMatchStringCultureNamesGenerator : IValidateSetValuesGenerator
+    {
+        string[] IValidateSetValuesGenerator.GetValidValues()
+        {
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+            var result = new List<string>(cultures.Length + 3);
+            result.Add(SelectStringCommand.OrdinalCultureName);
+            result.Add(SelectStringCommand.InvariantCultureName);
+            result.Add(SelectStringCommand.CurrentCultureName);
+            foreach (var cultureInfo in cultures)
+            {
+                result.Add(cultureInfo.Name);
+            }
+
+            return result.ToArray();
         }
     }
 }

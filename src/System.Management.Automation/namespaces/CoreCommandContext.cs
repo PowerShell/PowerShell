@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -54,7 +54,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                throw PSTraceSource.NewArgumentNullException("executionContext");
+                throw PSTraceSource.NewArgumentNullException(nameof(executionContext));
             }
 
             ExecutionContext = executionContext;
@@ -84,7 +84,7 @@ namespace System.Management.Automation
         {
             if (executionContext == null)
             {
-                throw PSTraceSource.NewArgumentNullException("executionContext");
+                throw PSTraceSource.NewArgumentNullException(nameof(executionContext));
             }
 
             ExecutionContext = executionContext;
@@ -118,7 +118,7 @@ namespace System.Management.Automation
             // verify the command parameter
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             _command = command;
@@ -172,7 +172,7 @@ namespace System.Management.Automation
             // verify the command parameter
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             _command = command;
@@ -220,7 +220,7 @@ namespace System.Management.Automation
             // verify the command parameter
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             _command = command;
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         {
             if (contextToCopyFrom == null)
             {
-                throw PSTraceSource.NewArgumentNullException("contextToCopyFrom");
+                throw PSTraceSource.NewArgumentNullException(nameof(contextToCopyFrom));
             }
 
             ExecutionContext = contextToCopyFrom.ExecutionContext;
@@ -827,7 +827,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal void WriteInformation(Object messageData, string[] tags)
+        internal void WriteInformation(object messageData, string[] tags)
         {
             if (_command != null)
             {
@@ -985,7 +985,7 @@ namespace System.Management.Automation
         {
             if (errorContext == null)
             {
-                throw PSTraceSource.NewArgumentNullException("errorContext");
+                throw PSTraceSource.NewArgumentNullException(nameof(errorContext));
             }
 
             if (HasErrors())

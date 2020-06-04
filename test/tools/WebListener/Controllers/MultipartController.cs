@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 using System;
 using System.Collections;
@@ -17,9 +17,9 @@ namespace mvc.Controllers
 {
     public class MultipartController : Controller
     {
-        private IHostingEnvironment _environment;
+        private IWebHostEnvironment _environment;
 
-        public MultipartController(IHostingEnvironment environment)
+        public MultipartController(IWebHostEnvironment environment)
         {
             _environment = environment;
         }

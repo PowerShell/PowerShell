@@ -17,7 +17,7 @@
   This veto power will be used with restraint since it is intended that the community drive the project.
   The Corporate Maintainer is determined by the Corporation both initially and in continuation.
   The initial Corporate Maintainer for PowerShell is Jeffrey Snover ([jpsnover](https://github.com/jpsnover)).
-* [**RFC process**][RFC-repo]: The "review-for-comment" (RFC) process whereby design decisions get made.
+* [**RFC process**][RFC-repo]: The "request-for-comments" (RFC) process whereby design decisions get made.
 
 ## PowerShell Committee
 
@@ -27,7 +27,6 @@ The PowerShell Committee and its members (aka Committee Members) are the primary
 
 * Bruce Payette ([BrucePay](https://github.com/BrucePay))
 * Dongbo Wang ([daxian-dbw](https://github.com/daxian-dbw))
-* Hemant Mahawar ([HemantMahawar](https://github.com/HemantMahawar))
 * Jim Truher ([JamesWTruher](https://github.com/JamesWTruher))
 * Joey Aiello ([joeyaiello](https://github.com/joeyaiello))
 * Kenneth Hansen ([khansen00](https://github.com/khansen00))
@@ -134,7 +133,6 @@ See our [Pull Request Process][pull-request-process]
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
 [pester]: ../testing-guidelines/WritingPesterTests.md
-[ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [breaking-changes]: ../dev-process/breaking-change-contract.md
 [issue-process]: ../maintainers/issue-management.md
 [pull-request-process]: ../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request

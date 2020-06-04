@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
@@ -189,9 +189,21 @@ namespace System.Management.Automation
             s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "ListAvailable"), (o, v) => ((GetModuleCommand)o).ListAvailable = (SwitchParameter)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(GetModuleCommand), "FullyQualifiedName"), (o, v) => ((GetModuleCommand)o).FullyQualifiedName = (ModuleSpecification[])v);
 
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorAction"), (o, v) => ((CommonParameters)o).ErrorAction = (ActionPreference)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "WarningAction"), (o, v) => ((CommonParameters)o).WarningAction = (ActionPreference)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "InformationAction"), (o, v) => ((CommonParameters)o).InformationAction = (ActionPreference)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorAction"),
+                (o, v) => {
+                    v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                    ((CommonParameters)o).ErrorAction = (ActionPreference)v;
+                });
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "WarningAction"),
+                (o, v) => {
+                    v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                    ((CommonParameters)o).WarningAction = (ActionPreference)v;
+                });
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "InformationAction"),
+                (o, v) => {
+                    v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                    ((CommonParameters)o).InformationAction = (ActionPreference)v;
+                });
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Verbose"), (o, v) => ((CommonParameters)o).Verbose = (SwitchParameter)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Debug"), (o, v) => ((CommonParameters)o).Debug = (SwitchParameter)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorVariable"), (o, v) => ((CommonParameters)o).ErrorVariable = (string)v);
@@ -204,6 +216,7 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> s_getterMethods
             = new ConcurrentDictionary<Tuple<Type, string>, Func<object, object>>();
+
         private static readonly ConcurrentDictionary<Tuple<Type, string>, Action<object, object>> s_setterMethods =
             new ConcurrentDictionary<Tuple<Type, string>, Action<object, object>>();
 

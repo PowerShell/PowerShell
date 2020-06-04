@@ -1,19 +1,14 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
-#if CORECLR
-
-using System.IO;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Reflection;
-using System.Reflection.Metadata;
-using System.Reflection.PortableExecutable;
 using System.Runtime.Loader;
-using System.Text;
-using System.Linq;
 
 namespace System.Management.Automation
 {
@@ -46,7 +41,9 @@ namespace System.Management.Automation
             lock (s_syncObj)
             {
                 if (Instance != null)
+                {
                     throw new InvalidOperationException(SingletonAlreadyInitialized);
+                }
 
                 Instance = new PowerShellAssemblyLoadContext(basePaths);
                 return Instance;
@@ -74,14 +71,14 @@ namespace System.Management.Automation
             }
             else
             {
-                _probingPaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                _probingPaths = basePaths.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < _probingPaths.Length; i++)
                 {
                     string basePath = _probingPaths[i];
                     if (!Directory.Exists(basePath))
                     {
                         string message = string.Format(CultureInfo.CurrentCulture, BaseFolderDoesNotExist, basePath);
-                        throw new ArgumentException(message, "basePaths");
+                        throw new ArgumentException(message, nameof(basePaths));
                     }
 
                     _probingPaths[i] = basePath.Trim();
@@ -93,8 +90,15 @@ namespace System.Management.Automation
             _availableDotNetAssemblyNames = new Lazy<HashSet<string>>(
                     () => new HashSet<string>(_coreClrTypeCatalog.Values, StringComparer.Ordinal));
 
-            // LAST: Register 'Resolving' handler on the default load context.
+            // LAST: Register the 'Resolving' handler and 'ResolvingUnmanagedDll' handler on the default load context.
             AssemblyLoadContext.Default.Resolving += Resolve;
+
+            // Add last resort native dll resolver.
+            // Default order:
+            //      1. System.Runtime.InteropServices.DllImportResolver callbacks
+            //      2. AssemblyLoadContext.LoadUnmanagedDll()
+            //      3. AssemblyLoadContext.Default.ResolvingUnmanagedDll handlers
+            AssemblyLoadContext.Default.ResolvingUnmanagedDll += NativeDllHandler;
         }
 
         #endregion Constructor
@@ -109,7 +113,8 @@ namespace System.Management.Automation
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
-        private readonly HashSet<string> _blackListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
+
+        private readonly HashSet<string> _denyListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
                 "System.Windows.Forms"
             };
 
@@ -150,7 +155,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell Core.
+        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
         internal IEnumerable<string> AvailableDotNetTypeNames
@@ -159,7 +164,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell Core.
+        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
         internal HashSet<string> AvailableDotNetAssemblyNames
@@ -195,19 +200,47 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Set the profile optimization root on the appropriate load context.
+        /// If a managed dll has native dependencies the handler will try to find these native dlls.
+        ///     1. Gets the managed.dll location (folder)
+        ///     2. Based on OS name and architecture name builds subfolder name where it is expected the native dll resides:
+        ///     3. Loads the native dll
+        ///
+        ///     managed.dll folder
+        ///                     |
+        ///                     |--- 'win-x64' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'win-x86' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'win-arm' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'win-arm64' subfolder
+        ///                     |       |--- native.dll
+        ///                     |
+        ///                     |--- 'linux-x64' subfolder
+        ///                     |       |--- native.so
+        ///                     |
+        ///                     |--- 'linux-x86' subfolder
+        ///                     |       |--- native.so
+        ///                     |
+        ///                     |--- 'linux-arm' subfolder
+        ///                     |       |--- native.so
+        ///                     |
+        ///                     |--- 'linux-arm64' subfolder
+        ///                     |       |--- native.so
+        ///                     |
+        ///                     |--- 'osx-x64' subfolder
+        ///                     |       |--- native.dylib
         /// </summary>
-        internal void SetProfileOptimizationRootImpl(string directoryPath)
+        internal static IntPtr NativeDllHandler(Assembly assembly, string libraryName)
         {
-            AssemblyLoadContext.Default.SetProfileOptimizationRoot(directoryPath);
-        }
+            s_nativeDllSubFolder ??= GetNativeDllSubFolderName(out s_nativeDllExtension);
+            string folder = Path.GetDirectoryName(assembly.Location);
+            string fullName = Path.Combine(folder, s_nativeDllSubFolder, libraryName) + s_nativeDllExtension;
 
-        /// <summary>
-        /// Start the profile optimization on the appropriate load context.
-        /// </summary>
-        internal void StartProfileOptimizationImpl(string profile)
-        {
-            AssemblyLoadContext.Default.StartProfileOptimization(profile);
+            return NativeLibrary.TryLoad(fullName, out IntPtr pointer) ? pointer : IntPtr.Zero;
         }
 
         #endregion Internal_Methods
@@ -299,7 +332,7 @@ namespace System.Management.Automation
         private bool TryFindInGAC(AssemblyName assemblyName, out string assemblyFilePath)
         {
             assemblyFilePath = null;
-            if (_blackListedAssemblies.Contains(assemblyName.Name))
+            if (_denyListedAssemblies.Contains(assemblyName.Name))
             {
                 // DotNet catches and throws a new exception with no inner exception
                 // We cannot change the message DotNet returns.
@@ -499,6 +532,34 @@ namespace System.Management.Automation
             throw new FileNotFoundException(message);
         }
 
+        private static string s_nativeDllSubFolder;
+        private static string s_nativeDllExtension;
+
+        private static string GetNativeDllSubFolderName(out string ext)
+        {
+            string folderName = string.Empty;
+            ext = string.Empty;
+            var processArch = RuntimeInformation.ProcessArchitecture.ToString().ToLowerInvariant();
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                folderName = "win-" + processArch;
+                ext = ".dll";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                folderName = "linux-" + processArch;
+                ext = ".so";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+            {
+                folderName = "osx-x64";
+                ext = ".dylib";
+            }
+
+            return folderName;
+        }
+
         #endregion Private_Methods
     }
 
@@ -522,12 +583,9 @@ namespace System.Management.Automation
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)]string basePaths)
         {
             if (string.IsNullOrEmpty(basePaths))
-                throw new ArgumentNullException("basePaths");
+                throw new ArgumentNullException(nameof(basePaths));
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
         }
     }
 }
-
-#endif
-

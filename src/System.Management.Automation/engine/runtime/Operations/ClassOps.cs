@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -42,24 +42,23 @@ namespace System.Management.Automation.Internal
 
         internal void RegisterRunspace()
         {
-            SessionStateInternal ssInMap = null;
-            Runspace rsToUse = Runspace.DefaultRunspace;
-            SessionStateInternal ssToUse = rsToUse.ExecutionContext.EngineSessionState;
+            SessionStateInternal sessionStateInMap = null;
+            Runspace runspaceToUse = Runspace.DefaultRunspace;
+            SessionStateInternal sessionStateToUse = runspaceToUse.ExecutionContext.EngineSessionState;
 
             // Different threads will operate on different key/value pairs (default-runspace/session-state pairs),
             // and a ConditionalWeakTable itself is thread safe, so there won't be race condition here.
-            if (!_stateMap.TryGetValue(rsToUse, out ssInMap))
+            if (!_stateMap.TryGetValue(runspaceToUse, out sessionStateInMap))
             {
                 // If the key doesn't exist yet, add it
-                _stateMap.Add(rsToUse, ssToUse);
+                _stateMap.Add(runspaceToUse, sessionStateToUse);
             }
-            else if (!ssInMap.Equals(ssToUse))
+            else if (sessionStateInMap != sessionStateToUse)
             {
                 // If the key exists but the corresponding value is not what we should use, then remove the key/value pair and add the new pair.
                 // This could happen when a powershell class is defined in a module and the module gets reloaded. In such case, the same TypeDefinitionAst
                 // instance will get reused, but should be associated with the SessionState from the new module, instead of the one from the old module.
-                _stateMap.Remove(rsToUse);
-                _stateMap.Add(rsToUse, ssToUse);
+                _stateMap.AddOrUpdate(runspaceToUse, sessionStateToUse);
             }
             // If the key exists and the corresponding value is the one we should use, then do nothing.
         }

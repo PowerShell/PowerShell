@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -118,7 +118,7 @@ namespace System.Management.Automation
 #if UNIX
             // On Linux, file names are case sensitive, so we need to add
             // extra logic to select the files that match the given pattern.
-            ArrayList result = new ArrayList();
+            var result = new List<string>();
             string[] files = Directory.GetFiles(path);
 
             var wildcardPattern = WildcardPattern.ContainsWildcardCharacters(pattern)
@@ -143,7 +143,7 @@ namespace System.Management.Automation
                 }
             }
 
-            return (string[])result.ToArray(typeof(string));
+            return result.ToArray();
 #else
             return Directory.GetFiles(path, pattern);
 #endif

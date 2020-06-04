@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -147,15 +147,14 @@ namespace System.Management.Automation
                     // Note - this is duplicated in ExecutionContext.cs as parameter binding for script cmdlets can avoid this code path.
                     if ((!bindingScriptCmdlet) && (!bindingParameters))
                     {
-                        // ActionPreference of Suspend is not supported as a preference variable. We can only block "Suspend"
-                        // during variable assignment (here) - "Ignore" is blocked during variable retrieval.
+                        // ActionPreference.Suspend is reserved for future use and is not supported as a preference variable.
                         if (_convertTypes[i] == typeof(ActionPreference))
                         {
                             ActionPreference resultPreference = (ActionPreference)result;
 
                             if (resultPreference == ActionPreference.Suspend)
                             {
-                                throw new PSInvalidCastException("InvalidActionPreference", null, ErrorPackage.UnsupportedPreferenceVariable, resultPreference);
+                                throw new PSInvalidCastException("InvalidActionPreference", null, ErrorPackage.ActionPreferenceReservedForFutureUseError, resultPreference);
                             }
                         }
                     }

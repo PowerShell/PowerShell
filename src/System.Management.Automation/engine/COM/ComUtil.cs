@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -36,7 +36,11 @@ namespace System.Management.Automation
         internal static string GetMethodSignatureFromFuncDesc(COM.ITypeInfo typeinfo, COM.FUNCDESC funcdesc, bool isPropertyPut)
         {
             StringBuilder builder = new StringBuilder();
-            string name = GetNameFromFuncDesc(typeinfo, funcdesc);
+
+            // First value is function name
+            int namesCount = funcdesc.cParams + 1;
+            string[] names = new string[funcdesc.cParams + 1];
+            typeinfo.GetNames(funcdesc.memid, names, namesCount, out namesCount);
 
             if (!isPropertyPut)
             {
@@ -46,7 +50,7 @@ namespace System.Management.Automation
             }
 
             // Append the function name
-            builder.Append(name);
+            builder.Append(names[0]);
             builder.Append(" (");
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
@@ -85,6 +89,7 @@ namespace System.Management.Automation
                 else
                 {
                     builder.Append(paramstring);
+                    builder.Append(" " + names[i + 1]);
 
                     if (i < funcdesc.cParams - 1)
                     {
@@ -406,41 +411,7 @@ namespace System.Management.Automation
             // The passed-in COM object could already be a IEnumVARIANT interface.
             // e.g. user call '_NewEnum()' on a COM collection interface.
             var enumVariant = comObject as COM.IEnumVARIANT;
-            if (enumVariant != null)
-            {
-                return new ComEnumerator(enumVariant);
-            }
-
-            // The passed-in COM object could be a collection.
-            var enumerable = comObject as IEnumerable;
-            var target = comObject as IDispatch;
-            if (enumerable != null && target != null)
-            {
-                try
-                {
-                    var comTypeInfo = ComTypeInfo.GetDispatchTypeInfo(comObject);
-                    if (comTypeInfo != null && comTypeInfo.NewEnumInvokeKind.HasValue)
-                    {
-                        // The COM object is a collection and also a IDispatch interface, so we try to get a
-                        // IEnumVARIANT interface out of it by invoking its '_NewEnum (DispId: -4)' function.
-                        var result = ComInvoker.Invoke(target, ComTypeInfo.DISPID_NEWENUM,
-                                                        args: Array.Empty<object>(), byRef: null,
-                                                        invokeKind: comTypeInfo.NewEnumInvokeKind.Value);
-                        enumVariant = result as COM.IEnumVARIANT;
-                        if (enumVariant != null)
-                        {
-                            return new ComEnumerator(enumVariant);
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    // Ignore exceptions. In case of exception, no enumerator can be created
-                    // for the passed-in COM object, and we will return null eventually.
-                }
-            }
-
-            return null;
+            return enumVariant != null ? new ComEnumerator(enumVariant) : null;
         }
     }
 }

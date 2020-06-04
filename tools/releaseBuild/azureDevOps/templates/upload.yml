@@ -3,6 +3,7 @@ parameters:
   version: 6.2.0
   msi: yes
   msix: yes
+  pdb: no
 
 steps:
 - template: upload-final-results.yml
@@ -11,7 +12,7 @@ steps:
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi
     condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
-- task: AzureFileCopy@1
+- task: AzureFileCopy@3
   displayName: 'upload signed msi to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msi'
@@ -19,14 +20,14 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'), eq(variables['Build.Reason'], 'Manual'))
+  condition: and(succeeded(), eq('${{ parameters.msi }}', 'yes'))
 
 - template: upload-final-results.yml
   parameters:
     artifactPath: $(System.ArtifactsDirectory)\signed
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip
 
-- task: AzureFileCopy@1
+- task: AzureFileCopy@3
   displayName: 'upload signed zip to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
@@ -34,7 +35,18 @@ steps:
     Destination: AzureBlob
     storage: '$(StorageAccount)'
     ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))
+  condition: succeeded()
+
+# Disable upload task as the symbols package is not currently used and we want to avoid publishing this in releases
+#- task: AzureFileCopy@3
+#  displayName: 'upload pbd zip to Azure - ${{ parameters.architecture }}'
+#  inputs:
+#    SourcePath: '$(System.ArtifactsDirectory)\signed\PowerShell-Symbols-${{ parameters.version }}-win-${{ parameters.architecture }}.zip'
+#    azureSubscription: '$(AzureFileCopySubscription)'
+#    Destination: AzureBlob
+#    storage: '$(StorageAccount)'
+#    ContainerName: '$(AzureVersion)'
+#  condition: and(succeeded(), eq('${{ parameters.pdb }}', 'yes'))
 
 - template: upload-final-results.yml
   parameters:
@@ -42,12 +54,12 @@ steps:
     artifactFilter: PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix
     condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'))
 
-- task: AzureFileCopy@1
+- task: AzureFileCopy@3
   displayName: 'upload signed msix to Azure - ${{ parameters.architecture }}'
   inputs:
     SourcePath: '$(Build.StagingDirectory)\signedPackages\PowerShell-${{ parameters.version }}-win-${{ parameters.architecture }}.msix'
     azureSubscription: '$(AzureFileCopySubscription)'
     Destination: AzureBlob
     storage: '$(StorageAccount)'
-    ContainerName: '$(AzureVersion)'
-  condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['Build.Reason'], 'Manual'))
+    ContainerName: '$(AzureVersion)-private'
+  condition: and(succeeded(), eq('${{ parameters.msix }}', 'yes'), eq(variables['SHOULD_SIGN'], 'true'))

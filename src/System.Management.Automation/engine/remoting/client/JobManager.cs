@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -81,51 +81,43 @@ namespace System.Management.Automation
             Dbg.Assert(jobSourceAdapterType != null, "JobSourceAdapterType should never be called with null value.");
             object instance = null;
 
-            if (jobSourceAdapterType.FullName != null && jobSourceAdapterType.FullName.EndsWith("WorkflowJobSourceAdapter", StringComparison.OrdinalIgnoreCase))
+            ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(Type.EmptyTypes);
+            if (!constructor.IsPublic)
             {
-                MethodInfo method = jobSourceAdapterType.GetMethod("GetInstance");
-                instance = method.Invoke(null, null);
+                string message = string.Format(CultureInfo.CurrentCulture,
+                                                RemotingErrorIdStrings.JobManagerRegistrationConstructorError,
+                                                jobSourceAdapterType.FullName);
+                throw new InvalidOperationException(message);
             }
-            else
-            {
-                ConstructorInfo constructor = jobSourceAdapterType.GetConstructor(Type.EmptyTypes);
-                if (!constructor.IsPublic)
-                {
-                    string message = string.Format(CultureInfo.CurrentCulture,
-                                                   RemotingErrorIdStrings.JobManagerRegistrationConstructorError,
-                                                   jobSourceAdapterType.FullName);
-                    throw new InvalidOperationException(message);
-                }
 
-                try
-                {
-                    instance = constructor.Invoke(null);
-                }
-                catch (MemberAccessException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
-                catch (TargetInvocationException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
-                catch (TargetParameterCountException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
-                catch (NotSupportedException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
-                catch (SecurityException exception)
-                {
-                    _tracer.TraceException(exception);
-                    throw;
-                }
+            try
+            {
+                instance = constructor.Invoke(null);
+            }
+            catch (MemberAccessException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
+            }
+            catch (TargetInvocationException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
+            }
+            catch (TargetParameterCountException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
+            }
+            catch (NotSupportedException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
+            }
+            catch (SecurityException exception)
+            {
+                _tracer.TraceException(exception);
+                throw;
             }
 
             if (instance != null)
@@ -186,7 +178,7 @@ namespace System.Management.Automation
         {
             if (definition == null)
             {
-                throw new ArgumentNullException("definition");
+                throw new ArgumentNullException(nameof(definition));
             }
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);
@@ -226,12 +218,12 @@ namespace System.Management.Automation
         {
             if (specification == null)
             {
-                throw new ArgumentNullException("specification");
+                throw new ArgumentNullException(nameof(specification));
             }
 
             if (specification.Definition == null)
             {
-                throw new ArgumentException(RemotingErrorIdStrings.NewJobSpecificationError, "specification");
+                throw new ArgumentException(RemotingErrorIdStrings.NewJobSpecificationError, nameof(specification));
             }
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(specification.Definition);
@@ -271,12 +263,12 @@ namespace System.Management.Automation
         {
             if (job == null)
             {
-                throw new PSArgumentNullException("job");
+                throw new PSArgumentNullException(nameof(job));
             }
 
             if (definition == null)
             {
-                throw new PSArgumentNullException("definition");
+                throw new PSArgumentNullException(nameof(definition));
             }
 
             JobSourceAdapter sourceAdapter = GetJobSourceAdapter(definition);
@@ -388,10 +380,6 @@ namespace System.Management.Automation
                         ex = e;
                     }
                     catch (SecurityException e)
-                    {
-                        ex = e;
-                    }
-                    catch (ThreadAbortException e)
                     {
                         ex = e;
                     }

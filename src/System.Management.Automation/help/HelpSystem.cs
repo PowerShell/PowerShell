@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -907,11 +907,6 @@ namespace System.Management.Automation
         /// Default Help.
         /// </summary>
         DefaultHelp = 0x1000,
-
-        ///<summary>
-        /// Help for a Workflow.
-        /// </summary>
-        Workflow = 0x2000,
 
         ///<summary>
         /// Help for a Configuration.

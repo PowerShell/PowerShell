@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -146,7 +146,7 @@ else                 { '-{0}{1} ' }) -f $_.Name, $parameterValue")
                             .AddScriptBlockExpressionBinding(StringUtil.Format(@"Set-StrictMode -Off
 if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and ($_.relatedLinks.navigationLink.Length -ne 0))
 {{
-    ""    {0}`""get-help $($_.Details.Name) -online`""""
+    ""    {0}`""Get-Help $($_.Details.Name) -Online`""""
 }}", HelpDisplayStrings.RelatedLinksHelpInfo))
                         .EndFrame()
                     .EndEntry()
@@ -573,17 +573,17 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .AddNewline()
                         .StartFrame(leftIndent: 4)
                             .AddText(HelpDisplayStrings.ExampleHelpInfo + "\"")
-                            .AddScriptBlockExpressionBinding(@"""get-help "" + $_.Details.Name + "" -examples""")
-                            .AddText("\".")
+                            .AddScriptBlockExpressionBinding(@"""Get-Help "" + $_.Details.Name + "" -Examples""")
+                            .AddText(@"""")
                             .AddNewline()
                             .AddText(HelpDisplayStrings.VerboseHelpInfo + "\"")
-                            .AddScriptBlockExpressionBinding(@"""get-help "" + $_.Details.Name + "" -detailed""")
-                            .AddText("\".")
+                            .AddScriptBlockExpressionBinding(@"""Get-Help "" + $_.Details.Name + "" -Detailed""")
+                            .AddText(@"""")
                             .AddNewline()
                             .AddText(HelpDisplayStrings.FullHelpInfo)
                             .AddText(@"""")
-                            .AddScriptBlockExpressionBinding(@"""get-help "" + $_.Details.Name + "" -full""")
-                            .AddText(@""".")
+                            .AddScriptBlockExpressionBinding(@"""Get-Help "" + $_.Details.Name + "" -Full""")
+                            .AddText(@"""")
                             .AddNewline()
                             .AddCustomControlExpressionBinding(sharedControls[18])
                         .EndFrame()
@@ -638,18 +638,18 @@ if (($_.relatedLinks -ne $()) -and ($_.relatedLinks.navigationLink -ne $()) -and
                         .StartFrame(leftIndent: 4)
                             .AddText(HelpDisplayStrings.ExampleHelpInfo)
                             .AddText(@"""")
-                            .AddScriptBlockExpressionBinding(@"""get-help "" + $_.Details.Name + "" -examples""")
-                            .AddText(@""".")
+                            .AddScriptBlockExpressionBinding(@"""Get-Help "" + $_.Details.Name + "" -Examples""")
+                            .AddText(@"""")
                             .AddNewline()
                             .AddText(HelpDisplayStrings.VerboseHelpInfo)
                             .AddText(@"""")
-                            .AddScriptBlockExpressionBinding(@"""get-help "" + $_.Details.Name + "" -detailed""")
-                            .AddText(@""".")
+                            .AddScriptBlockExpressionBinding(@"""Get-Help "" + $_.Details.Name + "" -Detailed""")
+                            .AddText(@"""")
                             .AddNewline()
                             .AddText(HelpDisplayStrings.FullHelpInfo)
                             .AddText(@"""")
-                            .AddScriptBlockExpressionBinding(@"""get-help "" + $_.Details.Name + "" -full""")
-                            .AddText(@""".")
+                            .AddScriptBlockExpressionBinding(@"""Get-Help "" + $_.Details.Name + "" -Full""")
+                            .AddText(@"""")
                             .AddNewline()
                             .AddCustomControlExpressionBinding(sharedControls[18])
                         .EndFrame()

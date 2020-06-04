@@ -2,14 +2,14 @@
   <Import Project="..\..\PowerShell.Common.props" />
 
   <PropertyGroup>
-    <Description>PowerShell Core's Markdown Rendering project</Description>
+    <Description>PowerShell's Markdown Rendering project</Description>
     <AssemblyName>Microsoft.PowerShell.MarkdownRender</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
   <!-- Source: https://github.com/lunet-io/markdig/ -->
     <ProjectReference Include="../System.Management.Automation/System.Management.Automation.csproj" />
-    <PackageReference Include="Markdig.Signed" Version="0.16.0" />
+    <PackageReference Include="Markdig.Signed" Version="0.20.0" />
   </ItemGroup>
 
 </Project>

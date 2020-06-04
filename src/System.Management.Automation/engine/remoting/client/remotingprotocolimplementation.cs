@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Internal;
@@ -17,6 +17,7 @@ namespace System.Management.Automation.Remoting
     {
         [TraceSourceAttribute("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl")]
         private static PSTraceSource s_trace = PSTraceSource.GetTracer("CRSDSHdlerImpl", "ClientRemoteSessionDSHandlerImpl");
+
         private const string resBaseName = "remotingerroridstrings";
 
         private BaseClientSessionTransportManager _transportManager;
@@ -66,7 +67,7 @@ namespace System.Management.Automation.Remoting
 
             if (session == null)
             {
-                throw PSTraceSource.NewArgumentNullException("session");
+                throw PSTraceSource.NewArgumentNullException(nameof(session));
             }
 
             _session = session;
@@ -278,7 +279,7 @@ namespace System.Management.Automation.Remoting
         {
             if (arg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("arg");
+                throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }
 
             // Enqueue session related negotiation packets first
@@ -540,14 +541,14 @@ namespace System.Management.Automation.Remoting
         {
             if (dataArg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("dataArg");
+                throw PSTraceSource.NewArgumentNullException(nameof(dataArg));
             }
 
             RemoteDataObject<PSObject> rcvdData = dataArg.ReceivedData;
 
             if (rcvdData == null)
             {
-                throw PSTraceSource.NewArgumentException("dataArg");
+                throw PSTraceSource.NewArgumentException(nameof(dataArg));
             }
 
             RemotingDestination destination = rcvdData.Destination;
@@ -610,7 +611,7 @@ namespace System.Management.Automation.Remoting
         {
             if (arg == null || arg.ReceivedData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("arg");
+                throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }
 
             RemoteDataObject<PSObject> rcvdData = arg.ReceivedData;
@@ -684,7 +685,7 @@ namespace System.Management.Automation.Remoting
             // TODO: Consider changing to Dbg.Assert()
             if (rcvdData == null)
             {
-                throw PSTraceSource.NewArgumentNullException("rcvdData");
+                throw PSTraceSource.NewArgumentNullException(nameof(rcvdData));
             }
 
             RemotingTargetInterface targetInterface = rcvdData.TargetInterface;

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 #Companion code for the blog https://cloudywindows.com
@@ -7,7 +7,7 @@
 #bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-amazonlinux.sh) ARGUMENTS
 #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-amazonlinux.sh) <ARGUMENTS>
 
-#Usage - if you do not have the ability to run scripts directly from the web, 
+#Usage - if you do not have the ability to run scripts directly from the web,
 #        pull all files in this repo folder and execute, this script
 #        automatically prefers local copies of sub-scripts
 
@@ -17,7 +17,7 @@
 # -includeide         - ignored, as Amazon Linux does not have a desktop environment
 # -interactivetesting - ignored, as Amazon Linux does not have a desktop environment
 # -skip-sudo-check    - use sudo without verifying its availability (hard to accurately do on some distros)
-# -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
+# -preview            - installs the latest preview release of PowerShell side-by-side with any existing production releases
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -31,7 +31,7 @@ gitscriptname="installpsh-amazonlinux.psh"
 pwshlink=/usr/bin/pwsh
 
 echo
-echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
+echo "*** PowerShell Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo
 echo "*** Arguments used: $*"
@@ -66,6 +66,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
@@ -111,7 +118,7 @@ fi
 #END Verify The Installer Choice
 
 echo
-echo "*** Installing prerequisites for PowerShell Core..."
+echo "*** Installing prerequisites for PowerShell..."
 $SUDO yum install -y \
         curl \
         libunwind \
@@ -126,7 +133,7 @@ $SUDO yum install -y \
 ##END Check requirements and prerequisites
 
 echo
-echo "*** Installing PowerShell Core for $DistroBasedOn..."
+echo "*** Installing PowerShell for $DistroBasedOn..."
 
 echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unless the '-preview' switch is used"
 
@@ -197,8 +204,8 @@ if [[ "'$*'" =~ -interactivetesting ]] ; then
 fi
 
 if [[ "$repobased" == true ]] ; then
-  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell Core"
+  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell"
 else
-  echo "*** NOTE: Re-run this script to update PowerShell Core"
+  echo "*** NOTE: Re-run this script to update PowerShell"
 fi
 echo "*** Install Complete"

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 //
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <param name="registryRights">A bitwise combination of Microsoft.Win32.RegistryRights values indicating the rights allowed or denied.</param>
         /// <param name="type">One of the AccessControlType values indicating whether the rights are allowed or denied.</param>
         /// </summary>
-        internal TransactedRegistryAccessRule(String identity, RegistryRights registryRights, AccessControlType type)
+        internal TransactedRegistryAccessRule(string identity, RegistryRights registryRights, AccessControlType type)
             : this(new NTAccount(identity), (int)registryRights, false, InheritanceFlags.None, PropagationFlags.None, type)
         {
         }
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         // like CLASSES_ROOT, CURRENT_USER, MACHINE, and USERS.  See
         // MSDN's help for SetNamedSecurityInfo for details.
         [SecurityPermission(SecurityAction.Assert, UnmanagedCode=true)]
-        internal TransactedRegistrySecurity(String name, AccessControlSections includeSections)
+        internal TransactedRegistrySecurity(string name, AccessControlSections includeSections)
             : base(true, ResourceType.RegistryKey, HKeyNameToWindowsName(name), includeSections)
         {
             new RegistryPermission(RegistryPermissionAccess.NoAccess, AccessControlActions.View, name).Demand();

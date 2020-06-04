@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -12,6 +12,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Reflection;
+using System.Threading;
 using System.Xml;
 
 using Microsoft.PowerShell.Commands;
@@ -44,18 +45,12 @@ namespace System.Management.Automation.Remoting
         internal const string MAXRCVDCMDSIZETOKEN = "psmaximumreceiveddatasizepercommandmb";
         internal const string MAXRCVDCMDSIZETOKEN_CamelCase = "PSMaximumReceivedDataSizePerCommandMB";
         internal const string THREADOPTIONSTOKEN = "pssessionthreadoptions";
-#if !CORECLR // No ApartmentState In CoreCLR
         internal const string THREADAPTSTATETOKEN = "pssessionthreadapartmentstate";
-#endif
         internal const string SESSIONCONFIGTOKEN = "sessionconfigurationdata";
         internal const string PSVERSIONTOKEN = "PSVersion";
         internal const string MAXPSVERSIONTOKEN = "MaxPSVersion";
         internal const string MODULESTOIMPORT = "ModulesToImport";
         internal const string HOSTMODE = "hostmode";
-        internal const string ENDPOINTCONFIGURATIONTYPE = "sessiontype";
-        internal const string WORKFLOWCOREASSEMBLY = "Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL";
-        internal const string WORKFLOWCORETYPENAME = "Microsoft.PowerShell.Workflow.PSWorkflowSessionConfiguration";
-        internal const string PSWORKFLOWMODULE = "%windir%\\system32\\windowspowershell\\v1.0\\Modules\\PSWorkflow";
         internal const string CONFIGFILEPATH = "configfilepath";
         internal const string CONFIGFILEPATH_CamelCase = "ConfigFilePath";
 
@@ -72,10 +67,7 @@ namespace System.Management.Automation.Remoting
         internal int? MaxReceivedCommandSizeMB;
         // Used to set properties on the RunspacePool created for this shell.
         internal PSThreadOptions? ShellThreadOptions;
-
-#if !CORECLR // No ApartmentState In CoreCLR
-        internal Nullable<System.Threading.ApartmentState> ShellThreadApartmentState;
-#endif
+        internal ApartmentState? ShellThreadApartmentState;
         internal PSSessionConfigurationData SessionConfigurationData;
         internal string ConfigFilePath;
 
@@ -131,13 +123,11 @@ namespace System.Management.Automation.Remoting
                     ShellThreadOptions = (PSThreadOptions)LanguagePrimitives.ConvertTo(
                         optionValue, typeof(PSThreadOptions), CultureInfo.InvariantCulture);
                     break;
-#if !CORECLR // No ApartmentState In CoreCLR
                 case THREADAPTSTATETOKEN:
                     AssertValueNotAssigned(THREADAPTSTATETOKEN, ShellThreadApartmentState);
-                    ShellThreadApartmentState = (System.Threading.ApartmentState)LanguagePrimitives.ConvertTo(
-                        optionValue, typeof(System.Threading.ApartmentState), CultureInfo.InvariantCulture);
+                    ShellThreadApartmentState = (ApartmentState)LanguagePrimitives.ConvertTo(
+                        optionValue, typeof(ApartmentState), CultureInfo.InvariantCulture);
                     break;
-#endif
                 case SESSIONCONFIGTOKEN:
                     {
                         AssertValueNotAssigned(SESSIONCONFIGTOKEN, SessionConfigurationData);
@@ -253,9 +243,6 @@ namespace System.Management.Automation.Remoting
             readerSettings.IgnoreProcessingInstructions = true;
             readerSettings.MaxCharactersInDocument = 10000;
             readerSettings.ConformanceLevel = ConformanceLevel.Fragment;
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
-            readerSettings.XmlResolver = null;
-#endif
 
             using (XmlReader reader = XmlReader.Create(new StringReader(initializationParameters), readerSettings))
             {
@@ -541,7 +528,7 @@ namespace System.Management.Automation.Remoting
                 assembly = LoadSsnStateProviderAssembly(applicationBase, assemblyName);
                 if (assembly == null)
                 {
-                    throw PSTraceSource.NewArgumentException("assemblyName", RemotingErrorIdStrings.UnableToLoadAssembly,
+                    throw PSTraceSource.NewArgumentException(nameof(assemblyName), RemotingErrorIdStrings.UnableToLoadAssembly,
                         assemblyName, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
                 }
             }
@@ -558,7 +545,7 @@ namespace System.Management.Automation.Remoting
                     Type type = assembly.GetType(typeToLoad, true, true);
                     if (type == null)
                     {
-                        throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
+                        throw PSTraceSource.NewArgumentException(nameof(typeToLoad), RemotingErrorIdStrings.UnableToLoadType,
                             typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
                     }
 
@@ -585,7 +572,7 @@ namespace System.Management.Automation.Remoting
 
                 // if we are here, that means we are unable to load the type specified
                 // in the config xml.. notify the same.
-                throw PSTraceSource.NewArgumentException("typeToLoad", RemotingErrorIdStrings.UnableToLoadType,
+                throw PSTraceSource.NewArgumentException(nameof(typeToLoad), RemotingErrorIdStrings.UnableToLoadType,
                         typeToLoad, ConfigurationDataFromXML.INITPARAMETERSTOKEN);
             }
 
@@ -780,7 +767,7 @@ namespace System.Management.Automation.Remoting
             {
                 s_tracer.TraceError("Mandatory property {0} not specified for registry key {1}",
                         name, registryKey.Name);
-                throw PSTraceSource.NewArgumentException("name", RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
+                throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotPresent, name, registryKey.Name);
             }
 
             string s = value as string;
@@ -788,7 +775,7 @@ namespace System.Management.Automation.Remoting
             {
                 s_tracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
                         name, registryKey.Name);
-                throw PSTraceSource.NewArgumentException("name", RemotingErrorIdStrings.MandatoryValueNotInCorrectFormat, name, registryKey.Name);
+                throw PSTraceSource.NewArgumentException(nameof(name), RemotingErrorIdStrings.MandatoryValueNotInCorrectFormat, name, registryKey.Name);
             }
 
             return s;
@@ -797,8 +784,10 @@ namespace System.Management.Automation.Remoting
         private const string configProvidersKeyName = "PSConfigurationProviders";
         private const string configProviderApplicationBaseKeyName = "ApplicationBase";
         private const string configProviderAssemblyNameKeyName = "AssemblyName";
+
         private static Dictionary<string, ConfigurationDataFromXML> s_ssnStateProviders =
             new Dictionary<string, ConfigurationDataFromXML>(StringComparer.OrdinalIgnoreCase);
+
         private static object s_syncObject = new object();
 
         #endregion
@@ -825,13 +814,13 @@ namespace System.Management.Automation.Remoting
         public override InitialSessionState GetInitialSessionState(PSSessionConfigurationData sessionConfigurationData, PSSenderInfo senderInfo, string configProviderId)
         {
             if (sessionConfigurationData == null)
-                throw new ArgumentNullException("sessionConfigurationData");
+                throw new ArgumentNullException(nameof(sessionConfigurationData));
 
             if (senderInfo == null)
-                throw new ArgumentNullException("senderInfo");
+                throw new ArgumentNullException(nameof(senderInfo));
 
             if (configProviderId == null)
-                throw new ArgumentNullException("configProviderId");
+                throw new ArgumentNullException(nameof(configProviderId));
 
             InitialSessionState sessionState = InitialSessionState.CreateDefault2();
             // now get all the modules in the specified path and import the same
@@ -959,7 +948,7 @@ namespace System.Management.Automation.Remoting
         internal static readonly string VisibleProviders = "VisibleProviders";
         internal static readonly string VisibleExternalCommands = "VisibleExternalCommands";
 
-        internal static ConfigTypeEntry[] ConfigFileKeys = new ConfigTypeEntry[] {
+        internal static readonly ConfigTypeEntry[] ConfigFileKeys = new ConfigTypeEntry[] {
             new ConfigTypeEntry(AliasDefinitions,               new ConfigTypeEntry.TypeValidationCallback(AliasDefinitionsTypeValidationCallback)),
             new ConfigTypeEntry(AssembliesToLoad,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(Author,                         new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
@@ -1775,7 +1764,7 @@ namespace System.Management.Automation.Remoting
                 DISCUtils.ValidateRoleDefinitions(roleEntry);
 
                 // Go through the Roles hashtable
-                foreach (Object role in roleEntry.Keys)
+                foreach (object role in roleEntry.Keys)
                 {
                     // Check if this role applies to the connected user
                     if (roleVerifier(role.ToString()))
@@ -1799,6 +1788,7 @@ namespace System.Management.Automation.Remoting
 
         // Takes the "RoleCapabilities" node in the config hash, and merges its values into the base configuration.
         private const string PSRCExtension = ".psrc";
+
         private void MergeRoleCapabilitiesIntoConfigHash()
         {
             List<string> psrcFiles = new List<string>();
@@ -1864,11 +1854,11 @@ namespace System.Management.Automation.Remoting
         // Merge a role / role capability hashtable into the master configuration hashtable
         private void MergeConfigHashIntoConfigHash(IDictionary childConfigHash)
         {
-            foreach (Object customization in childConfigHash.Keys)
+            foreach (object customization in childConfigHash.Keys)
             {
                 string customizationString = customization.ToString();
 
-                ArrayList customizationValue = new ArrayList();
+                var customizationValue = new List<object>();
 
                 // First, take all values from the master config table
                 if (_configHash.ContainsKey(customizationString))
@@ -1876,7 +1866,7 @@ namespace System.Management.Automation.Remoting
                     IEnumerable existingValueAsCollection = LanguagePrimitives.GetEnumerable(_configHash[customization]);
                     if (existingValueAsCollection != null)
                     {
-                        foreach (Object value in existingValueAsCollection)
+                        foreach (object value in existingValueAsCollection)
                         {
                             customizationValue.Add(value);
                         }
@@ -1891,7 +1881,7 @@ namespace System.Management.Automation.Remoting
                 IEnumerable newValueAsCollection = LanguagePrimitives.GetEnumerable(childConfigHash[customization]);
                 if (newValueAsCollection != null)
                 {
-                    foreach (Object value in newValueAsCollection)
+                    foreach (object value in newValueAsCollection)
                     {
                         customizationValue.Add(value);
                     }
@@ -1909,7 +1899,7 @@ namespace System.Management.Automation.Remoting
         private string GetRoleCapabilityPath(string roleCapability)
         {
             string moduleName = "*";
-            if (roleCapability.IndexOf('\\') != -1)
+            if (roleCapability.Contains('\\'))
             {
                 string[] components = roleCapability.Split(Utils.Separators.Backslash, 2);
                 moduleName = components[0];
@@ -2468,7 +2458,7 @@ namespace System.Management.Automation.Remoting
                 commandModuleNames.Add(moduleSpec.Name);
             }
 
-            foreach (Object commandObject in commands)
+            foreach (object commandObject in commands)
             {
                 if (commandObject == null)
                 {

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -24,7 +24,7 @@ namespace Microsoft.WSMan.Management
     /// WsMan Provider.
     /// </summary>
     [CmdletProvider(WSManStringLiterals.ProviderName, ProviderCapabilities.Credentials)]
-    public sealed partial class WSManConfigProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
+    public sealed class WSManConfigProvider : NavigationCmdletProvider, ICmdletProviderSupportsHelp
     {
         // Plugin Name Storage
         private PSObject objPluginNames = null;
@@ -38,17 +38,17 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         private bool clearItemIsCalled = false;
 
-        WSManHelper helper = new WSManHelper();
+        private WSManHelper helper = new WSManHelper();
 
         /// <summary>
         /// Object contains the cache of the enumerate results for the cmdlet to execute.
         /// </summary>
-        Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
+        private Dictionary<string, XmlDocument> enumerateMapping = new Dictionary<string, XmlDocument>();
 
         /// <summary>
         /// Mapping of ResourceURI with the XML returned by the Get call.
         /// </summary>
-        Dictionary<string, string> getMapping = new Dictionary<string, string>();
+        private Dictionary<string, string> getMapping = new Dictionary<string, string>();
 
         #region ICmdletProviderSupportsHelp Members
 
@@ -1340,7 +1340,7 @@ namespace Microsoft.WSMan.Management
                     }
                 }
 
-                foreach (String warnings in warningMessage)
+                foreach (string warnings in warningMessage)
                 {
                     WriteWarning(warnings);
                 }
@@ -1446,6 +1446,11 @@ namespace Microsoft.WSMan.Management
 
             // Get the wsman host name to find the session object
             string host = GetHostName(path);
+            if (string.IsNullOrEmpty(host))
+            {
+                return false;
+            }
+
             string WsManURI = NormalizePath(path, host);
 
             lock (WSManHelper.AutoSession)
@@ -1972,8 +1977,8 @@ namespace Microsoft.WSMan.Management
                 helper.CreateWsManConnection(parametersetName, dynParams.ConnectionURI, dynParams.Port, Name, dynParams.ApplicationName, dynParams.UseSSL, dynParams.Authentication, dynParams.SessionOption, this.Credential, dynParams.CertificateThumbprint);
                 if (dynParams.ConnectionURI != null)
                 {
-                    string[] constrsplit = dynParams.ConnectionURI.OriginalString.Split(new string[] { ":" + dynParams.Port + "/" + dynParams.ApplicationName }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = dynParams.ConnectionURI.OriginalString.Split(":" + dynParams.Port + "/" + dynParams.ApplicationName, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     Name = constrsplit1[1].Trim();
                 }
 
@@ -2521,9 +2526,9 @@ namespace Microsoft.WSMan.Management
         private string GetRootNodeName(string ResourceURI)
         {
             string tempuri = string.Empty;
-            if (ResourceURI.Contains("?"))
+            if (ResourceURI.Contains('?'))
             {
-                ResourceURI = ResourceURI.Split(new char[] { '?' }).GetValue(0).ToString();
+                ResourceURI = ResourceURI.Split('?').GetValue(0).ToString();
             }
 
             string PTRN_URI_LAST = "([a-z_][-a-z0-9._]*)$";
@@ -2969,7 +2974,7 @@ namespace Microsoft.WSMan.Management
                 }
             }
 
-            if (filter.ToString().EndsWith("+", StringComparison.OrdinalIgnoreCase))
+            if (filter.ToString().EndsWith('+'))
                 filter.Remove(filter.ToString().Length - 1, 1);
             return filter.ToString();
         }
@@ -3159,8 +3164,8 @@ namespace Microsoft.WSMan.Management
 
                 if (!string.IsNullOrEmpty(existingvalue))
                 {
-                    string[] existingsplitvalues = existingvalue.Split(new string[] { Delimiter }, StringSplitOptions.None);
-                    string[] newvalues = value.Split(new string[] { Delimiter }, StringSplitOptions.None);
+                    string[] existingsplitvalues = existingvalue.Split(Delimiter, StringSplitOptions.None);
+                    string[] newvalues = value.Split(Delimiter, StringSplitOptions.None);
                     foreach (string val in newvalues)
                     {
                         if (Array.IndexOf(existingsplitvalues, val) == -1)
@@ -3331,7 +3336,7 @@ namespace Microsoft.WSMan.Management
         /// <returns></returns>
         private string NormalizePath(string path, string host)
         {
-            string uri = string.Empty; ;
+            string uri = string.Empty;
             if (path.StartsWith(host, StringComparison.OrdinalIgnoreCase))
             {
                 if (path.EndsWith(WSManStringLiterals.DefaultPathSeparator.ToString(), StringComparison.OrdinalIgnoreCase))
@@ -4100,7 +4105,7 @@ namespace Microsoft.WSMan.Management
             PSObject obj = (PSObject)objcache[CurrentNode];
 
             CurrentNode = RemainingPath.Substring(pos + 1);
-            if (CurrentNode.IndexOf(WSManStringLiterals.DefaultPathSeparator) != -1)
+            if (CurrentNode.Contains(WSManStringLiterals.DefaultPathSeparator))
             {
                 // No more directories allowed after listeners objects
                 return false;
@@ -5426,13 +5431,13 @@ namespace Microsoft.WSMan.Management
 
         #endregion Plugin private functions
 
-        enum ProviderMethods
+        private enum ProviderMethods
         {
             GetChildItems,
             GetChildNames
         };
 
-        enum WsManElementObjectTypes
+        private enum WsManElementObjectTypes
         {
             WSManConfigElement,
             WSManConfigContainerElement,
@@ -5441,6 +5446,7 @@ namespace Microsoft.WSMan.Management
 
         #region def
         private static readonly string[] WinrmRootName = new string[] { "winrm/Config" };
+
         private static readonly string[] WinRmRootConfigs = new string[] {
             "Client",
             "Service",

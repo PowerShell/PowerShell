@@ -5,7 +5,7 @@
 #bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-redhat.sh) ARGUMENTS
 #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-redhat.sh) <ARGUMENTS>
 
-#Usage - if you do not have the ability to run scripts directly from the web, 
+#Usage - if you do not have the ability to run scripts directly from the web,
 #        pull all files in this repo folder and execute, this script
 #        automatically prefers local copies of sub-scripts
 
@@ -15,7 +15,7 @@
 # -includeide         - installs VSCode and VSCode PowerShell extension (only relevant to machines with desktop environment)
 # -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
 # -skip-sudo-check    - use sudo without verifying its availability (this is required to run in the VSTS Hosted Linux Preview)
-# -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releases
+# -preview            - installs the latest preview release of PowerShell side-by-side with any existing production releases
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -29,7 +29,7 @@ gitscriptname="installpsh-redhat.psh"
 powershellpackageid=powershell
 
 echo
-echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
+echo "*** PowerShell Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo
 echo "*** Arguments used: $* "
@@ -64,6 +64,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
@@ -111,7 +118,7 @@ if [[ "'$*'" =~ preview ]] ; then
 fi
 
 release=$(curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v// | sed s/,//g | sed s/\ //g)
-echo "*** Installing PowerShell Core for $DistroBasedOn..."
+echo "*** Installing PowerShell for $DistroBasedOn..."
 if ! hash curl 2>/dev/null; then
     echo "curl not found, installing..."
     $SUDO yum install -y curl
@@ -120,7 +127,7 @@ release=$(curl https://api.github.com/repos/powershell/powershell/releases/lates
 
 echo "*** Current version on git is: $release, repo version may differ slightly..."
 
-echo "*** Setting up PowerShell Core repo..."
+echo "*** Setting up PowerShell repo..."
 $SUDO curl https://packages.microsoft.com/config/rhel/7/prod.repo > /etc/yum.repos.d/microsoft.repo
 $SUDO yum install -y ${powershellpackageid}
 
@@ -155,6 +162,6 @@ if [[ "'$*'" =~ includeide ]] ; then
 fi
 
 if [[ "$repobased" == true ]] ; then
-  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell Core"
+  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell"
 fi
 echo "*** Install Complete"

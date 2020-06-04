@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -492,7 +492,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static List<string> ModulesWithJobSourceAdapters = new List<string>
+        internal static readonly List<string> ModulesWithJobSourceAdapters = new List<string>
             {
                 Utils.ScheduledJobModuleName,
             };
@@ -570,23 +570,12 @@ namespace System.Management.Automation
 
         internal T GetEnumPreference<T>(VariablePath preferenceVariablePath, T defaultPref, out bool defaultUsed)
         {
-            CmdletProviderContext context = null;
-            SessionStateScope scope = null;
-            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out context, out scope);
+            object val = EngineSessionState.GetVariableValue(preferenceVariablePath, out _, out _);
             if (val is T)
             {
-                // We don't want to support "Ignore" as action preferences, as it leads to bad
-                // scripting habits. They are only supported as cmdlet overrides.
-                if (val is ActionPreference)
+                if (val is ActionPreference actionPreferenceValue)
                 {
-                    ActionPreference preference = (ActionPreference)val;
-                    if ((preference == ActionPreference.Ignore) || (preference == ActionPreference.Suspend))
-                    {
-                        // Reset the variable value
-                        EngineSessionState.SetVariableValue(preferenceVariablePath.UserPath, defaultPref);
-                        string message = StringUtil.Format(ErrorPackage.UnsupportedPreferenceError, preference);
-                        throw new NotSupportedException(message);
-                    }
+                    CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref);
                 }
 
                 T convertedResult = (T)val;
@@ -613,6 +602,11 @@ namespace System.Management.Automation
                         result = (T)PSObject.Base(val);
                         defaultUsed = false;
                     }
+
+                    if (result is ActionPreference actionPreferenceValue)
+                    {
+                        CheckActionPreference(preferenceVariablePath, actionPreferenceValue, defaultPref);
+                    }
                 }
                 catch (InvalidCastException)
                 {
@@ -625,6 +619,18 @@ namespace System.Management.Automation
             }
 
             return result;
+        }
+
+        private void CheckActionPreference(VariablePath preferenceVariablePath, ActionPreference preference, object defaultValue)
+        {
+            if (preference == ActionPreference.Suspend)
+            {
+                // ActionPreference.Suspend is reserved for future use. When it is used, reset
+                // the variable to its default.
+                string message = StringUtil.Format(ErrorPackage.ReservedActionPreferenceReplacedError, preference, preferenceVariablePath.UserPath, defaultValue);
+                EngineSessionState.SetVariable(preferenceVariablePath, defaultValue, true, CommandOrigin.Internal);
+                throw new NotSupportedException(message);
+            }
         }
 
         /// <summary>
@@ -1048,9 +1054,9 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.DebugPreferenceVarPath,
-                    InitialSessionState.defaultDebugPreference,
+                    InitialSessionState.DefaultDebugPreference,
                     out defaultUsed);
             }
 
@@ -1069,9 +1075,9 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.VerbosePreferenceVarPath,
-                    InitialSessionState.defaultVerbosePreference,
+                    InitialSessionState.DefaultVerbosePreference,
                     out defaultUsed);
             }
 
@@ -1090,9 +1096,9 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
-                    InitialSessionState.defaultErrorActionPreference,
+                    InitialSessionState.DefaultErrorActionPreference,
                     out defaultUsed);
             }
 
@@ -1111,9 +1117,9 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.WarningPreferenceVarPath,
-                    InitialSessionState.defaultWarningPreference,
+                    InitialSessionState.DefaultWarningPreference,
                     out defaultUsed);
             }
 
@@ -1132,9 +1138,9 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ActionPreference>(
+                return this.GetEnumPreference(
                     SpecialVariables.InformationPreferenceVarPath,
-                    InitialSessionState.defaultInformationPreference,
+                    InitialSessionState.DefaultInformationPreference,
                     out defaultUsed);
             }
 
@@ -1178,9 +1184,9 @@ namespace System.Management.Automation
             get
             {
                 bool defaultUsed = false;
-                return this.GetEnumPreference<ConfirmImpact>(
+                return this.GetEnumPreference(
                     SpecialVariables.ConfirmPreferenceVarPath,
-                    InitialSessionState.defaultConfirmPreference,
+                    InitialSessionState.DefaultConfirmPreference,
                     out defaultUsed);
             }
 
@@ -1631,7 +1637,7 @@ namespace System.Management.Automation
             Modules = new ModuleIntrinsics(this);
         }
 
-        private static object lockObject = new Object();
+        private static object lockObject = new object();
 
 #if !CORECLR // System.AppDomain is not in CoreCLR
         private static bool _assemblyEventHandlerSet = false;

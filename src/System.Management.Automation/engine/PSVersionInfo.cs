@@ -1,11 +1,9 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
 using System.Diagnostics;
 using System.Globalization;
-using System.Management.Automation.Internal;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -41,7 +39,8 @@ namespace System.Management.Automation
         internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
-        private static PSVersionHashTable s_psVersionTable = null;
+
+        private static readonly PSVersionHashTable s_psVersionTable;
 
         /// <summary>
         /// A constant to track current PowerShell Version.
@@ -54,13 +53,18 @@ namespace System.Management.Automation
         /// For each later release of PowerShell, this constant needs to
         /// be updated to reflect the right version.
         /// </remarks>
-        private static Version s_psV1Version = new Version(1, 0);
-        private static Version s_psV2Version = new Version(2, 0);
-        private static Version s_psV3Version = new Version(3, 0);
-        private static Version s_psV4Version = new Version(4, 0);
-        private static Version s_psV5Version = new Version(5, 0);
-        private static Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static SemanticVersion s_psV6Version;
+        private static readonly Version s_psV1Version = new Version(1, 0);
+        private static readonly Version s_psV2Version = new Version(2, 0);
+        private static readonly Version s_psV3Version = new Version(3, 0);
+        private static readonly Version s_psV4Version = new Version(4, 0);
+        private static readonly Version s_psV5Version = new Version(5, 0);
+        private static readonly Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
+        private static readonly SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, preReleaseLabel: null, buildLabel: null);
+        private static readonly SemanticVersion s_psV61Version = new SemanticVersion(6, 1, 0, preReleaseLabel: null, buildLabel: null);
+        private static readonly SemanticVersion s_psV62Version = new SemanticVersion(6, 2, 0, preReleaseLabel: null, buildLabel: null);
+        private static readonly SemanticVersion s_psV7Version = new SemanticVersion(7, 0, 0, preReleaseLabel: null, buildLabel: null);
+        private static readonly SemanticVersion s_psSemVersion;
+        private static readonly Version s_psVersion;
 
         /// <summary>
         /// A constant to track current PowerShell Edition.
@@ -99,12 +103,13 @@ namespace System.Management.Automation
                 rawGitCommitId = mainVersion;
             }
 
-            s_psV6Version = new SemanticVersion(mainVersion);
+            s_psSemVersion = new SemanticVersion(mainVersion);
+            s_psVersion = (Version)s_psSemVersion;
 
-            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
+            s_psVersionTable[PSVersionInfo.PSVersionName] = s_psSemVersion;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
             s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
-            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
+            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psV61Version, s_psV62Version, s_psV7Version, s_psVersion };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
@@ -121,7 +126,7 @@ namespace System.Management.Automation
         {
             var result = (Hashtable)s_psVersionTable.Clone();
             // Downlevel systems don't support SemanticVersion, but Version is most likely good enough anyway.
-            result[PSVersionInfo.PSVersionName] = (Version)(SemanticVersion)s_psVersionTable[PSVersionInfo.PSVersionName];
+            result[PSVersionInfo.PSVersionName] = s_psVersion;
             return result;
         }
 
@@ -172,7 +177,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (SemanticVersion)GetPSVersionTable()[PSVersionInfo.PSVersionName];
+                return s_psVersion;
             }
         }
 
@@ -180,7 +185,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (string)GetPSVersionTable()[PSGitCommitIdName];
+                return (string)s_psVersionTable[PSGitCommitIdName];
             }
         }
 
@@ -188,7 +193,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version[])GetPSVersionTable()[PSCompatibleVersionsName];
+                return (Version[])s_psVersionTable[PSCompatibleVersionsName];
             }
         }
 
@@ -199,7 +204,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (string)GetPSVersionTable()[PSVersionInfo.PSEditionName];
+                return (string)s_psVersionTable[PSVersionInfo.PSEditionName];
             }
         }
 
@@ -207,7 +212,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version)GetPSVersionTable()[SerializationVersionName];
+                return (Version)s_psVersionTable[SerializationVersionName];
             }
         }
 
@@ -271,6 +276,11 @@ namespace System.Management.Automation
 
         internal static bool IsValidPSVersion(Version version)
         {
+            if (version.Major == s_psSemVersion.Major)
+            {
+                return version.Minor == s_psSemVersion.Minor;
+            }
+
             if (version.Major == s_psV6Version.Major)
             {
                 return version.Minor == s_psV6Version.Minor;
@@ -321,6 +331,16 @@ namespace System.Management.Automation
             get { return s_psV6Version; }
         }
 
+        internal static SemanticVersion PSV7Version
+        {
+            get { return s_psV7Version; }
+        }
+
+        internal static SemanticVersion PSCurrentVersion
+        {
+            get { return s_psSemVersion; }
+        }
+
         #endregion
     }
 
@@ -331,6 +351,7 @@ namespace System.Management.Automation
     public sealed class PSVersionHashTable : Hashtable, IEnumerable
     {
         private static readonly PSVersionTableComparer s_keysComparer = new PSVersionTableComparer();
+
         internal PSVersionHashTable(IEqualityComparer equalityComparer) : base(equalityComparer)
         {
         }
@@ -410,6 +431,7 @@ namespace System.Management.Automation
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
         private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
+
         private string versionString;
 
         /// <summary>

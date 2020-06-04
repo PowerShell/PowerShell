@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -186,6 +186,12 @@ namespace System.Management.Automation.Language
 
         /// <summary/>
         public virtual AstVisitAction VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordStatementAst) { return AstVisitAction.Continue; }
+
+        /// <summary/>
+        public virtual AstVisitAction VisitTernaryExpression(TernaryExpressionAst ternaryExpressionAst) { return AstVisitAction.Continue; }
+
+        /// <summary/>
+        public virtual AstVisitAction VisitPipelineChain(PipelineChainAst statementChain) { return AstVisitAction.Continue; }
     }
 
     /// <summary>

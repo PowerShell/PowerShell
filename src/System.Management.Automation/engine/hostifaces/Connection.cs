@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -333,7 +333,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (runspaceStateInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runspaceStateInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(runspaceStateInfo));
             }
 
             RunspaceStateInfo = runspaceStateInfo;
@@ -582,7 +582,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR // No ApartmentState In CoreCLR
         internal const ApartmentState DefaultApartmentState = ApartmentState.Unknown;
 
         /// <summary>
@@ -613,7 +612,6 @@ namespace System.Management.Automation.Runspaces
         }
 
         private ApartmentState apartmentState = Runspace.DefaultApartmentState;
-#endif
 
         /// <summary>
         /// This property determines whether a new thread is create for each invocation.
@@ -1674,6 +1672,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private RunspaceBase _runspace;
+
         internal SessionStateProxy(RunspaceBase runspace)
         {
             Dbg.Assert(runspace != null, "Caller should validate the parameter");
@@ -1702,7 +1701,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             _runspace.SetVariable(name, value);
@@ -1730,7 +1729,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (name.Equals(string.Empty))

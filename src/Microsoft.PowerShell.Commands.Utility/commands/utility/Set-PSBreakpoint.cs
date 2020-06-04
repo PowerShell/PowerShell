@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements Set-PSBreakpoint command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113449")]
+    [Cmdlet(VerbsCommon.Set, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096623")]
     [OutputType(typeof(VariableBreakpoint), typeof(CommandBreakpoint), typeof(LineBreakpoint))]
     public class SetPSBreakpointCommand : PSBreakpointCreationBase
     {
@@ -75,13 +75,13 @@ namespace Microsoft.PowerShell.Commands
                         foreach (string path in scripts)
                         {
                             WriteObject(
-                                Context.Debugger.NewCommandBreakpoint(path.ToString(), Command[i], Action));
+                                Context.Debugger.SetCommandBreakpoint(Command[i], Action, path));
                         }
                     }
                     else
                     {
                         WriteObject(
-                            Context.Debugger.NewCommandBreakpoint(Command[i], Action));
+                            Context.Debugger.SetCommandBreakpoint(Command[i], Action, path: null));
                     }
                 }
             }
@@ -97,13 +97,13 @@ namespace Microsoft.PowerShell.Commands
                         foreach (string path in scripts)
                         {
                             WriteObject(
-                                Context.Debugger.NewVariableBreakpoint(path.ToString(), Variable[i], Mode, Action));
+                                Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action, path));
                         }
                     }
                     else
                     {
                         WriteObject(
-                            Context.Debugger.NewVariableBreakpoint(Variable[i], Mode, Action));
+                            Context.Debugger.SetVariableBreakpoint(Variable[i], Mode, Action, path: null));
                     }
                 }
             }
@@ -130,16 +130,8 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (string path in scripts)
                     {
-                        if (Column != 0)
-                        {
-                            WriteObject(
-                                Context.Debugger.NewStatementBreakpoint(path, Line[i], Column, Action));
-                        }
-                        else
-                        {
-                            WriteObject(
-                                Context.Debugger.NewLineBreakpoint(path, Line[i], Action));
-                        }
+                        WriteObject(
+                            Context.Debugger.SetLineBreakpoint(path, Line[i], Column, Action));
                     }
                 }
             }

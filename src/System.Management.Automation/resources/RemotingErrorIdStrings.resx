@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -657,7 +657,7 @@
     <value>Session configuration "{0}" is not a PowerShell-based shell.</value>
   </data>
   <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
-    <value>Session configuration "{0}" is a PowerShell Core-based shell. Please use PowerShell Core to modify it.</value>
+    <value>Session configuration "{0}" is a PowerShell-based shell. Please use PowerShell 6+ to modify it.</value>
   </data>
   <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
     <value>Session configuration "{0}" is a Windows PowerShell-based shell. Please use Windows PowerShell to modify it.</value>
@@ -759,9 +759,6 @@ Do you want to continue?</value>
   </data>
   <data name="ShowUIAndSDDLCannotExist" xml:space="preserve">
     <value>"{0}" and "{1}" parameters cannot be specified together. Specify either "{0}" or  "{1}" parameter.</value>
-  </data>
-  <data name="UseSharedProcessCannotBeFalseForWorkflowSessionType" xml:space="preserve">
-    <value>The SharedHost attribute cannot be set to false on a workflow session type configuration.</value>
   </data>
   <data name="RestartWinRMMessage" xml:space="preserve">
     <value>This operation might restart the WinRM service. Do you want to continue?</value>
@@ -975,9 +972,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="SetEnabledTrueTarget" xml:space="preserve">
     <value>Enabled: True. This configures the WS-Management service to accept the connection request.</value>
-  </data>
-  <data name="PSJobProxyInvalidReasonException" xml:space="preserve">
-    <value>Reason in a deserialized Job object is not valid.</value>
   </data>
   <data name="DISCAliasDefinitionsComment" xml:space="preserve">
     <value>Aliases to be defined when applied to a session</value>
@@ -1307,6 +1301,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>Cannot find a scheduled job with type {0} and name {1}.</value>
     <comment>{0} is the job definition type and {1} is the job definition name.</comment>
   </data>
+  <data name="StartJobWorkingDirectoryNotFound" xml:space="preserve">
+    <value>Cannot find the WorkingDirectory path {0}.</value>
+  </data>
   <data name="CannotFindSessionForConnect" xml:space="preserve">
     <value>Cannot connect to session {0}.  The session no longer exists on computer {1}.</value>
     <comment>{0} is the session name that cannot be found.
@@ -1333,9 +1330,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="ErrorParsingTheKeyInPSSessionConfigurationFile" xml:space="preserve">
     <value>Register-PSSessionConfiguration : The '{0}' key in the {1}. session configuration file contains a value that is not valid. Correct the file and try the command again. </value>
   </data>
-  <data name="JobWasStopped" xml:space="preserve">
-    <value>The workflow job "{0}" was stopped. Receive-Job is only displaying partial results.</value>
-  </data>
   <data name="EndpointDoesNotSupportDisconnect" xml:space="preserve">
     <value>Disconnected sessions are supported only when the remote computer is running PowerShell 3.0 or a later version of PowerShell.</value>
   </data>
@@ -1344,9 +1338,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="EnableNetworkAccessWarning" xml:space="preserve">
     <value>PSSession {0} was created using the EnableNetworkAccess parameter and can only be reconnected from the local computer.</value>
-  </data>
-  <data name="RemoteHostDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>You are currently in a PowerShell PSSession and cannot use the Enter-PSSession cmdlet to enter another PSSession.</value>
   </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
     <value>Cannot start job. The language mode for this session is incompatible with the system-wide language mode.</value>
@@ -1659,7 +1650,10 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
   </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
-    <value>PowerShell Core does not support WOW64. The binary must match the architecture of the processor.</value>
+    <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
+  </data>
+  <data name="WowComponentNotPresent" xml:space="preserve">
+    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
   </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
     <value>Unable to install plugin {0} to directory {1}.</value>
@@ -1687,10 +1681,19 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
     <value>HTTPS on Unix does not currently support CA or CN checks. Use the PSSessionOption -SkipCACheck and -SkipCNCheck if you are certain you trust the server you are connecting to and the network in between.</value>
   </data>
   <data name="PSCoreRemotingDisableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been disabled only for PowerShell Core configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.
+    <value>PowerShell remoting has been disabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.
 </value>
   </data>
   <data name="PSCoreRemotingEnableWarning" xml:space="preserve">
-    <value>PowerShell remoting has been enabled only for PowerShell Core configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
+    <value>PowerShell remoting has been enabled only for PowerShell 6+ configurations and does not affect Windows PowerShell remoting configurations. Run this cmdlet in Windows PowerShell to affect all PowerShell remoting configurations.</value>
+  </data>
+  <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
+    <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
+  </data>
+  <data name="RemoteDebuggerError" xml:space="preserve">
+    <value>Remote debugger exception: {0}, error message: {1}</value>
+  </data>
+  <data name="WindowsPowerShellNotPresent" xml:space="preserve">
+    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
   </data>
 </root>

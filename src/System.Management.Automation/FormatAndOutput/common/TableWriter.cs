@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -40,8 +40,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         private ScreenInfo _si;
+
         private const char ESC = '\u001b';
         private const string ResetConsoleVt100Code = "\u001b[m";
+
         private List<string> _header;
 
         internal static int ComputeWideViewBestItemsPerRowFit(int stringLen, int screenColumns)
@@ -436,7 +438,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc, addPadding));
-                if (values[k].IndexOf(ESC) != -1)
+                if (values[k].Contains(ESC))
                 {
                     // Reset the console output if the content of this column contains ESC
                     sb.Append(ResetConsoleVt100Code);

@@ -8,8 +8,9 @@ param(
     $ScriptBlock,
 
     $LogFileName = '.\perfview.log',
-
-    $PowerShellPath = $(Get-Command pwsh.exe).Source)
+    $PowerShellPath = $(Get-Command -Name pwsh.exe).Source,
+    $PerfViewPath = $(Get-Command -Name PerfView.exe).Source
+)
 
 $EncodedScriptBlock = [System.Convert]::ToBase64String([System.Text.Encoding]::UNICODE.GetBytes($ScriptBlock.ToString()))
 $perfViewArgs = @(
@@ -30,26 +31,7 @@ $perfViewArgs = @(
     $EncodedScriptBlock
 )
 
-$process = Start-Process -FilePath (Get-Command PerfView.exe).Source -ArgumentList $perfViewArgs -PassThru
-
-$rs = [runspacefactory]::CreateRunspace($host)
-$rs.Open()
-$ps = [powershell]::Create()
-$ps.Runspace = $rs
-
-$null = $ps.AddCommand("Get-Content").
-    AddArgument($LogFileName).
-    AddParameter("Wait").
-    AddParameter("Tail", 0)
-$null = $ps.AddCommand("Out-Host")
-
-# If log file doesn't exist yet, wait a little bit so Get-Content doesn't fail
-while (!(Test-Path $LogFileName))
-{
-    Start-Sleep -Seconds 1
-}
-
-$null = $ps.BeginInvoke()
+$process = Start-Process -FilePath $PerfViewPath -ArgumentList $perfViewArgs -PassThru
 $process.WaitForExit()
-$ps.Stop()
 
+Get-Content $LogFileName | Out-Host

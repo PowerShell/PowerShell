@@ -1,5 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
 Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 
     BeforeAll {
@@ -19,7 +20,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
             $pingParam = "-n 2 localhost"
         }
         elseif ($IsLinux -Or $IsMacOS) {
-	        $pingParam = "-c 2 localhost"
+            $pingParam = "-c 2 localhost"
         }
     }
 
@@ -27,75 +28,75 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
     # This has been fixed on Linux, but not on macOS
 
     It "Should process arguments without error" {
-	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should work correctly when used with full path name" {
-	    $process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
+        $process = Start-Process $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with FilePath argument" {
-	    $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process -FilePath $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should invoke correct path when used with Path alias argument" {
-	    $process = Start-Process -Path $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process -Path $pingCommand -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
-	    $process.Length | Should -Be 1
-	    $process.Id     | Should -BeGreaterThan 1
+        $process.Length | Should -Be 1
+        $process.Id     | Should -BeGreaterThan 1
     }
 
     It "Should wait for command completion if used with Wait argument" {
-	    $process = Start-Process ping -ArgumentList $pingParam -Wait -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process ping -ArgumentList $pingParam -Wait -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
     }
 
     It "Should work correctly with WorkingDirectory argument" {
-	    $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
+        $process = Start-Process ping -WorkingDirectory $pingDirectory -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should handle stderr redirection without error" {
-	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
+        $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardError $tempFile -RedirectStandardOutput "$TESTDRIVE/output"  @extraArgs
 
 	    $process.Length      | Should -Be 1
 	    $process.Id          | Should -BeGreaterThan 1
-	    # $process.ProcessName | Should Be "ping"
+	    # $process.ProcessName | Should -Be "ping"
     }
 
     It "Should handle stdout redirection without error" {
-	    $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
-	    $dirEntry = get-childitem $tempFile
-	    $dirEntry.Length | Should -BeGreaterThan 0
+        $process = Start-Process ping -ArgumentList $pingParam -Wait -RedirectStandardOutput $tempFile  @extraArgs
+        $dirEntry = Get-ChildItem $tempFile
+        $dirEntry.Length | Should -BeGreaterThan 0
     }
 
     # Marking this test 'pending' to unblock daily builds. Filed issue : https://github.com/PowerShell/PowerShell/issues/2396
     It "Should handle stdin redirection without error" -Pending {
-	    $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile  @extraArgs
-	    $dirEntry = get-childitem $tempFile
-	    $dirEntry.Length | Should -BeGreaterThan 0
+        $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile  @extraArgs
+        $dirEntry = Get-ChildItem $tempFile
+        $dirEntry.Length | Should -BeGreaterThan 0
     }
 
-    ## -Verb is supported in PowerShell core on Windows full desktop.
+    ## -Verb is supported in PowerShell on Windows full desktop.
     It "Should give an error when -Verb parameter is used" -Skip:$isFullWin {
         { Start-Process -Verb runas -FilePath $pingCommand } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
 
-    ## -WindowStyle is supported in PowerShell core on Windows full desktop.
+    ## -WindowStyle is supported in PowerShell on Windows full desktop.
     It "Should give an error when -WindowStyle parameter is used" -Skip:$isFullWin {
         { Start-Process -FilePath $pingCommand -WindowStyle Normal } | Should -Throw -ErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
     }
@@ -167,5 +168,32 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
 
         Wait-FileToBePresent -File "$testdrive\foo.txt" -TimeoutInSeconds 10 -IntervalInMilliseconds 100 | Should -BeTrue
         Get-Content $testdrive\foo.txt | Should -BeExactly $fooFile
+    }
+}
+
+Describe "Start-Process" -Tags "Feature" {
+
+    It "UseNewEnvironment parameter should reset environment variables for child process" {
+
+        $PWSH = (Get-Process -Id $PID).MainModule.FileName
+        $outputFile = Join-Path -Path $TestDrive -ChildPath output.txt
+
+        $env:TestEnvVariable | Should -BeNullOrEmpty
+
+        $env:TestEnvVariable = 1
+        $userName = $env:USERNAME
+
+        try {
+            Start-Process $PWSH -ArgumentList '-NoProfile','-Command Write-Output \"$($env:TestEnvVariable);$($env:USERNAME)\"' -RedirectStandardOutput $outputFile -Wait
+            Get-Content -LiteralPath $outputFile | Should -BeExactly "1;$userName"
+
+            # Check that:
+            # 1. Environment variables is resetted (TestEnvVariable is removed)
+            # 2. Environment variables comes from current user profile
+            Start-Process $PWSH -ArgumentList '-NoProfile','-Command Write-Output \"$($env:TestEnvVariable);$($env:USERNAME)\"' -RedirectStandardOutput $outputFile -Wait -UseNewEnvironment
+            Get-Content -LiteralPath $outputFile | Should -BeExactly ";$userName"
+        } finally {
+            $env:TestEnvVariable = $null
+        }
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -72,7 +72,7 @@ namespace System.Management.Automation
         protected Breakpoint(string script, ScriptBlock action)
         {
             Enabled = true;
-            Script = script;
+            Script = string.IsNullOrEmpty(script) ? null : script;
             Id = Interlocked.Increment(ref s_lastID);
             Action = action;
             HitCount = 0;
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         protected Breakpoint(string script, ScriptBlock action, int id)
         {
             Enabled = true;
-            Script = script;
+            Script = string.IsNullOrEmpty(script) ? null : script;
             Id = id;
             Action = action;
             HitCount = 0;
@@ -128,9 +128,7 @@ namespace System.Management.Automation
             return BreakpointAction.Continue;
         }
 
-        internal virtual void RemoveSelf(ScriptDebugger debugger)
-        {
-        }
+        internal virtual bool RemoveSelf(ScriptDebugger debugger) => false;
 
         #endregion methods
 
@@ -208,10 +206,8 @@ namespace System.Management.Automation
                        : StringUtil.Format(DebuggerStrings.CommandBreakpointString, Command);
         }
 
-        internal override void RemoveSelf(ScriptDebugger debugger)
-        {
+        internal override bool RemoveSelf(ScriptDebugger debugger) =>
             debugger.RemoveCommandBreakpoint(this);
-        }
 
         private bool CommandInfoMatches(CommandInfo commandInfo)
         {
@@ -224,7 +220,7 @@ namespace System.Management.Automation
             // If the breakpoint looks like it might have specified a module name and the command
             // we're checking is in a module, try matching the module\command against the pattern
             // in the breakpoint.
-            if (!string.IsNullOrEmpty(commandInfo.ModuleName) && Command.IndexOf('\\') != -1)
+            if (!string.IsNullOrEmpty(commandInfo.ModuleName) && Command.Contains('\\'))
             {
                 if (CommandPattern.IsMatch(commandInfo.ModuleName + "\\" + commandInfo.Name))
                     return true;
@@ -350,10 +346,8 @@ namespace System.Management.Automation
             return false;
         }
 
-        internal override void RemoveSelf(ScriptDebugger debugger)
-        {
+        internal override bool RemoveSelf(ScriptDebugger debugger) =>
             debugger.RemoveVariableBreakpoint(this);
-        }
     }
 
     /// <summary>
@@ -589,7 +583,7 @@ namespace System.Management.Automation
             this.BreakpointBitArray.Set(SequencePointIndex, true);
         }
 
-        internal override void RemoveSelf(ScriptDebugger debugger)
+        internal override bool RemoveSelf(ScriptDebugger debugger)
         {
             if (this.SequencePoints != null)
             {
@@ -612,7 +606,7 @@ namespace System.Management.Automation
                 }
             }
 
-            debugger.RemoveLineBreakpoint(this);
+            return debugger.RemoveLineBreakpoint(this);
         }
     }
 }

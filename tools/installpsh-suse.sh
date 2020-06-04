@@ -5,7 +5,7 @@
 #bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-suse.sh) ARGUMENTS
 #bash <(curl -s https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/installpsh-suse.sh) <ARGUMENTS>
 
-#Usage - if you do not have the ability to run scripts directly from the web, 
+#Usage - if you do not have the ability to run scripts directly from the web,
 #        pull all files in this repo folder and execute, this script
 #        automatically prefers local copies of sub-scripts
 
@@ -15,7 +15,7 @@
 # -includeide         - installs VSCode and VSCode PowerShell extension (only relevant to machines with desktop environment)
 # -interactivetesting - do a quick launch test of VSCode (only relevant when used with -includeide)
 # -skip-sudo-check    - use sudo without verifying its availability (this is required to run in the VSTS Hosted Linux Preview)
-# -preview            - installs the latest preview release of PowerShell core side-by-side with any existing production releasesS
+# -preview            - installs the latest preview release of PowerShell side-by-side with any existing production releasesS
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
@@ -29,7 +29,7 @@ gitscriptname="installpsh-suse.psh"
 pwshlink=/usr/bin/pwsh
 
 echo
-echo "*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
+echo "*** PowerShell Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Original script is at: $gitreposcriptroot/$gitscriptname"
 echo
 echo "*** Arguments used: $*"
@@ -64,6 +64,13 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DIST=$(sed s/\ release.*// < /etc/system-release)
+            if [[ $DIST == *"Amazon Linux"* ]] ; then
+                DistroBasedOn='amazonlinux'
+            else
+                DistroBasedOn='redhat'
+            fi
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
@@ -123,7 +130,7 @@ fi
 #END Verify The Installer Choice
 
 echo
-echo "*** Installing prerequisites for PowerShell Core..."
+echo "*** Installing prerequisites for PowerShell..."
 $SUDO zypper --non-interactive install \
         glibc-locale \
         glibc-i18ndata \
@@ -137,7 +144,7 @@ $SUDO zypper --non-interactive install \
 ##END Check requirements and prerequisites
 
 echo
-echo "*** Installing PowerShell Core for $DistroBasedOn..."
+echo "*** Installing PowerShell for $DistroBasedOn..."
 
 echo "ATTENTION: As of version 1.2.0 this script no longer uses pre-releases unless the '-preview' switch is used"
 
@@ -156,12 +163,12 @@ downloadurl=https://github.com/PowerShell/PowerShell/releases/download/v$release
 
 
 #REPO BASED (Not ready yet)
-#echo "*** Setting up PowerShell Core repo..."
+#echo "*** Setting up PowerShell repo..."
 #echo "*** Current version on git is: $release, repo version may differ slightly..."
 ## Install the Microsoft public key so that zypper trusts the package
 #sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 ##Add the Repo
-#$SUDO sh -c 'echo -e "[code]\nname=PowerShell Core\nbaseurl=https://packages.microsoft.com/yumrepos/microsoft-sles12-prod\nenabled=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/zypp/repos.d/powershellcore.repo'
+#$SUDO sh -c 'echo -e "[code]\nname=PowerShell\nbaseurl=https://packages.microsoft.com/yumrepos/microsoft-sles12-prod\nenabled=1\ntype=rpm-md\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/zypp/repos.d/powershellcore.repo'
 ## Update zypper
 #$SUDO zypper refresh
 ## Install PowerShell
@@ -228,8 +235,8 @@ if [[ "'$*'" =~ includeide ]] ; then
 fi
 
 if [[ "$repobased" == true ]] ; then
-  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell Core"
+  echo "*** NOTE: Run your regular package manager update cycle to update PowerShell"
 else
-  echo "*** NOTE: Re-run this script to update PowerShell Core"
+  echo "*** NOTE: Re-run this script to update PowerShell"
 fi
 echo "*** Install Complete"

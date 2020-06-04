@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Text;
@@ -29,7 +29,7 @@ namespace System.Management.Automation.Language
             foreach (char c in value)
             {
                 sb.Append(c);
-                if (SpecialCharacters.IsSingleQuote(c))
+                if (CharExtensions.IsSingleQuote(c))
                 {
                     // double-up quotes to escape them
                     sb.Append(c);
@@ -76,7 +76,7 @@ namespace System.Management.Automation.Language
             foreach (char c in value)
             {
                 sb.Append(c);
-                if (SpecialCharacters.IsCurlyBracket(c))
+                if (CharExtensions.IsCurlyBracket(c))
                 {
                     // double-up curly brackets to escape them
                     sb.Append(c);

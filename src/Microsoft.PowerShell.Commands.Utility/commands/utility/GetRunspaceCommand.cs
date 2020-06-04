@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet returns runspaces in the PowerShell session.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Runspace", DefaultParameterSetName = GetRunspaceCommand.NameParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=403730")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096616")]
     [OutputType(typeof(Runspace))]
     public sealed class GetRunspaceCommand : PSCmdlet
     {

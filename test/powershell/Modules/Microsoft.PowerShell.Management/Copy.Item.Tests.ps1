@@ -1,5 +1,18 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+Describe "Validate Copy-Item locally" -Tags "CI" {
+    It "Copy-Item has non-terminating error if destination is in use" -Skip:(!$IsWindows) {
+        Copy-Item -Path $env:windir\system32\cmd.exe -Destination TestDrive:\
+        $cmd = Start-Process -FilePath TestDrive:\cmd.exe -PassThru
+        try {
+            { Copy-Item -Path $env:windir\system32\cmd.exe -Destination TestDrive:\ -ErrorAction SilentlyContinue } | Should -Not -Throw
+        }
+        finally {
+            $cmd | Stop-Process
+        }
+    }
+}
 
 # This is a Pester test suite to validate Copy-Item remotely using a remote session.
 
@@ -485,7 +498,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             try
             {
                 $s1 = New-PSSession -ComputerName . -ErrorAction SilentlyContinue
-                $s1 | Should Not BeNullOrEmpty
+                $s1 | Should -Not -BeNullOrEmpty
                 $filePath = CreateTestFile
                 $destinationFolderPath = GetDestinationFolderPath
                 { Copy-Item -Path $filePath -Destination $destinationFolderPath -FromSession $s -ToSession $s1 -ErrorAction Stop } | Should -Throw -ErrorId "InvalidInput,Microsoft.PowerShell.Commands.CopyItemCommand"
@@ -537,7 +550,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         BeforeAll {
             # Create test file.
             $testFilePath = Join-Path "TestDrive:" "testfile.txt"
-            if (test-path $testFilePath)
+            if (Test-Path $testFilePath)
             {
                 Remove-Item $testFilePath -Force -ErrorAction SilentlyContinue
             }

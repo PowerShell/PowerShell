@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet generates the catalog for File or Folder.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "FileCatalog", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=786749")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096596")]
     [OutputType(typeof(FileInfo))]
     public sealed class NewFileCatalogCommand : CatalogCommandsBase
     {
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet validates the Integrity of catalog.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "FileCatalog", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=786750")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096921")]
     [OutputType(typeof(CatalogValidationStatus))]
     [OutputType(typeof(CatalogInformation))]
     public sealed class TestFileCatalogCommand : CatalogCommandsBase

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
                 throw new PlatformNotSupportedException();
             }
 
-            // PowerShell Core requires at least Windows 7,
+            // PowerShell 7 requires at least Windows 7,
             // so no version test is needed
             _pdhHelper = new PdhHelper(false);
 #else

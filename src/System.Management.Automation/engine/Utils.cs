@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -14,6 +14,7 @@ using System.Linq;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
+using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Numerics;
@@ -301,7 +302,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Allowed PowerShell Editions.
         /// </summary>
-        internal static string[] AllowedEditionValues = { "Desktop", "Core" };
+        internal static readonly string[] AllowedEditionValues = { "Desktop", "Core" };
 
         /// <summary>
         /// Helper fn to check byte[] arg for null.
@@ -446,9 +447,45 @@ namespace System.Management.Automation
 
             return null;
         }
+
+        private static string s_windowsPowerShellVersion = null;
+
+        /// <summary>
+        /// Get the Windows PowerShell version from registry.
+        /// </summary>
+        /// <returns>
+        /// String of Windows PowerShell version from registry.
+        /// </returns>
+        internal static string GetWindowsPowerShellVersionFromRegistry()
+        {
+            if (!string.IsNullOrEmpty(InternalTestHooks.TestWindowsPowerShellVersionString))
+            {
+                return InternalTestHooks.TestWindowsPowerShellVersionString;
+            }
+
+            if (s_windowsPowerShellVersion != null)
+            {
+                return s_windowsPowerShellVersion;
+            }
+
+            string engineKeyPath = RegistryStrings.MonadRootKeyPath + "\\" +
+                PSVersionInfo.RegistryVersionKey + "\\" + RegistryStrings.MonadEngineKey;
+
+            using (RegistryKey engineKey = Registry.LocalMachine.OpenSubKey(engineKeyPath))
+            {
+                if (engineKey != null)
+                {
+                    s_windowsPowerShellVersion = engineKey.GetValue(RegistryStrings.MonadEngine_MonadVersion) as string;
+                    return s_windowsPowerShellVersion;
+                }
+            }
+
+            return string.Empty;
+        }
 #endif
 
         internal static string DefaultPowerShellAppBase => GetApplicationBase(DefaultPowerShellShellID);
+
         internal static string GetApplicationBase(string shellId)
         {
             // Use the location of SMA.dll as the application base.
@@ -457,20 +494,6 @@ namespace System.Management.Automation
         }
 
         private static string[] s_productFolderDirectories;
-
-        /// <summary>
-        /// Specifies the per-user configuration settings directory in a platform agnostic manner.
-        /// </summary>
-        /// <returns>The current user's configuration settings directory.</returns>
-        internal static string GetUserConfigurationDirectory()
-        {
-#if UNIX
-            return Platform.SelectProductNameForDirectory(Platform.XDG_Type.CONFIG);
-#else
-            string basePath = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            return IO.Path.Combine(basePath, Utils.ProductNameForDirectory);
-#endif
-        }
 
         private static string[] GetProductFolderDirectories()
         {
@@ -713,7 +736,7 @@ namespace System.Management.Automation
         /// The subdirectory of module paths
         /// e.g. ~\Documents\WindowsPowerShell\Modules and %ProgramFiles%\WindowsPowerShell\Modules.
         /// </summary>
-        internal static string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
+        internal static readonly string ModuleDirectory = Path.Combine(ProductNameForDirectory, "Modules");
 
         internal static readonly ConfigScope[] SystemWideOnlyConfig = new[] { ConfigScope.AllUsers };
         internal static readonly ConfigScope[] CurrentUserOnlyConfig = new[] { ConfigScope.CurrentUser };
@@ -806,37 +829,44 @@ namespace System.Management.Automation
             {nameof(UpdatableHelp), @"Software\Policies\Microsoft\PowerShellCore\UpdatableHelp"},
             {nameof(ConsoleSessionConfiguration), @"Software\Policies\Microsoft\PowerShellCore\ConsoleSessionConfiguration"}
         };
-        private static readonly ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase> s_cachedPoliciesFromRegistry =
-            new ConcurrentDictionary<Tuple<ConfigScope, string>, PolicyBase>();
+
+        private static readonly Dictionary<string, string> WindowsPowershellGroupPolicyKeys = new Dictionary<string, string>
+        {
+            { nameof(ScriptExecution), @"Software\Policies\Microsoft\Windows\PowerShell" },
+            { nameof(ScriptBlockLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" },
+            { nameof(ModuleLogging), @"Software\Policies\Microsoft\Windows\PowerShell\ModuleLogging" },
+            { nameof(Transcription), @"Software\Policies\Microsoft\Windows\PowerShell\Transcription" },
+            { nameof(UpdatableHelp), @"Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp" },
+        };
+
+        private const string PolicySettingFallbackKey = "UseWindowsPowerShellPolicySetting";
+
+        private static readonly ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_cachedPoliciesFromRegistry =
+            new ConcurrentDictionary<ConfigScope, ConcurrentDictionary<string, PolicyBase>>();
+
+        private static readonly Func<ConfigScope, ConcurrentDictionary<string, PolicyBase>> s_subCacheCreationDelegate =
+            key => new ConcurrentDictionary<string, PolicyBase>(StringComparer.Ordinal);
 
         /// <summary>
-        /// The implementation of fetching a specific kind of policy setting from the given configuration scope.
+        /// Read policy settings from a registry key into a policy object.
         /// </summary>
-        private static T GetPolicySettingFromGPOImpl<T>(ConfigScope scope) where T : PolicyBase, new()
+        /// <param name="instance">Policy object that will be filled with values from registry.</param>
+        /// <param name="instanceType">Type of policy object used.</param>
+        /// <param name="gpoKey">Registry key that has policy settings.</param>
+        /// <returns>True if any property was successfully set on the policy object.</returns>
+        private static bool TrySetPolicySettingsFromRegistryKey(object instance, Type instanceType, RegistryKey gpoKey)
         {
-            Type tType = typeof(T);
-            // SystemWide scope means 'LocalMachine' root key when query from registry
-            RegistryKey rootKey = (scope == ConfigScope.AllUsers) ? Registry.LocalMachine : Registry.CurrentUser;
+            var properties = instanceType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            bool isAnyPropertySet = false;
 
-            GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
-            Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
+            string[] valueNames = gpoKey.GetValueNames();
+            string[] subKeyNames = gpoKey.GetSubKeyNames();
+            var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
+            var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
 
-            using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
+            // If there are any values or subkeys in the registry key - read them into the policy instance object
+            if ((valueNameSet != null) || (subKeyNameSet != null))
             {
-                // If the corresponding GPO key doesn't exist, return null
-                if (gpoKey == null) { return null; }
-
-                // The corresponding GPO key exists, then create an instance of T
-                // and populate its properties with the settings
-                object tInstance = Activator.CreateInstance(tType, nonPublic: true);
-                var properties = tType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-                bool isAnyPropertySet = false;
-
-                string[] valueNames = gpoKey.GetValueNames();
-                string[] subKeyNames = gpoKey.GetSubKeyNames();
-                var valueNameSet = valueNames.Length > 0 ? new HashSet<string>(valueNames, StringComparer.OrdinalIgnoreCase) : null;
-                var subKeyNameSet = subKeyNames.Length > 0 ? new HashSet<string>(subKeyNames, StringComparer.OrdinalIgnoreCase) : null;
-
                 foreach (var property in properties)
                 {
                     string settingName = property.Name;
@@ -851,7 +881,10 @@ namespace System.Management.Automation
                     {
                         using (RegistryKey subKey = gpoKey.OpenSubKey(settingName))
                         {
-                            if (subKey != null) { rawRegistryValue = subKey.GetValueNames(); }
+                            if (subKey != null)
+                            {
+                                rawRegistryValue = subKey.GetValueNames();
+                            }
                         }
                     }
 
@@ -867,8 +900,14 @@ namespace System.Management.Automation
                             case var _ when propertyType == typeof(bool?):
                                 if (rawRegistryValue is int rawIntValue)
                                 {
-                                    if (rawIntValue == 1) { propertyValue = true; }
-                                    else if (rawIntValue == 0) { propertyValue = false; }
+                                    if (rawIntValue == 1)
+                                    {
+                                        propertyValue = true;
+                                    }
+                                    else if (rawIntValue == 0)
+                                    {
+                                        propertyValue = false;
+                                    }
                                 }
 
                                 break;
@@ -891,16 +930,59 @@ namespace System.Management.Automation
 
                                 break;
                             default:
-                                Diagnostics.Assert(false, "Should be unreachable code. Update this switch block when properties of new types are added to PowerShell policy types.");
-                                break;
+                                throw System.Management.Automation.Interpreter.Assert.Unreachable;
                         }
 
                         // Set the property if the value is not null
                         if (propertyValue != null)
                         {
-                            property.SetValue(tInstance, propertyValue);
+                            property.SetValue(instance, propertyValue);
                             isAnyPropertySet = true;
                         }
+                    }
+                }
+            }
+
+            return isAnyPropertySet;
+        }
+
+        /// <summary>
+        /// The implementation of fetching a specific kind of policy setting from the given configuration scope.
+        /// </summary>
+        private static T GetPolicySettingFromGPOImpl<T>(ConfigScope scope) where T : PolicyBase, new()
+        {
+            Type tType = typeof(T);
+            // SystemWide scope means 'LocalMachine' root key when query from registry
+            RegistryKey rootKey = (scope == ConfigScope.AllUsers) ? Registry.LocalMachine : Registry.CurrentUser;
+
+            GroupPolicyKeys.TryGetValue(tType.Name, out string gpoKeyPath);
+            Diagnostics.Assert(gpoKeyPath != null, StringUtil.Format("The GPO registry key path should be pre-defined for {0}", tType.Name));
+
+            using (RegistryKey gpoKey = rootKey.OpenSubKey(gpoKeyPath))
+            {
+                // If the corresponding GPO key doesn't exist, return null
+                if (gpoKey == null) { return null; }
+
+                // The corresponding GPO key exists, then create an instance of T
+                // and populate its properties with the settings
+                object tInstance = Activator.CreateInstance(tType, nonPublic: true);
+                bool isAnyPropertySet = false;
+
+                // if PolicySettingFallbackKey is Not set - use PowerShell Core policy reg key
+                if ((int)gpoKey.GetValue(PolicySettingFallbackKey, 0) == 0)
+                {
+                    isAnyPropertySet = TrySetPolicySettingsFromRegistryKey(tInstance, tType, gpoKey);
+                }
+                else
+                {
+                    // when PolicySettingFallbackKey flag is set (REG_DWORD "1") use Windows PS policy reg key
+                    WindowsPowershellGroupPolicyKeys.TryGetValue(tType.Name, out string winPowershellGpoKeyPath);
+                    Diagnostics.Assert(winPowershellGpoKeyPath != null, StringUtil.Format("The Windows PS GPO registry key path should be pre-defined for {0}", tType.Name));
+                    using (RegistryKey winPowershellGpoKey = rootKey.OpenSubKey(winPowershellGpoKeyPath))
+                    {
+                        // If the corresponding Windows PS GPO key doesn't exist, return null
+                        if (winPowershellGpoKey == null) { return null; }
+                        isAnyPropertySet = TrySetPolicySettingsFromRegistryKey(tInstance, tType, winPowershellGpoKey);
                     }
                 }
 
@@ -915,6 +997,8 @@ namespace System.Management.Automation
         private static T GetPolicySettingFromGPO<T>(ConfigScope[] preferenceOrder) where T : PolicyBase, new()
         {
             PolicyBase policy = null;
+            string policyName = typeof(T).Name;
+
             foreach (ConfigScope scope in preferenceOrder)
             {
                 if (InternalTestHooks.BypassGroupPolicyCaching)
@@ -923,13 +1007,10 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    var key = Tuple.Create(scope, typeof(T).Name);
-                    if (!s_cachedPoliciesFromRegistry.TryGetValue(key, out policy))
+                    var subordinateCache = s_cachedPoliciesFromRegistry.GetOrAdd(scope, s_subCacheCreationDelegate);
+                    if (!subordinateCache.TryGetValue(policyName, out policy))
                     {
-                        lock (s_cachedPoliciesFromRegistry)
-                        {
-                            policy = s_cachedPoliciesFromRegistry.GetOrAdd(key, tuple => GetPolicySettingFromGPOImpl<T>(tuple.Item1));
-                        }
+                        policy = subordinateCache.GetOrAdd(policyName, key => GetPolicySettingFromGPOImpl<T>(scope));
                     }
                 }
 
@@ -1033,11 +1114,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // append to result
-                        foreach (PSModuleInfo temp in gmoOutPut)
-                        {
-                            result.Add(temp);
-                        }
+                        result.AddRange(gmoOutPut);
                     }
                 }
             }
@@ -1182,8 +1259,6 @@ namespace System.Management.Automation
             string compareName = Path.GetFileName(destinationPath);
             string noExtensionCompareName = Path.GetFileNameWithoutExtension(destinationPath);
 
-            // See if it's the correct length. If it's shorter than CON, AUX, etc, it can't be a device name.
-            // Likewise, if it's longer than 'CLOCK$', it can't be a device name.
             if (((compareName.Length < 3) || (compareName.Length > 6)) &&
                 ((noExtensionCompareName.Length < 3) || (noExtensionCompareName.Length > 6)))
             {
@@ -1208,8 +1283,19 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
+            if (string.IsNullOrEmpty(path) || !path.StartsWith('\\'))
+            {
+                return false;
+            }
+
+            // handle special cases like \\wsl$\ubuntu which isn't a UNC path, but we can say it is so the filesystemprovider can use it
+            if (path.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
             Uri uri;
-            return !string.IsNullOrEmpty(path) && Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
+            return Uri.TryCreate(path, UriKind.Absolute, out uri) && uri.IsUnc;
 #endif
         }
 
@@ -1371,11 +1457,11 @@ namespace System.Management.Automation
         }
 
         // BigEndianUTF32 encoding is possible, but requires creation
-        internal static Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
+        internal static readonly Encoding BigEndianUTF32Encoding = new UTF32Encoding(bigEndian: true, byteOrderMark: true);
         // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
-        internal static Dictionary<string, Encoding> encodingMap =
+        internal static readonly Dictionary<string, Encoding> encodingMap =
             new Dictionary<string, Encoding>()
             {
                 { "255-254", Encoding.Unicode },
@@ -1385,7 +1471,7 @@ namespace System.Management.Automation
                 { "239-187-191", Encoding.UTF8 },
             };
 
-        internal static char[] nonPrintableCharacters = {
+        internal static readonly char[] nonPrintableCharacters = {
             (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8,
             (char) 11, (char) 12, (char) 14, (char) 15, (char) 16, (char) 17, (char) 18, (char) 19, (char) 20,
             (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,
@@ -1741,6 +1827,7 @@ namespace System.Management.Automation
         }
 
         private const string WhereObjectCommandAlias = "?";
+
         private static bool TryGetCommandInfoList(PowerShell ps, HashSet<string> commandNames, out Collection<CommandInfo> cmdInfoList)
         {
             if (commandNames.Count == 0)
@@ -1792,6 +1879,7 @@ namespace System.Management.Automation
     {
         internal readonly HashSet<string> ValidVariables = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         internal readonly HashSet<string> Commands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         internal ScriptBlockAst ScriptBeingConverted { get; set; }
 
         public override AstVisitAction VisitVariableExpression(VariableExpressionAst variableExpressionAst)
@@ -1987,6 +2075,9 @@ namespace System.Management.Automation.Internal
         // since we can't manipulate the System32 directory in a test
         internal static string TestWindowsPowerShellPSHomeLocation;
 
+        // A version of Windows PS that is installed on the system; normally this is retrieved from a reg key that is write-protected.
+        internal static string TestWindowsPowerShellVersionString;
+
         internal static bool ShowMarkdownOutputBypass;
 
         /// <summary>This member is used for internal test purposes.</summary>
@@ -2010,6 +2101,25 @@ namespace System.Management.Automation.Internal
         public static bool TestImplicitRemotingBatching(string commandPipeline, System.Management.Automation.Runspaces.Runspace runspace)
         {
             return Utils.TryRunAsImplicitBatch(commandPipeline, runspace);
+        }
+
+        /// <summary>
+        /// Constructs a custom PSSenderInfo instance that can be assigned to $PSSenderInfo
+        /// in order to simulate a remoting session with respect to the $PSSenderInfo.ConnectionString (connection URL)
+        /// and $PSSenderInfo.ApplicationArguments.PSVersionTable.PSVersion (the remoting client's PowerShell version).
+        /// See Get-FormatDataTest.ps1.
+        /// </summary>
+        /// <param name="url">The connection URL to reflect in the returned instance's ConnectionString property.</param>
+        /// <param name="clientVersion">The version number to report as the remoting client's PowerShell version.</param>
+        /// <returns>The newly constructed custom PSSenderInfo instance.</returns>
+        public static PSSenderInfo GetCustomPSSenderInfo(string url, Version clientVersion)
+        {
+            var dummyPrincipal = new PSPrincipal(new PSIdentity("none", true, "someuser", null), null);
+            var pssi = new PSSenderInfo(dummyPrincipal, url);
+            pssi.ApplicationArguments = new PSPrimitiveDictionary();
+            pssi.ApplicationArguments.Add("PSVersionTable", new PSObject(new PSPrimitiveDictionary()));
+            ((PSPrimitiveDictionary)PSObject.Base(pssi.ApplicationArguments["PSVersionTable"])).Add("PSVersion", new PSObject(clientVersion));
+            return pssi;
         }
     }
 
