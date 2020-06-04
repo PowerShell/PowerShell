@@ -32,17 +32,17 @@ jobs:
 
   - template: expand-compliance.yml
     parameters:
+      architecture: fxdependent
+      version: $(version)
+
+  - template: expand-compliance.yml
+    parameters:
       architecture: x86
       version: $(version)
 
   - template: expand-compliance.yml
     parameters:
       architecture: x64
-      version: $(version)
-
-  - template: expand-compliance.yml
-    parameters:
-      architecture: fxdependent
       version: $(version)
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-antimalware.AntiMalware@3
@@ -96,25 +96,9 @@ jobs:
 
   # FXCop is not applicable
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
-    displayName: 'Publish Security Analysis Logs to Build Artifacts'
-    continueOnError: true
-
   # PreFASt is not applicable
 
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-policheck.PoliCheck@1
-    displayName: 'Run PoliCheck'
-    inputs:
-      targetType: F
-      optionsFC: 0
-      optionsXS: 0
-      optionsPE: '1|2|3|4'
-      optionsHMENABLE: 0
-      optionsRulesDBPath: '$(Build.SourcesDirectory)\tools\terms\PowerShell-Terms-Rules.mdb'
-      optionsFTPATH: '$(Build.SourcesDirectory)\tools\terms\FileTypeSet.xml'
-    continueOnError: true
-
-  - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@1
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-apiscan.APIScan@2
     displayName: 'Run APIScan'
     inputs:
       softwareFolder: '$(CompliancePath)'
@@ -122,6 +106,10 @@ jobs:
       softwareVersionNum: '$(ReleaseTagVar)'
       isLargeApp: false
       preserveTempFiles: true
+    continueOnError: true
+
+  - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2
+    displayName: 'Publish Security Analysis Logs to Build Artifacts'
     continueOnError: true
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-uploadtotsa.TSAUpload@1
