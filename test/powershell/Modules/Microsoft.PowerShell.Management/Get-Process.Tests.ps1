@@ -71,6 +71,8 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Test for process property = Name" {
+        $msg = Get-Process -Id $PID | fl * | Out-String
+        Write-Warning ">>> $PID; $msg"
         (Get-Process -Id $PID).Name | Should -BeExactly "pwsh"
     }
 
