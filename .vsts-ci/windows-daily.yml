@@ -158,7 +158,6 @@ stages:
         $capDataDir = '$(CapDataDir)'
         $capModuleFile = '$(CapUtilDir)\CAPService.psm1'
 
-        Write-Host 'IngressToken: $(CapIngressToken)'
         if ((Test-Path $capModuleFile) -and (Test-Path $capDataDir)) {
             Import-Module $capModuleFile
             Stop-TraceCollection -DataDir $capDataDir -RepoRoot $pwd -IngressToken '$(CapIngressToken)'
