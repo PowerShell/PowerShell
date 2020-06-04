@@ -260,7 +260,7 @@ Describe "CliXml test" -Tags "CI" {
             $gps.Id | Should -Be $importedProcess.Id
         }
 
-        It "should import PSCredential" {
+        It "Should import PSCredential" {
             $UserName = "Foo"
             $pass = ConvertTo-SecureString (New-RandomHexString) -AsPlainText -Force
             $cred =  [PSCredential]::new($UserName, $pass)

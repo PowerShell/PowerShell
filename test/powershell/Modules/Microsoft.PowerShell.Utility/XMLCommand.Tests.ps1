@@ -163,8 +163,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
     It "ConvertFrom-CliXml directive should work" {
         $content = Get-Command export* -Type Cmdlet | Select-Object -First 3 | ConvertTo-Clixml
 		$results = ConvertFrom-CliXml $content
-		$results.Count | Should -BeExactly 3
-        $results[0].PSTypeNames[0] | Should -Be "Deserialized.System.Management.Automation.CmdletInfo"
+		$results.Count | Should -Be 3
+        $results[0].PSTypeNames[0] | Should -BeExactly "Deserialized.System.Management.Automation.CmdletInfo"
     }
 
     It "ConvertFrom-CliXml with Rehydration should work" {
@@ -174,7 +174,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$content = $isHiddenTestType | ConvertTo-Clixml
 		$results = ConvertFrom-CliXml $content
 		$results.Property1 | Should -Be $property1
-		$results.Property2 | Should -Be $property2
+		$results.Property2 | Should -BeExactly $property2
     }
 
     It "ConvertTo-Clixml StopProcessing should succeed" {
@@ -183,10 +183,10 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
         $null = $ps.AddCommand("foreach-object")
         $null = $ps.AddParameter("Process", { $_; Start-Sleep -Seconds 1 })
         $null = $ps.AddCommand("ConvertTo-Clixml")
-        $null = $ps.BeginInvoke()
-        Start-Sleep -Seconds 1
+
+        Wait-UntilTrue { $ps.BeginInvoke() } -IntervalInMilliseconds 1000
         $null = $ps.Stop()
-        $ps.InvocationStateInfo.State | Should -Be "Stopped"
+        $ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
         $ps.Dispose()
 	}
 
@@ -198,7 +198,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$ps.AddParameter("InputObject", $content)
 		$ps.BeginInvoke()
 		$ps.Stop()
-		$ps.InvocationStateInfo.State | Should -Be "Stopped"
+		$ps.InvocationStateInfo.State | Should -BeExactly "Stopped"
 	}
 
     It "ConvertTo-Clixml using -Depth should work" {
@@ -230,7 +230,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 
 	It "ConvertFrom-CliXml -IncludeTotalCount always returns unknown total count" {
 		# this cmdlets supports paging, but not this switch
-		$content = [PSCustomObject]@{foo=1;bar=@{hello="world"}} | ConvertTo-Clixml
+		$content = [PSCustomObject]@{ foo = 1; bar = @{ hello = "world" }} | ConvertTo-Clixml
 		$out = ConvertFrom-CliXml -InputObject $content -IncludeTotalCount
 		$out[0].ToString() | Should -BeExactly "Unknown total count"
 	}
@@ -244,7 +244,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 	}
 
 	It "ConvertFrom-CliXml -First and -Skip work together for collections" {
-		$content = @{a=1;b=2;c=3;d=4} | ConvertTo-Clixml
+		$content = @{ a = 1; b = 2; c = 3; d = 4 } | ConvertTo-Clixml
 		# order not guaranteed, even with [ordered] so we have to be smart here and compare against the full result
 		$out1 = ConvertFrom-CliXml -InputObject $content	# this results in a hashtable
 		$out2 = ConvertFrom-CliXml -InputObject $content -First 2 -Skip 1	# this results in a dictionary entry

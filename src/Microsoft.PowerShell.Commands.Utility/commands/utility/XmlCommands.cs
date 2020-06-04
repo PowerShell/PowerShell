@@ -572,7 +572,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            _importXmlHelper = new ImportXmlHelper(this, _stringBuilder);
+            _importXmlHelper = new ImportXmlHelper(this, _stringBuilder.ToString());
             _importXmlHelper.Import();
         }
 
@@ -902,10 +902,14 @@ namespace Microsoft.PowerShell.Commands
             CreateFileStream();
         }
 
-        internal ImportXmlHelper(PSCmdlet cmdlet, StringBuilder stringBuilder)
+        internal ImportXmlHelper(PSCmdlet cmdlet, string cliObject)
         {
             _cmdlet = cmdlet;
-            _stringBuilder = stringBuilder;
+            _memoryStream = new MemoryStream();
+            StreamWriter memeoryWriter = new StreamWriter(_memoryStream);
+            memeoryWriter.Write(cliObject);
+            memeoryWriter.Flush();
+            _memoryStream.Position = 0;
             CreateStream();
         }
 
@@ -921,7 +925,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Handle to string builder.
         /// </summary>
-        internal StringBuilder _stringBuilder;
+        private readonly Stream _memoryStream;
 
         /// <summary>
         /// XmlReader used to read file or string.
@@ -946,24 +950,6 @@ namespace Microsoft.PowerShell.Commands
             return XmlReader.Create(textReader, InternalDeserializer.XmlReaderSettingsForCliXml);
         }
 
-        private static XmlReader CreateXmlReader(StringBuilder stringBuilder)
-        {
-            StringReader stringReader = new StringReader(stringBuilder.ToString());
-
-            // skip #< CLIXML directive
-            const string CliXmlDirective = "#< CLIXML";
-            if (stringReader.Peek() == (int)CliXmlDirective[0])
-            {
-                string line = stringReader.ReadLine();
-                if (!line.Equals(CliXmlDirective, StringComparison.Ordinal))
-                {
-                    stringReader = new StringReader(stringBuilder.ToString());
-                }
-            }
-
-            return XmlReader.Create(stringReader, InternalDeserializer.XmlReaderSettingsForCliXml);
-        }
-
         internal void CreateFileStream()
         {
             _fs = PathUtils.OpenFileStream(_path, _cmdlet, _isLiteralPath);
@@ -972,7 +958,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal void CreateStream()
         {
-            _xr = CreateXmlReader(_stringBuilder);
+            _xr = CreateXmlReader(_memoryStream);
         }
 
         private void CleanUp()
