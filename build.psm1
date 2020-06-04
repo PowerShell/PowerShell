@@ -1854,6 +1854,7 @@ function Start-PSBootstrap {
                     if($environment.IsMacOS -or $env:TF_BUILD) {
                         $gemsudo = $sudo
                     }
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ffi -v 1.12.0 --no-document"))
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
                 } catch {
