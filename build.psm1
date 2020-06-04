@@ -1702,6 +1702,7 @@ function Start-PSBootstrap {
                         $gemsudo = $sudo
                     }
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install backports -v 3.15.0 --no-document"))
+                    Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ffi -v 1.12.0 --no-document"))
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install fpm -v 1.11.0 --no-document"))
                     Start-NativeExecution ([ScriptBlock]::Create("$gemsudo gem install ronn -v 0.7.3 --no-document"))
                 } catch {
