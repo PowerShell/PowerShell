@@ -922,7 +922,7 @@ namespace System.Management.Automation.Host
         /// Name of the user whose credential is to be prompted for. If set to null or empty
         /// string, the function will prompt for user name first.
         /// </param>
-        /// <param name="reenterPassword">
+        /// <param name="confirmPassword">
         /// Prompts user to re-enter the password for confirmation.
         /// </param>
         /// <param name="targetName">
@@ -947,7 +947,7 @@ namespace System.Management.Automation.Host
             string caption,
             string message,
             string userName,
-            bool reenterPassword,
+            bool confirmPassword,
             string targetName,
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options);

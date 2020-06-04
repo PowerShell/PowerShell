@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell
             return PromptForCredential(caption,
                                          message,
                                          userName,
-                                         reenterPassword: false,
+                                         confirmPassword: false,
                                          targetName,
                                          PSCredentialTypes.Default,
                                          PSCredentialUIOptions.Default);
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell
                 caption,
                 message,
                 userName,
-                reenterPassword: false,
+                confirmPassword: false,
                 targetName,
                 allowedCredentialTypes,
                 options);
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell
         /// <param name="caption">Caption for the message.</param>
         /// <param name="message">Message to be displayed.</param>
         /// <param name="userName">Name of the user whose credentials are to be prompted for. If set to null or empty string, the function will prompt for user name first.</param>
-        /// <param name="reenterPassword">Prompts user to re-enter the password for confirmation.</param>
+        /// <param name="confirmPassword">Prompts user to re-enter the password for confirmation.</param>
         /// <param name="targetName">Name of the target for which credentials are being collected.</param>
         /// <param name="allowedCredentialTypes">What type of credentials can be supplied by the user.</param>
         /// <param name="options">Options that control the credential gathering UI behavior.</param>
@@ -84,17 +84,17 @@ namespace Microsoft.PowerShell
             string caption,
             string message,
             string userName,
-            bool reenterPassword,
+            bool confirmPassword,
             string targetName,
             PSCredentialTypes allowedCredentialTypes,
             PSCredentialUIOptions options)
         {
             PSCredential cred = null;
             SecureString password = null;
-            SecureString confirmPassword = null;
+            SecureString reenterPassword = null;
             string userPrompt = null;
             string passwordPrompt = null;
-            string reenterPasswordPrompt = null;
+            string confirmPasswordPrompt = null;
             string passwordMismatch = null;
 
             if (!string.IsNullOrEmpty(caption))
@@ -140,20 +140,20 @@ namespace Microsoft.PowerShell
             }
             while (password.Length == 0);
 
-            if (reenterPassword)
+            if (confirmPassword)
             {
-                reenterPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ReenterPassword, userName);
+                confirmPasswordPrompt = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_ReenterPassword, userName);
                 passwordMismatch = StringUtil.Format(ConsoleHostUserInterfaceSecurityResources.PromptForCredential_PasswordMismatch);
 
                 // now, prompt to re-enter the password.
-                WriteToConsole(reenterPasswordPrompt, true);
-                confirmPassword = ReadLineAsSecureString();
-                if (confirmPassword == null)
+                WriteToConsole(confirmPasswordPrompt, true);
+                reenterPassword = ReadLineAsSecureString();
+                if (reenterPassword == null)
                 {
                     return null;
                 }
 
-                if (!SecureStringEquals(password, confirmPassword))
+                if (!SecureStringEquals(password, reenterPassword))
                 {
                     WriteToConsole(ConsoleColor.Red, ConsoleColor.Black, passwordMismatch, false);
                     return null;
@@ -177,14 +177,23 @@ namespace Microsoft.PowerShell
             try
             {
                 pwd_ptr = Marshal.SecureStringToBSTR(password);
+                if (pwd_ptr == IntPtr.Zero)
+                {
+                    return false;
+                }
+
                 confirmPwd_ptr = Marshal.SecureStringToBSTR(confirmPassword);
+                if (confirmPwd_ptr == IntPtr.Zero)
+                {
+                    return false;
+                }
 
                 int pwdLength = Marshal.ReadInt32(pwd_ptr, -4);
                 int equal = 0;
                 for (int i = 0; i < pwdLength; i++)
                 {
-                    byte c1 = Marshal.ReadByte(pwd_ptr + i);
-                    byte c2 = Marshal.ReadByte(confirmPwd_ptr + i);
+                    byte c1 = Marshal.ReadByte(pwd_ptr, i);
+                    byte c2 = Marshal.ReadByte(confirmPwd_ptr, i);
                     equal = c1 ^ c2;
                     if (equal != 0)
                         return false;

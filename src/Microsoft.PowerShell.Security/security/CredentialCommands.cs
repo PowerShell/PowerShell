@@ -80,10 +80,10 @@ namespace Microsoft.PowerShell.Commands
         private string _title = UtilsStrings.PromptForCredential_DefaultCaption;
 
         /// <summary>
-        /// Gets or sets the re-enter password on the window prompt.
+        /// Gets or sets the confirm password prompt.
         /// </summary>
         [Parameter(ParameterSetName = messageSet)]
-        public SwitchParameter ReenterPassword { get; set; }
+        public SwitchParameter ConfirmPassword { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the GetCredentialCommand
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
                     _title,
                     _message,
                     _userName,
-                    ReenterPassword,
+                    ConfirmPassword,
                     string.Empty,
                     PSCredentialTypes.Default,
                     PSCredentialUIOptions.Default);

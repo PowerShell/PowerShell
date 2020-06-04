@@ -149,7 +149,7 @@ namespace TestHost
             return PromptForCredential(caption,
                                         message,
                                         userName,
-                                        reenterPassword: false,
+                                        confirmPassword: false,
                                         targetName,
                                         PSCredentialTypes.Default,
                                         PSCredentialUIOptions.Default);
@@ -160,17 +160,17 @@ namespace TestHost
             return PromptForCredential(caption,
                                          message,
                                          userName,
-                                         reenterPassword: false,
+                                         confirmPassword: false,
                                          targetName,
                                          allowedCredentialTypes,
                                          options);
         }
 
-        public override PSCredential PromptForCredential(string caption, string message, string userName, bool reenterPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, bool confirmPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
             Streams.Prompt.Add("Credential:" + caption + ":" + message);
             SecureString password = ReadLineAsSecureString();
-            if(reenterPassword)
+            if(confirmPassword)
             {
                 Streams.Prompt.Add("Credential@" + caption + "@" + message);
             }

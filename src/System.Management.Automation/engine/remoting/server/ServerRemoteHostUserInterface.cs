@@ -237,11 +237,11 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Prompt for credential.
         /// </summary>
-        public override PSCredential PromptForCredential(string caption, string message, string userName, bool reenterPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
+        public override PSCredential PromptForCredential(string caption, string message, string userName, bool confirmPassword, string targetName, PSCredentialTypes allowedCredentialTypes, PSCredentialUIOptions options)
         {
             return _serverMethodExecutor.ExecuteMethod<PSCredential>(
                 RemoteHostMethodId.PromptForCredential2,
-                new object[] { caption, message, userName, reenterPassword, targetName, allowedCredentialTypes, options });
+                new object[] { caption, message, userName, confirmPassword, targetName, allowedCredentialTypes, options });
         }
     }
 }
