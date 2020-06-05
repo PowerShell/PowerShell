@@ -563,8 +563,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            string temp = InputObject[0].ToString();
-            _stringBuilder.AppendLine(temp);
+            _stringBuilder.AppendLine( InputObject[0].ToString() );
         }
 
         /// <summary>
@@ -918,17 +917,17 @@ namespace Microsoft.PowerShell.Commands
         #region file
 
         /// <summary>
+        /// Handle to memory stream.
+        /// </summary>
+        private readonly Stream _memoryStream;
+
+        /// <summary>
         /// Handle to file stream.
         /// </summary>
         internal FileStream _fs;
 
         /// <summary>
-        /// Handle to string builder.
-        /// </summary>
-        private readonly Stream _memoryStream;
-
-        /// <summary>
-        /// XmlReader used to read file or string.
+        /// XmlReader used to read file or memory stream.
         /// </summary>
         internal XmlReader _xr;
 
