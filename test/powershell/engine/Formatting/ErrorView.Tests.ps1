@@ -102,12 +102,13 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
         It "Position message does not contain line information" {
 
-            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" | Out-String
+            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" 2>&1 | out-string
+            $e | Should -Not -BeNullOrEmpty
             $e | Should -Not -BeLike "*At line*"
         }
 
         It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
-            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' | Out-String
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | out-string
             $e | Should -BeLike "*cmdletThatDoesntExist*"
         }
     }
