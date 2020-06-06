@@ -102,7 +102,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
         It "Position message does not contain line information" {
 
-            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" 2>&1 | out-string
+            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" 2>&1 | Out-String
             $e | Should -Not -BeNullOrEmpty
             $e | Should -Not -BeLike "*At line*"
         }
