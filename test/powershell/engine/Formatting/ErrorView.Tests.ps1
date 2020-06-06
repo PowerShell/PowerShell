@@ -108,7 +108,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
-            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | out-string
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
             $e | Should -BeLike "*cmdletThatDoesntExist*"
         }
     }
