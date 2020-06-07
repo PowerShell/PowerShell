@@ -822,95 +822,72 @@ namespace StackTest {
     }
 
     Context "Console prompt tests" {
-
-        It "Alias PSDrive is displayed correctly"  {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Alias:""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS Alias:\> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
+        BeforeAll {
+            $winTestCases = @(
+                @{Path="Cert:\"},
+                @{Path="HKLM:\"},
+                @{Path="WSMan:\"},
+                @{Path="\\localhost\c$"}
+            )
+            $allOsTestCases = @(
+                @{Path="Alias:\"},
+                @{Path="Env:\"},
+                @{Path="Function:\"},
+                @{Path="Temp:\"},
+                @{Path="Variable:\"}
+            )
+            function InvokePromptTest([string]$CommandLine)
+            {
+                $si = NewProcessStartInfo $CommandLine -RedirectStdIn
+                $process = RunPowerShell $si
+                $process.StandardInput.Close()
+                # Read Stream, split into array, and read last entry
+                $stdout = $process.StandardOutput.ReadToEnd().Split([System.Environment]::NewLine)[-1]
+                EnsureChildHasExited $process | Out-Null
+                return $stdout
+            }
+            function InvokePromptTestForDebugJob([string]$CommandLine, $Path)
+            {
+                $si = NewProcessStartInfo $CommandLine -RedirectStdIn
+                $process = RunPowerShell $si
+                $process.StandardInput.WriteLine("Set-Location $Path")
+                $process.StandardInput.Close()
+                # Read Stream, split into array, because it returns empty output, we read second last entry instead
+                $stdout = $process.StandardOutput.ReadToEnd().Split([System.Environment]::NewLine)[-2]
+                EnsureChildHasExited $process | Out-Null
+                return $stdout
+            }
         }
 
-        It "Cert PSDrive is displayed correctly" -Skip:(-not $IsWindows) {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Cert:""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS Cert:\> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
+        It "Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
+            param($Path)
+            InvokePromptTest "-noprofile -nologo -noexit -c ""Set-Location $Path;""" | Should -Be "PS $Path> "
         }
 
-        It "Environment PSDrive is displayed correctly" {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Env:""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS Env:\> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
+        It "(Windows) Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
+            param ($Path)
+            InvokePromptTest "-noprofile -nologo -noexit -c ""Set-Location $Path;""" | Should -Be "PS $Path> "
+        }
+        It "Debug: Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
+            param ($Path)
+            InvokePromptTest "-noprofile -nologo -noexit -c ""Set-Location $Path; `$ErrorActionPreference = 'break'; throw""" | Should -Be "[DBG]: PS $Path>> "
         }
 
-        It "Function PSDrive is displayed correctly" {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Function:""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS Function:\> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
+        It "(Windows) Debug: Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
+            param ($Path)
+            InvokePromptTest "-noprofile -nologo -noexit -c ""Set-Location $Path; `$ErrorActionPreference = 'break'; throw""" | Should -Be "[DBG]: PS $Path>> "
         }
 
-        It "Registry PSDrive is displayed correctly" -Skip:(-not $IsWindows) {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location HKLM:""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS HKLM:\> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
+        It "Job Debug: Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
+            param ($Path)
+            $output = InvokePromptTestForDebugJob -Path $Path -CommandLine "-noprofile -nologo -noexit -c ""`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; Start-Sleep -Seconds 1; Debug-Job `$j;"""
+            $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
         }
 
-        It "Temp PSDrive is displayed correctly" {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Temp:""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS Temp:\> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
-        }
-
-        It "UNC Path is displayed correctly" -Skip:(-not $IsWindows) {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location \\localhost\c$""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS \\localhost\c$> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
-        }
-
-        It "Variable PSDrive is displayed correctly" {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location Variable:""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS Variable:\> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
-        }
-
-        It "WSMan PSDrive is displayed correctly" -Skip:(-not $IsWindows) {
-
-            $si = NewProcessStartInfo "-noprofile -nologo -noexit -c ""Set-Location WSMan:""" -RedirectStdIn
-            $process = RunPowerShell $si
-            $process.StandardInput.WriteLine("`n")
-            $process.StandardOutput.ReadLine() | Should -Be "PS WSMan:\> "
-            $process.StandardInput.Close()
-            EnsureChildHasExited $process
+        It "(Windows) Job Debug: Path '<Path>' is displayed correctly" -TestCases $winTestCases {
+            param ($Path)
+            $output = InvokePromptTestForDebugJob -Path $Path -CommandLine "-noprofile -nologo -noexit -c ""`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; Start-Sleep -Seconds 1; Debug-Job `$j;"""
+            $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
         }
     }
 }
