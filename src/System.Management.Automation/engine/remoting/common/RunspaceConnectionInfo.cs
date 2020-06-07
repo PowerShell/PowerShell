@@ -2552,8 +2552,8 @@ namespace System.Management.Automation.Runspaces
             {
                 // Create process start command line with filename and argument list.
                 var cmdLine = string.Format(
-                    CultureInfo.InvariantCulture, 
-                    @"""{0}"" {1}", 
+                    CultureInfo.InvariantCulture,
+                    @"""{0}"" {1}",
                     startInfo.FileName,
                     string.Join(' ', startInfo.ArgumentList));
 
