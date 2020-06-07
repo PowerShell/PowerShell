@@ -50,5 +50,4 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private object result;
         #endregion
     }
-
 }

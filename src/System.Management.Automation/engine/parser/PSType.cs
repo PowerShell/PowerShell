@@ -349,7 +349,6 @@ namespace System.Management.Automation.Language
                             // fall to the default base type
                         }
                         else
-
                         {
                             if (baseClass.IsSealed)
                             {

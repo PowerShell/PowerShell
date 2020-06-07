@@ -879,7 +879,6 @@ namespace Microsoft.PowerShell
                 {
                     // Just toss this option, it was processed earlier...
                 }
-
                 else if (MatchSwitch(switchKey, "modules", "mod"))
                 {
                     if (ConsoleHost.DefaultInitialSessionState == null)

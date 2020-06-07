@@ -141,7 +141,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private long _pipelineId;
 
-
         /// <summary>
         /// Returns a clone of this object.
         /// </summary>

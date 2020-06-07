@@ -98,7 +98,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         mainControlFound = true;
                         view.mainControl = LoadListControl(n);
                     }
-
                     else if (MatchNodeName(n, XmlTags.WideControlNode))
                     {
                         if (mainControlFound)

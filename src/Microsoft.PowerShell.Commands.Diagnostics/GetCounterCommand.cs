@@ -212,7 +212,6 @@ namespace Microsoft.PowerShell.Commands
         //
         protected override void BeginProcessing()
         {
-
             if (Platform.IsIoT)
             {
                 // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.

@@ -3162,7 +3162,6 @@ namespace Microsoft.PowerShell.Commands
 
                 newManifestInfo.ExperimentalFeatures = manifestInfo.ExperimentalFeatures;
 
-
                 // If we are in module discovery, then fix the path.
                 if (ss == null)
                 {

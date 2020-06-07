@@ -21,7 +21,6 @@ namespace System.Management.Automation
             return GetDamerauLevenshteinDistance(string1, string2) <= MinimumDistance;
         }
 
-
         /// <summary>
         /// Compute the case-insensitive distance between two strings.
         /// Based off https://www.csharpstar.com/csharp-string-distance-algorithm/.

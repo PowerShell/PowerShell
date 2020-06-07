@@ -4243,7 +4243,6 @@ namespace System.Management.Automation.Language
                 return NewToken(TokenKind.LBracket);
             }
 
-
             if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators") && c == '?')
             {
                 _tokenStart = _currentIndex;

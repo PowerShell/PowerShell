@@ -12,7 +12,6 @@ using System.Threading;
 
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
-
     /// <summary>
     /// <para>
     /// Subscription result event args

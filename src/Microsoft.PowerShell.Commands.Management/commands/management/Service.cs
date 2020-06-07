@@ -144,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
                     StringUtil.Format(ServiceResources.CouldNotSetServiceSecurityDescriptorSddl, service.ServiceName, exception.Message),
                     accessDenied ? ErrorCategory.PermissionDenied : ErrorCategory.InvalidOperation);
             }
-
         }
         #endregion Internal
     }
@@ -2748,7 +2747,6 @@ namespace Microsoft.PowerShell.Commands
             [In, MarshalAs(UnmanagedType.LPWStr)] string lpServiceStartName,
             [In] IntPtr lpPassword
         );
-
 
         [DllImport(PinvokeDllNames.SetServiceObjectSecurityDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]

@@ -723,7 +723,6 @@ namespace System.Management.Automation
                 args);
         }
 
-
         internal SteppablePipeline GetSteppablePipelineImpl(CommandOrigin commandOrigin, object[] args)
         {
             var pipelineAst = GetSimplePipeline(
