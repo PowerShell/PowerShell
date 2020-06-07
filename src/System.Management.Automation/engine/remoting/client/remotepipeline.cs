@@ -545,7 +545,7 @@ namespace System.Management.Automation
                     catch (ObjectDisposedException)
                     {
                         throw PSTraceSource.NewObjectDisposedException("Pipeline");
-                    };
+                    }
 
                     asyncresult.AsyncWaitHandle.WaitOne();
                 }

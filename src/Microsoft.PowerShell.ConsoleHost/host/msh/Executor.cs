@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell
                             // hence the Input pipe.
                             break;
                         }
-                    };
+                    }
                     des.End();
                 }
 

@@ -346,7 +346,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// DO NOT USE!!!
         /// </remarks>
-        public ParameterBindingException() : base() {; }
+        public ParameterBindingException() : base() { }
 
         /// <summary>
         /// Constructors a ParameterBindingException.

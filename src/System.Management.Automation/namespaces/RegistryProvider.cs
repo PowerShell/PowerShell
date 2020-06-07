@@ -3833,7 +3833,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             value = 0;
                         }
-                    }; break;
+                    } break;
 
                 case RegistryValueKind.ExpandString:
                     value = (value != null)
@@ -3870,7 +3870,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             value = 0;
                         }
-                    }; break;
+                    } break;
 
                 case RegistryValueKind.String:
                     value = (value != null)
