@@ -14,8 +14,8 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
         $pingDirectory = Split-Path $pingCommand -Parent
         $tempFile = Join-Path -Path $TestDrive -ChildPath PSTest
-		$tempDirectory = Join-Path -Path $TestDrive -ChildPath 'PSPath[]'
-		New-Item $tempDirectory -ItemType Directory  -Force
+        $tempDirectory = Join-Path -Path $TestDrive -ChildPath 'PSPath[]'
+        New-Item $tempDirectory -ItemType Directory  -Force
         $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
         if ($IsWindows) {
             $pingParam = "-n 2 localhost"
