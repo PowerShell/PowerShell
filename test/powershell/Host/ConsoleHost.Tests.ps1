@@ -836,24 +836,13 @@ namespace StackTest {
                 @{Path="Temp:\"},
                 @{Path="Variable:\"}
             )
-            function InvokePromptTest([string]$CommandLine)
+            function InvokePromptTest([string]$CommandLine, [int]$OutputIndex)
             {
                 $si = NewProcessStartInfo $CommandLine -RedirectStdIn
                 $process = RunPowerShell $si
                 $process.StandardInput.Close()
-                # Read Stream, split into array, and read last entry
-                $stdout = $process.StandardOutput.ReadToEnd().Split([System.Environment]::NewLine)[-1]
-                EnsureChildHasExited $process | Out-Null
-                return $stdout
-            }
-            function InvokePromptTestForDebugJob([string]$CommandLine, $Path)
-            {
-                $si = NewProcessStartInfo $CommandLine -RedirectStdIn
-                $process = RunPowerShell $si
-                $process.StandardInput.WriteLine("Set-Location $Path")
-                $process.StandardInput.Close()
-                # Read Stream, split into array, because it returns empty output, we read second last entry instead
-                $stdout = $process.StandardOutput.ReadToEnd().Split([System.Environment]::NewLine)[-2]
+                # Read Stream, split into array, and read entry
+                $stdout = $process.StandardOutput.ReadToEnd().Split([System.Environment]::NewLine)[$OutputIndex]
                 EnsureChildHasExited $process | Out-Null
                 return $stdout
             }
@@ -861,32 +850,32 @@ namespace StackTest {
 
         It "Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
             param($Path)
-            InvokePromptTest "-noprofile -nologo -noexit -c ""Set-Location $Path;""" | Should -Be "PS $Path> "
+            InvokePromptTest -OutputIndex -1 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;""" | Should -Be "PS $Path> "
         }
 
         It "(Windows) Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
             param ($Path)
-            InvokePromptTest "-noprofile -nologo -noexit -c ""Set-Location $Path;""" | Should -Be "PS $Path> "
+            InvokePromptTest -OutputIndex -1 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;""" | Should -Be "PS $Path> "
         }
         It "Debug: Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
             param ($Path)
-            InvokePromptTest "-noprofile -nologo -noexit -c ""Set-Location $Path; `$ErrorActionPreference = 'break'; throw""" | Should -Be "[DBG]: PS $Path>> "
+            InvokePromptTest -OutputIndex -1 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path; `$ErrorActionPreference = 'break'; throw""" | Should -Be "[DBG]: PS $Path>> "
         }
 
         It "(Windows) Debug: Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
             param ($Path)
-            InvokePromptTest "-noprofile -nologo -noexit -c ""Set-Location $Path; `$ErrorActionPreference = 'break'; throw""" | Should -Be "[DBG]: PS $Path>> "
+            InvokePromptTest -OutputIndex -1 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path; `$ErrorActionPreference = 'break'; throw""" | Should -Be "[DBG]: PS $Path>> "
         }
 
         It "Job Debug: Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
             param ($Path)
-            $output = InvokePromptTestForDebugJob -Path $Path -CommandLine "-noprofile -nologo -noexit -c ""`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; Start-Sleep -Seconds 1; Debug-Job `$j;"""
+            $output = InvokePromptTest -OutputIndex -2 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; Start-Sleep -Seconds 1; Debug-Job `$j;"""
             $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
         }
 
-        It "(Windows) Job Debug: Path '<Path>' is displayed correctly" -TestCases $winTestCases {
+        It "(Windows) Job Debug: Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
             param ($Path)
-            $output = InvokePromptTestForDebugJob -Path $Path -CommandLine "-noprofile -nologo -noexit -c ""`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; Start-Sleep -Seconds 1; Debug-Job `$j;"""
+            $output = InvokePromptTest -OutputIndex -2 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; Start-Sleep -Seconds 1; Debug-Job `$j;"""
             $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
         }
     }
