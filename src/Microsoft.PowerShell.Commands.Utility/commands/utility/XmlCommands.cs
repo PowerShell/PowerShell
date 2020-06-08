@@ -563,7 +563,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            _stringBuilder.AppendLine( InputObject[0].ToString() );
+            _stringBuilder.AppendLine(InputObject[0].ToString());
         }
 
         /// <summary>
