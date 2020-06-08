@@ -167,7 +167,7 @@ namespace System.Management.Automation.Remoting
 
             lock (_syncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     WSManPluginInstance.ReportWSManOperationComplete(requestDetails, lastErrorReported);
                     return;
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManStreamIDSet_UnToMan streamSet,
             WSManPluginOperationShutdownContext ctxtToReport)
         {
-            if (true == isClosed)
+            if (isClosed)
             {
                 WSManPluginInstance.ReportWSManOperationComplete(requestDetails, lastErrorReported);
                 return false;
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Remoting
 
             lock (_syncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }
@@ -688,7 +688,7 @@ namespace System.Management.Automation.Remoting
             // let command sessions to close.
             lock (shellSyncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }
@@ -788,7 +788,7 @@ namespace System.Management.Automation.Remoting
             // let command sessions to close.
             lock (cmdSyncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }

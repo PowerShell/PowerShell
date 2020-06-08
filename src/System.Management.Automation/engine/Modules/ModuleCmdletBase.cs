@@ -786,7 +786,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // The rooted files wasn't found, so don't search anymore...
-                if (found == false && wasRooted == true)
+                if (found == false && wasRooted)
                     return null;
 
                 if (searchModulePath && found == false && moduleFileFound == false)

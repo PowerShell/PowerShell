@@ -1191,7 +1191,7 @@ namespace System.Management.Automation.Remoting.Client
             // let other threads release the lock before we clean up the resources.
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }
@@ -3105,7 +3105,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }
@@ -3148,7 +3148,7 @@ namespace System.Management.Automation.Remoting.Client
             // then let other threads release the lock before we cleaning up the resources.
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }

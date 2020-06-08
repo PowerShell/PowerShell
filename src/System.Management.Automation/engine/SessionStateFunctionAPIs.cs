@@ -120,8 +120,8 @@ namespace System.Management.Automation
 
             set
             {
-                Dbg.Assert((value == true), "This property should never be set/reset to false");
-                if (value == true)
+                Dbg.Assert((value), "This property should never be set/reset to false");
+                if (value)
                 {
                     _functionsExportedWithWildcard = value;
                 }

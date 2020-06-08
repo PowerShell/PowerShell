@@ -1899,7 +1899,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Treat the value as a collection and enumerate it if enumeration is true
-            if (enumerate == true && fieldValue is IEnumerable items)
+            if (enumerate && fieldValue is IEnumerable items)
             {
                 foreach (var item in items)
                 {

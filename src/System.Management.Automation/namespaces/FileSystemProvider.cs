@@ -2398,7 +2398,7 @@ namespace Microsoft.PowerShell.Commands
                     if (itemType == ItemType.HardLink)
                     {
                         // Hard links can only be to files, not directories.
-                        if (isDirectory == true)
+                        if (isDirectory)
                         {
                             string message = StringUtil.Format(FileSystemProviderStrings.ItemNotFile, strTargetPath);
                             WriteError(new ErrorRecord(new InvalidOperationException(message), "ItemNotFile", ErrorCategory.InvalidOperation, strTargetPath));

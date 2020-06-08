@@ -2454,7 +2454,7 @@ namespace System.Management.Automation.Runspaces
 
             if ((ex != null) ||
                 (sshProcess == null) ||
-                (sshProcess.HasExited == true))
+                (sshProcess.HasExited))
             {
                 throw new InvalidOperationException(
                     StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty),

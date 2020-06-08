@@ -583,7 +583,7 @@ namespace System.Management.Automation
             => ast is CommandAst cmdAst && cmdAst.DefiningKeyword != null;
 
         private static bool IsUsingTypes(Ast ast)
-            => ast is UsingStatementAst cmdAst && cmdAst.IsUsingModuleOrAssembly() == true;
+            => ast is UsingStatementAst cmdAst && cmdAst.IsUsingModuleOrAssembly();
 
         internal static void CacheScriptBlock(ScriptBlock scriptBlock, string fileName, string fileContents)
         {
@@ -982,10 +982,10 @@ namespace System.Management.Automation
 
             // Validate at the arguments are consistent. The only public API that gets you here never sets createLocalScope to false...
             Diagnostics.Assert(
-                createLocalScope == true || functionsToDefine == null,
+                createLocalScope || functionsToDefine == null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'functionsToDefine' != null then 'createLocalScope' must be true");
             Diagnostics.Assert(
-                createLocalScope == true || variablesToDefine == null,
+                createLocalScope || variablesToDefine == null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'variablesToDefine' != null then 'createLocalScope' must be true");
 
             if (args == null)

@@ -330,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                             if (firstId <= 1) break;
                             // if entry is null , continue the loop with the next entry
                             if (_buffer[GetIndexFromId(i)] == null) continue;
-                            if (_buffer[GetIndexFromId(i)].Cleared == true)
+                            if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,decrement
                                 // first id as long as its is greater than the lowest entry in the buffer.
@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // if an entry is null after being cleared by clear-history cmdlet,
                             // continue with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared == true)
+                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared)
                                 continue;
                             entriesList.Add(_buffer[GetIndexFromId(i)].Clone());
                         }
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
                             if (firstId >= _countEntriesAdded) break;
                             // if entry is null , continue the loop with the next entry
                             if (_buffer[GetIndexFromId(i)] == null) continue;
-                            if (_buffer[GetIndexFromId(i)].Cleared == true)
+                            if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,increment first id
                                 firstId++;
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // if an entry is null after being cleared by clear-history cmdlet,
                             // continue with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared == true)
+                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared)
                                 continue;
                             entriesList.Add(_buffer[GetIndexFromId(i)].Clone());
                         }
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (index > _countEntriesAdded) break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
-                                (_buffer[GetIndexFromId(index)].Cleared == true))
+                                (_buffer[GetIndexFromId(index)].Cleared))
                             {
                                 index++; continue;
                             }
@@ -434,7 +434,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (index < 1) break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
-                                (_buffer[GetIndexFromId(index)].Cleared == true))
+                                (_buffer[GetIndexFromId(index)].Cleared))
                             { index--; continue; }
                             else
                             {
@@ -1019,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Invoke-history can execute only one command. If multiple
             // ids were provided, throw exception
-            if (_multipleIdProvided == true)
+            if (_multipleIdProvided)
             {
                 Exception ex =
                     new ArgumentException
