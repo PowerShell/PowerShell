@@ -204,7 +204,7 @@ namespace Microsoft.PowerShell.Commands
             _commandType = commandType;
             _helpSystem = new UpdatableHelpSystem(this, _useDefaultCredentials);
             _exceptions = new Dictionary<string, UpdatableHelpExceptionContext>();
-            _helpSystem.OnProgressChanged += new EventHandler<UpdatableHelpProgressEventArgs>(HandleProgressChanged);
+            _helpSystem.OnProgressChanged += HandleProgressChanged;
 
             Random rand = new Random();
 

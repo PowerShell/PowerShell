@@ -1359,7 +1359,7 @@ namespace Microsoft.PowerShell.Commands
         private void HandleThrottleComplete(object sender, EventArgs eventArgs)
         {
             _operationsComplete.Set();
-            _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
+            _throttleManager.ThrottleComplete -= HandleThrottleComplete;
         }
 
         /// <summary>
@@ -1389,14 +1389,14 @@ namespace Microsoft.PowerShell.Commands
                 if (!_nojob)
                 {
                     _throttleManager.ThrottleLimit = ThrottleLimit;
-                    _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleComplete);
+                    _throttleManager.ThrottleComplete += HandleThrottleComplete;
 
                     _operationsComplete.Reset();
                     Dbg.Assert(_disconnectComplete == null, "disconnectComplete event should only be used once.");
                     _disconnectComplete = new ManualResetEvent(false);
                     _job = new PSInvokeExpressionSyncJob(Operations, _throttleManager);
                     _job.HideComputerName = _hideComputerName;
-                    _job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+                    _job.StateChanged += HandleJobStateChanged;
 
                     // Add robust connection retry notification handler.
                     AddConnectionRetryHandler(_job);
@@ -1435,7 +1435,7 @@ namespace Microsoft.PowerShell.Commands
                 state == JobState.Stopped ||
                 state == JobState.Failed)
             {
-                _job.StateChanged -= new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+                _job.StateChanged -= HandleJobStateChanged;
                 RemoveConnectionRetryHandler(sender as PSInvokeExpressionSyncJob);
 
                 // Signal that this job has been disconnected, or has ended.
@@ -1461,8 +1461,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ps.RemotePowerShell != null)
                 {
-                    ps.RemotePowerShell.RCConnectionNotification +=
-                        new EventHandler<PSConnectionRetryStatusEventArgs>(RCConnectionNotificationHandler);
+                    ps.RemotePowerShell.RCConnectionNotification += RCConnectionNotificationHandler;
                 }
             }
         }
@@ -1482,8 +1481,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ps.RemotePowerShell != null)
                 {
-                    ps.RemotePowerShell.RCConnectionNotification -=
-                        new EventHandler<PSConnectionRetryStatusEventArgs>(RCConnectionNotificationHandler);
+                    ps.RemotePowerShell.RCConnectionNotification -= RCConnectionNotificationHandler;
                 }
             }
         }
@@ -2056,7 +2054,7 @@ namespace Microsoft.PowerShell.Commands
                         _job.Dispose();
                     }
 
-                    _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
+                    _throttleManager.ThrottleComplete -= HandleThrottleComplete;
                     _throttleManager.Dispose();
                     _throttleManager = null;
                 }

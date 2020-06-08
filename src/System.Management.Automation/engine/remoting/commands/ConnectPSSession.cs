@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
 
             _throttleManager.ThrottleLimit = ThrottleLimit;
-            _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleConnectComplete);
+            _throttleManager.ThrottleComplete += HandleThrottleConnectComplete;
         }
 
         /// <summary>
@@ -1072,7 +1072,7 @@ namespace Microsoft.PowerShell.Commands
                 _operationsComplete.WaitOne();
                 _operationsComplete.Dispose();
 
-                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleConnectComplete);
+                _throttleManager.ThrottleComplete -= HandleThrottleConnectComplete;
                 _retryThrottleManager.Dispose();
 
                 _stream.Dispose();

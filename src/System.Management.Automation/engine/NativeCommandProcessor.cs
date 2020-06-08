@@ -1487,7 +1487,7 @@ namespace System.Management.Automation
             {
                 _isFirstOutput = true;
                 _isXmlCliOutput = false;
-                process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
+                process.OutputDataReceived += OutputHandler;
                 process.BeginOutputReadLine();
             }
 
@@ -1495,7 +1495,7 @@ namespace System.Management.Automation
             {
                 _isFirstError = true;
                 _isXmlCliError = false;
-                process.ErrorDataReceived += new DataReceivedEventHandler(ErrorHandler);
+                process.ErrorDataReceived += ErrorHandler;
                 process.BeginErrorReadLine();
             }
         }

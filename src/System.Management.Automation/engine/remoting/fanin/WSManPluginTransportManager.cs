@@ -399,7 +399,7 @@ namespace System.Management.Automation.Remoting
 
         internal void Initialize()
         {
-            this.PowerShellGuidObserver += new System.EventHandler(OnPowershellGuidReported);
+            this.PowerShellGuidObserver += OnPowershellGuidReported;
             this.MigrateDataReadyEventHandlers(_serverTransportMgr);
         }
 
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
         {
             _cmdId = (System.Guid)src;
             _serverTransportMgr.ReportTransportMgrForCmd(_cmdId, this);
-            this.PowerShellGuidObserver -= new System.EventHandler(this.OnPowershellGuidReported);
+            this.PowerShellGuidObserver -= this.OnPowershellGuidReported;
         }
     }
 }

@@ -1122,7 +1122,7 @@ namespace System.Management.Automation.Remoting.Client
                         _processInstance.RunspacePool.Dispose();
                     }
 
-                    _serverProcess.Exited += new EventHandler(OnExited);
+                    _serverProcess.Exited += OnExited;
                     _processInstance.Start();
 
                     StartRedirectionReaderThreads(_serverProcess);

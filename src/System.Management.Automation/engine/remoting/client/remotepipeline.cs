@@ -126,8 +126,7 @@ namespace System.Management.Automation
 
             _powershell.SetIsNested(isNested);
 
-            _powershell.InvocationStateChanged +=
-               new EventHandler<PSInvocationStateChangedEventArgs>(HandleInvocationStateChanged);
+            _powershell.InvocationStateChanged += HandleInvocationStateChanged;
         }
 
         /// <summary>
@@ -153,8 +152,7 @@ namespace System.Management.Automation
             _powershell = new PowerShell(_connectCmdInfo, _inputStream, _outputStream, _errorStream,
                 ((RemoteRunspace)_runspace).RunspacePool);
 
-            _powershell.InvocationStateChanged +=
-                new EventHandler<PSInvocationStateChangedEventArgs>(HandleInvocationStateChanged);
+            _powershell.InvocationStateChanged += HandleInvocationStateChanged;
         }
 
         /// <summary>
@@ -894,8 +892,7 @@ namespace System.Management.Automation
 
             _powershell.InitForRemotePipeline(_commands, _inputStream, _outputStream, _errorStream, settings, RedirectShellErrorOutputPipe);
 
-            _powershell.RemotePowerShell.HostCallReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
+            _powershell.RemotePowerShell.HostCallReceived += HandleHostCallReceived;
         }
 
         /// <summary>
@@ -931,8 +928,7 @@ namespace System.Management.Automation
 
                 _powershell.InitForRemotePipelineConnect(_inputStream, _outputStream, _errorStream, settings, RedirectShellErrorOutputPipe);
 
-                _powershell.RemotePowerShell.HostCallReceived +=
-                    new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
+                _powershell.RemotePowerShell.HostCallReceived += HandleHostCallReceived;
             }
         }
 

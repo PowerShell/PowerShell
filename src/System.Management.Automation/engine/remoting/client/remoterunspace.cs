@@ -203,17 +203,11 @@ namespace System.Management.Automation
 
             _eventManager = new PSRemoteEventManager(_connectionInfo.ComputerName, this.InstanceId);
 
-            RunspacePool.StateChanged +=
-                new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-            RunspacePool.RemoteRunspacePoolInternal.HostCallReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-            RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported +=
-                new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-            RunspacePool.ForwardEvent +=
-                new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
-
-            RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted +=
-                new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
+            RunspacePool.StateChanged += HandleRunspacePoolStateChanged;
+            RunspacePool.RemoteRunspacePoolInternal.HostCallReceived += HandleHostCallReceived;
+            RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported += HandleURIDirectionReported;
+            RunspacePool.ForwardEvent += HandleRunspacePoolForwardEvent;
+            RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted += HandleSessionCreateCompleted;
         }
 
         #endregion Constructors
@@ -656,17 +650,11 @@ namespace System.Management.Automation
 
                     try
                     {
-                        RunspacePool.StateChanged -=
-                                        new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-                        RunspacePool.RemoteRunspacePoolInternal.HostCallReceived -=
-                            new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-                        RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported -=
-                            new EventHandler<RemoteDataEventArgs<Uri>>(HandleURIDirectionReported);
-                        RunspacePool.ForwardEvent -=
-                            new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
-
-                        RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted -=
-                            new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
+                        RunspacePool.StateChanged -= HandleRunspacePoolStateChanged;
+                        RunspacePool.RemoteRunspacePoolInternal.HostCallReceived -= HandleHostCallReceived;
+                        RunspacePool.RemoteRunspacePoolInternal.URIRedirectionReported -= HandleURIDirectionReported;
+                        RunspacePool.ForwardEvent -= HandleRunspacePoolForwardEvent;
+                        RunspacePool.RemoteRunspacePoolInternal.SessionCreateCompleted -= HandleSessionCreateCompleted;
 
                         _eventManager = null;
 

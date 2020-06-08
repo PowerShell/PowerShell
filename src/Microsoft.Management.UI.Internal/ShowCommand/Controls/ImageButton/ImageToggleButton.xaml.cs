@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         public ImageToggleButton()
         {
             InitializeComponent();
-            this.Loaded += new System.Windows.RoutedEventHandler(this.ImageButton_Loaded);
+            this.Loaded += this.ImageButton_Loaded;
         }
 
         /// <summary>

@@ -204,30 +204,21 @@ namespace System.Management.Automation
             DataStructureHandler = new ServerRunspacePoolDataStructureHandler(this, transportManager);
 
             // handle the StateChanged event of the runspace pool
-            RunspacePool.StateChanged +=
-                new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
+            RunspacePool.StateChanged += HandleRunspacePoolStateChanged;
 
             // listen for events on the runspace pool
-            RunspacePool.ForwardEvent +=
-                new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
+            RunspacePool.ForwardEvent += HandleRunspacePoolForwardEvent;
 
             RunspacePool.RunspaceCreated += HandleRunspaceCreated;
 
             // register for all the events from the data structure handler
-            DataStructureHandler.CreateAndInvokePowerShell +=
-                new EventHandler<RemoteDataEventArgs<RemoteDataObject<PSObject>>>(HandleCreateAndInvokePowerShell);
-            DataStructureHandler.GetCommandMetadata +=
-                new EventHandler<RemoteDataEventArgs<RemoteDataObject<PSObject>>>(HandleGetCommandMetadata);
-            DataStructureHandler.HostResponseReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostResponse>>(HandleHostResponseReceived);
-            DataStructureHandler.SetMaxRunspacesReceived +=
-                new EventHandler<RemoteDataEventArgs<PSObject>>(HandleSetMaxRunspacesReceived);
-            DataStructureHandler.SetMinRunspacesReceived +=
-                new EventHandler<RemoteDataEventArgs<PSObject>>(HandleSetMinRunspacesReceived);
-            DataStructureHandler.GetAvailableRunspacesReceived +=
-                new EventHandler<RemoteDataEventArgs<PSObject>>(HandleGetAvailableRunspacesReceived);
-            DataStructureHandler.ResetRunspaceState +=
-                new EventHandler<RemoteDataEventArgs<PSObject>>(HandleResetRunspaceState);
+            DataStructureHandler.CreateAndInvokePowerShell += HandleCreateAndInvokePowerShell;
+            DataStructureHandler.GetCommandMetadata += HandleGetCommandMetadata;
+            DataStructureHandler.HostResponseReceived += HandleHostResponseReceived;
+            DataStructureHandler.SetMaxRunspacesReceived += HandleSetMaxRunspacesReceived;
+            DataStructureHandler.SetMinRunspacesReceived += HandleSetMinRunspacesReceived;
+            DataStructureHandler.GetAvailableRunspacesReceived += HandleGetAvailableRunspacesReceived;
+            DataStructureHandler.ResetRunspaceState += HandleResetRunspaceState;
         }
 
         #endregion Constructors
@@ -364,10 +355,8 @@ namespace System.Management.Automation
                 DisposeRemoteDebugger();
 
                 RunspacePool.Close();
-                RunspacePool.StateChanged -=
-                                new EventHandler<RunspacePoolStateChangedEventArgs>(HandleRunspacePoolStateChanged);
-                RunspacePool.ForwardEvent -=
-                                new EventHandler<PSEventArgs>(HandleRunspacePoolForwardEvent);
+                RunspacePool.StateChanged -= HandleRunspacePoolStateChanged;
+                RunspacePool.ForwardEvent -= HandleRunspacePoolForwardEvent;
                 RunspacePool.Dispose();
                 RunspacePool = null;
 

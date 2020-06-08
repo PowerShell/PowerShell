@@ -26,7 +26,7 @@ namespace Microsoft.Management.UI.Internal
         public PropertiesTextContainsFilterRule()
         {
             this.PropertyNames = new List<string>();
-            this.EvaluationResultInvalidated += new EventHandler(this.PropertiesTextContainsFilterRule_EvaluationResultInvalidated);
+            this.EvaluationResultInvalidated += this.PropertiesTextContainsFilterRule_EvaluationResultInvalidated;
         }
 
         /// <summary>
@@ -124,7 +124,7 @@ namespace Microsoft.Management.UI.Internal
         [OnDeserialized]
         private void Initialize(StreamingContext context)
         {
-            this.EvaluationResultInvalidated += new EventHandler(this.PropertiesTextContainsFilterRule_EvaluationResultInvalidated);
+            this.EvaluationResultInvalidated += this.PropertiesTextContainsFilterRule_EvaluationResultInvalidated;
         }
     }
 }
