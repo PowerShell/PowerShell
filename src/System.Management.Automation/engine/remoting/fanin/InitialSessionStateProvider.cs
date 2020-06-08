@@ -138,7 +138,7 @@ namespace System.Management.Automation.Remoting
                 case CONFIGFILEPATH:
                     {
                         AssertValueNotAssigned(CONFIGFILEPATH, ConfigFilePath);
-                        ConfigFilePath = optionValue.ToString();
+                        ConfigFilePath = optionValue;
                     }
 
                     break;

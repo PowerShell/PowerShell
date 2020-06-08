@@ -419,7 +419,7 @@ namespace Microsoft.WSMan.Management
             }
 
             filter = filter + "</wsman:SelectorSet>";
-            return (filter.ToString());
+            return (filter);
         }
 
         private void ReturnEnumeration(IWSManEx wsmanObject, IWSManResourceLocator wsmanResourceLocator, IWSManSession wsmanSession)

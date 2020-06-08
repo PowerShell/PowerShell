@@ -114,7 +114,7 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
             s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
-            s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
+            s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription;
         }
 
         internal static PSVersionHashTable GetPSVersionTable()

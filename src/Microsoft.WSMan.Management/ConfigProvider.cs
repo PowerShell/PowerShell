@@ -823,7 +823,7 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         PSObject mshObject = null;
-                        if (!uri.Equals(WinrmRootName[0].ToString(), StringComparison.OrdinalIgnoreCase))
+                        if (!uri.Equals(WinrmRootName[0], StringComparison.OrdinalIgnoreCase))
                         {
                             foreach (XmlNode innerResourceNodes in xmlResource.ChildNodes)
                             {
@@ -2259,7 +2259,7 @@ namespace Microsoft.WSMan.Management
                 inputStr = ConstructPluginXml(ps, uri, host, "Set", ResourceArray, SecurityArray, InitParamArray);
                 try
                 {
-                    ((IWSManSession)sessionobj).Put(uri + "?" + "Name=" + pName, inputStr.ToString(), 0);
+                    ((IWSManSession)sessionobj).Put(uri + "?" + "Name=" + pName, inputStr, 0);
                     if (path.EndsWith(strPathChk + WSManStringLiterals.containerInitParameters, StringComparison.OrdinalIgnoreCase))
                     {
                         WriteItemObject(GetItemPSObjectWithTypeName(mshObj.Properties[NewItem].Name, mshObj.Properties[NewItem].TypeNameOfValue, mshObj.Properties[NewItem].Value, null, "InitParams", WsManElementObjectTypes.WSManConfigLeafElement), path + WSManStringLiterals.DefaultPathSeparator + mshObj.Properties[NewItem].Name, false);
@@ -2536,7 +2536,7 @@ namespace Microsoft.WSMan.Management
             MatchCollection regexmatch = objregex.Matches(ResourceURI);
             if (regexmatch.Count > 0)
             {
-                tempuri = regexmatch[0].Value.ToString();
+                tempuri = regexmatch[0].Value;
             }
 
             return tempuri;
@@ -2686,7 +2686,7 @@ namespace Microsoft.WSMan.Management
                             if (Itemfound)
                             {
                                 ResourceURI = GetURIWithFilter(ResourceURI, value);
-                                ((IWSManSession)sessionobj).Put(ResourceURI, node.OuterXml.ToString(), 0);
+                                ((IWSManSession)sessionobj).Put(ResourceURI, node.OuterXml, 0);
                             }
                             else
                             {
@@ -3344,7 +3344,7 @@ namespace Microsoft.WSMan.Management
 
                 if (path.Equals(host, StringComparison.OrdinalIgnoreCase))
                 {
-                    uri = WinrmRootName[0].ToString();
+                    uri = WinrmRootName[0];
                     return uri;
                 }
 
@@ -3353,19 +3353,19 @@ namespace Microsoft.WSMan.Management
                 string host_prefix = host + WSManStringLiterals.DefaultPathSeparator;
                 if (path.StartsWith(host_prefix + WSManStringLiterals.containerClientCertificate, StringComparison.OrdinalIgnoreCase))
                 {
-                    uri = WinrmRootName[0].ToString() + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerCertMapping;
+                    uri = WinrmRootName[0] + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerCertMapping;
                 }
                 else if (path.StartsWith(host_prefix + WSManStringLiterals.containerPlugin, StringComparison.OrdinalIgnoreCase))
                 {
-                    uri = WinrmRootName[0].ToString() + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerPlugin;
+                    uri = WinrmRootName[0] + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerPlugin;
                 }
                 else if (path.StartsWith(host_prefix + WSManStringLiterals.containerShell, StringComparison.OrdinalIgnoreCase))
                 {
-                    uri = WinrmRootName[0].ToString() + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerWinrs;
+                    uri = WinrmRootName[0] + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerWinrs;
                 }
                 else if (path.StartsWith(host_prefix + WSManStringLiterals.containerListener, StringComparison.OrdinalIgnoreCase))
                 {
-                    uri = WinrmRootName[0].ToString() + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerListener;
+                    uri = WinrmRootName[0] + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerListener;
                 }
                 else
                 {
@@ -3380,7 +3380,7 @@ namespace Microsoft.WSMan.Management
                         }
                     }
 
-                    uri = WinrmRootName[0].ToString() + uri;
+                    uri = WinrmRootName[0] + uri;
                 }
 
                 return uri;
@@ -5490,8 +5490,8 @@ namespace Microsoft.WSMan.Management
         /// </summary>
         private static readonly List<string> globalWarningUris =
             new List<string> {
-                WinrmRootName[0].ToString() + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerWinrs,
-                WinrmRootName[0].ToString() + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerService};
+                WinrmRootName[0] + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerWinrs,
+                WinrmRootName[0] + WSManStringLiterals.WinrmPathSeparator + WSManStringLiterals.containerService};
 
         #endregion def
 

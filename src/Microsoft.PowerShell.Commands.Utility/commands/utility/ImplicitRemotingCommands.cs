@@ -799,7 +799,7 @@ namespace Microsoft.PowerShell.Commands
             if (_commandsSkippedBecauseOfShadowing.Count != 0)
             {
                 string skippedCommands = string.Join(", ", _commandsSkippedBecauseOfShadowing.ToArray());
-                ErrorRecord errorRecord = this.GetErrorCommandSkippedBecauseOfShadowing(skippedCommands.ToString());
+                ErrorRecord errorRecord = this.GetErrorCommandSkippedBecauseOfShadowing(skippedCommands);
                 this.WriteWarning(errorRecord.ErrorDetails.Message);
             }
         }

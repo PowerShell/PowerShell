@@ -1716,7 +1716,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // case statement to identify the parameter set
-            switch (ParameterSetName.ToString())
+            switch (ParameterSetName)
             {
                 case "IDParameter":
                     ClearHistoryByID();
