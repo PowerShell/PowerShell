@@ -780,7 +780,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!info2.IsDefined(typeof(T), true))
                 {
                     MethodInfo getMethod = info2.GetGetMethod();
-                    if ((getMethod != null) && (getMethod.GetParameters().Length <= 0))
+                    if ((getMethod != null) && (getMethod.GetParameters().Length == 0))
                     {
                         object value;
                         try

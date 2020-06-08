@@ -1028,7 +1028,7 @@ namespace Microsoft.WSMan.Management
                     }
 
                     string[] valuenames = rGPOLocalMachineKey.GetValueNames();
-                    if (valuenames.Length <= 0)
+                    if (valuenames.Length == 0)
                     {
                         return !AllowFreshCredentialsValueShouldBePresent;
                     }
@@ -1119,7 +1119,7 @@ namespace Microsoft.WSMan.Management
         internal static string GetResourceString(string Key)
         {
             // Checks whether resource values already loaded and loads.
-            if (ResourceValueCache.Count <= 0)
+            if (ResourceValueCache.Count == 0)
             {
                 LoadResourceData();
             }
