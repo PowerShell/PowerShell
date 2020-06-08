@@ -2725,6 +2725,33 @@ namespace System.Management.Automation
             {
                 this.events = events;
             }
+
+            private string _eventDefinition;
+            internal string EventDefinition
+            {
+                get
+                {
+                    if (_eventDefinition == null)
+                    {
+                        var sb = new StringBuilder();
+                        var invokeMethod = new MethodInformation(
+                            events[0].EventHandlerType.GetMethod("Invoke"), parametersToIgnore: 0).method;
+                        sb.AppendFormat(
+                            "event {0} {1}",
+                            ToStringCodeMethods.Type(events[0].EventHandlerType),
+                            events[0].Name);
+
+                        sb.Append("(");
+                        sb.AppendJoin(", ", invokeMethod.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"));
+                        sb.Append(")");
+
+                        _eventDefinition = sb.ToString();
+                        sb.Clear();
+                    }
+
+                    return _eventDefinition;
+                }
+            }
         }
 
         internal class ParameterizedPropertyCacheEntry : CacheEntry
@@ -3562,7 +3589,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal IEnumerable<object> GetPropertiesAndMethods(Type type, bool @static)
+        internal IEnumerable<object> GetPropertiesMethodsAndEvents(Type type, bool @static)
         {
             CacheTable propertyTable = @static
                 ? GetStaticPropertyReflectionTable(type)
@@ -3584,6 +3611,15 @@ namespace System.Management.Automation
                 {
                     yield return method;
                 }
+            }
+
+            Dictionary<string, EventCacheEntry> eventTable = @static
+                ? GetStaticEventReflectionTable(type)
+                : GetInstanceEventReflectionTable(type);
+
+            foreach (var @event in eventTable.Values)
+            {
+                yield return @event;
             }
         }
 
@@ -3682,6 +3718,31 @@ namespace System.Management.Automation
             return PSMethod.Create(methods[0].method.Name, this, obj, methods, isSpecial, methods.IsHidden) as T;
         }
 
+        private T GetDotNetEventImpl<T>(object obj, string eventName, MemberNamePredicate predicate) where T : PSMemberInfo
+        {
+            if (!typeof(T).IsAssignableFrom(typeof(PSEvent)))
+            {
+                return null;
+            }
+
+            Dictionary<string, EventCacheEntry> typeTable = _isStatic
+                ? GetStaticEventReflectionTable((Type)obj)
+                : GetInstanceEventReflectionTable(obj.GetType());
+
+            EventCacheEntry events = predicate != null
+                ? typeTable.Values.FirstOrDefault(e => predicate(e.events[0].Name))
+                : typeTable.ContainsKey(eventName)
+                    ? typeTable[eventName]
+                    : null;
+
+            if (events != null)
+            {
+                return new PSEvent(events.events[0]) as T;
+            }
+
+            return null;
+        }
+
         internal T GetDotNetProperty<T>(object obj, string propertyName) where T : PSMemberInfo
         {
             return GetDotNetPropertyImpl<T>(obj, propertyName, predicate: null);
@@ -3690,6 +3751,11 @@ namespace System.Management.Automation
         internal T GetDotNetMethod<T>(object obj, string methodName) where T : PSMemberInfo
         {
             return GetDotNetMethodImpl<T>(obj, methodName, predicate: null);
+        }
+
+        internal T GetDotNetEvent<T>(object obj, string methodName) where T : PSMemberInfo
+        {
+            return GetDotNetEventImpl<T>(obj, methodName, predicate: null);
         }
 
         protected T GetFirstDotNetPropertyOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
@@ -3704,24 +3770,7 @@ namespace System.Management.Automation
 
         protected T GetFirstDotNetEventOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
         {
-            if (!typeof(T).IsAssignableFrom(typeof(PSEvent)))
-            {
-                return null;
-            }
-
-            var table = _isStatic
-                ? GetStaticEventReflectionTable((Type)obj)
-                : GetInstanceEventReflectionTable(obj.GetType());
-
-            foreach (var psEvent in table.Values)
-            {
-                if (predicate(psEvent.events[0].Name))
-                {
-                    return new PSEvent(psEvent.events[0]) as T;
-                }
-            }
-
-            return null;
+            return GetDotNetEventImpl<T>(obj, eventName: null, predicate);
         }
 
         protected T GetFirstDynamicMemberOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
@@ -3932,11 +3981,10 @@ namespace System.Management.Automation
         /// or null if the given member name is not a member in the adapter.
         /// </returns>
         protected override T GetMember<T>(object obj, string memberName)
-        {
-            T returnValue = GetDotNetProperty<T>(obj, memberName);
-            if (returnValue != null) return returnValue;
-            return GetDotNetMethod<T>(obj, memberName);
-        }
+            => GetDotNetProperty<T>(obj, memberName)
+                ?? GetDotNetMethod<T>(obj, memberName)
+                ?? GetDotNetEvent<T>(obj, memberName);
+
 
         /// <summary>
         /// Get the first .NET member whose name matches the specified <see cref="MemberNamePredicate"/>.
