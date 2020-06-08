@@ -20,48 +20,62 @@ resources:
   clean: true
 
 jobs:
+- template: templates/checkAzureContainer.yml
+
 - template: templates/linux.yml
   parameters:
     buildName: deb
+    parentJob: DeleteBlob
 
 - template: templates/linux.yml
   parameters:
     buildName: rpm
     uploadDisplayName: Upload and Sign
+    parentJob: DeleteBlob
 
 - template: templates/linux.yml
   parameters:
     buildName: fxdependent
+    parentJob: DeleteBlob
 
 - template: templates/linux.yml
   parameters:
     buildName: alpine
+    parentJob: DeleteBlob
 
 - template: templates/mac.yml
+  parameters:
+    parentJob: DeleteBlob
 
 - template: templates/windows-hosted-build.yml
   parameters:
     Architecture: x64
+    parentJob: DeleteBlob
 
 - template: templates/windows-hosted-build.yml
   parameters:
     Architecture: x86
+    parentJob: DeleteBlob
 
 - template: templates/windows-hosted-build.yml
   parameters:
     Architecture: arm
+    parentJob: DeleteBlob
 
 - template: templates/windows-hosted-build.yml
   parameters:
     Architecture: arm64
+    parentJob: DeleteBlob
 
 - template: templates/windows-hosted-build.yml
   parameters:
     Architecture: fxdependent
+    parentJob: DeleteBlob
 
 - template: templates/windows-hosted-build.yml
   parameters:
     Architecture: fxdependentWinDesktop
+    parentJob: DeleteBlob
 
 - template: templates/windows-packaging.yml
   parameters:
