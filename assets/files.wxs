@@ -2185,11 +2185,11 @@
       <Component Id="cmp003E42DEEEA8449C88B2A23B92E0AE39" Guid="{50d7aa94-fcaa-4418-8a7f-2cafd3dee77c}">
         <File Id="fil58F60CDE7E154249820022F5280A3C80" KeyPath="yes" Source="$(env.ProductSourcePath)\Markdig.Signed.dll" />
       </Component>
-      <Component Id="cmp351C4E9343494D3C81FC34343AA26D1F" Guid="{c196ea10-885e-4163-b483-65dd331f1862}">
-        <File Id="fil430268F524C449AAB127F08E5A99F9AA" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.28801.04.dll" />
+      <Component Id="cmp2E15C82B7BA843C9B789BD0D6A146BE3" Guid="{76d63c89-b0e2-492b-aea5-6c123cbf03ba}">
+        <File Id="filC97E387EF8BF4C719589995389D08837" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.28928.01.dll" />
       </Component>
-      <Component Id="cmp8A8E3654239C4329B500A3D95ABEFD84" Guid="{57f2f618-79ca-4359-a398-21aaa373d1d7}">
-        <File Id="fil9FD43D3A46EF49CD9778468785197EB3" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.28801.04.dll" />
+      <Component Id="cmp03E24B7E7B7D4055867621E578F67586" Guid="{ff62a1f3-db60-45b6-8dc6-b15ba22b7b9f}">
+        <File Id="filA3D33FA04A1E450D92BDBE47697F5451" KeyPath="yes" Source="$(env.ProductSourcePath)\sos_$(var.FileArchitecture)_$(var.FileArchitecture)_4.6.28928.01.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -2888,8 +2888,8 @@
       <ComponentRef Id="cmp75D079D2DE8545BB962554C7EFE6A37C" />
       <ComponentRef Id="cmp8A4E5A03C2644F199C7395C8EA350F65" />
       <ComponentRef Id="cmp003E42DEEEA8449C88B2A23B92E0AE39" />
-      <ComponentRef Id="cmp351C4E9343494D3C81FC34343AA26D1F" />
-      <ComponentRef Id="cmp8A8E3654239C4329B500A3D95ABEFD84" />
+      <ComponentRef Id="cmp2E15C82B7BA843C9B789BD0D6A146BE3" />
+      <ComponentRef Id="cmp03E24B7E7B7D4055867621E578F67586" />
     </ComponentGroup>
   </Fragment>
 </Wix>
