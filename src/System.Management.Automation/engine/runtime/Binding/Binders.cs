@@ -2108,6 +2108,69 @@ namespace System.Management.Automation.Language
         }
     }
 
+
+    /// <summary>
+    /// This binder is used to add or remove delegates from event handlers.
+    /// </summary>
+    internal class PSEventDelegateBinder : DynamicMetaObjectBinder
+    {
+        private static readonly PSEventDelegateBinder _addInstanceBinder = new PSEventDelegateBinder(
+            ExpressionType.Add, @static: false);
+        private static readonly PSEventDelegateBinder _removeInstanceBinder = new PSEventDelegateBinder(
+            ExpressionType.Subtract, @static: false);
+        private static readonly PSEventDelegateBinder _addStaticBinder = new PSEventDelegateBinder(
+            ExpressionType.Add, @static: true);
+        private static readonly PSEventDelegateBinder _removeStaticBinder = new PSEventDelegateBinder(
+            ExpressionType.Subtract, @static: true);
+
+        internal static PSEventDelegateBinder Get(ExpressionType expressionType, bool @static)
+            => expressionType == ExpressionType.Add
+                ? @static ? _addStaticBinder : _addInstanceBinder
+                : @static ? _removeStaticBinder : _removeInstanceBinder;
+
+        private readonly bool isAddBinder;
+        private readonly bool isStatic;
+
+        private PSEventDelegateBinder(ExpressionType expressionType, bool @static)
+        {
+            isAddBinder = expressionType == ExpressionType.Add;
+            isStatic = @static;
+        }
+
+        public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
+        {
+            if (!target.HasValue)
+            {
+                return Defer(target);
+            }
+
+            if (PSObject.Base(target.Value) is PSEvent @event)
+            {
+                string methodName = isAddBinder
+                    ? $"add_{@event.Name}"
+                    : $"remove_{@event.Name}";
+
+                var methodBinder = PSInvokeMemberBinder.Get(
+                    methodName,
+                    new CallInfo(argCount: 1, argNames: Array.Empty<string>()),
+                    @static: isStatic,
+                    propertySetter: false,
+                    constraints: null,
+                    classScope: null);
+
+                var eventTarget = new DynamicMetaObject(Expression.Constant(
+                    @event.IsInstance
+                        ? @event.instance
+                        : @event.baseEvent.DeclaringType),
+                    target.PSGetTypeRestriction());
+
+                return methodBinder.Bind(eventTarget, args);
+            }
+
+            return new DynamicMetaObject(ExpressionCache.NullConstant, target.PSGetTypeRestriction()).WriteToDebugLog(this);
+        }
+    }
+
     #endregion PowerShell non-standard language binders
 
     #region Standard binders
