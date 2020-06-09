@@ -231,7 +231,7 @@ Describe "Set-Location" -Tags "CI" {
         }
     }
 
-    It 'Should should not match directory containing wildcard character *' -Skip:([System.IO.Path]::GetInvalidFileNameChars() -contains '*') {
+    It 'Should not match directory containing wildcard character *' -Skip:([System.IO.Path]::GetInvalidFileNameChars() -contains '*') {
         Set-Location $TestDrive
         $currentPath = (Get-Location).Path
         $literalPathActual = Join-Path $TestDrive '*****'
@@ -241,7 +241,7 @@ Describe "Set-Location" -Tags "CI" {
         (Get-Location).Path | Should -BeExactly $currentPath
     }
 
-    It 'Should should not match directory containing wildcard character ?' -Skip:([System.IO.Path]::GetInvalidFileNameChars() -contains '?') {
+    It 'Should not match directory containing wildcard character ?' -Skip:([System.IO.Path]::GetInvalidFileNameChars() -contains '?') {
         Set-Location $TestDrive
         $currentPath = (Get-Location).Path
         $literalPathActual = Join-Path $TestDrive '?????'
@@ -299,7 +299,7 @@ Describe "Set-Location: Name with special/wildcards characters" -Tags "CI" {
             [System.IO.Path]::GetFileName((Get-Location).Path) | Should -BeExactly $Name
         }
         catch {
-            throw "Set-Location $Name Failed"
+            throw ("Set-Location $Name Failed; Exception: " + $_.Exception.Message)
         }
         finally { 
             Set-Location -LiteralPath $startLocation
