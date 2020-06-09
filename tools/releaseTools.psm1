@@ -37,6 +37,7 @@ $Script:powershell_team = @(
     "Travis Plunk"
     "dependabot-preview[bot]"
     "Joey Aiello"
+    "Tyler James Leonhardt"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
