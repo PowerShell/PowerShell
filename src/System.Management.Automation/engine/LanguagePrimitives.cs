@@ -1535,7 +1535,7 @@ namespace System.Management.Automation
             {
                 TargetInvocationException inner = e as TargetInvocationException;
                 string message = (inner == null) || (inner.InnerException == null) ? e.Message : inner.InnerException.Message;
-                typeConversion.WriteLine("Could not create an instance of type \"{0}\". Exception is thrown: \"{1}\"", assemblyQualifiedTypeName, message);
+                typeConversion.WriteLine("Creating an instance of type \"{0}\" caused an exception to be thrown: \"{1}\"", assemblyQualifiedTypeName, message);
                 return null;
             }
         }
