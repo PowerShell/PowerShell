@@ -3062,8 +3062,8 @@
       <Component Id="cmp2E32A6E773F543F0A150B972F8D3E23A" Guid="{a43d0117-1193-4316-a0f6-fef892870f38}">
         <File Id="fil66411B8941CA492E93BF262EA72C6BE6" KeyPath="yes" Source="$(env.ProductSourcePath)\Microsoft.PowerShell.GraphicalHost.xml" />
       </Component>
-      <Component Id="cmpB354FFC600B342EE8DF733ED9C6F6494" Guid="{6f61d5bb-e947-4409-a877-f9d1f1d4438f}">
-        <File Id="fil7886B01FBE4D4BE5A2670CEDB38A75C8" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.20.20201.dll" />
+      <Component Id="cmp2DD86631184942F1A98A1DCCD3D1F732" Guid="{61eacfa1-8b3c-4f69-8820-33acae8e2b03}">
+        <File Id="fil2B735FF5C5C243B7AD352405F1005457" KeyPath="yes" Source="$(env.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_4.700.20.26901.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -4051,7 +4051,7 @@
       <ComponentRef Id="cmp73A4CC8E2C9E4594A3D8258C9E00D7E6" />
       <ComponentRef Id="cmpAC984FA3A67247BC996F60290C87D0A1" />
       <ComponentRef Id="cmp2E32A6E773F543F0A150B972F8D3E23A" />
-      <ComponentRef Id="cmpB354FFC600B342EE8DF733ED9C6F6494" />
+      <ComponentRef Id="cmp2DD86631184942F1A98A1DCCD3D1F732" />
     </ComponentGroup>
   </Fragment>
 </Wix>
