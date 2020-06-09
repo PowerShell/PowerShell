@@ -2745,14 +2745,14 @@ namespace System.Management.Automation.Language
                 while (true)
                 {
                     Token token = PeekToken();
-                    var isDefaultClause = token.Kind == TokenKind.Default;
+                    bool isDefaultClause = token.Kind == TokenKind.Default;
                     ExpressionAst clauseCondition = null;
 
                     if (isDefaultClause)
                     {
                         // Consume the 'default' token.
                         SkipToken();
-                        endErrorStatement = token.Extent;
+                        clauseCondition = new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord);
                     }
                     else
                     {
@@ -2775,10 +2775,10 @@ namespace System.Management.Automation.Language
 
                             break;
                         }
-
-                        errorAsts.Add(clauseCondition);
-                        endErrorStatement = clauseCondition.Extent;
                     }
+
+                    errorAsts.Add(clauseCondition);
+                    endErrorStatement = clauseCondition.Extent;
 
                     StatementBlockAst clauseBody = StatementBlockRule();
                     if (clauseBody == null)
@@ -2802,7 +2802,7 @@ namespace System.Management.Automation.Language
                                 // ErrorRecovery: just report the error and continue, forget the previous default clause.
 
                                 isError = true;
-                                ReportError(token.Extent,
+                                ReportError(clauseCondition.Extent,
                                     nameof(ParserStrings.MultipleSwitchDefaultClauses),
                                     ParserStrings.MultipleSwitchDefaultClauses);
                             }

@@ -237,7 +237,7 @@ Describe 'switch statement parsing' -Tags "CI" {
     Test-ErrorStmt 'switch (1) {foo'       'switch (1) {foo' 'foo' '1' '1' '1'
     Test-ErrorStmt 'switch (1) {foo}'      'switch (1) {foo' 'foo' '1' '1' '1'
     Test-ErrorStmt 'switch (1) {foo {bar}' 'switch (1) {foo {bar}' 'foo' '{bar}' 'bar' 'bar' 'bar' '1' '1' '1'
-    Test-ErrorStmt 'switch (1) {default {9} default{2}' 'switch (1) {default {9} default{2}' '{9}' '9' '9' '9' '{2}' '2' '2' '2' '1' '1' '1'
+    Test-ErrorStmt 'switch (1) {default {9} default{2}' 'switch (1) {default {9} default{2}' 'default' '{9}' '9' '9' '9' 'default' '{2}' '2' '2' '2' '1' '1' '1'
 }
 
 Describe 'function statement parsing' -Tags "CI" {
