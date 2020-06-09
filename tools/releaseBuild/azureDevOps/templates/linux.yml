@@ -1,12 +1,14 @@
 parameters:
   buildName: ''
   uploadDisplayName: 'Upload'
+  parentJob: ''
 
 jobs:
 - job: build_${{ parameters.buildName }}
   displayName: Build ${{ parameters.buildName }}
   condition: succeeded()
   pool: Hosted Ubuntu 1604
+  dependsOn: ${{ parameters.parentJob }}
   variables:
     build: ${{ parameters.buildName }}
   steps:
