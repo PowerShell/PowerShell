@@ -976,13 +976,13 @@ namespace System.Management.Automation
                 try
                 {
                     var stat = System.IO.File.ReadAllText(path);
-                    var parts = stat.Split(' ', 5);
-                    if (parts.Length < 5)
+                    var parts = stat.Substring(stat.LastIndexOf(')')).Split(' ', 4);
+                    if (parts.Length < 4)
                     {
                         return invalidPid;
                     }
 
-                    return Int32.Parse(parts[3]);
+                    return Int32.Parse(parts[2]);
                 }
                 catch (Exception)
                 {
