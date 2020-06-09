@@ -230,6 +230,26 @@ Describe "Set-Location" -Tags "CI" {
             $PWD.Path | Should -Be $location.Path
         }
     }
+
+    It 'Should should not match directory containing wildcard character *' -Skip:([System.IO.Path]::GetInvalidFileNameChars() -contains '*') {
+        Set-Location $TestDrive
+        $currentPath = (Get-Location).Path
+        $literalPathActual = Join-Path $TestDrive '*****'
+        $literalPathAttempt = Join-Path $TestDrive 'aaaaa'
+        New-Item -ItemType Directory -Path $literalPathActual
+        { Set-Location -LiteralPath $literalPathAttempt -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
+        (Get-Location).Path | Should -BeExactly $currentPath
+    }
+
+    It 'Should should not match directory containing wildcard character ?' -Skip:([System.IO.Path]::GetInvalidFileNameChars() -contains '?') {
+        Set-Location $TestDrive
+        $currentPath = (Get-Location).Path
+        $literalPathActual = Join-Path $TestDrive '?????'
+        $literalPathAttempt = Join-Path $TestDrive 'aaaaa'
+        New-Item -ItemType Directory -Path $literalPathActual
+        { Set-Location -LiteralPath $literalPathAttempt -ErrorAction Stop } | Should -Throw -ErrorId "PathNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
+        (Get-Location).Path | Should -BeExactly $currentPath
+    }
 }
 
 Describe "Set-Location: Name with special/wildcards characters" -Tags "CI" {
