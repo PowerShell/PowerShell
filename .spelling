@@ -40,6 +40,7 @@ amd64
 andschwa
 api
 apis
+apiscan
 appimage
 applocker
 appveyor
@@ -222,6 +223,7 @@ export-modulemember
 failurecode
 failurecount
 ffeldhaus
+ffi
 filecatalog
 filename
 filesystem
