@@ -130,6 +130,12 @@ Describe "Process Parent property" -Tags "CI" {
         & $powershellexe -noprofile -command '(Get-Process -Id $PID).Parent' | Should -Not -BeNullOrEmpty
     }
 
+    It "Has Parent process property in linux" -Pending:$IsLinux {
+        # Added new test to check for bug as described in issue #12908
+        $powershellexe = (Get-Process -Id $PID).mainmodule.filename
+        & $powershellexe -noprofile -command '(Get-Process -Name "$((Get-Process -Id $PID).Name)").Parent' | Should -Not -BeNullOrEmpty
+    }
+
     It "Has valid parent process ID property" -Pending {
         # Bug. See https://github.com/PowerShell/PowerShell/issues/12908
         $powershellexe = (Get-Process -Id $PID).mainmodule.filename
