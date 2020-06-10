@@ -2724,33 +2724,46 @@ namespace System.Management.Automation
             internal EventCacheEntry(EventInfo[] events)
             {
                 this.events = events;
+                this._eventDefinition = new Lazy<string>(CreateEventDefinition);
             }
 
-            private string _eventDefinition;
-            internal string EventDefinition
+            private Lazy<string> _eventDefinition;
+
+            internal string EventDefinition => _eventDefinition.Value;
+
+            private string CreateEventDefinition()
             {
-                get
+                MethodBase invokeMethod = new MethodInformation(
+                    events[0].EventHandlerType.GetMethod(nameof(Action.Invoke)),
+                    parametersToIgnore: 0)
+                        .method;
+
+                var sb = new StringBuilder()
+                    .Append("event ")
+                    .Append(ToStringCodeMethods.Type(events[0].EventHandlerType))
+                    .Append(' ')
+                    .Append(events[0].Name)
+                    .Append('(');
+
+                ParameterInfo[] invocationParameters = invokeMethod.GetParameters();
+                if (invocationParameters.Length > 0)
                 {
-                    if (_eventDefinition == null)
+                    ParameterInfo currentParam = invocationParameters[0];
+                    sb.Append(ToStringCodeMethods.Type(currentParam.ParameterType))
+                        .Append(' ')
+                        .Append(currentParam.Name);
+
+                    for (int i = 1; i < invocationParameters.Length; i++)
                     {
-                        var sb = new StringBuilder();
-                        var invokeMethod = new MethodInformation(
-                            events[0].EventHandlerType.GetMethod("Invoke"), parametersToIgnore: 0).method;
-                        sb.AppendFormat(
-                            "event {0} {1}",
-                            ToStringCodeMethods.Type(events[0].EventHandlerType),
-                            events[0].Name);
-
-                        sb.Append("(");
-                        sb.AppendJoin(", ", invokeMethod.GetParameters().Select(p => $"{p.ParameterType.Name} {p.Name}"));
-                        sb.Append(")");
-
-                        _eventDefinition = sb.ToString();
-                        sb.Clear();
+                        currentParam = invocationParameters[i];
+                        sb.Append(", ")
+                            .Append(ToStringCodeMethods.Type(currentParam.ParameterType))
+                            .Append(' ')
+                            .Append(currentParam.Name);
                     }
-
-                    return _eventDefinition;
                 }
+
+                return sb.Append(')').ToString();
             }
         }
 
@@ -3617,7 +3630,7 @@ namespace System.Management.Automation
                 ? GetStaticEventReflectionTable(type)
                 : GetInstanceEventReflectionTable(type);
 
-            foreach (var @event in eventTable.Values)
+            foreach (EventCacheEntry @event in eventTable.Values)
             {
                 yield return @event;
             }
@@ -3753,9 +3766,9 @@ namespace System.Management.Automation
             return GetDotNetMethodImpl<T>(obj, methodName, predicate: null);
         }
 
-        internal T GetDotNetEvent<T>(object obj, string methodName) where T : PSMemberInfo
+        internal T GetDotNetEvent<T>(object obj, string eventName) where T : PSMemberInfo
         {
-            return GetDotNetEventImpl<T>(obj, methodName, predicate: null);
+            return GetDotNetEventImpl<T>(obj, eventName, predicate: null);
         }
 
         protected T GetFirstDotNetPropertyOrDefault<T>(object obj, MemberNamePredicate predicate) where T : PSMemberInfo
@@ -3984,7 +3997,6 @@ namespace System.Management.Automation
             => GetDotNetProperty<T>(obj, memberName)
                 ?? GetDotNetMethod<T>(obj, memberName)
                 ?? GetDotNetEvent<T>(obj, memberName);
-
 
         /// <summary>
         /// Get the first .NET member whose name matches the specified <see cref="MemberNamePredicate"/>.

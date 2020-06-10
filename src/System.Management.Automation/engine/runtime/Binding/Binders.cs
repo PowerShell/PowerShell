@@ -2108,33 +2108,36 @@ namespace System.Management.Automation.Language
         }
     }
 
-
     /// <summary>
     /// This binder is used to add or remove delegates from event handlers.
     /// </summary>
     internal class PSEventDelegateBinder : DynamicMetaObjectBinder
     {
-        private static readonly PSEventDelegateBinder _addInstanceBinder = new PSEventDelegateBinder(
+        private static readonly PSEventDelegateBinder s_addInstanceBinder = new PSEventDelegateBinder(
             ExpressionType.Add, @static: false);
-        private static readonly PSEventDelegateBinder _removeInstanceBinder = new PSEventDelegateBinder(
+
+        private static readonly PSEventDelegateBinder s_removeInstanceBinder = new PSEventDelegateBinder(
             ExpressionType.Subtract, @static: false);
-        private static readonly PSEventDelegateBinder _addStaticBinder = new PSEventDelegateBinder(
+
+        private static readonly PSEventDelegateBinder s_addStaticBinder = new PSEventDelegateBinder(
             ExpressionType.Add, @static: true);
-        private static readonly PSEventDelegateBinder _removeStaticBinder = new PSEventDelegateBinder(
+
+        private static readonly PSEventDelegateBinder s_removeStaticBinder = new PSEventDelegateBinder(
             ExpressionType.Subtract, @static: true);
 
         internal static PSEventDelegateBinder Get(ExpressionType expressionType, bool @static)
             => expressionType == ExpressionType.Add
-                ? @static ? _addStaticBinder : _addInstanceBinder
-                : @static ? _removeStaticBinder : _removeInstanceBinder;
+                ? @static ? s_addStaticBinder : s_addInstanceBinder
+                : @static ? s_removeStaticBinder : s_removeInstanceBinder;
 
-        private readonly bool isAddBinder;
-        private readonly bool isStatic;
+        private readonly bool _isAddBinder;
+
+        private readonly bool _isStatic;
 
         private PSEventDelegateBinder(ExpressionType expressionType, bool @static)
         {
-            isAddBinder = expressionType == ExpressionType.Add;
-            isStatic = @static;
+            _isAddBinder = expressionType == ExpressionType.Add;
+            _isStatic = @static;
         }
 
         public override DynamicMetaObject Bind(DynamicMetaObject target, DynamicMetaObject[] args)
@@ -2146,22 +2149,23 @@ namespace System.Management.Automation.Language
 
             if (PSObject.Base(target.Value) is PSEvent @event)
             {
-                string methodName = isAddBinder
-                    ? $"add_{@event.Name}"
-                    : $"remove_{@event.Name}";
+                string methodName = string.Format(
+                    CultureInfo.InvariantCulture,
+                    format: _isAddBinder ? "add_{0}" : "remove_{0}",
+                    @event.Name);
 
                 var methodBinder = PSInvokeMemberBinder.Get(
                     methodName,
                     new CallInfo(argCount: 1, argNames: Array.Empty<string>()),
-                    @static: isStatic,
+                    @static: _isStatic,
                     propertySetter: false,
                     constraints: null,
                     classScope: null);
 
                 var eventTarget = new DynamicMetaObject(Expression.Constant(
-                    @event.IsInstance
-                        ? @event.instance
-                        : @event.baseEvent.DeclaringType),
+                    _isStatic
+                        ? @event.baseEvent.DeclaringType
+                        : @event.instance),
                     target.PSGetTypeRestriction());
 
                 return methodBinder.Bind(eventTarget, args);

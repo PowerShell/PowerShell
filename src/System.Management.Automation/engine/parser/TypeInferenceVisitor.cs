@@ -268,8 +268,8 @@ namespace System.Management.Automation
                 }
 
                 var members = isStatic
-                              ? PSObject.DotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
-                              : PSObject.DotNetInstanceAdapter.GetPropertiesMethodsAndEvents(type, false);
+                    ? PSObject.DotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
+                    : PSObject.DotNetInstanceAdapter.GetPropertiesMethodsAndEvents(type, @static: false);
 
                 if (filterToCall != null)
                 {
