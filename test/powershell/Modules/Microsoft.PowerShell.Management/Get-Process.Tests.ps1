@@ -132,7 +132,7 @@ Describe "Process Parent property" -Tags "CI" {
 
     It "Has Parent process property in linux" -Pending:$IsLinux {
         # Added new test to check for bug as described in issue #12908
-        $powershellexe = (Get-Process -Id $PID).mainmodule.filename
+        $powershellexe = (Get-Process -Name "$((Get-Process -Id $PID).Name)").mainmodule.filename
         & $powershellexe -noprofile -command '(Get-Process -Name "$((Get-Process -Id $PID).Name)").Parent' | Should -Not -BeNullOrEmpty
     }
 
