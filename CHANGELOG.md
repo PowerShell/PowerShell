@@ -1,5 +1,40 @@
 # Changelog
 
+## [6.2.6] - 2020-06-11
+
+### Engine Updates and Fixes
+
+- Restrict loading of `amsi.dll` to `system32` folder (#12730)
+
+### Tools
+
+- Update the PowerShell team list to correct changelog generation (#12927)
+
+### Tests
+
+- Pin major Pester version to 4 to prevent breaking changes caused by upcoming release of `v5` (#12262) (Thanks @bergmeister!)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>Update to `.NET Core 2.1.807`</p>
+
+</summary>
+
+<ul>
+<li>update to dotnet 2.1.807 (Internal 11697)</li>
+<li>update hosting tests</li>
+<li>Check if Azure Blob exists before overwriting (#12921)</li>
+<li>Upgrade <code>APIScan</code> version (#12876)</li>
+<li>Fix break in package build by pinning <code>ffi</code> version to <code>1.12</code> (#12889)</li>
+<li>Update the build to sign any unsigned files as 3rd party Dlls (#12581)</li>
+</ul>
+
+</details>
+
 ## [6.2.5] - 2020-05-14
 
 ### Build and Packaging Improvements
@@ -2708,3 +2743,5 @@ We made a number of fixes to the progress bar rendering and the `ProgressRecord`
 ## v0.1.0 - 2016-02-23
 
 - Supports Windows, OS X, and Ubuntu 14.04
+
+[6.2.6]: https://github.com/PowerShell/PowerShell/compare/v6.2.5...v6.2.6
