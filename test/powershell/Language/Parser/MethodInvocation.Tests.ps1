@@ -99,12 +99,40 @@ Describe 'Generic Method invocation' {
                 ExpectedType = [System.Collections.Generic.Dictionary`2[[System.String, System.Private.CoreLib], [System.Numerics.BigInteger, System.Runtime.Numerics]][], System.Private.CoreLib]
             }
         )
+
+        $ExpectedParseErrors = @(
+            @{
+                Script          = '$object.Method[incompl'
+                ExpectedErrors  = 'EndSquareBracketExpectedAtEndOfType'
+                ErrorCount      = 1
+            }
+            @{
+                Script          = '[type]::Member[incompl'
+                ExpectedErrors  = 'EndSquareBracketExpectedAtEndOfType'
+                ErrorCount      = 1
+            }
+            @{
+                Script          = '$object.Method[Type1[Type2'
+                ExpectedErrors  = 'UnexpectedToken','EndSquareBracketExpectedAtEndOfType'
+                ErrorCount      = 2
+            }
+        )
     }
 
     It 'does not throw a parse error for "<Script>"' -TestCases $EmptyArrayCases {
         param($Script)
 
         { [scriptblock]::Create($script) } | Should -Not -Throw
+    }
+
+    It 'reports a parse error for "<Script>"' -TestCases $ExpectedParseErrors {
+        param($Script, $ExpectedError, $ErrorCount)
+
+        $parseErrors = $null
+        [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$parseErrors)
+
+        $parseErrors.Count | Should -Be $ErrorCount
+        $parseErrors.ErrorId | Should -BeIn $ExpectedError
     }
 
     It 'can call a generic method "<Script>" with no arguments' -TestCases $EmptyArrayCases {
@@ -156,7 +184,7 @@ Describe 'Generic Method invocation' {
     It 'can call generic static methods with arguments' {
         [System.Linq.Enumerable]::Select[int, int](
             [int[]](0..10),
-            [func[int, int]]{ $args[0] + 2 }
+            [func[int, int]] { $args[0] + 2 }
         ) | Should -Be @(2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
     }
 }
