@@ -278,6 +278,11 @@ Describe "Test-Connection" -tags "CI" {
         It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $hostName -MtuSize
 
+            if (-not $?)
+            {
+                Get-Error | Write-Warning
+            }
+
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
             $result.Destination | Should -BeExactly $hostName
             $result.Status | Should -BeExactly "Success"
@@ -286,6 +291,11 @@ Describe "Test-Connection" -tags "CI" {
 
         It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
             $result = Test-Connection $hostName -MtuSize -Quiet
+
+            if (-not $?)
+            {
+                Get-Error | Write-Warning
+            }
 
             $result | Should -BeOfType Int32
             $result | Should -BeGreaterThan 0
