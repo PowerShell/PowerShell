@@ -3,6 +3,49 @@
 
 Import-Module HelpersCommon
 
+function GetRealIPAddress([string]$HostName)
+{
+    $tryCount = 0
+    while ($true)
+    {
+        try
+        {
+            # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
+            return [System.Net.Dns]::GetHostEntry($HostName).AddressList |
+                Where-Object { $_.AddressFamily -eq "InterNetwork" } |
+                Select-Object -First 1 |
+                ForEach-Object { $_.IPAddressToString }
+        }
+        catch
+        {
+            if ($tryCount -ge 5)
+            {
+                if ($IsMacOS)
+                {
+                    # We have a fallback on macOS (because we're more likely to need it)
+                    break
+                }
+
+                throw
+            }
+
+            $tryCount++
+        }
+    }
+
+    # We must be on macOS to get here,
+    # but the condition makes this more explicit
+    if ($IsMacOS)
+    {
+        return ifconfig |
+            Select-String -Pattern 'inet (\d+.\d+.\d+.\d+) ' -AllMatches |
+            ForEach-Object { $_.Matches[0].Groups[1].Value } |
+            Where-Object { $_ -ne '127.0.0.1' } |
+            Select-Object -First 1
+    }
+}
+
+
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
@@ -11,11 +54,7 @@ Describe "Test-Connection" -tags "CI" {
         $targetAddressIPv6 = "::1"
         $UnreachableAddress = "10.11.12.13"
         # this resolves to an actual IP rather than 127.0.0.1
-        # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
-        $realAddress = [System.Net.Dns]::GetHostEntry($hostName).AddressList |
-            Where-Object { $_.AddressFamily -eq "InterNetwork" } |
-            Select-Object -First 1 |
-            ForEach-Object { $_.IPAddressToString }
+        $realAddress = GetRealIPAddress -HostName $hostName
         # under some environments, we can't round trip this and retrieve the real name from the address
         # in this case we will simply use the hostname
         $jobContinues = Start-Job { Test-Connection $using:targetAddress -Repeat }
