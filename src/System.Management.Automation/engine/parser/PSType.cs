@@ -282,18 +282,21 @@ namespace System.Management.Automation.Language
             private Type ResolveConcreteInterfaceTypeArguments(ITypeName typeName, TypeBuilder parameter)
             {
                 var typeArgs = new List<Type>();
-                if(typeName.IsGeneric && typeName is GenericTypeName genericName)
+                if (typeName.IsGeneric && typeName is GenericTypeName genericName)
                 {
-                    foreach(var typeArg in genericName.GenericArguments)
+                    foreach (var typeArg in genericName.GenericArguments)
                     {
                         typeArgs.Add(ResolveConcreteInterfaceTypeArguments(typeArg, parameter));
                     }
+
                     return genericName.TypeName.GetReflectionType().MakeGenericType(typeArgs.ToArray());
                 }
-                if(parameter.FullName == typeName.FullName)
+
+                if (parameter.FullName == typeName.FullName)
                 {
                     return parameter;
                 }
+
                 return typeName.GetReflectionType();
             }
         }
@@ -329,10 +332,11 @@ namespace System.Management.Automation.Language
                 var baseClass = this.GetBaseTypes(parser, typeDefinitionAst, out interfaces);
 
                 _typeBuilder = module.DefineType(typeName, Reflection.TypeAttributes.Class | Reflection.TypeAttributes.Public, baseClass, null);
-                foreach(var interfaceExpression in interfaces)
+                foreach (var interfaceExpression in interfaces)
                 {
                     _typeBuilder.AddInterfaceImplementation(interfaceExpression.ResolveConcreteInterfaceType(_typeBuilder));
                 }
+
                 _staticHelpersTypeBuilder = module.DefineType(string.Format(CultureInfo.InvariantCulture, "{0}_<staticHelpers>", typeName), Reflection.TypeAttributes.Class);
                 DefineCustomAttributes(_typeBuilder, typeDefinitionAst.Attributes, _parser, AttributeTargets.Class);
                 _typeDefinitionAst.Type = _typeBuilder;
@@ -351,7 +355,7 @@ namespace System.Management.Automation.Language
             /// <param name="parser"></param>
             /// <param name="typeDefinitionAst"></param>
             /// <param name="interfaces">Return declared interfaces.</param>
-            /// <returns></returns>
+            /// <returns>The base type</returns>
             private Type GetBaseTypes(Parser parser, TypeDefinitionAst typeDefinitionAst, out List<InterfaceExpression> interfaces)
             {
                 // Define base types and report errors.
@@ -361,14 +365,14 @@ namespace System.Management.Automation.Language
                 bool TryGetInterface(TypeConstraintAst ast, out InterfaceExpression interfaceExpression)
                 {
                     interfaceExpression = new InterfaceExpression(ast);
-                    if(ast.TypeName.IsGeneric && ast.TypeName is GenericTypeName genericTypeName)
+                    if (ast.TypeName.IsGeneric && ast.TypeName is GenericTypeName genericTypeName)
                     {
-                        if(genericTypeName.TypeName.GetReflectionType().IsInterface)
+                        if (genericTypeName.TypeName.GetReflectionType().IsInterface)
                         {
                             return true;
                         }
                     }
-                    else if(ast.TypeName.GetReflectionType()?.IsInterface ?? false)
+                    else if (ast.TypeName.GetReflectionType()?.IsInterface ?? false)
                     {
                         return true;
                     }
@@ -395,7 +399,7 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        if(TryGetInterface(firstBaseTypeAst, out InterfaceExpression interfaceExpression))
+                        if (TryGetInterface(firstBaseTypeAst, out InterfaceExpression interfaceExpression))
                         {
                             // First Ast can represent interface as well as BaseClass.
                             interfaces.Add(interfaceExpression);
@@ -505,8 +509,10 @@ namespace System.Management.Automation.Language
                     foreach (var interfaceType in _typeBuilder.GetInterfaces())
                     {
                         var typeDefinition = interfaceType;
-                        if(interfaceType.IsGenericType && interfaceType.GenericTypeArguments.Contains(_typeBuilder))
+                        if (interfaceType.IsGenericType && interfaceType.GenericTypeArguments.Contains(_typeBuilder))
+                        {
                             typeDefinition = interfaceType.GetGenericTypeDefinition();
+                        }
 
                         foreach (var parentInterface in typeDefinition.GetInterfaces())
                         {
@@ -525,7 +531,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                return _interfaceProperties.TryGetValue(name, out Type returnType) && (returnType == type || (returnType.IsGenericParameter));
+                return _interfaceProperties.TryGetValue(name, out Type returnType) && (returnType == type || returnType.IsGenericParameter);
             }
 
             public void DefineMembers()
