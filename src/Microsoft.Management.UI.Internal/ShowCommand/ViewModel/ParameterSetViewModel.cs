@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     continue;
                 }
 
-                parameter.PropertyChanged += new PropertyChangedEventHandler(this.MandatoryParameter_PropertyChanged);
+                parameter.PropertyChanged += this.MandatoryParameter_PropertyChanged;
             }
 
             this.EvaluateAllMandatoryParametersHaveValues();

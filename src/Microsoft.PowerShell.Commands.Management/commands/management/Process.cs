@@ -1000,7 +1000,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!process.HasExited)
                     {
                         process.EnableRaisingEvents = true;
-                        process.Exited += new EventHandler(myProcess_Exited);
+                        process.Exited += myProcess_Exited;
                         if (!process.HasExited)
                         {
                             System.Threading.Interlocked.Increment(ref _numberOfProcessesToWaitFor);
@@ -2040,7 +2040,7 @@ namespace Microsoft.PowerShell.Commands
                         else if (!process.HasExited)
                         {
                             // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
-                            process.Exited += new EventHandler(myProcess_Exited);
+                            process.Exited += myProcess_Exited;
                             process.EnableRaisingEvents = true;
                             process.WaitForExit();
                         }

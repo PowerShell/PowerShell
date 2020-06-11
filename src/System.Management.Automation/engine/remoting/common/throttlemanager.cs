@@ -527,8 +527,7 @@ namespace System.Management.Automation.Remoting
                 {
                     operation = _operationsQueue[0];
                     _operationsQueue.RemoveAt(0);
-                    operation.OperationComplete +=
-                        new EventHandler<OperationStateEventArgs>(OperationCompleteHandler);
+                    operation.OperationComplete += OperationCompleteHandler;
                     _startOperationQueue.Add(operation);
                 }
             }

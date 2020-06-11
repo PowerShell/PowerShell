@@ -181,8 +181,7 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
             _operationsComplete.Reset();
             _throttleManager.ThrottleLimit = ThrottleLimit;
-            _throttleManager.ThrottleComplete +=
-                new EventHandler<EventArgs>(HandleThrottleComplete);
+            _throttleManager.ThrottleComplete += HandleThrottleComplete;
 
             if (string.IsNullOrEmpty(ConfigurationName))
             {
@@ -286,8 +285,7 @@ namespace Microsoft.PowerShell.Commands
                 OpenRunspaceOperation operation = new OpenRunspaceOperation(remoteRunspace);
                 // HandleRunspaceStateChanged callback is added before ThrottleManager complete
                 // callback handlers so HandleRunspaceStateChanged will always be called first.
-                operation.OperationComplete +=
-                    new EventHandler<OperationStateEventArgs>(HandleRunspaceStateChanged);
+                operation.OperationComplete += HandleRunspaceStateChanged;
                 remoteRunspace.URIRedirectionReported += HandleURIDirectionReported;
                 operations.Add(operation);
             }
@@ -1212,7 +1210,7 @@ namespace Microsoft.PowerShell.Commands
                 _operationsComplete.WaitOne();
                 _operationsComplete.Dispose();
 
-                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleComplete);
+                _throttleManager.ThrottleComplete -= HandleThrottleComplete;
                 _throttleManager = null;
 
                 foreach (RemoteRunspace remoteRunspace in _toDispose)
@@ -1321,8 +1319,7 @@ namespace Microsoft.PowerShell.Commands
             _startComplete = true;
             _stopComplete = true;
             OperatedRunspace = runspace;
-            OperatedRunspace.StateChanged +=
-                new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
+            OperatedRunspace.StateChanged += HandleRunspaceStateChanged;
         }
 
         /// <summary>

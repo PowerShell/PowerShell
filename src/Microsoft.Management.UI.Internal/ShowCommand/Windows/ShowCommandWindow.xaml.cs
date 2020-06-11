@@ -20,9 +20,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         public ShowCommandWindow()
         {
             this.InitializeComponent();
-            this.SizeChanged += new SizeChangedEventHandler(this.ShowCommandWindow_SizeChanged);
-            this.LocationChanged += new System.EventHandler(this.ShowCommandWindow_LocationChanged);
-            this.StateChanged += new System.EventHandler(this.ShowCommandWindow_StateChanged);
+            this.SizeChanged += this.ShowCommandWindow_SizeChanged;
+            this.LocationChanged += this.ShowCommandWindow_LocationChanged;
+            this.StateChanged += this.ShowCommandWindow_StateChanged;
         }
 
         /// <summary>

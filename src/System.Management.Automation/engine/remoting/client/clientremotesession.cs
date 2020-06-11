@@ -221,10 +221,8 @@ namespace System.Management.Automation.Remoting
             // Register handlers for various ClientSessiondata structure handler events
             SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;
             SessionDataStructureHandler.ConnectionStateChanged += HandleConnectionStateChanged;
-            SessionDataStructureHandler.EncryptedSessionKeyReceived +=
-                new EventHandler<RemoteDataEventArgs<string>>(HandleEncryptedSessionKeyReceived);
-            SessionDataStructureHandler.PublicKeyRequestReceived +=
-                new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyRequestReceived);
+            SessionDataStructureHandler.EncryptedSessionKeyReceived += HandleEncryptedSessionKeyReceived;
+            SessionDataStructureHandler.PublicKeyRequestReceived += HandlePublicKeyRequestReceived;
         }
 
         #endregion Constructors

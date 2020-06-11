@@ -141,8 +141,7 @@ namespace System.Management.Automation.Remoting
             SessionDataStructureHandler.CreateRunspacePoolReceived += HandleCreateRunspacePool;
             SessionDataStructureHandler.NegotiationReceived += HandleNegotiationReceived;
             SessionDataStructureHandler.SessionClosing += HandleSessionDSHandlerClosing;
-            SessionDataStructureHandler.PublicKeyReceived +=
-                new EventHandler<RemoteDataEventArgs<string>>(HandlePublicKeyReceived);
+            SessionDataStructureHandler.PublicKeyReceived += HandlePublicKeyReceived;
             transportManager.Closing += HandleResourceClosing;
 
             // update the quotas from sessionState..start with default size..and

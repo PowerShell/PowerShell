@@ -257,7 +257,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             if (newSubscriber != null)
             {
                 DebugHelper.WriteLog("RegisterCimIndicationCommand::EndProcessing subscribe to Unsubscribed event", 4);
-                newSubscriber.Unsubscribed += new PSEventUnsubscribedEventHandler(newSubscriber_Unsubscribed);
+                newSubscriber.Unsubscribed += newSubscriber_Unsubscribed;
             }
         }
 

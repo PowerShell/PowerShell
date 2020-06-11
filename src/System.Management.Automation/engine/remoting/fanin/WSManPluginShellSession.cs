@@ -59,10 +59,8 @@ namespace System.Management.Automation.Remoting
             this.creationRequestDetails = creationRequestDetails;
             this.transportMgr = transportMgr;
 
-            transportMgr.PrepareCalled +=
-                new EventHandler<EventArgs>(this.HandlePrepareFromTransportManager);
-            transportMgr.WSManTransportErrorOccured +=
-                new EventHandler<TransportErrorOccuredEventArgs>(this.HandleTransportError);
+            transportMgr.PrepareCalled += this.HandlePrepareFromTransportManager;
+            transportMgr.WSManTransportErrorOccured += this.HandleTransportError;
         }
 
         public void Dispose()
@@ -327,7 +325,7 @@ namespace System.Management.Automation.Remoting
         {
             ReportContext();
             ReportSendOperationComplete();
-            transportMgr.PrepareCalled -= new EventHandler<EventArgs>(this.HandlePrepareFromTransportManager);
+            transportMgr.PrepareCalled -= this.HandlePrepareFromTransportManager;
         }
 
         internal void Close(bool isShuttingDown)
@@ -350,8 +348,7 @@ namespace System.Management.Automation.Remoting
                 shutDownContext = null;
             }
 
-            transportMgr.WSManTransportErrorOccured -=
-                new EventHandler<TransportErrorOccuredEventArgs>(this.HandleTransportError);
+            transportMgr.WSManTransportErrorOccured -= this.HandleTransportError;
 
             // We should not use request details again after so releasing the resource.
             // Remember not to free this memory as this memory is allocated and owned by WSMan.
@@ -523,7 +520,7 @@ namespace System.Management.Automation.Remoting
 
                 WSManPluginCommandSession mgdCmdSession = new WSManPluginCommandSession(requestDetails, serverCmdTransportMgr, _remoteSession);
                 AddToActiveCmdSessions(mgdCmdSession);
-                mgdCmdSession.SessionClosed += new EventHandler<EventArgs>(this.HandleCommandSessionClosed);
+                mgdCmdSession.SessionClosed += this.HandleCommandSessionClosed;
 
                 mgdCmdSession.shutDownContext = new WSManPluginOperationShutdownContext(
                     pluginContext,
@@ -640,7 +637,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginCommandSession cmdSession = cmdSessionEnumerator.Current;
                 // we are not interested in session closed events anymore as we are initiating the close
                 // anyway/
-                cmdSession.SessionClosed -= new EventHandler<EventArgs>(this.HandleCommandSessionClosed);
+                cmdSession.SessionClosed -= this.HandleCommandSessionClosed;
                 cmdSession.Close(reasonForClose);
             }
 

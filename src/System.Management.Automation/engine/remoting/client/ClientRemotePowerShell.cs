@@ -251,24 +251,17 @@ namespace System.Management.Automation.Runspaces.Internal
             dataStructureHandler = runspacePool.DataStructureHandler.CreatePowerShellDataStructureHandler(this);
 
             // register for events from the data structure handler
-            dataStructureHandler.InvocationStateInfoReceived +=
-                new EventHandler<RemoteDataEventArgs<PSInvocationStateInfo>>(HandleInvocationStateInfoReceived);
-            dataStructureHandler.OutputReceived += new EventHandler<RemoteDataEventArgs<object>>(HandleOutputReceived);
-            dataStructureHandler.ErrorReceived += new EventHandler<RemoteDataEventArgs<ErrorRecord>>(HandleErrorReceived);
-            dataStructureHandler.InformationalMessageReceived +=
-                new EventHandler<RemoteDataEventArgs<InformationalMessage>>(HandleInformationalMessageReceived);
-            dataStructureHandler.HostCallReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-            dataStructureHandler.ClosedNotificationFromRunspacePool +=
-                new EventHandler<RemoteDataEventArgs<Exception>>(HandleCloseNotificationFromRunspacePool);
-            dataStructureHandler.BrokenNotificationFromRunspacePool +=
-                new EventHandler<RemoteDataEventArgs<Exception>>(HandleBrokenNotificationFromRunspacePool);
-            dataStructureHandler.ConnectCompleted += new EventHandler<RemoteDataEventArgs<Exception>>(HandleConnectCompleted);
-            dataStructureHandler.ReconnectCompleted += new EventHandler<RemoteDataEventArgs<Exception>>(HandleConnectCompleted);
-            dataStructureHandler.RobustConnectionNotification +=
-                new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
-            dataStructureHandler.CloseCompleted +=
-                new EventHandler<EventArgs>(HandleCloseCompleted);
+            dataStructureHandler.InvocationStateInfoReceived += HandleInvocationStateInfoReceived;
+            dataStructureHandler.OutputReceived += HandleOutputReceived;
+            dataStructureHandler.ErrorReceived += HandleErrorReceived;
+            dataStructureHandler.InformationalMessageReceived += HandleInformationalMessageReceived;
+            dataStructureHandler.HostCallReceived += HandleHostCallReceived;
+            dataStructureHandler.ClosedNotificationFromRunspacePool += HandleCloseNotificationFromRunspacePool;
+            dataStructureHandler.BrokenNotificationFromRunspacePool += HandleBrokenNotificationFromRunspacePool;
+            dataStructureHandler.ConnectCompleted += HandleConnectCompleted;
+            dataStructureHandler.ReconnectCompleted += HandleConnectCompleted;
+            dataStructureHandler.RobustConnectionNotification += HandleRobustConnectionNotification;
+            dataStructureHandler.CloseCompleted += HandleCloseCompleted;
         }
 
         /// <summary>

@@ -65,7 +65,7 @@ namespace Microsoft.Management.UI.Internal
 
             data.Enqueue(callback, parameter);
 
-            element.Loaded += new RoutedEventHandler(Element_Loaded);
+            element.Loaded += Element_Loaded;
             element.ApplyTemplate();
 
             return true;

@@ -74,11 +74,11 @@ namespace Microsoft.Management.UI
 
             this.ReadZoomUserSetting();
 
-            this.viewModel.PropertyChanged += new System.ComponentModel.PropertyChangedEventHandler(this.ViewModel_PropertyChanged);
+            this.viewModel.PropertyChanged += this.ViewModel_PropertyChanged;
             this.DataContext = this.viewModel;
 
-            this.Loaded += new RoutedEventHandler(this.HelpDialog_Loaded);
-            this.Closed += new System.EventHandler(this.HelpDialog_Closed);
+            this.Loaded += this.HelpDialog_Loaded;
+            this.Closed += this.HelpDialog_Closed;
         }
 
         /// <summary>
@@ -222,9 +222,9 @@ namespace Microsoft.Management.UI
         /// <param name="e">Event arguments.</param>
         private void HelpDialog_Loaded(object sender, RoutedEventArgs e)
         {
-            this.StateChanged += new System.EventHandler(this.HelpDialog_StateChanged);
-            this.LocationChanged += new System.EventHandler(this.HelpDialog_LocationChanged);
-            this.SizeChanged += new SizeChangedEventHandler(this.HelpDialog_SizeChanged);
+            this.StateChanged += this.HelpDialog_StateChanged;
+            this.LocationChanged += this.HelpDialog_LocationChanged;
+            this.SizeChanged += this.HelpDialog_SizeChanged;
         }
 
         /// <summary>

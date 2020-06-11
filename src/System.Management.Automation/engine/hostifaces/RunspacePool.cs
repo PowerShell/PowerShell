@@ -748,8 +748,7 @@ namespace System.Management.Automation.Runspaces
                         // call any event handlers on this object, replacing the
                         // internalPool sender with 'this' since receivers
                         // are expecting a RunspacePool.
-                        _internalPool.StateChanged +=
-                            new EventHandler<RunspacePoolStateChangedEventArgs>(OnStateChanged);
+                        _internalPool.StateChanged += OnStateChanged;
                     }
                 }
             }
@@ -761,8 +760,7 @@ namespace System.Management.Automation.Runspaces
                     InternalStateChanged -= value;
                     if (InternalStateChanged == null)
                     {
-                        _internalPool.StateChanged -=
-                            new EventHandler<RunspacePoolStateChangedEventArgs>(OnStateChanged);
+                        _internalPool.StateChanged -= OnStateChanged;
                     }
                 }
             }
