@@ -816,7 +816,7 @@ namespace System.Management.Automation
             Dbg.Assert(mshsnapinKey != null, "Caller should validate the parameter");
 
             object value = mshsnapinKey.GetValue(name);
-            if (value == null && mandatory == true)
+            if (value == null && mandatory)
             {
                 s_mshsnapinTracer.TraceError("Mandatory property {0} not specified for registry key {1}",
                         name, mshsnapinKey.Name);
@@ -824,7 +824,7 @@ namespace System.Management.Automation
             }
 
             string s = value as string;
-            if (string.IsNullOrEmpty(s) && mandatory == true)
+            if (string.IsNullOrEmpty(s) && mandatory)
             {
                 s_mshsnapinTracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
                         name, mshsnapinKey.Name);

@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
 
                     thread.Join();
 
-                    if (createInfo.success == true)
+                    if (createInfo.success)
                     {
                         return createInfo.objectCreated;
                     }

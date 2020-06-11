@@ -371,7 +371,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         writer.WriteLineAsync(spaces[indent] + sourceInformation + @"        " + message);
                     }
-
                 }
             }
         }

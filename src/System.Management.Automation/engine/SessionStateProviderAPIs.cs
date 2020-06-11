@@ -1269,7 +1269,7 @@ namespace System.Management.Automation
                     // An exception during initialization should remove the provider from
                     // session state.
 
-                    Providers.Remove(provider.Name.ToString());
+                    Providers.Remove(provider.Name);
                     ProvidersCurrentWorkingDrive.Remove(provider);
                     provider = null;
                 }

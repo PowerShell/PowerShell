@@ -2018,7 +2018,6 @@ namespace Microsoft.PowerShell.Commands
                         _providersByLogMap.Add(logLink.LogName.ToLowerInvariant(), provColl);
                     }
                     else
-
                     {
                         //
                         // Log is there: add provider, if needed

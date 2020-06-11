@@ -786,7 +786,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // The rooted files wasn't found, so don't search anymore...
-                if (found == false && wasRooted == true)
+                if (found == false && wasRooted)
                     return null;
 
                 if (searchModulePath && found == false && moduleFileFound == false)
@@ -3161,7 +3161,6 @@ namespace Microsoft.PowerShell.Commands
                 newManifestInfo.IsConsideredEditionCompatible = manifestInfo.IsConsideredEditionCompatible;
 
                 newManifestInfo.ExperimentalFeatures = manifestInfo.ExperimentalFeatures;
-
 
                 // If we are in module discovery, then fix the path.
                 if (ss == null)

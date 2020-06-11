@@ -544,7 +544,7 @@ namespace System.Management.Automation.Remoting.Client
             bool shouldRaiseCloseCompleted = false;
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }
@@ -2167,7 +2167,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }

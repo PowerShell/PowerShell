@@ -1043,7 +1043,7 @@ namespace System.Management.Automation.Runspaces
             // Concurrency check should be done under runspace lock
             lock (SyncRoot)
             {
-                if (_bSessionStateProxyCallInProgress == true)
+                if (_bSessionStateProxyCallInProgress)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.NoPipelineWhenSessionStateProxyInProgress);
                 }
@@ -1151,7 +1151,7 @@ namespace System.Management.Automation.Runspaces
                     throw e;
                 }
 
-                if (_bSessionStateProxyCallInProgress == true)
+                if (_bSessionStateProxyCallInProgress)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RunspaceStrings.AnotherSessionStateProxyInProgress);
                 }

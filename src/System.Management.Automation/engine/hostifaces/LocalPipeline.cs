@@ -1395,7 +1395,7 @@ namespace System.Management.Automation.Runspaces
             PipelineProcessor[] copyStack;
             lock (_syncRoot)
             {
-                if (_stopping == true)
+                if (_stopping)
                 {
                     return;
                 }

@@ -27,7 +27,6 @@ namespace System.Management.Automation.Remoting
     {
         #region Strings
 
-
         internal const string NamedPipeNamePrefix = "PSHost.";
 #if UNIX
         internal const string DefaultAppDomainName = "None";

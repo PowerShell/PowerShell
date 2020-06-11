@@ -192,7 +192,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static PSPropertyInfo GetPropertyInfo(PSObject psObject, string[] path)
         {
-            if (path.Length <= 0)
+            if (path.Length == 0)
             {
                 return null;
             }
@@ -290,7 +290,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static void EnsurePropertyInfoPathExists(PSObject psObject, string[] path)
         {
-            if (path.Length <= 0)
+            if (path.Length == 0)
             {
                 return;
             }

@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal override void ReportExecutionStatusAsRunning()
         {
-            if (true == _isClosed)
+            if (_isClosed)
             {
                 return;
             }
@@ -200,7 +200,7 @@ namespace System.Management.Automation.Remoting
             bool reportAsPending,
             bool reportAsDataBoundary)
         {
-            if (true == _isClosed)
+            if (_isClosed)
             {
                 return;
             }

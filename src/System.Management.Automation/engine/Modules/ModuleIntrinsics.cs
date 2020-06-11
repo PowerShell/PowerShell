@@ -420,7 +420,6 @@ namespace System.Management.Automation
             return modulesMatched.OrderBy(m => m.Name).ToList();
         }
 
-
         /// <summary>
         /// Check if a given module info object matches a given module specification.
         /// </summary>

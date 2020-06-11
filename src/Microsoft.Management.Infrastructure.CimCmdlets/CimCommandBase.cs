@@ -511,7 +511,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// </summary>
     public class CimBaseCommand : Cmdlet, IDisposable
     {
-
         #region resolve parameter set name
         /// <summary>
         /// <para>
@@ -982,7 +981,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 NetworkCredential networkCredential = psCredentials.GetNetworkCredential();
                 DebugHelper.WriteLog("Domain:{0}; UserName:{1}; Password:{2}.", 1, networkCredential.Domain, networkCredential.UserName, psCredentials.Password);
                 credentials = new CimCredential(passwordAuthentication, networkCredential.Domain, networkCredential.UserName, psCredentials.Password);
-
             }
             else
             {

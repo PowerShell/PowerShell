@@ -1246,7 +1246,7 @@ namespace System.Management.Automation
 
             // In minishell scenario, if output is redirected
             // then error should also be redirected.
-            if (redirectError == false && redirectOutput == true && _isMiniShell)
+            if (redirectError == false && redirectOutput && _isMiniShell)
             {
                 redirectError = true;
             }

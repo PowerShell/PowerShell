@@ -577,7 +577,6 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-
             if (_loadAssembly)
             {
                 // File extension is ".DLL" (ParameterSetName = FromPathParameterSetName or FromLiteralPathParameterSetName).

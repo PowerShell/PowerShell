@@ -2463,7 +2463,7 @@ namespace System.Management.Automation
                 {
                     SetJobState(JobState.Failed);
                 }
-                else if (_stopIsCalled == true)
+                else if (_stopIsCalled)
                 {
                     SetJobState(JobState.Stopped);
                 }
@@ -3241,12 +3241,12 @@ namespace System.Management.Automation
         /// </summary>
         protected virtual void DoFinish()
         {
-            if (_doFinishCalled == true)
+            if (_doFinishCalled)
                 return;
 
             lock (SyncObject)
             {
-                if (_doFinishCalled == true)
+                if (_doFinishCalled)
                     return;
 
                 _doFinishCalled = true;
@@ -4387,12 +4387,12 @@ namespace System.Management.Automation
         /// </summary>
         protected override void DoFinish()
         {
-            if (_doFinishCalled == true)
+            if (_doFinishCalled)
                 return;
 
             lock (SyncObject)
             {
-                if (_doFinishCalled == true)
+                if (_doFinishCalled)
                     return;
 
                 _doFinishCalled = true;

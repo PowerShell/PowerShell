@@ -1280,7 +1280,7 @@ namespace Microsoft.PowerShell
                 {
                     // If ShouldEndSession is already true, you can't set it back
 
-                    Dbg.Assert(_shouldEndSession != true || value != false,
+                    Dbg.Assert(_shouldEndSession != true || value,
                         "ShouldEndSession can only be set from false to true");
 
                     _shouldEndSession = value;

@@ -1332,7 +1332,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 Runspace runspaceToDestroy = null;
                 lock (pool)
                 {
-                    if (pool.Count <= 0)
+                    if (pool.Count == 0)
                     {
                         break; // break from while
                     }

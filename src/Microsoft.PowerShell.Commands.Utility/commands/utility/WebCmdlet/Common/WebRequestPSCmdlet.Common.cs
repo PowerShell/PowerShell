@@ -1070,7 +1070,7 @@ namespace Microsoft.PowerShell.Commands
                     if (!string.IsNullOrEmpty(CustomMethod))
                     {
                         // set the method if the parameter was provided
-                        httpMethod = new HttpMethod(CustomMethod.ToString().ToUpperInvariant());
+                        httpMethod = new HttpMethod(CustomMethod.ToUpperInvariant());
                     }
 
                     break;
@@ -1478,7 +1478,7 @@ namespace Microsoft.PowerShell.Commands
                                           &&
                                           PreserveAuthorizationOnRedirect.IsPresent
                                           &&
-                                          WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization.ToString());
+                                          WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization);
 
                 using (HttpClient client = GetHttpClient(keepAuthorization))
                 {
@@ -1845,7 +1845,7 @@ namespace Microsoft.PowerShell.Commands
                             if (url != string.Empty && rel != string.Empty && !_relationLink.ContainsKey(rel))
                             {
                                 Uri absoluteUri = new Uri(requestUri, url);
-                                _relationLink.Add(rel, absoluteUri.AbsoluteUri.ToString());
+                                _relationLink.Add(rel, absoluteUri.AbsoluteUri);
                             }
                         }
                     }
@@ -1899,7 +1899,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Treat the value as a collection and enumerate it if enumeration is true
-            if (enumerate == true && fieldValue is IEnumerable items)
+            if (enumerate && fieldValue is IEnumerable items)
             {
                 foreach (var item in items)
                 {

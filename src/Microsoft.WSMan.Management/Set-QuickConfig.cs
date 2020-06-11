@@ -233,7 +233,7 @@ namespace Microsoft.WSMan.Management
                     xpathResult = "/cfg:EnableRemoting_OUTPUT/cfg:Results";
                 }
 
-                if (finalxml.SelectSingleNode(xpathStatus, nsmgr).InnerText.ToString().Equals("succeeded"))
+                if (finalxml.SelectSingleNode(xpathStatus, nsmgr).InnerText.Equals("succeeded"))
                 {
                     if (serviceonly)
                     {

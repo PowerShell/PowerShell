@@ -97,7 +97,7 @@ namespace System.Management.Automation.Runspaces
             // to add cmd to CommandCollection again (Initialize does this).. because of this
             // I am handling history here..
             Initialize(runspace, null, false, isNested);
-            if (true == addToHistory)
+            if (addToHistory)
             {
                 // get command text for history..
                 string cmdText = command.GetCommandStringForHistory();

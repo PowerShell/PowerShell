@@ -361,7 +361,6 @@ namespace System.Management.Automation
         public SteppablePipeline GetSteppablePipeline()
             => GetSteppablePipelineImpl(commandOrigin: CommandOrigin.Internal, args: null);
 
-
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>

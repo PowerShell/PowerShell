@@ -619,7 +619,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.QueryComputerSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameSessionSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameComputerSet, false),
-
                                  }
             },
             {

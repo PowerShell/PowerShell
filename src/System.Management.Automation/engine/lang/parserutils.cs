@@ -905,7 +905,6 @@ namespace System.Management.Automation
             return null;
         }
 
-
         /// <summary>
         /// The implementation of the PowerShell -replace operator....
         /// </summary>

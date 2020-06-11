@@ -38,7 +38,6 @@ namespace System.Management.Automation.Runspaces
 
             return s_valueFactoryCache[cacheIndex];
 
-
             // Local helper function to avoid creating an instance of the generated delegate helper class
             // every time 'GetValueFactoryBasedOnInitCapacity' is invoked.
             static Func<string, PSMemberInfoInternalCollection<PSMemberInfo>> CreateValueFactory(int capacity)

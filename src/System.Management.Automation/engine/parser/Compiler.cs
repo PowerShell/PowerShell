@@ -622,7 +622,6 @@ namespace System.Management.Automation.Language
         internal static readonly MethodInfo VariableOps_SetVariableValue =
             typeof(VariableOps).GetMethod(nameof(VariableOps.SetVariableValue), StaticFlags);
 
-
         internal static readonly MethodInfo Utils_IsComObject =
             typeof(Utils).GetMethod(nameof(Utils.IsComObject), StaticFlags);
 

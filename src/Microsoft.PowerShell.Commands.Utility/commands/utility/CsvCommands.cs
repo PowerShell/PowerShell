@@ -1738,7 +1738,7 @@ namespace Microsoft.PowerShell.Commands
                 case "UseCulture":
                 case "CulturePath":
                 case "CultureLiteralPath":
-                    if (useCulture == true)
+                    if (useCulture)
                     {
                         // ListSeparator is apparently always a character even though the property returns a string, checked via:
                         // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1

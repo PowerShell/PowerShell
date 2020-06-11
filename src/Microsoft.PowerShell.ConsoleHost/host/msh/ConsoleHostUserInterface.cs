@@ -29,7 +29,6 @@ namespace Microsoft.PowerShell
     [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
     internal partial class ConsoleHostUserInterface : System.Management.Automation.Host.PSHostUserInterface
     {
-
         /// <summary>
         /// This is the char that is echoed to the console when the input is masked. This not localizable.
         /// </summary>
