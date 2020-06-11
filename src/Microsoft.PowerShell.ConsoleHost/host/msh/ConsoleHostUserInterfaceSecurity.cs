@@ -196,7 +196,9 @@ namespace Microsoft.PowerShell
                     byte c2 = Marshal.ReadByte(confirmPwd_ptr, i);
                     equal = c1 ^ c2;
                     if (equal != 0)
+                    {
                         return false;
+                    }
                 }
 
                 return true;
