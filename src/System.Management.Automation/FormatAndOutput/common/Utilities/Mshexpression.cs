@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
@@ -162,20 +163,20 @@ namespace Microsoft.PowerShell.Commands
             var wrappedTarget = IfHashtableWrapAsPSCustomObject(target, out bool wasHashtable);
 
             // we have a string value
-            List<PSMemberInfo> members = new List<PSMemberInfo>();
+            IEnumerable<PSMemberInfo> members;
             if (HasWildCardCharacters)
             {
                 // get the members first: this will expand the globbing on each parameter
-                members.AddRange(wrappedTarget.Members.Match(
+                members = wrappedTarget.Members.Match(
                     _stringValue,
-                    PSMemberTypes.Properties | PSMemberTypes.PropertySet | PSMemberTypes.Dynamic));
+                    PSMemberTypes.Properties | PSMemberTypes.PropertySet | PSMemberTypes.Dynamic);
 
                 // if target was a hashtable and no result is found from the keys, then use property value if available
-                if (wasHashtable && members.Count == 0)
+                if (wasHashtable && !members.Any())
                 {
-                    members.AddRange(target.Members.Match(
+                    members = target.Members.Match(
                         _stringValue,
-                        PSMemberTypes.Properties | PSMemberTypes.PropertySet | PSMemberTypes.Dynamic));
+                        PSMemberTypes.Properties | PSMemberTypes.PropertySet | PSMemberTypes.Dynamic);
                 }
             }
             else
@@ -185,9 +186,11 @@ namespace Microsoft.PowerShell.Commands
 
                 if (x == null)
                 {
-                    x = target.Members[_stringValue];
-
-                    if ((x == null) && (wrappedTarget.BaseObject is System.Dynamic.IDynamicMetaObjectProvider))
+                    if (wasHashtable)
+                    {
+                        x = target.Members[_stringValue];
+                    }
+                    else if (wrappedTarget.BaseObject is System.Dynamic.IDynamicMetaObjectProvider)
                     {
                         // We could check if GetDynamicMemberNames includes the name...  but
                         // GetDynamicMemberNames is only a hint, not a contract, so we'd want
@@ -283,28 +286,18 @@ namespace Microsoft.PowerShell.Commands
         {
             List<PSPropertyExpressionResult> retVal = new List<PSPropertyExpressionResult>();
 
-            // If the object passed in is a hashtable, then turn it into a PSCustomObject so
-            // that property expressions can work on it.
-            var wrappedTarget = IfHashtableWrapAsPSCustomObject(target, out bool wasHashtable);
-
             // process the script case
             if (Script != null)
             {
                 PSPropertyExpression scriptExpression = new PSPropertyExpression(Script);
-                PSPropertyExpressionResult r = scriptExpression.GetValue(wrappedTarget, eatExceptions);
+                PSPropertyExpressionResult r = scriptExpression.GetValue(target, eatExceptions);
                 retVal.Add(r);
                 return retVal;
             }
 
             foreach (PSPropertyExpression resolvedName in ResolveNames(target, expand))
             {
-                PSPropertyExpressionResult result = resolvedName.GetValue(wrappedTarget, eatExceptions);
-
-                if (result.Result == null && wasHashtable)
-                {
-                    result = resolvedName.GetValue(target, eatExceptions);
-                }
-
+                PSPropertyExpressionResult result = resolvedName.GetValue(target, eatExceptions);
                 retVal.Add(result);
             }
 
