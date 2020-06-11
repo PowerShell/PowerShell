@@ -642,34 +642,78 @@ Describe "Keywords 'default', 'hidden', 'in', 'static' Token parsing" -Tags CI {
     }
 }
 
-Describe 'Splatting' -Tags 'CI' {
+Describe "Generalized Splatting - Parsing" -Tags CI {
     BeforeAll {
-        $tempFile = New-TemporaryFile
-    }
-    AfterAll {
-        Remove-Item $tempFile
-    }
-
-    Context 'Happy Path' {
-        It "Splatting using hashtable variable '@var'" {
-            $splattedHashTable = @{ Path = $tempFile }
-            Get-Item @splattedHashTable | Should -Not -BeNullOrEmpty
-        }
-
-        It "Splatting using inlined hashtable '@@{key=value}'" {
-            Get-Item @@{ Path = $tempFile; Verbose = $true } | Should -Not -BeNullOrEmpty
-        }
-    }
-
-    Context 'Parameter mismatches' {
         $skipTest = -not $EnabledExperimentalFeatures.Contains('PSGeneralizedSplatting')
-        It "Splatting using hashtable variable '@var'" -Skip:$skipTest {
-            $splattedHashTable = @{ ParameterThatDoesNotExist = $tempFile }
-            { Get-Item @splattedHashTable } | Should -Throw -ErrorId 'NamedParameterNotFound'
+        if ($skipTest) {
+            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSGeneralizedSplatting' to be enabled." -Verbose
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
         }
+        else {
+            $testCases_basic = @(
+                @{  Script        = 'Verb-Noun @@{ "ParameterName"="ParameterValue" }';
+                    TokenKind     = [System.Management.Automation.Language.TokenKind]::At;
+                    TokenPosition = 1
+                }
+                @{  Script        = 'Verb-Noun @@{ "ParameterName1"="ParameterValue1"; "ParameterName2"="ParameterValue2" }';
+                    TokenKind     = [System.Management.Automation.Language.TokenKind]::At;
+                    TokenPosition = 1
+                }
+            )
 
-        It "Splatting using inlined hashtable '@@{key=value}'" -Skip:$skipTest {
-            { Get-Item @@{ ParameterThatDoesNotExist = $tempFile } } | Should -Throw -ErrorId 'NamedParameterNotFound'
+            $testCases_incomplete = @(
+                @{  Script  = '@@{ "Key"="Value" }';
+                    ErrorId = "GeneralizedSplattingOnlyPermittedForCommands";
+                    AstType = [System.Management.Automation.Language.ErrorExpressionAst]
+                }
+                # The following test case is incomplete at the moment but could be implemented as per RFC0002
+                @{  Script  = '$str="1234"; $str.SubString(@@{ StartIndex = 2; Length = 2 })';
+                    ErrorId = "GeneralizedSplattingOnlyPermittedForCommands";
+                    AstType = [System.Management.Automation.Language.ErrorExpressionAst]
+                }
+            )
         }
+    }
+
+    AfterAll {
+        if ($skipTest) {
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        }
+    }
+
+    It "Using generalized splatting operator '@@' in script <Script> for inline argument splatting of a command" -TestCases $testCases_basic {
+        param($Script, $TokenKind, [int]$TokenPosition)
+
+        $tokens = $null
+        $errors = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tokens, [ref]$errors)
+
+        $tokens[$TokenPosition].Kind | Should -BeExactly $TokenKind
+        $tokens[$TokenPosition].Text | Should -BeExactly '@'
+
+        $result.EndBlock.Statements.PipelineElements[0].CommandElements[1] | Should -BeOfType 'System.Management.Automation.Language.HashtableAst'
+        $result.EndBlock.Statements.PipelineElements[0].CommandElements[1].Extent.Text.StartsWith('@@{') |
+            Should -BeTrue -Because "HashtableAst Extent should start with '@@{'"
+        $result.EndBlock.Statements.PipelineElements[0].CommandElements[1].Extent.Text.EndsWith('}') |
+            Should -BeTrue -Because "HashtableAst Extent should end with '}'"
+    }
+
+    It "Generalized splatting operator '@@' can be used in function name" {
+        function a@@ { 'a@@' }
+        function a@@b { 'a@@b' }
+
+        a@@ | Should -BeExactly 'a@@'
+        a@@b | Should -BeExactly 'a@@b'
+    }
+
+    It "Using generalized splatting expression <Script> not as argument to command should generate correct error" -TestCases $testCases_incomplete {
+        param($Script, $ErrorId, $AstType)
+
+        $errors = $null
+        [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$errors)
+
+        $errors.Count | Should -Be 1
+        $errors.ErrorId | Should -BeExactly $ErrorId
     }
 }
