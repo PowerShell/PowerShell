@@ -280,7 +280,7 @@ Describe "Test-Connection" -tags "CI" {
 
             if (-not $?)
             {
-                Get-Error | Write-Warning
+                Get-Error | Out-String | Write-Host
             }
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
@@ -294,7 +294,7 @@ Describe "Test-Connection" -tags "CI" {
 
             if (-not $?)
             {
-                Get-Error | Write-Warning
+                Get-Error | Out-String | Write-Host
             }
 
             $result | Should -BeOfType Int32
