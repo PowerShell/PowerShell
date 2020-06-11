@@ -3,7 +3,7 @@
 
 Import-Module HelpersCommon
 
-function GetRealIPAddress([string]$HostName)
+function GetHostNetworkInfo
 {
     $tryCount = 0
     while ($true)
@@ -11,10 +11,12 @@ function GetRealIPAddress([string]$HostName)
         try
         {
             # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
-            return [System.Net.Dns]::GetHostEntry($HostName).AddressList |
+            $hostName = [System.Net.Dns]::GetHostName()
+            $ipAddress = [System.Net.Dns]::GetHostEntry($hostName).AddressList |
                 Where-Object { $_.AddressFamily -eq "InterNetwork" } |
                 Select-Object -First 1 |
                 ForEach-Object { $_.IPAddressToString }
+            return $hostName, $ipAddress
         }
         catch
         {
@@ -37,24 +39,27 @@ function GetRealIPAddress([string]$HostName)
     # but the condition makes this more explicit
     if ($IsMacOS)
     {
-        return ifconfig |
+        $hostName ??= hostname
+        $ipAddress = ifconfig |
             Select-String -Pattern 'inet (\d+.\d+.\d+.\d+) ' -AllMatches |
             ForEach-Object { $_.Matches[0].Groups[1].Value } |
             Where-Object { $_ -ne '127.0.0.1' } |
             Select-Object -First 1
+
+        Write-Warning "Resolved network information with ifconfig.`nHOSTNAME: '$hostName'`nIPADDRESS: '$ipAddress'"
+
+        return $hostName, $ipAddress
     }
 }
 
 
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
-        $hostName = [System.Net.Dns]::GetHostName()
+        $hostName, $realAddress = GetHostNetworkInfo
         $targetName = "localhost"
         $targetAddress = "127.0.0.1"
         $targetAddressIPv6 = "::1"
         $UnreachableAddress = "10.11.12.13"
-        # this resolves to an actual IP rather than 127.0.0.1
-        $realAddress = GetRealIPAddress -HostName $hostName
         # under some environments, we can't round trip this and retrieve the real name from the address
         # in this case we will simply use the hostname
         $jobContinues = Start-Job { Test-Connection $using:targetAddress -Repeat }
