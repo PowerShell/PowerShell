@@ -1,7 +1,7 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "ScriptBlock.GetNewClosure()" -tags "CI" {
-    
+
     BeforeAll {
 
         ## No error should occur when calling GetNewClosure because:

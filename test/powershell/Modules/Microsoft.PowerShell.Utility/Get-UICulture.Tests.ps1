@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-UICulture" -Tags "CI" {
     It "Should have $ PsUICulture variable be equivalent to Get-UICulture object" {

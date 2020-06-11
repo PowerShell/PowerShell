@@ -1,12 +1,12 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Move-Item tests" -Tag "CI" {
     BeforeAll {
         $content = "This is content"
-        Setup -f originalfile.txt -content "This is content"
+        Setup -f originalfile.txt -Content "This is content"
         $source = "$TESTDRIVE/originalfile.txt"
         $target = "$TESTDRIVE/ItemWhichHasBeenMoved.txt"
-        Setup -f [orig-file].txt -content "This is not content"
+        Setup -f [orig-file].txt -Content "This is not content"
         $sourceSp = "$TestDrive/``[orig-file``].txt"
         $targetSpName = "$TestDrive/ItemWhichHasBeen[Moved].txt"
         $targetSp = "$TestDrive/ItemWhichHasBeen``[Moved``].txt"

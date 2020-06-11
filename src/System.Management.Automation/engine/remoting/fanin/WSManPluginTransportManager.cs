@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal override void ReportExecutionStatusAsRunning()
         {
-            if (true == _isClosed)
+            if (_isClosed)
             {
                 return;
             }
@@ -200,7 +200,7 @@ namespace System.Management.Automation.Remoting
             bool reportAsPending,
             bool reportAsDataBoundary)
         {
-            if (true == _isClosed)
+            if (_isClosed)
             {
                 return;
             }

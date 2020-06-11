@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -25,7 +25,7 @@ namespace Microsoft.Management.UI.Internal
                 return;
             }
 
-            if ((bool)e.OldValue == true)
+            if ((bool)e.OldValue)
             {
                 tb.SizeChanged -= OnTextBlockSizeChanged;
             }

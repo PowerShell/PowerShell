@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 namespace System.Management.Automation.Runspaces
@@ -97,7 +97,7 @@ namespace System.Management.Automation.Runspaces
             // to add cmd to CommandCollection again (Initialize does this).. because of this
             // I am handling history here..
             Initialize(runspace, null, false, isNested);
-            if (true == addToHistory)
+            if (addToHistory)
             {
                 // get command text for history..
                 string cmdText = command.GetCommandStringForHistory();
@@ -128,7 +128,7 @@ namespace System.Management.Automation.Runspaces
             // NTRAID#Windows Out Of Band Releases-915851-2005/09/13
             if (pipeline == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pipeline");
+                throw PSTraceSource.NewArgumentNullException(nameof(pipeline));
             }
 
             if (pipeline._disposed)
@@ -997,7 +997,7 @@ namespace System.Management.Automation.Runspaces
 
             if (addToHistory && command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             if (command != null)

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Set-StrictMode -Version 3.0
@@ -17,12 +17,12 @@ if(Test-Path $dotNetPath)
 
 # import build into the global scope so it can be used by packaging
 Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
-Import-Module (Join-Path $repoRoot 'tools\packaging') -scope Global
+Import-Module (Join-Path $repoRoot 'tools\packaging') -Scope Global
 
 # import the windows specific functcion only in Windows PowerShell or on Windows
 if($PSVersionTable.PSEdition -eq 'Desktop' -or $IsWindows)
 {
-    Import-Module (Join-Path $PSScriptRoot 'WindowsCI.psm1') -scope Global
+    Import-Module (Join-Path $PSScriptRoot 'WindowsCI.psm1') -Scope Global
 }
 
 # tests if we should run a daily build
@@ -104,7 +104,7 @@ function Invoke-CIBuild
 
     $options = (Get-PSOptions)
 
-    $path = split-path -path $options.Output
+    $path = Split-Path -Path $options.Output
 
     $psOptionsPath = (Join-Path -Path $PSScriptRoot -ChildPath '../psoptions.json')
     $buildZipPath = (Join-Path -Path $PSScriptRoot -ChildPath '../build.zip')
@@ -129,7 +129,7 @@ function Invoke-CIInstall
     {
         if ($env:BUILD_REASON -eq 'Schedule')
         {
-            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((get-date).ToString("yyyyMMddhhss"))"
+            Write-Host "##vso[build.updatebuildnumber]Daily-$env:BUILD_SOURCEBRANCHNAME-$env:BUILD_SOURCEVERSION-$((Get-Date).ToString("yyyyMMddhhss"))"
         }
     }
 
@@ -145,7 +145,7 @@ function Invoke-CIInstall
 
         # Account
         $userName = 'ciRemote'
-        New-LocalUser -username $userName -password $password
+        New-LocalUser -username $userName -Password $password
         Add-UserToGroup -username $userName -groupSid $script:administratorsGroupSID
 
         # Provide credentials globally for remote tests.
@@ -192,7 +192,7 @@ function Invoke-CIxUnit
         throw "CoreCLR pwsh.exe was not built"
     }
 
-    $xUnitTestResultsFile = Join-Path -Path $PWD -childpath "xUnitTestResults.xml"
+    $xUnitTestResultsFile = Join-Path -Path $PWD -ChildPath "xUnitTestResults.xml"
 
     Start-PSxUnit -xUnitTestResultsFile $xUnitTestResultsFile
     Push-Artifact -Path $xUnitTestResultsFile -name xunit
@@ -414,7 +414,7 @@ function Compress-CoverageArtifacts
     $null = $artifacts.Add($zipOpenCoverPath)
 
     $zipCodeCoveragePath = Join-Path $PWD "CodeCoverage.zip"
-    Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
+    Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -Verbose
     [System.IO.Compression.ZipFile]::CreateFromDirectory($CodeCoverageOutput, $zipCodeCoveragePath)
     $null = $artifacts.Add($zipCodeCoveragePath)
 
@@ -441,7 +441,7 @@ function Invoke-CIFinish
         [string] $NuGetKey
     )
 
-    if($IsLinux -or $IsMacOS)
+    if($PSEdition -eq 'Core' -and ($IsLinux -or $IsMacOS))
     {
         return New-LinuxPackage -NugetKey $NugetKey
     }
@@ -464,7 +464,7 @@ function Invoke-CIFinish
         Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release' -ReleaseTag $preReleaseVersion -Clean
 
         # Build packages
-        $packages = Start-PSPackage -Type msi,nupkg,zip -ReleaseTag $preReleaseVersion -SkipReleaseChecks
+        $packages = Start-PSPackage -Type msi,nupkg,zip,zip-pdb -ReleaseTag $preReleaseVersion -SkipReleaseChecks
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -492,8 +492,9 @@ function Invoke-CIFinish
         $env:PSMsiX64Path = $artifacts | Where-Object { $_.EndsWith(".msi")}
 
         # Install the latest Pester and import it
-        Install-Module Pester -Force -SkipPublisherCheck
-        Import-Module Pester -Force
+        $maximumPesterVersion = '4.99'
+        Install-Module Pester -Force -SkipPublisherCheck -MaximumVersion $maximumPesterVersion
+        Import-Module Pester -Force -MaximumVersion $maximumPesterVersion
 
         # start the packaging tests and get the results
         $packagingTestResult = Invoke-Pester -Script (Join-Path $repoRoot '.\test\packaging\windows\') -PassThru

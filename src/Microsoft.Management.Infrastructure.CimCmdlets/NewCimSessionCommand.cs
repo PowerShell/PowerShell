@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -18,6 +18,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// The CimSession object returned by the Cmdlet is used by all other CIM
     /// cmdlets.
     /// </summary>
+    [Alias("ncms")]
     [Cmdlet(VerbsCommon.New, "CimSession", DefaultParameterSetName = CredentialParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227967")]
     [OutputType(typeof(CimSession))]
     public sealed class NewCimSessionCommand : CimBaseCommand

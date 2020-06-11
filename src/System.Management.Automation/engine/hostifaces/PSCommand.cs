@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Runspaces;
@@ -133,7 +133,7 @@ namespace System.Management.Automation
         {
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
+                throw PSTraceSource.NewArgumentNullException(nameof(cmdlet));
             }
 
             if (_owner != null)
@@ -175,7 +175,7 @@ namespace System.Management.Automation
         {
             if (script == null)
             {
-                throw PSTraceSource.NewArgumentNullException("script");
+                throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
 
             if (_owner != null)
@@ -220,7 +220,7 @@ namespace System.Management.Automation
         {
             if (script == null)
             {
-                throw PSTraceSource.NewArgumentNullException("script");
+                throw PSTraceSource.NewArgumentNullException(nameof(script));
             }
 
             if (_owner != null)
@@ -258,7 +258,7 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw PSTraceSource.NewArgumentNullException("command");
+                throw PSTraceSource.NewArgumentNullException(nameof(command));
             }
 
             if (_owner != null)

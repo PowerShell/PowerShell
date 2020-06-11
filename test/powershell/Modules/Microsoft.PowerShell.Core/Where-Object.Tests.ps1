@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Add-TestDynamicType
 
@@ -51,7 +51,7 @@ Describe "Where-Object" -Tags "CI" {
     }
 
     It 'Where-Object Prop -contains Value' {
-        $Result = $Computers | Where-Object Drives -contains 'D'
+        $Result = $Computers | Where-Object Drives -Contains 'D'
         $Result | Should -HaveCount 2
     }
 
@@ -63,7 +63,7 @@ Describe "Where-Object" -Tags "CI" {
 
     It 'Where-Object $Array -in Prop' {
         $Array = 'SPC-1234','BGP-5678'
-        $Result = $Computers | Where-Object ComputerName -in $Array
+        $Result = $Computers | Where-Object ComputerName -In $Array
         $Result | Should -HaveCount 2
     }
 
@@ -73,7 +73,7 @@ Describe "Where-Object" -Tags "CI" {
     }
 
     It 'Where-Object Prop -ge 2' {
-        $Result = $Computers | Where-Object NumberOfCores -ge 2
+        $Result = $Computers | Where-Object NumberOfCores -GE 2
         $Result | Should -HaveCount 2
     }
 
@@ -83,7 +83,7 @@ Describe "Where-Object" -Tags "CI" {
     }
 
     It 'Where-Object Prop -gt 2' {
-        $Result = $Computers | Where-Object NumberOfCores -gt 2
+        $Result = $Computers | Where-Object NumberOfCores -GT 2
         $Result | Should -HaveCount 1
     }
 
@@ -93,7 +93,7 @@ Describe "Where-Object" -Tags "CI" {
     }
 
     It 'Where-Object Prop -le 2' {
-        $Result = $Computers | Where-Object NumberOfCores -le 2
+        $Result = $Computers | Where-Object NumberOfCores -LE 2
         $Result | Should -HaveCount 2
     }
 
@@ -103,7 +103,7 @@ Describe "Where-Object" -Tags "CI" {
     }
 
     It 'Where-Object Prop -lt 2' {
-        $Result = $Computers | Where-Object NumberOfCores -lt 2
+        $Result = $Computers | Where-Object NumberOfCores -LT 2
         $Result | Should -HaveCount 1
     }
 
@@ -113,7 +113,7 @@ Describe "Where-Object" -Tags "CI" {
     }
 
     It 'Where-Object Prop -like Value' {
-        $Result = $Computers | Where-Object ComputerName -like 'MGC-9101'
+        $Result = $Computers | Where-Object ComputerName -Like 'MGC-9101'
         $Result | Should -HaveCount 1
     }
 
@@ -123,13 +123,13 @@ Describe "Where-Object" -Tags "CI" {
     }
 
     It 'Where-Object Prop -like Value' {
-        $Result = $Computers | Where-Object ComputerName -match '^MGC.+'
+        $Result = $Computers | Where-Object ComputerName -Match '^MGC.+'
         $Result | Should -HaveCount 1
     }
 
     It 'Where-Object should handle dynamic (DLR) objects' {
         $dynObj = [TestDynamic]::new()
-        $Result = $dynObj, $dynObj | Where-Object FooProp -eq 123
+        $Result = $dynObj, $dynObj | Where-Object FooProp -EQ 123
         $Result | Should -HaveCount 2
         $Result[0] | Should -Be $dynObj
         $Result[1] | Should -Be $dynObj
@@ -137,7 +137,7 @@ Describe "Where-Object" -Tags "CI" {
 
     It 'Where-Object should handle dynamic (DLR) objects, even without property name hint' {
         $dynObj = [TestDynamic]::new()
-        $Result = $dynObj, $dynObj | Where-Object HiddenProp -eq 789
+        $Result = $dynObj, $dynObj | Where-Object HiddenProp -EQ 789
         $Result | Should -HaveCount 2
         $Result[0] | Should -Be $dynObj
         $Result[1] | Should -Be $dynObj

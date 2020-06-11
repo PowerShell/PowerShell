@@ -18,8 +18,7 @@ This guide assumes that you have recursively cloned the PowerShell repository an
 
 ### Visual Studio
 
-You will need to install an edition of Visual Studio 2015 (Community, Enterprise, or Professional) with the optional feature 'Common Tools for Visual C++' installed.
-The free Community edition of Visual Studio 2015 can be downloaded [here](https://www.visualstudio.com/visual-studio-community-vs/).
+This repository requires at least Visual Studio 2019 16.6 Preview 2. The free Community edition of Visual Studio can be downloaded from [Microsoft](https://visualstudio.microsoft.com/downloads/).
 
 ### Visual Studio Code
 
@@ -58,11 +57,11 @@ Import-Module ./build.psm1
 Start-PSBuild
 ```
 
-Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/netcoreapp3.0/win7-x64/publish/pwsh.exe`.
+Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/net5.0/win7-x64/publish/pwsh.exe`.
 
 This location is of the form `./[project]/bin/[configuration]/[framework]/[rid]/publish/[binary name]`,
 and our project is `powershell`, configuration is `Debug` by default,
-framework is `netcoreapp3.0`, runtime identifier is `win7-x64` by default,
+framework is `net5.0`, runtime identifier is `win7-x64` by default,
 and binary name is `pwsh`.
 The function `Get-PSOutput` will return the path to the executable;
 thus you can execute the development copy via `& (Get-PSOutput)`.

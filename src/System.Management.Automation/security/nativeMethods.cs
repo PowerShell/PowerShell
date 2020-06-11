@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -524,6 +524,7 @@ namespace System.Management.Automation.Security
                           string strKeyName,
                           uint dwLegacySpec,
                           uint dwFlags);
+
         [DllImport("ncrypt.dll", CharSet = CharSet.Unicode)]
         internal static extern unsafe
         int NCryptSetProperty(IntPtr hProv, string pszProperty, void* pbInput, int cbInput, int dwFlags);
@@ -565,12 +566,16 @@ namespace System.Management.Automation.Security
         {
             internal DWORD dwSize;
             internal DWORD dwSubjectChoice;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszFileName;
+
             internal DWORD dwSigningCertChoice;
             internal IntPtr pSigningCertContext; // PCCERT_CONTEXT
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszTimestampURL;
+
             internal DWORD dwAdditionalCertChoice;
             internal IntPtr pSignExtInfo; // PCCRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO
         };
@@ -602,10 +607,13 @@ namespace System.Management.Automation.Security
         {
             internal DWORD dwSize;
             internal DWORD dwAttrFlagsNotUsed;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszDescription;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszMoreInfoLocation;
+
             [MarshalAs(UnmanagedType.LPStr)]
             internal string pszHashAlg;
 
@@ -794,8 +802,10 @@ namespace System.Management.Automation.Security
         internal struct WINTRUST_FILE_INFO
         {
             internal DWORD cbStruct;               // = sizeof(WINTRUST_FILE_INFO)
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pcwszFilePath;         // LPCWSTR
+
             internal IntPtr hFileNotUsed;          // optional, HANDLE to pcwszFilePath
             internal IntPtr pgKnownSubjectNotUsed; // optional: GUID* : fill if the
                                                    // subject type is known
@@ -808,7 +818,7 @@ namespace System.Management.Automation.Security
             internal uint cbStruct;
 
             /// GUID->_GUID
-            internal GUID gSubject;
+            internal Guid gSubject;
 
             /// LPCWSTR->WCHAR*
             [MarshalAsAttribute(UnmanagedType.LPWStr)]
@@ -825,23 +835,6 @@ namespace System.Management.Automation.Security
 
             /// BYTE*
             internal System.IntPtr pbMemSignedMsg;
-        }
-
-        [StructLayoutAttribute(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-        internal struct GUID
-        {
-            /// unsigned int
-            internal uint Data1;
-
-            /// unsigned short
-            internal ushort Data2;
-
-            /// unsigned short
-            internal ushort Data3;
-
-            /// unsigned char[8]
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
-            internal byte[] Data4;
         }
 
         [ArchitectureSensitive]
@@ -864,11 +857,7 @@ namespace System.Management.Automation.Security
             byte[] contentBytes = System.Text.Encoding.Unicode.GetBytes(content);
 
             // The GUID of the PowerShell SIP
-            bi.gSubject.Data1 = 0x603bcc1f;
-            bi.gSubject.Data2 = 0x4b59;
-            bi.gSubject.Data3 = 0x4e08;
-            bi.gSubject.Data4 = new byte[] { 0xb7, 0x24, 0xd2, 0xc6, 0x29, 0x7e, 0xf3, 0x51 };
-
+            bi.gSubject = new Guid(0x603bcc1f, 0x4b59, 0x4e08, new byte[] { 0xb7, 0x24, 0xd2, 0xc6, 0x29, 0x7e, 0xf3, 0x51 });
             bi.cbStruct = (DWORD)Marshal.SizeOf(bi);
             bi.pcwszDisplayName = fileName;
             bi.cbMemObject = (uint)contentBytes.Length;
@@ -1956,6 +1945,7 @@ namespace System.Management.Automation.Security
         {
             [MarshalAs(UnmanagedType.LPStr)]
             internal string pszObjId;
+
             internal CRYPT_ATTR_BLOB Value;
         }
 
@@ -1975,8 +1965,10 @@ namespace System.Management.Automation.Security
             private DWORD _dwCurFilePos;
             private DWORD _dwLastMemberOffset;
             private BOOL _fEOF;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             private string _pwszResultDir;
+
             private IntPtr _hCATStore;
         };
 
@@ -1984,11 +1976,14 @@ namespace System.Management.Automation.Security
         internal struct CRYPTCATMEMBER
         {
             internal DWORD cbStruct;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszReferenceTag;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszFileName;
-            internal GUID gSubjectType;
+
+            internal Guid gSubjectType;
             internal DWORD fdwMemberFlags;
             internal IntPtr pIndirectData;
             internal DWORD dwCertVersion;
@@ -2002,8 +1997,10 @@ namespace System.Management.Automation.Security
         internal struct CRYPTCATATTRIBUTE
         {
             private DWORD _cbStruct;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszReferenceTag;
+
             private DWORD _dwAttrTypeAndAction;
             internal DWORD cbValue;
             internal System.IntPtr pbValue;
@@ -2015,8 +2012,10 @@ namespace System.Management.Automation.Security
         {
             private DWORD _cbStruct;
             internal DWORD dwPublicVersion;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             internal string pwszP7File;
+
             private IntPtr _hProv;
             private DWORD _dwEncodingType;
             private DWORD _fdwStoreFlags;

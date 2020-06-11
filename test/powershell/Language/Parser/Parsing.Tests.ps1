@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-set-strictmode -v 2
+Set-StrictMode -v 2
 
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
@@ -480,78 +480,196 @@ Describe "ParserError type tests" -Tag CI {
     }
 }
 
-Describe "Generalized Splatting - Parsing" -Tags CI {
+Describe "Keywords 'default', 'hidden', 'in', 'static' Token parsing" -Tags CI {
     BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSGeneralizedSplatting')
-        if ($skipTest) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSGeneralizedSplatting' to be enabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-        else {
-            $testCases_basic = @(
-                @{  Script        = 'Verb-Noun @@{ "ParameterName"="ParameterValue" }';
-                    TokenKind     = [System.Management.Automation.Language.TokenKind]::At;
-                    TokenPosition = 1
+        $testCases_basic = @(
+            @{
+                Script = 'switch (1) {default {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Default
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
                 }
-                @{  Script        = 'Verb-Noun @@{ "ParameterName1"="ParameterValue1"; "ParameterName2"="ParameterValue2" }';
-                    TokenKind     = [System.Management.Automation.Language.TokenKind]::At;
-                    TokenPosition = 1
+            }
+            @{
+                Script = 'switch (1) {"default" {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::StringExpandable
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
                 }
-            )
-
-            $testCases_incomplete = @(
-                @{  Script  = '@@{ "Key"="Value" }';
-                    ErrorId = "GeneralizedSplattingOnlyPermittedForCommands";
-                    AstType = [System.Management.Automation.Language.ErrorExpressionAst]
+            }
+            @{
+                Script = 'switch (1) {adefault {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Identifier
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
                 }
-                # The following test case is incomplete at the moment but could be implemented as per RFC0002
-                @{  Script  = '$str="1234"; $str.SubString(@@{ StartIndex = 2; Length = 2 })';
-                    ErrorId = "GeneralizedSplattingOnlyPermittedForCommands";
-                    AstType = [System.Management.Automation.Language.ErrorExpressionAst]
+            }
+            @{
+                Script = 'foreach ($i in 1..2) {$i}'
+                TokensToCheck = @{
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::In
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
                 }
-            )
-        }
+            }
+            @{
+                Script = 'class test {hidden $a; static aMethod () {return $this.a} }'
+                TokensToCheck = @{
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Hidden
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                    6 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Static
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                }
+            }
+            @{
+                Script = 'echo default hidden in static'
+                TokensToCheck = @{
+                    1 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    2 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    4 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                }
+            }
+            @{
+                Script = 'default'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Default
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'hidden'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Hidden
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'in'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::In
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'static'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Static
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+        )
     }
 
     AfterAll {
-        if ($skipTest) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+
+    It "Keywords 'default', 'hidden', 'in', 'static' in {<Script>} correctly tokenized." -TestCases $testCases_basic {
+        param($Script, $TokensToCheck)
+
+        $tks = $null
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+
+        foreach ($token in $TokensToCheck.Keys ) {
+            if ($TokensToCheck[$Token].ContainsKey('TokenKind')) {
+                $tks[$token].Kind | Should -Be $TokensToCheck[$token].TokenKind -Because 'because TokenKind must be as expected'
+            }
+            if ($TokensToCheck[$Token].ContainsKey('TokenFlags_Value')) {
+                $tks[$token].TokenFlags -band $TokensToCheck[$token].TokenFlags_Mask | Should -Be $TokensToCheck[$token].TokenFlags_Value -Because 'because TokenFlags must be as expected after masking'
+            }
         }
     }
 
-    It "Using generalized splatting operator '@@' in script <Script> for inline argument splatting of a command" -TestCases $testCases_basic {
-        param($Script, $TokenKind, [int]$TokenPosition)
+    $testKeywordsAsCmds = @(
+        @{ Keyword = 'default' }
+        @{ Keyword = 'hidden' }
+        @{ Keyword = 'in' }         # Note: this overwrites Pester's `In` function.
+        @{ Keyword = 'static' }
+    )
 
-        $tokens = $null
-        $errors = $null
-        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tokens, [ref]$errors)
+    It "<Keyword> can be used as command name" -TestCases $testKeywordsAsCmds {
+        param($Keyword)
 
-        $tokens[$TokenPosition].Kind | Should -BeExactly $TokenKind
-        $tokens[$TokenPosition].Text | Should -BeExactly '@'
+        Invoke-Expression "function $Keyword { '$Keyword' }"
 
-        $result.EndBlock.Statements.PipelineElements[0].CommandElements[1] | Should -BeOfType 'System.Management.Automation.Language.HashtableAst'
-        $result.EndBlock.Statements.PipelineElements[0].CommandElements[1].Extent.Text.StartsWith('@@{') |
-            Should -BeTrue -Because "HashtableAst Extent should start with '@@{'"
-        $result.EndBlock.Statements.PipelineElements[0].CommandElements[1].Extent.Text.EndsWith('}') |
-            Should -BeTrue -Because "HashtableAst Extent should end with '}'"
+        . $Keyword | Should -BeExactly $Keyword
+    }
+}
+
+Describe 'Splatting' -Tags 'CI' {
+    BeforeAll {
+        $tempFile = New-TemporaryFile
+    }
+    AfterAll {
+        Remove-Item $tempFile
     }
 
-    It "Generalized splatting operator '@@' can be used in function name" {
-        function a@@ { 'a@@' }
-        function a@@b { 'a@@b' }
+    Context 'Happy Path' {
+        It "Splatting using hashtable variable '@var'" {
+            $splattedHashTable = @{ Path = $tempFile }
+            Get-Item @splattedHashTable | Should -Not -BeNullOrEmpty
+        }
 
-        a@@ | Should -BeExactly 'a@@'
-        a@@b | Should -BeExactly 'a@@b'
+        It "Splatting using inlined hashtable '@@{key=value}'" {
+            Get-Item @@{ Path = $tempFile; Verbose = $true } | Should -Not -BeNullOrEmpty
+        }
     }
 
-    It "Using generalized splatting expression <Script> not as argument to command should generate correct error" -TestCases $testCases_incomplete {
-        param($Script, $ErrorId, $AstType)
+    Context 'Parameter mismatches' {
+        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSGeneralizedSplatting')
+        It "Splatting using hashtable variable '@var'" -Skip:$skipTest {
+            $splattedHashTable = @{ ParameterThatDoesNotExist = $tempFile }
+            { Get-Item @splattedHashTable } | Should -Throw -ErrorId 'NamedParameterNotFound'
+        }
 
-        $errors = $null
-        [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$null, [ref]$errors)
-
-        $errors.Count | Should -Be 1
-        $errors.ErrorId | Should -BeExactly $ErrorId
+        It "Splatting using inlined hashtable '@@{key=value}'" -Skip:$skipTest {
+            { Get-Item @@{ ParameterThatDoesNotExist = $tempFile } } | Should -Throw -ErrorId 'NamedParameterNotFound'
+        }
     }
 }

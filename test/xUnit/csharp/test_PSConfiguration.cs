@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,6 +18,7 @@ namespace PSTests.Sequential
     public class PowerShellPolicyFixture : IDisposable
     {
         private const string ConfigFileName = "powershell.config.json";
+
         private readonly string systemWideConfigFile;
         private readonly string currentUserConfigFile;
 

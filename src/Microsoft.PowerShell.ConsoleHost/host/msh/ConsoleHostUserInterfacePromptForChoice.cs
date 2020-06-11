@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -46,18 +46,18 @@ namespace Microsoft.PowerShell
 
             if (choices == null)
             {
-                throw PSTraceSource.NewArgumentNullException("choices");
+                throw PSTraceSource.NewArgumentNullException(nameof(choices));
             }
 
             if (choices.Count == 0)
             {
-                throw PSTraceSource.NewArgumentException("choices",
+                throw PSTraceSource.NewArgumentException(nameof(choices),
                     ConsoleHostUserInterfaceStrings.EmptyChoicesErrorTemplate, "choices");
             }
 
             if ((defaultChoice < -1) || (defaultChoice >= choices.Count))
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("defaultChoice", defaultChoice,
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(defaultChoice), defaultChoice,
                     ConsoleHostUserInterfaceStrings.InvalidDefaultChoiceErrorTemplate, "defaultChoice", "choice");
             }
 
@@ -175,12 +175,12 @@ namespace Microsoft.PowerShell
 
             if (choices == null)
             {
-                throw PSTraceSource.NewArgumentNullException("choices");
+                throw PSTraceSource.NewArgumentNullException(nameof(choices));
             }
 
             if (choices.Count == 0)
             {
-                throw PSTraceSource.NewArgumentException("choices",
+                throw PSTraceSource.NewArgumentException(nameof(choices),
                     ConsoleHostUserInterfaceStrings.EmptyChoicesErrorTemplate, "choices");
             }
 

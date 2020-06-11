@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 using namespace System.Management.Automation
 using namespace System.Collections.Generic
@@ -399,21 +399,21 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers typeof Foreach-Object -Member when Member is Property' {
-        $ast = {Get-Process | Foreach-Object -Member FileVersion}.Ast
+        $ast = {Get-Process | ForEach-Object -Member FileVersion}.Ast
         $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $typeNames.Count | Should -Be 1
         $typeNames[0] | Should -Be 'System.String'
     }
 
     It 'Infers typeof Foreach-Object -Member when member is ScriptProperty' {
-        $ast = {Get-Process | Foreach-Object -Member Description}.Ast
+        $ast = {Get-Process | ForEach-Object -Member Description}.Ast
         $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $typeNames.Count | Should -Be 1
         $typeNames[0] | Should -Be 'System.String'
     }
 
     It 'Infers typeof Foreach-Object -Member when Member is Alias' {
-        $ast = {Get-Process | Foreach-Object -Member Handles}.Ast
+        $ast = {Get-Process | ForEach-Object -Member Handles}.Ast
         $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $typeNames.Count | Should -Be 1
         $typeNames[0] | Should -Be 'System.Int32'
@@ -433,7 +433,7 @@ Describe "Type inference Tests" -tags "CI" {
         Update-TypeData -TypeName InferScriptPropLevel1 -MemberName TheValue -MemberType ScriptProperty -Value { return $this.Value } -Force
         Update-TypeData -TypeName InferScriptPropLevel2 -MemberName XVal -MemberType ScriptProperty -Value {return $this.X } -Force
         try {
-            $ast = {[InferScriptPropLevel2]::new() | Foreach-Object -MemberName XVal | ForEach-Object -MemberName TheValue}.Ast
+            $ast = {[InferScriptPropLevel2]::new() | ForEach-Object -MemberName XVal | ForEach-Object -MemberName TheValue}.Ast
             $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
             $typeNames.Count | Should -Be 1
             $typeNames[0] | Should -Be 'System.String'
@@ -525,43 +525,43 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Infers typeof Group-Object Group" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | Foreach-Object Group  }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | ForEach-Object Group  }.Ast)
         $res.Count | Should -Be 3
         ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
     }
 
     It "Infers typeof Group-Object Values" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | Foreach-Object Values  }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object | ForEach-Object Values  }.Ast)
         $res.Count | Should -Be 3
         ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
     }
 
     It "Infers typeof Group-Object Group with Property" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name | Foreach-Object Group  }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name | ForEach-Object Group  }.Ast)
         $res.Count | Should -Be 3
         ($res.Name | Sort-Object)[1,2] -join ', ' | Should -Be "System.IO.DirectoryInfo, System.IO.FileInfo"
     }
 
     It "Infers typeof Group-Object Values with Property" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name | Foreach-Object Values  }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name | ForEach-Object Values  }.Ast)
         $res.Count | Should -Be 2
         $res.Name -join ', ' | Should -Be "System.String, System.Collections.ArrayList"
     }
 
     It "Infers typeof Group-Object Group with NoElement" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name -NoElement | Foreach-Object Group  }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name -NoElement | ForEach-Object Group  }.Ast)
         $res.Count | Should -Be 1
         $res.Name | Should -BeLike "*Collection*PSObject*"
     }
 
     It "Infers typeof Group-Object Values with Properties" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name,CreationTime | Foreach-Object Values  }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property Name,CreationTime | ForEach-Object Values  }.Ast)
         $res.Count | Should -Be 3
         ($res.Name | Sort-Object)  -join ', ' | Should -Be "System.Collections.ArrayList, System.DateTime, System.String"
     }
 
     It "ignores Group-Object Group with Scriptblock" {
-        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property {$_.Name} | Foreach-Object Values  }.Ast)
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | Group-Object -Property {$_.Name} | ForEach-Object Values  }.Ast)
         $res.Count | Should -Be 1
         $res.Name | Should -Be "System.Collections.ArrayList"
     }
@@ -841,7 +841,7 @@ Describe "Type inference Tests" -tags "CI" {
         class X {
             [int] $Length
         }
-        Update-TypeData -Typename X -MemberType AliasProperty -MemberName AliasLength -Value Length -Force
+        Update-TypeData -TypeName X -MemberType AliasProperty -MemberName AliasLength -Value Length -Force
         $res = [AstTypeInference]::InferTypeOf( {
                 [x]::new().AliasLength
             }.Ast)
@@ -991,7 +991,7 @@ Describe "Type inference Tests" -tags "CI" {
         BeforeAll {
             $errors = $null
             $tokens = $null
-            $p = Resolve-path TestDrive:/
+            $p = Resolve-Path TestDrive:/
         }
         It 'Infers type of command parameter' {
             $ast = [Language.Parser]::ParseInput("Get-ChildItem -Path $p/foo.txt", [ref] $tokens, [ref] $errors)
@@ -1032,7 +1032,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers type of variable $_ in hashtable in command parameter' {
-        $variableAst = {1..10 | Format-table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
+        $variableAst = {1..10 | Format-Table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
         $res = [AstTypeInference]::InferTypeOf( $variableAst)
 
         $res.Count | Should -Be 1
@@ -1040,7 +1040,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers type of variable $_ in hashtable from Array' {
-        $variableAst = { [int[]]::new(10) | Format-table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
+        $variableAst = { [int[]]::new(10) | Format-Table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
         $res = [AstTypeInference]::InferTypeOf( $variableAst)
 
         $res.Count | Should -Be 1
@@ -1048,7 +1048,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers type of variable $_ in hashtable from generic IEnumerable ' {
-        $variableAst = { [System.Collections.Generic.List[int]]::new() | Format-table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
+        $variableAst = { [System.Collections.Generic.List[int]]::new() | Format-Table @{n = 'x'; ex = {$_}}}.ast.Find( {param($a) $a -is [System.Management.Automation.Language.VariableExpressionAst]}, $true)
         $res = [AstTypeInference]::InferTypeOf( $variableAst)
 
         $res.Count | Should -Be 1

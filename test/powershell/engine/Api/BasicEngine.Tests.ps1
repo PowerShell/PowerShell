@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Basic engine APIs' -Tags "CI" {
     Context 'powershell::Create' {
@@ -19,7 +19,7 @@ Describe 'Basic engine APIs' -Tags "CI" {
             { [powershell]::Create([runspace]$null) } | Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
-        It "can load the default snapin 'Microsoft.WSMan.Management'" -skip:(-not $IsWindows) {
+        It "can load the default snapin 'Microsoft.WSMan.Management'" -Skip:(-not $IsWindows) {
             $ps = [powershell]::Create()
             $ps.AddScript("Get-Command -Name Test-WSMan") > $null
 

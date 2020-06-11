@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Clipboard cmdlet tests' -Tag CI {
@@ -13,7 +13,7 @@ Describe 'Clipboard cmdlet tests' -Tag CI {
         }
 
         AfterAll {
-            $PSDefaultParameterValues = $defaultParamValues
+            $global:PSDefaultParameterValues = $defaultParamValues
         }
 
         It 'Get-Clipboard returns what is in Set-Clipboard' {

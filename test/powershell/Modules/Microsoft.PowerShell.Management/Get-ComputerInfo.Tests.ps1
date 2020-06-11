@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 #
 # TEST SPECIFIC HELPER METHODS FOR TESTING Get-ComputerInfo cmdlet
@@ -472,7 +472,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
     {
         $hal = $null
         $systemDirectory =  Get-CimClassPropVal Win32_OperatingSystem SystemDirectory
-        $halPath = Join-Path -path $systemDirectory -ChildPath "hal.dll"
+        $halPath = Join-Path -Path $systemDirectory -ChildPath "hal.dll"
         $query = 'SELECT * FROM CIM_DataFile Where Name="C:\WINDOWS\system32\hal.dll"'
         $query = $query -replace '\\','\\'
         $instance = Get-CimInstance -Query $query
@@ -1049,7 +1049,7 @@ try {
                     $ObservedList = $ComputerInformation.$property
                     $ExpectedList = $Expected.$property
                     $SpecialPropertyList = ($ObservedList)[0].psobject.properties.name
-                    Compare-Object $ObservedList $ExpectedList -property $SpecialPropertyList | Should -BeNullOrEmpty
+                    Compare-Object $ObservedList $ExpectedList -Property $SpecialPropertyList | Should -BeNullOrEmpty
                 }
                 else
                 {

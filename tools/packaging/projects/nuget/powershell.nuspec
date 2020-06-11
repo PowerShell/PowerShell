@@ -11,7 +11,7 @@
     <projectUrl>https://github.com/powershell/powershell</projectUrl>
     <iconUrl>https://github.com/PowerShell/PowerShell/blob/master/assets/Powershell_64.png</iconUrl>
     <description>This package contains PowerShell for $runtime$.</description>
-    <copyright>Copyright (c) Microsoft Corporation. All rights reserved.</copyright>
+    <copyright>Copyright (c) Microsoft Corporation.</copyright>
     <tags>PowerShell</tags>
 
     <contentFiles>

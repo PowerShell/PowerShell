@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Validate Copy-Item locally" -Tags "CI" {
@@ -550,7 +550,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
         BeforeAll {
             # Create test file.
             $testFilePath = Join-Path "TestDrive:" "testfile.txt"
-            if (test-path $testFilePath)
+            if (Test-Path $testFilePath)
             {
                 Remove-Item $testFilePath -Force -ErrorAction SilentlyContinue
             }

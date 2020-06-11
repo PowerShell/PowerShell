@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -232,6 +232,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private int _openTimeout = DefaultOpenTimeout;
+
         internal const int DefaultOpenTimeout = 3 * 60 * 1000; // 3 minutes
         internal const int DefaultTimeout = -1;
         internal const int InfiniteTimeout = 0;
@@ -280,7 +281,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (options == null)
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException(nameof(options));
             }
 
             if (options.Culture != null)
@@ -688,9 +689,9 @@ namespace System.Management.Automation.Runspaces
                     default:
                         string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
                             value,
-                            AuthenticationMechanism.Basic.ToString(),
-                            AuthenticationMechanism.Negotiate.ToString(),
-                            AuthenticationMechanism.Digest.ToString());
+                            nameof(AuthenticationMechanism.Basic),
+                            nameof(AuthenticationMechanism.Negotiate),
+                            nameof(AuthenticationMechanism.Digest));
                         throw new ArgumentException(message);
                 }
             }
@@ -974,7 +975,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (options == null)
             {
-                throw new ArgumentNullException("options");
+                throw new ArgumentNullException(nameof(options));
             }
 
             if ((options.ProxyAccessType == ProxyAccessType.None) && (options.ProxyCredential != null))
@@ -1348,7 +1349,7 @@ namespace System.Management.Automation.Runspaces
 
 #if NOT_APPLY_PORT_DCR
         private static string DEFAULT_SCHEME = HTTP_SCHEME;
-        internal static string DEFAULT_SSL_SCHEME = HTTPS_SCHEME;
+        internal static readonly string DEFAULT_SSL_SCHEME = HTTPS_SCHEME;
         private static string DEFAULT_APP_NAME = "wsman";
         /// <summary>
         /// See below for explanation.
@@ -1439,7 +1440,7 @@ namespace System.Management.Automation.Runspaces
                 return (EnableNetworkAccess &&                                                              // Interactive token requested
                         (Credential == null &&                                                              // No credential provided
                          (ComputerName.Equals(DefaultComputerName, StringComparison.OrdinalIgnoreCase) ||   // Localhost computer name
-                          ComputerName.IndexOf('.') == -1)));                                               // Not FQDN computer name
+                          !ComputerName.Contains('.'))));                                                    // Not FQDN computer name
             }
         }
 
@@ -1570,7 +1571,7 @@ namespace System.Management.Automation.Runspaces
                 if (value != AuthenticationMechanism.Default)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.IPCSupportsOnlyDefaultAuth,
-                        value.ToString(), AuthenticationMechanism.Default.ToString());
+                        value.ToString(), nameof(AuthenticationMechanism.Default));
                 }
 
                 _authMechanism = value;
@@ -1645,6 +1646,7 @@ namespace System.Management.Automation.Runspaces
         private PSCredential _credential;
         private AuthenticationMechanism _authMechanism;
         private string _appDomainName = string.Empty;
+
         private const int _defaultOpenTimeout = 60000;      /* 60 seconds. */
 
         #endregion
@@ -1801,7 +1803,7 @@ namespace System.Management.Automation.Runspaces
                 if (value != Runspaces.AuthenticationMechanism.Default)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.IPCSupportsOnlyDefaultAuth,
-                        value.ToString(), AuthenticationMechanism.Default.ToString());
+                        value.ToString(), nameof(AuthenticationMechanism.Default));
                 }
 
                 _authMechanism = value;
@@ -1912,7 +1914,7 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath)
         {
-            if (computerName == null) { throw new PSArgumentNullException("computerName"); }
+            if (computerName == null) { throw new PSArgumentNullException(nameof(computerName)); }
 
             this.UserName = userName;
             this.ComputerName = computerName;
@@ -2452,7 +2454,7 @@ namespace System.Management.Automation.Runspaces
 
             if ((ex != null) ||
                 (sshProcess == null) ||
-                (sshProcess.HasExited == true))
+                (sshProcess.HasExited))
             {
                 throw new InvalidOperationException(
                     StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty),
@@ -2548,7 +2550,12 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-                var cmdLine = string.Format(CultureInfo.InvariantCulture, @"""{0}"" {1}", startInfo.FileName, startInfo.Arguments);
+                // Create process start command line with filename and argument list.
+                var cmdLine = string.Format(
+                    CultureInfo.InvariantCulture,
+                    @"""{0}"" {1}",
+                    startInfo.FileName,
+                    string.Join(' ', startInfo.ArgumentList));
 
                 lpStartupInfo.hStdInput = new SafeFileHandle(stdInPipeClient.DangerousGetHandle(), false);
                 lpStartupInfo.hStdOutput = new SafeFileHandle(stdOutPipeClient.DangerousGetHandle(), false);
@@ -2656,7 +2663,7 @@ namespace System.Management.Automation.Runspaces
                 byte[] securityDescBuffer = new byte[securityDesc.BinaryLength];
                 securityDesc.GetBinaryForm(securityDescBuffer, 0);
                 securityDescHandle = GCHandle.Alloc(securityDescBuffer, GCHandleType.Pinned);
-                securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value, true); ;
+                securityAttributes = NamedPipeNative.GetSecurityAttributes(securityDescHandle.Value, true);
             }
 
             // Create async named pipe.
@@ -2699,6 +2706,7 @@ namespace System.Management.Automation.Runspaces
 
         private AuthenticationMechanism _authMechanism;
         private PSCredential _credential;
+
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
 
         #endregion
@@ -2735,7 +2743,7 @@ namespace System.Management.Automation.Runspaces
                 if (value != AuthenticationMechanism.Default)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.IPCSupportsOnlyDefaultAuth,
-                        value.ToString(), AuthenticationMechanism.Default.ToString());
+                        value.ToString(), nameof(AuthenticationMechanism.Default));
                 }
 
                 _authMechanism = value;
@@ -2828,6 +2836,7 @@ namespace System.Management.Automation.Runspaces
 
         private AuthenticationMechanism _authMechanism;
         private PSCredential _credential;
+
         private const int _defaultOpenTimeout = 20000; /* 20 seconds. */
 
         #endregion
@@ -2859,7 +2868,7 @@ namespace System.Management.Automation.Runspaces
                 if (value != AuthenticationMechanism.Default)
                 {
                     throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.IPCSupportsOnlyDefaultAuth,
-                        value.ToString(), AuthenticationMechanism.Default.ToString());
+                        value.ToString(), nameof(AuthenticationMechanism.Default));
                 }
 
                 _authMechanism = value;

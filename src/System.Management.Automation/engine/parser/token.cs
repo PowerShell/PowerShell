@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -592,6 +592,9 @@ namespace System.Management.Automation.Language
         /// <summary>The 'base' keyword</summary>
         Base = 168,
 
+        /// <summary>The 'default' keyword</summary>
+        Default = 169,
+
         #endregion Keywords
     }
 
@@ -951,6 +954,7 @@ namespace System.Management.Automation.Language
             /*              Command */ TokenFlags.Keyword,
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
+            /*              Default */ TokenFlags.Keyword,
 
             #endregion Flags for keywords
         };
@@ -1149,6 +1153,7 @@ namespace System.Management.Automation.Language
             /*              Command */ "command",
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
+            /*              Default */ "default",
 
             #endregion Text for keywords
         };

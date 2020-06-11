@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1517,9 +1517,9 @@ namespace System.Management.Automation.Runspaces
                 {
                     ss.ImportPSSnapIn(si, out warning);
                 }
-                catch (PSSnapInException pse)
+                catch (PSSnapInException)
                 {
-                    throw pse;
+                    throw;
                 }
 #if DEBUG
                 // NOTE:
@@ -3826,9 +3826,9 @@ namespace System.Management.Automation.Runspaces
                 PSSnapInException warning;
                 this.ImportPSSnapIn(coreSnapin, out warning);
             }
-            catch (PSSnapInException pse)
+            catch (PSSnapInException)
             {
-                throw pse;
+                throw;
             }
 
             return coreSnapin;
@@ -4435,7 +4435,7 @@ end {
         internal const bool DefaultWhatIfPreference = false;
         internal const ConfirmImpact DefaultConfirmPreference = ConfirmImpact.High;
 
-        internal static SessionStateVariableEntry[] BuiltInVariables = new SessionStateVariableEntry[]
+        internal static readonly SessionStateVariableEntry[] BuiltInVariables = new SessionStateVariableEntry[]
         {
             // Engine variables that should be precreated before running profile
             // Bug fix for Win7:2202228 Engine halts if initial command fulls up variable table
@@ -4771,10 +4771,12 @@ end {
 ";
 
         internal const string DefaultSetDriveFunctionText = "Set-Location $MyInvocation.MyCommand.Name";
-        internal static ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
+
+        internal static readonly ScriptBlock SetDriveScriptBlock = ScriptBlock.CreateDelayParsedScriptBlock(DefaultSetDriveFunctionText, isProductCode: true);
 
         private static PSLanguageMode systemLanguageMode = (SystemPolicy.GetSystemLockdownPolicy() == SystemEnforcementMode.Enforce) ? PSLanguageMode.ConstrainedLanguage : PSLanguageMode.FullLanguage;
-        internal static SessionStateFunctionEntry[] BuiltInFunctions = new SessionStateFunctionEntry[]
+
+        internal static readonly SessionStateFunctionEntry[] BuiltInFunctions = new SessionStateFunctionEntry[]
         {
            // Functions that don't require full language mode
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("cd..", "Set-Location ..", isProductCode: true, languageMode: systemLanguageMode),
@@ -4841,12 +4843,12 @@ end {
 
         private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);
 
-        internal static string CoreSnapin = "Microsoft.PowerShell.Core";
-        internal static string CoreModule = "Microsoft.PowerShell.Core";
+        internal static readonly string CoreSnapin = "Microsoft.PowerShell.Core";
+        internal static readonly string CoreModule = "Microsoft.PowerShell.Core";
         internal Collection<PSSnapInInfo> defaultSnapins = new Collection<PSSnapInInfo>();
 
         // The list of engine modules to create warnings when you try to remove them
-        internal static HashSet<string> EngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly HashSet<string> EngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 "Microsoft.PowerShell.Utility",
                 "Microsoft.PowerShell.Management",
@@ -4856,7 +4858,7 @@ end {
                 "Microsoft.WSMan.Management"
             };
 
-        internal static HashSet<string> NestedEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly HashSet<string> NestedEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 "Microsoft.PowerShell.Commands.Utility",
                 "Microsoft.PowerShell.Commands.Management",
@@ -4864,14 +4866,15 @@ end {
                 "Microsoft.PowerShell.ConsoleHost"
             };
 
-        internal static Dictionary<string, string> EngineModuleNestedModuleMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly Dictionary<string, string> EngineModuleNestedModuleMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Commands.Utility"},
                 { "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Commands.Management"},
                 { "Microsoft.PowerShell.Diagnostics", "Microsoft.PowerShell.Commands.Diagnostics"},
                 { "Microsoft.PowerShell.Host", "Microsoft.PowerShell.ConsoleHost"},
             };
-        internal static Dictionary<string, string> NestedModuleEngineModuleMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+
+        internal static readonly Dictionary<string, string> NestedModuleEngineModuleMapping = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             {
                 { "Microsoft.PowerShell.Commands.Utility", "Microsoft.PowerShell.Utility"},
                 { "Microsoft.PowerShell.Commands.Management", "Microsoft.PowerShell.Management"},
@@ -4882,13 +4885,13 @@ end {
             };
 
         // The list of engine modules that we will not allow users to remove
-        internal static HashSet<string> ConstantEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly HashSet<string> ConstantEngineModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 CoreModule,
             };
 
         // The list of nested engine modules that we will not allow users to remove
-        internal static HashSet<string> ConstantEngineNestedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        internal static readonly HashSet<string> ConstantEngineNestedModules = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
                 "System.Management.Automation",
             };
@@ -5490,7 +5493,7 @@ end {
     [EventSource(Name = "Microsoft-PowerShell-Runspaces")]
     internal class RunspaceEventSource : EventSource
     {
-        internal static RunspaceEventSource Log = new RunspaceEventSource();
+        internal static readonly RunspaceEventSource Log = new RunspaceEventSource();
 
         public void OpenRunspaceStart() { WriteEvent(1); }
 

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Function Stop-HTTPListener {
     <#
@@ -173,7 +173,7 @@ Function Start-HTTPListener {
 
                             Example: test=redirectex&type=Moved&multiredirect=true
 
-                            See also https://docs.microsoft.com/dotnet/api/system.net.httpstatuscode?view=netcore-2.1
+                            See also https://docs.microsoft.com/dotnet/api/system.net.httpstatuscode
                         #>
                         "redirect"
                         {
@@ -319,7 +319,7 @@ Function Start-HTTPListener {
             }
             catch
             {
-                $errormsg = $_ | convertto-json
+                $errormsg = $_ | ConvertTo-Json
                 Write-Error $errormsg
             }
             finally

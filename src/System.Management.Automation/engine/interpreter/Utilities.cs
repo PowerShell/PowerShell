@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -126,7 +126,7 @@ namespace System.Management.Automation.Interpreter
         }
     }
 
-    internal static partial class DelegateHelpers
+    internal static class DelegateHelpers
     {
         #region Generated Maximum Delegate Arity
 
@@ -239,8 +239,8 @@ namespace System.Management.Automation.Interpreter
         internal static readonly MethodInfo BooleanToObjectMethod = typeof(ScriptingRuntimeHelpers).GetMethod("BooleanToObject");
         internal static readonly MethodInfo Int32ToObjectMethod = typeof(ScriptingRuntimeHelpers).GetMethod("Int32ToObject");
 
-        internal static object True = true;
-        internal static object False = false;
+        internal static readonly object True = true;
+        internal static readonly object False = false;
 
         internal static object GetPrimitiveDefaultValue(Type type)
         {
@@ -375,6 +375,7 @@ namespace System.Management.Automation.Interpreter
         private KeyValuePair<TKey, TValue>[] _keysAndValues;
         private Dictionary<TKey, TValue> _dict;
         private int _count;
+
         private const int _arraySize = 10;
 
         public HybridReferenceDictionary()

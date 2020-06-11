@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Remoting
 
             lock (_syncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     WSManPluginInstance.ReportWSManOperationComplete(requestDetails, lastErrorReported);
                     return;
@@ -196,7 +196,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManStreamIDSet_UnToMan streamSet,
             WSManPluginOperationShutdownContext ctxtToReport)
         {
-            if (true == isClosed)
+            if (isClosed)
             {
                 WSManPluginInstance.ReportWSManOperationComplete(requestDetails, lastErrorReported);
                 return false;
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Remoting
 
             lock (_syncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }
@@ -254,7 +254,7 @@ namespace System.Management.Automation.Remoting
                         PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                         creationRequestDetails.ToString(), creationRequestDetails.ToString());
 
-                    // RACE TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
+                    // TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
                     // If Signal comes and executes before registering the notification handle, cleanup will be messed
                     result = WSManNativeApi.WSManPluginReportContext(creationRequestDetails.unmanagedHandle, 0, creationRequestDetails.unmanagedHandle);
                     if (Platform.IsWindows && (WSManPluginConstants.ExitCodeSuccess == result))
@@ -386,6 +386,7 @@ namespace System.Management.Automation.Remoting
         #region Pure virtual methods
 
         internal abstract void CloseOperation(WSManPluginOperationShutdownContext context, Exception reasonForClose);
+
         internal abstract void ExecuteConnect(
             WSManNativeApi.WSManPluginRequest requestDetails, // in
             int flags, // in
@@ -687,7 +688,7 @@ namespace System.Management.Automation.Remoting
             // let command sessions to close.
             lock (shellSyncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }
@@ -787,7 +788,7 @@ namespace System.Management.Automation.Remoting
             // let command sessions to close.
             lock (cmdSyncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }

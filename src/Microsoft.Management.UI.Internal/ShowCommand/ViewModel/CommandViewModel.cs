@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 commandName = this.ModuleName + "\\" + commandName;
             }
 
-            if (commandName.IndexOf(' ') != -1)
+            if (commandName.Contains(' '))
             {
                 builder.AppendFormat("& \"{0}\"", commandName);
             }

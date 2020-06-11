@@ -7,7 +7,7 @@ assignees: 'TravisEz13'
 
 ---
 
-# Security Issue
+## Security Issue
 
 Excerpt from [Issue Management - Security Vulnerabilities](https://github.com/PowerShell/PowerShell/blob/master/.github/SECURITY.md)
 

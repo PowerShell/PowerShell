@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Basic Job Tests' -Tags 'Feature' {
@@ -6,7 +6,7 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
         # Make sure we do not have any jobs running
         Get-Job | Remove-Job -Force
         $timeBeforeStartedJob = Get-Date
-        $startedJob = Start-Job -Name 'StartedJob' -ScriptBlock { 1 + 1 } | Wait-Job
+        $startedJob = Start-Job -Name 'StartedJob' -Scriptblock { 1 + 1 } | Wait-Job
         $timeAfterStartedJob = Get-Date
 
         function script:ValidateJobInfo($job, $state, $hasMoreData, $command)
@@ -114,7 +114,7 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
 
         It "Create job with native command" {
             try {
-                $nativeJob = Start-job { & "$PSHOME/pwsh" -c 1+1 }
+                $nativeJob = Start-Job { & "$PSHOME/pwsh" -c 1+1 }
                 $nativeJob | Wait-Job
                 $nativeJob.State | Should -BeExactly "Completed"
                 $nativeJob.HasMoreData | Should -BeTrue
@@ -315,7 +315,7 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
 
         BeforeEach {
             # 20 seconds is chosen to be large, so that the job is in running state when Stop-Job is called.
-            $jobToStop = Start-Job -ScriptBlock {
+            $jobToStop = Start-Job -Scriptblock {
                 1..80 | ForEach-Object {
                     Write-Output $_
                     Start-Sleep -Milliseconds 250
@@ -336,6 +336,60 @@ Describe 'Basic Job Tests' -Tags 'Feature' {
             $splat = @{ $property = $jobToStop.$property }
             Stop-Job @splat
             ValidateJobInfo -job $jobToStop -state 'Stopped' -hasMoreData $false
+        }
+    }
+
+    Context 'Background pwsh process should terminate after job is done' {
+        It "Can clean up background pwsh process after job is done" {
+            $job = Start-Job { $pid }
+            $processId = Receive-Job $job -Wait
+
+            try {
+                $process = Get-Process -Id $processId -ErrorAction Stop
+                Wait-UntilTrue { $process.HasExited } -IntervalInMilliseconds 300 | Should -BeTrue
+            } catch {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+            }
+
+            Remove-Job $job -Force
+        }
+
+        It "Can clean up background pwsh process when job is stopped" {
+            $job = Start-Job { $pid; Start-Sleep -Second 10 }
+
+            # Wait for the pid to be received.
+            Wait-UntilTrue { [bool](Receive-Job $job -Keep) } | Should -BeTrue
+            $processId = Receive-Job $job
+
+            # Stop the job and wait for the cleanup to finish.
+            Stop-Job $job
+
+            try {
+                $process = Get-Process -Id $processId -ErrorAction Stop
+                Wait-UntilTrue { $process.HasExited } -IntervalInMilliseconds 300 | Should -BeTrue
+            } catch {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+            }
+
+            Remove-Job $job -Force
+        }
+
+        It "Can clean up background pwsh process when job is removed" {
+            $job = Start-Job { $pid; Start-Sleep -Second 10 }
+
+            # Wait for the pid to be received.
+            Wait-UntilTrue { [bool](Receive-Job $job -Keep) } | Should -BeTrue
+            $processId = Receive-Job $job
+
+            # Remove the job and wait for the cleanup to finish.
+            Remove-Job $job -Force
+
+            try {
+                $process = Get-Process -Id $processId -ErrorAction Stop
+                Wait-UntilTrue { $process.HasExited } -IntervalInMilliseconds 300 | Should -BeTrue
+            } catch {
+                $_.FullyQualifiedErrorId | Should -BeExactly 'NoProcessFoundForGivenId,Microsoft.PowerShell.Commands.GetProcessCommand'
+            }
         }
     }
 }

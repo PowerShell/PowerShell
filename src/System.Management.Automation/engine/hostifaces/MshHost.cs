@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -41,6 +41,7 @@ namespace System.Management.Automation.Host
         /// The powershell spec states that 128 is the maximum nesting depth.
         /// </summary>
         internal const int MaximumNestedPromptLevel = 128;
+
         internal static bool IsStdOutputRedirected;
 
         /// <summary>

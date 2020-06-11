@@ -126,4 +126,7 @@
   <data name="InvalidJsonAgainstSchema" xml:space="preserve">
     <value>The JSON is not valid with the schema.</value>
   </data>
+  <data name="JsonSchemaFileOpenFailure" xml:space="preserve">
+    <value>Can not open JSON schema file: {0}</value>
+  </data>
 </root>

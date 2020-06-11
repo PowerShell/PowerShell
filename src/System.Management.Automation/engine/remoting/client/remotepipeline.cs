@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -173,7 +173,7 @@ namespace System.Management.Automation
             // originally copied it from PipelineBase
             if (pipeline == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pipeline");
+                throw PSTraceSource.NewArgumentNullException(nameof(pipeline));
             }
 
             if (pipeline._disposed)
@@ -545,7 +545,7 @@ namespace System.Management.Automation
                     catch (ObjectDisposedException)
                     {
                         throw PSTraceSource.NewObjectDisposedException("Pipeline");
-                    };
+                    }
 
                     asyncresult.AsyncWaitHandle.WaitOne();
                 }

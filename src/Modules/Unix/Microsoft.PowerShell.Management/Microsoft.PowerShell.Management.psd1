@@ -2,12 +2,12 @@
 GUID="EEFCB906-B326-4E99-9F54-8B4BB6EF3C6D"
 Author="PowerShell"
 CompanyName="Microsoft Corporation"
-Copyright="Copyright (c) Microsoft Corporation. All rights reserved."
+Copyright="Copyright (c) Microsoft Corporation."
 ModuleVersion="7.0.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113632'
+HelpInfoURI = 'https://aka.ms/powershell71-help'
 FunctionsToExport = @()
 AliasesToExport = @("gcb", "gtz", "scb")
 CmdletsToExport=@("Add-Content",

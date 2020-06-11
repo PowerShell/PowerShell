@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
@@ -145,7 +145,7 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 # If opening the runspace fails, then print out the trace with the callstack
                 Wait-UntilTrue { $rs.RunspaceStateInfo.State -eq [System.Management.Automation.Runspaces.RunspaceState]::Opened } |
-                    Should -BeTrue -Because (get-content $splat.FilePath -Raw)
+                    Should -BeTrue -Because (Get-Content $splat.FilePath -Raw)
 
                 $ps = [powershell]::Create()
                 $ps.Runspace = $rs

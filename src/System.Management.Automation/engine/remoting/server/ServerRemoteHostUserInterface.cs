@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -195,6 +195,17 @@ namespace System.Management.Automation.Remoting
         public override void WriteWarningLine(string message)
         {
             _serverMethodExecutor.ExecuteVoidMethod(RemoteHostMethodId.WriteWarningLine, new object[] { message });
+        }
+
+        /// <summary>
+        /// Read line as string masked.
+        /// </summary>
+        /// <returns>
+        /// Not implemented. It throws an exception.
+        /// </returns>
+        public override string ReadLineMaskedAsString()
+        {
+            throw new PSNotImplementedException();
         }
 
         /// <summary>

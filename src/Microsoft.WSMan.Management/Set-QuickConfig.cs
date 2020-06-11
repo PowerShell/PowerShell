@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -233,7 +233,7 @@ namespace Microsoft.WSMan.Management
                     xpathResult = "/cfg:EnableRemoting_OUTPUT/cfg:Results";
                 }
 
-                if (finalxml.SelectSingleNode(xpathStatus, nsmgr).InnerText.ToString().Equals("succeeded"))
+                if (finalxml.SelectSingleNode(xpathStatus, nsmgr).InnerText.Equals("succeeded"))
                 {
                     if (serviceonly)
                     {

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -591,6 +591,27 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private PSModuleInfo ImportModule_LocallyViaName_WithTelemetry(ImportModuleOptions importModuleOptions, string name)
+        {
+            PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
+            if (foundModule != null)
+            {
+                SetModuleBaseForEngineModules(foundModule.Name, this.Context);
+
+                // report loading of the module in telemetry
+                // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
+                if (!foundModule.IsWindowsPowerShellCompatModule)
+                {
+                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
+#if LEGACYTELEMETRY
+                    TelemetryAPI.ReportModuleLoad(foundModule);
+#endif
+                }
+            }
+
+            return foundModule;
+        }
+
         private PSModuleInfo ImportModule_LocallyViaName(ImportModuleOptions importModuleOptions, string name)
         {
             try
@@ -820,6 +841,24 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
+        private PSModuleInfo ImportModule_LocallyViaFQName(ImportModuleOptions importModuleOptions, ModuleSpecification modulespec)
+        {
+            RequiredVersion = modulespec.RequiredVersion;
+            MinimumVersion = modulespec.Version;
+            MaximumVersion = modulespec.MaximumVersion;
+            BaseGuid = modulespec.Guid;
+
+            PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
+
+            if (foundModule != null)
+            {
+                ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
+                SetModuleBaseForEngineModules(foundModule.Name, this.Context);
+            }
+
+            return foundModule;
+        }
+
         #endregion Local import
 
         #region Remote import
@@ -1024,7 +1063,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     powerShell.AddCommand("Export-PSSession");
                     powerShell.AddParameter("OutputModule", wildcardEscapedPath);
-                    powerShell.AddParameter("AllowClobber", true);
+                    if (!importModuleOptions.NoClobberExportPSSession)
+                    {
+                        powerShell.AddParameter("AllowClobber", true);
+                    }
                     powerShell.AddParameter("Module", remoteModuleName); // remoteModulePath is currently unsupported by Get-Command and implicit remoting
                     powerShell.AddParameter("Force", true);
                     powerShell.AddParameter("FormatTypeName", "*");
@@ -1667,6 +1709,7 @@ namespace Microsoft.PowerShell.Commands
         #region Cancellation support
 
         private readonly CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
+
         private CancellationToken CancellationToken
         {
             get
@@ -1751,10 +1794,10 @@ namespace Microsoft.PowerShell.Commands
         ///     c:\temp\mdir\mdir       # resolve by using extensions. mdir is a directory, mdir.xxx is a file.
         ///     c:\temp\mdir            # load default module if mdir is directory
         ///     module                  # $PSScriptRoot/module/module.psd1 (ps1,psm1,dll)
-        ///     module/foobar.psm1      # $PSScriptRoot/module/module.psm1
-        ///     module/foobar           # $PSScriptRoot/module/foobar.XXX if foobar is not a directory...
-        ///     module/foobar           # $PSScriptRoot/module/foobar is a directory and $PSScriptRoot/module/foobar/foobar.XXX exists
-        ///     module/foobar/foobar.XXX
+        ///     module/examplemodule.psm1      # $PSScriptRoot/module/module.psm1
+        ///     module/examplemodule           # $PSScriptRoot/module/examplemodule.XXX if examplemodule is not a directory...
+        ///     module/examplemodule           # $PSScriptRoot/module/examplemodule is a directory and $PSScriptRoot/module/examplemodule/examplemodule.XXX exists
+        ///     module/examplemodule/examplemodule.XXX
         /// </remarks>
         protected override void ProcessRecord()
         {
@@ -1816,21 +1859,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string name in Name)
                 {
-                    PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, name);
-                    if (foundModule != null)
-                    {
-                        SetModuleBaseForEngineModules(foundModule.Name, this.Context);
-
-                        // report loading of the module in telemetry
-                        // avoid double reporting for WinCompat modules that go through CommandDiscovery\AutoloadSpecifiedModule
-                        if (!foundModule.IsWindowsPowerShellCompatModule)
-                        {
-                            ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, foundModule.Name);
-#if LEGACYTELEMETRY
-                            TelemetryAPI.ReportModuleLoad(foundModule);
-#endif
-                        }
-                    }
+                    ImportModule_LocallyViaName_WithTelemetry(importModuleOptions, name);
                 }
             }
             else if (this.ParameterSetName.Equals(ParameterSet_ViaPsrpSession, StringComparison.OrdinalIgnoreCase))
@@ -1845,17 +1874,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (var modulespec in FullyQualifiedName)
                 {
-                    RequiredVersion = modulespec.RequiredVersion;
-                    MinimumVersion = modulespec.Version;
-                    MaximumVersion = modulespec.MaximumVersion;
-                    BaseGuid = modulespec.Guid;
-
-                    PSModuleInfo foundModule = ImportModule_LocallyViaName(importModuleOptions, modulespec.Name);
-                    ApplicationInsightsTelemetry.SendTelemetryMetric(TelemetryType.ModuleLoad, modulespec.Name);
-                    if (foundModule != null)
-                    {
-                        SetModuleBaseForEngineModules(foundModule.Name, this.Context);
-                    }
+                    ImportModule_LocallyViaFQName(importModuleOptions, modulespec);
                 }
             }
             else if (this.ParameterSetName.Equals(ParameterSet_FQName_ViaPsrpSession, StringComparison.OrdinalIgnoreCase))
@@ -1884,19 +1903,10 @@ namespace Microsoft.PowerShell.Commands
         {
             Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
 
-            var exactModuleName = string.Empty;
+            // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
+            string exactModuleName = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
             bool match = false;
 
-            if (!string.IsNullOrEmpty(moduleName))
-            {
-                // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
-                exactModuleName = Path.GetFileNameWithoutExtension(moduleName);
-            }
-            else if (moduleSpec != null)
-            {
-                exactModuleName = moduleSpec.Name;
-            }
-            
             foreach (var deniedModuleName in moduleDenyList)
             {
                 // use case-insensitive module name comparison
@@ -1910,7 +1920,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
-            
+
             return match;
         }
 
@@ -1941,6 +1951,49 @@ namespace Microsoft.PowerShell.Commands
             return filteredModuleCollection;
         }
 
+        private void PrepareNoClobberWinCompatModuleImport(string moduleName, ModuleSpecification moduleSpec, ref ImportModuleOptions importModuleOptions)
+        {
+            Debug.Assert(string.IsNullOrEmpty(moduleName) ^ (moduleSpec == null), "Either moduleName or moduleSpec must be specified");
+
+            // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
+            string coreModuleToLoad = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
+
+            var isModuleToLoadEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
+            string[] noClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
+            if (isModuleToLoadEngineModule || ((noClobberModuleList != null) && noClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))
+            {
+                // if it is one of engine modules - first try to load it from $PSHOME\Modules
+                // otherwise rely on $env:PSModulePath (in which WinPS module location has to go after CorePS module location)
+                if (isModuleToLoadEngineModule)
+                {
+                    string expectedCoreModulePath = Path.Combine(ModuleIntrinsics.GetPSHomeModulePath(), coreModuleToLoad);
+                    if (Directory.Exists(expectedCoreModulePath))
+                    {
+                        coreModuleToLoad = expectedCoreModulePath;
+                    }
+                }
+
+                if (moduleSpec == null)
+                {
+                    ImportModule_LocallyViaName_WithTelemetry(importModuleOptions, coreModuleToLoad);
+                }
+                else
+                {
+                    ModuleSpecification tmpModuleSpec = new ModuleSpecification()
+                    {
+                        Guid = moduleSpec.Guid,
+                        MaximumVersion = moduleSpec.MaximumVersion,
+                        Version = moduleSpec.Version,
+                        RequiredVersion = moduleSpec.RequiredVersion,
+                        Name = coreModuleToLoad
+                    };
+                    ImportModule_LocallyViaFQName(importModuleOptions, tmpModuleSpec);
+                }
+
+                importModuleOptions.NoClobberExportPSSession = true;
+            }
+        }
+
         internal override IList<PSModuleInfo> ImportModulesUsingWinCompat(IEnumerable<string> moduleNames, IEnumerable<ModuleSpecification> moduleFullyQualifiedNames, ImportModuleOptions importModuleOptions)
         {
             IList<PSModuleInfo> moduleProxyList = new List<PSModuleInfo>();
@@ -1968,6 +2021,24 @@ namespace Microsoft.PowerShell.Commands
                 return new List<PSModuleInfo>();
             }
 
+            // perform necessary preparations if module has to be imported with NoClobber mode
+            if (filteredModuleNames != null)
+            {
+                foreach(string moduleName in filteredModuleNames)
+                {
+                    PrepareNoClobberWinCompatModuleImport(moduleName, null, ref importModuleOptions);
+                }
+            }
+
+            if (filteredModuleFullyQualifiedNames != null)
+            {
+                foreach(var moduleSpec in filteredModuleFullyQualifiedNames)
+                {
+                    PrepareNoClobberWinCompatModuleImport(null, moduleSpec, ref importModuleOptions);
+                }
+            }
+
+            // perform the module import / proxy generation
             moduleProxyList = ImportModule_RemotelyViaPsrpSession(importModuleOptions, filteredModuleNames, filteredModuleFullyQualifiedNames, WindowsPowerShellCompatRemotingSession, usingWinCompat: true);
 
             foreach (PSModuleInfo moduleProxy in moduleProxyList)
@@ -1977,6 +2048,22 @@ namespace Microsoft.PowerShell.Commands
 
                 string message = StringUtil.Format(Modules.WinCompatModuleWarning, moduleProxy.Name, WindowsPowerShellCompatRemotingSession.Name);
                 WriteWarning(message);
+            }
+
+            // register LocationChanged handler so that $PWD in Windows PS process mirrors local $PWD changes
+            if (moduleProxyList.Count > 0)
+            {
+                // make sure that we add registration only once to a multicast delegate
+                SyncCurrentLocationDelegate ??= SyncCurrentLocationHandler;
+                var alreadyregistered = this.SessionState.InvokeCommand.LocationChangedAction?.GetInvocationList().Contains(SyncCurrentLocationDelegate);
+
+                if (!alreadyregistered ?? true)
+                {
+                    this.SessionState.InvokeCommand.LocationChangedAction += SyncCurrentLocationDelegate;
+
+                    // first sync has to be triggered manually
+                    SyncCurrentLocationHandler(sender: this, args: new LocationChangedEventArgs(sessionState: null, oldPath: null, newPath: this.SessionState.Path.CurrentLocation));
+                }
             }
 #endif
             return moduleProxyList;

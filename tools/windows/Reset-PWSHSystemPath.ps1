@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 <#
@@ -53,13 +53,13 @@ ForEach ($PathScopeItem in $PathScope)
 {
   $AssembledNewPath = $NewPath = ''
   #From the current path scope. retrieve the array of paths that match the pathspec of PowerShell (to use as a filter)
-  $pathstoremove = @([Environment]::GetEnvironmentVariable("PATH","$PathScopeItem").split(';') | Where { $_ -ilike "*\Program Files\Powershell\6*"})
+  $pathstoremove = @([Environment]::GetEnvironmentVariable("PATH","$PathScopeItem").split(';') | where { $_ -ilike "*\Program Files\Powershell\6*"})
   If (!$RemoveAllOccurences)
   {
     #If we are not removing all occurances of PowerShell paths, then remove the highest sorted path from the filter
-    $pathstoremove = @($pathstoremove | sort-object | Select-Object -skiplast 1)
+    $pathstoremove = @($pathstoremove | Sort-Object | Select-Object -SkipLast 1)
   }
-  Write-Verbose "Reset-PWSHSystemPath: Found $($pathstoremove.count) paths to remove from $PathScopeItem path scope: $($Pathstoremove -join ', ' | out-string)"
+  Write-Verbose "Reset-PWSHSystemPath: Found $($pathstoremove.count) paths to remove from $PathScopeItem path scope: $($Pathstoremove -join ', ' | Out-String)"
   If ($pathstoremove.count -gt 0)
   {
     foreach ($Path in [Environment]::GetEnvironmentVariable("PATH","$PathScopeItem").split(';'))

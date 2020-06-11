@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 . "$PSScriptRoot/TestRunner.ps1"
 $AssemblyName = "Microsoft.PowerShell.Commands.Utility"
@@ -15,6 +15,6 @@ $excludeList = "CoreMshSnapinResources.resx",
     "ConvertStringResources.resx",
     "FlashExtractStrings.resx",
     "ImmutableStrings.resx"
-import-module Microsoft.Powershell.Utility
+Import-Module Microsoft.Powershell.Utility
 # run the tests
 Test-ResourceStrings -AssemblyName $AssemblyName -ExcludeList $excludeList

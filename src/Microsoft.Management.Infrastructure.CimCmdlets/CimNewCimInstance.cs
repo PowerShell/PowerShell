@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -79,7 +79,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet.Key,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -92,7 +91,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet.Key,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -103,7 +101,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             cimInstance = CreateCimInstance(cmdlet.CimClass,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -313,7 +310,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         flag);
                     cimInstance.CimInstanceProperties.Add(newProperty);
                 }
-
             }
 
             return cimInstance;

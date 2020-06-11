@@ -1,25 +1,26 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
 #pragma warning disable 56523
 
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using Microsoft.PowerShell;
-using Microsoft.PowerShell.Commands;
-using System.Management.Automation.Security;
+using System.Globalization;
 using System.Management.Automation.Configuration;
 using System.Management.Automation.Internal;
+using System.Management.Automation.Security;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Globalization;
 
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
+using Microsoft.PowerShell;
+using Microsoft.PowerShell.Commands;
+
 using DWORD = System.UInt32;
 
 namespace Microsoft.PowerShell
@@ -629,6 +630,17 @@ namespace System.Management.Automation.Internal
                  CertHasKeyUsage(c, X509KeyUsageFlags.KeyEncipherment)));
         }
 
+        /// <summary>
+        /// Check to see if the specified cert is expiring by the time.
+        /// </summary>
+        /// <param name="c">Certificate object.</param>
+        /// <param name="expiring">Certificate expire time.</param>
+        /// <returns>True on success, false otherwise.</returns>
+        internal static bool CertExpiresByTime(X509Certificate2 c, DateTime expiring)
+        {
+            return c.NotAfter < expiring;
+        }
+
         private static bool CertHasOid(X509Certificate2 c, string oid)
         {
             foreach (var extension in c.Extensions)
@@ -666,6 +678,64 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
+        /// Get the EKUs of a cert.
+        /// </summary>
+        /// <param name="cert">Certificate object.</param>
+        /// <returns>A collection of cert eku strings.</returns>
+        [ArchitectureSensitive]
+        internal static Collection<string> GetCertEKU(X509Certificate2 cert)
+        {
+            Collection<string> ekus = new Collection<string>();
+            IntPtr pCert = cert.Handle;
+            int structSize = 0;
+            IntPtr dummy = IntPtr.Zero;
+
+            if (Security.NativeMethods.CertGetEnhancedKeyUsage(pCert, 0, dummy,
+                                                      out structSize))
+            {
+                if (structSize > 0)
+                {
+                    IntPtr ekuBuffer = Marshal.AllocHGlobal(structSize);
+
+                    try
+                    {
+                        if (Security.NativeMethods.CertGetEnhancedKeyUsage(pCert, 0,
+                                                                  ekuBuffer,
+                                                                  out structSize))
+                        {
+                            Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct =
+                                (Security.NativeMethods.CERT_ENHKEY_USAGE)
+                                Marshal.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
+                            IntPtr ep = ekuStruct.rgpszUsageIdentifier;
+                            IntPtr ekuptr;
+
+                            for (int i = 0; i < ekuStruct.cUsageIdentifier; i++)
+                            {
+                                ekuptr = Marshal.ReadIntPtr(ep, i * Marshal.SizeOf(ep));
+                                string eku = Marshal.PtrToStringAnsi(ekuptr);
+                                ekus.Add(eku);
+                            }
+                        }
+                        else
+                        {
+                            throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+                        }
+                    }
+                    finally
+                    {
+                        Marshal.FreeHGlobal(ekuBuffer);
+                    }
+                }
+            }
+            else
+            {
+                throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
+            }
+
+            return ekus;
+        }
+
+        /// <summary>
         /// Convert an int to a DWORD.
         /// </summary>
         /// <param name="n">Signed int number.</param>
@@ -698,174 +768,53 @@ namespace System.Management.Automation.Internal
         }
 
         /// <summary>
-        /// Purpose of a certificate.
+        /// Gets or sets purpose of a certificate.
         /// </summary>
         internal CertificatePurpose Purpose
         {
-            get { return _purpose; }
-
-            set { _purpose = value; }
-        }
+            get;
+            set;
+        } = CertificatePurpose.NotSpecified;
 
         /// <summary>
-        /// SSL Server Authentication.
+        /// Gets or sets SSL Server Authentication.
         /// </summary>
         internal bool SSLServerAuthentication
         {
-            get { return _sslServerAuthentication; }
+            get;
 
-            set { _sslServerAuthentication = value; }
+            set;
         }
 
         /// <summary>
-        /// DNS name of a certificate.
+        /// Gets or sets DNS name of a certificate.
         /// </summary>
-        internal string DnsName
+        internal WildcardPattern DnsName
         {
-            set { _dnsName = value; }
+            get;
+            set;
         }
 
         /// <summary>
-        /// EKU OID list of a certificate.
+        /// Gets or sets EKU OID list of a certificate.
         /// </summary>
-        internal string[] Eku
+        internal List<WildcardPattern> Eku
         {
-            set { _eku = value; }
+            get;
+            set;
         }
 
         /// <summary>
-        /// Remaining validity period in days for a certificate.
+        /// Gets or sets validity time for a certificate.
         /// </summary>
-        internal int ExpiringInDays
+        internal DateTime Expiring
         {
-            set { _expiringInDays = value; }
-        }
-
-        /// <summary>
-        /// Combine properties into a filter string.
-        /// </summary>
-        internal string FilterString
-        {
-            get
-            {
-                string filterString = string.Empty;
-
-                if (_dnsName != null)
-                {
-                    filterString = AppendFilter(filterString, "dns", _dnsName);
-                }
-
-                string ekuT = string.Empty;
-                if (_eku != null)
-                {
-                    for (int i = 0; i < _eku.Length; i++)
-                    {
-                        if (ekuT.Length != 0)
-                        {
-                            ekuT = ekuT + ",";
-                        }
-
-                        ekuT = ekuT + _eku[i];
-                    }
-                }
-
-                if (_purpose == CertificatePurpose.CodeSigning)
-                {
-                    if (ekuT.Length != 0)
-                    {
-                        ekuT = ekuT + ",";
-                    }
-
-                    ekuT = ekuT + CodeSigningOid;
-                }
-
-                if (_purpose == CertificatePurpose.DocumentEncryption)
-                {
-                    if (ekuT.Length != 0)
-                    {
-                        ekuT = ekuT + ",";
-                    }
-
-                    ekuT = ekuT + DocumentEncryptionOid;
-                }
-
-                if (_sslServerAuthentication)
-                {
-                    if (ekuT.Length != 0)
-                    {
-                        ekuT = ekuT + ",";
-                    }
-
-                    ekuT = ekuT + szOID_PKIX_KP_SERVER_AUTH;
-                }
-
-                if (ekuT.Length != 0)
-                {
-                    filterString = AppendFilter(filterString, "eku", ekuT);
-                    if (_purpose == CertificatePurpose.CodeSigning ||
-                        _sslServerAuthentication)
-                    {
-                        filterString = AppendFilter(filterString, "key", "*");
-                    }
-                }
-
-                if (_expiringInDays >= 0)
-                {
-                    filterString = AppendFilter(
-                                    filterString,
-                                    "ExpiringInDays",
-                                    _expiringInDays.ToString(System.Globalization.CultureInfo.InvariantCulture));
-                }
-
-                if (filterString.Length == 0)
-                {
-                    filterString = null;
-                }
-
-                return filterString;
-            }
-        }
-
-        private string AppendFilter(
-                            string filterString,
-                            string name,
-                            string value)
-        {
-            string newfilter = value;
-
-            // append a "name=value" filter to the existing filter string.
-            // insert a separating "&" if existing filter string is not empty.
-
-            // if the value is empty, do nothing.
-
-            if (newfilter.Length != 0)
-            {
-                // if the value contains an equal sign or an ampersand, throw
-                // an exception to avoid compromising the native code parser.
-
-                if (newfilter.Contains("=") || newfilter.Contains("&"))
-                {
-                    Marshal.ThrowExceptionForHR(Security.NativeMethods.E_INVALID_DATA);
-                }
-
-                newfilter = name + "=" + newfilter;
-                if (filterString.Length != 0)
-                {
-                    newfilter = "&" + newfilter;
-                }
-            }
-
-            return filterString + newfilter;
-        }
-
-        private CertificatePurpose _purpose = 0;
-        private bool _sslServerAuthentication = false;
-        private string _dnsName = null;
-        private string[] _eku = null;
-        private int _expiringInDays = -1;
+            get;
+            set;
+        } = DateTime.MinValue;
 
         internal const string CodeSigningOid = "1.3.6.1.5.5.7.3.3";
-        internal const string szOID_PKIX_KP_SERVER_AUTH = "1.3.6.1.5.5.7.3.1";
+        internal const string OID_PKIX_KP_SERVER_AUTH = "1.3.6.1.5.5.7.3.1";
 
         // The OID arc 1.3.6.1.4.1.311.80 is assigned to PowerShell. If we need
         // new OIDs, we can assign them under this branch.
@@ -961,11 +910,11 @@ namespace System.Management.Automation
             return encodedContent;
         }
 
-        internal static string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
-        internal static string END_CMS_SIGIL = "-----END CMS-----";
+        internal static readonly string BEGIN_CMS_SIGIL = "-----BEGIN CMS-----";
+        internal static readonly string END_CMS_SIGIL = "-----END CMS-----";
 
-        internal static string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
-        internal static string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
+        internal static readonly string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
+        internal static readonly string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
 
         /// <summary>
         /// Adds Ascii armour to a byte stream in Base64 format.
@@ -1559,6 +1508,7 @@ namespace System.Management.Automation
 
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiContext = IntPtr.Zero;
+
         [SuppressMessage("Microsoft.Reliability", "CA2006:UseSafeHandleToEncapsulateNativeResources")]
         private static IntPtr s_amsiSession = IntPtr.Zero;
 
@@ -1652,24 +1602,28 @@ namespace System.Management.Automation
             /// Return Type: HRESULT->LONG->int
             ///appName: LPCWSTR->WCHAR*
             ///amsiContext: HAMSICONTEXT*
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiInitialize", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiInitialize(
                 [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string appName, ref System.IntPtr amsiContext);
 
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiUninitialize", CallingConvention = CallingConvention.StdCall)]
             internal static extern void AmsiUninitialize(System.IntPtr amsiContext);
 
             /// Return Type: HRESULT->LONG->int
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
             ///amsiSession: HAMSISESSION*
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiOpenSession", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiOpenSession(System.IntPtr amsiContext, ref System.IntPtr amsiSession);
 
             /// Return Type: void
             ///amsiContext: HAMSICONTEXT->HAMSICONTEXT__*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiCloseSession", CallingConvention = CallingConvention.StdCall)]
             internal static extern void AmsiCloseSession(System.IntPtr amsiContext, System.IntPtr amsiSession);
 
@@ -1680,6 +1634,7 @@ namespace System.Management.Automation
             ///contentName: LPCWSTR->WCHAR*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
             ///result: AMSI_RESULT*
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiScanBuffer", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiScanBuffer(
                 System.IntPtr amsiContext, System.IntPtr buffer, uint length,
@@ -1691,6 +1646,7 @@ namespace System.Management.Automation
             ///contentName: LPCWSTR->WCHAR*
             ///amsiSession: HAMSISESSION->HAMSISESSION__*
             ///result: AMSI_RESULT*
+            [DefaultDllImportSearchPathsAttribute(DllImportSearchPath.System32)]
             [DllImportAttribute("amsi.dll", EntryPoint = "AmsiScanString", CallingConvention = CallingConvention.StdCall)]
             internal static extern int AmsiScanString(
                 System.IntPtr amsiContext, [InAttribute()] [MarshalAsAttribute(UnmanagedType.LPWStr)] string @string,

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -175,13 +175,13 @@ namespace Microsoft.PowerShell.Commands
 
             // TODO: assign real TechNet addresses
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://go.microsoft.com/fwlink/?linkid=2113532");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://go.microsoft.com/fwlink/?linkid=2113534");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://go.microsoft.com/fwlink/?linkid=2113633");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://go.microsoft.com/fwlink/?linkid=2113538");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://go.microsoft.com/fwlink/?linkid=2113632");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://go.microsoft.com/fwlink/?linkid=2113533");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "https://go.microsoft.com/fwlink/?linkid=2113537");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", "https://aka.ms/powershell71-help");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://aka.ms/powershell71-help");
         }
 
         /// <summary>
@@ -823,12 +823,8 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="message">Message to log.</param>
         internal void LogMessage(string message)
         {
-#if !CORECLR // TODO:CORECLR Uncomment when we add PSEtwLog support
-            List<string> details = new List<string>();
-
-            details.Add(message);
+            List<string> details = new List<string>() { message };
             PSEtwLog.LogPipelineExecutionDetailEvent(MshLog.GetLogContext(Context, Context.CurrentCommandProcessor.Command.MyInvocation), details);
-#endif
         }
 
         #endregion

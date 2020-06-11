@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -22,6 +22,7 @@ namespace Microsoft.PowerShell.Commands.Utility
     {
         /// <summary>A bigger default to not get re-allocations in common use cases.</summary>
         private const int DefaultOutputStringCapacity = 256;
+
         private readonly StringBuilder _outputBuilder = new StringBuilder(DefaultOutputStringCapacity);
         private CultureInfo _cultureInfo = CultureInfo.InvariantCulture;
         private string _separator;

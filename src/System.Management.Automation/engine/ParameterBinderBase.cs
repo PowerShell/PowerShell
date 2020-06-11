@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -61,7 +61,7 @@ namespace System.Management.Automation
         private static PSTraceSource s_tracer = PSTraceSource.GetTracer("ParameterBinderBase", "A abstract helper class for the CommandProcessor that binds parameters to the specified object.");
 
         [TraceSource("ParameterBinding", "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.")]
-        internal static PSTraceSource bindingTracer =
+        internal static readonly PSTraceSource bindingTracer =
             PSTraceSource.GetTracer(
                 "ParameterBinding",
                 "Traces the process of binding the arguments to the parameters of cmdlets, scripts, and applications.",
@@ -243,7 +243,7 @@ namespace System.Management.Automation
             if (!psTypeNamesOfArgumentValue.Contains(psTypeNameRequestedByParameter, StringComparer.OrdinalIgnoreCase))
             {
                 // win8: 228176..The callers know when to ignore and when not to ignore invalid cast exceptions.
-                PSInvalidCastException e = new PSInvalidCastException(ErrorCategory.InvalidArgument.ToString(),
+                PSInvalidCastException e = new PSInvalidCastException(nameof(ErrorCategory.InvalidArgument),
                         null,
                         ParameterBinderStrings.MismatchedPSTypeName,
                         (_invocationInfo != null) && (_invocationInfo.MyCommand != null) ? _invocationInfo.MyCommand.Name : string.Empty,
@@ -337,12 +337,12 @@ namespace System.Management.Automation
 
             if (parameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameter));
             }
 
             if (parameterMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterMetadata");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
 
             using (bindingTracer.TraceScope(
@@ -904,6 +904,7 @@ namespace System.Management.Automation
         /// The invocation information for the code that is being bound.
         /// </summary>
         private InvocationInfo _invocationInfo;
+
         internal InvocationInfo InvocationInfo
         {
             get
@@ -916,6 +917,7 @@ namespace System.Management.Automation
         /// The context of the currently running engine.
         /// </summary>
         private ExecutionContext _context;
+
         internal ExecutionContext Context
         {
             get
@@ -928,6 +930,7 @@ namespace System.Management.Automation
         /// An instance of InternalCommand that the binder is binding to.
         /// </summary>
         private InternalCommand _command;
+
         internal InternalCommand Command
         {
             get
@@ -986,12 +989,12 @@ namespace System.Management.Automation
         {
             if (argument == null)
             {
-                throw PSTraceSource.NewArgumentNullException("argument");
+                throw PSTraceSource.NewArgumentNullException(nameof(argument));
             }
 
             if (toType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("toType");
+                throw PSTraceSource.NewArgumentNullException(nameof(toType));
             }
 
             // Construct the collection type information if it wasn't passed in.
@@ -1798,7 +1801,7 @@ namespace System.Management.Automation
                         if (coerceElementTypeIfNeeded)
                         {
                             bindingTracer.WriteLine(
-                                "Coercing scalar arg value to type {1}",
+                                "Coercing scalar arg value to type {0}",
                                 collectionElementType);
 
                             // Coerce the scalar type into the collection

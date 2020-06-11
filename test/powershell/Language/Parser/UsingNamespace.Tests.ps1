@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # There is an automatic 'using namespace system' which is
@@ -60,7 +60,7 @@ Describe "Using Namespace" -Tags "CI" {
         New-Object CompilerGeneratedAttribute | Should -Be System.Runtime.CompilerServices.CompilerGeneratedAttribute
     }
 
-    It "Attributes w/ using namespace" -pending {
+    It "Attributes w/ using namespace" -Pending {
         function foo
         {
             [DebuggerStepThrough()]

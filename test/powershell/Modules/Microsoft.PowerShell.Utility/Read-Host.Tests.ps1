@@ -1,6 +1,6 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-Describe "Read-Host Test" -tag "CI" {
+Describe "Read-Host Test" -Tag "CI" {
     BeforeAll {
         $th = New-TestHost
         $rs = [runspacefactory]::Createrunspace($th)
@@ -33,9 +33,20 @@ Describe "Read-Host Test" -tag "CI" {
     }
 
     It "Read-Host returns a secure string when using -AsSecureString parameter" {
-        $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | select-object -first 1
+        $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | Select-Object -First 1
         $result | Should -BeOfType SecureString
         [pscredential]::New("foo",$result).GetNetworkCredential().Password | Should -BeExactly TEST
+    }
+
+    It "Read-Host returns a string when using -MaskInput parameter" {
+        $result = $ps.AddScript("Read-Host -MaskInput").Invoke()
+        $result | Should -Be $th.UI.ReadLineData
+    }
+
+    It "Read-Host throws an error when both -AsSecureString parameter and -MaskInput parameter are used" {
+        # Contrary to the rest of the tests this does not need to be invoked through a runspace since it is going to throw an error.
+        $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.ReadHostCommand"
+        {Read-Host -MaskInput -AsSecureString} | Should -Throw -ErrorId $errorId
     }
 
     It "Read-Host doesn't enter command prompt mode" {

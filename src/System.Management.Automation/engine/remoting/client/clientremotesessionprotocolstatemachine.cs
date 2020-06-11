@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -190,7 +190,7 @@ namespace System.Management.Automation.Remoting
                             "State can be set to NegotiationReceived only when RemoteSessionCapability is not null");
                         if (eventArgs.RemoteSessionCapability == null)
                         {
-                            throw PSTraceSource.NewArgumentException("eventArgs");
+                            throw PSTraceSource.NewArgumentException(nameof(eventArgs));
                         }
 
                         SetState(RemoteSessionState.NegotiationReceived, null);
@@ -490,7 +490,7 @@ namespace System.Management.Automation.Remoting
                     _state == RemoteSessionState.EstablishedAndKeyReceived ||   // TODO - Client session would never get into this state... to be removed
                     _state == RemoteSessionState.EstablishedAndKeySent ||
                     _state == RemoteSessionState.Disconnecting ||               // There can be input data until disconnect has been completed
-                    _state == RemoteSessionState.Disconnected)                  // Data can arrive while state machine is transitioning to disconnected, in a race.
+                    _state == RemoteSessionState.Disconnected)                  // Data can arrive while state machine is transitioning to disconnected
                 {
                     return true;
                 }
@@ -554,7 +554,7 @@ namespace System.Management.Automation.Remoting
         {
             if (arg == null)
             {
-                throw PSTraceSource.NewArgumentNullException("arg");
+                throw PSTraceSource.NewArgumentNullException(nameof(arg));
             }
 
             EventHandler<RemoteSessionStateMachineEventArgs> handler = _stateMachineHandle[(int)State, (int)arg.StateEvent];

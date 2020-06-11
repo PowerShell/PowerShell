@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -26,7 +26,9 @@ namespace Microsoft.PowerShell.Commands
         public object InputObject { get; set; }
 
         private int _depth = 2;
+
         private const int maxDepthAllowed = 100;
+
         private readonly CancellationTokenSource _cancellationSource = new CancellationTokenSource();
 
         /// <summary>

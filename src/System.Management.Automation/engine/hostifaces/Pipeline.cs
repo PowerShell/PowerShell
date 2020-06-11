@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (runspace == null)
             {
-                PSTraceSource.NewArgumentNullException("runspace");
+                PSTraceSource.NewArgumentNullException(nameof(runspace));
             }
             // This constructor is used only internally.
             // Caller should make sure the input is valid

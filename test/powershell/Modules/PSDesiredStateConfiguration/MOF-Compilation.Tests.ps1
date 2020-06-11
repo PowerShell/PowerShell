@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "DSC MOF Compilation" -tags "CI" {
 
@@ -7,7 +7,12 @@ Describe "DSC MOF Compilation" -tags "CI" {
     }
 
     BeforeAll {
-        $SkipAdditionalPlatforms = (Get-PlatformInfo) -match "alpine|raspbian"
+        $platformInfo = Get-PlatformInfo
+        $SkipAdditionalPlatforms =
+            ($platformInfo.Platform -match "alpine|raspbian") -or
+            ($platformInfo.Platform -eq "debian" -and ($platformInfo.Version -eq '10' -or $platformInfo.Version -eq '')) -or # debian 11 has empty Version ID
+            ($platformInfo.Platform -eq 'centos' -and $platformInfo.Version -eq '8')
+
         Import-Module PSDesiredStateConfiguration
         $dscModule = Get-Module PSDesiredStateConfiguration
         $baseSchemaPath = Join-Path $dscModule.ModuleBase 'Configuration'
@@ -17,8 +22,8 @@ Describe "DSC MOF Compilation" -tags "CI" {
         Copy-Item $testResourceSchemaPath $baseSchemaPath -Recurse -Force
 
         $_modulePath = $env:PSModulePath
-        $powershellexe = (get-process -pid $PID).MainModule.FileName
-        $env:PSModulePath = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
+        $powershellexe = (Get-Process -pid $PID).MainModule.FileName
+        $env:PSModulePath = Join-Path ([io.path]::GetDirectoryName($powershellexe)) Modules
     }
 
     It "Should be able to compile a MOF from a basic configuration" -Skip:($IsMacOS -or $IsWindows -or $SkipAdditionalPlatforms) {

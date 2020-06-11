@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
@@ -71,14 +71,14 @@ namespace System.Management.Automation
             }
             else
             {
-                _probingPaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                _probingPaths = basePaths.Split(';', StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < _probingPaths.Length; i++)
                 {
                     string basePath = _probingPaths[i];
                     if (!Directory.Exists(basePath))
                     {
                         string message = string.Format(CultureInfo.CurrentCulture, BaseFolderDoesNotExist, basePath);
-                        throw new ArgumentException(message, "basePaths");
+                        throw new ArgumentException(message, nameof(basePaths));
                     }
 
                     _probingPaths[i] = basePath.Trim();
@@ -113,6 +113,7 @@ namespace System.Management.Automation
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
+
         private readonly HashSet<string> _denyListedAssemblies = new HashSet<string>(StringComparer.OrdinalIgnoreCase){
                 "System.Windows.Forms"
             };
@@ -582,7 +583,7 @@ namespace System.Management.Automation
         public static void SetPowerShellAssemblyLoadContext([MarshalAs(UnmanagedType.LPWStr)]string basePaths)
         {
             if (string.IsNullOrEmpty(basePaths))
-                throw new ArgumentNullException("basePaths");
+                throw new ArgumentNullException(nameof(basePaths));
 
             PowerShellAssemblyLoadContext.InitializeSingleton(basePaths);
         }

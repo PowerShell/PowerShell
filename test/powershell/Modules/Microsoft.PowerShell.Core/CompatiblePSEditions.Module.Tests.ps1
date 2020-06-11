@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 $script:oldModulePath = $env:PSModulePath
@@ -327,6 +327,48 @@ Describe "Import-Module from CompatiblePSEditions-checked paths" -Tag "CI" {
                 [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("TestWindowsPowerShellVersionString", $null)
             }
         }
+
+        It "Current location in Windows PS mirrors local current location" -TestCases $failCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+            $pwdBackup = $PWD
+            $location = Join-Path $TestDrive "Custom dir" (New-Guid).ToString()
+            $null = New-Item -Path $location -ItemType Directory
+            Push-Location -Path $location
+            try
+            {
+                # right after module import remote $PWD should be synchronized
+                Import-Module $ModuleName -UseWindowsPowerShell
+                $s = Get-PSSession -Name WinPSCompatSession
+                (Invoke-Command -Session $s {Get-Location}).Path | Should -BeExactly $PWD.Path
+
+                # after local $PWD changes remote $PWD should be synchronized
+                Set-Location -Path ..
+                (Invoke-Command -Session $s {Get-Location}).Path | Should -BeExactly $PWD.Path
+
+                # after WinCompat cleanup local $PWD changes should not cause errors
+                Remove-Module $ModuleName -Force
+
+                Pop-Location
+            }
+            finally
+            {
+                Set-Location $pwdBackup
+            }
+        }
+
+        It "-NoClobber and -Scope work with implicit WinCompat" -TestCases $failCases -Skip:(-not $IsWindows) {
+            param($Editions, $ModuleName, $Result)
+            try
+            {
+                Set-Item function:Test-$ModuleName {"OriginalFunctionImplementation"}
+                Import-Module $ModuleName -Force -WarningAction Ignore -Scope Local -NoClobber
+                & "Test-$ModuleName" | Should -BeExactly "OriginalFunctionImplementation"
+            }
+            finally
+            {
+                Remove-Item function:Test-$ModuleName
+            }
+        }
     }
 
     Context "Imports from absolute path" {
@@ -401,6 +443,7 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
         $ModuleName = "DesktopModule"
         $ModuleName2 = "DesktopModule2"
         $basePath = Join-Path $TestDrive "WinCompatModules"
+        $allModules = @($ModuleName, $ModuleName2)
         Remove-Item -Path $basePath -Recurse -ErrorAction SilentlyContinue
         # create an incompatible module that generates an error on import
         New-EditionCompatibleModule -ModuleName $ModuleName -CompatiblePSEditions "Desktop" -Dir $basePath -ErrorGenerationCode '1/0;'
@@ -510,6 +553,153 @@ Describe "Additional tests for Import-Module with WinCompat" -Tag "Feature" {
             $out | Should -BeExactly 'CouldNotAutoloadMatchingModule'
         }
     }
+
+    Context "Tests around Windows PowerShell Compatibility NoClobber module list" {
+        BeforeAll {
+            $pwsh = "$PSHOME/pwsh"
+            Add-ModulePath $basePath
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        It "NoClobber WinCompat import works for an engine module through command discovery" {
+
+            ConvertFrom-String -InputObject '1,2,3' -Delimiter ',' | Out-Null
+            $modules = Get-Module -Name Microsoft.PowerShell.Utility
+            $modules.Count | Should -Be 2
+            $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
+            $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
+
+            $proxyModule.ExportedCommands.Keys | Should -Contain "ConvertFrom-String"
+            $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Date"
+
+            $coreModule.ExportedCommands.Keys | Should -Contain "Get-Date"
+            $coreModule.ExportedCommands.Keys | Should -Not -Contain "ConvertFrom-String"
+
+            $proxyModule | Remove-Module -Force
+        }
+
+        It "NoClobber WinCompat import works for an engine module through -UseWindowsPowerShell parameter" {
+
+            Import-Module Microsoft.PowerShell.Management -UseWindowsPowerShell
+
+            $modules = Get-Module -Name Microsoft.PowerShell.Management
+            $modules.Count | Should -Be 2
+            $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
+            $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
+
+            $proxyModule.ExportedCommands.Keys | Should -Contain "Get-WmiObject"
+            $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Item"
+
+            $coreModule.ExportedCommands.Keys | Should -Contain "Get-Item"
+            $coreModule.ExportedCommands.Keys | Should -Not -Contain "Get-WmiObject"
+
+            $proxyModule | Remove-Module -Force
+        }
+
+        It "NoClobber WinCompat import works with ModuleSpecifications" {
+
+            Import-Module -UseWindowsPowerShell -FullyQualifiedName @{ModuleName='Microsoft.PowerShell.Utility';ModuleVersion='0.0'}
+
+            $modules = Get-Module -Name Microsoft.PowerShell.Utility
+            $modules.Count | Should -Be 2
+            $proxyModule = $modules | Where-Object {$_.ModuleType -eq 'Script'}
+            $coreModule = $modules | Where-Object {$_.ModuleType -eq 'Manifest'}
+
+            $proxyModule.ExportedCommands.Keys | Should -Contain "ConvertFrom-String"
+            $proxyModule.ExportedCommands.Keys | Should -Not -Contain "Get-Date"
+
+            $coreModule.ExportedCommands.Keys | Should -Contain "Get-Date"
+            $coreModule.ExportedCommands.Keys | Should -Not -Contain "ConvertFrom-String"
+
+            $proxyModule | Remove-Module -Force
+        }
+
+        It "NoClobber WinCompat list in powershell.config is missing " {
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned"}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
+        }
+
+        It "NoClobber WinCompat list in powershell.config is empty " {
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": []}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Import-Module $ModuleName2 -WarningAction Ignore;Test-${ModuleName2}PSEdition" | Should -Be 'Desktop'
+        }
+
+        It "NoClobber WinCompat list in powershell.config is working " {
+            $targetModuleFolder = Join-Path $TestDrive "TempWinCompatModuleFolder"
+            Copy-Item -Path "$basePath\$ModuleName2" -Destination "$targetModuleFolder\$ModuleName2" -Recurse -Force
+            $env:PSModulePath = $targetModuleFolder + [System.IO.Path]::PathSeparator + $env:PSModulePath
+
+            $psm1 = Get-ChildItem -Recurse -Path $targetModuleFolder -Filter "$ModuleName2.psm1"
+            "function Test-$ModuleName2 { `$PSVersionTable.PSEdition }" | Out-File -FilePath $psm1.FullName -Force
+
+            # Now Core version of the module has 1 function: Test-$ModuleName2 (returns 'Core')
+            # and WinPS version of the module has 2 functions: Test-$ModuleName2 (returns '$true'), Test-${ModuleName2}PSEdition (returns 'Desktop')
+            # when NoClobber WinCompat import is working Test-$ModuleName2 should return 'Core'
+
+            '{"Microsoft.PowerShell:ExecutionPolicy": "RemoteSigned", "WindowsPowerShellCompatibilityNoClobberModuleList": ["' + $ModuleName2 + '"]}' | Out-File -Force $ConfigPath
+            & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "[System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('TestWindowsPowerShellPSHomeLocation', `'$basePath`');Test-${ModuleName2}PSEdition;Test-$ModuleName2" | Should -Be @('Desktop','Core')
+        }
+    }
+
+    Context "Tests around PSModulePath in WinCompat process" {
+        BeforeAll {
+            $pwsh = "$PSHOME/pwsh"
+            Add-ModulePath $basePath
+            $ConfigPath = Join-Path $TestDrive 'powershell.config.json'
+        }
+
+        AfterAll {
+            Restore-ModulePath
+        }
+
+        AfterEach {
+            Get-Module $allModules | Remove-Module -Force
+        }
+
+        It 'WinCompat process does not inherit PowerShell-Core-specific paths' {
+            # these paths were copied from test\powershell\engine\Module\ModulePath.Tests.ps1
+            $pscoreUserPath = Join-Path -Path $HOME -ChildPath "Documents\PowerShell\Modules"
+            $pscoreSharedPath = Join-Path -Path $env:ProgramFiles -ChildPath "PowerShell\Modules"
+            $pscoreSystemPath = Join-Path -Path $PSHOME -ChildPath 'Modules'
+
+            $pscorePaths = $env:psmodulepath
+            $pscorePaths | Should -BeLike "*$pscoreUserPath*"
+            $pscorePaths | Should -BeLike "*$pscoreSharedPath*"
+            $pscorePaths | Should -BeLike "*$pscoreSystemPath*"
+
+            Import-Module $ModuleName2 -UseWindowsPowerShell -Force -WarningAction Ignore
+            $s = Get-PSSession -Name WinPSCompatSession
+            $winpsPaths = Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath}
+            $winpsPaths | Should -Not -BeLike "*$pscoreUserPath*"
+            $winpsPaths | Should -Not -BeLike "*$pscoreSharedPath*"
+            $winpsPaths | Should -Not -BeLike "*$pscoreSystemPath*"
+        }
+
+        It 'WinCompat process inherits user added paths' {
+            $mypath = Join-Path $env:SystemDrive MyDir
+            $originalModulePath = $env:PSModulePath
+            try {
+                $env:PSModulePath += ";$mypath"
+                Import-Module $ModuleName2 -UseWindowsPowerShell -Force -WarningAction Ignore
+                $s = Get-PSSession -Name WinPSCompatSession
+                $winpsPaths = Invoke-Command -Session $s -ScriptBlock {$env:psmodulepath}
+                $winpsPaths | Should -BeLike "*$mypath*"
+            }
+            finally {
+                $env:PSModulePath = $originalModulePath
+            }
+        }
+
+        It 'Windows PowerShell does not inherit path defined in powershell.config.json' {
+            '{ "PSModulePath": "C:\\MyTestDir" }' | Out-File -Force $ConfigPath
+            $winpsPaths =  & $pwsh -NoProfile -NonInteractive -settingsFile $ConfigPath -c "Import-Module $ModuleName2 -UseWindowsPowerShell -WarningAction Ignore;`$s = Get-PSSession -Name WinPSCompatSession;Invoke-Command -Session `$s -ScriptBlock {`$env:psmodulepath}"
+            $winpsPaths | Should -Not -BeLike "*MyTestDir*"
+        }
+    }
 }
 
 Describe "PSModulePath changes interacting with other PowerShell processes" -Tag "Feature" {
@@ -545,6 +735,10 @@ Describe "PSModulePath changes interacting with other PowerShell processes" -Tag
         It "Allows Windows PowerShell subprocesses to call `$PSHOME modules still" {
             $errors = powershell.exe -Command "Get-ChildItem" 2>&1 | Where-Object { $_ -is [System.Management.Automation.ErrorRecord] }
             $errors | Should -Be $null
+        }
+
+        It "Allows Windows PowerShell subprocesses to load WinPS version of `$PSHOME modules" {
+            powershell.exe -Command "Get-ChildItem | Out-Null;(Get-Module Microsoft.PowerShell.Management).Path" | Should -BeLike "*system32*"
         }
 
         It "Allows PowerShell subprocesses to call core modules" {

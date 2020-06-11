@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -70,6 +70,7 @@ namespace System.Management.Automation
         internal static readonly string mamlURI = "http://schemas.microsoft.com/maml/2004/10";
         internal static readonly string commandURI = "http://schemas.microsoft.com/maml/dev/command/2004/10";
         internal static readonly string devURI = "http://schemas.microsoft.com/maml/dev/2004/10";
+
         private const string directive = @"^\s*\.(\w+)(\s+(\S.*))?\s*$";
         private const string blankline = @"^\s*$";
         // Although "http://msh" is the default namespace, it still must be explicitly qualified with non-empty prefix,

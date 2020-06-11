@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -23,6 +23,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// Should the class remember what Session it came from? No.
     /// </para>
     /// </summary>
+    [Alias("gcls")]
     [Cmdlet(VerbsCommon.Get, GetCimClassCommand.Noun, DefaultParameterSetName = ComputerSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227959")]
     [OutputType(typeof(CimClass))]
     public class GetCimClassCommand : CimBaseCommand
@@ -219,11 +220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         protected override void ProcessRecord()
         {
             base.CheckParameterSet();
-            CimGetCimClass cimGetCimClass = this.GetOperationAgent();
-            if (cimGetCimClass == null)
-            {
-                cimGetCimClass = CreateOperationAgent();
-            }
+            CimGetCimClass cimGetCimClass = this.GetOperationAgent() ?? CreateOperationAgent();
 
             cimGetCimClass.GetCimClass(this);
             cimGetCimClass.ProcessActions(this.CmdletOperation);
@@ -251,7 +248,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all New-CimInstance operations.
         /// </para>
         /// </summary>
-        CimGetCimClass GetOperationAgent()
+        private CimGetCimClass GetOperationAgent()
         {
             return (this.AsyncOperation as CimGetCimClass);
         }
@@ -263,7 +260,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns></returns>
-        CimGetCimClass CreateOperationAgent()
+        private CimGetCimClass CreateOperationAgent()
         {
             CimGetCimClass cimGetCimClass = new CimGetCimClass();
             this.AsyncOperation = cimGetCimClass;
@@ -291,7 +288,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameCimSession, new HashSet<ParameterDefinitionEntry> {
@@ -309,7 +306,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.SessionSetName, new ParameterSetEntry(1)     },
             {   CimBaseCommand.ComputerSetName, new ParameterSetEntry(0, true)     },

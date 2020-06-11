@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
@@ -186,9 +186,30 @@ Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         { New-Item @params } | Should -Throw -ErrorId "NewItemIOError,Microsoft.PowerShell.Commands.NewItemCommand"
         Remove-Item "$testdrive\test.txt" -Force
     }
+
+    It "Parameter binding '-<name>' throws correctly (no NRE) if argument is <argValue>" -TestCases @(
+        @{ name = "ErrorAction";       argValue = "null";           arguments = @{ ErrorAction = $null } }
+        @{ name = "WarningAction";     argValue = "null";           arguments = @{ WarningAction = $null } }
+        @{ name = "InformationAction"; argValue = "null";           arguments = @{ InformationAction = $null } }
+        @{ name = "ErrorAction";       argValue = "AutomationNull"; arguments = @{ ErrorAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
+        @{ name = "WarningAction";     argValue = "AutomationNull"; arguments = @{ WarningAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
+        @{ name = "InformationAction"; argValue = "AutomationNull"; arguments = @{ InformationAction = [System.Management.Automation.Internal.AutomationNull]::Value } }
+    ) {
+        param($arguments)
+
+        $err = $null
+        try {
+            Test-Path .\noexistfile.ps1 @arguments
+        } catch {
+            $err = $_
+        }
+
+        $err.FullyQualifiedErrorId | Should -BeExactly "ParameterBindingFailed,Microsoft.PowerShell.Commands.TestPathCommand"
+        $err.Exception.InnerException.InnerException | Should -BeOfType "System.Management.Automation.PSInvalidCastException"
+    }
 }
 
-Describe 'ActionPreference.Break tests' -tag 'CI' {
+Describe 'ActionPreference.Break tests' -Tag 'CI' {
 
     BeforeAll {
         Register-DebuggerHandler
@@ -218,7 +239,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v', 'v')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'v', 'v')
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -259,7 +280,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript -CommandQueue 'v', 'v')
+            $results = @(Test-Debugger -Scriptblock $testScript -CommandQueue 'v', 'v')
         }
 
         It 'Should show 3 debugger commands were invoked' {
@@ -300,7 +321,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript)
+            $results = @(Test-Debugger -Scriptblock $testScript)
         }
 
         It 'Should show 1 debugger command was invoked' {
@@ -333,7 +354,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break -ErrorAction Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript)
+            $results = @(Test-Debugger -Scriptblock $testScript)
         }
 
         It 'Should show 2 debugger commands were invoked' {
@@ -369,7 +390,7 @@ Describe 'ActionPreference.Break tests' -tag 'CI' {
                 Test-Break *>$null
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript)
+            $results = @(Test-Debugger -Scriptblock $testScript)
         }
 
         It 'Should show 7 debugger commands were invoked' {

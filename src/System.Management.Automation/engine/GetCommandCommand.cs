@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -531,9 +531,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (!string.IsNullOrEmpty(result.Syntax))
                         {
-                            PSObject syntax = PSObject.AsPSObject(result.Syntax);
-
-                            syntax.IsHelpObject = true;
+                            PSObject syntax = GetSyntaxObject(result);
 
                             WriteObject(syntax);
                         }
@@ -569,6 +567,81 @@ namespace Microsoft.PowerShell.Commands
                 Telemetry.Internal.TelemetryAPI.ReportGetCommandFailed(Name, _timer.ElapsedMilliseconds);
             }
 #endif
+        }
+
+        /// <summary>
+        /// Creates the syntax output based on if the command is an alias, script, application or command.
+        /// </summary>
+        /// <param name="command">
+        /// CommandInfo object containing the syntax to be output.
+        /// </param>
+        /// <returns>
+        /// Syntax string cast as a PSObject for outputting.
+        /// </returns>
+        private PSObject GetSyntaxObject(CommandInfo command)
+        {
+            PSObject syntax = PSObject.AsPSObject(command.Syntax);
+
+            // This is checking if the command name that's been passed in is one that was specified by a user,
+            // if not then we have to assume they specified an alias or a wildcard and do some extra formatting for those,
+            // if it is then just go with the default formatting.
+            // So if a user runs Get-Command -Name del -Syntax the code will find del and the command it resolves to as Remove-Item
+            // and attempt to return that, but as the user specified del we want to fiddle with the output a bit to make it clear
+            // that's an alias but still give the Remove-Item syntax.
+            if (this.Name != null && !Array.Exists(this.Name, name => name.Equals(command.Name, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                string aliasName = _nameContainsWildcard ? command.Name : this.Name[0];
+
+                IDictionary<string, AliasInfo> aliasTable = SessionState.Internal.GetAliasTable();
+                foreach (KeyValuePair<string, AliasInfo> tableEntry in aliasTable)
+                {
+                    if ((Array.Exists(this.Name, name => name.Equals(tableEntry.Key, StringComparison.InvariantCultureIgnoreCase)) &&
+                        tableEntry.Value.Definition == command.Name) ||
+                        (_nameContainsWildcard && tableEntry.Value.Definition == command.Name))
+                    {
+                        aliasName = tableEntry.Key;
+                        break;
+                    }
+                }
+
+                string replacedSyntax = string.Empty;
+                switch (command)
+                {
+                    case ExternalScriptInfo externalScript:
+                        replacedSyntax = string.Format(
+                            "{0} (alias) -> {1}{2}{3}",
+                            aliasName,
+                            string.Format("{0}{1}", externalScript.Path, Environment.NewLine),
+                            Environment.NewLine,
+                            command.Syntax.Replace(command.Name, aliasName));
+                        break;
+                    case ApplicationInfo app:
+                        replacedSyntax = app.Path;
+                        break;
+                    default:
+                        if (aliasName.Equals(command.Name))
+                        {
+                            replacedSyntax = command.Syntax;
+                        }
+                        else
+                        {
+                            replacedSyntax = string.Format(
+                                "{0} (alias) -> {1}{2}{3}",
+                                aliasName,
+                                command.Name,
+                                Environment.NewLine,
+                                command.Syntax.Replace(command.Name, aliasName));
+                        }
+
+                        break;
+                }
+
+                syntax = PSObject.AsPSObject(replacedSyntax);
+            }
+
+            syntax.IsHelpObject = true;
+
+            return syntax;
         }
 
         /// <summary>
@@ -1229,31 +1302,35 @@ namespace Microsoft.PowerShell.Commands
 
                 if (isCommandMatch)
                 {
-                    if (ArgumentList != null)
+                    if (Syntax.IsPresent && current is AliasInfo ai)
                     {
-                        AliasInfo ai = current as AliasInfo;
-                        if (ai != null)
+                        // If the matching command was an alias, then use the resolved command
+                        // instead of the alias...
+                        current = ai.ResolvedCommand ?? CommandDiscovery.LookupCommandInfo(
+                            ai.UnresolvedCommandName,
+                            this.MyInvocation.CommandOrigin,
+                            this.Context);
+
+                        // there are situations where both ResolvedCommand and UnresolvedCommandName
+                        // are both null (often due to multiple versions of modules with aliases)
+                        // therefore we need to exit early.
+                        if (current == null)
                         {
-                            // If the matching command was an alias, then use the resolved command
-                            // instead of the alias...
-                            current = ai.ResolvedCommand;
-                            if (current == null)
-                            {
-                                return false;
-                            }
+                            return false;
                         }
-                        else if (!(current is CmdletInfo || current is IScriptCommandInfo))
-                        {
-                            // If current is not a cmdlet or script, we need to throw a terminating error.
-                            ThrowTerminatingError(
-                                new ErrorRecord(
-                                    PSTraceSource.NewArgumentException(
-                                        "ArgumentList",
-                                        DiscoveryExceptions.CommandArgsOnlyForSingleCmdlet),
-                                    "CommandArgsOnlyForSingleCmdlet",
-                                    ErrorCategory.InvalidArgument,
-                                    current));
-                        }
+                    }
+
+                    if (ArgumentList != null && !(current is CmdletInfo || current is IScriptCommandInfo))
+                    {
+                        // If current is not a cmdlet or script, we need to throw a terminating error.
+                        ThrowTerminatingError(
+                            new ErrorRecord(
+                                PSTraceSource.NewArgumentException(
+                                    "ArgumentList",
+                                    DiscoveryExceptions.CommandArgsOnlyForSingleCmdlet),
+                                "CommandArgsOnlyForSingleCmdlet",
+                                ErrorCategory.InvalidArgument,
+                                current));
                     }
 
                     // If the command implements dynamic parameters
@@ -1367,15 +1444,13 @@ namespace Microsoft.PowerShell.Commands
                             // Look in function table
                             if ((this.CommandType & (CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
                             {
-                                foreach (DictionaryEntry function in module.SessionState.Internal.GetFunctionTable())
+                                foreach ((string functionName, FunctionInfo functionInfo) in module.SessionState.Internal.GetFunctionTable())
                                 {
-                                    FunctionInfo func = (FunctionInfo)function.Value;
-
-                                    if (matcher.IsMatch((string)function.Key) && func.IsImported)
+                                    if (matcher.IsMatch(functionName) && functionInfo.IsImported)
                                     {
                                         // make sure function doesn't come from the current module's nested module
-                                        if (func.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
-                                            yield return (CommandInfo)function.Value;
+                                        if (functionInfo.Module.Path.Equals(module.Path, StringComparison.OrdinalIgnoreCase))
+                                            yield return functionInfo;
                                     }
                                 }
                             }
@@ -1583,7 +1658,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (fakeBoundParameters == null)
             {
-                throw PSTraceSource.NewArgumentNullException("fakeBoundParameters");
+                throw PSTraceSource.NewArgumentNullException(nameof(fakeBoundParameters));
             }
 
             var commandInfo = new CmdletInfo("Get-Command", typeof(GetCommandCommand));
