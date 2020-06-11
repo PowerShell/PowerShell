@@ -133,8 +133,13 @@ Describe "Process Parent property" -Tags "CI" {
     It "Has Parent process property in linux" -Skip:(-not $IsLinux) {
         # Added new test to check for bug as described in issue https://github.com/PowerShell/PowerShell/issue/12908
             $powershellexe = (Get-Process -Name "$((Get-Process -Id $PID).Name)").mainmodule.filename
-            & $powershellexe -noprofile -command '(Get-Process -Name "$((Get-Process -Id $PID).Name)").Parent' | Should -Not -BeNullOrEmpty
-        }
+            & $powershellexe -noprofile -command "echo '#!/bin/bash' > 't ( e ( s ) t )'"
+            & $powershellexe -noprofile -command "echo './src/powershell-unix/bin/Debug/net5.0/linux-x64/publish/pwsh' >> 't ( e ( s ) t )'"
+            & $powershellexe -noprofile -command "chmod +x './t ( e ( s ) t )'"
+            & $powershellexe -noprofile -command "Import-Module ./build.psm1"
+            & $powershellexe -noprofile -command "Start-PSBuild"
+            & $powershellexe -noprofile -command "./'t ( e ( s ) t )'"
+            & $powershellexe -noprofile -command '(Get-Process -Name "t ( e ( s ) t )").Parent' | Should -Not -BeNullOrEmpty
     }
 
     It "Has valid parent process ID property" -Pending {
