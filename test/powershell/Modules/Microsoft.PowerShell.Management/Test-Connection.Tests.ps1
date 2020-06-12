@@ -3,8 +3,6 @@
 
 Import-Module HelpersCommon
 
-if ($MacOS) { hostname | nslookup | Write-Warning }
-
 function GetHostNetworkInfo
 {
     $tryCount = 0
@@ -41,6 +39,9 @@ function GetHostNetworkInfo
     # but the condition makes this more explicit
     if ($IsMacOS)
     {
+        hostname | nslookup | Write-Warning
+
+
         $hostName ??= hostname
         $ipAddress = $hostName |
             nslookup |
