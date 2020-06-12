@@ -40,11 +40,11 @@ function GetHostNetworkInfo
     if ($IsMacOS)
     {
         $hostName ??= hostname
-        $ipAddress = ifconfig |
-            Select-String -Pattern 'inet (\d+.\d+.\d+.\d+) ' -AllMatches |
-            ForEach-Object { $_.Matches[0].Groups[1].Value } |
-            Where-Object { $_ -ne '127.0.0.1' } |
-            Select-Object -First 1
+        $ipAddress = $hostName |
+            nslookup |
+            Select-String -Pattern 'Address: (.*)' -AllMatches |
+            Select-Object -First 1 |
+            ForEach-Object { $_.Matches[0].Groups[1].Value }
 
         Write-Warning "Resolved network information with ifconfig.`nHOSTNAME: '$hostName'`nIPADDRESS: '$ipAddress'"
 
