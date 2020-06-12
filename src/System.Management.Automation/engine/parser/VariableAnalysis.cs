@@ -1416,7 +1416,7 @@ namespace System.Management.Automation.Language
             if (label != null)
             {
                 label.Accept(this);
-                if (_loopTargets.Any())
+                if (_loopTargets.Count > 0)
                 {
                     var labelStrAst = label as StringConstantExpressionAst;
                     if (labelStrAst != null)
@@ -1600,7 +1600,7 @@ namespace System.Management.Automation.Language
             // break or continue, so add the appropriate edges to our graph.  These edges occur after visiting
             // the command elements because command arguments could create new blocks, and we won't have executed
             // the command yet.
-            if (invokesCommand && _loopTargets.Any())
+            if (invokesCommand && _loopTargets.Count > 0)
             {
                 foreach (var loopTarget in _loopTargets)
                 {

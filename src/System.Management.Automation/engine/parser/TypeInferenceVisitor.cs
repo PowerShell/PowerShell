@@ -1231,7 +1231,7 @@ namespace System.Management.Automation
                 }
 
                 var memberNameAndTypes = GetMemberNameAndTypeFromProperties(prevType, IsInPropertyArgument);
-                if (!memberNameAndTypes.Any())
+                if (memberNameAndTypes.Count == 0)
                 {
                     continue;
                 }

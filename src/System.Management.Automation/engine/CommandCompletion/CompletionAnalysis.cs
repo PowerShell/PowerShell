@@ -1954,7 +1954,7 @@ namespace System.Management.Automation
                 // If the last token was just a '.', we tried to complete members.  That may
                 // have failed because it wasn't really an attempt to complete a member, in
                 // which case we should try to complete as an argument.
-                if (result.Any())
+                if (result.Count > 0)
                 {
                     if (!isWildcard && memberOperator != TokenKind.Unknown)
                     {
@@ -1969,7 +1969,7 @@ namespace System.Management.Automation
             if (lastAst.Parent is HashtableAst)
             {
                 result = CompletionCompleters.CompleteHashtableKey(completionContext, (HashtableAst)lastAst.Parent);
-                if (result != null && result.Any())
+                if (result != null && result.Count > 0)
                 {
                     return result;
                 }
@@ -1992,7 +1992,7 @@ namespace System.Management.Automation
             else if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
             {
                 var command = lastAst.Parent as CommandBaseAst;
-                if (command != null && command.Redirections.Any())
+                if (command != null && command.Redirections.Count > 0)
                 {
                     var fileRedirection = command.Redirections[0] as FileRedirectionAst;
                     if (fileRedirection != null &&

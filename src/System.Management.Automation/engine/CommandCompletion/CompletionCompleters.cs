@@ -1603,7 +1603,7 @@ namespace System.Management.Automation
                         if (parameterSetData.ParameterSetFlag == defaultParameterSetFlag)
                         {
                             ProcessParameter(commandName, commandAst, context, result, param, boundArguments);
-                            isProcessedAsPositional = result.Any();
+                            isProcessedAsPositional = result.Count > 0;
                             break;
                         }
                         else
@@ -2458,7 +2458,7 @@ namespace System.Management.Automation
             {
             }
 
-            if (customResults == null || !customResults.Any())
+            if (customResults == null || customResults.Count == 0)
             {
                 return false;
             }
@@ -5409,7 +5409,7 @@ namespace System.Management.Automation
 
             var memberInfo = member as MemberInfo;
             if (memberInfo != null)
-                return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Any();
+                return memberInfo.GetCustomAttributes(typeof(HiddenAttribute), false).Length > 0;
 
             var propertyMemberAst = member as PropertyMemberAst;
             if (propertyMemberAst != null)

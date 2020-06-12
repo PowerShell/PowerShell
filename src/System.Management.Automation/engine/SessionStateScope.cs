@@ -440,7 +440,7 @@ namespace System.Management.Automation
                     }
 
                     if (variable is LocalVariable
-                        && (variableToSet.Attributes.Any() || variableToSet.Options != variable.Options))
+                        && (variableToSet.Attributes.Count > 0 || variableToSet.Options != variable.Options))
                     {
                         SessionStateUnauthorizedAccessException e =
                             new SessionStateUnauthorizedAccessException(

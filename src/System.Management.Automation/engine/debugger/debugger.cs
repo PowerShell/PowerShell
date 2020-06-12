@@ -1402,10 +1402,10 @@ namespace System.Management.Automation
                 _commandBreakpoints.Values.Where(bp => bp.Enabled && bp.Trigger(invocationInfo)).ToList<Breakpoint>();
 
             bool checkLineBp = true;
-            if (breakpoints.Any())
+            if (breakpoints.Count > 0)
             {
                 breakpoints = TriggerBreakpoints(breakpoints);
-                if (breakpoints.Any())
+                if (breakpoints.Count > 0)
                 {
                     var breakInvocationInfo =
                         functionContext != null
@@ -1422,7 +1422,7 @@ namespace System.Management.Automation
         internal void CheckVariableRead(string variableName)
         {
             var breakpointsToTrigger = GetVariableBreakpointsToTrigger(variableName, read: true);
-            if (breakpointsToTrigger != null && breakpointsToTrigger.Any())
+            if (breakpointsToTrigger != null && breakpointsToTrigger.Count > 0)
             {
                 TriggerVariableBreakpoints(breakpointsToTrigger);
             }
@@ -1431,7 +1431,7 @@ namespace System.Management.Automation
         internal void CheckVariableWrite(string variableName)
         {
             var breakpointsToTrigger = GetVariableBreakpointsToTrigger(variableName, read: false);
-            if (breakpointsToTrigger != null && breakpointsToTrigger.Any())
+            if (breakpointsToTrigger != null && breakpointsToTrigger.Count > 0)
             {
                 TriggerVariableBreakpoints(breakpointsToTrigger);
             }
@@ -1580,7 +1580,7 @@ namespace System.Management.Automation
                                        select breakpoint).ToList<Breakpoint>();
 
                     breakpoints = TriggerBreakpoints(breakpoints);
-                    if (breakpoints.Any())
+                    if (breakpoints.Count > 0)
                     {
                         StopOnSequencePoint(functionContext, breakpoints);
                     }
@@ -2020,7 +2020,7 @@ namespace System.Management.Automation
 
         private void SetPendingBreakpoints(FunctionContext functionContext)
         {
-            if (!_pendingBreakpoints.Any())
+            if (_pendingBreakpoints.Count == 0)
                 return;
 
             var newPendingBreakpoints = new Dictionary<int, LineBreakpoint>();

@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    if (_modulePatterns.Count > 0 || _moduleSpecifications.Any())
+                    if (_modulePatterns.Count > 0 || _moduleSpecifications.Length > 0)
                     {
                         // Its not a match if we are filtering on a PSSnapin/Module name but the cmdlet doesn't have one.
                         break;

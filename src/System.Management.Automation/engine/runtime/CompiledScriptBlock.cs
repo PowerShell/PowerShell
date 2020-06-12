@@ -748,7 +748,7 @@ namespace System.Management.Automation
 
             var ast = AstInternal;
             var statements = ast.Body.EndBlock.Statements;
-            if (!statements.Any())
+            if (statements.Count == 0)
             {
                 return errorHandler(AutomationExceptions.CantConvertEmptyPipeline);
             }
@@ -758,7 +758,7 @@ namespace System.Management.Automation
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }
 
-            if (ast.Body.EndBlock.Traps != null && ast.Body.EndBlock.Traps.Any())
+            if (ast.Body.EndBlock.Traps != null && ast.Body.EndBlock.Traps.Count > 0)
             {
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
             }
@@ -904,7 +904,7 @@ namespace System.Management.Automation
                     AstVisitAction.Continue);
             }
 
-            if (parser.ErrorList.Any())
+            if (parser.ErrorList.Count > 0)
             {
                 throw new ParseException(parser.ErrorList.ToArray());
             }

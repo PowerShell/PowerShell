@@ -2143,7 +2143,7 @@ namespace System.Management.Automation
                     // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                     // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                     var paramArrayAttrs = lastParameter.GetCustomAttributes(typeof(ParamArrayAttribute), false);
-                    if (paramArrayAttrs != null && paramArrayAttrs.Any())
+                    if (paramArrayAttrs != null && paramArrayAttrs.Length > 0)
                     {
                         this.hasVarArgs = true;
                         this.parameters[parametersLength - 1].isParamArray = true;
@@ -4473,7 +4473,7 @@ namespace System.Management.Automation
                         // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                         // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                         var paramArrayAttrs = parameter.GetCustomAttributes(typeof(ParamArrayAttribute), false);
-                        if (paramArrayAttrs != null && paramArrayAttrs.Any())
+                        if (paramArrayAttrs != null && paramArrayAttrs.Length > 0)
                             builder.Append("Params ");
                     }
 

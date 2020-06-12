@@ -1683,7 +1683,7 @@ namespace System.Management.Automation.Language
                 // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                 // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                 var paramArrayAttrs = parameterInfo[argIndex].GetCustomAttributes(typeof(ParamArrayAttribute), true);
-                if (paramArrayAttrs != null && paramArrayAttrs.Any() && expandParamsOnBest)
+                if (paramArrayAttrs != null && paramArrayAttrs.Length > 0 && expandParamsOnBest)
                 {
                     var elementType = parameterInfo[argIndex].ParameterType.GetElementType();
                     var paramsArray = new List<Expression>();
@@ -1714,7 +1714,7 @@ namespace System.Management.Automation.Language
             }
 
             Expression result = Expression.New(constructorInfo, ctorArgs);
-            if (CallInfo.ArgumentNames.Any())
+            if (CallInfo.ArgumentNames.Count > 0)
             {
                 var tmp = Expression.Parameter(result.Type);
                 var blockExprs = new List<Expression>();
@@ -2036,7 +2036,7 @@ namespace System.Management.Automation.Language
             }
 
             // If there are any fields, the type is mutable.
-            if (type.GetFields(BindingFlags.Public | BindingFlags.Instance).Any())
+            if (type.GetFields(BindingFlags.Public | BindingFlags.Instance).Length > 0)
             {
                 return true;
             }
@@ -5102,7 +5102,7 @@ namespace System.Management.Automation.Language
                             var binderList = s_binderCacheIgnoringCase.GetOrAdd(memberName, _ => new List<PSGetMemberBinder>());
                             lock (binderList)
                             {
-                                if (binderList.Any())
+                                if (binderList.Count > 0)
                                 {
                                     result._hasInstanceMember = binderList[0]._hasInstanceMember;
                                     result._hasTypeTableMember = binderList[0]._hasTypeTableMember;
@@ -7084,7 +7084,7 @@ namespace System.Management.Automation.Language
                 // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                 // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                 var paramArrayAttrs = parameters[i].GetCustomAttributes(typeof(ParamArrayAttribute), false);
-                if (paramArrayAttrs != null && paramArrayAttrs.Any())
+                if (paramArrayAttrs != null && paramArrayAttrs.Length > 0)
                 {
                     Diagnostics.Assert(i == parameters.Length - 1, "vararg parameter is not the last");
                     var paramElementType = parameterType.GetElementType();
@@ -7204,9 +7204,9 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (temps.Any())
+            if (temps.Count > 0)
             {
-                if (call.Type != typeof(void) && copyOutTemps.Any())
+                if (call.Type != typeof(void) && copyOutTemps.Count > 0)
                 {
                     var retValue = Expression.Variable(call.Type);
                     temps.Add(retValue);
