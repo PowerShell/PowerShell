@@ -223,7 +223,7 @@ namespace System.Management.Automation.Language
             if (elements == null || elements.Count == 0) { return null; }
 
             var result = new T[elements.Count];
-            for (int i = 0; i < result.Count(); i++)
+            for (int i = 0; i < result.Length; i++)
             {
                 result[i] = (T)elements[i].Copy();
             }
@@ -6852,7 +6852,7 @@ namespace System.Management.Automation.Language
         public DynamicKeywordStatementAst(IScriptExtent extent,
             IEnumerable<CommandElementAst> commandElements) : base(extent)
         {
-            if (commandElements == null || commandElements.Count() <= 0)
+            if (commandElements == null || !commandElements.Any())
             {
                 throw PSTraceSource.NewArgumentException(nameof(commandElements));
             }

@@ -1153,7 +1153,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 var file = pair.Key;
                 var classList = pair.Value;
-                if (classList != null && classList.FirstOrDefault((CimClass c) => string.Equals(c.CimSystemProperties.ClassName, className, StringComparison.OrdinalIgnoreCase)) != null)
+                if (classList != null && classList.Find((CimClass c) => string.Equals(c.CimSystemProperties.ClassName, className, StringComparison.OrdinalIgnoreCase)) != null)
                 {
                     files.Add(file);
                 }

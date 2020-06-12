@@ -838,7 +838,7 @@ namespace System.Management.Automation.Language
                         var parameters = functionMemberAst.Parameters;
                         if (parameters.Count > 0)
                         {
-                            IScriptExtent errorExtent = Parser.ExtentOf(parameters.First(), parameters.Last());
+                            IScriptExtent errorExtent = Parser.ExtentOf(parameters[0], parameters.Last());
                             _parser.ReportError(errorExtent,
                                 nameof(ParserStrings.StaticConstructorCantHaveParameters),
                                 ParserStrings.StaticConstructorCantHaveParameters);
@@ -888,7 +888,7 @@ namespace System.Management.Automation.Language
                 }
 
                 var ilGenerator = method.GetILGenerator();
-                DefineMethodBody(functionMemberAst, ilGenerator, GetMetaDataName(method.Name, parameterTypes.Count()), functionMemberAst.IsStatic, parameterTypes, returnType,
+                DefineMethodBody(functionMemberAst, ilGenerator, GetMetaDataName(method.Name, parameterTypes.Length), functionMemberAst.IsStatic, parameterTypes, returnType,
                     (i, n) => method.DefineParameter(i, ParameterAttributes.None, n));
             }
 
@@ -917,7 +917,7 @@ namespace System.Management.Automation.Language
                     ilGenerator.Emit(OpCodes.Stfld, _sessionStateField);
                 }
 
-                DefineMethodBody(ipmp, ilGenerator, GetMetaDataName(ctor.Name, parameterTypes.Count()), isStatic, parameterTypes, typeof(void),
+                DefineMethodBody(ipmp, ilGenerator, GetMetaDataName(ctor.Name, parameterTypes.Length), isStatic, parameterTypes, typeof(void),
                     (i, n) => ctor.DefineParameter(i, ParameterAttributes.None, n));
             }
 

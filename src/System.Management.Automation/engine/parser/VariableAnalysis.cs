@@ -103,7 +103,7 @@ namespace System.Management.Automation.Language
                 visitor.VisitParameters(ast.Parameters);
             }
 
-            localsAllocated = visitor._variables.Where(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed).Count();
+            localsAllocated = visitor._variables.Count(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed);
             return visitor._variables;
         }
 

@@ -1952,7 +1952,7 @@ namespace System.Management.Automation
             }
             else
             {
-                string itemToRemove = list.FirstOrDefault(item => item.Equals(alias, StringComparison.OrdinalIgnoreCase));
+                string itemToRemove = list.Find(item => item.Equals(alias, StringComparison.OrdinalIgnoreCase));
                 if (itemToRemove != null)
                 {
                     list.Remove(itemToRemove);

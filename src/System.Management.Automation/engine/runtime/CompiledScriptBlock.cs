@@ -428,7 +428,7 @@ namespace System.Management.Automation
                 }
 
                 return _usesCmdletBinding
-                    ? (CmdletBindingAttribute)_attributes.FirstOrDefault(attr => attr is CmdletBindingAttribute)
+                    ? (CmdletBindingAttribute)Array.Find(_attributes, attr => attr is CmdletBindingAttribute)
                     : null;
             }
         }
@@ -442,7 +442,7 @@ namespace System.Management.Automation
                     InitializeMetadata();
                 }
 
-                return (ObsoleteAttribute)_attributes.FirstOrDefault(attr => attr is ObsoleteAttribute);
+                return (ObsoleteAttribute)Array.Find(_attributes, attr => attr is ObsoleteAttribute);
             }
         }
 

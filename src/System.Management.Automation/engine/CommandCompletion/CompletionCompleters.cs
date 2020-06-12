@@ -120,7 +120,7 @@ namespace System.Management.Automation
                     foreach (var defn in findFunctionsVisitor.FunctionDefinitions)
                     {
                         if (commandNamePattern.IsMatch(defn.Name)
-                            && !commandResults.Where(cr => cr.CompletionText.Equals(defn.Name, StringComparison.OrdinalIgnoreCase)).Any())
+                            && !commandResults.Any(cr => cr.CompletionText.Equals(defn.Name, StringComparison.OrdinalIgnoreCase)))
                         {
                             // Results found in the current script are prepended to show up at the top of the list.
                             commandResults.Insert(0, GetCommandNameCompletionResult(defn.Name, defn, addAmpersandIfNecessary, quote));

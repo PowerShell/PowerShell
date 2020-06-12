@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                             var entries = Directory.GetFileSystemEntries(exactPath, item);
                             if (entries.Length > 0)
                             {
-                                exactPath = entries.First();
+                                exactPath = entries[0];
                             }
                             else
                             {

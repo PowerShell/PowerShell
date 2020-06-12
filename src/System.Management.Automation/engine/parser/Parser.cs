@@ -6277,7 +6277,7 @@ namespace System.Management.Automation.Language
                             nameof(ParserStrings.MissingExpression),
                             ParserStrings.MissingExpression,
                             ",");
-                        return new ErrorExpressionAst(ExtentOf(commandArgs.First(), commaToken), commandArgs);
+                        return new ErrorExpressionAst(ExtentOf(commandArgs[0], commaToken), commandArgs);
 
                     case TokenKind.SplattedVariable:
                     case TokenKind.Variable:

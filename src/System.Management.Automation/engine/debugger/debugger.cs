@@ -5615,7 +5615,7 @@ namespace System.Management.Automation
                     break;
                 }
 
-                if (scope.DottedScopes != null && scope.DottedScopes.Where(s => s == FunctionContext._localsTuple).Any())
+                if (scope.DottedScopes != null && scope.DottedScopes.Any(s => s == FunctionContext._localsTuple))
                 {
                     var dottedScopes = scope.DottedScopes.ToArray();
 

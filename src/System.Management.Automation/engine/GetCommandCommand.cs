@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands
 
                 bool hasParameterSet = false;
                 IList<string> validValues = new List<string>();
-                var validateSetAttribute = parameter.Attributes.Where(x => (x is ValidateSetAttribute)).Cast<ValidateSetAttribute>().LastOrDefault();
+                var validateSetAttribute = parameter.Attributes.OfType<ValidateSetAttribute>().LastOrDefault();
                 if (validateSetAttribute != null)
                 {
                     hasParameterSet = true;
@@ -1631,7 +1631,7 @@ namespace Microsoft.PowerShell.Commands
             returnParameterType.Properties.Add(new PSNoteProperty("EnumValues", enumValues));
 
             bool hasFlagAttribute = (isArray) ?
-                ((parameterType.GetCustomAttributes(typeof(FlagsAttribute), true)).Count() > 0) : false;
+                ((parameterType.GetCustomAttributes(typeof(FlagsAttribute), true)).Length > 0) : false;
             returnParameterType.Properties.Add(new PSNoteProperty("HasFlagAttribute", hasFlagAttribute));
 
             // Recurse into array elements.
