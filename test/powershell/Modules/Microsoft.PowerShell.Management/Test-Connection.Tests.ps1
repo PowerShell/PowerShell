@@ -3,62 +3,20 @@
 
 Import-Module HelpersCommon
 
-function GetHostNetworkInfo
+function GetGatewayAddress
 {
-    $tryCount = 0
-    while ($true)
-    {
-        try
-        {
-            # this can also include both IPv4 and IPv6, so select InterNetwork rather than InterNetworkV6
-            $hostName = [System.Net.Dns]::GetHostName()
-            $ipAddress = [System.Net.Dns]::GetHostEntry($hostName).AddressList |
-                Where-Object { $_.AddressFamily -eq "InterNetwork" } |
-                Select-Object -First 1 |
-                ForEach-Object { $_.IPAddressToString }
-            return $hostName, $ipAddress
-        }
-        catch
-        {
-            if ($tryCount -ge 5)
-            {
-                if ($IsMacOS)
-                {
-                    # We have a fallback on macOS (because we're more likely to need it)
-                    break
-                }
-
-                throw
-            }
-
-            $tryCount++
-        }
-    }
-
-    # We must be on macOS to get here,
-    # but the condition makes this more explicit
-    if ($IsMacOS)
-    {
-        hostname | nslookup | Write-Warning
-
-
-        $hostName ??= hostname
-        $ipAddress = $hostName |
-            nslookup |
-            Select-String -Pattern 'Address: (.*)' -AllMatches |
-            Select-Object -First 1 |
-            ForEach-Object { $_.Matches[0].Groups[1].Value }
-
-        Write-Warning "Resolved network information with ifconfig.`nHOSTNAME: '$hostName'`nIPADDRESS: '$ipAddress'"
-
-        return $hostName, $ipAddress
-    }
+    return [System.Net.NetworkInformation.NetworkInterface]::GetAllNetworkInterfaces() |
+        Where-Object { $_.OperationalStatus -eq 'Up' -and $_.NetworkInterfaceType -ne 'Loopback' } |
+        ForEach-Object { $_.GetIPProperties().GatewayAddresses } |
+        Select-Object -First 1 |
+        ForEach-Object { $_.Address.IPAddressToString }
 }
 
 
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
-        $hostName, $realAddress = GetHostNetworkInfo
+        $hostName = [System.Net.Dns]::GetHostName()
+        $gatewayAddress = GetGatewayAddress
         $targetName = "localhost"
         $targetAddress = "127.0.0.1"
         $targetAddressIPv6 = "::1"
@@ -125,10 +83,10 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0. Making pending due to instability in Az DevOps.
-        It "Force IPv4 with implicit PingOptions" -Pending:($IsMacOS) {
+        It "Force IPv4 with implicit PingOptions" {
             $result = Test-Connection $hostName -Count 1 -IPv4
 
-            $result[0].Address | Should -BeExactly $realAddress
+            $result[0].Address | Should -BeExactly $gatewayAddress
             $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
             if ($IsWindows) {
                 $result[0].Reply.Options.DontFragment | Should -BeFalse
@@ -144,7 +102,7 @@ Describe "Test-Connection" -tags "CI" {
             # it's more about breaking out of the loop
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
-            $result1.Address | Should -BeExactly $realAddress
+            $result1.Address | Should -BeExactly $gatewayAddress
             $result1.Reply.Options.Ttl | Should -BeLessOrEqual 128
 
             if (!$IsWindows) {
@@ -279,26 +237,16 @@ Describe "Test-Connection" -tags "CI" {
         # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
         # instead of returning a PacketTooBig response cleanly.
         It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $hostName -MtuSize
-
-            if (-not $?)
-            {
-                Get-Error | Out-String | Write-Host
-            }
+            $result = Test-Connection $gatewayAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $hostName
+            $result.Destination | Should -BeExactly $gatewayAddress
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
         It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $hostName -MtuSize -Quiet
-
-            if (-not $?)
-            {
-                Get-Error | Out-String | Write-Host
-            }
+            $result = Test-Connection $gatewayAddress -MtuSize -Quiet
 
             $result | Should -BeOfType Int32
             $result | Should -BeGreaterThan 0
@@ -309,14 +257,15 @@ Describe "Test-Connection" -tags "CI" {
         # Mark it as pending due to instability in Az DevOps
         It "TraceRoute works" -Pending:($IsMacOS) {
             # real address is an ipv4 address, so force IPv4
-            $result = Test-Connection $hostName -TraceRoute -IPv4
+            $result = Test-Connection $gatewayAddress -TraceRoute -IPv4
 
             $result[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus
-            $result[0].Source | Should -BeExactly $hostName
-            $result[0].TargetAddress | Should -BeExactly $realAddress
-            $result[0].Target | Should -BeExactly $hostName
+            $result[0].Source | Should -BeExactly $
+            $result[0].TargetAddress | Should -BeExactly $gatewayAddress
+            $result[0].Target | Should -BeOfType 'System.Net.IPAddress'
+            $result[0].Target.IPAddressToString | Should -BeExactly $gatewayAddress
             $result[0].Hop | Should -Be 1
-            $result[0].HopAddress | Should -BeExactly $realAddress
+            $result[0].HopAddress.IPAddressToString | Should -BeExactly $gatewayAddress
             $result[0].Status | Should -BeExactly "Success"
             if (!$IsWindows) {
                 $result[0].Reply.Buffer.Count | Should -Match '^0$|^32$'
