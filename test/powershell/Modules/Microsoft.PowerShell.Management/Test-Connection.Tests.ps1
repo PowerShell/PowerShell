@@ -3,6 +3,8 @@
 
 Import-Module HelpersCommon
 
+if ($MacOS) { hostname | nslookup | Write-Warning }
+
 function GetHostNetworkInfo
 {
     $tryCount = 0
