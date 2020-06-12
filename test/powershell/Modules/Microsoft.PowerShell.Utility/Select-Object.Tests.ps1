@@ -125,7 +125,7 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
     }
 
     It "Select-Object with empty script block property should throw" {
-        $e = { "bar" | Select-Object -Prop { } -ErrorAction Stop } |
+        $e = { "bar" | Select-Object -Prop {} -ErrorAction Stop } |
             Should -Throw -ErrorId "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand" -PassThru
         $e.CategoryInfo | Should -Match "PSArgumentException"
     }
@@ -383,22 +383,5 @@ Describe 'Select-Object behaviour with hashtable entries and actual members' -Ta
         $result.Count | Should -Be 3
 
         $hashtable | Select-Object -ExpandProperty Count | Should -Be 3
-    }
-
-    It 'should get the hashtable Count member' {
-        $hashtable = @{ a = 10; b = 20; c = 30 }
-        $result = $hashtable | Select-Object -Property Count
-        $result.Count | Should -Be 3
-
-        $hashtable | Select-Object -ExpandProperty Count | Should -Be 3
-    }
-
-    It 'should get the Length member from a hashtable' {
-        $hashtable = @{ a = 10; b = 20; c = 30 }
-
-        $result = $hashtable | Select-Object -Property Length
-        $result.Length | Should -Be 1
-
-        $hashtable | Select-Object -ExpandProperty Length | Should -Be 1
     }
 }
