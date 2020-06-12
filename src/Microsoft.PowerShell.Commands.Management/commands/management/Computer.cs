@@ -552,7 +552,7 @@ $result
                             string newLastBootUpTime = os.CimInstanceProperties["LastBootUpTime"].Value.ToString();
                             string oldLastBootUpTime = _computerInfos[computer].LastBootUpTime;
 
-                            if (string.Compare(newLastBootUpTime, oldLastBootUpTime, StringComparison.OrdinalIgnoreCase) != 0)
+                            if (!string.Equals(newLastBootUpTime, oldLastBootUpTime, StringComparison.OrdinalIgnoreCase))
                             {
                                 _computerInfos[computer].RebootComplete = true;
                                 nextTestList.Add(computer);

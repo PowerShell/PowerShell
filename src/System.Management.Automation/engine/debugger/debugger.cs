@@ -1949,7 +1949,7 @@ namespace System.Management.Automation
                     throw new TerminateException();
 
                 default:
-                    Debug.Assert(false, "Received an unknown action: " + action);
+                    Debug.Fail("Received an unknown action: " + action);
                     break;
             }
         }
@@ -3628,7 +3628,7 @@ namespace System.Management.Automation
             if ((runspaceInfo.Runspace.Debugger != null) &&
                 runspaceInfo.Runspace.Debugger.Equals(this))
             {
-                Debug.Assert(false, "Nested debugger cannot be the root debugger.");
+                Debug.Fail("Nested debugger cannot be the root debugger.");
                 return;
             }
 

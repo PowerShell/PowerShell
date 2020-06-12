@@ -2212,7 +2212,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (string.Compare(sourceValueEntry, name, ignoreCaseOpt) != 0)
+                            if (!string.Equals(sourceValueEntry, name, ignoreCaseOpt))
                                 continue;
                         }
 

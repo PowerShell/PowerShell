@@ -234,8 +234,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 CimSetCimInstanceContext setContext = context as CimSetCimInstanceContext;
                 if (setContext != null)
                 {
-                    if ((string.Compare(setContext.ParameterSetName, CimBaseCommand.QueryComputerSet, StringComparison.OrdinalIgnoreCase) == 0) ||
-                        (string.Compare(setContext.ParameterSetName, CimBaseCommand.QuerySessionSet, StringComparison.OrdinalIgnoreCase) == 0))
+                    if ((string.Equals(setContext.ParameterSetName, CimBaseCommand.QueryComputerSet, StringComparison.OrdinalIgnoreCase)) ||
+                        (string.Equals(setContext.ParameterSetName, CimBaseCommand.QuerySessionSet, StringComparison.OrdinalIgnoreCase)))
                     {
                         this.setCimInstance.SetCimInstance(sendToPipeline as CimInstance, setContext, this);
                         return;

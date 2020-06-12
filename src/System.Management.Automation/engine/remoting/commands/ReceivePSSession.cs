@@ -467,7 +467,7 @@ namespace Microsoft.PowerShell.Commands
                 // Find specified session.
                 bool haveMatch = false;
                 if (!string.IsNullOrEmpty(name) &&
-                    string.Compare(name, ((RemoteRunspace)runspace).RunspacePool.RemoteRunspacePoolInternal.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                    string.Equals(name, ((RemoteRunspace)runspace).RunspacePool.RemoteRunspacePoolInternal.Name, StringComparison.OrdinalIgnoreCase))
                 {
                     // Selected by friendly name.
                     haveMatch = true;

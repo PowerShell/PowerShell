@@ -452,7 +452,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 foreach (string propertyName in value)
                 {
                     // * is wild char supported in select properties
-                    if ((propertyName != null) && (string.Compare(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase) == 0))
+                    if ((propertyName != null) && (string.Equals(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase)))
                     {
                         continue;
                     }

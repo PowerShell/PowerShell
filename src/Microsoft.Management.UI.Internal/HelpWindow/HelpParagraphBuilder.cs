@@ -82,11 +82,11 @@ namespace Microsoft.Management.UI.Internal
 
             HelpCategory category = HelpCategory.Default;
 
-            if (string.Compare(strCategory, "DscResource", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Equals(strCategory, "DscResource", StringComparison.OrdinalIgnoreCase))
             {
                 category = HelpCategory.DscResource;
             }
-            else if (string.Compare(strCategory, "Class", StringComparison.OrdinalIgnoreCase) == 0)
+            else if (string.Equals(strCategory, "Class", StringComparison.OrdinalIgnoreCase))
             {
                 category = HelpCategory.Class;
             }
@@ -594,7 +594,7 @@ namespace Microsoft.Management.UI.Internal
                 string type = GetPropertyString(member, "type");
                 string propertyType = null;
 
-                if (string.Compare("field", type, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals("field", type, StringComparison.OrdinalIgnoreCase))
                 {
                     PSObject fieldData = HelpParagraphBuilder.GetPropertyObject(member, "fieldData") as PSObject;
 
@@ -610,7 +610,7 @@ namespace Microsoft.Management.UI.Internal
                         memberText = string.Format(CultureInfo.CurrentCulture, " [{0}] {1}\r\n", propertyType, name);
                     }
                 }
-                else if (string.Compare("method", type, StringComparison.OrdinalIgnoreCase) == 0)
+                else if (string.Equals("method", type, StringComparison.OrdinalIgnoreCase))
                 {
                     FormatMethodData(member, name, out memberText, out description);
                 }
@@ -702,7 +702,7 @@ namespace Microsoft.Management.UI.Internal
                         parameterText.Append(paramString);
                     }
 
-                    if (string.Compare(parameterText[parameterText.Length - 1].ToString(), ",", StringComparison.OrdinalIgnoreCase) == 0)
+                    if (string.Equals(parameterText[parameterText.Length - 1].ToString(), ",", StringComparison.OrdinalIgnoreCase))
                     {
                         parameterText = parameterText.Remove(parameterText.Length - 1, 1);
                     }

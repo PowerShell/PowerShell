@@ -1633,7 +1633,7 @@ namespace System.Management.Automation
 
             IEnumerable<DynamicKeyword> keywords = configureAst.DefinedKeywords.Where(
                 k => // Node is special case, legal in both Resource and Meta configuration
-                    string.Compare(k.Keyword, @"Node", StringComparison.OrdinalIgnoreCase) == 0 ||
+                    string.Equals(k.Keyword, @"Node", StringComparison.OrdinalIgnoreCase) ||
                     (
                         // Check compatibility between Resource and Configuration Type
                         k.IsCompatibleWithConfigurationType(configureAst.ConfigurationType) &&

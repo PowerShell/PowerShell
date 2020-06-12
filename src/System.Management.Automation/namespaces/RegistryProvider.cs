@@ -1521,10 +1521,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 // See if the paths are equal
 
-                if (string.Compare(
+                if (string.Equals(
                         sourcePath,
                         destinationPath,
-                        StringComparison.OrdinalIgnoreCase) == 0)
+                        StringComparison.OrdinalIgnoreCase))
                 {
                     result = true;
                     break;
@@ -1539,10 +1539,10 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                if (string.Compare(
+                if (string.Equals(
                         newDestinationPath,
                         destinationPath,
-                        StringComparison.OrdinalIgnoreCase) == 0)
+                        StringComparison.OrdinalIgnoreCase))
                 {
                     // We reached the root so the destination must not be a child
                     // of the source
@@ -3203,8 +3203,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (string.IsNullOrEmpty(path) ||
-                (string.Compare(path, "\\", StringComparison.OrdinalIgnoreCase) == 0) ||
-                (string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0))
+                (string.Equals(path, "\\", StringComparison.OrdinalIgnoreCase)) ||
+                (string.Equals(path, "/", StringComparison.OrdinalIgnoreCase)))
             {
                 result = true;
             }
