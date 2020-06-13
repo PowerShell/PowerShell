@@ -52,7 +52,7 @@ namespace System.Management.Automation.Runspaces
             switch (inputData)
             {
                 case string name:
-                    var runspacesByName = GetRunspaceUtils.GetRunspacesByName(new string[] { name });
+                    var runspacesByName = GetRunspaceUtils.GetRunspacesByName(new[] { name });
                     if (runspacesByName.Count == 1)
                     {
                         return runspacesByName[0];
@@ -61,7 +61,7 @@ namespace System.Management.Automation.Runspaces
                     break;
 
                 case int id:
-                    var runspacesById = GetRunspaceUtils.GetRunspacesById(new int[] { id });
+                    var runspacesById = GetRunspaceUtils.GetRunspacesById(new[] { id });
                     if (runspacesById.Count == 1)
                     {
                         return runspacesById[0];
@@ -70,7 +70,7 @@ namespace System.Management.Automation.Runspaces
                     break;
 
                 case Guid guid:
-                    var runspacesByGuid = GetRunspaceUtils.GetRunspacesByInstanceId(new Guid[] { guid });
+                    var runspacesByGuid = GetRunspaceUtils.GetRunspacesByInstanceId(new[] { guid });
                     if (runspacesByGuid.Count == 1)
                     {
                         return runspacesByGuid[0];
