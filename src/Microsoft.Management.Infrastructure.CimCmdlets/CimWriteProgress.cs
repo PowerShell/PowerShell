@@ -48,7 +48,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.currentOperation = theCurrentOperation;
             if (string.IsNullOrEmpty(theStatusDescription))
             {
-                this.statusDescription = Strings.DefaultStatusDescription;
+                this.statusDescription = CimCmdletStrings.DefaultStatusDescription;
             }
             else
             {
