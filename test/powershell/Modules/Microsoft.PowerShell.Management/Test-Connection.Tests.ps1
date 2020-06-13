@@ -82,9 +82,8 @@ Describe "Test-Connection" -tags "CI" {
             $error[0].Exception.InnerException.ErrorCode | Should -Be $code
         }
 
-        # In VSTS, address is 0.0.0.0. Making pending due to instability in Az DevOps.
         It "Force IPv4 with implicit PingOptions" {
-            $result = Test-Connection $hostName -Count 1 -IPv4
+            $result = Test-Connection $gatewayAddress -Count 1 -IPv4
 
             $result[0].Address | Should -BeExactly $gatewayAddress
             $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
@@ -95,8 +94,8 @@ Describe "Test-Connection" -tags "CI" {
 
         # In VSTS, address is 0.0.0.0
         # This test is marked as PENDING as .NET Core does not return correct PingOptions from ping request
-        It "Force IPv4 with explicit PingOptions" -Pending {
-            $result1 = Test-Connection $hostName -Count 1 -IPv4 -MaxHops 10 -DontFragment
+        It "Force IPv4 with explicit PingOptions" {
+            $result1 = Test-Connection $gatewayAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             # explicitly go to google dns. this test will pass even if the destination is unreachable
             # it's more about breaking out of the loop
