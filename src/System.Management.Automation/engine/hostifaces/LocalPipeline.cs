@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -1320,6 +1320,7 @@ namespace System.Management.Automation.Runspaces
         /// This is set true when stop is called.
         /// </summary>
         private bool _stopping;
+
         internal bool IsStopping
         {
             get
@@ -1341,7 +1342,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (item == null)
             {
-                throw PSTraceSource.NewArgumentNullException("item");
+                throw PSTraceSource.NewArgumentNullException(nameof(item));
             }
 
             lock (_syncRoot)
@@ -1394,7 +1395,7 @@ namespace System.Management.Automation.Runspaces
             PipelineProcessor[] copyStack;
             lock (_syncRoot)
             {
-                if (_stopping == true)
+                if (_stopping)
                 {
                     return;
                 }

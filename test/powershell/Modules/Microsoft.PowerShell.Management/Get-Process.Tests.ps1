@@ -1,12 +1,12 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     It "Should support -IncludeUserName" {
-        (Get-Process -Id $pid -IncludeUserName).UserName | Should -Match $env:USERNAME
+        (Get-Process -Id $PID -IncludeUserName).UserName | Should -Match $env:USERNAME
     }
 
     It "Should support -Module" -Pending:$IsMacOS {
-        $modules = Get-Process -Id $pid -Module
+        $modules = Get-Process -Id $PID -Module
         $modules.GetType() | Should -BeExactly "System.Object[]"
         foreach ($module in $modules) {
             $module.GetType() | Should -BeExactly "System.Diagnostics.ProcessModule"
@@ -14,7 +14,7 @@ Describe "Get-Process for admin" -Tags @('CI', 'RequireAdminOnWindows') {
     }
 
     It "Should support -FileVersionInfo" {
-        $pwshVersion = Get-Process -Id $pid -FileVersionInfo
+        $pwshVersion = Get-Process -Id $PID -FileVersionInfo
         if ($IsWindows) {
             $pwshVersion.FileVersion | Should -Match $PSVersionTable.PSVersion.ToString().Split("-")[0]
             $pwshVersion.FileMajorPart | Should -BeExactly $PSVersionTable.PSVersion.Major
@@ -46,11 +46,11 @@ Describe "Get-Process" -Tags "CI" {
         $idleProcessPid = 0
     }
     It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsMacOS {
-        ,$ps | Should -BeOfType "System.Object[]"
+        ,$ps | Should -BeOfType System.Object[]
     }
 
     It "Should have not empty Name flags set for Get-Process object" -Pending:$IsMacOS {
-        $ps | foreach-object { $_.Name | Should -Not -BeNullOrEmpty }
+        $ps | ForEach-Object { $_.Name | Should -Not -BeNullOrEmpty }
     }
 
     It "Should throw an error for non existing process id." {
@@ -59,7 +59,7 @@ Describe "Get-Process" -Tags "CI" {
     }
 
     It "Should throw an exception when process id is null." {
-        { Get-Process -id $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetProcessCommand"
+        { Get-Process -Id $null } | Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
 
     It "Should throw an exception when -InputObject parameter is null." {
@@ -70,12 +70,13 @@ Describe "Get-Process" -Tags "CI" {
         { (Get-Process -Id $idleProcessPid).Name } | Should -Not -Throw
     }
 
-    It "Test for process property = Name" {
-        (Get-Process -Id $pid).Name | Should -BeExactly "pwsh"
+    It "Test for process property = Name" -Pending {
+        # Bug in .Net 5.0 Preview4. See https://github.com/PowerShell/PowerShell/pull/12894
+        (Get-Process -Id $PID).Name | Should -BeExactly "pwsh"
     }
 
     It "Test for process property = Id" {
-        (Get-Process -Id $pid).Id | Should -BeExactly $pid
+        (Get-Process -Id $PID).Id | Should -BeExactly $PID
     }
 
     It "Should fail to run Get-Process with -IncludeUserName without admin" -Skip:(!$IsWindows)  {
@@ -89,10 +90,25 @@ Describe "Get-Process" -Tags "CI" {
     It "Should fail to run Get-Process with -FileVersionInfo without admin" -Skip:(!$IsWindows) {
         { Get-Process -FileVersionInfo -ErrorAction Stop } | Should -Throw -ErrorId "CouldNotEnumerateFileVer,Microsoft.PowerShell.Commands.GetProcessCommand"
     }
+
+    It "Should return CommandLine property" -Skip:($IsMacOS)  {
+        $command = "(Get-Process -Id `$pid).CommandLine"
+        $result = & "$PSHOME/pwsh" -NoProfile -NonInteractive -Command $command
+        $result | Should -BeLike "*$command*"
+    }
 }
 
 Describe "Get-Process Formatting" -Tags "Feature" {
-    It "Should not have Handle in table format header" {
+    BeforeAll {
+        $skip = $false
+        if ($IsWindows)
+        {
+            # on Windows skip this test until issue #11016 is resolved
+            $skip = $true
+        }
+    }
+
+    It "Should not have Handle in table format header" -Skip:$skip {
         $types = "System.Diagnostics.Process","System.Diagnostics.Process#IncludeUserName"
 
         foreach ($type in $types) {
@@ -108,14 +124,16 @@ Describe "Get-Process Formatting" -Tags "Feature" {
 }
 
 Describe "Process Parent property" -Tags "CI" {
-    It "Has Parent process property" {
-        $powershellexe = (get-process -id $PID).mainmodule.filename
-        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent' | Should -Not -BeNullOrEmpty
+    It "Has Parent process property" -Pending {
+        # Bug in .Net 5.0 Preview4. See https://github.com/PowerShell/PowerShell/pull/12894
+        $powershellexe = (Get-Process -Id $PID).mainmodule.filename
+        & $powershellexe -noprofile -command '(Get-Process -Id $PID).Parent' | Should -Not -BeNullOrEmpty
     }
 
-    It "Has valid parent process ID property" {
-        $powershellexe = (get-process -id $PID).mainmodule.filename
-        & $powershellexe -noprofile -command '(Get-Process -Id $pid).Parent.Id' | Should -Be $pid
+    It "Has valid parent process ID property" -Pending {
+        # Bug. See https://github.com/PowerShell/PowerShell/issues/12908
+        $powershellexe = (Get-Process -Id $PID).mainmodule.filename
+        & $powershellexe -noprofile -command '(Get-Process -Id $PID).Parent.Id' | Should -Be $PID
     }
 }
 

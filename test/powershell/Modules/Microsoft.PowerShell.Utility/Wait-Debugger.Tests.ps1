@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Tests for Wait-Debugger' -Tags "CI" {
@@ -22,7 +22,7 @@ Describe 'Tests for Wait-Debugger' -Tags "CI" {
                 Test-Break
             }
 
-            $results = @(Test-Debugger -ScriptBlock $testScript)
+            $results = @(Test-Debugger -Scriptblock $testScript)
         }
 
         It 'Should show 1 debugger command was invoked' {

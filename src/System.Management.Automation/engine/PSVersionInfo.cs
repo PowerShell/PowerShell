@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -39,6 +39,7 @@ namespace System.Management.Automation
         internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
+
         private static readonly PSVersionHashTable s_psVersionTable;
 
         /// <summary>
@@ -108,12 +109,12 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psSemVersion;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
             s_psVersionTable[PSGitCommitIdName] = rawGitCommitId;
-            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psV61Version, s_psV62Version, s_psVersion };
+            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version, s_psV61Version, s_psV62Version, s_psV7Version, s_psVersion };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
             s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
-            s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
+            s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription;
         }
 
         internal static PSVersionHashTable GetPSVersionTable()
@@ -350,6 +351,7 @@ namespace System.Management.Automation
     public sealed class PSVersionHashTable : Hashtable, IEnumerable
     {
         private static readonly PSVersionTableComparer s_keysComparer = new PSVersionTableComparer();
+
         internal PSVersionHashTable(IEqualityComparer equalityComparer) : base(equalityComparer)
         {
         }
@@ -429,6 +431,7 @@ namespace System.Management.Automation
         private const string PreLabelPropertyName = "PSSemVerPreReleaseLabel";
         private const string BuildLabelPropertyName = "PSSemVerBuildLabel";
         private const string TypeNameForVersionWithLabel = "System.Version#IncludeLabel";
+
         private string versionString;
 
         /// <summary>

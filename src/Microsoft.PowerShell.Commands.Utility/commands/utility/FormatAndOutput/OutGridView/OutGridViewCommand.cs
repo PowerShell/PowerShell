@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -36,13 +36,14 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Out-GridView command.
     /// </summary>
-    [Cmdlet(VerbsData.Out, "GridView", DefaultParameterSetName = "PassThru", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113364")]
+    [Cmdlet(VerbsData.Out, "GridView", DefaultParameterSetName = "PassThru", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109378")]
     public class OutGridViewCommand : PSCmdlet, IDisposable
     {
         #region Properties
 
         private const string DataNotQualifiedForGridView = "DataNotQualifiedForGridView";
         private const string RemotingNotSupported = "RemotingNotSupported";
+
         private TypeInfoDataBase _typeInfoDataBase;
         private PSPropertyExpressionFactory _expressionFactory;
         private OutWindowProxy _windowProxy;
@@ -312,7 +313,7 @@ namespace Microsoft.PowerShell.Commands
             internal static GridHeader ConstructGridHeader(PSObject input, OutGridViewCommand parentCmd)
             {
                 if (DefaultScalarTypes.IsTypeInList(input.TypeNames) ||
-                    OutOfBandFormatViewManager.IsPropertyLessObject(input))
+                    !OutOfBandFormatViewManager.HasNonRemotingProperties(input))
                 {
                     return new ScalarTypeHeader(parentCmd, input);
                 }
@@ -380,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
                     int index = 0;
                     foreach (string typeName in input.TypeNames)
                     {
-                        if (index > 0 && (typeName.Equals(typeof(Object).FullName, StringComparison.OrdinalIgnoreCase) ||
+                        if (index > 0 && (typeName.Equals(typeof(object).FullName, StringComparison.OrdinalIgnoreCase) ||
                             typeName.Equals(typeof(MarshalByRefObject).FullName, StringComparison.OrdinalIgnoreCase)))
                         {
                             break;

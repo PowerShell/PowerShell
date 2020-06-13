@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,26 +18,61 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// A Helper class for printing notification on PowerShell startup when there is a new update.
     /// </summary>
+    /// <remarks>
+    /// For the detailed design, please take a look at the corresponding RFC.
+    /// </remarks>
     internal static class UpdatesNotification
     {
-        private const string UpdateCheckOptOutEnvVar = "POWERSHELL_UPDATECHECK_OPTOUT";
-        private const string Last3ReleasesUri = "https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=3";
-        private const string LatestReleaseUri = "https://api.github.com/repos/PowerShell/PowerShell/releases/latest";
+        private const string UpdateCheckEnvVar = "POWERSHELL_UPDATECHECK";
+        private const string LTSBuildInfoURL = "https://aka.ms/pwsh-buildinfo-lts";
+        private const string StableBuildInfoURL = "https://aka.ms/pwsh-buildinfo-stable";
+        private const string PreviewBuildInfoURL = "https://aka.ms/pwsh-buildinfo-preview";
 
-        private const string SentinelFileName = "_sentinel_";
-        private const string DoneFileNameTemplate = "sentinel-{0}-{1}-{2}.done";
-        private const string DoneFileNamePattern = "sentinel-*.done";
-        private const string UpdateFileNameTemplate = "update_{0}_{1}";
-        private const string UpdateFileNamePattern = "update_v*.*.*_????-??-??";
+        /// <summary>
+        /// The version of new update is persisted using a file, not as the file content, but instead baked in the file name in the following template:
+        ///  `update{notification-type}_{version}_{publish-date}` -- held by 's_updateFileNameTemplate',
+        /// while 's_updateFileNamePattern' holds the pattern of this file name.
+        /// </summary>
+        private static readonly string s_updateFileNameTemplate, s_updateFileNamePattern;
 
-        private static readonly EnumerationOptions s_enumOptions = new EnumerationOptions();
-        private static readonly string s_cacheDirectory = Path.Combine(Platform.CacheDirectory, PSVersionInfo.GitCommitId);
+        /// <summary>
+        /// For each notification type, we need two files to achieve the synchronization for the update check:
+        ///  `_sentinel{notification-type}_` -- held by 's_sentinelFileName';
+        ///  `sentinel{notification-type}-{year}-{month}-{day}.done`
+        ///     -- held by 's_doneFileNameTemplate', while 's_doneFileNamePattern' holds the pattern of this file name.
+        /// The {notification-type} part will be the integer value of the corresponding `NotificationType` member.
+        /// The {year}-{month}-{day} part will be filled with the date of current day when the update check runs.
+        /// </summary>
+        private static readonly string s_sentinelFileName, s_doneFileNameTemplate, s_doneFileNamePattern;
+
+        private static readonly string s_cacheDirectory;
+        private static readonly EnumerationOptions s_enumOptions;
+        private static readonly NotificationType s_notificationType;
 
         /// <summary>
         /// Gets a value indicating whether update notification should be done.
         /// </summary>
-        internal static readonly bool CanNotifyUpdates = !Utils.GetOptOutEnvVariableAsBool(UpdateCheckOptOutEnvVar, defaultValue: false)
-            && ExperimentalFeature.IsEnabled("PSUpdatesNotification");
+        internal static readonly bool CanNotifyUpdates;
+
+        static UpdatesNotification()
+        {
+            s_notificationType = GetNotificationType();
+            CanNotifyUpdates = s_notificationType != NotificationType.Off;
+
+            if (CanNotifyUpdates)
+            {
+                s_enumOptions = new EnumerationOptions();
+                s_cacheDirectory = Path.Combine(Platform.CacheDirectory, PSVersionInfo.GitCommitId);
+
+                // Build the template/pattern strings for the configured notification type.
+                string typeNum = ((int)s_notificationType).ToString();
+                s_sentinelFileName = $"_sentinel{typeNum}_";
+                s_doneFileNameTemplate = $"sentinel{typeNum}-{{0}}-{{1}}-{{2}}.done";
+                s_doneFileNamePattern = $"sentinel{typeNum}-*.done";
+                s_updateFileNameTemplate = $"update{typeNum}_{{0}}_{{1}}";
+                s_updateFileNamePattern = $"update{typeNum}_v*.*.*_????-??-??";
+            }
+        }
 
         // Maybe we shouldn't do update check and show notification when it's from a mini-shell, meaning when
         // 'ConsoleShell.Start' is not called by 'ManagedEntrance.Start'.
@@ -58,9 +93,11 @@ namespace Microsoft.PowerShell
                && lastUpdateVersion != null)
             {
                 string releaseTag = lastUpdateVersion.ToString();
-                string notificationMsgTemplate = string.IsNullOrEmpty(lastUpdateVersion.PreReleaseLabel)
-                    ? ManagedEntranceStrings.StableUpdateNotificationMessage
-                    : ManagedEntranceStrings.PreviewUpdateNotificationMessage;
+                string notificationMsgTemplate = s_notificationType == NotificationType.LTS
+                    ? ManagedEntranceStrings.LTSUpdateNotificationMessage
+                    : string.IsNullOrEmpty(lastUpdateVersion.PreReleaseLabel)
+                        ? ManagedEntranceStrings.StableUpdateNotificationMessage
+                        : ManagedEntranceStrings.PreviewUpdateNotificationMessage;
 
                 string notificationColor = string.Empty;
                 string resetColor = string.Empty;
@@ -106,6 +143,13 @@ namespace Microsoft.PowerShell
                 return;
             }
 
+            // Daily builds do not support update notifications
+            string preReleaseLabel = PSVersionInfo.PSCurrentVersion.PreReleaseLabel;
+            if (preReleaseLabel != null && preReleaseLabel.StartsWith("daily", StringComparison.OrdinalIgnoreCase))
+            {
+                return;
+            }
+
             // If the host is not connect to a network, skip the rest of the check.
             if (!NetworkInterface.GetIsNetworkAvailable())
             {
@@ -134,7 +178,7 @@ namespace Microsoft.PowerShell
             // Construct the sentinel file paths for today's check.
             string todayDoneFileName = string.Format(
                 CultureInfo.InvariantCulture,
-                DoneFileNameTemplate,
+                s_doneFileNameTemplate,
                 today.Year.ToString(),
                 today.Month.ToString(),
                 today.Day.ToString());
@@ -149,9 +193,9 @@ namespace Microsoft.PowerShell
 
             try
             {
-                // Use 'sentinelFilePath' as the file lock.
+                // Use 's_sentinelFileName' as the file lock.
                 // The update-check tasks started by every 'pwsh' process of the same version will compete on holding this file.
-                string sentinelFilePath = Path.Combine(s_cacheDirectory, SentinelFileName);
+                string sentinelFilePath = Path.Combine(s_cacheDirectory, s_sentinelFileName);
                 using (new FileStream(sentinelFilePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.None, bufferSize: 1, FileOptions.DeleteOnClose))
                 {
                     if (File.Exists(todayDoneFilePath))
@@ -163,7 +207,7 @@ namespace Microsoft.PowerShell
 
                     // Now it's guaranteed that this is the only process that reaches here.
                     // Clean up the old '.done' file, there should be only one of it.
-                    foreach (string oldFile in Directory.EnumerateFiles(s_cacheDirectory, DoneFileNamePattern, s_enumOptions))
+                    foreach (string oldFile in Directory.EnumerateFiles(s_cacheDirectory, s_doneFileNamePattern, s_enumOptions))
                     {
                         File.Delete(oldFile);
                     }
@@ -173,8 +217,8 @@ namespace Microsoft.PowerShell
                         // The update file is corrupted, either because more than one update files were found unexpectedly,
                         // or because the update file name failed to be parsed into a release version and a publish date.
                         // This is **very unlikely** to happen unless the file is accidentally altered manually.
-                        // We try to recover here by cleaning up all update files.
-                        foreach (string file in Directory.EnumerateFiles(s_cacheDirectory, UpdateFileNamePattern, s_enumOptions))
+                        // We try to recover here by cleaning up all update files for the configured notification type.
+                        foreach (string file in Directory.EnumerateFiles(s_cacheDirectory, s_updateFileNamePattern, s_enumOptions))
                         {
                             File.Delete(file);
                         }
@@ -183,8 +227,8 @@ namespace Microsoft.PowerShell
                     // Do the real update check:
                     //  - Send HTTP request to query for the new release/pre-release;
                     //  - If there is a valid new release that should be reported to the user,
-                    //    create the file `update_<tag>_<publish-date>` when no `update` file exists,
-                    //    or rename the existing file to `update_<new-version>_<new-publish-date>`.
+                    //    create the file `update<NotificationType>_<tag>_<publish-date>` when no `update` file exists,
+                    //    or rename the existing file to `update<NotificationType>_<new-version>_<new-publish-date>`.
                     SemanticVersion baselineVersion = lastUpdateVersion ?? PSVersionInfo.PSCurrentVersion;
                     Release release = await QueryNewReleaseAsync(baselineVersion);
 
@@ -194,7 +238,7 @@ namespace Microsoft.PowerShell
                         const int dateLength = 10;
                         string newUpdateFileName = string.Format(
                             CultureInfo.InvariantCulture,
-                            UpdateFileNameTemplate,
+                            s_updateFileNameTemplate,
                             release.TagName,
                             release.PublishAt.Substring(0, dateLength));
 
@@ -247,7 +291,7 @@ namespace Microsoft.PowerShell
             lastUpdateVersion = null;
             lastUpdateDate = default;
 
-            var files = Directory.EnumerateFiles(s_cacheDirectory, UpdateFileNamePattern, s_enumOptions);
+            var files = Directory.EnumerateFiles(s_cacheDirectory, s_updateFileNamePattern, s_enumOptions);
             var enumerator = files.GetEnumerator();
 
             if (!enumerator.MoveNext())
@@ -265,7 +309,7 @@ namespace Microsoft.PowerShell
                 return false;
             }
 
-            // OK, only found one update file, which is expected.
+            // OK, only found one update file for the configured notification type, which is expected.
             // Now let's parse the file name.
             string updateFileName = Path.GetFileName(updateFilePath);
             int dateStartIndex = updateFileName.LastIndexOf('_') + 1;
@@ -297,7 +341,14 @@ namespace Microsoft.PowerShell
         private static async Task<Release> QueryNewReleaseAsync(SemanticVersion baselineVersion)
         {
             bool isStableRelease = string.IsNullOrEmpty(PSVersionInfo.PSCurrentVersion.PreReleaseLabel);
-            string queryUri = isStableRelease ? LatestReleaseUri : Last3ReleasesUri;
+            string[] queryUris = s_notificationType switch
+            {
+                NotificationType.LTS => new[] { LTSBuildInfoURL },
+                NotificationType.Default => isStableRelease
+                    ? new[] { StableBuildInfoURL }
+                    : new[] { StableBuildInfoURL, PreviewBuildInfoURL },
+                _ => Array.Empty<string>()
+            };
 
             using var client = new HttpClient();
 
@@ -305,52 +356,76 @@ namespace Microsoft.PowerShell
             client.DefaultRequestHeaders.Add("User-Agent", userAgent);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            // Query the GitHub Rest API and throw if the query fails.
-            HttpResponseMessage response = await client.GetAsync(queryUri);
-            response.EnsureSuccessStatusCode();
-
-            using var stream = await response.Content.ReadAsStreamAsync();
-            using var reader = new StreamReader(stream);
-            using var jsonReader = new JsonTextReader(reader);
-
             Release releaseToReturn = null;
+            SemanticVersion highestVersion = baselineVersion;
             var settings = new JsonSerializerSettings() { DateParseHandling = DateParseHandling.None };
             var serializer = JsonSerializer.Create(settings);
 
-            if (isStableRelease)
+            foreach (string queryUri in queryUris)
             {
+                // Query the GitHub Rest API and throw if the query fails.
+                HttpResponseMessage response = await client.GetAsync(queryUri);
+                response.EnsureSuccessStatusCode();
+
+                using var stream = await response.Content.ReadAsStreamAsync();
+                using var reader = new StreamReader(stream);
+                using var jsonReader = new JsonTextReader(reader);
+
                 JObject release = serializer.Deserialize<JObject>(jsonReader);
-                var tagName = release["tag_name"].ToString();
-                var version = SemanticVersion.Parse(tagName.Substring(1));
-
-                if (version > baselineVersion)
-                {
-                    var publishAt = release["published_at"].ToString();
-                    releaseToReturn = new Release(publishAt, tagName);
-                }
-
-                return releaseToReturn;
-            }
-
-            // The current 'pwsh' is a preview release.
-            JArray last3Releases = serializer.Deserialize<JArray>(jsonReader);
-            SemanticVersion highestVersion = baselineVersion;
-
-            for (int i = 0; i < last3Releases.Count; i++)
-            {
-                JToken release = last3Releases[i];
-                var tagName = release["tag_name"].ToString();
+                var tagName = release["ReleaseTag"].ToString();
                 var version = SemanticVersion.Parse(tagName.Substring(1));
 
                 if (version > highestVersion)
                 {
                     highestVersion = version;
-                    var publishAt = release["published_at"].ToString();
+                    var publishAt = release["ReleaseDate"].ToString();
                     releaseToReturn = new Release(publishAt, tagName);
                 }
             }
 
             return releaseToReturn;
+        }
+
+        /// <summary>
+        /// Get the notification type setting.
+        /// </summary>
+        private static NotificationType GetNotificationType()
+        {
+            string str = Environment.GetEnvironmentVariable(UpdateCheckEnvVar);
+            if (string.IsNullOrEmpty(str))
+            {
+                return NotificationType.Default;
+            }
+
+            if (Enum.TryParse(str, ignoreCase: true, out NotificationType type))
+            {
+                return type;
+            }
+
+            return NotificationType.Default;
+        }
+
+        /// <summary>
+        /// Notification type that can be configured.
+        /// </summary>
+        private enum NotificationType
+        {
+            /// <summary>
+            /// Turn off the udpate notification.
+            /// </summary>
+            Off = 0,
+
+            /// <summary>
+            /// Give you the default behaviors:
+            ///  - the preview version 'pwsh' checks for the new preview version and the new GA version.
+            ///  - the GA version 'pwsh' checks for the new GA version only.
+            /// </summary>
+            Default = 1,
+
+            /// <summary>
+            /// Both preview and GA version 'pwsh' checks for the new LTS version only.
+            /// </summary>
+            LTS = 2
         }
 
         private class Release

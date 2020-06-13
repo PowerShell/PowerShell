@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <Version>$(RefAsmVersion)</Version>
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>$(SnkFile)</AssemblyOriginatorKeyFile>
@@ -8,8 +8,8 @@
     <LangVersion>Latest</LangVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.7.0-preview1.19504.10" />
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.7.0-preview1.19504.10" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="2.0.0" />
+    <PackageReference Include="System.Security.AccessControl" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="5.0.0-preview.5.20278.1" />
   </ItemGroup>
 </Project>

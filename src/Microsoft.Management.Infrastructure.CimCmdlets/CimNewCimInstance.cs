@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -79,7 +79,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet.Key,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -92,7 +91,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet.Key,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -103,7 +101,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             cimInstance = CreateCimInstance(cmdlet.CimClass,
                                 cmdlet.Property,
                                 cmdlet);
-
                         }
 
                         break;
@@ -211,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             NewCimInstanceCommand cmdlet)
         {
             proxy.OperationTimeout = cmdlet.OperationTimeoutSec;
-            if(cmdlet.ResourceUri != null)
+            if (cmdlet.ResourceUri != null)
             {
                 proxy.ResourceUri = cmdlet.ResourceUri;
             }
@@ -270,7 +267,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             IDictionary properties,
             NewCimInstanceCommand cmdlet)
         {
-            CimInstance cimInstance = new CimInstance(className,cimNamespace);
+            CimInstance cimInstance = new CimInstance(className, cimNamespace);
             if (properties == null)
             {
                 return cimInstance;
@@ -299,8 +296,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
                 DebugHelper.WriteLog("Create and add new property to ciminstance: name = {0}; value = {1}; flags = {2}", 5, propertyName, propertyValue, flag);
 
-                PSReference cimReference =  propertyValue as PSReference;
-                if( cimReference != null )
+                PSReference cimReference = propertyValue as PSReference;
+                if (cimReference != null)
                 {
                     CimProperty newProperty = CimProperty.Create(propertyName, GetBaseObject(cimReference.Value), CimType.Reference, flag);
                     cimInstance.CimInstanceProperties.Add(newProperty);
@@ -313,7 +310,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         flag);
                     cimInstance.CimInstanceProperties.Add(newProperty);
                 }
-
             }
 
             return cimInstance;

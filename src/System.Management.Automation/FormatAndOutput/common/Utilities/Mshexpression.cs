@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(s))
             {
-                throw PSTraceSource.NewArgumentNullException("s");
+                throw PSTraceSource.NewArgumentNullException(nameof(s));
             }
 
             _stringValue = s;
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (scriptBlock == null)
             {
-                throw PSTraceSource.NewArgumentNullException("scriptBlock");
+                throw PSTraceSource.NewArgumentNullException(nameof(scriptBlock));
             }
 
             Script = scriptBlock;
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Resolve the names matched by this the expression.
+        /// Resolve the names matched by the expression.
         /// </summary>
         /// <param name="target">The object to apply the expression against.</param>
         public List<PSPropertyExpression> ResolveNames(PSObject target)
@@ -133,7 +133,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Resolve the names matched by this the expression.
+        /// Resolve the names matched by the expression.
         /// </summary>
         /// <param name="target">The object to apply the expression against.</param>
         /// <param name="expand">If the matched properties are property sets, expand them.</param>

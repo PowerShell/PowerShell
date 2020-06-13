@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation;
@@ -9,7 +9,7 @@ namespace Microsoft.PowerShell.Commands
     /// This class implements Remove-PSBreakpoint.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = BreakpointParameterSetName,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113375")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097134")]
     public class RemovePSBreakpointCommand : PSBreakpointUpdaterCommandBase
     {
         #region overrides

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -411,41 +411,7 @@ namespace System.Management.Automation
             // The passed-in COM object could already be a IEnumVARIANT interface.
             // e.g. user call '_NewEnum()' on a COM collection interface.
             var enumVariant = comObject as COM.IEnumVARIANT;
-            if (enumVariant != null)
-            {
-                return new ComEnumerator(enumVariant);
-            }
-
-            // The passed-in COM object could be a collection.
-            var enumerable = comObject as IEnumerable;
-            var target = comObject as IDispatch;
-            if (enumerable != null && target != null)
-            {
-                try
-                {
-                    var comTypeInfo = ComTypeInfo.GetDispatchTypeInfo(comObject);
-                    if (comTypeInfo != null && comTypeInfo.NewEnumInvokeKind.HasValue)
-                    {
-                        // The COM object is a collection and also a IDispatch interface, so we try to get a
-                        // IEnumVARIANT interface out of it by invoking its '_NewEnum (DispId: -4)' function.
-                        var result = ComInvoker.Invoke(target, ComTypeInfo.DISPID_NEWENUM,
-                                                        args: Array.Empty<object>(), byRef: null,
-                                                        invokeKind: comTypeInfo.NewEnumInvokeKind.Value);
-                        enumVariant = result as COM.IEnumVARIANT;
-                        if (enumVariant != null)
-                        {
-                            return new ComEnumerator(enumVariant);
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    // Ignore exceptions. In case of exception, no enumerator can be created
-                    // for the passed-in COM object, and we will return null eventually.
-                }
-            }
-
-            return null;
+            return enumVariant != null ? new ComEnumerator(enumVariant) : null;
         }
     }
 }

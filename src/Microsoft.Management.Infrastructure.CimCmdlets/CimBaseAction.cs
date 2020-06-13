@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -69,7 +69,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     internal class CimSyncAction : CimBaseAction, IDisposable
     {
         /// <summary>
-        /// Constructor.
+        /// The constructor.
         /// </summary>
         public CimSyncAction()
         {
@@ -91,7 +91,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// Set response result
+        /// Set the response result.
         /// </para>
         /// </summary>
         internal CimResponseType ResponseType
@@ -102,7 +102,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// Call this method when the action is completed or
-        /// the operation is terminated
+        /// the operation is terminated.
         /// </para>
         /// </summary>
         internal virtual void OnComplete()
@@ -112,7 +112,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>
-        /// block current thread.
+        /// Block current thread.
         /// </para>
         /// </summary>
         protected virtual void Block()

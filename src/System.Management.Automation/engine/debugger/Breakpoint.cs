@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -220,7 +220,7 @@ namespace System.Management.Automation
             // If the breakpoint looks like it might have specified a module name and the command
             // we're checking is in a module, try matching the module\command against the pattern
             // in the breakpoint.
-            if (!string.IsNullOrEmpty(commandInfo.ModuleName) && Command.IndexOf('\\') != -1)
+            if (!string.IsNullOrEmpty(commandInfo.ModuleName) && Command.Contains('\\'))
             {
                 if (CommandPattern.IsMatch(commandInfo.ModuleName + "\\" + commandInfo.Name))
                     return true;

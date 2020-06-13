@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 /*
@@ -30,11 +30,13 @@ namespace Microsoft.PowerShell.Commands
         object GetValue(string name);
         object GetValue(string name, object defaultValue, RegistryValueOptions options);
         RegistryValueKind GetValueKind(string name);
+
         object RegistryKey { get; }
 
         void SetAccessControl(ObjectSecurity securityDescriptor);
         ObjectSecurity GetAccessControl(AccessControlSections includeSections);
         void Close();
+
         string Name { get; }
 
         int SubKeyCount { get; }

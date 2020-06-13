@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -62,7 +62,7 @@ namespace System.Management.Automation
         internal PSClassMemberInfo(string name, string memberType, string defaultValue)
         {
             if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException("name");
+                throw new ArgumentNullException(nameof(name));
 
             this.Name = name;
             this.TypeName = memberType;

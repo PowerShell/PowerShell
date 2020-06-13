@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.FullName = other.FullName;
@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         {
             if (other == null)
             {
-                throw new ArgumentNullException("other");
+                throw new ArgumentNullException(nameof(other));
             }
 
             this.IsEnum = (bool)(other.Members["IsEnum"].Value);

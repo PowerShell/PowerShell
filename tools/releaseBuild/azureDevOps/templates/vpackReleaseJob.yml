@@ -1,0 +1,86 @@
+parameters:
+  architecture: x64
+
+jobs:
+- job: vpack_${{ parameters.architecture }}
+  displayName: Build and Publish VPack - ${{ parameters.architecture }}
+  condition: succeeded()
+  pool: Package ES Standard Build
+  steps:
+
+  - template: ./SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - pwsh: |
+      $azcopy = "C:\Program Files (x86)\Microsoft SDKs\Azure\AzCopy\AzCopy.exe"
+
+      Write-Host "running: $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:****** /Pattern:PowerShell-$(Version)-win-${{ parameters.architecture }}.zip /Z:$(AGENT.TEMPDIRECTORY)"
+      & $azcopy /Source:https://$(StorageAccount).blob.core.windows.net/$(AzureVersion) /Dest:$(System.ArtifactsDirectory) /S /SourceKey:$(StorageAccountKey) /Pattern:PowerShell-$(Version)-win-${{ parameters.architecture }}.zip /Z:$(AGENT.TEMPDIRECTORY)
+    displayName: 'Download Azure Artifacts'
+
+  - pwsh: 'Get-ChildItem $(System.ArtifactsDirectory)\* -recurse | Select-Object -ExpandProperty Name'
+    displayName: 'Capture Artifact Listing'
+
+  - pwsh: |
+      $message = @()
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
+          if($_.Name -notmatch 'PowerShell-\d\.\d\.\d\-([a-z]*.\d+\-)?win\-(fxdependent|x64|arm32|arm64|x86|fxdependentWinDesktop)\.(msi|zip){1}')
+          {
+                $messageInstance = "$($_.Name) is not a valid package name"
+                $message += $messageInstance
+                Write-Warning $messageInstance
+          }
+      }
+
+      if($message.count -gt 0){throw ($message | out-string)}
+    displayName: 'Validate Zip and MSI Package Names'
+
+  - pwsh: |
+      Get-ChildItem $(System.ArtifactsDirectory)\* -recurse -include *.zip, *.msi | ForEach-Object {
+          if($_.Name -match 'PowerShell-\d\.\d\.\d\-([a-z]*.\d+\-)?win\-(${{ parameters.architecture }})\.(zip){1}')
+          {
+              $destDir = "$(System.ArtifactsDirectory)\vpack${{ parameters.architecture }}"
+              $null = new-item -ItemType Directory -Path $destDir
+              Expand-Archive -Path $_.FullName -DestinationPath $destDir
+              $vstsCommandString = "vso[task.setvariable variable=vpackDir]$destDir"
+              Write-Host "sending " + $vstsCommandString
+              Write-Host "##$vstsCommandString"
+          }
+      }
+    displayName: 'Extract Zip'
+
+  - pwsh: |
+      $vpackVersion = '$(version)'
+
+      if('$(VPackPublishOverride)' -ne '' -and '$(VPackPublishOverride)' -ne 'None' )
+      {
+        Write-Host "Using VPackPublishOverride varabile"
+        $vpackVersion = '$(VPackPublishOverride)'
+      }
+
+      $vstsCommandString = "vso[task.setvariable variable=vpackVersion]$vpackVersion"
+      Write-Host "sending " + $vstsCommandString
+      Write-Host "##$vstsCommandString"
+    displayName: 'Set vpackVersion'
+
+  - pwsh: |
+      Get-ChildItem -Path env:
+    displayName: Capture Environment
+    condition: succeededOrFailed()
+
+  - task: PkgESVPack@10
+    displayName: 'Package ES - VPack '
+    env:
+      SYSTEM_ACCESSTOKEN: $(System.AccessToken)
+    inputs:
+      sourceDirectory: '$(vpackDir)'
+      description: PowerShell ${{ parameters.architecture }} $(version)
+      pushPkgName: 'PowerShell.${{ parameters.architecture }}'
+      configurations: Release
+      platforms: x64
+      target: '$(System.ArtifactsDirectory)'
+      owner: tplunk
+      provData: false
+      version: '$(vpackVersion)'
+    condition: and(succeeded(), eq(variables['Build.Reason'], 'Manual'))

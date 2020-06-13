@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -22,7 +22,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>Create a new .net object</summary>
-    [Cmdlet(VerbsCommon.New, "Object", DefaultParameterSetName = netSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113355")]
+    [Cmdlet(VerbsCommon.New, "Object", DefaultParameterSetName = netSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096620")]
     public sealed class NewObjectCommand : PSCmdlet
     {
         #region parameters
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
                                 targetObject: null));
                     }
 
-                    throw e;
+                    throw;
                 }
 
                 Diagnostics.Assert(type != null, "LanguagePrimitives.TryConvertTo failed but returned true");
@@ -404,7 +404,7 @@ namespace Microsoft.PowerShell.Commands
 
         private ComCreateInfo createInfo;
 
-        private void STAComCreateThreadProc(Object createstruct)
+        private void STAComCreateThreadProc(object createstruct)
         {
             ComCreateInfo info = (ComCreateInfo)createstruct;
             try
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
 
                     thread.Join();
 
-                    if (createInfo.success == true)
+                    if (createInfo.success)
                     {
                         return createInfo.objectCreated;
                     }

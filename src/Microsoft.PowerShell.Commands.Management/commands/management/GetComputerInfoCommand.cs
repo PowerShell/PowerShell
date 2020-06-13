@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -21,11 +21,11 @@ namespace Microsoft.PowerShell.Commands
 
     #region GetComputerInfoCommand cmdlet implementation
     /// <summary>
-    /// The Get=ComputerInfo cmdlet gathers and reports information
+    /// The Get-ComputerInfo cmdlet gathers and reports information
     /// about a computer.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "ComputerInfo",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799466")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096810")]
     [Alias("gin")]
     [OutputType(typeof(ComputerInfo), typeof(PSObject))]
     public class GetComputerInfoCommand : PSCmdlet

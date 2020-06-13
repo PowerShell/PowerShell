@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This came from monad/tests/ci/PowerShell/tests/Commands/Cmdlets/pester.utility.command.tests.ps1
@@ -54,7 +54,7 @@ Describe "Trace-Command" -tags "CI" {
 
         It "None options has no effect" {
             Trace-Command -Name * -Expression {Write-Output Foo} -ListenerOption None -FilePath $actualLogfile
-            Trace-Command -name * -Expression {Write-Output Foo} -FilePath $logfile
+            Trace-Command -Name * -Expression {Write-Output Foo} -FilePath $logfile
 
             Compare-Object (Get-Content $actualLogfile) (Get-Content $logfile) | Should -BeNullOrEmpty
         }
@@ -80,14 +80,14 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ProcessID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should -Be $pid }
+            $results | ForEach-Object { $_ | Should -Be $PID }
         }
     }
 
     Context "Trace-Command tests for code coverage" {
 
         BeforeAll {
-            $filePath = join-path $TestDrive 'testtracefile.txt'
+            $filePath = Join-Path $TestDrive 'testtracefile.txt'
         }
 
         AfterEach {
@@ -95,7 +95,7 @@ Describe "Trace-Command" -tags "CI" {
         }
 
         It "Get non-existing trace source" {
-            { '34E7F9FA-EBFB-4D21-A7D2-D7D102E2CC2F' | get-tracesource -ErrorAction Stop} | Should -Throw -ErrorId 'TraceSourceNotFound,Microsoft.PowerShell.Commands.GetTraceSourceCommand'
+            { '34E7F9FA-EBFB-4D21-A7D2-D7D102E2CC2F' | Get-TraceSource -ErrorAction Stop} | Should -Throw -ErrorId 'TraceSourceNotFound,Microsoft.PowerShell.Commands.GetTraceSourceCommand'
         }
 
         It "Set-TraceSource to file and RemoveFileListener wildcard" {
@@ -115,7 +115,7 @@ Describe "Trace-Command" -tags "CI" {
 
         It "Trace-Command to readonly file" {
             $null = New-Item $filePath -Force
-            Set-ItemProperty $filePath -name IsReadOnly -value $true
+            Set-ItemProperty $filePath -Name IsReadOnly -Value $true
             Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -FilePath $filePath -Force
             Get-Content $filePath -Raw | Should -Match 'ParameterBinding Information'
         }

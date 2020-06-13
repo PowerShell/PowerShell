@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -644,7 +644,7 @@ namespace System.Management.Automation
         /// Get suggestion text from suggestion scriptblock.
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Need to keep this for legacy reflection based use")]
-        private static string GetSuggestionText(Object suggestion, PSModuleInfo invocationModule)
+        private static string GetSuggestionText(object suggestion, PSModuleInfo invocationModule)
         {
             return GetSuggestionText(suggestion, null, invocationModule);
         }
@@ -652,7 +652,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get suggestion text from suggestion scriptblock with arguments.
         /// </summary>
-        private static string GetSuggestionText(Object suggestion, object[] suggestionArgs, PSModuleInfo invocationModule)
+        private static string GetSuggestionText(object suggestion, object[] suggestionArgs, PSModuleInfo invocationModule)
         {
             if (suggestion is ScriptBlock)
             {
@@ -800,12 +800,12 @@ namespace System.Management.Automation
         {
             if (command == null)
             {
-                throw new PSArgumentNullException("command");
+                throw new PSArgumentNullException(nameof(command));
             }
 
             if (runspace == null)
             {
-                throw new PSArgumentNullException("runspace");
+                throw new PSArgumentNullException(nameof(runspace));
             }
 
             if ((runspace.Debugger != null) && runspace.Debugger.InBreakpoint)

@@ -1,5 +1,5 @@
 parameters:
-  pool: 'Hosted macOS'
+  pool: 'macOS-latest'
   parentJobs: []
   purpose: ''
   tagSet: 'CI'
@@ -10,7 +10,7 @@ jobs:
   dependsOn:
     ${{ parameters.parentJobs }}
   pool:
-    name: ${{ parameters.pool }}
+    vmImage: ${{ parameters.pool }}
 
   displayName: ${{ parameters.name }} Test - ${{ parameters.purpose }} - ${{ parameters.tagSet }}
 

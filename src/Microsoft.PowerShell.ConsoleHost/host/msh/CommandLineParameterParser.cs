@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -97,6 +97,17 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
+        /// Null implementation of ReadLineMaskedAsString.
+        /// </summary>
+        /// <returns>
+        /// It throws an exception.
+        /// </returns>
+        public override string ReadLineMaskedAsString()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// ReadLineAsSecureString.
         /// </summary>
         /// <returns></returns>
@@ -172,7 +183,7 @@ namespace Microsoft.PowerShell
         private const int MaxPipePathLengthLinux = 108;
         private const int MaxPipePathLengthMacOS = 104;
 
-        internal static string[] validParameters = {
+        internal static readonly string[] validParameters = {
             "sta",
             "mta",
             "command",
@@ -534,7 +545,7 @@ namespace Microsoft.PowerShell
 
                 string switchKey = switchKeyResults.SwitchKey;
 
-                if (MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
+                if (!string.IsNullOrEmpty(switchKey) && MatchSwitch(switchKey, match: "settingsfile", smallestUnambiguousMatch: "settings"))
                 {
                     // parse setting file arg and don't write error as there is no host yet.
                     if (!TryParseSettingFileHelper(args, ++i, parser: null))
@@ -868,7 +879,6 @@ namespace Microsoft.PowerShell
                 {
                     // Just toss this option, it was processed earlier...
                 }
-
                 else if (MatchSwitch(switchKey, "modules", "mod"))
                 {
                     if (ConsoleHost.DefaultInitialSessionState == null)

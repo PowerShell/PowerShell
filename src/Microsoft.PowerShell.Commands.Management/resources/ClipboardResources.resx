@@ -131,4 +131,22 @@
   <data name="InvalidHtmlCombine" xml:space="preserve">
     <value>Html can only be combined with Html Text format.</value>
   </data>
+  <data name="UnsupportedFormat" xml:space="preserve">
+    <value>Only Text format is supported on this platform.</value>
+  </data>
+  <data name="UnsupportedPlatform" xml:space="preserve">
+    <value>The clipboard is not supported on this platform.</value>
+  </data>
+  <data name="AsHtmlUnsupported" xml:space="preserve">
+    <value>The '-AsHtml' switch is not supported on this platform.</value>
+  </data>
+  <data name="TextFormatUnsupported" xml:space="preserve">
+    <value>The '-TextFormatType' parameter only supports 'Text' on this platform.</value>
+  </data>
+  <data name="PathUnsupported" xml:space="preserve">
+    <value>The '-Path' parameter is not supported on this platform.</value>
+  </data>
+  <data name="LiteralPathUnsupported" xml:space="preserve">
+    <value>The '-LiteralPath' parameter is not supported on this platform.</value>
+  </data>
 </root>

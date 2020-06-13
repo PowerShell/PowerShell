@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
@@ -120,19 +120,19 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
 
     It "verify the initial state of the test module 'UntrustedDataModeTest'" {
         $result = Execute-Script -Script "Test-WithScriptVar"
-        $result | Should Be 15
+        $result | Should -Be 15
 
         $result = Execute-Script -Script "Test-WithGlobalVar"
-        $result | Should Be "Hello"
+        $result | Should -Be "Hello"
 
         $result = Execute-Script -Script "Get-ScriptVar"
-        $result | Should Be 15
+        $result | Should -Be 15
 
         $result = Execute-Script -Script "Get-GlobalVar"
-        $result | Should Be "Hello"
+        $result | Should -Be "Hello"
 
         $result = Execute-Script -Script '$ExecutionContext.SessionState.LanguageMode'
-        $result | Should Be "ConstrainedLanguage"
+        $result | Should -Be "ConstrainedLanguage"
     }
 
     Context "Set global variable value in top-level session state" {
@@ -286,7 +286,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             Execute-Script -Script $SetupScript > $null
             $result = Execute-Script -Script $testScript
 
-            $result -join ";" | Should Be $ExpectedOutput
+            $result -join ";" | Should -Be $ExpectedOutput
         }
 
         It "Enable 'data global:var' test if the syntax is supported" {
@@ -298,7 +298,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 ## Syntax 'data global:var { }' is not supported at the time writting the tests here
                 ## If this test fail, then maybe this syntax is supported now, and in that case, please
                 ## enable the test 'Data Section - "data global:var"' in $testCases above
-                $_.FullyQualifiedErrorId | Should Be "ParseException"
+                $_.FullyQualifiedErrorId | Should -Be "ParseException"
             }
         }
     }
@@ -318,7 +318,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             Execute-Script -Script "Import-LocalizedData -BindingVariable globalVar -BaseDirectory $TestDrive -FileName local.psd1"
             $result = Execute-Script -Script $testScript
 
-            $result -join ";" | Should Be "Localized-Data;ParameterArgumentValidationError,Test-Untrusted"
+            $result -join ";" | Should -Be "Localized-Data;ParameterArgumentValidationError,Test-Untrusted"
         }
     }
 
@@ -354,7 +354,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 Execute-Script -Script "Import-Module $VarModule"
                 $result = Execute-Script -Script $testScript
 
-                $result -join ";" | Should Be "global-from-module;ParameterArgumentValidationError,Test-Untrusted;Trusted-Script;Trusted-Script"
+                $result -join ";" | Should -Be "global-from-module;ParameterArgumentValidationError,Test-Untrusted;Trusted-Script;Trusted-Script"
             } finally {
                 Execute-Script -Script "Remove-Module Var -Force"
             }
@@ -370,7 +370,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             Execute-Script -Script '$globalVar = @{ Argument = "global-splatting" }'
             $result = Execute-Script -Script $testScript
 
-            $result -join ";" | Should Be "System.Collections.Hashtable;ParameterArgumentValidationError,Test-Untrusted"
+            $result -join ";" | Should -Be "System.Collections.Hashtable;ParameterArgumentValidationError,Test-Untrusted"
         }
     }
 
@@ -387,7 +387,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }
 '@
-            $result | Should Be "CannotDefineNewType,Microsoft.PowerShell.Commands.AddTypeCommand"
+            $result | Should -Be "CannotDefineNewType,Microsoft.PowerShell.Commands.AddTypeCommand"
         }
 
         It "test 'ValidateTrustedDataAttribute' NOT take effect in non-FullLanguage [Invoke-Expression]" {
@@ -396,7 +396,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             $globalVar = "Get-Process -id $PID"
             Invoke-Expression -Command $globalVar | ForEach-Object Id
 '@
-            $result | Should Be $PID
+            $result | Should -Be $PID
         }
 
         It "test 'ValidateTrustedDataAttribute' NOT take effect in non-FullLanguage [New-Object]" {
@@ -405,7 +405,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             $globalVar = "uri"
             New-Object -TypeName $globalVar -ArgumentList 'https://www.bing.com'
 '@
-            $result | Should Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
         }
 
         It "test 'ValidateTrustedDataAttribute' NOT take effect in non-FullLanguage [Foreach-Object]" {
@@ -414,7 +414,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             $globalVar = "Year"
             Get-Date | Foreach-Object -MemberName $globalVar
 '@
-            $result | Should Not BeNullOrEmpty
+            $result | Should -Not -BeNullOrEmpty
         }
 
         It "test 'ValidateTrustedDataAttribute' NOT take effect in non-FullLanguage [Import-Module]" {
@@ -423,8 +423,8 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             $globalVar = "NonExistModule"
             Import-Module -Name $globalVar -ErrorAction SilentlyContinue -ErrorVariable ev; $ev
 '@
-            $result | Should Not BeNullOrEmpty
-            $result.FullyQualifiedErrorId | Should Be "Modules_ModuleNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand"
+            $result | Should -Not -BeNullOrEmpty
+            $result.FullyQualifiedErrorId | Should -Be "Modules_ModuleNotFound,Microsoft.PowerShell.Commands.ImportModuleCommand"
         }
 
         It "test 'ValidateTrustedDataAttribute' NOT take effect in non-FullLanguage [Start-Job]" {
@@ -438,7 +438,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }
 '@
-            $result | Should Be "CannotStartJobInconsistentLanguageMode,Microsoft.PowerShell.Commands.StartJobCommand"
+            $result | Should -Be "CannotStartJobInconsistentLanguageMode,Microsoft.PowerShell.Commands.StartJobCommand"
         }
     }
 
@@ -455,7 +455,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }
 '@
-            $result | Should Be "ParameterArgumentValidationError,Test-Untrusted"
+            $result | Should -Be "ParameterArgumentValidationError,Test-Untrusted"
         }
 
         It "test 'ValidateTrustedDataAttribute' take effect when calling from 'Constrained' to 'Full' [Simple function]" {
@@ -469,7 +469,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }
 '@
-            $result | Should Be "ParameterArgumentValidationError,Test-SimpleUntrusted"
+            $result | Should -Be "ParameterArgumentValidationError,Test-SimpleUntrusted"
         }
 
         It "test 'ValidateTrustedDataAttribute' with param type conversion [string -> string[]]" {
@@ -483,7 +483,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }
 '@
-            $result | Should Be "ParameterArgumentValidationError,Test-OtherParameterType"
+            $result | Should -Be "ParameterArgumentValidationError,Test-OtherParameterType"
         }
 
         It "test 'ValidateTrustedDataAttribute' with value type param [DateTime]" {
@@ -497,7 +497,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }
 '@
-            $result | Should Be "ParameterArgumentValidationError,Test-OtherParameterType"
+            $result | Should -Be "ParameterArgumentValidationError,Test-OtherParameterType"
         }
 
         It "test 'ValidateTrustedDataAttribute' with param type conversion [string -> FileInfo]" {
@@ -511,7 +511,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }
 '@
-            $result | Should Be "ParameterArgumentValidationError,Test-OtherParameterType"
+            $result | Should -Be "ParameterArgumentValidationError,Test-OtherParameterType"
         }
 
         It "test type property conversion to [ProcessStartInfo] should fail during Lang-Mode transition" {
@@ -524,7 +524,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
                 $_.FullyQualifiedErrorId
             }
 '@
-            $result | Should Be "ParameterArgumentTransformationError,Test-OtherParameterType"
+            $result | Should -Be "ParameterArgumentTransformationError,Test-OtherParameterType"
         }
     }
 
@@ -554,7 +554,7 @@ Describe "UntrustedDataMode tests for variable assignments" -Tags 'CI' {
             ## Run this in the global scope, so value of $globalVar will be marked as untrusted
             $testScript = $ScriptTemplate -f $Argument
             $result = Execute-Script -Script $testScript
-            $result | Should Be $ExpectedErrorId
+            $result | Should -Be $ExpectedErrorId
         }
     }
 }

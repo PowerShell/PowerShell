@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Get-Verb" -Tags "CI" {
 
@@ -7,8 +7,8 @@ Describe "Get-Verb" -Tags "CI" {
     }
 
     It "Should get a specific verb" {
-        @(Get-Verb -Verb Add).Count | Should -Be 1
-        @(Get-Verb -Verb Add -Group Common).Count | Should -Be 1
+        @(Get-Verb -verb Add).Count | Should -Be 1
+        @(Get-Verb -verb Add -Group Common).Count | Should -Be 1
     }
 
     It "Should get a specific group" {
@@ -16,7 +16,7 @@ Describe "Get-Verb" -Tags "CI" {
     }
 
     It "Should not return duplicate Verbs with Verb paramater" {
-        $dups = Get-Verb -Verb Add,ad*,a*
+        $dups = Get-Verb -verb Add,ad*,a*
         $unique = $dups |
             Select-Object -Property * -Unique
         $dups.Count | Should -Be $unique.Count
@@ -30,7 +30,7 @@ Describe "Get-Verb" -Tags "CI" {
     }
 
     It "Should filter using the Verb parameter" {
-        Get-Verb -Verb fakeVerbNeverExists | Should -BeNullOrEmpty
+        Get-Verb -verb fakeVerbNeverExists | Should -BeNullOrEmpty
     }
 
     It "Should not accept Groups that are not in the validate set" {
@@ -59,7 +59,7 @@ Describe "Get-Verb" -Tags "CI" {
     }
 
     It "Should not have duplicate alias prefixes" {
-        $dupPrefixVerbs = ((Get-Verb | Group-Object -Property AliasPrefix | Where-Object Count -gt 1).Group).Verb -join ", "
+        $dupPrefixVerbs = ((Get-Verb | Group-Object -Property AliasPrefix | Where-Object Count -GT 1).Group).Verb -join ", "
         $dupPrefixVerbs | Should -BeNullOrEmpty
     }
 }

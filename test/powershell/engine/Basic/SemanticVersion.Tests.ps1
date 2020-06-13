@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
@@ -109,8 +109,8 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
                 @{ lhs = $v1_0_0_alpha; rhs = $v1_0_0_alpha2 }
                 @{ lhs = $v1_0_0_alpha; rhs = $v1_0_0 }
                 @{ lhs = $v1_0_0_beta; rhs = $v1_0_0 }
-                @{ lhs = $v2_1_0; rhs = "3.0" }
-                @{ lhs = "1.5"; rhs = $v2_1_0 }
+                @{ lhs = $v2_1_0; rhs = "3.0"}
+                @{ lhs = "1.5"; rhs = $v2_1_0}
             )
         }
 
@@ -176,39 +176,38 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
     Context "Error handling" {
 
         It "<name>: '<version>'" -TestCases @(
-            @{ name = "Missing parts: 'null'"; errorId = "PSArgumentNullException"; expectedResult = $false; version = $null }
-            @{ name = "Missing parts: 'NullString'"; errorId = "PSArgumentNullException"; expectedResult = $false; version = [NullString]::Value }
-            @{ name = "Missing parts: 'EmptyString'"; errorId = "FormatException"; expectedResult = $false; version = "" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "-" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "." }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "+" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "-alpha" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1..0" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.-alpha" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.+alpha" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.0-alpha+" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.0-+" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.0+-" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.0+" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.0-" }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.0." }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0." }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = "1.0.." }
-            @{ name = "Missing parts"; errorId = "FormatException"; expectedResult = $false; version = ".0.0" }
-            @{ name = "Range check of versions"; errorId = "FormatException"; expectedResult = $false; version = "-1.0.0" }
-            @{ name = "Range check of versions"; errorId = "FormatException"; expectedResult = $false; version = "1.-1.0" }
-            @{ name = "Range check of versions"; errorId = "FormatException"; expectedResult = $false; version = "1.0.-1" }
-            @{ name = "Format errors"; errorId = "FormatException"; expectedResult = $false; version = "aa.0.0" }
-            @{ name = "Format errors"; errorId = "FormatException"; expectedResult = $false; version = "1.bb.0" }
-            @{ name = "Format errors"; errorId = "FormatException"; expectedResult = $false; version = "1.0.cc" }
+            @{ name = "Missing parts: 'null'";       errorId = "PSArgumentNullException";expectedResult = $false; version = $null  }
+            @{ name = "Missing parts: 'NullString'"; errorId = "PSArgumentNullException";expectedResult = $false; version = [NullString]::Value }
+            @{ name = "Missing parts: 'EmptyString'";errorId = "FormatException";    expectedResult = $false; version = "" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "-" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "." }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "+" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "-alpha" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1..0" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.-alpha" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.+alpha" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0-alpha+" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0-+" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0+-" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0+" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0-" }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.0." }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0." }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = "1.0.." }
+            @{ name = "Missing parts";               errorId = "FormatException";    expectedResult = $false; version = ".0.0" }
+            @{ name = "Range check of versions";     errorId = "FormatException";    expectedResult = $false; version = "-1.0.0"  }
+            @{ name = "Range check of versions";     errorId = "FormatException";    expectedResult = $false; version = "1.-1.0"  }
+            @{ name = "Range check of versions";     errorId = "FormatException";    expectedResult = $false; version = "1.0.-1"  }
+            @{ name = "Format errors";               errorId = "FormatException";    expectedResult = $false; version = "aa.0.0"  }
+            @{ name = "Format errors";               errorId = "FormatException";    expectedResult = $false; version = "1.bb.0"  }
+            @{ name = "Format errors";               errorId = "FormatException";    expectedResult = $false; version = "1.0.cc"  }
         ) {
             param($version, $expectedResult, $errorId)
             { [SemanticVersion]::new($version) } | Should -Throw -ErrorId $errorId
-            if ([LanguagePrimitives]::IsNull($version)) {
+            if ($version -eq $null) {
                 # PowerShell convert $null to Empty string
                 { [SemanticVersion]::Parse($version) } | Should -Throw -ErrorId "FormatException"
-            }
-            else {
+            } else {
                 { [SemanticVersion]::Parse($version) } | Should -Throw -ErrorId $errorId
             }
             $semVer = $null

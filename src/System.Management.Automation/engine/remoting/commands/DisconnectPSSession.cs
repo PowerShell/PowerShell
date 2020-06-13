@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Disconnect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = DisconnectPSSessionCommand.SessionParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210605", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096576", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class DisconnectPSSessionCommand : PSRunspaceCmdlet, IDisposable
     {
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
 
             _throttleManager.ThrottleLimit = ThrottleLimit;
-            _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+            _throttleManager.ThrottleComplete += HandleThrottleDisconnectComplete;
         }
 
         /// <summary>
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
                 _operationsComplete.WaitOne();
                 _operationsComplete.Dispose();
 
-                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+                _throttleManager.ThrottleComplete -= HandleThrottleDisconnectComplete;
                 _stream.Dispose();
             }
         }

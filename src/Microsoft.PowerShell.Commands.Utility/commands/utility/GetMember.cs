@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements get-member command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Member", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113322", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommon.Get, "Member", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096704", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(MemberDefinition))]
     public class GetMemberCommand : PSCmdlet
     {

@@ -15,6 +15,7 @@ jobs:
     displayName: 'Scan for Secrets'
     inputs:
       suppressionsFile: tools/credScan/suppress.json
+      toolMajorVersion: V2
       debugMode: false
 
   - task: securedevelopmentteam.vss-secure-development-tools.build-task-publishsecurityanalysislogs.PublishSecurityAnalysisLogs@2

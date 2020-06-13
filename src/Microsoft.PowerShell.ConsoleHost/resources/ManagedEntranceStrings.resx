@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -119,7 +119,7 @@
   </resheader>
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
     <value>PowerShell {0}
-Copyright (c) Microsoft Corporation. All rights reserved.
+Copyright (c) Microsoft Corporation.
 
 https://aka.ms/powershell
 Type 'help' to get help.</value>
@@ -135,6 +135,12 @@ Type 'help' to get help.</value>
   </data>
   <data name="StableUpdateNotificationMessage" xml:space="preserve">
     <value>  {1} A new PowerShell stable release is available: v{0} {2}
+  {1} Upgrade now, or check out the release page at:{3}{2}
+  {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
+</value>
+  </data>
+  <data name="LTSUpdateNotificationMessage" xml:space="preserve">
+    <value>  {1} A new PowerShell LTS release is available: v{0} {2}
   {1} Upgrade now, or check out the release page at:{3}{2}
   {1}   https://aka.ms/PowerShell-Release?tag=v{0} {4}{2}
 </value>

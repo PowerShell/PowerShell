@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -21,6 +21,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// on the server, otherwise just create client in-memory instance
     /// </para>
     /// </summary>
+    [Alias("ncim")]
     [Cmdlet(VerbsCommon.New, "CimInstance", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227963")]
     [OutputType(typeof(CimInstance))]
     public class NewCimInstanceCommand : CimBaseCommand
@@ -306,10 +307,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get { return clientOnly; }
 
-            set {
+            set
+            {
                 clientOnly = value;
                 base.SetParameter(value, nameClientOnly);
-                }
+            }
         }
 
         private SwitchParameter clientOnly;
@@ -353,11 +355,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 }
             }
 
-            CimNewCimInstance cimNewCimInstance = this.GetOperationAgent();
-            if (cimNewCimInstance == null)
-            {
-                cimNewCimInstance = CreateOperationAgent();
-            }
+            CimNewCimInstance cimNewCimInstance = this.GetOperationAgent() ?? CreateOperationAgent();
 
             cimNewCimInstance.NewCimInstance(this);
             cimNewCimInstance.ProcessActions(this.CmdletOperation);
@@ -385,7 +383,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// used to delegate all New-CimInstance operations.
         /// </para>
         /// </summary>
-        CimNewCimInstance GetOperationAgent()
+        private CimNewCimInstance GetOperationAgent()
         {
             return (this.AsyncOperation as CimNewCimInstance);
         }
@@ -397,7 +395,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// </para>
         /// </summary>
         /// <returns></returns>
-        CimNewCimInstance CreateOperationAgent()
+        private CimNewCimInstance CreateOperationAgent()
         {
             CimNewCimInstance cimNewCimInstance = new CimNewCimInstance();
             this.AsyncOperation = cimNewCimInstance;
@@ -439,7 +437,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter definition entries.
         /// </summary>
-        static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
+        private static Dictionary<string, HashSet<ParameterDefinitionEntry>> parameters = new Dictionary<string, HashSet<ParameterDefinitionEntry>>
         {
             {
                 nameClassName, new HashSet<ParameterDefinitionEntry> {
@@ -502,7 +500,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Static parameter set entries.
         /// </summary>
-        static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
+        private static Dictionary<string, ParameterSetEntry> parameterSets = new Dictionary<string, ParameterSetEntry>
         {
             {   CimBaseCommand.ClassNameSessionSet, new ParameterSetEntry(2)     },
             {   CimBaseCommand.ClassNameComputerSet, new ParameterSetEntry(1, true)     },

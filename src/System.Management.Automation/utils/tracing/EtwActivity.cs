@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #if !UNIX
 
@@ -122,12 +122,12 @@ namespace System.Management.Automation.Tracing
             {
                 if (callback == null)
                 {
-                    throw new ArgumentNullException("callback");
+                    throw new ArgumentNullException(nameof(callback));
                 }
 
                 if (tracer == null)
                 {
-                    throw new ArgumentNullException("tracer");
+                    throw new ArgumentNullException(nameof(tracer));
                 }
 
                 this.tracer = tracer;
@@ -144,12 +144,12 @@ namespace System.Management.Automation.Tracing
             {
                 if (callback == null)
                 {
-                    throw new ArgumentNullException("callback");
+                    throw new ArgumentNullException(nameof(callback));
                 }
 
                 if (tracer == null)
                 {
-                    throw new ArgumentNullException("tracer");
+                    throw new ArgumentNullException(nameof(tracer));
                 }
 
                 this.tracer = tracer;
@@ -166,12 +166,12 @@ namespace System.Management.Automation.Tracing
             {
                 if (callback == null)
                 {
-                    throw new ArgumentNullException("callback");
+                    throw new ArgumentNullException(nameof(callback));
                 }
 
                 if (tracer == null)
                 {
-                    throw new ArgumentNullException("tracer");
+                    throw new ArgumentNullException(nameof(tracer));
                 }
 
                 this.tracer = tracer;
@@ -193,12 +193,12 @@ namespace System.Management.Automation.Tracing
             {
                 if (callback == null)
                 {
-                    throw new ArgumentNullException("callback");
+                    throw new ArgumentNullException(nameof(callback));
                 }
 
                 if (tracer == null)
                 {
-                    throw new ArgumentNullException("tracer");
+                    throw new ArgumentNullException(nameof(tracer));
                 }
 
                 this.tracer = tracer;
@@ -380,7 +380,7 @@ namespace System.Management.Automation.Tracing
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
 
             return new CorrelatedCallback(this, callback).Callback;
@@ -395,7 +395,7 @@ namespace System.Management.Automation.Tracing
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
 
             return new CorrelatedCallback(this, callback).Callback;
@@ -410,7 +410,7 @@ namespace System.Management.Automation.Tracing
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
 
             return new CorrelatedCallback(this, callback).Callback;
@@ -426,7 +426,7 @@ namespace System.Management.Automation.Tracing
         {
             if (callback == null)
             {
-                throw new ArgumentNullException("callback");
+                throw new ArgumentNullException(nameof(callback));
             }
 
             return new CorrelatedCallback(this, callback).Callback;

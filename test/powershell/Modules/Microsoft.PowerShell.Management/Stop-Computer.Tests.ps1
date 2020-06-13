@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # note these will manipulate private data in the PowerShell engine which will
@@ -10,7 +10,6 @@ $DefaultResultValue = 0
 try
 {
     # set up for testing
-    $PSDefaultParameterValues["it:skip"] = ! $IsWindows
     Enable-Testhook -testhookName $stopTesthook
 
     Describe "Stop-Computer" -Tag Feature {
@@ -27,16 +26,16 @@ try
 
         It "Should stop the local computer" {
             Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
-            Stop-Computer -ErrorAction Stop| Should -BeNullOrEmpty
+            Stop-Computer -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
-        It "Should support -Computer parameter" {
+        It "Should support -Computer parameter" -Skip:(!$IsWindows) {
             Set-TesthookResult -testhookName $stopTesthookResultName -Value $defaultResultValue
             $computerNames = "localhost","${env:COMPUTERNAME}"
-            Stop-Computer -Computer $computerNames -ErrorAction Stop| Should -BeNullOrEmpty
+            Stop-Computer -Computer $computerNames -ErrorAction Stop | Should -BeNullOrEmpty
         }
 
-        It "Should support WsmanAuthentication types" {
+        It "Should support WsmanAuthentication types" -Skip:(!$IsWindows) {
             $authChoices = "Default","Basic","Negotiate","CredSSP","Digest","Kerberos"
             foreach ( $auth in $authChoices ) {
                 Stop-Computer -WsmanAuthentication $auth | Should -BeNullOrEmpty

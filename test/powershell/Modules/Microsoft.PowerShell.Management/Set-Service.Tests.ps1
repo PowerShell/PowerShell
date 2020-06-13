@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Import-Module (Join-Path -Path $PSScriptRoot '..\Microsoft.PowerShell.Security\certificateCommon.psm1')
 
@@ -82,7 +82,7 @@ Describe "Set/New/Remove-Service cmdlet tests" -Tags "Feature", "RequireAdminOnW
         param($parameter, $value, $script, $expectedNull)
 
         $setServiceCommand = [Microsoft.PowerShell.Commands.SetServiceCommand]::new()
-        if ($script -ne $Null) {
+        if ($script -ne $null) {
             $value = & $script
         }
         $setServiceCommand.$parameter = $value

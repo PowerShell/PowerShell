@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Windows PowerShell
+    url: https://windowsserver.uservoice.com/forums/301869-powershell
+    about: Windows PowerShell issues or suggestions.
+  - name: Support
+    url: https://github.com/PowerShell/PowerShell/blob/master/.github/SUPPORT.md
+    about: PowerShell Support Questions/Help
+  - name: Documentation Issue
+    url: https://github.com/MicrosoftDocs/PowerShell-Docs
+    about: Please open issues on documentation for PowerShell here.

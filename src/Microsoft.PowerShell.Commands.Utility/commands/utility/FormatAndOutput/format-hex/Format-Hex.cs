@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Displays the hexadecimal equivalent of the input data.
     /// </summary>
-    [Cmdlet(VerbsCommon.Format, "Hex", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526919")]
+    [Cmdlet(VerbsCommon.Format, "Hex", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096611")]
     [OutputType(typeof(ByteCollection))]
     [Alias("fhx")]
     public sealed class FormatHex : PSCmdlet
@@ -280,6 +280,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private static readonly Random _idGenerator = new Random();
+
         private static string GetGroupLabel(Type inputType)
             => string.Format("{0} ({1}) <{2:X8}>", inputType.Name, inputType.FullName, _idGenerator.Next());
 
@@ -403,6 +404,7 @@ namespace Microsoft.PowerShell.Commands
                     if (_lastInputType != null && baseType != _lastInputType)
                     {
                         _groupInput = false;
+                        FlushInputBuffer();
                     }
 
                     _lastInputType = baseType;

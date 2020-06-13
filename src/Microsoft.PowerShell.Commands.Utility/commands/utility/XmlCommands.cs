@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the Export-Clixml command.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113297")]
+    [Cmdlet(VerbsData.Export, "Clixml", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096926")]
     public sealed class ExportClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Import-Clixml command.
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113340")]
+    [Cmdlet(VerbsData.Import, "Clixml", SupportsPaging = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096618")]
     public sealed class ImportClixmlCommand : PSCmdlet, IDisposable
     {
         #region Command Line Parameters
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implementation for the convertto-xml command.
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Xml", SupportsShouldProcess = false,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135204", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096603", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(XmlDocument), typeof(string))]
     public sealed class ConvertToXmlCommand : PSCmdlet, IDisposable
     {
@@ -800,7 +800,7 @@ namespace Microsoft.PowerShell.Commands
     ///<summary>
     ///This cmdlet is used to search an xml document based on the XPath Query.
     ///</summary>
-    [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135255")]
+    [Cmdlet(VerbsCommon.Select, "Xml", DefaultParameterSetName = "Xml", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097031")]
     [OutputType(typeof(SelectXmlInfo))]
     public class SelectXmlCommand : PSCmdlet
     {
@@ -1180,7 +1180,7 @@ namespace Microsoft.PowerShell.Commands
             string relPath = _path;
             if (!relPath.Equals(inputStream))
             {
-                if (relPath.StartsWith(directory, StringComparison.CurrentCultureIgnoreCase))
+                if (relPath.StartsWith(directory, StringComparison.OrdinalIgnoreCase))
                 {
                     int offset = directory.Length;
                     if (offset < relPath.Length)

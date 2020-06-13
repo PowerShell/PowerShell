@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -25,9 +25,9 @@ namespace Microsoft.PowerShell.Commands
     };
 
     /// <summary>
-    /// This class implements Remove-PSBreakpoint.
+    /// This class implements Get-PSBreakpoint.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113325")]
+    [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = LineParameterSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097108")]
     [OutputType(typeof(CommandBreakpoint), ParameterSetName = new[] { CommandParameterSetName })]
     [OutputType(typeof(LineBreakpoint), ParameterSetName = new[] { LineParameterSetName })]
     [OutputType(typeof(VariableBreakpoint), ParameterSetName = new[] { VariableParameterSetName })]

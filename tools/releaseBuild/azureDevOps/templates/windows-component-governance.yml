@@ -5,7 +5,7 @@ jobs:
   condition: succeeded()
 
   pool:
-    name: PowerShell
+    name: Package ES Standard Build
 
   steps:
 

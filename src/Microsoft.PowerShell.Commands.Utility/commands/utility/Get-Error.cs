@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -11,15 +11,17 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for Get-Error implementation.
     /// </summary>
-    [Experimental("Microsoft.PowerShell.Utility.PSGetError", ExperimentAction.Show)]
     [Cmdlet(VerbsCommon.Get, "Error",
-        HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error?view=powershell-7&WT.mc_id=ps-gethelp",
+        HelpUri = "https://docs.microsoft.com/powershell/module/microsoft.powershell.utility/get-error",
         DefaultParameterSetName = NewestParameterSetName)]
+    [OutputType("System.Management.Automation.ErrorRecord#PSExtendedError", "System.Exception#PSExtendedError")]
     public sealed class GetErrorCommand : PSCmdlet
     {
         internal const string ErrorParameterSetName = "Error";
         internal const string NewestParameterSetName = "Newest";
         internal const string AliasNewest = "Last";
+        internal const string ErrorRecordPSExtendedError = "System.Management.Automation.ErrorRecord#PSExtendedError";
+        internal const string ExceptionPSExtendedError = "System.Exception#PSExtendedError";
 
         /// <summary>
         /// Gets or sets the error object to resolve.
@@ -74,12 +76,29 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (object errorRecord in errorRecords)
             {
-                PSObject obj = PSObject.AsPSObject(errorRecord);
-                obj.TypeNames.Insert(0, "PSExtendedError");
+                var obj = PSObject.AsPSObject(errorRecord, storeTypeNameAndInstanceMembersLocally: true);
 
-                // Remove some types so they don't get rendered by those formats
-                obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
-                obj.TypeNames.Remove("System.Exception");
+                if (obj.TypeNames.Contains("System.Management.Automation.ErrorRecord"))
+                {
+                    if (!obj.TypeNames.Contains(ErrorRecordPSExtendedError))
+                    {
+                        obj.TypeNames.Insert(0, ErrorRecordPSExtendedError);
+
+                        // Need to remove so this rendering doesn't take precedence as ErrorRecords is "OutOfBand"
+                        obj.TypeNames.Remove("System.Management.Automation.ErrorRecord");
+                    }
+                }
+
+                if (obj.TypeNames.Contains("System.Exception"))
+                {
+                    if (!obj.TypeNames.Contains(ExceptionPSExtendedError))
+                    {
+                        obj.TypeNames.Insert(0, ExceptionPSExtendedError);
+
+                        // Need to remove so this rendering doesn't take precedence as Exception is "OutOfBand"
+                        obj.TypeNames.Remove("System.Exception");
+                    }
+                }
 
                 if (addErrorIdentifier)
                 {

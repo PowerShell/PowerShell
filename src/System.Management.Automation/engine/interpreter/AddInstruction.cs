@@ -119,7 +119,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Double)l + (Double)r;
+                frame.Data[frame.StackIndex - 2] = (double)l + (double)r;
                 frame.StackIndex--;
                 return +1;
             }
@@ -252,7 +252,7 @@ namespace System.Management.Automation.Interpreter
             {
                 object l = frame.Data[frame.StackIndex - 2];
                 object r = frame.Data[frame.StackIndex - 1];
-                frame.Data[frame.StackIndex - 2] = (Double)l + (Double)r;
+                frame.Data[frame.StackIndex - 2] = (double)l + (double)r;
                 frame.StackIndex--;
                 return +1;
             }

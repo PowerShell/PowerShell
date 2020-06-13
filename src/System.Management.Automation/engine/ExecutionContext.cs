@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -492,7 +492,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static List<string> ModulesWithJobSourceAdapters = new List<string>
+        internal static readonly List<string> ModulesWithJobSourceAdapters = new List<string>
             {
                 Utils.ScheduledJobModuleName,
             };
@@ -1056,7 +1056,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.DebugPreferenceVarPath,
-                    InitialSessionState.defaultDebugPreference,
+                    InitialSessionState.DefaultDebugPreference,
                     out defaultUsed);
             }
 
@@ -1077,7 +1077,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.VerbosePreferenceVarPath,
-                    InitialSessionState.defaultVerbosePreference,
+                    InitialSessionState.DefaultVerbosePreference,
                     out defaultUsed);
             }
 
@@ -1098,7 +1098,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.ErrorActionPreferenceVarPath,
-                    InitialSessionState.defaultErrorActionPreference,
+                    InitialSessionState.DefaultErrorActionPreference,
                     out defaultUsed);
             }
 
@@ -1119,7 +1119,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.WarningPreferenceVarPath,
-                    InitialSessionState.defaultWarningPreference,
+                    InitialSessionState.DefaultWarningPreference,
                     out defaultUsed);
             }
 
@@ -1140,7 +1140,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.InformationPreferenceVarPath,
-                    InitialSessionState.defaultInformationPreference,
+                    InitialSessionState.DefaultInformationPreference,
                     out defaultUsed);
             }
 
@@ -1186,7 +1186,7 @@ namespace System.Management.Automation
                 bool defaultUsed = false;
                 return this.GetEnumPreference(
                     SpecialVariables.ConfirmPreferenceVarPath,
-                    InitialSessionState.defaultConfirmPreference,
+                    InitialSessionState.DefaultConfirmPreference,
                     out defaultUsed);
             }
 
@@ -1637,7 +1637,7 @@ namespace System.Management.Automation
             Modules = new ModuleIntrinsics(this);
         }
 
-        private static object lockObject = new Object();
+        private static object lockObject = new object();
 
 #if !CORECLR // System.AppDomain is not in CoreCLR
         private static bool _assemblyEventHandlerSet = false;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -44,7 +44,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             // Get the verb and noun from the name
@@ -52,7 +52,7 @@ namespace System.Management.Automation
             {
                 throw
                     PSTraceSource.NewArgumentException(
-                        "name",
+                        nameof(name),
                         DiscoveryExceptions.InvalidCmdletNameFormat,
                         name);
             }
@@ -105,12 +105,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (implementingType == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
 
             if (!typeof(Cmdlet).IsAssignableFrom(implementingType))
@@ -123,7 +123,7 @@ namespace System.Management.Automation
             {
                 throw
                     PSTraceSource.NewArgumentException(
-                        "name",
+                        nameof(name),
                         DiscoveryExceptions.InvalidCmdletNameFormat,
                         name);
             }

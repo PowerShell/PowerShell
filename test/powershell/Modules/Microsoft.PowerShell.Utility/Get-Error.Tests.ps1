@@ -1,23 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Get-Error tests' -Tag CI {
-    BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('Microsoft.PowerShell.Utility.PSGetError')
-        if ($skipTest) {
-            Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'Microsoft.PowerShell.Utility.PSGetError' to be enabled." -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-    }
-
-    AfterAll {
-        if ($skipTest) {
-            $global:PSDefaultParameterValues = $originalDefaultParameterValues
-        }
-    }
-
-    It 'Get-Error resolves $Error[0] and includes InnerException' {
+    It 'Get-Error resolves $error[0] and includes InnerException' {
         try {
             1/0
         }
@@ -26,6 +11,17 @@ Describe 'Get-Error tests' -Tag CI {
 
         $out = Get-Error | Out-String
         $out | Should -BeLikeExactly '*InnerException*'
+
+        $err = Get-Error
+        $err | Should -BeOfType System.Management.Automation.ErrorRecord
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord'
+        $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
+
+        # need to exercise the formatter to validate that the internal types are removed from the error object
+        $null = $err | Out-String
+        $err | Should -BeOfType System.Management.Automation.ErrorRecord
+        $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord'
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
     }
 
     It 'Get-Error -Newest `<count>` works: <scenario>' -TestCases @(
@@ -42,7 +38,7 @@ Describe 'Get-Error tests' -Tag CI {
         }
 
         try {
-            get-item (new-guid) -ErrorAction SilentlyContinue
+            Get-Item (New-Guid) -ErrorAction SilentlyContinue
         }
         catch {
         }
@@ -80,14 +76,53 @@ Describe 'Get-Error tests' -Tag CI {
     }
 
     It 'Get-Error will handle Exceptions' {
+        $e = [Exception]::new('myexception')
+        $error.Insert(0, $e)
+
+        $out = Get-Error | Out-String
+        $out | Should -BeLikeExactly '*myexception*'
+
+        $err = Get-Error
+        $err | Should -BeOfType System.Exception
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Exception'
+        $err.PSObject.TypeNames | Should -Contain 'System.Exception#PSExtendedError'
+
+        # need to exercise the formatter to validate that the internal types are removed from the error object
+        $null = $err | Out-String
+        $err | Should -BeOfType System.Exception
+        $err.PSObject.TypeNames | Should -Contain 'System.Exception'
+        $err.PSObject.TypeNames | Should -Not -Contain 'System.Exception#PSExtendedError'
+    }
+
+    It 'Get-Error will not modify the original error object' {
         try {
-            Invoke-Expression '1/d'
+            1 / 0
+        }
+        catch {
+        }
+
+        $null = Get-Error
+
+        $error[0].pstypenames | Should -Be System.Management.Automation.ErrorRecord, System.Object
+    }
+
+    It 'Get-Error adds ExceptionType for Exceptions' {
+        try {
+            [System.Net.DNS]::GetHostByName((New-Guid))
         }
         catch {
         }
 
         $out = Get-Error | Out-String
-        $out | Should -BeLikeExactly '*ExpectedValueExpression*'
-        $out | Should -BeLikeExactly '*UnexpectedToken*'
+        $out | Should -BeLikeExactly '*Type*'
+
+        if ($IsWindows) {
+            $expectedExceptionType = "System.Management.Automation.ParentContainsErrorRecordException"
+        }
+        else {
+            $expectedExceptionType = "System.Net.Internals.SocketExceptionFactory+ExtendedSocketException"
+        }
+
+        $out | Should -BeLikeExactly "*$expectedExceptionType*"
     }
 }

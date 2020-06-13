@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the string representation of the match object with the matched line passed 
+        /// Returns the string representation of the match object with the matched line passed
         /// in as <paramref name="line"/> and trims the path to be relative to
         /// the<paramref name="directory"/> argument.
         /// </summary>
@@ -315,10 +315,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>The matched line with matched text inverted.</returns>
         private string EmphasizeLine()
         {
-            const string InvertColorsVT100 = "\u001b[7m";
-            const string ResetVT100 = "\u001b[0m";
+            string invertColorsVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Inverse);
+            string resetVT100 = VTUtility.GetEscapeSequence(VTUtility.VT.Reset);
 
-            char[] chars = new char[(_matchIndexes.Count * (InvertColorsVT100.Length + ResetVT100.Length)) + Line.Length];
+            char[] chars = new char[(_matchIndexes.Count * (invertColorsVT100.Length + resetVT100.Length)) + Line.Length];
             int lineIndex = 0;
             int charsIndex = 0;
             for (int i = 0; i < _matchIndexes.Count; i++)
@@ -329,8 +329,8 @@ namespace Microsoft.PowerShell.Commands
                 lineIndex = _matchIndexes[i];
 
                 // Adds opening vt sequence
-                InvertColorsVT100.CopyTo(0, chars, charsIndex, InvertColorsVT100.Length);
-                charsIndex += InvertColorsVT100.Length;
+                invertColorsVT100.CopyTo(0, chars, charsIndex, invertColorsVT100.Length);
+                charsIndex += invertColorsVT100.Length;
 
                 // Adds characters being emphasized
                 Line.CopyTo(lineIndex, chars, charsIndex, _matchLengths[i]);
@@ -338,8 +338,8 @@ namespace Microsoft.PowerShell.Commands
                 charsIndex += _matchLengths[i];
 
                 // Adds closing vt sequence
-                ResetVT100.CopyTo(0, chars, charsIndex, ResetVT100.Length);
-                charsIndex += ResetVT100.Length;
+                resetVT100.CopyTo(0, chars, charsIndex, resetVT100.Length);
+                charsIndex += resetVT100.Length;
             }
 
             // Adds remaining characters in line
@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A cmdlet to search through strings and files for particular patterns.
     /// </summary>
-    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = ParameterSetFile, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113388")]
+    [Cmdlet(VerbsCommon.Select, "String", DefaultParameterSetName = ParameterSetFile, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097119")]
     [OutputType(typeof(bool), typeof(MatchInfo), ParameterSetName = new[] { ParameterSetFile, ParameterSetObject, ParameterSetLiteralFile })]
     [OutputType(typeof(string), ParameterSetName = new[] { ParameterSetFileRaw, ParameterSetObjectRaw, ParameterSetLiteralFileRaw })]
     public sealed class SelectStringCommand : PSCmdlet
@@ -1076,6 +1076,104 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets a culture name.
+        /// </summary>
+        [Parameter]
+        [ValidateSet(typeof(ValidateMatchStringCultureNamesGenerator))]
+        [ValidateNotNull]
+        public string Culture
+        {
+            get
+            {
+                switch (_stringComparison)
+                {
+                    case StringComparison.Ordinal:
+                    case StringComparison.OrdinalIgnoreCase:
+                        {
+                            return OrdinalCultureName;
+                        }
+
+                    case StringComparison.InvariantCulture:
+                    case StringComparison.InvariantCultureIgnoreCase:
+                        {
+                            return InvariantCultureName;
+                        }
+
+                    case StringComparison.CurrentCulture:
+                    case StringComparison.CurrentCultureIgnoreCase:
+                        {
+                            return CurrentCultureName;
+                        }
+
+                    default:
+                        {
+                            break;
+                        }
+                }
+
+                return _cultureName;
+            }
+
+            set
+            {
+                _cultureName = value;
+                InitCulture();
+            }
+        }
+
+        internal const string OrdinalCultureName = "Ordinal";
+        internal const string InvariantCultureName = "Invariant";
+        internal const string CurrentCultureName = "Current";
+
+        private string _cultureName = CultureInfo.CurrentCulture.Name;
+        private StringComparison _stringComparison = StringComparison.CurrentCultureIgnoreCase;
+        private CompareOptions _compareOptions = CompareOptions.IgnoreCase;
+
+        private delegate int CultureInfoIndexOf(string source, string value, int startIndex, int count, CompareOptions options);
+
+        private CultureInfoIndexOf _cultureInfoIndexOf = CultureInfo.CurrentCulture.CompareInfo.IndexOf;
+
+        private void InitCulture()
+        {
+            _stringComparison = default;
+
+            switch (_cultureName)
+            {
+                case OrdinalCultureName:
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.Ordinal : StringComparison.OrdinalIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.Ordinal : CompareOptions.OrdinalIgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
+                        break;
+                    }
+
+                case InvariantCultureName:
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.InvariantCulture : StringComparison.InvariantCultureIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.InvariantCulture.CompareInfo.IndexOf;
+                        break;
+                    }
+
+                case CurrentCultureName:
+                    {
+                        _stringComparison = CaseSensitive ? StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = CultureInfo.CurrentCulture.CompareInfo.IndexOf;
+                        break;
+                    }
+
+                default:
+                    {
+                        var _cultureInfo = CultureInfo.GetCultureInfo(_cultureName);
+                        _compareOptions = CaseSensitive ? CompareOptions.None : CompareOptions.IgnoreCase;
+                        _cultureInfoIndexOf = _cultureInfo.CompareInfo.IndexOf;
+                        break;
+                    }
+            }
+        }
+
+        /// <summary>
         /// Gets or sets the current pipeline object.
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = ParameterSetObject)]
@@ -1294,8 +1392,8 @@ namespace Microsoft.PowerShell.Commands
         private int _postContext = 0;
 
         // When we are in Raw mode or pre- and postcontext are zero, use the _noContextTracker, since we will not be needing trackedLines.
-        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0)) 
-            ? _noContextTracker 
+        private IContextTracker GetContextTracker() => (Raw || (_preContext == 0 && _postContext == 0))
+            ? _noContextTracker
             : new ContextTracker(_preContext, _postContext);
 
         // This context tracker is only used for strings which are piped
@@ -1322,6 +1420,21 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void BeginProcessing()
         {
+            if (this.MyInvocation.BoundParameters.ContainsKey(nameof(Culture)) && !this.MyInvocation.BoundParameters.ContainsKey(nameof(SimpleMatch)))
+            {
+                InvalidOperationException exception = new InvalidOperationException(MatchStringStrings.CannotSpecifyCultureWithoutSimpleMatch);
+                ErrorRecord errorRecord = new ErrorRecord(exception, "CannotSpecifyCultureWithoutSimpleMatch", ErrorCategory.InvalidData, null);
+                this.ThrowTerminatingError(errorRecord);
+            }
+
+            InitCulture();
+
+            string suppressVt = Environment.GetEnvironmentVariable("__SuppressAnsiEscapeSequences");
+            if (!string.IsNullOrEmpty(suppressVt))
+            {
+                NoEmphasis = true;
+            }
+
             if (!SimpleMatch)
             {
                 RegexOptions regexOptions = CaseSensitive ? RegexOptions.None : RegexOptions.IgnoreCase;
@@ -1722,13 +1835,11 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                StringComparison compareOption = CaseSensitive ?
-                    StringComparison.CurrentCulture : StringComparison.CurrentCultureIgnoreCase;
                 while (patternIndex < Pattern.Length)
                 {
                     string pat = Pattern[patternIndex];
 
-                    int index = operandString.IndexOf(pat, compareOption);
+                    int index = _cultureInfoIndexOf(operandString, pat, 0, operandString.Length, _compareOptions);
                     if (index >= 0)
                     {
                         if (shouldEmphasize)
@@ -1964,6 +2075,27 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return ok;
+        }
+    }
+
+    /// <summary>
+    /// Get list of valid culture names for ValidateSet attribute.
+    /// </summary>
+    public class ValidateMatchStringCultureNamesGenerator : IValidateSetValuesGenerator
+    {
+        string[] IValidateSetValuesGenerator.GetValidValues()
+        {
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+            var result = new List<string>(cultures.Length + 3);
+            result.Add(SelectStringCommand.OrdinalCultureName);
+            result.Add(SelectStringCommand.InvariantCultureName);
+            result.Add(SelectStringCommand.CurrentCultureName);
+            foreach (var cultureInfo in cultures)
+            {
+                result.Add(cultureInfo.Name);
+            }
+
+            return result.ToArray();
         }
     }
 }
