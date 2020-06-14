@@ -823,18 +823,19 @@ namespace StackTest {
 
     Context "Console prompt tests" {
         BeforeAll {
+            $pathseparator = [System.Io.Path]::DirectorySeparatorChar
             $winTestCases = @(
-                @{Path="Cert:\"},
-                @{Path="HKLM:\"},
-                @{Path="WSMan:\"},
-                @{Path="\\localhost\c$"}
+                @{Path="Cert:$($pathseparator)"},
+                @{Path="HKLM:$($pathseparator)"},
+                @{Path="WSMan:$($pathseparator)"},
+                @{Path="\\localhost$($pathseparator)c$"}
             )
             $allOsTestCases = @(
-                @{Path="Alias:\"},
-                @{Path="Env:\"},
-                @{Path="Function:\"},
-                @{Path="Temp:\"},
-                @{Path="Variable:\"}
+                @{Path="Alias:$($pathseparator)"},
+                @{Path="Env:$($pathseparator)"},
+                @{Path="Function:$($pathseparator)"},
+                @{Path="Temp:$($pathseparator)"},
+                @{Path="Variable:$($pathseparator)"}
             )
             function InvokePromptTest([string]$CommandLine, [int]$OutputIndex)
             {
@@ -845,6 +846,25 @@ namespace StackTest {
                 $stdout = $process.StandardOutput.ReadToEnd().Split([System.Environment]::NewLine)[$OutputIndex]
                 EnsureChildHasExited $process | Out-Null
                 return $stdout
+            }
+
+            function InvokePromptTestPSTask([string]$CommandLine)
+            {
+                $si = NewProcessStartInfo $CommandLine -RedirectStdIn
+                $process = RunPowerShell $si
+                while($false -eq $process.StandardOutput.EndOfStream) {
+                    $stdout = $process.StandardOutput.ReadLine()
+                    # ReadLine() stops responding after printing the debug message unless it receives input
+                    if($stdout -like "*~~~*") {
+                        $process.StandardInput.WriteLine()
+                        # If we don't 'detach' the process never exits gracefully
+                        $process.StandardInput.WriteLine("detach")
+                        $output = $process.StandardOutput.ReadLine()
+                    }
+                }
+                EnsureChildHasExited $process | Out-Null
+                # PID is part of the prompt string, so return this as well
+                return $process.Id,$output
             }
         }
 
@@ -869,14 +889,35 @@ namespace StackTest {
 
         It "Job Debug: Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
             param ($Path)
-            $output = InvokePromptTest -OutputIndex -2 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; Start-Sleep -Seconds 1; Debug-Job `$j;"""
+            $output = InvokePromptTest -OutputIndex -2 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; `
+                while(`$j.State -ne 'AtBreakpoint' -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 50}; Debug-Job `$j;"""
+
             $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
         }
 
         It "(Windows) Job Debug: Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
             param ($Path)
-            $output = InvokePromptTest -OutputIndex -2 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; Start-Sleep -Seconds 1; Debug-Job `$j;"""
-            $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
+            $output = InvokePromptTest -OutputIndex -2 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; `
+                while(`$j.State -ne 'AtBreakpoint' -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 50}; Debug-Job `$j;"""
+
+                $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
+        }
+
+        It "PSTask Debug: Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
+            param ($Path)
+            $output = InvokePromptTestPSTask -CommandLine "-noprofile -nologo -c ""Set-Location $Path;`$null = 1 | Foreach-Object -Parallel {Wait-Debugger; {}} -AsJob; `
+                while($null -ne (`$rd=Get-RunspaceDebug | Where-Object Enabled -eq true) -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 50}; `
+                `$rd = Get-RunspaceDebug | Where-Object Enabled -eq true; Debug-Runspace -Id `$rd.RunspaceId"""
+
+            $output[1] | Should -Be "[DBG]: [Process:$($output[0])]: [PSTask:1]: PS $Path>> "
+        }
+        It "(Windows) PSTask Debug: Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
+            param ($Path)
+            $output = InvokePromptTestPSTask -CommandLine "-noprofile -nologo -c ""Set-Location $Path;`$null = 1 | Foreach-Object -Parallel {Wait-Debugger; {}} -AsJob; `
+                while($null -ne (`$rd=Get-RunspaceDebug | Where-Object Enabled -eq true) -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 5000}; `
+                `$rd = Get-RunspaceDebug | Where-Object Enabled -eq true; Debug-Runspace -Id `$rd.RunspaceId"""
+
+            $output[1] | Should -Be "[DBG]: [Process:$($output[0])]: [PSTask:1]: PS $Path>> "
         }
     }
 }
