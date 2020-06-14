@@ -231,19 +231,19 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            Hashtable hash = new Hashtable();
+            var set = new HashSet<string>();
 
             // build the list of unique values: remove the possible duplicates
             // from property set expansion
             foreach (PSMemberInfo m in temporaryMemberList)
             {
-                if (!hash.ContainsKey(m.Name))
+                if (!set.Contains(m.Name))
                 {
                     PSPropertyExpression ex = new PSPropertyExpression(m.Name);
 
                     ex._isResolved = true;
                     retVal.Add(ex);
-                    hash.Add(m.Name, null);
+                    set.Add(m.Name);
                 }
             }
 
