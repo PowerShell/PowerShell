@@ -1,17 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
     BeforeAll {
-        $skipTest = -not $EnabledExperimentalFeatures.Contains('PSPipelineChainOperators')
-        if ($skipTest)
-        {
-            Write-Verbose "Test Suite Skipped: These tests require the PSPipelineChainOperators experimental feature to be enabled" -Verbose
-            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-            return
-        }
-
         function Test-SuccessfulCommand
         {
             Write-Output "SUCCESS"
@@ -23,12 +14,12 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             param(
                 [Parameter(ValueFromPipeline)]
                 [object[]]
-                $Input
+                $input
             )
 
-            if ($Input -ne 2)
+            if ($input -ne 2)
             {
-                return $Input
+                return $input
             }
 
             $exception = [System.Exception]::new("NTERROR")
@@ -89,6 +80,13 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
             @{ Statement = '0,1 | % { testexe -returncode $_ } && testexe -returncode 0'; Output = @('0','1','0') }
             @{ Statement = '1,2 | % { testexe -returncode $_ } && testexe -returncode 0'; Output = @('1','2','0') }
 
+            # Subpipeline and subexpression cases
+            @{ Statement = '(testexe -returncode 0 && testexe -returncode 1) && "Hi"'; Output = @('0','1') }
+            @{ Statement = '$(testexe -returncode 0 && testexe -returncode 1) && "Hi"'; Output = @('0','1') }
+            @{ Statement = '(testexe -returncode 0 && testexe -returncode 1) || "Bad"'; Output = @('0','1','Bad') }
+            @{ Statement = '$(testexe -returncode 0 && testexe -returncode 1) && "Bad"'; Output = @('0','1') }
+            @{ Statement = '(testexe -returncode 1 || testexe -returncode 1) && "Hi"'; Output = @('1','1') }
+
             # Control flow statements
             @{ Statement = 'foreach ($v in 0,1,2) { testexe -returncode $v || $(break) }'; Output = @('0', '1') }
             @{ Statement = 'foreach ($v in 0,1,2) { testexe -returncode $v || $(continue); $v + 1 }'; Output = @('0', 1, '1', '2') }
@@ -128,9 +126,88 @@ Describe "Experimental Feature: && and || operators - Feature-Enabled" -Tag CI {
         )
     }
 
-    AfterAll {
-        if ($skipTest) {
-            $PSDefaultParameterValues = $originalDefaultParameterValues
+    It "Gets the correct output with statement '<Statement>'" -TestCases $simpleTestCases {
+        param($Statement, $Output)
+
+        $result = Invoke-Expression -Command $Statement 2>$null
+        $result | Should -Be $Output
+    }
+
+    It "Sets the variable correctly with statement '<Statement>'" -TestCases $variableTestCases {
+        param($Statement, $Variables)
+
+        Invoke-Expression -Command $Statement
+        foreach ($variableName in $Variables.get_Keys())
+        {
+            (Get-Variable -Name $variableName -ErrorAction Ignore).Value | Should -Be $Variables[$variableName] -Because "variable is '`$$variableName'"
+        }
+    }
+
+    It "Runs the statement chain '<Statement>' as a job" -TestCases $jobTestCases {
+        param($Statement, $Output, $Variable)
+
+        $resultJob = Invoke-Expression -Command $Statement
+
+        if ($Variable)
+        {
+            $resultJob = (Get-Variable $Variable).Value
+        }
+
+        $resultJob | Wait-Job | Receive-Job | Should -Be $Output
+    }
+
+    It "Rejects invalid syntax usage in '<Statement>'" -TestCases $invalidSyntaxCases {
+        param([string]$Statement, [string]$ErrorID, [bool]$IncompleteInput)
+
+        $tokens = $errors = $null
+        [System.Management.Automation.Language.Parser]::ParseInput($Statement, [ref]$tokens, [ref]$errors)
+
+        $errors.Count | Should -BeExactly 1
+        $errors[0].ErrorId | Should -BeExactly $ErrorID
+        $errors[0].IncompleteInput | Should -Be $IncompleteInput
+    }
+
+    Context "File redirection with && and ||" {
+        BeforeAll {
+            $redirectionTestCases = @(
+                @{ Statement = "testexe -returncode 0 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1' } }
+                @{ Statement = "testexe -returncode 1 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = $null } }
+                @{ Statement = "testexe -returncode 1 > '$TestDrive/1.txt' || testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = '1' } }
+                @{ Statement = "testexe -returncode 0 > '$TestDrive/1.txt' || testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = $null } }
+                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1) > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/3.txt" = "0$([System.Environment]::NewLine)1$([System.Environment]::NewLine)" } }
+                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1 > '$TestDrive/2.txt') > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/2.txt" = '1'; "$TestDrive/3.txt" = '0' } }
+                @{ Statement = "(testexe -returncode 0 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt') > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1'; "$TestDrive/3.txt" = '' } }
+            )
+        }
+
+        BeforeEach {
+            Remove-Item -Path $TestDrive/*
+        }
+
+        It "Handles redirection correctly with statement '<Statement>'" -TestCases $redirectionTestCases {
+            param($Statement, $Files)
+
+            Invoke-Expression -Command $Statement
+
+            foreach ($file in $Files.get_Keys())
+            {
+                $expectedValue = $Files[$file]
+
+                if ($null -eq $expectedValue)
+                {
+                    $file | Should -Not -Exist
+                    continue
+                }
+
+                # Special case for empty file
+                if ($expectedValue -eq '')
+                {
+                    (Get-Item $file).Length | Should -Be 0
+                    continue
+                }
+
+                $file | Should -FileContentMatchMultiline $expectedValue
+            }
         }
     }
 
@@ -145,12 +222,12 @@ filter Test-NonTerminatingError
     param(
         [Parameter(ValueFromPipeline)]
         [object[]]
-        $Input
+        $input
     )
 
-    if ($Input -ne 2)
+    if ($input -ne 2)
     {
-        return $Input
+        return $input
     }
 
     $exception = [System.Exception]::new("NTERROR")
@@ -164,11 +241,11 @@ filter Test-NonTerminatingError
 filter Test-PipelineTerminatingError
 {
     [CmdletBinding()]
-    param([Parameter(ValueFromPipeline)][int[]]$Input)
+    param([Parameter(ValueFromPipeline)][int[]]$input)
 
-    if ($Input -ne 4)
+    if ($input -ne 4)
     {
-        return $Input
+        return $input
     }
 
     $exception = [System.Exception]::new("PIPELINE")
@@ -261,94 +338,9 @@ function Test-FullyTerminatingError
         }
     }
 
-    It "Gets the correct output with statement '<Statement>'" -TestCases $simpleTestCases {
-        param($Statement, $Output)
-
-        Invoke-Expression -Command $Statement 2>$null | Should -Be $Output
-    }
-
-    It "Sets the variable correctly with statement '<Statement>'" -TestCases $variableTestCases {
-        param($Statement, $Variables)
-
-        Invoke-Expression -Command $Statement
-        foreach ($variableName in $Variables.get_Keys())
-        {
-            (Get-Variable -Name $variableName -ErrorAction Ignore).Value | Should -Be $Variables[$variableName] -Because "variable is '`$$variableName'"
-        }
-    }
-
-    It "Runs the statement chain '<Statement>' as a job" -TestCases $jobTestCases {
-        param($Statement, $Output, $Variable)
-
-        $resultJob = Invoke-Expression -Command $Statement
-
-        if ($Variable)
-        {
-            $resultJob = (Get-Variable $Variable).Value
-        }
-
-        $resultJob | Wait-Job | Receive-Job | Should -Be $Output
-    }
-
-    It "Rejects invalid syntax usage in '<Statement>'" -TestCases $invalidSyntaxCases {
-        param([string]$Statement, [string]$ErrorID, [bool]$IncompleteInput)
-
-        $tokens = $errors = $null
-        [System.Management.Automation.Language.Parser]::ParseInput($Statement, [ref]$tokens, [ref]$errors)
-
-        $errors.Count | Should -BeExactly 1
-        $errors[0].ErrorId | Should -BeExactly $ErrorID
-        $errors[0].IncompleteInput | Should -Be $IncompleteInput
-    }
-
-    Context "File redirection with && and ||" {
-        BeforeAll {
-            $redirectionTestCases = @(
-                @{ Statement = "testexe -returncode 0 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1' } }
-                @{ Statement = "testexe -returncode 1 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = $null } }
-                @{ Statement = "testexe -returncode 1 > '$TestDrive/1.txt' || testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '1'; "$TestDrive/2.txt" = '1' } }
-                @{ Statement = "testexe -returncode 0 > '$TestDrive/1.txt' || testexe -returncode 1 > '$TestDrive/2.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = $null } }
-                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1) > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/3.txt" = "0$([System.Environment]::NewLine)1$([System.Environment]::NewLine)" } }
-                @{ Statement = "(testexe -returncode 0 && testexe -returncode 1 > '$TestDrive/2.txt') > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/2.txt" = '1'; "$TestDrive/3.txt" = '0' } }
-                @{ Statement = "(testexe -returncode 0 > '$TestDrive/1.txt' && testexe -returncode 1 > '$TestDrive/2.txt') > '$TestDrive/3.txt'"; Files = @{ "$TestDrive/1.txt" = '0'; "$TestDrive/2.txt" = '1'; "$TestDrive/3.txt" = '' } }
-            )
-        }
-
-        BeforeEach {
-            Remove-Item -Path $TestDrive/*
-        }
-
-        It "Handles redirection correctly with statement '<Statement>'" -TestCases $redirectionTestCases {
-            param($Statement, $Files)
-
-            Invoke-Expression -Command $Statement
-
-            foreach ($file in $Files.get_Keys())
-            {
-                $expectedValue = $Files[$file]
-
-                if ($null -eq $expectedValue)
-                {
-                    $file | Should -Not -Exist
-                    continue
-                }
-
-                # Special case for empty file
-                if ($expectedValue -eq '')
-                {
-                    (Get-Item $file).Length | Should -Be 0
-                    continue
-                }
-
-
-                $file | Should -FileContentMatchMultiline $expectedValue
-            }
-        }
-    }
-
     It "Recognises invalid assignment" {
         {
             Invoke-Expression -Command '$x = $x, $y += $z = testexe -returncode 0 && testexe -returncode 1'
-        } | Should -Throw -ErrorID 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand'
+        } | Should -Throw -ErrorId 'InvalidLeftHandSide,Microsoft.PowerShell.Commands.InvokeExpressionCommand'
     }
 }

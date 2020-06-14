@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -109,27 +109,23 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSCommandNotFoundSuggestion",
                     description: "Recommend potential commands based on fuzzy search on a CommandNotFoundException"),
+#if UNIX
                 new ExperimentalFeature(
-                    name: "PSForEachObjectParallel",
-                    description: "New parameter set for ForEach-Object to run script blocks in parallel"),
+                    name: "PSUnixFileStat",
+                    description: "Provide unix permission information for files and directories"),
+#endif
+                new ExperimentalFeature(
+                    name: "PSNullConditionalOperators",
+                    description: "Support the null conditional member access operators in PowerShell language"),
+                new ExperimentalFeature(
+                    name: "PSCultureInvariantReplaceOperator",
+                    description: "Use culture invariant to-string convertor for lval in replace operator"),
+                new ExperimentalFeature(
+                    name: "PSNativePSPathResolution",
+                    description: "Convert PSPath to filesystem path, if possible, for native commands"),
                 new ExperimentalFeature(
                     name: "PSNewCommonParameters",
                     description: "New -DebugAction, -DebugVariable, -ProgressAction, -ProgressVariable, -VerboseAction, and -VerboseVariable common parameters"),
-                new ExperimentalFeature(
-                    name: "PSTernaryOperator",
-                    description: "Support the ternary operator in PowerShell language"),
-                new ExperimentalFeature(
-                    name: "PSErrorView",
-                    description: "New formatting for ErrorRecord"),
-                new ExperimentalFeature(
-                    name: "PSUpdatesNotification",
-                    description: "Print notification message when new releases are available"),
-                new ExperimentalFeature(
-                    name: "PSCoalescingOperators",
-                    description: "Support the null coalescing operator and null coalescing assignment operator in PowerShell language"),
-                new ExperimentalFeature(
-                    name: "PSPipelineChainOperators",
-                    description: "Allow use of && and || as operators between pipeline invocations"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 
@@ -218,7 +214,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsEngineFeatureName(string featureName)
         {
-            return featureName.Length > 2 && featureName.IndexOf('.') == -1 && featureName.StartsWith("PS", StringComparison.Ordinal);
+            return featureName.Length > 2 && !featureName.Contains('.') && featureName.StartsWith("PS", StringComparison.Ordinal);
         }
 
         /// <summary>
@@ -356,7 +352,7 @@ namespace System.Management.Automation
             if (experimentAction == ExperimentAction.None)
             {
                 string paramName = nameof(experimentAction);
-                string invalidMember = ExperimentAction.None.ToString();
+                string invalidMember = nameof(ExperimentAction.None);
                 string validMembers = StringUtil.Format("{0}, {1}", ExperimentAction.Hide, ExperimentAction.Show);
                 throw PSTraceSource.NewArgumentException(paramName, Metadata.InvalidEnumArgument, invalidMember, paramName, validMembers);
             }

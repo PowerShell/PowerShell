@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation.Runspaces
         internal StopJobOperationHelper(Job job)
         {
             _job = job;
-            _job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+            _job.StateChanged += HandleJobStateChanged;
         }
 
         /// <summary>
@@ -1392,7 +1392,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void RaiseOperationCompleteEvent()
         {
-            _job.StateChanged -= new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
+            _job.StateChanged -= HandleJobStateChanged;
 
             OperationStateEventArgs operationStateArgs = new OperationStateEventArgs();
             operationStateArgs.OperationState = OperationState.StartComplete;
@@ -1417,7 +1417,7 @@ namespace System.Management.Automation.Runspaces
         internal CloseOrDisconnectRunspaceOperationHelper(RemoteRunspace remoteRunspace)
         {
             _remoteRunspace = remoteRunspace;
-            _remoteRunspace.StateChanged += new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
+            _remoteRunspace.StateChanged += HandleRunspaceStateChanged;
         }
 
         /// <summary>
@@ -1494,7 +1494,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         private void RaiseOperationCompleteEvent()
         {
-            _remoteRunspace.StateChanged -= new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
+            _remoteRunspace.StateChanged -= HandleRunspaceStateChanged;
 
             OperationStateEventArgs operationStateEventArgs =
                     new OperationStateEventArgs();
@@ -1592,7 +1592,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);

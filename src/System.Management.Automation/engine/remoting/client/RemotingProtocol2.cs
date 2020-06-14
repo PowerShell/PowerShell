@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -43,16 +43,11 @@ namespace System.Management.Automation.Internal
             // TODO: Assign remote session name.. should be passed from clientRunspacePool
             _transportManager = RemoteSession.SessionDataStructureHandler.TransportManager;
             _transportManager.TypeTable = typeTable;
-            RemoteSession.StateChanged +=
-                new EventHandler<RemoteSessionStateEventArgs>(
-                    HandleClientRemoteSessionStateChanged);
+            RemoteSession.StateChanged += HandleClientRemoteSessionStateChanged;
             _reconnecting = false;
 
-            _transportManager.RobustConnectionNotification +=
-                new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
-
-            _transportManager.CreateCompleted +=
-                new EventHandler<CreateCompleteEventArgs>(HandleSessionCreateCompleted);
+            _transportManager.RobustConnectionNotification += HandleRobustConnectionNotification;
+            _transportManager.CreateCompleted += HandleSessionCreateCompleted;
         }
 
         #endregion Constructors
@@ -234,8 +229,7 @@ namespace System.Management.Automation.Internal
                 _associatedPowerShellDSHandlers.Add(shell.InstanceId, shell.DataStructureHandler);
             }
 
-            shell.DataStructureHandler.RemoveAssociation +=
-                new EventHandler(HandleRemoveAssociation);
+            shell.DataStructureHandler.RemoveAssociation += HandleRemoveAssociation;
 
             // Find out if this is an invoke and disconnect operation and if so whether the endpoint
             // supports disconnect.  Throw exception if disconnect is not supported.
@@ -266,7 +260,7 @@ namespace System.Management.Automation.Internal
                 _associatedPowerShellDSHandlers[psShellInstanceId] = psDSHandler;
             }
 
-            psDSHandler.RemoveAssociation += new EventHandler(HandleRemoveAssociation);
+            psDSHandler.RemoveAssociation += HandleRemoveAssociation;
         }
 
         /// <summary>
@@ -876,6 +870,7 @@ namespace System.Management.Automation.Internal
         private int _maxRunspaces;
         private PSHost _host;
         private PSPrimitiveDictionary _applicationArguments;
+
         private Dictionary<Guid, ClientPowerShellDataStructureHandler> _associatedPowerShellDSHandlers
             = new Dictionary<Guid, ClientPowerShellDataStructureHandler>();
         // data structure handlers of all ClientRemotePowerShell which are
@@ -1192,7 +1187,7 @@ namespace System.Management.Automation.Internal
                 // registered
                 lock (_inputSyncObject)
                 {
-                    inputstream.DataReady += new EventHandler(HandleInputDataReady);
+                    inputstream.DataReady += HandleInputDataReady;
                     WriteInput(inputstream);
                 }
             }
@@ -1497,7 +1492,7 @@ namespace System.Management.Automation.Internal
             TransportManager = transportManager;
             this.clientRunspacePoolId = clientRunspacePoolId;
             this.clientPowerShellId = clientPowerShellId;
-            transportManager.SignalCompleted += new EventHandler<EventArgs>(OnSignalCompleted);
+            transportManager.SignalCompleted += OnSignalCompleted;
         }
 
         #endregion Constructors

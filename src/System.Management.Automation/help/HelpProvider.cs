@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -225,15 +225,9 @@ namespace System.Management.Automation
         {
             string shellID = this.HelpSystem.ExecutionContext.ShellID;
             // Beginning in PowerShell 6.0.0.12, the $pshome is no longer registry specified, we search the application base instead.
-            string returnValue = Utils.GetApplicationBase(shellID);
-
-            if (returnValue == null)
-            {
-                // use executing assemblies location in case registry entry not found
-                returnValue = Path.GetDirectoryName(PsUtils.GetMainModule(System.Diagnostics.Process.GetCurrentProcess()).FileName);
-            }
-
-            return returnValue;
+            // We use executing assemblies location in case registry entry not found
+            return Utils.GetApplicationBase(shellID)
+                ?? Path.GetDirectoryName(PsUtils.GetMainModule(System.Diagnostics.Process.GetCurrentProcess()).FileName);
         }
 
         /// <summary>

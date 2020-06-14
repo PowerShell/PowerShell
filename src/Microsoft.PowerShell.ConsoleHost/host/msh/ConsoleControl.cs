@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -136,6 +136,7 @@ namespace Microsoft.PowerShell
             internal short FontHeight;
             internal int FontFamily;
             internal int FontWeight;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
             internal string FontFace;
         }
@@ -1084,7 +1085,7 @@ namespace Microsoft.PowerShell
             Dbg.Assert(!consoleHandle.IsClosed, "ConsoleHandle is closed");
             if (contents == null)
             {
-                throw PSTraceSource.NewArgumentNullException("contents");
+                throw PSTraceSource.NewArgumentNullException(nameof(contents));
             }
 
             uint codePage;
@@ -2781,7 +2782,36 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            return str.Length - offset - escapeSequenceAdjustment;
+            int length = 0;
+            foreach (char c in str)
+            {
+                length += LengthInBufferCells(c);
+            }
+
+            return length - offset - escapeSequenceAdjustment;
+        }
+
+        internal static int LengthInBufferCells(char c)
+        {
+            // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
+            // which is derived from https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
+            bool isWide = c >= 0x1100 &&
+                (c <= 0x115f || /* Hangul Jamo init. consonants */
+                 c == 0x2329 || c == 0x232a ||
+                 ((uint)(c - 0x2e80) <= (0xa4cf - 0x2e80) &&
+                  c != 0x303f) || /* CJK ... Yi */
+                 ((uint)(c - 0xac00) <= (0xd7a3 - 0xac00)) || /* Hangul Syllables */
+                 ((uint)(c - 0xf900) <= (0xfaff - 0xf900)) || /* CJK Compatibility Ideographs */
+                 ((uint)(c - 0xfe10) <= (0xfe19 - 0xfe10)) || /* Vertical forms */
+                 ((uint)(c - 0xfe30) <= (0xfe6f - 0xfe30)) || /* CJK Compatibility Forms */
+                 ((uint)(c - 0xff00) <= (0xff60 - 0xff00)) || /* Fullwidth Forms */
+                 ((uint)(c - 0xffe0) <= (0xffe6 - 0xffe0)));
+
+            // We can ignore these ranges because .Net strings use surrogate pairs
+            // for this range and we do not handle surrogage pairs.
+            // (c >= 0x20000 && c <= 0x2fffd) ||
+            // (c >= 0x30000 && c <= 0x3fffd)
+            return 1 + (isWide ? 1 : 0);
         }
 
 #if !UNIX
@@ -2950,33 +2980,6 @@ namespace Microsoft.PowerShell
 
         #endregion helper
 
-        #region
-
-        internal static int LengthInBufferCells(char c)
-        {
-            // The following is based on http://www.cl.cam.ac.uk/~mgk25/c/wcwidth.c
-            // which is derived from https://www.unicode.org/Public/UCD/latest/ucd/EastAsianWidth.txt
-
-            bool isWide = c >= 0x1100 &&
-                (c <= 0x115f || /* Hangul Jamo init. consonants */
-                 c == 0x2329 || c == 0x232a ||
-                 (c >= 0x2e80 && c <= 0xa4cf &&
-                  c != 0x303f) || /* CJK ... Yi */
-                 (c >= 0xac00 && c <= 0xd7a3) || /* Hangul Syllables */
-                 (c >= 0xf900 && c <= 0xfaff) || /* CJK Compatibility Ideographs */
-                 (c >= 0xfe10 && c <= 0xfe19) || /* Vertical forms */
-                 (c >= 0xfe30 && c <= 0xfe6f) || /* CJK Compatibility Forms */
-                 (c >= 0xff00 && c <= 0xff60) || /* Fullwidth Forms */
-                 (c >= 0xffe0 && c <= 0xffe6));
-            // We can ignore these ranges because .Net strings use surrogate pairs
-            // for this range and we do not handle surrogage pairs.
-            // (c >= 0x20000 && c <= 0x2fffd) ||
-            // (c >= 0x30000 && c <= 0x3fffd)
-            return 1 + (isWide ? 1 : 0);
-        }
-
-        #endregion
-
         #region SendInput
 
         internal static void MimicKeyPress(INPUT[] inputs)
@@ -3003,6 +3006,7 @@ namespace Microsoft.PowerShell
         internal static class NativeMethods
         {
             internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);  // WinBase.h
+
             internal const int FontTypeMask = 0x06;
             internal const int TrueTypeFont = 0x04;
 

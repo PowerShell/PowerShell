@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -52,12 +52,12 @@ namespace System.Management.Automation
             Name = string.Empty;
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             if (parameterMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterMetadata");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterMetadata));
             }
 
             this.Name = name;
@@ -292,7 +292,7 @@ namespace System.Management.Automation
                 }
 
                 // If the type is really an array, but the typename didn't include [], then add it.
-                if (type.IsArray && (parameterTypeString.IndexOf("[]", StringComparison.Ordinal) == -1))
+                if (type.IsArray && !parameterTypeString.Contains("[]", StringComparison.Ordinal))
                 {
                     var t = type;
                     while (t.IsArray)

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "BooleanParameterDCR Tests" -tags "CI" {
     BeforeAll {
@@ -27,7 +27,7 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
             param ( $inputTest, $expected )
             [bool]$switchTestParam = $inputTest
             $result = ParserTestSwitchCmdlet -switchParam:$switchTestParam
-            $result | should -Be $expected
+            $result | Should -Be $expected
     }
 
     $tests = @(
@@ -39,16 +39,16 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
             param ( $inputTest, $expected )
             [bool]$switchTestParam = $inputTest
             $result = ParserTestSwitchCmdlet -switchParam:$switchTestParam
-            $result | should -Be $expected
+            $result | Should -Be $expected
     }
 
     It "Test that a nullable boolean is accepted for a boolean parameter." {
         [System.Nullable[System.Int32]] $nullBoolVar = $false
         $result = ParserTestBoolCmdlet2 $nullBoolVar
-        $result | should -BeFalse
+        $result | Should -BeFalse
         $result = ParserTestBoolCmdlet2 -First:$nullBoolVar
-        $result | should -BeFalse
+        $result | Should -BeFalse
         $result = ParserTestBoolCmdlet2 -First $nullBoolVar
-        $result | should -BeFalse
+        $result | Should -BeFalse
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -1019,6 +1019,7 @@ namespace Microsoft.PowerShell
 
         private ArrayList _topLevelNodes = new ArrayList();
         private int _nodeCount;
+
         private const int maxNodeCount = 128;
     }
 }   // namespace

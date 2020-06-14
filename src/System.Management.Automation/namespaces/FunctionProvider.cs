@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     }
 
-                    throw PSTraceSource.NewArgumentException("value");
+                    throw PSTraceSource.NewArgumentException(nameof(value));
                 } while (false);
 
                 if (writeItem && modifiedItem != null)
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         internal override IDictionary GetSessionStateTable()
         {
-            return SessionState.Internal.GetFunctionTable();
+            return (IDictionary)SessionState.Internal.GetFunctionTable();
         }
 
         /// <summary>

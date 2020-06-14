@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -316,12 +316,12 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         {
             if (string.IsNullOrEmpty(optionName))
             {
-                throw new ArgumentNullException("optionName");
+                throw new ArgumentNullException(nameof(optionName));
             }
 
             if (optionValue == null)
             {
-                throw new ArgumentNullException("optionValue");
+                throw new ArgumentNullException(nameof(optionValue));
             }
 
             this.queryOptions[optionName] = optionValue;

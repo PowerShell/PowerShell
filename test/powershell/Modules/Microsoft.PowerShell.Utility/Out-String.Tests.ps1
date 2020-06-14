@@ -1,11 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Out-String DRT Unit Tests" -Tags "CI" {
 
     It "check display of properties with names containing wildcard characters" {
-        $results = new-object psobject | add-member -passthru noteproperty 'name with square brackets: [0]' 'myvalue' | out-string
+        $results = New-Object psobject | Add-Member -PassThru noteproperty 'name with square brackets: [0]' 'myvalue' | Out-String
         $results.Length | Should -BeGreaterThan 1
-        $results | Should -BeOfType "System.String"
+        $results | Should -BeOfType System.String
         $results.Contains("myvalue") | Should -BeTrue
         $results.Contains("name with square brackets: [0]") | Should -BeTrue
     }
@@ -22,14 +22,14 @@ Describe "Out-String" -Tags "CI" {
         $testArray = "a", " b"
 
         $testArray | Out-String | Should -BeExactly "a$nl b$nl"
-        ,$($testArray | Out-String) | Should -BeOfType "System.String"
+        ,$($testArray | Out-String) | Should -BeOfType System.String
     }
 
     It "Should be able to return an array of strings using the stream switch" {
         $testInput = "a", "b"
 
-        ,$($testInput | Out-String) | Should -BeOfType "System.String"
-        ,$($testInput | Out-String -Stream) | Should -BeOfType "System.Array"
+        ,$($testInput | Out-String) | Should -BeOfType System.String
+        ,$($testInput | Out-String -Stream) | Should -BeOfType System.Array
     }
 
     It "Should send all objects through a pipeline when not using the stream switch" {
@@ -37,7 +37,7 @@ Describe "Out-String" -Tags "CI" {
 	$streamoutputlength = $($testInput | Out-String -Stream).Length
 	$nonstreamoutputlength = $($testInput | Out-String).Length
 
-	$nonstreamoutputlength| Should -BeGreaterThan $streamoutputlength
+	$nonstreamoutputlength | Should -BeGreaterThan $streamoutputlength
     }
 
     It "Should send a single object through a pipeline when the stream switch is used" {

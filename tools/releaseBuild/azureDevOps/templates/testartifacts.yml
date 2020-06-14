@@ -31,6 +31,7 @@ jobs:
           linux-arm { $packageName = "TestPackage-linux-arm.zip" }
           linux-arm64 { $packageName = "TestPackage-linux-arm64.zip" }
           osx-x64 { $packageName = "TestPackage-macOS.zip" }
+          linux-musl-x64 { $packageName = "TestPackage-alpine-x64.zip"}
         }
 
         Rename-Item $(System.ArtifactsDirectory)/TestPackage.zip $packageName
@@ -42,5 +43,6 @@ jobs:
       BuildTestPackage -runtime linux-arm
       BuildTestPackage -runtime linux-arm64
       BuildTestPackage -runtime osx-x64
+      BuildTestPackage -runtime linux-musl-x64
 
     displayName: Build test package and upload

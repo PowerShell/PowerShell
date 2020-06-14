@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,6 +14,7 @@ namespace System.Diagnostics.Eventing
         private const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";
         private const string EventProviderDllName = "api-ms-win-eventing-provider-l1-1-0.dll";
         private const string WEVTAPI = "wevtapi.dll";
+
         private static readonly IntPtr s_NULL = IntPtr.Zero;
 
         // WinError.h codes:
@@ -239,18 +240,25 @@ namespace System.Diagnostics.Eventing
         {
             [MarshalAs(UnmanagedType.U2)]
             public short Year;
+
             [MarshalAs(UnmanagedType.U2)]
             public short Month;
+
             [MarshalAs(UnmanagedType.U2)]
             public short DayOfWeek;
+
             [MarshalAs(UnmanagedType.U2)]
             public short Day;
+
             [MarshalAs(UnmanagedType.U2)]
             public short Hour;
+
             [MarshalAs(UnmanagedType.U2)]
             public short Minute;
+
             [MarshalAs(UnmanagedType.U2)]
             public short Second;
+
             [MarshalAs(UnmanagedType.U2)]
             public short Milliseconds;
         }
@@ -261,50 +269,73 @@ namespace System.Diagnostics.Eventing
         {
             [FieldOffset(0)]
             public UInt32 UInteger;
+
             [FieldOffset(0)]
             public Int32 Integer;
+
             [FieldOffset(0)]
             public byte UInt8;
+
             [FieldOffset(0)]
             public short Short;
+
             [FieldOffset(0)]
             public ushort UShort;
+
             [FieldOffset(0)]
             public UInt32 Bool;
+
             [FieldOffset(0)]
-            public Byte ByteVal;
+            public byte ByteVal;
+
             [FieldOffset(0)]
             public byte SByte;
+
             [FieldOffset(0)]
             public UInt64 ULong;
+
             [FieldOffset(0)]
             public Int64 Long;
+
             [FieldOffset(0)]
             public Single Single;
+
             [FieldOffset(0)]
-            public Double Double;
+            public double Double;
+
             [FieldOffset(0)]
             public IntPtr StringVal;
+
             [FieldOffset(0)]
             public IntPtr AnsiString;
+
             [FieldOffset(0)]
             public IntPtr SidVal;
+
             [FieldOffset(0)]
             public IntPtr Binary;
+
             [FieldOffset(0)]
             public IntPtr Reference;
+
             [FieldOffset(0)]
             public IntPtr Handle;
+
             [FieldOffset(0)]
             public IntPtr GuidReference;
+
             [FieldOffset(0)]
             public UInt64 FileTime;
+
             [FieldOffset(0)]
             public IntPtr SystemTime;
+
             [FieldOffset(0)]
             public IntPtr SizeT;
+
             [FieldOffset(8)]
             public UInt32 Count;   // number of elements (not length) in bytes.
+
             [FieldOffset(12)]
             public UInt32 Type;
         }
@@ -493,12 +524,16 @@ namespace System.Diagnostics.Eventing
         {
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Server;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string User;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Domain;
+
             [SecurityCritical]
             public CoTaskMemUnicodeSafeHandle Password;
+
             public int Flags;
         }
 
@@ -825,8 +860,10 @@ namespace System.Diagnostics.Eventing
         {
             [MarshalAs(UnmanagedType.LPWStr), FieldOffset(0)]
             public string StringVal;
+
             [FieldOffset(8)]
             public UInt32 Count;
+
             [FieldOffset(12)]
             public UInt32 Type;
         };

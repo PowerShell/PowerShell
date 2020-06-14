@@ -1,5 +1,5 @@
 parameters:
-  vmImage: 'win1803'
+  vmImage: 'windows-2019'
   jobName: 'Nanoserver_Tests'
   continueOnError: false
 
@@ -34,7 +34,7 @@ jobs:
     continueOnError: true
 
   - pwsh: |
-      Install-module pester -Scope CurrentUser -Force
+      Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
     displayName: 'Install Pester'
     continueOnError: true
 

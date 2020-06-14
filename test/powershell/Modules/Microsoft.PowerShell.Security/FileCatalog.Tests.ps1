@@ -1,11 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a Pester test suite to validate the New-FileCatalog & Test-FileCatalog cmdlets on PowerShell.
 
 try {
     #skip all tests on non-windows platform
-    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $defaultParamValues = $PSDefaultParameterValues.Clone()
     $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
 $script:catalogPath = ""
@@ -232,7 +232,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
             $catalogPath = "$env:TEMP\UserConfigProv\catalog.cat"
             try
             {
-                copy-item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue
+                Copy-Item "$testDataPath\UserConfigProv" $env:temp -Recurse -ErrorAction SilentlyContinue
                 Push-Location "$env:TEMP\UserConfigProv"
                 # When -Path is not specified, it should use current directory
                 $null = New-FileCatalog -CatalogFilePath $catalogPath -CatalogVersion 1.0
@@ -316,9 +316,9 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
             $script:catalogPath = "$env:TEMP\TestCatalogWhenNewFileAddedtoFolderBeforeValidation.cat"
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 2.0
-            $null = copy-item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
+            $null = Copy-Item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
             $null = New-Item $env:temp\UserConfigProv\DSCResources\NewFile.txt -ItemType File
-            Add-Content $env:temp\UserConfigProv\DSCResources\NewFile.txt -Value "More Data" -force
+            Add-Content $env:temp\UserConfigProv\DSCResources\NewFile.txt -Value "More Data" -Force
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed
 
             $result.Status | Should -Be "ValidationFailed"
@@ -336,8 +336,8 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
             $script:catalogPath = "$env:TEMP\TestCatalogWhenNewFileDeletedFromFolderBeforeValidation.cat"
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0
-            $null = copy-item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
-            del $env:temp\UserConfigProv\DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1 -force -ErrorAction SilentlyContinue
+            $null = Copy-Item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
+            del $env:temp\UserConfigProv\DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1 -Force -ErrorAction SilentlyContinue
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed
 
             $result.Status | Should -Be "ValidationFailed"
@@ -355,7 +355,7 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
             $script:catalogPath = "$env:TEMP\TestCatalogWhenFileContentModifiedBeforeValidation.cat"
             $null = New-FileCatalog -Path $testDataPath\UserConfigProv\ -CatalogFilePath $script:catalogPath -CatalogVersion 1.0
-            $null = copy-item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
+            $null = Copy-Item $testDataPath\UserConfigProv $env:temp -Recurse -ErrorAction SilentlyContinue
             Add-Content $env:temp\UserConfigProv\DSCResources\UserConfigProviderModVersion1\UserConfigProviderModVersion1.psm1 -Value "More Data" -Force
             $result = Test-FileCatalog -Path $env:temp\UserConfigProv -CatalogFilePath $script:catalogPath -Detailed
 

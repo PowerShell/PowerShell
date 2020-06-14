@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
@@ -55,14 +55,12 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManPluginRequest creationRequestDetails,
             WSManPluginServerTransportManager transportMgr)
         {
-            _syncObject = new Object();
+            _syncObject = new object();
             this.creationRequestDetails = creationRequestDetails;
             this.transportMgr = transportMgr;
 
-            transportMgr.PrepareCalled +=
-                new EventHandler<EventArgs>(this.HandlePrepareFromTransportManager);
-            transportMgr.WSManTransportErrorOccured +=
-                new EventHandler<TransportErrorOccuredEventArgs>(this.HandleTransportError);
+            transportMgr.PrepareCalled += this.HandlePrepareFromTransportManager;
+            transportMgr.WSManTransportErrorOccured += this.HandleTransportError;
         }
 
         public void Dispose()
@@ -167,7 +165,7 @@ namespace System.Management.Automation.Remoting
 
             lock (_syncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     WSManPluginInstance.ReportWSManOperationComplete(requestDetails, lastErrorReported);
                     return;
@@ -196,7 +194,7 @@ namespace System.Management.Automation.Remoting
             WSManNativeApi.WSManStreamIDSet_UnToMan streamSet,
             WSManPluginOperationShutdownContext ctxtToReport)
         {
-            if (true == isClosed)
+            if (isClosed)
             {
                 WSManPluginInstance.ReportWSManOperationComplete(requestDetails, lastErrorReported);
                 return false;
@@ -241,7 +239,7 @@ namespace System.Management.Automation.Remoting
 
             lock (_syncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }
@@ -254,7 +252,7 @@ namespace System.Management.Automation.Remoting
                         PSKeyword.ManagedPlugin | PSKeyword.UseAlwaysAnalytic,
                         creationRequestDetails.ToString(), creationRequestDetails.ToString());
 
-                    // RACE TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
+                    // TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
                     // If Signal comes and executes before registering the notification handle, cleanup will be messed
                     result = WSManNativeApi.WSManPluginReportContext(creationRequestDetails.unmanagedHandle, 0, creationRequestDetails.unmanagedHandle);
                     if (Platform.IsWindows && (WSManPluginConstants.ExitCodeSuccess == result))
@@ -305,13 +303,13 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
-        protected internal void SafeInvokeSessionClosed(Object sender, EventArgs eventArgs)
+        protected internal void SafeInvokeSessionClosed(object sender, EventArgs eventArgs)
         {
             SessionClosed.SafeInvoke(sender, eventArgs);
         }
 
         // handle transport manager related errors
-        internal void HandleTransportError(Object sender, TransportErrorOccuredEventArgs eventArgs)
+        internal void HandleTransportError(object sender, TransportErrorOccuredEventArgs eventArgs)
         {
             Exception reasonForClose = null;
             if (eventArgs != null)
@@ -323,11 +321,11 @@ namespace System.Management.Automation.Remoting
         }
 
         // handle prepare from transport by reporting context to WSMan.
-        internal void HandlePrepareFromTransportManager(Object sender, EventArgs eventArgs)
+        internal void HandlePrepareFromTransportManager(object sender, EventArgs eventArgs)
         {
             ReportContext();
             ReportSendOperationComplete();
-            transportMgr.PrepareCalled -= new EventHandler<EventArgs>(this.HandlePrepareFromTransportManager);
+            transportMgr.PrepareCalled -= this.HandlePrepareFromTransportManager;
         }
 
         internal void Close(bool isShuttingDown)
@@ -350,8 +348,7 @@ namespace System.Management.Automation.Remoting
                 shutDownContext = null;
             }
 
-            transportMgr.WSManTransportErrorOccured -=
-                new EventHandler<TransportErrorOccuredEventArgs>(this.HandleTransportError);
+            transportMgr.WSManTransportErrorOccured -= this.HandleTransportError;
 
             // We should not use request details again after so releasing the resource.
             // Remember not to free this memory as this memory is allocated and owned by WSMan.
@@ -386,6 +383,7 @@ namespace System.Management.Automation.Remoting
         #region Pure virtual methods
 
         internal abstract void CloseOperation(WSManPluginOperationShutdownContext context, Exception reasonForClose);
+
         internal abstract void ExecuteConnect(
             WSManNativeApi.WSManPluginRequest requestDetails, // in
             int flags, // in
@@ -424,7 +422,7 @@ namespace System.Management.Automation.Remoting
                 new EventHandler<RemoteSessionStateMachineEventArgs>(this.HandleServerRemoteSessionClosed);
 
             _activeCommandSessions = new Dictionary<IntPtr, WSManPluginCommandSession>();
-            this.shellSyncObject = new System.Object();
+            this.shellSyncObject = new object();
             this.shutDownContext = shutDownContext;
         }
         #endregion
@@ -522,7 +520,7 @@ namespace System.Management.Automation.Remoting
 
                 WSManPluginCommandSession mgdCmdSession = new WSManPluginCommandSession(requestDetails, serverCmdTransportMgr, _remoteSession);
                 AddToActiveCmdSessions(mgdCmdSession);
-                mgdCmdSession.SessionClosed += new EventHandler<EventArgs>(this.HandleCommandSessionClosed);
+                mgdCmdSession.SessionClosed += this.HandleCommandSessionClosed;
 
                 mgdCmdSession.shutDownContext = new WSManPluginOperationShutdownContext(
                     pluginContext,
@@ -639,7 +637,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginCommandSession cmdSession = cmdSessionEnumerator.Current;
                 // we are not interested in session closed events anymore as we are initiating the close
                 // anyway/
-                cmdSession.SessionClosed -= new EventHandler<EventArgs>(this.HandleCommandSessionClosed);
+                cmdSession.SessionClosed -= this.HandleCommandSessionClosed;
                 cmdSession.Close(reasonForClose);
             }
 
@@ -687,7 +685,7 @@ namespace System.Management.Automation.Remoting
             // let command sessions to close.
             lock (shellSyncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }
@@ -749,7 +747,7 @@ namespace System.Management.Automation.Remoting
             : base(creationRequestDetails, transportMgr)
         {
             _remoteSession = remoteSession;
-            cmdSyncObject = new System.Object();
+            cmdSyncObject = new object();
         }
 
         #endregion
@@ -787,7 +785,7 @@ namespace System.Management.Automation.Remoting
             // let command sessions to close.
             lock (cmdSyncObject)
             {
-                if (true == isClosed)
+                if (isClosed)
                 {
                     return;
                 }

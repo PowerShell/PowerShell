@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
@@ -192,33 +192,58 @@ namespace System.Management.Automation
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Debug"), (o, v) => ((CommonParameters)o).Debug = (SwitchParameter)v);
             if (ExperimentalFeature.EnabledExperimentalFeatureNames.Contains("PSNewCommonParameters"))
             {
-                s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "DebugAction"), (o, v) => ((CommonParameters)o).DebugAction = (ActionPreference)v);
+                s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "DebugAction"),
+                    (o, v) => {
+                        v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                        ((CommonParameters)o).DebugAction = (ActionPreference)v;
+                    });
                 s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "DebugVariable"), (o, v) => ((CommonParameters)o).DebugVariable = (string)v);
             }
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorAction"), (o, v) => ((CommonParameters)o).ErrorAction = (ActionPreference)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorAction"),
+                (o, v) => {
+                    v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                    ((CommonParameters)o).ErrorAction = (ActionPreference)v;
+                });
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ErrorVariable"), (o, v) => ((CommonParameters)o).ErrorVariable = (string)v);
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "InformationAction"), (o, v) => ((CommonParameters)o).InformationAction = (ActionPreference)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "InformationAction"),
+                (o, v) => {
+                    v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                    ((CommonParameters)o).InformationAction = (ActionPreference)v;
+                });
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "InformationVariable"), (o, v) => ((CommonParameters)o).InformationVariable = (string)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "OutBuffer"), (o, v) => ((CommonParameters)o).OutBuffer = (int)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "OutVariable"), (o, v) => ((CommonParameters)o).OutVariable = (string)v);
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "PipelineVariable"), (o, v) => ((CommonParameters)o).PipelineVariable = (string)v);
             if (ExperimentalFeature.EnabledExperimentalFeatureNames.Contains("PSNewCommonParameters"))
             {
-                s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ProgressAction"), (o, v) => ((CommonParameters)o).ProgressAction = (ActionPreference)v);
+                s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ProgressAction"),
+                    (o, v) => {
+                        v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                        ((CommonParameters)o).ProgressAction = (ActionPreference)v;
+                    });
                 s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "ProgressVariable"), (o, v) => ((CommonParameters)o).ProgressVariable = (string)v);
             }
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "Verbose"), (o, v) => ((CommonParameters)o).Verbose = (SwitchParameter)v);
             if (ExperimentalFeature.EnabledExperimentalFeatureNames.Contains("PSNewCommonParameters"))
             {
-                s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "VerboseAction"), (o, v) => ((CommonParameters)o).VerboseAction = (ActionPreference)v);
+                s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "VerboseAction"),
+                    (o, v) => {
+                        v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                        ((CommonParameters)o).VerboseAction = (ActionPreference)v;
+                    });
                 s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "VerboseVariable"), (o, v) => ((CommonParameters)o).VerboseVariable = (string)v);
             }
-            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "WarningAction"), (o, v) => ((CommonParameters)o).WarningAction = (ActionPreference)v);
+            s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "WarningAction"),
+                (o, v) => {
+                    v ??= LanguagePrimitives.ThrowInvalidCastException(null, typeof(ActionPreference));
+                    ((CommonParameters)o).WarningAction = (ActionPreference)v;
+                });
             s_setterMethods.TryAdd(Tuple.Create(typeof(CommonParameters), "WarningVariable"), (o, v) => ((CommonParameters)o).WarningVariable = (string)v);
         }
 
         private static readonly ConcurrentDictionary<Tuple<Type, string>, Func<object, object>> s_getterMethods
             = new ConcurrentDictionary<Tuple<Type, string>, Func<object, object>>();
+
         private static readonly ConcurrentDictionary<Tuple<Type, string>, Action<object, object>> s_setterMethods =
             new ConcurrentDictionary<Tuple<Type, string>, Action<object, object>>();
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -59,6 +59,30 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         public abstract string ReadLine();
+
+        /// <summary>
+        /// Same as ReadLine except that the input is not echoed to the user while it is collected
+        /// or is echoed in some obfuscated way, such as showing a dot for each character.
+        /// </summary>
+        /// <returns>
+        /// The characters typed by the user.
+        /// </returns>
+        /// <remarks>
+        /// Note that credentials (a user name and password) should be gathered with
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
+        /// <see cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
+        /// </remarks>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string)"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForCredential(string, string, string, string, System.Management.Automation.PSCredentialTypes, System.Management.Automation.PSCredentialUIOptions)"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.PromptForChoice"/>
+        /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
+        public virtual string ReadLineMaskedAsString()
+        {
+            // Default implementation of the function to maintain backwards compatibility of the base class.
+            throw new PSNotImplementedException();
+        }
+
         /// <summary>
         /// Same as ReadLine, except that the result is a SecureString, and that the input is not echoed to the user while it is
         /// collected (or is echoed in some obfuscated way, such as showing a dot for each character).
@@ -391,12 +415,16 @@ namespace System.Management.Automation.Host
         /// make it to the actual host.
         /// </summary>
         internal bool TranscribeOnly => Interlocked.CompareExchange(ref _transcribeOnlyCount, 0, 0) != 0;
+
         private int _transcribeOnlyCount = 0;
+
         internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
+
         private sealed class TranscribeOnlyCookie : IDisposable
         {
             private PSHostUserInterface _ui;
             private bool _disposed = false;
+
             public TranscribeOnlyCookie(PSHostUserInterface ui)
             {
                 _ui = ui;
@@ -949,7 +977,8 @@ namespace System.Management.Automation.Host
         }
 
         internal static TranscriptionOption systemTranscript = null;
-        private static object s_systemTranscriptLock = new Object();
+        private static object s_systemTranscriptLock = new object();
+
         private static Lazy<Transcription> s_transcriptionSettingCache = new Lazy<Transcription>(
             () => Utils.GetPolicySetting<Transcription>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
@@ -1247,7 +1276,7 @@ namespace System.Management.Automation.Host
                     if (andPos + 1 < choices[i].Label.Length)
                     {
                         splitLabel.Append(choices[i].Label.Substring(andPos + 1));
-                        hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.Substring(andPos + 1, 1).Trim());
+                        hotkeysAndPlainLabels[0, i] = CultureInfo.CurrentCulture.TextInfo.ToUpper(choices[i].Label.AsSpan(andPos + 1, 1).Trim().ToString());
                     }
 
                     hotkeysAndPlainLabels[1, i] = splitLabel.ToString().Trim();

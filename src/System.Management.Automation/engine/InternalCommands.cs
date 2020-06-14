@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
     /// to each element of the pipeline.
     /// </summary>
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Low,
-        DefaultParameterSetName = ForEachObjectCommand.ScriptBlockSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300",
+        DefaultParameterSetName = ForEachObjectCommand.ScriptBlockSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096867",
         RemotingCapability = RemotingCapability.None)]
     public sealed class ForEachObjectCommand : PSCmdlet, IDisposable
     {
@@ -234,7 +234,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets a script block to run in parallel for each pipeline object.
         /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(Mandatory = true, ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public ScriptBlock Parallel { get; set; }
 
@@ -242,7 +241,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the maximum number of concurrently running scriptblocks on separate threads.
         /// The default number is 5.
         /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateRange(1, Int32.MaxValue)]
         public int ThrottleLimit { get; set; } = 5;
@@ -251,7 +249,6 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a timeout time in seconds, after which the parallel running scripts will be stopped
         /// The default value is 0, indicating no timeout.
         /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         [ValidateRange(0, (Int32.MaxValue / 1000))]
         public int TimeoutSeconds { get; set; }
@@ -260,9 +257,16 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets a flag that returns a job object immediately for the parallel operation, instead of returning after
         /// all foreach processing is completed.
         /// </summary>
-        [Experimental("PSForEachObjectParallel", ExperimentAction.Show)]
         [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
         public SwitchParameter AsJob { get; set; }
+
+        /// <summary>
+        /// Gets or sets a flag so that a new runspace object is created for each loop iteration, instead of reusing objects
+        /// from the runspace pool.
+        /// By default, runspaces are reused from a runspace pool.
+        /// </summary>
+        [Parameter(ParameterSetName = ForEachObjectCommand.ParallelParameterSet)]
+        public SwitchParameter UseNewRunspace { get; set; }
 
         #endregion
 
@@ -399,7 +403,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 _currentLocationPath = SessionState.Internal.CurrentLocation.Path;
             }
-            catch (PSInvalidOperationException) 
+            catch (PSInvalidOperationException)
             {
             }
 
@@ -441,7 +445,8 @@ namespace Microsoft.PowerShell.Commands
 
                 _taskJob = new PSTaskJob(
                     Parallel.ToString(),
-                    ThrottleLimit);
+                    ThrottleLimit,
+                    UseNewRunspace);
 
                 return;
             }
@@ -449,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
             // Set up for synchronous processing and data streaming.
             _taskCollection = new PSDataCollection<System.Management.Automation.PSTasks.PSTask>();
             _taskDataStreamWriter = new PSTaskDataStreamWriter(this);
-            _taskPool = new PSTaskPool(ThrottleLimit);
+            _taskPool = new PSTaskPool(ThrottleLimit, UseNewRunspace);
             _taskPool.PoolComplete += (sender, args) =>
             {
                 _taskDataStreamWriter.Close();
@@ -499,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
                             _taskCollection.Complete();
                             _taskCollectionException = ex;
                             _taskDataStreamWriter.Close();
-                            
+
                             break;
                         }
 
@@ -519,7 +524,7 @@ namespace Microsoft.PowerShell.Commands
         private void ProcessParallelParameterSet()
         {
             // Validate piped InputObject
-            if (_inputObject != null && 
+            if (_inputObject != null &&
                 _inputObject.BaseObject is ScriptBlock)
             {
                 WriteError(
@@ -583,7 +588,7 @@ namespace Microsoft.PowerShell.Commands
 
                 return;
             }
-            
+
             // Close task collection and wait for processing to complete while streaming data.
             _taskDataStreamWriter.WriteImmediate();
             _taskCollection.Complete();
@@ -1186,7 +1191,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="inputObject">Source object.</param>
         /// <returns>True if we are in restrictedLanguageMode.</returns>
-        private bool BlockMethodInLanguageMode(Object inputObject)
+        private bool BlockMethodInLanguageMode(object inputObject)
         {
             // Cannot invoke a method in RestrictedLanguage mode
             if (Context.LanguageMode == PSLanguageMode.RestrictedLanguage)
@@ -1262,7 +1267,7 @@ namespace Microsoft.PowerShell.Commands
     /// is passed on, otherwise it is dropped.
     /// </summary>
     [Cmdlet("Where", "Object", DefaultParameterSetName = "EqualSet",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113423", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096806", RemotingCapability = RemotingCapability.None)]
     public sealed class WhereObjectCommand : PSCmdlet
     {
         /// <summary>
@@ -1958,6 +1963,7 @@ namespace Microsoft.PowerShell.Commands
 
         private readonly CallSite<Func<CallSite, object, bool>> _toBoolSite =
             CallSite<Func<CallSite, object, bool>>.Create(PSConvertBinder.Get(typeof(bool)));
+
         private Func<object, object, object> _operationDelegate;
 
         private static Func<object, object, object> GetCallSiteDelegate(ExpressionType expressionType, bool ignoreCase)
@@ -2485,7 +2491,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that sets the script debugging options.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSDebug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113398")]
+    [Cmdlet(VerbsCommon.Set, "PSDebug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096959")]
     public sealed class SetPSDebugCommand : PSCmdlet
     {
         /// <summary>
@@ -2611,7 +2617,7 @@ namespace Microsoft.PowerShell.Commands
     /// Unlike Set-PSDebug -strict, Set-StrictMode is not engine-wide, and only
     /// affects the scope it was defined in.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113450")]
+    [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096804")]
     public class SetStrictModeCommand : PSCmdlet
     {
         /// <summary>

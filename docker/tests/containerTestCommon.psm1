@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 $script:forcePull = $true
@@ -72,7 +72,7 @@ function Get-LinuxContainer
     {
         Write-Output @{
             Name = $os
-            Path = "$psscriptroot/../release/$os"
+            Path = "$PSScriptRoot/../release/$os"
         }
     }
 }
@@ -84,7 +84,7 @@ function Get-WindowsContainer
     {
         Write-Output @{
             Name = $os
-            Path = "$psscriptroot/../release/$os"
+            Path = "$PSScriptRoot/../release/$os"
         }
     }
 }
@@ -183,7 +183,7 @@ function Get-ContainerPowerShellVersion
     $runParams = @()
     $localVolumeName = $testContext.resolvedTestDrive
     $runParams += '--rm'
-    if($TestContext.Type -ne 'Windows' -and $isWindows)
+    if($TestContext.Type -ne 'Windows' -and $IsWindows)
     {
         # use a container volume on windows because host volumes are not automatic
         $volumeName = "test-volume-" + (Get-Random -Minimum 100 -Maximum 999)
@@ -204,7 +204,7 @@ function Get-ContainerPowerShellVersion
     $runParams += ('$PSVersionTable.PSVersion.ToString() | out-string | out-file -encoding ascii -FilePath '+$testContext.containerLogPath)
 
     $null = Invoke-Docker -Command run -Params $runParams -SuppressHostOutput
-    if($TestContext.Type -ne 'Windows' -and $isWindows)
+    if($TestContext.Type -ne 'Windows' -and $IsWindows)
     {
         $null = Invoke-Docker -Command cp -Params "${volumeName}:$($testContext.containerLogPath)", $TestContext.ResolvedLogPath
         $null = Invoke-Docker -Command container, rm -Params $volumeName, '--force' -SuppressHostOutput

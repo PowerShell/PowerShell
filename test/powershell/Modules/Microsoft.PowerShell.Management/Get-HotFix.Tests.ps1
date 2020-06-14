@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Get-HotFix Tests" -Tag CI {
@@ -57,5 +57,10 @@ Describe "Get-HotFix Tests" -Tag CI {
     It "Get-HotFix can use -ComputerName" {
         $hotfixes = Get-HotFix -ComputerName localhost
         $hotfixes.Count | Should -Be $qfe.Count
+    }
+
+    It "Get-Hotfix can accept ComputerName via pipeline" {
+        { [PSCustomObject]@{ComputerName = 'UnavailableComputer'} | Get-HotFix } | Should -Throw -ErrorId 'Microsoft.PowerShell.Commands.GetHotFixCommand'
+        [PSCustomObject]@{ComputerName = 'localhost'} | Get-HotFix | Should -Not -BeNullOrEmpty
     }
 }

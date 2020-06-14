@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Threading;
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (callback == null)
             {
-                throw new PSArgumentNullException("callback");
+                throw new PSArgumentNullException(nameof(callback));
             }
 
             _invokeCallback = callback;

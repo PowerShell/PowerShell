@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -422,6 +422,12 @@ namespace System.Management.Automation.Language
         /// <summary>The null coalesce operator '??'.</summary>
         QuestionQuestion = 102,
 
+        /// <summary>The null conditional member access operator '?.'.</summary>
+        QuestionDot = 103,
+
+        /// <summary>The null conditional index access operator '?[]'.</summary>
+        QuestionLBracket = 104,
+
         #endregion Operators
 
         #region Keywords
@@ -578,6 +584,9 @@ namespace System.Management.Automation.Language
 
         /// <summary>The 'base' keyword</summary>
         Base = 168,
+
+        /// <summary>The 'default' keyword</summary>
+        Default = 169,
 
         #endregion Keywords
     }
@@ -867,8 +876,8 @@ namespace System.Management.Automation.Language
             /*         QuestionMark */ TokenFlags.TernaryOperator | TokenFlags.DisallowedInRestrictedMode,
           /* QuestionQuestionEquals */ TokenFlags.AssignmentOperator,
             /*     QuestionQuestion */ TokenFlags.BinaryOperator | TokenFlags.BinaryPrecedenceCoalesce,
-            /*     Reserved slot 5  */ TokenFlags.None,
-            /*     Reserved slot 6  */ TokenFlags.None,
+            /*          QuestionDot */ TokenFlags.SpecialOperator | TokenFlags.DisallowedInRestrictedMode,
+            /*     QuestionLBracket */ TokenFlags.None,
             /*     Reserved slot 7  */ TokenFlags.None,
             /*     Reserved slot 8  */ TokenFlags.None,
             /*     Reserved slot 9  */ TokenFlags.None,
@@ -938,6 +947,7 @@ namespace System.Management.Automation.Language
             /*              Command */ TokenFlags.Keyword,
             /*               Hidden */ TokenFlags.Keyword,
             /*                 Base */ TokenFlags.Keyword,
+            /*              Default */ TokenFlags.Keyword,
 
             #endregion Flags for keywords
         };
@@ -1065,8 +1075,8 @@ namespace System.Management.Automation.Language
             /*         QuestionMark */ "?",
           /* QuestionQuestionEquals */ "??=",
             /*     QuestionQuestion */ "??",
-            /*    Reserved slot 5   */ string.Empty,
-            /*    Reserved slot 6   */ string.Empty,
+            /*          QuestionDot */ "?.",
+            /*     QuestionLBracket */ "?[",
             /*    Reserved slot 7   */ string.Empty,
             /*    Reserved slot 8   */ string.Empty,
             /*    Reserved slot 9   */ string.Empty,
@@ -1136,6 +1146,7 @@ namespace System.Management.Automation.Language
             /*              Command */ "command",
             /*               Hidden */ "hidden",
             /*                 Base */ "base",
+            /*              Default */ "default",
 
             #endregion Text for keywords
         };
@@ -1143,9 +1154,9 @@ namespace System.Management.Automation.Language
 #if DEBUG
         static TokenTraits()
         {
-            Diagnostics.Assert(s_staticTokenFlags.Length == ((int)TokenKind.Base + 1),
+            Diagnostics.Assert(s_staticTokenFlags.Length == ((int)TokenKind.Default + 1),
                                "Table size out of sync with enum - _staticTokenFlags");
-            Diagnostics.Assert(s_tokenText.Length == ((int)TokenKind.Base + 1),
+            Diagnostics.Assert(s_tokenText.Length == ((int)TokenKind.Default + 1),
                                "Table size out of sync with enum - _tokenText");
             // Some random assertions to make sure the enum and the traits are in sync
             Diagnostics.Assert(GetTraits(TokenKind.Begin) == (TokenFlags.Keyword | TokenFlags.ScriptBlockBlockName),

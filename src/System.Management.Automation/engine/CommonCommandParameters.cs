@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -28,7 +28,7 @@ namespace System.Management.Automation.Internal
         {
             if (commandRuntime == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandRuntime");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandRuntime));
             }
 
             _commandRuntime = commandRuntime;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !SILVERLIGHT // ComObject
@@ -192,10 +192,7 @@ namespace System.Management.Automation.ComInterop
                 {
                     foreach (string name in Events.Keys)
                     {
-                        if (!names.ContainsKey(name))
-                        {
-                            names.Add(name, null);
-                        }
+                        names.TryAdd(name, null);
                     }
                 }
             }

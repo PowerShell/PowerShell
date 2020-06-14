@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -609,7 +609,7 @@ namespace Microsoft.PowerShell
         {
             if ((options & (ReadKeyOptions.IncludeKeyDown | ReadKeyOptions.IncludeKeyUp)) == 0)
             {
-                throw PSTraceSource.NewArgumentException("options", ConsoleHostRawUserInterfaceStrings.InvalidReadKeyOptionsError);
+                throw PSTraceSource.NewArgumentException(nameof(options), ConsoleHostRawUserInterfaceStrings.InvalidReadKeyOptionsError);
             }
 
             // keyInfo is initialized in the below if-else statement
@@ -880,14 +880,14 @@ namespace Microsoft.PowerShell
         {
             if (contents == null)
             {
-                PSTraceSource.NewArgumentNullException("contents");
+                PSTraceSource.NewArgumentNullException(nameof(contents));
             }
             // the origin must be within the window.
 
             ConsoleControl.CONSOLE_SCREEN_BUFFER_INFO bufferInfo;
 
             ConsoleHandle handle = GetBufferInfo(out bufferInfo);
-            CheckCoordinateWithinBuffer(ref origin, ref bufferInfo, "origin");
+            CheckCoordinateWithinBuffer(ref origin, ref bufferInfo, nameof(origin));
 
             // The output is clipped by the console subsystem, so we don't have to check that the array exceeds the buffer
             // boundaries.
@@ -931,14 +931,14 @@ namespace Microsoft.PowerShell
             // make sure the rect is valid
             if (region.Right < region.Left)
             {
-                throw PSTraceSource.NewArgumentException("region",
+                throw PSTraceSource.NewArgumentException(nameof(region),
                     ConsoleHostRawUserInterfaceStrings.InvalidRegionErrorTemplate,
                     "region.Right", "region.Left");
             }
 
             if (region.Bottom < region.Top)
             {
-                throw PSTraceSource.NewArgumentException("region",
+                throw PSTraceSource.NewArgumentException(nameof(region),
                     ConsoleHostRawUserInterfaceStrings.InvalidRegionErrorTemplate,
                     "region.Bottom", "region.Top");
             }
@@ -960,7 +960,7 @@ namespace Microsoft.PowerShell
                     ConsoleControl.IsCJKOutputCodePage(out codePage) &&
                     LengthInBufferCells(fill.Character) == 2)
                 {
-                    throw PSTraceSource.NewArgumentException("fill");
+                    throw PSTraceSource.NewArgumentException(nameof(fill));
                 }
 
                 int cells = bufferWidth * bufferHeight;
@@ -1005,7 +1005,7 @@ namespace Microsoft.PowerShell
                     {
                         if (leftExisting[r, 0].BufferCellType == BufferCellType.Leading)
                         {
-                            throw PSTraceSource.NewArgumentException("fill");
+                            throw PSTraceSource.NewArgumentException(nameof(fill));
                         }
                     }
                 }
@@ -1014,7 +1014,7 @@ namespace Microsoft.PowerShell
                 {
                     if (charLength == 2)
                     {
-                        throw PSTraceSource.NewArgumentException("fill");
+                        throw PSTraceSource.NewArgumentException(nameof(fill));
                     }
                 }
                 else
@@ -1030,7 +1030,7 @@ namespace Microsoft.PowerShell
                         {
                             if (rightExisting[r, 0].BufferCellType == BufferCellType.Leading)
                             {
-                                throw PSTraceSource.NewArgumentException("fill");
+                                throw PSTraceSource.NewArgumentException(nameof(fill));
                             }
                         }
                     }
@@ -1040,7 +1040,7 @@ namespace Microsoft.PowerShell
                         {
                             if (rightExisting[r, 0].BufferCellType == BufferCellType.Leading ^ charLength == 2)
                             {
-                                throw PSTraceSource.NewArgumentException("fill");
+                                throw PSTraceSource.NewArgumentException(nameof(fill));
                             }
                         }
                     }
@@ -1091,14 +1091,14 @@ namespace Microsoft.PowerShell
             // make sure the rect is valid
             if (region.Right < region.Left)
             {
-                throw PSTraceSource.NewArgumentException("region",
+                throw PSTraceSource.NewArgumentException(nameof(region),
                     ConsoleHostRawUserInterfaceStrings.InvalidRegionErrorTemplate,
                     "region.Right", "region.Left");
             }
 
             if (region.Bottom < region.Top)
             {
-                throw PSTraceSource.NewArgumentException("region",
+                throw PSTraceSource.NewArgumentException(nameof(region),
                     ConsoleHostRawUserInterfaceStrings.InvalidRegionErrorTemplate,
                     "region.Bottom", "region.Top");
             }

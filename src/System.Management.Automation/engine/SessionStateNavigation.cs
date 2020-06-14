@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -48,7 +48,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -125,7 +125,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             CmdletProviderContext getProviderPathContext =
@@ -469,7 +469,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -517,7 +517,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             CmdletProviderContext getProviderPathContext =
@@ -546,7 +546,7 @@ namespace System.Management.Automation
                     // Since the provider didn't write an error, and we didn't get any
                     // results ourselves, we need to write out our own error.
 
-                    Exception e = PSTraceSource.NewArgumentException("path");
+                    Exception e = PSTraceSource.NewArgumentException(nameof(path));
                     context.WriteError(new ErrorRecord(e, "NormalizePathNullResult", ErrorCategory.InvalidArgument, path));
                     return null;
                 }
@@ -816,13 +816,13 @@ namespace System.Management.Automation
 
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (parent == null &&
                 child == null)
             {
-                throw PSTraceSource.NewArgumentException("parent");
+                throw PSTraceSource.NewArgumentException(nameof(parent));
             }
 
             // Set the drive data for the context
@@ -1046,7 +1046,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             PSDriveInfo drive = null;
@@ -1340,7 +1340,7 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             CmdletProviderContext context = new CmdletProviderContext(this.ExecutionContext);
@@ -1398,12 +1398,12 @@ namespace System.Management.Automation
         {
             if (paths == null)
             {
-                throw PSTraceSource.NewArgumentNullException("paths");
+                throw PSTraceSource.NewArgumentNullException(nameof(paths));
             }
 
             if (destination == null)
             {
-                throw PSTraceSource.NewArgumentNullException("destination");
+                throw PSTraceSource.NewArgumentNullException(nameof(destination));
             }
 
             ProviderInfo provider = null;
@@ -1420,7 +1420,7 @@ namespace System.Management.Automation
             {
                 ArgumentException argException =
                     PSTraceSource.NewArgumentException(
-                        "destination",
+                        nameof(destination),
                         SessionStateStrings.MoveItemOneDestination);
 
                 context.WriteError(new ErrorRecord(argException, argException.GetType().FullName, ErrorCategory.InvalidArgument, destination));
@@ -1431,7 +1431,7 @@ namespace System.Management.Automation
                 {
                     if (path == null)
                     {
-                        throw PSTraceSource.NewArgumentNullException("paths");
+                        throw PSTraceSource.NewArgumentNullException(nameof(paths));
                     }
 
                     Collection<string> providerPaths =
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation
                         {
                             ArgumentException argException =
                                 PSTraceSource.NewArgumentException(
-                                    "destination",
+                                    nameof(destination),
                                     SessionStateStrings.MoveItemSourceAndDestinationNotSameProvider);
 
                             context.WriteError(new ErrorRecord(argException, argException.GetType().FullName, ErrorCategory.InvalidArgument, providerPaths));

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -42,7 +42,7 @@ namespace System.Management.Automation.Help
     /// </summary>
     internal class DefaultCommandHelpObjectBuilder
     {
-        internal static string TypeNameForDefaultHelp = "ExtendedCmdletHelpInfo";
+        internal static readonly string TypeNameForDefaultHelp = "ExtendedCmdletHelpInfo";
         /// <summary>
         /// Generates a HelpInfo PSObject from a CmdletInfo object.
         /// </summary>

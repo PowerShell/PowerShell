@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             CimQuery query = baseQuery as CimQuery;
             if (query == null)
             {
-                throw new ArgumentNullException("baseQuery");
+                throw new ArgumentNullException(nameof(baseQuery));
             }
 
             TerminatingErrorTracker tracker = TerminatingErrorTracker.GetTracker(this.CmdletInvocationInfo, isStaticCmdlet: false);
@@ -369,6 +369,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         #region Handling of dynamic parameters
 
         private RuntimeDefinedParameterDictionary _dynamicParameters;
+
         private const string CimNamespaceParameter = "CimNamespace";
 
         private string GetDynamicNamespace()

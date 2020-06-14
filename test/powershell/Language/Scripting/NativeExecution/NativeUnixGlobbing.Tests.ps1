@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Native UNIX globbing tests' -tags "CI" {
@@ -50,9 +50,9 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
     }
     # Test globbing with absolute paths - it shouldn't turn absolute paths into relative paths (#7089)
     It 'Should not normalize absolute paths' {
-        $matches = /bin/echo /etc/*
+        $Matches = /bin/echo /etc/*
         # Matched path should start with '/etc/' not '../..'
-        $matches.substring(0,5) | Should Be '/etc/'
+        $Matches.substring(0,5) | Should -Be '/etc/'
     }
 	It 'Globbing should not happen with quoted expressions' {
 	    $v = "$TESTDRIVE/abc*"
@@ -120,11 +120,11 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
     }
     # Test ~ expansion
     It 'Tilde should be replaced by the filesystem provider home directory' {
-        /bin/echo ~ | Should -BeExactly ($executioncontext.SessionState.Provider.Get("FileSystem").Home)
+        /bin/echo ~ | Should -BeExactly ($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)
     }
     # Test ~ expansion with a path fragment (e.g. ~/foo)
     It '~/foo should be replaced by the <filesystem provider home directory>/foo' {
-        /bin/echo ~/foo | Should -BeExactly "$($executioncontext.SessionState.Provider.Get("FileSystem").Home)/foo"
+        /bin/echo ~/foo | Should -BeExactly "$($ExecutionContext.SessionState.Provider.Get("FileSystem").Home)/foo"
     }
 	It '~ should not be replaced when quoted' {
 		/bin/echo '~' | Should -BeExactly '~'

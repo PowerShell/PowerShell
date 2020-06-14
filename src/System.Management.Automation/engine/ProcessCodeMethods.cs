@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell
     /// </summary>
     public static class ProcessCodeMethods
     {
-        const int InvalidProcessId = -1;
+        private const int InvalidProcessId = -1;
 
         internal static Process GetParent(this Process process)
         {
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        struct PROCESS_BASIC_INFORMATION
+        private struct PROCESS_BASIC_INFORMATION
         {
             public IntPtr ExitStatus;
             public IntPtr PebBaseAddress;
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell
         }
 
         [DllImport("ntdll.dll", SetLastError = true)]
-        static extern int NtQueryInformationProcess(
+        private static extern int NtQueryInformationProcess(
                 IntPtr processHandle,
                 int processInformationClass,
                 out PROCESS_BASIC_INFORMATION processInformation,

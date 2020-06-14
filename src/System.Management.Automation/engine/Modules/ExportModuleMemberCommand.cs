@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that loads a module.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "ModuleMember", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141551")]
+    [Cmdlet(VerbsData.Export, "ModuleMember", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096578")]
     public sealed class ExportModuleMemberCommand : PSCmdlet
     {
         /// <summary>

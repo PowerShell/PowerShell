@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -847,12 +847,14 @@ namespace System.Management.Automation
             "Description",
             "HelpInfoURI",
         };
+
         private static readonly string[] s_manifestEntriesToKeepAsStringArray = new[] {
             "FunctionsToExport",
             "VariablesToExport",
             "AliasesToExport",
             "CmdletsToExport",
         };
+
         internal static Hashtable RewriteManifest(
             Hashtable originalManifest,
             IEnumerable<string> nestedModules,
@@ -976,7 +978,7 @@ namespace System.Management.Automation
             }
 
             Dbg.Assert(false, "Unrecognized authentication mechanism [ValidateSet should prevent that from happening]");
-            throw new ArgumentOutOfRangeException("authentication");
+            throw new ArgumentOutOfRangeException(nameof(authentication));
         }
 
         internal static CimSession CreateCimSession(

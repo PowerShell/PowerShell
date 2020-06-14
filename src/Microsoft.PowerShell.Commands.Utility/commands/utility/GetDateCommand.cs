@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the get-date command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113313")]
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
     [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
     [OutputType(typeof(DateTime), ParameterSetName = new string[] { "net" })]
     public sealed class GetDateCommand : Cmdlet
@@ -39,6 +39,12 @@ namespace Microsoft.PowerShell.Commands
                 _dateSpecified = true;
             }
         }
+
+        /// <summary>
+        /// Gets or sets whether to treat a numeric input as ticks, or unix time.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter FromUnixTime;
 
         private DateTime _date;
         private bool _dateSpecified;
@@ -217,6 +223,11 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value that converts date to UTC before formatting.
+        /// </summary>
+        [Parameter(ParameterSetName = "net")]
+        public SwitchParameter AsUTC { get; set; }
         #endregion
 
         #region methods
@@ -232,7 +243,14 @@ namespace Microsoft.PowerShell.Commands
             // use passed date object if specified
             if (_dateSpecified)
             {
-                dateToUse = Date;
+                if (FromUnixTime.IsPresent)
+                {
+                    dateToUse = DateTimeOffset.FromUnixTimeSeconds(Date.Ticks).UtcDateTime;
+                }
+                else
+                {
+                    dateToUse = Date;
+                }
             }
 
             // use passed year if specified
@@ -283,6 +301,11 @@ namespace Microsoft.PowerShell.Commands
                 offset = Millisecond - dateToUse.Millisecond;
                 dateToUse = dateToUse.AddMilliseconds(offset);
                 dateToUse = dateToUse.Subtract(TimeSpan.FromTicks(dateToUse.Ticks % 10000));
+            }
+
+            if (AsUTC)
+            {
+                dateToUse = dateToUse.ToUniversalTime();
             }
 
             if (UFormat != null)
@@ -474,34 +497,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'V':
-                            // .Net Core doesn't implement ISO 8601.
-                            // So we use workaround from https://blogs.msdn.microsoft.com/shawnste/2006/01/24/iso-8601-week-of-year-format-in-microsoft-net/
-                            // with corrections from comments
-
-                            // Culture doesn't matter since we specify start day of week
-                            var calender = CultureInfo.InvariantCulture.Calendar;
-                            var day = calender.GetDayOfWeek(dateTime);
-                            var normalizedDatetime = dateTime;
-
-                            switch (day)
-                            {
-                                case DayOfWeek.Monday:
-                                case DayOfWeek.Tuesday:
-                                case DayOfWeek.Wednesday:
-                                    normalizedDatetime = dateTime.AddDays(3);
-                                    break;
-
-                                case DayOfWeek.Friday:
-                                case DayOfWeek.Saturday:
-                                case DayOfWeek.Sunday:
-                                    normalizedDatetime = dateTime.AddDays(-3);
-                                    break;
-                            }
-
-                            // FirstFourDayWeek and DayOfWeek.Monday is from ISO 8601
-                            sb.Append(StringUtil.Format("{0:00}", calender.GetWeekOfYear(normalizedDatetime,
-                                                                                        CalendarWeekRule.FirstFourDayWeek,
-                                                                                        DayOfWeek.Monday)));
+                            sb.Append(StringUtil.Format("{0:00}", ISOWeek.GetWeekOfYear(dateTime)));
                             break;
 
                         case 'W':

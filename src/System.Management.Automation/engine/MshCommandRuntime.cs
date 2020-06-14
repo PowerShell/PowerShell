@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #pragma warning disable 1634, 1691
 
@@ -396,7 +396,7 @@ namespace System.Management.Automation
         {
             if (progressRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("progressRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(progressRecord));
             }
 
             if (Host == null || Host.UI == null)
@@ -932,6 +932,7 @@ namespace System.Management.Automation
         /// the cmdlet. Semantically this is equivalent to :  cmd | % { $pipelineVariable = $_; (...) }
         /// </summary>
         internal string PipelineVariable { get; set; }
+
         private PSVariable _pipelineVarReference = null;
 
         internal void SetupOutVariable()
@@ -2059,7 +2060,7 @@ namespace System.Management.Automation
             ThrowIfStopping();
             if (errorRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("errorRecord");
+                throw PSTraceSource.NewArgumentNullException(nameof(errorRecord));
             }
 
             errorRecord.SetInvocationInfo(MyInvocation);
@@ -2236,7 +2237,7 @@ namespace System.Management.Automation
         /// An empty array that is declared statically so we don't keep
         /// allocating them over and over...
         /// </summary>
-        internal static object[] StaticEmptyArray = Array.Empty<object>();
+        internal static readonly object[] StaticEmptyArray = Array.Empty<object>();
 
         /// <summary>
         /// Gets or sets the error pipe.
@@ -2324,7 +2325,7 @@ namespace System.Management.Automation
             internal AllowWrite(InternalCommand permittedToWrite, bool permittedToWriteToPipeline)
             {
                 if (permittedToWrite == null)
-                    throw PSTraceSource.NewArgumentNullException("permittedToWrite");
+                    throw PSTraceSource.NewArgumentNullException(nameof(permittedToWrite));
                 MshCommandRuntime mcr = permittedToWrite.commandRuntime as MshCommandRuntime;
                 if (mcr == null)
                     throw PSTraceSource.NewArgumentNullException("permittedToWrite.CommandRuntime");
@@ -2374,7 +2375,7 @@ namespace System.Management.Automation
         public Exception ManageException(Exception e)
         {
             if (e == null)
-                throw PSTraceSource.NewArgumentNullException("e");
+                throw PSTraceSource.NewArgumentNullException(nameof(e));
 
             if (PipelineProcessor != null)
             {
@@ -3017,7 +3018,7 @@ namespace System.Management.Automation
         // See "User Feedback Mechanisms - Note.doc" for details.
 
         private bool _readCommandConfirmPreference = false;
-        private ConfirmImpact _confirmPreference = InitialSessionState.defaultConfirmPreference;
+        private ConfirmImpact _confirmPreference = InitialSessionState.DefaultConfirmPreference;
 
         /// <summary>
         /// Preference setting controlling behavior of ShouldProcess()
@@ -3068,7 +3069,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ActionPreference _debugPreference = InitialSessionState.defaultDebugPreference;
+        private ActionPreference _debugPreference = InitialSessionState.DefaultDebugPreference;
         private bool _readCommandDebugPreference = false;
         /// <summary>
         /// Preference setting.
@@ -3131,7 +3132,7 @@ namespace System.Management.Automation
 
         internal bool IsDebugActionSet { get; private set; } = false;
 
-        private ActionPreference _verbosePreference = InitialSessionState.defaultVerbosePreference;
+        private ActionPreference _verbosePreference = InitialSessionState.DefaultVerbosePreference;
         private bool _readCommandVerbosePreference = false;
 
         /// <summary>
@@ -3207,7 +3208,7 @@ namespace System.Management.Automation
         internal bool IsVerboseActionSet { get; private set; }
 
         private bool _readCommandWarningPreference = false;
-        private ActionPreference _warningPreference = InitialSessionState.defaultWarningPreference;
+        private ActionPreference _warningPreference = InitialSessionState.DefaultWarningPreference;
 
         /// <summary>
         /// Preference setting.
@@ -3372,7 +3373,7 @@ namespace System.Management.Automation
 
         internal bool IsDebugFlagSet { get; private set; } = false;
 
-        private bool _whatIfFlag = InitialSessionState.defaultWhatIfPreference;
+        private bool _whatIfFlag = InitialSessionState.DefaultWhatIfPreference;
         private bool _readCommandWhatIfPreference /* = false */;
         /// <summary>
         /// WhatIf indicates that the command should not
@@ -3412,7 +3413,7 @@ namespace System.Management.Automation
 
         internal bool IsWhatIfFlagSet { get; private set; }
 
-        private ActionPreference _errorAction = InitialSessionState.defaultErrorActionPreference;
+        private ActionPreference _errorAction = InitialSessionState.DefaultErrorActionPreference;
         private bool _readCommandErrorActionPreference = false;
         /// <summary>
         /// ErrorAction tells the command what to do when an error occurs.
@@ -3501,7 +3502,7 @@ namespace System.Management.Automation
 
         internal bool IsProgressActionSet { get; private set; }
 
-        private ActionPreference _informationPreference = InitialSessionState.defaultInformationPreference;
+        private ActionPreference _informationPreference = InitialSessionState.DefaultInformationPreference;
         private bool _readCommandInformationPreference;
 
         /// <summary>

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -35,7 +35,7 @@ namespace System.Management.Automation
         private static ConcurrentDictionary<string, string> s_modulesBeingAnalyzed =
             new ConcurrentDictionary<string, string>( /*concurrency*/1, /*capacity*/2, StringComparer.OrdinalIgnoreCase);
 
-        internal static char[] InvalidCommandNameCharacters = new[]
+        internal static readonly char[] InvalidCommandNameCharacters = new[]
         {
             '#', ',', '(', ')', '{', '}', '[', ']', '&', '/', '\\', '$', '^', ';', ':',
             '"', '\'', '<', '>', '|', '?', '@', '`', '*', '%', '+', '=', '~'
@@ -103,7 +103,7 @@ namespace System.Management.Automation
                 var moduleManifestProperties = PsUtils.GetModuleManifestProperties(modulePath, PsUtils.FastModuleManifestAnalysisPropertyNames);
                 if (moduleManifestProperties != null)
                 {
-                    if (ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
+                    if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && ModuleIsEditionIncompatible(modulePath, moduleManifestProperties))
                     {
                         ModuleIntrinsics.Tracer.WriteLine($"Module lies on the Windows System32 legacy module path and is incompatible with current PowerShell edition, skipping module: {modulePath}");
                         return null;
@@ -492,8 +492,8 @@ namespace System.Management.Automation
             ModuleIntrinsics.Tracer.WriteLine("Requested caching for {0}", module.Name);
 
             // Don't cache incompatible modules on the system32 module path even if loaded with
-            // -SkipEditionCheck, since it will break subsequent sessions.
-            if (!module.IsConsideredEditionCompatible)
+            // -SkipEditionCheck, since it will break subsequent sessions
+            if (!Configuration.PowerShellConfig.Instance.IsImplicitWinCompatEnabled() && !module.IsConsideredEditionCompatible)
             {
                 ModuleIntrinsics.Tracer.WriteLine($"Module '{module.Name}' not edition compatible and not cached.");
                 return;
@@ -736,7 +736,7 @@ namespace System.Management.Automation
         private void Serialize(string filename)
         {
             AnalysisCacheData fromOtherProcess = null;
-            Diagnostics.Assert(_saveCacheToDisk != false, "Serialize should never be called without going through QueueSerialization which has a check");
+            Diagnostics.Assert(_saveCacheToDisk, "Serialize should never be called without going through QueueSerialization which has a check");
 
             try
             {

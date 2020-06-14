@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
@@ -78,25 +78,25 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         $command.ParameterSets.Count | Should -Be 2
 
         $command.Parameters["UserName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["UserName"].ParameterSets.ContainsKey("ComputerSet") | Should -Be $true
+        $command.Parameters["UserName"].ParameterSets.ContainsKey("ComputerSet") | Should -BeTrue
 
         $command.Parameters["ComputerName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ComputerName"].ParameterSets.ContainsKey("ComputerSet") | Should -Be $true
+        $command.Parameters["ComputerName"].ParameterSets.ContainsKey("ComputerSet") | Should -BeTrue
 
         $command.Parameters["ConfigurationName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ConfigurationName"].ParameterSets.ContainsKey("ComputerSet") | Should -Be $true
+        $command.Parameters["ConfigurationName"].ParameterSets.ContainsKey("ComputerSet") | Should -BeTrue
 
         $command.Parameters["VMName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["VMName"].ParameterSets.ContainsKey("VMSet") | Should -Be $true
+        $command.Parameters["VMName"].ParameterSets.ContainsKey("VMSet") | Should -BeTrue
 
         $command.Parameters["Port"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["Port"].ParameterSets.ContainsKey("VMSet") | Should -Be $true
+        $command.Parameters["Port"].ParameterSets.ContainsKey("VMSet") | Should -BeTrue
 
         $command.Parameters["ThrottleLimit"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ThrottleLimit"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
+        $command.Parameters["ThrottleLimit"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
         $command.Parameters["Command"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["Command"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
+        $command.Parameters["Command"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
         ## Common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-ThrottleLimit' and '-Command'
         $command.ParameterSets[0].Name | Should -BeExactly "ComputerSet"
@@ -120,7 +120,7 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         ## Common parameters + '-SessionName'
         $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         $command.Parameters["SessionName"].ParameterType.FullName | Should -BeExactly "System.String"
-        $command.Parameters.ContainsKey("ComputerName") | Should -Be $false
+        $command.Parameters.ContainsKey("ComputerName") | Should -BeFalse
     }
 
     It "Use 'Experimental' attribute directly on parameters - '<Name>'" -TestCases @(
@@ -135,19 +135,19 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         $command.ParameterSets.Count | Should -Be 2
 
         $command.Parameters["ByUrl"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ByUrl"].ParameterSets.ContainsKey("UrlSet") | Should -Be $true
+        $command.Parameters["ByUrl"].ParameterSets.ContainsKey("UrlSet") | Should -BeTrue
 
         $command.Parameters["ByRadio"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ByRadio"].ParameterSets.ContainsKey("RadioSet") | Should -Be $true
+        $command.Parameters["ByRadio"].ParameterSets.ContainsKey("RadioSet") | Should -BeTrue
 
         $command.Parameters["Configuration"].ParameterSets.Count | Should -Be 2
-        $command.Parameters["Configuration"].ParameterSets.ContainsKey("UrlSet") | Should -Be $true
-        $command.Parameters["Configuration"].ParameterSets.ContainsKey("RadioSet") | Should -Be $true
+        $command.Parameters["Configuration"].ParameterSets.ContainsKey("UrlSet") | Should -BeTrue
+        $command.Parameters["Configuration"].ParameterSets.ContainsKey("RadioSet") | Should -BeTrue
 
         $command.Parameters["FileName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["FileName"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
+        $command.Parameters["FileName"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
-        $command.Parameters.ContainsKey("Destination") | Should -Be $false
+        $command.Parameters.ContainsKey("Destination") | Should -BeFalse
     }
 
     It "Dynamic parameters - <CommandType>-<Name>" -TestCases @(
@@ -167,10 +167,10 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         ## Common parameters + '-Name' and '-ConfigName' (dynamic parameters are triggered)
         $command.Parameters.Count | Should -Be ($CommonParameterCount + 2)
         $command.Parameters["ConfigName"].Attributes.Count | Should -Be 2
-        $command.Parameters["ConfigName"].Attributes[0] | Should -BeOfType [parameter]
-        $command.Parameters["ConfigName"].Attributes[1] | Should -BeOfType [ValidateNotNullOrEmpty]
+        $command.Parameters["ConfigName"].Attributes[0] | Should -BeOfType parameter
+        $command.Parameters["ConfigName"].Attributes[1] | Should -BeOfType ValidateNotNullOrEmpty
 
-        $command.Parameters.ContainsKey("ConfigFile") | Should -Be $false
+        $command.Parameters.ContainsKey("ConfigFile") | Should -BeFalse
     }
 }
 
@@ -207,7 +207,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
 
     It "Experimental feature 'ExpTest.FeatureOne' should be enabled" {
         $EnabledExperimentalFeatures.Count | Should -Be 1
-        $EnabledExperimentalFeatures -contains "ExpTest.FeatureOne" | Should -Be $true
+        $EnabledExperimentalFeatures -contains "ExpTest.FeatureOne" | Should -BeTrue
     }
 
     It "Replace existing command <Name> - version two should be shown" -TestCases @(
@@ -258,33 +258,33 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command.ParameterSets.Count | Should -Be 3
 
         $command.Parameters["UserName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["UserName"].ParameterSets.ContainsKey("ComputerSet") | Should -Be $true
+        $command.Parameters["UserName"].ParameterSets.ContainsKey("ComputerSet") | Should -BeTrue
 
         $command.Parameters["ComputerName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ComputerName"].ParameterSets.ContainsKey("ComputerSet") | Should -Be $true
+        $command.Parameters["ComputerName"].ParameterSets.ContainsKey("ComputerSet") | Should -BeTrue
 
         $command.Parameters["VMName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["VMName"].ParameterSets.ContainsKey("VMSet") | Should -Be $true
+        $command.Parameters["VMName"].ParameterSets.ContainsKey("VMSet") | Should -BeTrue
 
         $command.Parameters["Token"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["Token"].ParameterSets.ContainsKey("WebSocketSet") | Should -Be $true
+        $command.Parameters["Token"].ParameterSets.ContainsKey("WebSocketSet") | Should -BeTrue
 
         $command.Parameters["WebSocketUrl"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["WebSocketUrl"].ParameterSets.ContainsKey("WebSocketSet") | Should -Be $true
+        $command.Parameters["WebSocketUrl"].ParameterSets.ContainsKey("WebSocketSet") | Should -BeTrue
 
         $command.Parameters["ConfigurationName"].ParameterSets.Count | Should -Be 2
-        $command.Parameters["ConfigurationName"].ParameterSets.ContainsKey("ComputerSet") | Should -Be $true
-        $command.Parameters["ConfigurationName"].ParameterSets.ContainsKey("WebSocketSet") | Should -Be $true
+        $command.Parameters["ConfigurationName"].ParameterSets.ContainsKey("ComputerSet") | Should -BeTrue
+        $command.Parameters["ConfigurationName"].ParameterSets.ContainsKey("WebSocketSet") | Should -BeTrue
 
         $command.Parameters["Port"].ParameterSets.Count | Should -Be 2
-        $command.Parameters["Port"].ParameterSets.ContainsKey("VMSet") | Should -Be $true
-        $command.Parameters["Port"].ParameterSets.ContainsKey("WebSocketSet") | Should -Be $true
+        $command.Parameters["Port"].ParameterSets.ContainsKey("VMSet") | Should -BeTrue
+        $command.Parameters["Port"].ParameterSets.ContainsKey("WebSocketSet") | Should -BeTrue
 
         $command.Parameters["ThrottleLimit"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ThrottleLimit"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
+        $command.Parameters["ThrottleLimit"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
         $command.Parameters["Command"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["Command"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
+        $command.Parameters["Command"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
         ## Common parameters + '-UserName', '-ComputerName', '-ConfigurationName', '-ThrottleLimit' and '-Command'
         $command.ParameterSets[0].Name | Should -BeExactly "ComputerSet"
@@ -318,7 +318,7 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         ## Common parameters + '-ComputerName'
         $command.Parameters.Count | Should -Be ($CommonParameterCount + 1)
         $command.Parameters["ComputerName"].ParameterType.FullName | Should -BeExactly "System.String"
-        $command.Parameters.ContainsKey("SessionName") | Should -Be $false
+        $command.Parameters.ContainsKey("SessionName") | Should -BeFalse
     }
 
     It "Use 'Experimental' attribute directly on parameters - '<Name>'" -TestCases @(
@@ -333,18 +333,18 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         $command.ParameterSets.Count | Should -Be 2
 
         $command.Parameters["ByUrl"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ByUrl"].ParameterSets.ContainsKey("UrlSet") | Should -Be $true
+        $command.Parameters["ByUrl"].ParameterSets.ContainsKey("UrlSet") | Should -BeTrue
 
         $command.Parameters["ByRadio"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["ByRadio"].ParameterSets.ContainsKey("RadioSet") | Should -Be $true
+        $command.Parameters["ByRadio"].ParameterSets.ContainsKey("RadioSet") | Should -BeTrue
 
         $command.Parameters["Destination"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["Destination"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
+        $command.Parameters["Destination"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
         $command.Parameters["FileName"].ParameterSets.Count | Should -Be 1
-        $command.Parameters["FileName"].ParameterSets.ContainsKey("__AllParameterSets") | Should -Be $true
+        $command.Parameters["FileName"].ParameterSets.ContainsKey("__AllParameterSets") | Should -BeTrue
 
-        $command.Parameters.ContainsKey("Configuration") | Should -Be $false
+        $command.Parameters.ContainsKey("Configuration") | Should -BeFalse
     }
 
     It "Dynamic parameters - <CommandType>-<Name>" -TestCases @(
@@ -365,10 +365,10 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         ## Common parameters + '-Name' and '-ConfigFile' (dynamic parameters are triggered)
         $command.Parameters.Count | Should -Be ($CommonParameterCount + 2)
         $command.Parameters["ConfigFile"].Attributes.Count | Should -Be 2
-        $command.Parameters["ConfigFile"].Attributes[0] | Should -BeOfType [parameter]
-        $command.Parameters["ConfigFile"].Attributes[1] | Should -BeOfType [ValidateNotNullOrEmpty]
+        $command.Parameters["ConfigFile"].Attributes[0] | Should -BeOfType parameter
+        $command.Parameters["ConfigFile"].Attributes[1] | Should -BeOfType ValidateNotNullOrEmpty
 
-        $command.Parameters.ContainsKey("ConfigName") | Should -Be $false
+        $command.Parameters.ContainsKey("ConfigName") | Should -BeFalse
     }
 }
 
@@ -434,10 +434,10 @@ PrivateData = @{
         Import-Module $moduleFile -ErrorVariable featureNameError -ErrorAction SilentlyContinue
         $featureNameError | Should -Not -BeNullOrEmpty
         $featureNameError[0].FullyQualifiedErrorId | Should -Be "Modules_InvalidExperimentalFeatureName,Microsoft.PowerShell.Commands.ImportModuleCommand"
-        $featureNameError[0].Exception.Message.Contains(".Feature1") | Should -Be $true
-        $featureNameError[0].Exception.Message.Contains("Feature2.") | Should -Be $true
-        $featureNameError[0].Exception.Message.Contains("Feature3") | Should -Be $true
-        $featureNameError[0].Exception.Message.Contains("Module.Feature4") | Should -Be $true
-        $featureNameError[0].Exception.Message.Contains("InvalidFeatureName.Feature5") | Should -Be $false
+        $featureNameError[0].Exception.Message.Contains(".Feature1") | Should -BeTrue
+        $featureNameError[0].Exception.Message.Contains("Feature2.") | Should -BeTrue
+        $featureNameError[0].Exception.Message.Contains("Feature3") | Should -BeTrue
+        $featureNameError[0].Exception.Message.Contains("Module.Feature4") | Should -BeTrue
+        $featureNameError[0].Exception.Message.Contains("InvalidFeatureName.Feature5") | Should -BeFalse
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet that traces the specified categories and flags for the duration of the
     /// specified expression.
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113419")]
+    [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097136")]
     public class TraceCommandCommand : TraceListenerCommandBase, IDisposable
     {
         #region Parameters
@@ -334,12 +334,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (cmdlet == null)
             {
-                throw new ArgumentNullException("cmdlet");
+                throw new ArgumentNullException(nameof(cmdlet));
             }
 
             if (matchingSources == null)
             {
-                throw new ArgumentNullException("matchingSources");
+                throw new ArgumentNullException(nameof(matchingSources));
             }
 
             _cmdlet = cmdlet;

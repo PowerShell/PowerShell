@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet start invocation of jobs in background.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113405")]
+    [Cmdlet(VerbsLifecycle.Start, "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096796")]
     [OutputType(typeof(PSRemotingJob))]
     public class StartJobCommand : PSExecutionCmdlet, IDisposable
     {
@@ -598,14 +598,25 @@ namespace Microsoft.PowerShell.Commands
 
             if (WorkingDirectory != null && !Directory.Exists(WorkingDirectory))
             {
-                    string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
-                    var errorRecord = new ErrorRecord(
-                        new DirectoryNotFoundException(message),
-                        "DirectoryNotFoundException",
-                        ErrorCategory.InvalidOperation,
-                        targetObject: null);
+                string message = StringUtil.Format(RemotingErrorIdStrings.StartJobWorkingDirectoryNotFound, WorkingDirectory);
+                var errorRecord = new ErrorRecord(
+                    new DirectoryNotFoundException(message),
+                    "DirectoryNotFoundException",
+                    ErrorCategory.InvalidOperation,
+                    targetObject: null);
 
-                    ThrowTerminatingError(errorRecord);
+                ThrowTerminatingError(errorRecord);
+            }
+
+            if (WorkingDirectory == null)
+            {
+                try
+                {
+                    WorkingDirectory = SessionState.Internal.CurrentLocation.Path;
+                }
+                catch (PSInvalidOperationException)
+                {
+                }
             }
 
             CommandDiscovery.AutoloadModulesWithJobSourceAdapters(this.Context, this.CommandOrigin);

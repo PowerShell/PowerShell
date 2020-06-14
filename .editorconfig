@@ -2,34 +2,41 @@
 # .NET coding convention settings for EditorConfig
 # https://docs.microsoft.com/visualstudio/ide/editorconfig-code-style-settings-reference
 #
-# The .editorconfig comes from Roslyn and CoreFX repositories:
-# https://github.com/dotnet/corefx/blob/master/.editorconfig
+# This file comes from dotnet repositories:
+# https://github.com/dotnet/runtime/blob/master/.editorconfig
 # https://github.com/dotnet/roslyn/blob/master/.editorconfig
 
 # Top-most EditorConfig file
 root = true
 
-# Don't use tabs for indentation.
 [*]
-indent_style = space
-# (Please don't specify an indent_size here; that has too many unintended consequences.)
-
-# Code files
-[*.{cs,csx,cpp,h}]
-indent_size = 4
-insert_final_newline = true
 charset = utf-8
+# indent_size intentionally not specified in this section
+indent_style = space
+insert_final_newline = true
+
+# Source code
+[*.{cs,ps1,psd1,psm1}]
+indent_size = 4
+
+# Shell scripts
+[*.sh]
+indent_size = 4
 
 # Xml project files
 [*.{csproj,resx,ps1xml}]
 indent_size = 2
 
-# JSON files
-[*.json]
+# Data serialization
+[*.{json,yaml,yml}]
+indent_size = 2
+
+# Markdown
+[*.md]
 indent_size = 2
 
 # Xml files
-[*.{xml,stylecop,resx,ruleset}]
+[*.{resx,ruleset,stylecop,xml,xsd,xsl}]
 indent_size = 2
 
 # Xml config files
@@ -37,9 +44,12 @@ indent_size = 2
 indent_size = 2
 
 # Dotnet code style settings:
-[*.{cs,cpp}]
+[*.cs]
 # Sort using and Import directives with System.* appearing first
 dotnet_sort_system_directives_first = true
+
+# Modifier preferences
+csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:suggestion
 
 # Avoid "this." and "Me." if not necessary
 dotnet_style_qualification_for_field = false:suggestion

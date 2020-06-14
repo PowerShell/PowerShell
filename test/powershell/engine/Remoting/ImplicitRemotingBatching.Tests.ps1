@@ -1,11 +1,11 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "TestImplicitRemotingBatching hook should correctly batch simple remote command pipelines" -Tag 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
 
-        if (! $isWindows) { return }
+        if (! $IsWindows) { return }
 
         function ThrowSetupError
         {
@@ -149,7 +149,7 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
 
     AfterAll {
 
-        if (! $isWindows) { return }
+        if (! $IsWindows) { return }
 
         if ($remoteSession -ne $null) { Remove-PSSession $remoteSession -ErrorAction Ignore }
         if ($powershell -ne $null) { $powershell.Dispose() }
@@ -163,6 +163,6 @@ Describe "TestImplicitRemotingBatching hook should correctly batch simple remote
         $psInvoke.Commands.AddScript('param ($cmdLine, $runspace) [System.Management.Automation.Internal.InternalTestHooks]::TestImplicitRemotingBatching($cmdLine, $runspace)').AddArgument($CommandLine).AddArgument($localRunspace)
 
         $result = $psInvoke.Invoke()
-        $result | Should Be $ExpectedOutput
+        $result | Should -Be $ExpectedOutput
     }
 }

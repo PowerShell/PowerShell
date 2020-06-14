@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -161,7 +161,7 @@ namespace System.Management.Automation
         {
             if (applicationInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("applicationInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(applicationInfo));
             }
 
             _applicationInfo = applicationInfo;
@@ -408,6 +408,19 @@ namespace System.Management.Automation
 
             // Get the start info for the process.
             ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
+
+#if !UNIX
+            string commandPath = this.Path.ToLowerInvariant();
+            if (commandPath.EndsWith("powershell.exe") || commandPath.EndsWith("powershell_ise.exe"))
+            {
+                // if starting Windows PowerShell, need to remove PowerShell specific segments of PSModulePath
+                string psmodulepath = ModuleIntrinsics.GetWindowsPowerShellModulePath();
+                startInfo.Environment["PSModulePath"] = psmodulepath;
+
+                // must set UseShellExecute to false if we modify the environment block
+                startInfo.UseShellExecute = false;
+            }
+#endif
 
             if (this.Command.Context.CurrentPipelineStopping)
             {
@@ -804,6 +817,7 @@ namespace System.Management.Automation
         {
             public Process OriginalProcessInstance;
             private int _parentId;
+
             public int ParentId
             {
                 get
@@ -1232,7 +1246,7 @@ namespace System.Management.Automation
 
             // In minishell scenario, if output is redirected
             // then error should also be redirected.
-            if (redirectError == false && redirectOutput == true && _isMiniShell)
+            if (redirectError == false && redirectOutput && _isMiniShell)
             {
                 redirectError = true;
             }
@@ -1394,8 +1408,10 @@ namespace System.Management.Automation
             public IntPtr hIcon;
             public int iIcon;
             public uint dwAttributes;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)]
             public string szDisplayName;
+
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 80)]
             public string szTypeName;
         };
@@ -1471,7 +1487,7 @@ namespace System.Management.Automation
             {
                 _isFirstOutput = true;
                 _isXmlCliOutput = false;
-                process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
+                process.OutputDataReceived += OutputHandler;
                 process.BeginOutputReadLine();
             }
 
@@ -1479,7 +1495,7 @@ namespace System.Management.Automation
             {
                 _isFirstError = true;
                 _isXmlCliError = false;
-                process.ErrorDataReceived += new DataReceivedEventHandler(ErrorHandler);
+                process.ErrorDataReceived += ErrorHandler;
                 process.BeginErrorReadLine();
             }
         }
@@ -1816,7 +1832,7 @@ namespace System.Management.Automation
             }
         }
 
-        bool _stopping = false;
+        private bool _stopping = false;
 
         /// <summary>
         /// Stop writing input to process.
@@ -2126,6 +2142,7 @@ namespace System.Management.Automation
 
         [NonSerialized]
         private PSObject _serializedRemoteException;
+
         [NonSerialized]
         private PSObject _serializedRemoteInvocationInfo;
 

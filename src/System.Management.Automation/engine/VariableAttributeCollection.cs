@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -30,7 +30,7 @@ namespace System.Management.Automation
         {
             if (variable == null)
             {
-                throw PSTraceSource.NewArgumentNullException("variable");
+                throw PSTraceSource.NewArgumentNullException(nameof(variable));
             }
 
             _variable = variable;

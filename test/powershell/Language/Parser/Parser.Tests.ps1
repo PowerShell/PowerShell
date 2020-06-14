@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
@@ -293,8 +293,8 @@ foo``u{2195}abc
     }
 
     It "Test that escaping any character with no special meaning just returns that char. (line 602)" {
-        $result = ExecuteCommand '"fo`obar"'
-        $result | Should -BeExactly "foobar"
+        $result = ExecuteCommand '"fo`odbar"'
+        $result | Should -BeExactly "foodbar"
     }
 
     Context "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" {
@@ -677,7 +677,7 @@ foo``u{2195}abc
     It "Test that typing a number at the command line will return that number. (line 1630)" {
         $result = ExecuteCommand '3'
         $result | Should -Be "3"
-        $result | Should -BeOfType [int]
+        $result | Should -BeOfType int
     }
 
     It "This test will check that an msh script can be run without invoking. (line 1641)" {
@@ -703,7 +703,7 @@ foo``u{2195}abc
         if ( $IsLinux -or $IsMacOS ) {
             # because we execute on *nix based on executable bit, and the file name doesn't matter
             # so we can use the same filename as for windows, just make sure it's executable with chmod
-            "#!/bin/sh`necho ""Hello World""" | out-file -encoding ASCII $shellfile
+            "#!/bin/sh`necho ""Hello World""" | Out-File -Encoding ASCII $shellfile
             /bin/chmod +x $shellfile
         }
         else {
@@ -741,28 +741,28 @@ foo``u{2195}abc
             @{ Script = 'if (0 -or 1) { $true } else { $false }'; Expected = $true }
             @{ Script = 'if (0 -or 0) { $true } else { $false }'; Expected = $false }
             #-eq
-            @{ Script = 'if ($False -eq $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -eq $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -eq $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -eq $false) { $true } else { $false }'; Expected = $false }
             #-ieq
-            @{ Script = 'if ($False -ieq $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ieq $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ieq $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ieq $false) { $true } else { $false }'; Expected = $false }
             #-le
-            @{ Script = 'if ($False -le $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -le $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -le $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -le $false) { $true } else { $false }'; Expected = $false }
             #-ile
-            @{ Script = 'if ($False -ile $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ile $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ile $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ile $false) { $true } else { $false }'; Expected = $false }
             #-ge
-            @{ Script = 'if ($False -ge $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ge $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ge $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ge $false) { $true } else { $false }'; Expected = $false }
             #-ige
-            @{ Script = 'if ($False -ige $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -ige $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -ige $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -ige $false) { $true } else { $false }'; Expected = $false }
             #-like
-            @{ Script = 'if ($False -like $True -and $False) { $true } else { $false }'; Expected = $false }
-            @{ Script = 'if ($False -and $True -like $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -like $true -and $false) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if ($false -and $true -like $false) { $true } else { $false }'; Expected = $false }
             #!
-            @{ Script = 'if (!$True -and $False) { $true } else { $false }'; Expected = $false }
+            @{ Script = 'if (!$true -and $false) { $true } else { $false }'; Expected = $false }
         )
         It "<Script> should return <Expected>" -TestCases $testData {
             param ( $Script, $Expected )
@@ -931,6 +931,7 @@ foo``u{2195}abc
             @{ Script = "0x0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
             @{ Script = "0x41y"; ExpectedValue = "65"; ExpectedType = [sbyte] }
             @{ Script = "-0x41y"; ExpectedValue = "-65"; ExpectedType = [sbyte] }
+            @{ Script = "0xFFy"; ExpectedValue = "-1"; ExpectedType = [sbyte] }
             #Binary
             @{ Script = "0b0y"; ExpectedValue = "0"; ExpectedType = [sbyte] }
             @{ Script = "0b10y"; ExpectedValue = "2"; ExpectedType = [sbyte] }
@@ -957,6 +958,7 @@ foo``u{2195}abc
             @{ Script = "0x0s"; ExpectedValue = "0"; ExpectedType = [short] }
             @{ Script = "0x41s"; ExpectedValue = "65"; ExpectedType = [short] }
             @{ Script = "-0x41s"; ExpectedValue = "-65"; ExpectedType = [short] }
+            @{ Script = "0xFFFFs"; ExpectedValue = "-1"; ExpectedType = [short] }
             #Binary
             @{ Script = "0b0s"; ExpectedValue = "0"; ExpectedType = [short] }
             @{ Script = "0b10s"; ExpectedValue = "2"; ExpectedType = [short] }
@@ -985,6 +987,7 @@ foo``u{2195}abc
             @{ Script = "0x0l"; ExpectedValue = "0"; ExpectedType = [long] }
             @{ Script = "0x41l"; ExpectedValue = "65"; ExpectedType = [long] }
             @{ Script = "-0x41l"; ExpectedValue = "-65"; ExpectedType = [long] }
+            @{ Script = "0xFFFFFFFFFFFFFFFFl"; ExpectedValue = "-1"; ExpectedType = [long] }
             #Binary
             @{ Script = "0b0l"; ExpectedValue = "0"; ExpectedType = [long] }
             @{ Script = "0b10l"; ExpectedValue = "2"; ExpectedType = [long] }
@@ -1078,6 +1081,7 @@ foo``u{2195}abc
             #Hexadecimal
             @{ Script = "0x0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
             @{ Script = "0x41uy"; ExpectedValue = "65"; ExpectedType = [byte] }
+            @{ Script = "0xFFuy"; ExpectedValue = [byte]::MaxValue; ExpectedType = [byte] }
             #Binary
             @{ Script = "0b0uy"; ExpectedValue = "0"; ExpectedType = [byte] }
             @{ Script = "0b10uy"; ExpectedValue = "2"; ExpectedType = [byte] }
@@ -1098,6 +1102,8 @@ foo``u{2195}abc
             #Hexadecimal
             @{ Script = "0x0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
             @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
+            @{ Script = "0x41us"; ExpectedValue = "65"; ExpectedType = [ushort] }
+            @{ Script = "0xFFFFus"; ExpectedValue = [ushort]::MaxValue; ExpectedType = [ushort] }
             #Binary
             @{ Script = "0b0us"; ExpectedValue = "0"; ExpectedType = [ushort] }
             @{ Script = "0b10us"; ExpectedValue = "2"; ExpectedType = [ushort] }
@@ -1119,6 +1125,7 @@ foo``u{2195}abc
             #Hexadecimal
             @{ Script = "0x0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
             @{ Script = "0x41ul"; ExpectedValue = "65"; ExpectedType = [ulong] }
+            @{ Script = "0xFFFFFFFFFFFFFFFFul"; ExpectedValue = [ulong]::MaxValue; ExpectedType = [ulong] }
             #Binary
             @{ Script = "0b0ul"; ExpectedValue = "0"; ExpectedType = [ulong] }
             @{ Script = "0b10ul"; ExpectedValue = "2"; ExpectedType = [ulong] }

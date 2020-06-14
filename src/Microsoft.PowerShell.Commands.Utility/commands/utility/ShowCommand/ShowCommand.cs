@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Show-Command displays a GUI for a cmdlet, or for all cmdlets if no specific cmdlet is specified.
     /// </summary>
-    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217448")]
+    [Cmdlet(VerbsCommon.Show, "Command", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2109589")]
     public class ShowCommandCommand : PSCmdlet, IDisposable
     {
         #region Private Fields
@@ -156,7 +156,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (!ConsoleInputWithNativeMethods.AddToConsoleInputBuffer(script, true))
+            // Don't send newline at end as PSReadLine shows it rather than executing
+            if (!ConsoleInputWithNativeMethods.AddToConsoleInputBuffer(script, newLine: false))
             {
                 this.WriteDebug(FormatAndOut_out_gridview.CannotWriteToConsoleInputBuffer);
                 this.RunScriptSilentlyAndWithErrorHookup(script);
@@ -225,8 +226,8 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // We wait untill the window is loaded and then activate it
-            // to work arround the console window gaining activation somewhere
+            // We wait until the window is loaded and then activate it
+            // to work around the console window gaining activation somewhere
             // in the end of ProcessRecord, which causes the keyboard focus
             // (and use oif tab key to focus controls) to go away from the window
             _showCommandProxy.WindowLoaded.WaitOne();
@@ -280,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
             output.DataAdded += new EventHandler<DataAddedEventArgs>(this.Output_DataAdded);
             _errors.DataAdded += new EventHandler<DataAddedEventArgs>(this.Error_DataAdded);
 
-            PowerShell ps = PowerShell.Create(RunspaceMode.CurrentRunspace);
+            System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace);
             ps.Streams.Error = _errors;
 
             ps.Commands.AddScript(script);
@@ -376,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
-                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.ToBool(), _importedModules, this.Name.IndexOf('\\') != -1);
+                _commandViewModelObj = _showCommandProxy.GetCommandViewModel(new ShowCommandCommandInfo(commandInfo), _noCommonParameter.ToBool(), _importedModules, this.Name.Contains('\\'));
                 _showCommandProxy.ShowCommandWindow(_commandViewModelObj, _passThrough);
             }
             catch (TargetInvocationException ti)
