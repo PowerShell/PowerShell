@@ -1,10 +1,9 @@
 # Visual Studio Code
 
-[Experimental .NET Core Debugging in VS Code][core-debug] enables
-cross-platform debugging with the [Visual Studio Code][vscode] editor.
+The [Visual Studio Code][vscode] editor supports cross-platform debugging.
 This is made possible by the [OmniSharp][] extension for VS Code.
 
-Please review their [detailed instructions][vscclrdebugger]. In
+Please review their [detailed instructions][core-debug]. In
 addition to being able to build PowerShell, you need:
 
 - C# Extension for VS Code installed
@@ -42,10 +41,9 @@ process named `powershell`, and will attach to it. If you need more fine-grained
 control, replace `processName` with `processId` and provide a PID. (Please be
 careful not to commit such a change.)
 
-[core-debug]: https://blogs.msdn.microsoft.com/visualstudioalm/2016/03/10/experimental-net-core-debugging-in-vs-code/
+[core-debug]: https://docs.microsoft.com/dotnet/core/tutorials/with-visual-studio-code#debug
 [vscode]: https://code.visualstudio.com/
 [OmniSharp]: https://github.com/OmniSharp/omnisharp-vscode
-[vscclrdebugger]: https://aka.ms/vscclrdebugger
 
 ## PowerShell
 

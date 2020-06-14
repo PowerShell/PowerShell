@@ -3,7 +3,7 @@
 This guide supplements the [Linux instructions](./linux.md), as
 building on macOS is almost identical.
 
-.NET Core 2.x (and by transitivity, us) only supports macOS 10.12+.
+.NET Core 2.x (and by transitivity, us) only supports macOS 10.13+.
 
 ## Environment
 
@@ -36,4 +36,4 @@ We cannot do this for you in the build module due to #[847][].
 
 Start a PowerShell session by running `pwsh`, and then use `Start-PSBuild` from the module.
 
-After building, PowerShell will be at `./src/powershell-unix/bin/Debug/netcoreapp3.0/osx-x64/publish/pwsh`.
+After building, PowerShell will be at `./src/powershell-unix/bin/Debug/net5.0/osx-x64/publish/pwsh`.

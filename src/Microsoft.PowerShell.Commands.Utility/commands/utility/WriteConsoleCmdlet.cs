@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// WriteHost cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommunications.Write, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113426", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2097137", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteHostCommand : ConsoleColorCmdlet
     {
         /// <summary>
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (object element in enumerable)
                     {
-                        if (printSeparator == true && Separator != null)
+                        if (printSeparator && Separator != null)
                         {
                             result.Append(Separator.ToString());
                         }

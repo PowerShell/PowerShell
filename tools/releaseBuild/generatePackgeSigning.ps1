@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 param(
     [Parameter(Mandatory)]
@@ -7,14 +7,20 @@ param(
     [string[]] $AuthenticodeFiles,
     [string[]] $NuPkgFiles,
     [string[]] $MacDeveloperFiles,
-    [string[]] $LinuxFiles
+    [string[]] $LinuxFiles,
+    [string[]] $ThirdPartyFiles,
+    [string[]] $MsixFiles,
+    [ValidateSet('release','preview')]
+    [string]  $MsixCertType = 'preview'
 )
 
 if ((!$AuthenticodeDualFiles -or $AuthenticodeDualFiles.Count -eq 0) -and
     (!$AuthenticodeFiles -or $AuthenticodeFiles.Count -eq 0) -and
     (!$NuPkgFiles -or $NuPkgFiles.Count -eq 0) -and
     (!$MacDeveloperFiles -or $MacDeveloperFiles.Count -eq 0) -and
-    (!$LinuxFiles -or $LinuxFiles.Count -eq 0))
+    (!$LinuxFiles -or $LinuxFiles.Count -eq 0) -and
+    (!$MsixFiles -or $MsixFiles.Count -eq 0) -and
+    (!$ThirdPartyFiles -or $ThirdPartyFiles.Count -eq 0))
 {
     throw "At least one file must be specified"
 }
@@ -63,7 +69,7 @@ function New-FileElement
     }
 }
 
-[xml]$signingXml = get-content (Join-Path -Path $PSScriptRoot -ChildPath 'packagesigning.xml')
+[xml]$signingXml = Get-Content (Join-Path -Path $PSScriptRoot -ChildPath 'packagesigning.xml')
 $job = $signingXml.SignConfigXML.job
 
 foreach($file in $AuthenticodeDualFiles)
@@ -87,6 +93,18 @@ foreach ($file in $MacDeveloperFiles) {
 
 foreach ($file in $LinuxFiles) {
     New-FileElement -File $file -SignType 'LinuxPack' -XmlDoc $signingXml -Job $job
+}
+
+foreach ($file in $ThirdPartyFiles) {
+    New-FileElement -File $file -SignType 'ThirdParty' -XmlDoc $signingXml -Job $job
+}
+
+foreach ($file in $MsixFiles) {
+    # 'CP-459155' signs for the store only
+    # AuthenticodeFormer works only for sideloading
+    # ----------------------------------------------
+    # update releasePublisher in packaging.psm1 when this is changed
+    New-FileElement -File $file -SignType 'CP-459155' -XmlDoc $signingXml -Job $job
 }
 
 $signingXml.Save($path)

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # PowerShell Script to build and package PowerShell from specified form and branch
@@ -32,9 +32,18 @@ param (
 $repoRoot = $location
 
 if ($Build.IsPresent) {
-    $releaseTagParam = @{}
+    $releaseTagParam = @{ }
     if ($ReleaseTag) {
         $releaseTagParam = @{ 'ReleaseTag' = $ReleaseTag }
+
+        #Remove the initial 'v' from the ReleaseTag
+        $version = $ReleaseTag -replace '^v'
+        $semVersion = [System.Management.Automation.SemanticVersion] $version
+
+        $metadata = Get-Content "$location/tools/metadata.json" -Raw | ConvertFrom-Json
+        $LTS = $metadata.LTSRelease
+
+        Write-Verbose -Verbose -Message "LTS is set to: $LTS"
     }
 }
 
@@ -57,6 +66,13 @@ try {
         switch ($ExtraPackage) {
             "tar" { Start-PSPackage -Type tar @releaseTagParam }
         }
+
+        if ($LTS) {
+            Start-PSPackage @releaseTagParam -LTS
+            switch ($ExtraPackage) {
+                "tar" { Start-PSPackage -Type tar @releaseTagParam -LTS }
+            }
+        }
     }
 } finally {
     Pop-Location
@@ -66,11 +82,11 @@ if ($Build.IsPresent) {
     $macPackages = Get-ChildItem "$repoRoot/powershell*" -Include *.pkg, *.tar.gz
     foreach ($macPackage in $macPackages) {
         $filePath = $macPackage.FullName
-        $name = split-path -Leaf -Path $filePath
+        $name = Split-Path -Leaf -Path $filePath
         $extension = (Split-Path -Extension -Path $filePath).Replace('.', '')
         Write-Verbose "Copying $filePath to $destination" -Verbose
         Write-Host "##vso[artifact.upload containerfolder=results;artifactname=results]$filePath"
         Write-Host "##vso[task.setvariable variable=Package-$extension]$filePath"
-        Copy-Item -Path $filePath -Destination $destination -force
+        Copy-Item -Path $filePath -Destination $destination -Force
     }
 }

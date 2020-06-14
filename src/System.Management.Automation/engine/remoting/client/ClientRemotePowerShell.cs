@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -251,24 +251,17 @@ namespace System.Management.Automation.Runspaces.Internal
             dataStructureHandler = runspacePool.DataStructureHandler.CreatePowerShellDataStructureHandler(this);
 
             // register for events from the data structure handler
-            dataStructureHandler.InvocationStateInfoReceived +=
-                new EventHandler<RemoteDataEventArgs<PSInvocationStateInfo>>(HandleInvocationStateInfoReceived);
-            dataStructureHandler.OutputReceived += new EventHandler<RemoteDataEventArgs<object>>(HandleOutputReceived);
-            dataStructureHandler.ErrorReceived += new EventHandler<RemoteDataEventArgs<ErrorRecord>>(HandleErrorReceived);
-            dataStructureHandler.InformationalMessageReceived +=
-                new EventHandler<RemoteDataEventArgs<InformationalMessage>>(HandleInformationalMessageReceived);
-            dataStructureHandler.HostCallReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCallReceived);
-            dataStructureHandler.ClosedNotificationFromRunspacePool +=
-                new EventHandler<RemoteDataEventArgs<Exception>>(HandleCloseNotificationFromRunspacePool);
-            dataStructureHandler.BrokenNotificationFromRunspacePool +=
-                new EventHandler<RemoteDataEventArgs<Exception>>(HandleBrokenNotificationFromRunspacePool);
-            dataStructureHandler.ConnectCompleted += new EventHandler<RemoteDataEventArgs<Exception>>(HandleConnectCompleted);
-            dataStructureHandler.ReconnectCompleted += new EventHandler<RemoteDataEventArgs<Exception>>(HandleConnectCompleted);
-            dataStructureHandler.RobustConnectionNotification +=
-                new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
-            dataStructureHandler.CloseCompleted +=
-                new EventHandler<EventArgs>(HandleCloseCompleted);
+            dataStructureHandler.InvocationStateInfoReceived += HandleInvocationStateInfoReceived;
+            dataStructureHandler.OutputReceived += HandleOutputReceived;
+            dataStructureHandler.ErrorReceived += HandleErrorReceived;
+            dataStructureHandler.InformationalMessageReceived += HandleInformationalMessageReceived;
+            dataStructureHandler.HostCallReceived += HandleHostCallReceived;
+            dataStructureHandler.ClosedNotificationFromRunspacePool += HandleCloseNotificationFromRunspacePool;
+            dataStructureHandler.BrokenNotificationFromRunspacePool += HandleBrokenNotificationFromRunspacePool;
+            dataStructureHandler.ConnectCompleted += HandleConnectCompleted;
+            dataStructureHandler.ReconnectCompleted += HandleConnectCompleted;
+            dataStructureHandler.RobustConnectionNotification += HandleRobustConnectionNotification;
+            dataStructureHandler.CloseCompleted += HandleCloseCompleted;
         }
 
         /// <summary>
@@ -924,10 +917,12 @@ namespace System.Management.Automation.Runspaces.Internal
         protected bool stopCalled = false;
         protected PSHost hostToUse;
         protected RemoteRunspacePoolInternal runspacePool;
+
         protected const string WRITE_DEBUG_LINE = "WriteDebugLine";
         protected const string WRITE_VERBOSE_LINE = "WriteVerboseLine";
         protected const string WRITE_WARNING_LINE = "WriteWarningLine";
         protected const string WRITE_PROGRESS = "WriteProgress";
+
         protected bool initialized = false;
         /// <summary>
         /// This queue is for the state change events that resulted in closing the underlying

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Basic Alias Provider Tests" -Tags "CI" {
     BeforeAll {
@@ -52,7 +52,7 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
 
     It "Test executing the new alias" {
         $result = Invoke-Expression $testAliasName
-        $result | Should -BeOfType [DateTime]
+        $result | Should -BeOfType DateTime
     }
 }
 
@@ -76,7 +76,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
 
         It "Verifying Whatif" {
             $before = (Get-Item -Path "Alias:\${testAliasName}").Definition
-            Set-Item -Path "Alias:\${testAliasName}" -Value "Get-Location" -Whatif
+            Set-Item -Path "Alias:\${testAliasName}" -Value "Get-Location" -WhatIf
             $after = (Get-Item -Path "Alias:\${testAliasName}").Definition
             $after | Should -BeExactly $before # Definition should not have changed
         }

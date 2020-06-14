@@ -1339,9 +1339,6 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="EnableNetworkAccessWarning" xml:space="preserve">
     <value>PSSession {0} was created using the EnableNetworkAccess parameter and can only be reconnected from the local computer.</value>
   </data>
-  <data name="RemoteHostDoesNotSupportPushRunspace" xml:space="preserve">
-    <value>You are currently in a PowerShell PSSession and cannot use the Enter-PSSession cmdlet to enter another PSSession.</value>
-  </data>
   <data name="CannotStartJobInconsistentLanguageMode" xml:space="preserve">
     <value>Cannot start job. The language mode for this session is incompatible with the system-wide language mode.</value>
   </data>
@@ -1655,6 +1652,9 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
     <value>PowerShell 6+ does not support WOW64. The binary must match the architecture of the processor.</value>
   </data>
+  <data name="WowComponentNotPresent" xml:space="preserve">
+    <value>The "{0}" executable file was not found. Verify that the WOW64 feature is installed.</value>
+  </data>
   <data name="UnableToInstallPlugin" xml:space="preserve">
     <value>Unable to install plugin {0} to directory {1}.</value>
   </data>
@@ -1689,5 +1689,11 @@ All WinRM sessions connected to PowerShell session configurations, such as Micro
   </data>
   <data name="EnterPSHostProcessCmdletDisabled" xml:space="preserve">
     <value>Enter-PSHostProcess cmdlet is disabled because an application control policy such as 'AppLocker' or 'Windows Defender Application Control' is in enforcement.</value>
+  </data>
+  <data name="RemoteDebuggerError" xml:space="preserve">
+    <value>Remote debugger exception: {0}, error message: {1}</value>
+  </data>
+  <data name="WindowsPowerShellNotPresent" xml:space="preserve">
+    <value>Unable to create Windows PowerShell process because Windows PowerShell could not be found on this machine.</value>
   </data>
 </root>

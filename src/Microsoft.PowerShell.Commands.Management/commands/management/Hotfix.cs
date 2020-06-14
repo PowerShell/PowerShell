@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// Cmdlet for Get-Hotfix Proxy.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "HotFix", DefaultParameterSetName = "Default",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135217", RemotingCapability = RemotingCapability.SupportedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?linkid=2109716", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(@"System.Management.ManagementObject#root\cimv2\Win32_QuickFixEngineering")]
     public sealed class GetHotFixCommand : PSCmdlet, IDisposable
     {
@@ -66,52 +66,61 @@ namespace Microsoft.PowerShell.Commands
         private ManagementObjectSearcher _searchProcess;
 
         private bool _inputContainsWildcard = false;
+        private readonly ConnectionOptions _connectionOptions = new ConnectionOptions();
+
+        /// <summary>
+        /// Sets connection options.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            _connectionOptions.Authentication = AuthenticationLevel.Packet;
+            _connectionOptions.Impersonation = ImpersonationLevel.Impersonate;
+            _connectionOptions.Username = Credential?.UserName;
+            _connectionOptions.SecurePassword = Credential?.Password;
+        }
+
         /// <summary>
         /// Get the List of HotFixes installed on the Local Machine.
         /// </summary>
-        protected override void BeginProcessing()
+        protected override void ProcessRecord()
         {
             foreach (string computer in ComputerName)
             {
                 bool foundRecord = false;
-                StringBuilder QueryString = new StringBuilder();
-                ConnectionOptions conOptions = new ConnectionOptions
-                {
-                    Authentication = AuthenticationLevel.Packet,
-                    Impersonation = ImpersonationLevel.Impersonate,
-                    Username = Credential?.UserName,
-                    SecurePassword = Credential?.Password
-                };
-
-                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), conOptions);
+                StringBuilder queryString = new StringBuilder();
+                ManagementScope scope = new ManagementScope(ComputerWMIHelper.GetScopeString(computer, ComputerWMIHelper.WMI_Path_CIM), _connectionOptions);
                 scope.Connect();
                 if (Id != null)
                 {
-                    QueryString.Append("Select * from Win32_QuickFixEngineering where (");
+                    queryString.Append("Select * from Win32_QuickFixEngineering where (");
                     for (int i = 0; i <= Id.Length - 1; i++)
                     {
-                        QueryString.Append("HotFixID= '");
-                        QueryString.Append(Id[i].ToString().Replace("'", "\\'"));
-                        QueryString.Append("'");
+                        queryString.Append("HotFixID= '");
+                        queryString.Append(Id[i].Replace("'", "\\'"));
+                        queryString.Append("'");
                         if (i < Id.Length - 1)
-                            QueryString.Append(" Or ");
+                        {
+                            queryString.Append(" Or ");
+                        }
                     }
 
-                    QueryString.Append(")");
+                    queryString.Append(")");
                 }
                 else
                 {
-                    QueryString.Append("Select * from Win32_QuickFixEngineering");
+                    queryString.Append("Select * from Win32_QuickFixEngineering");
                     foundRecord = true;
                 }
 
-                _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(QueryString.ToString()));
+                _searchProcess = new ManagementObjectSearcher(scope, new ObjectQuery(queryString.ToString()));
                 foreach (ManagementObject obj in _searchProcess.Get())
                 {
                     if (Description != null)
                     {
                         if (!FilterMatch(obj))
+                        {
                             continue;
+                        }
                     }
                     else
                     {
@@ -126,13 +135,15 @@ namespace Microsoft.PowerShell.Commands
                         try
                         {
                             SecurityIdentifier secObj = new SecurityIdentifier(installed);
-                            obj["InstalledBy"] = secObj.Translate(typeof(NTAccount)); ;
+                            obj["InstalledBy"] = secObj.Translate(typeof(NTAccount));
                         }
-                        catch (IdentityNotMappedException) // thrown by SecurityIdentifier.Translate
+                        catch (IdentityNotMappedException)
                         {
+                            // thrown by SecurityIdentifier.Translate
                         }
-                        catch (SystemException) // thrown by SecurityIdentifier.constr
+                        catch (SystemException)
                         {
+                            // thrown by SecurityIdentifier.constr
                         }
                     }
 
@@ -142,8 +153,8 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!foundRecord && !_inputContainsWildcard)
                 {
-                    Exception Ex = new ArgumentException(StringUtil.Format(HotFixResources.NoEntriesFound, computer));
-                    WriteError(new ErrorRecord(Ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
+                    Exception ex = new ArgumentException(StringUtil.Format(HotFixResources.NoEntriesFound, computer));
+                    WriteError(new ErrorRecord(ex, "GetHotFixNoEntriesFound", ErrorCategory.ObjectNotFound, null));
                 }
 
                 if (_searchProcess != null)

@@ -1,11 +1,13 @@
 parameters:
   jobName: 'build_macOS'
+  parentJob: ''
 
 jobs:
 - job: ${{ parameters.jobName }}
   displayName: Build macOS
   condition: succeeded()
   pool: Hosted Mac Internal
+  dependsOn: ${{ parameters.parentJob }}
   variables:
     # Turn off Homebrew analytics
     HOMEBREW_NO_ANALYTICS: 1

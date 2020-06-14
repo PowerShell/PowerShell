@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -125,7 +125,7 @@ namespace System.Management.Automation
         public static WildcardPattern Get(string pattern, WildcardOptions options)
         {
             if (pattern == null)
-                throw PSTraceSource.NewArgumentNullException("pattern");
+                throw PSTraceSource.NewArgumentNullException(nameof(pattern));
 
             if (pattern.Length == 1 && pattern[0] == '*')
                 return s_matchAllIgnoreCasePattern;
@@ -449,7 +449,7 @@ namespace System.Management.Automation
         {
             if (errorRecord == null)
             {
-                throw new ArgumentNullException("errorRecord");
+                throw new ArgumentNullException(nameof(errorRecord));
             }
 
             _errorRecord = errorRecord;
@@ -752,6 +752,7 @@ namespace System.Management.Automation
         private RegexOptions _regexOptions;
 
         private const string regexChars = "()[.?*{}^$+|\\"; // ']' is missing on purpose
+
         private static bool IsRegexChar(char ch)
         {
             for (int i = 0; i < regexChars.Length; i++)
@@ -909,7 +910,7 @@ namespace System.Management.Automation
             WildcardPatternParser.Parse(wildcardPattern, parser);
             try
             {
-                return new Regex(parser._regexPattern.ToString(), parser._regexOptions);
+                return ParserOps.NewRegex(parser._regexPattern.ToString(), parser._regexOptions);
             }
             catch (ArgumentException)
             {
@@ -1258,7 +1259,7 @@ namespace System.Management.Automation
             protected override void EndBracketExpression()
             {
                 _bracketExpressionBuilder.Append(']');
-                Regex regex = new Regex(_bracketExpressionBuilder.ToString(), _regexOptions);
+                Regex regex = ParserOps.NewRegex(_bracketExpressionBuilder.ToString(), _regexOptions);
                 _patternElements.Add(new BracketExpressionElement(regex));
             }
         }

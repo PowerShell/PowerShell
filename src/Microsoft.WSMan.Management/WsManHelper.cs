@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -94,7 +94,7 @@ namespace Microsoft.WSMan.Management
             /// <summary>
             /// Dictionary object to store the connection.
             /// </summary>
-            internal static Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
+            internal static readonly Dictionary<string, object> SessionObjCache = new Dictionary<string, object>();
 
             ~Sessions()
             {
@@ -102,7 +102,7 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-        internal static Sessions AutoSession = new Sessions();
+        internal static readonly Sessions AutoSession = new Sessions();
         //
         //
         //
@@ -180,12 +180,12 @@ namespace Microsoft.WSMan.Management
         {
             if (resourceManager == null)
             {
-                throw new ArgumentNullException("resourceManager");
+                throw new ArgumentNullException(nameof(resourceManager));
             }
 
             if (string.IsNullOrEmpty(resourceName))
             {
-                throw new ArgumentNullException("resourceName");
+                throw new ArgumentNullException(nameof(resourceName));
             }
 
             string template = resourceManager.GetString(resourceName);
@@ -478,7 +478,7 @@ namespace Microsoft.WSMan.Management
                                 if (string.IsNullOrEmpty(entry.Key.ToString()))
                                 {
                                     // XmlNode newnode = xmlfile.CreateNode(XmlNodeType.Attribute, ATTR_NIL_NAME, NS_XSI_URI);
-                                    XmlAttribute newnode = xmlfile.CreateAttribute(XmlNodeType.Attribute.ToString(), ATTR_NIL_NAME, NS_XSI_URI);
+                                    XmlAttribute newnode = xmlfile.CreateAttribute(nameof(XmlNodeType.Attribute), ATTR_NIL_NAME, NS_XSI_URI);
                                     newnode.Value = "true";
                                     node.Attributes.Append(newnode);
                                     // (newnode.Attributes.Item(0).FirstChild   );
@@ -953,18 +953,14 @@ namespace Microsoft.WSMan.Management
                 if (connectionuri != null)
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionStr.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = connectionStr.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
 
                 IWSManSession m_session = CreateSessionObject(m_wsmanObject, authentication, sessionoption, credential, connectionStr, certificateThumbprint, usessl);
                 m_session.Identify(0);
-                string key = computername;
-                if (key == null)
-                {
-                    key = "localhost";
-                }
+                string key = computername ?? "localhost";
 
                 AddtoDictionary(key, m_session);
             }
@@ -1032,7 +1028,7 @@ namespace Microsoft.WSMan.Management
                     }
 
                     string[] valuenames = rGPOLocalMachineKey.GetValueNames();
-                    if (valuenames.Length <= 0)
+                    if (valuenames.Length == 0)
                     {
                         return !AllowFreshCredentialsValueShouldBePresent;
                     }
@@ -1098,19 +1094,19 @@ namespace Microsoft.WSMan.Management
                         string Line = _sr.ReadLine();
                         if (Line.Contains("="))
                         {
-                            string[] arr = Line.Split(new char[] { '=' }, 2);
+                            string[] arr = Line.Split('=', count: 2);
                             if (!ResourceValueCache.ContainsKey(arr[0].Trim()))
                             {
-                                string value = arr[1].TrimStart(new char[] { '"' }).TrimEnd(new char[] { '"' });
+                                string value = arr[1].Trim('"');
                                 ResourceValueCache.Add(arr[0].Trim(), value.Trim());
                             }
                         }
                     }
                 }
             }
-            catch (IOException e)
+            catch (IOException)
             {
-                throw (e);
+                throw;
             }
         }
 
@@ -1123,7 +1119,7 @@ namespace Microsoft.WSMan.Management
         internal static string GetResourceString(string Key)
         {
             // Checks whether resource values already loaded and loads.
-            if (ResourceValueCache.Count <= 0)
+            if (ResourceValueCache.Count == 0)
             {
                 LoadResourceData();
             }

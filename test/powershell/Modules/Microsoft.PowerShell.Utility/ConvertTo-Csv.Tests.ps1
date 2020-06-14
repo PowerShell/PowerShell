@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "ConvertTo-Csv DRT Unit Tests" -Tags "CI" {
     $inputObject = [pscustomobject]@{ First = 1; Second = 2 }
@@ -40,6 +40,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     BeforeAll {
         $Name = "Hello"; $Data = "World";
         $testObject = [pscustomobject]@{ FirstColumn = $Name; SecondColumn = $Data }
+        $testNullObject = [pscustomobject]@{ FirstColumn = $Name; SecondColumn = $null }
     }
 
     It "Should Be able to be called without error" {
@@ -48,7 +49,7 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
     It "Should output an array of objects" {
         $result = $testObject | ConvertTo-Csv
-        ,$result | Should -BeOfType "System.Array"
+        ,$result | Should -BeOfType System.Array
     }
 
     It "Should return the type of data in the first element of the output array" {
@@ -121,6 +122,11 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
             $result[0] | Should -BeExactly "`"FirstColumn`",`"SecondColumn`""
             $result[1] | Should -BeExactly "`"Hello`",`"World`""
+
+            $result = $testNullObject | ConvertTo-Csv -UseQuotes Always -Delimiter ','
+
+            $result[0] | Should -BeExactly "`"FirstColumn`",`"SecondColumn`""
+            $result[1] | Should -BeExactly "`"Hello`","
         }
 
         It "UseQuotes Always is default" {
@@ -135,6 +141,11 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
             $result[0] | Should -BeExactly "FirstColumn,SecondColumn"
             $result[1] | Should -BeExactly "Hello,World"
+
+            $result = $testNullObject | ConvertTo-Csv -UseQuotes Never -Delimiter ','
+
+            $result[0] | Should -BeExactly "FirstColumn,SecondColumn"
+            $result[1] | Should -BeExactly "Hello,"
         }
 
         It "UseQuotes AsNeeded" {
@@ -142,6 +153,11 @@ Describe "ConvertTo-Csv" -Tags "CI" {
 
             $result[0] | Should -BeExactly "`"FirstColumn`"rSecondColumn"
             $result[1] | Should -BeExactly "Hellor`"World`""
+
+            $result = $testNullObject | ConvertTo-Csv -UseQuotes AsNeeded -Delimiter 'r'
+
+            $result[0] | Should -BeExactly "`"FirstColumn`"rSecondColumn"
+            $result[1] | Should -BeExactly "Hellor"
         }
     }
 }

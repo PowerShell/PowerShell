@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -510,6 +510,7 @@ namespace System.Management.Automation.Help
                     </xs:complexType>
                 </xs:element>
             </xs:schema>";
+
         private const string HelpInfoXmlNamespace = "http://schemas.microsoft.com/powershell/help/2010/05";
         private const string HelpInfoXmlValidationFailure = "HelpInfoXmlValidationFailure";
 
@@ -1498,52 +1499,6 @@ namespace System.Management.Automation.Help
             var updatableHelpSetting = Utils.GetPolicySetting<UpdatableHelp>(Utils.SystemWideOnlyConfig);
             string defaultSourcePath = updatableHelpSetting?.DefaultSourcePath;
             return string.IsNullOrEmpty(defaultSourcePath) ? null : defaultSourcePath;
-        }
-
-        /// <summary>
-        /// Sets the DisablePromptToUpdatableHelp regkey.
-        /// </summary>
-        internal static void SetDisablePromptToUpdateHelp()
-        {
-            try
-            {
-                PowerShellConfig.Instance.SetDisablePromptToUpdateHelp(true);
-            }
-            catch (UnauthorizedAccessException)
-            {
-                // Ignore AccessDenied related exceptions
-            }
-            catch (SecurityException)
-            {
-                // Ignore AccessDenied related exceptions
-            }
-        }
-
-        /// <summary>
-        /// Checks if it is necessary to prompt to update help.
-        /// </summary>
-        /// <returns></returns>
-        internal static bool ShouldPromptToUpdateHelp()
-        {
-#if UNIX
-            // TODO: This workaround needs to be removed once updatable help
-            //       works on Linux.
-            return false;
-#else
-            try
-            {
-                if (!Utils.IsAdministrator())
-                {
-                    return false;
-                }
-
-                return PowerShellConfig.Instance.GetDisablePromptToUpdateHelp();
-            }
-            catch (SecurityException)
-            {
-                return false;
-            }
-#endif
         }
 
         #endregion

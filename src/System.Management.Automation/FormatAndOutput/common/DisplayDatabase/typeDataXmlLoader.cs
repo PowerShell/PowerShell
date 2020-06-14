@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -193,16 +193,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool preValidated)
         {
             if (info == null)
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
 
             if (info.filePath == null)
                 throw PSTraceSource.NewArgumentNullException("info.filePath");
 
             if (db == null)
-                throw PSTraceSource.NewArgumentNullException("db");
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
 
             if (expressionFactory == null)
-                throw PSTraceSource.NewArgumentNullException("expressionFactory");
+                throw PSTraceSource.NewArgumentNullException(nameof(expressionFactory));
 
             if (SecuritySupport.IsProductBinary(info.filePath))
             {
@@ -288,13 +288,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             bool isForHelp)
         {
             if (typeDefinition == null)
-                throw PSTraceSource.NewArgumentNullException("typeDefinition");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeDefinition));
             if (typeDefinition.TypeName == null)
                 throw PSTraceSource.NewArgumentNullException("typeDefinition.TypeName");
             if (db == null)
-                throw PSTraceSource.NewArgumentNullException("db");
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
             if (expressionFactory == null)
-                throw PSTraceSource.NewArgumentNullException("expressionFactory");
+                throw PSTraceSource.NewArgumentNullException(nameof(expressionFactory));
 
             this.expressionFactory = expressionFactory;
             this.ReportTrace("loading ExtendedTypeDefinition started");
@@ -337,10 +337,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void LoadData(XmlDocument doc, TypeInfoDataBase db)
         {
             if (doc == null)
-                throw PSTraceSource.NewArgumentNullException("doc");
+                throw PSTraceSource.NewArgumentNullException(nameof(doc));
 
             if (db == null)
-                throw PSTraceSource.NewArgumentNullException("db");
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
 
             // create a new instance of the database to be loaded
             XmlElement documentElement = doc.DocumentElement;
@@ -428,7 +428,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 throw PSTraceSource.NewArgumentNullException("viewDefinition");
 
             if (db == null)
-                throw PSTraceSource.NewArgumentNullException("db");
+                throw PSTraceSource.NewArgumentNullException(nameof(db));
 
             int viewIndex = 0;
             foreach (FormatViewDefinition formatView in typeDefinition.FormatViewDefinition)
@@ -2054,7 +2054,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal bool ProcessExpressionDirectives(XmlNode containerNode, List<XmlNode> unprocessedNodes)
             {
                 if (containerNode == null)
-                    throw PSTraceSource.NewArgumentNullException("containerNode");
+                    throw PSTraceSource.NewArgumentNullException(nameof(containerNode));
 
                 string formatString = null;
                 TextToken textToken = null;

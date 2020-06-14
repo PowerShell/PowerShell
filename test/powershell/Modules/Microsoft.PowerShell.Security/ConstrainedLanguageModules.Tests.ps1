@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 ##
@@ -236,8 +236,8 @@ try
             "@{ ModuleVersion='1.0'; RootModule='$moduleFilePathI' }" | Out-File $moduleManifestPathI
 
             # Module with using directive
-            $sriptModuleNameJ = "ModuleWithUsing_System32"
-            $moduleFilePathJ = Join-Path $TestModulePath ($sriptModuleNameJ + ".psm1")
+            $scriptModuleNameJ = "ModuleWithUsing_System32"
+            $moduleFilePathJ = Join-Path $TestModulePath ($scriptModuleNameJ + ".psm1")
             @'
             using module {0}
             function PublicUsingFn {{ [Class1]::GetMessage() }}
@@ -245,6 +245,19 @@ try
 '@ -f $moduleManifestPathI | Out-File $moduleFilePathJ
 
             Write-Verbose "Test module files created"
+        }
+
+        AfterAll {
+            Remove-Module $scriptModuleNameA -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameB -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameC -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameD -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameE -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameF -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameG -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameH -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameI -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleNameJ -Force -ErrorAction SilentlyContinue
         }
 
         It "Verifies that importing trusted module in system lockdown which dot sources a ps1 file while exporting all functions with wildcard throws expected error" {
@@ -457,6 +470,10 @@ try
             "@{ ModuleVersion = '1.0'; RootModule = '$moduleFileName'; FunctionsToExport = 'PublicFn' }" > $manifestFileName
         }
 
+        AfterAll {
+            Remove-Module ImportTrustedManifestWithCallOperator_System32 -Force -ErrorAction SilentlyContinue
+        }
+
         It "Verifies expected error when call operator attempts to access trusted module scope function" {
 
             try
@@ -638,6 +655,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportUnTrustedManifestWithFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $expectedError.FullyQualifiedErrorId | Should -BeExactly "Modules_MismatchedLanguageModes,Microsoft.PowerShell.Commands.ImportModuleCommand"
@@ -807,6 +825,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedModuleWithNoFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 0
@@ -837,6 +856,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedModuleWithFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -868,6 +888,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedModuleWithWildcardFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 2
@@ -927,6 +948,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithNoFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 0
@@ -957,6 +979,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithWildcardFnExport1_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 0
@@ -987,6 +1010,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithWildcardNameFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 0
@@ -1019,6 +1043,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithWildcardModFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -1050,6 +1075,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithCmdletExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 0
@@ -1092,6 +1118,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithTwoMods_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -1124,6 +1151,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithExportFn_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -1155,6 +1183,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithNestedModsAndFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -1186,6 +1215,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithNestedModsAndNoFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 0
@@ -1216,6 +1246,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithNestedModsAndNoExtNoFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -1260,6 +1291,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportTrustedManifestWithDotSourceModAndFnExport_System32 -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -1305,6 +1337,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportUntrustedManifestWithNoFnExport -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 2
@@ -1335,6 +1368,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportUntrustedManifestWithFnExport -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -1365,6 +1399,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportUnTrustedModuleWithNoFnExport -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 2
@@ -1395,6 +1430,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module ImportUnTrustedModuleWithFnExport -Force -ErrorAction SilentlyContinue
             }
 
             $module.ExportedCommands.Count | Should -Be 1
@@ -1518,6 +1554,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -RevertLockdownMode -EnableFullLanguageMode
+                Remove-Module UntrustedScriptFoo -Force -ErrorAction SilentlyContinue
             }
 
             $result | Should -BeExactly "ConstrainedLanguage"

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 ##
@@ -129,6 +129,10 @@ try
             Export-ModuleMember -Function TestRestrictedSession
 '@
             $template -f $configFilePath > $moduleFilePath
+        }
+
+        AfterAll {
+            Remove-Module $scriptModuleName -Force -ErrorAction SilentlyContinue
         }
 
         It "Verifies that a NoLanguage runspace pool throws the expected 'script not allowed' error" {
@@ -405,6 +409,7 @@ try
             finally
             {
                 Invoke-LanguageModeTestingSupportCmdlet -EnableFullLanguageMode
+                Remove-Module PSDiagnostics -Force -ErrorAction SilentlyContinue
             }
 
             $expectedError.FullyQualifiedErrorId | Should -BeExactly "CantInvokeCallOperatorAcrossLanguageBoundaries"
@@ -465,7 +470,7 @@ try
 
         BeforeAll {
 
-            function VulnerableFunctionFromFullLanguage { Invoke-Expression $Args[0] }
+            function VulnerableFunctionFromFullLanguage { Invoke-Expression $args[0] }
 
             $TestCasesIEX = @(
                 @{testName = "Verifies direct Invoke-Expression does not bypass constrained language mode";
@@ -880,26 +885,9 @@ try
 
     Describe "ForEach-Object -Parallel Constrained Language Tests" -Tags 'Feature','RequireAdminOnWindows' {
 
-        BeforeAll {
-
-            $skipTest = -not $EnabledExperimentalFeatures.Contains('PSForEachObjectParallel')
-            if ($skipTest) {
-                Write-Verbose "Test Suite Skipped. The test suite requires the experimental feature 'PSForEachObjectParallel' to be enabled." -Verbose
-                $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-                $PSDefaultParameterValues["it:skip"] = $true
-            }
-        }
-    
-        AfterAll {
-    
-            if ($skipTest) {
-                $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            }
-        }
-
         It 'Foreach-Object -Parallel must run in ConstrainedLanguage mode under system lock down' {
 
-            try 
+            try
             {
                 $ExecutionContext.SessionState.LanguageMode = "ConstrainedLanguage"
                 Invoke-LanguageModeTestingSupportCmdlet -SetLockdownMode
@@ -938,6 +926,10 @@ try
                 TrustedFn
             }}
 '@ -f $scriptFilePath | Out-File -FilePath $scriptModulePath
+        }
+
+        AfterAll {
+            Remove-Module $scriptModuleName -Force -ErrorAction SilentlyContinue
         }
 
         It "Verifies a scriptblock from a trusted script file does not run as trusted" {
@@ -983,6 +975,11 @@ try
             function ModuleFn {{ "ModuleFn: $($ExecutionContext.SessionState.LanguageMode)" }}
             Export-ModuleMember -Function "ModuleFn","ImportModuleFn"
 '@ -f $importModulePath | Out-File -FilePath $scriptModulePath
+        }
+
+        AfterAll {
+            Remove-Module $importModuleName -Force -ErrorAction SilentlyContinue
+            Remove-Module $scriptModuleName -Force -ErrorAction SilentlyContinue
         }
 
         It "Verifies that trusted module functions run in FullLanguage" {
@@ -1040,6 +1037,7 @@ try
         AfterAll {
 
             Remove-Module -Name T1ScriptClass_System32 -Force -ErrorAction Ignore
+            Remove-Module -Name T1ScriptClass -Force -ErrorAction Ignore
         }
 
         It "Verifies that classes cannot be created in script running under constrained language" {

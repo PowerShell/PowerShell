@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation.Language;
@@ -33,7 +33,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (name == null)
             {
-                throw PSTraceSource.NewArgumentNullException("name");
+                throw PSTraceSource.NewArgumentNullException(nameof(name));
             }
         }
 
@@ -51,7 +51,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (string.IsNullOrWhiteSpace(name))
                 {
-                    throw PSTraceSource.NewArgumentException("name");
+                    throw PSTraceSource.NewArgumentException(nameof(name));
                 }
 
                 Name = name;
@@ -90,7 +90,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (internalParameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("internalParameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(internalParameter));
             }
 
             // we want the name to preserve 1) dashes, 2) colons, 3) followed-by-space information
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (publicParameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("publicParameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(publicParameter));
             }
 
             string name = publicParameter.Name;
@@ -211,7 +211,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (parameterAsPSObject == null)
             {
-                throw PSTraceSource.NewArgumentNullException("parameterAsPSObject");
+                throw PSTraceSource.NewArgumentNullException(nameof(parameterAsPSObject));
             }
 
             string name = RemotingDecoder.GetPropertyValue<string>(parameterAsPSObject, RemoteDataNameStrings.ParameterName);

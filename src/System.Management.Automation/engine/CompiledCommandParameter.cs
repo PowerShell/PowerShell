@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -37,7 +37,7 @@ namespace System.Management.Automation
         {
             if (runtimeDefinedParameter == null)
             {
-                throw PSTraceSource.NewArgumentNullException("runtimeDefinedParameter");
+                throw PSTraceSource.NewArgumentNullException(nameof(runtimeDefinedParameter));
             }
 
             this.Name = runtimeDefinedParameter.Name;
@@ -123,7 +123,7 @@ namespace System.Management.Automation
         {
             if (member == null)
             {
-                throw PSTraceSource.NewArgumentNullException("member");
+                throw PSTraceSource.NewArgumentNullException(nameof(member));
             }
 
             this.Name = member.Name;
@@ -146,7 +146,7 @@ namespace System.Management.Automation
                 {
                     ArgumentException e =
                     PSTraceSource.NewArgumentException(
-                        "member",
+                        nameof(member),
                         DiscoveryExceptions.CompiledCommandParameterMemberMustBeFieldOrProperty);
 
                     throw e;

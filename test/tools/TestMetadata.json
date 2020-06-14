@@ -1,7 +1,10 @@
 {
   "ExperimentalFeatures": {
     "ExpTest.FeatureOne": [ "test/powershell/engine/ExperimentalFeature/ExperimentalFeature.Basic.Tests.ps1" ],
-    "PSForEachObjectParallel": [ "test/powershell/Modules/Microsoft.PowerShell.Utility/Foreach-Object-Parallel.Tests.ps1", "test/powershell/Modules/Microsoft.PowerShell.Security/ConstrainedLanguageRestriction.Tests.ps1" ],
-    "PSPipelineChainOperators": [ "test/powershell/Language/Operators/PipelineChainOperator.Tests.ps1" ]
+    "PSNullConditionalOperators": [
+      "test/powershell/Language/Operators/NullConditional.Tests.ps1",
+      "test/powershell/Language/Parser/Parsing.Tests.ps1",
+      "/test/powershell/Host/TabCompletion/TabCompletion.Tests.ps1" ],
+    "PSCultureInvariantReplaceOperator": [ "test/powershell/Language/Operators/ReplaceOperator.Tests.ps1" ]
   }
 }

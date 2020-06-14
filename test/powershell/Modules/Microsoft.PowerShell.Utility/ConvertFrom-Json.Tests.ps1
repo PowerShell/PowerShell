@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 function New-NestedJson {
@@ -36,6 +36,10 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
         $testCasesWithAndWithoutAsHashtableSwitch = @(
             @{ AsHashtable = $true  }
             @{ AsHashtable = $false }
+        )
+        $testCasesWithAndWithoutNoEnumerateSwitch = @(
+            @{ NoEnumerate = $true  }
+            @{ NoEnumerate = $false }
         )
     }
 
@@ -105,6 +109,38 @@ Describe 'ConvertFrom-Json Unit Tests' -tags "CI" {
 
         { $nestedJson | ConvertFrom-Json -AsHashtable:$AsHashtable } |
             Should -Throw -ErrorId "System.ArgumentException,Microsoft.PowerShell.Commands.ConvertFromJsonCommand"
+    }
+
+    It 'Can correctly round trip arrays with NoEnumerate switch set to <NoEnumerate>' -TestCases $testCasesWithAndWithoutNoEnumerateSwitch {
+        Param($NoEnumerate)
+        '[ 1, 2 ]' | ConvertFrom-Json -NoEnumerate:$NoEnumerate | ConvertTo-Json -Compress | Should -Be '[1,2]'
+    }
+
+    It 'Unravels array elements when NoEnumerate switch is not set' {
+        ('[ 1, 2 ]' | ConvertFrom-Json | Measure-Object).Count | Should -Be 2
+    }
+
+    It 'Sends a Json array as a single element when NoEnumerate switch is set' {
+        ('[ 1, 2 ]' | ConvertFrom-Json -NoEnumerate | Measure-Object).Count | Should -Be 1
+    }
+
+    It 'Cannot round trip single element arrays without NoEnumerate switch' {
+        '[ 1 ]' | ConvertFrom-Json | ConvertTo-Json | Should -Be 1
+    }
+
+    It 'Can round trip single element arrays with NoEnumerate switch' {
+        '[ 1 ]' | ConvertFrom-Json -NoEnumerate | ConvertTo-Json -Compress | Should -Be '[1]'
+    }
+
+    It 'Can convert null' {
+        'null' | ConvertFrom-Json | Should -Be $null
+        $out = '[1, null, 2]' | ConvertFrom-Json
+        $out.Length | Should -Be 3
+
+        # can't compare directly to array as Pester doesn't handle the $null
+        $out[0] | Should -Be 1
+        $out[1] | Should -Be $null
+        $out[2] | Should -Be 2
     }
 }
 

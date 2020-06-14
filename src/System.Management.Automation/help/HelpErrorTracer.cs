@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -156,7 +156,7 @@ namespace System.Management.Automation
         /// <param name="errorRecord"></param>
         internal void TraceError(ErrorRecord errorRecord)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
             TraceFrame traceFrame = _traceFrames[_traceFrames.Count - 1];
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         /// <param name="errorRecords"></param>
         internal void TraceErrors(Collection<ErrorRecord> errorRecords)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
             TraceFrame traceFrame = _traceFrames[_traceFrames.Count - 1];
@@ -181,7 +181,7 @@ namespace System.Management.Automation
 
         internal void PopFrame(TraceFrame traceFrame)
         {
-            if (_traceFrames.Count <= 0)
+            if (_traceFrames.Count == 0)
                 return;
 
             TraceFrame lastFrame = _traceFrames[_traceFrames.Count - 1];

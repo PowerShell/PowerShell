@@ -22,7 +22,7 @@ namespace System.Management.Automation.Interpreter
         void AddInstructions(LightCompiler compiler);
     }
 
-    internal abstract partial class Instruction
+    internal abstract class Instruction
     {
         public const int UnknownInstrIndex = int.MaxValue;
 

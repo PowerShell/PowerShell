@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         #region tracer
         [TraceSource("format_out_OutCommandInner", "OutCommandInner")]
-        internal static PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutCommandInner", "OutCommandInner");
+        internal static readonly PSTraceSource tracer = PSTraceSource.GetTracer("format_out_OutCommandInner", "OutCommandInner");
         #endregion tracer
 
         internal override void BeginProcessing()
@@ -476,8 +476,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (goc.Data.groupingEntry != null)
             {
-                _lo.WriteLine(string.Empty);
-
                 ComplexWriter writer = new ComplexWriter();
                 writer.Initialize(_lo, _lo.ColumnNumber);
                 writer.WriteObject(goc.Data.groupingEntry.formatValueList);
@@ -510,7 +508,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // we assume FormatEntryData as a standard wrapper
             if (fed == null)
             {
-                PSTraceSource.NewArgumentNullException("fed");
+                PSTraceSource.NewArgumentNullException(nameof(fed));
             }
 
             if (fed.formatEntryInfo == null)
@@ -950,7 +948,9 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             private int _rowCount = 0;
             private int _consoleHeight = -1;
             private int _consoleWidth = -1;
+
             private const int WhitespaceAndPagerLineCount = 2;
+
             private bool _repeatHeader = false;
 
             /// <summary>

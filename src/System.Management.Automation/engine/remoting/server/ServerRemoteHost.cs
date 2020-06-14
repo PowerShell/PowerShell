@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Globalization;
@@ -150,17 +150,6 @@ namespace System.Management.Automation.Remoting
         /// Host info.
         /// </summary>
         internal HostInfo HostInfo { get; }
-
-        /// <summary>
-        /// Allows a push runspace on this remote server host instance, regardless of
-        /// transport being used.
-        /// </summary>
-        internal virtual bool AllowPushRunspace
-        {
-            get { return (_serverDriverRemoteHost != null) ? _serverDriverRemoteHost.AllowPushRunspace : false; }
-
-            set { if (_serverDriverRemoteHost != null) { _serverDriverRemoteHost.AllowPushRunspace = value; } }
-        }
 
         #endregion
 
@@ -328,18 +317,6 @@ namespace System.Management.Automation.Remoting
         /// <param name="runspace">RemoteRunspace.</param>
         public override void PushRunspace(Runspace runspace)
         {
-            // Double session hop is currently allowed only for WSMan (non-OutOfProc) sessions, where
-            // the second session is either through a named pipe or hyperV socket connection.
-            if (!AllowPushRunspace &&
-                ((_transportManager is OutOfProcessServerSessionTransportManager) ||
-                 !(runspace.ConnectionInfo is NamedPipeConnectionInfo ||
-                   runspace.ConnectionInfo is VMConnectionInfo ||
-                   runspace.ConnectionInfo is ContainerConnectionInfo))
-               )
-            {
-                throw new PSNotSupportedException();
-            }
-
             if (_debugger == null)
             {
                 throw new PSInvalidOperationException(RemotingErrorIdStrings.ServerDriverRemoteHostNoDebuggerToPush);
@@ -415,16 +392,6 @@ namespace System.Management.Automation.Remoting
         internal Runspace PushedRunspace
         {
             get { return _pushedRunspace; }
-        }
-
-        /// <summary>
-        /// Allows a push runspace on this remote server host instance, regardless of
-        /// transport being used.
-        /// </summary>
-        internal override bool AllowPushRunspace
-        {
-            get;
-            set;
         }
 
         /// <summary>

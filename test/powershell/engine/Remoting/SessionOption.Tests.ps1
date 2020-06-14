@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 try {
     if ( ! $IsWindows ) {
@@ -10,27 +10,27 @@ try {
         }
         It "The SessionOption type can be created" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
-            $result | should -BeOfType "Microsoft.WSMan.Management.SessionOption"
+            $result | Should -BeOfType Microsoft.WSMan.Management.SessionOption
         }
         It "The SessionOption type has the proper properties when created with the default constructor" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
-            $result.SkipCACheck         | should -BeFalse
-            $result.SkipCNCheck         | should -BeFalse
-            $result.SkipRevocationCheck | should -BeFalse
-            $result.UseEncryption       | should -BeTrue
-            $result.UseUtf16            | should -BeFalse
-            $result.ProxyAuthentication | should -Be 0
-            $result.SPNPort             | should -Be 0
-            $result.OperationTimeout    | should -Be 0
-            $result.ProxyCredential     | should -BeNullOrEmpty
-            $result.ProxyAccessType     | should -Be ProxyIEConfig
+            $result.SkipCACheck         | Should -BeFalse
+            $result.SkipCNCheck         | Should -BeFalse
+            $result.SkipRevocationCheck | Should -BeFalse
+            $result.UseEncryption       | Should -BeTrue
+            $result.UseUtf16            | Should -BeFalse
+            $result.ProxyAuthentication | Should -Be 0
+            $result.SPNPort             | Should -Be 0
+            $result.OperationTimeout    | Should -Be 0
+            $result.ProxyCredential     | Should -BeNullOrEmpty
+            $result.ProxyAccessType     | Should -Be ProxyIEConfig
         }
         It "The values of SessionOption may be set" {
             $result = [Microsoft.WSMan.Management.SessionOption]::new()
             $result.SkipCACheck = $true
             $result.SkipCNCheck = $true
             $result.SkipRevocationCheck = $true
-            $result.UseUtf16 = $True
+            $result.UseUtf16 = $true
             $result.UseEncryption = $false
             $result.ProxyAuthentication = "Negotiate"
             $result.SPNPort = 10
@@ -38,16 +38,16 @@ try {
             $result.ProxyAccessType = "ProxyAutoDetect"
             $result.ProxyCredential = [System.Net.NetworkCredential]::new("user","pass")
 
-            $result.SkipCACheck         | should -BeTrue
-            $result.SkipCNCheck         | should -BeTrue
-            $result.SkipRevocationCheck | should -BeTrue
-            $result.UseEncryption       | should -BeFalse
-            $result.UseUtf16            | should -BeTrue
-            $result.ProxyAuthentication | should -Be "Negotiate"
-            $result.SPNPort             | should -Be 10
-            $result.OperationTimeout    | should -Be 10
-            $result.ProxyCredential     | should -Not -BeNullOrEmpty
-            $result.ProxyAccessType     | should -Be "ProxyAutoDetect"
+            $result.SkipCACheck         | Should -BeTrue
+            $result.SkipCNCheck         | Should -BeTrue
+            $result.SkipRevocationCheck | Should -BeTrue
+            $result.UseEncryption       | Should -BeFalse
+            $result.UseUtf16            | Should -BeTrue
+            $result.ProxyAuthentication | Should -Be "Negotiate"
+            $result.SPNPort             | Should -Be 10
+            $result.OperationTimeout    | Should -Be 10
+            $result.ProxyCredential     | Should -Not -BeNullOrEmpty
+            $result.ProxyAccessType     | Should -Be "ProxyAutoDetect"
         }
     }
 }

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Basic engine APIs' -Tags "CI" {
     Context 'powershell::Create' {
@@ -19,7 +19,7 @@ Describe 'Basic engine APIs' -Tags "CI" {
             { [powershell]::Create([runspace]$null) } | Should -Throw -ErrorId 'PSArgumentNullException'
         }
 
-        It "can load the default snapin 'Microsoft.WSMan.Management'" -skip:(-not $IsWindows) {
+        It "can load the default snapin 'Microsoft.WSMan.Management'" -Skip:(-not $IsWindows) {
             $ps = [powershell]::Create()
             $ps.AddScript("Get-Command -Name Test-WSMan") > $null
 
@@ -49,7 +49,7 @@ $null = $ps.AddScript(1).Invoke()
 exit
 '@
         $outputFile = New-Item -Path $TestDrive\output.txt -ItemType File
-        $process = Start-Process pwsh -ArgumentList $command -PassThru -RedirectStandardOutput $outputFile
+        $process = Start-Process "$PSHOME/pwsh" -ArgumentList $command -PassThru -RedirectStandardOutput $outputFile
         Wait-UntilTrue -sb { $process.HasExited } -TimeoutInMilliseconds 5000 -IntervalInMilliseconds 1000 | Should -BeTrue
         $hasExited = $process.HasExited
 

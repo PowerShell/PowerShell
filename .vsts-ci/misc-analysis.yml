@@ -34,7 +34,7 @@ jobs:
     condition: succeededOrFailed()
 
   - powershell: |
-      Install-module pester -Scope CurrentUser -Force
+      Install-module Pester -Scope CurrentUser -Force -MaximumVersion 4.99
     displayName: Install Pester
     condition: succeededOrFailed()
 
@@ -68,3 +68,8 @@ jobs:
       }
     displayName: Run Common Tests
     condition: succeededOrFailed()
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

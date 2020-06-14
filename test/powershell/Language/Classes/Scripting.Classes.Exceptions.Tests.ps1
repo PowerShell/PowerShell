@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Exceptions flow for classes' -Tags "CI" {
 
@@ -290,7 +290,7 @@ Describe "Exception from initializer" -Tags "CI" {
 
     It "static member w/ ctor" {
         $e = { $null = [MSFT_6397334c]::a } | Should -Throw -PassThru
-        $e.Exception | Should -BeOfType 'System.TypeInitializationException'
+        $e.Exception | Should -BeOfType System.TypeInitializationException
         $e.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should -BeExactly 'InvalidCastFromStringToInteger'
         $e.Exception.InnerException.InnerException.ErrorRecord.InvocationInfo.Line | Should -Match 'a = "zz"'
     }

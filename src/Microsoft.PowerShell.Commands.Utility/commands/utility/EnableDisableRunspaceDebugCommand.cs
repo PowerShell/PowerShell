@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="runspaceId">Runspace local Id.</param>
         public PSRunspaceDebug(bool enabled, bool breakAll, string runspaceName, int runspaceId)
         {
-            if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException("runspaceName"); }
+            if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException(nameof(runspaceName)); }
 
             this.Enabled = enabled;
             this.BreakAll = breakAll;
@@ -327,7 +327,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet enables debugging for selected runspaces in the current or specified process.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403732")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096831")]
     public sealed class EnableRunspaceDebugCommand : CommonRunspaceCommandBase
     {
         #region Parameters
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet disables Runspace debugging in selected Runspaces.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Disable, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403733")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2096924")]
     public sealed class DisableRunspaceDebugCommand : CommonRunspaceCommandBase
     {
         #region Overrides
@@ -482,7 +482,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet returns a PSRunspaceDebug object for each found Runspace object.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "RunspaceDebug", DefaultParameterSetName = CommonRunspaceCommandBase.RunspaceNameParameterSet,
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403734")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097015")]
     [OutputType(typeof(PSRunspaceDebug))]
     public sealed class GetRunspaceDebugCommand : CommonRunspaceCommandBase
     {
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet causes a running script or command to stop in the debugger at the next execution point.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Wait, "Debugger",
-        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403735")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=2097035")]
     public sealed class WaitDebuggerCommand : PSCmdlet
     {
         #region Overrides

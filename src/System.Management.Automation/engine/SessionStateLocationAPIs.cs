@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -75,7 +75,7 @@ namespace System.Management.Automation
         {
             if (namespaceID == null)
             {
-                throw PSTraceSource.NewArgumentNullException("namespaceID");
+                throw PSTraceSource.NewArgumentNullException(nameof(namespaceID));
             }
 
             // If namespace ID is empty, we will use the current working drive
@@ -236,7 +236,7 @@ namespace System.Management.Automation
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             PathInfo current = CurrentLocation;
@@ -519,7 +519,7 @@ namespace System.Management.Automation
 
                         throw
                             PSTraceSource.NewArgumentException(
-                                "path",
+                                nameof(path),
                                 SessionStateStrings.PathResolvedToMultiple,
                                 originalPath);
                     }
@@ -636,7 +636,7 @@ namespace System.Management.Automation
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             PSDriveInfo drive = null;
@@ -733,7 +733,7 @@ namespace System.Management.Automation
                     providerSpecificPath,
                     currentWorkingPath);
 
-                if (string.Compare(providerSpecificPath, currentWorkingPath, StringComparison.CurrentCultureIgnoreCase) == 0)
+                if (string.Compare(providerSpecificPath, currentWorkingPath, StringComparison.OrdinalIgnoreCase) == 0)
                 {
                     // The path is the current working directory so
                     // return true
@@ -765,7 +765,7 @@ namespace System.Management.Automation
                             lockedDirectory,
                             providerSpecificPath);
 
-                        if (string.Compare(lockedDirectory, providerSpecificPath, StringComparison.CurrentCultureIgnoreCase) == 0)
+                        if (string.Compare(lockedDirectory, providerSpecificPath, StringComparison.OrdinalIgnoreCase) == 0)
                         {
                             // The path is a parent of the current working
                             // directory
@@ -913,7 +913,7 @@ namespace System.Management.Automation
                         {
                             throw
                                 PSTraceSource.NewArgumentException(
-                                    "stackName",
+                                    nameof(stackName),
                                     SessionStateStrings.StackNameResolvedToMultiple,
                                     stackName);
                         }
@@ -935,7 +935,7 @@ namespace System.Management.Automation
                     {
                         throw
                             PSTraceSource.NewArgumentException(
-                                "stackName",
+                                nameof(stackName),
                                 SessionStateStrings.StackNotFound,
                                 stackName);
                     }
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("stackName");
+                    throw PSTraceSource.NewArgumentException(nameof(stackName));
                 }
             }
 

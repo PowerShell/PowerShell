@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.ComponentModel;
@@ -171,7 +171,7 @@ namespace System.Management.Automation
         {
             if (component == null)
             {
-                throw PSTraceSource.NewArgumentNullException("component");
+                throw PSTraceSource.NewArgumentNullException(nameof(component));
             }
 
             PSObject mshObj = GetComponentPSObject(component);
@@ -221,7 +221,7 @@ namespace System.Management.Automation
                 PSObjectTypeDescriptor descriptor = component as PSObjectTypeDescriptor;
                 if (descriptor == null)
                 {
-                    throw PSTraceSource.NewArgumentException("component", ExtendedTypeSystem.InvalidComponent,
+                    throw PSTraceSource.NewArgumentException(nameof(component), ExtendedTypeSystem.InvalidComponent,
                                                              "component",
                                                              typeof(PSObject).Name,
                                                              typeof(PSObjectTypeDescriptor).Name);
@@ -270,7 +270,7 @@ namespace System.Management.Automation
         {
             if (component == null)
             {
-                throw PSTraceSource.NewArgumentNullException("component");
+                throw PSTraceSource.NewArgumentNullException(nameof(component));
             }
 
             PSObject mshObj = GetComponentPSObject(component);
@@ -330,7 +330,7 @@ namespace System.Management.Automation
     /// </summary>
     public class PSObjectTypeDescriptor : CustomTypeDescriptor
     {
-        internal static PSTraceSource typeDescriptor = PSTraceSource.GetTracer("TypeDescriptor", "Traces the behavior of PSObjectTypeDescriptor, PSObjectTypeDescriptionProvider and PSObjectPropertyDescriptor.", false);
+        internal static readonly PSTraceSource typeDescriptor = PSTraceSource.GetTracer("TypeDescriptor", "Traces the behavior of PSObjectTypeDescriptor, PSObjectTypeDescriptionProvider and PSObjectPropertyDescriptor.", false);
 
         /// <summary>
         /// Occurs when there was an exception setting the value of a property.

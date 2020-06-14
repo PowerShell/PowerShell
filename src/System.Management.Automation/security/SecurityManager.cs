@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell
         {
             if (string.IsNullOrEmpty(shellId))
             {
-                throw PSTraceSource.NewArgumentNullException("shellId");
+                throw PSTraceSource.NewArgumentNullException(nameof(shellId));
             }
 
             _shellId = shellId;
@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell
                     {
                         TrustPublisher(signature);
                         policyCheckPassed = true;
-                    }; break;
+                    } break;
                 case RunPromptDecision.DoNotRun:
                     policyCheckPassed = false;
                     reasonMessage = StringUtil.Format(Authenticode.Reason_DoNotRun, path);
@@ -395,7 +395,7 @@ namespace Microsoft.PowerShell
                         reasonMessage = StringUtil.Format(Authenticode.Reason_NeverRun, path);
                         reason = new UnauthorizedAccessException(reasonMessage);
                         policyCheckPassed = false;
-                    }; break;
+                    } break;
             }
 
             return policyCheckPassed;

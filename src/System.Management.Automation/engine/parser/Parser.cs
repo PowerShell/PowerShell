@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -8,14 +8,10 @@ using System.Diagnostics.Tracing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-#if !CORECLR
-using Microsoft.CodeAnalysis;
-#endif
 
 namespace System.Management.Automation.Language
 {
@@ -35,8 +31,6 @@ namespace System.Management.Automation.Language
     /// </summary>
     public sealed class Parser
     {
-        private static readonly bool s_pipelineChainsEnabled = ExperimentalFeature.IsEnabled("PSPipelineChainOperators");
-
         private readonly Tokenizer _tokenizer;
         internal Token _ungotToken;
         private bool _disableCommaOperator;
@@ -45,6 +39,7 @@ namespace System.Management.Automation.Language
         private ParseMode _parseMode;
 
         internal string _fileName;
+
         internal bool ProduceV2Tokens { get; set; }
 
         internal const string VERBATIM_ARGUMENT = "--%";
@@ -74,7 +69,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             if (!string.IsNullOrEmpty(fileName) && fileName.Length > scriptSchemaExtension.Length && fileName.EndsWith(scriptSchemaExtension, StringComparison.OrdinalIgnoreCase))
             {
-                parser._keywordModuleName = Path.GetFileName(fileName.Substring(0, fileName.Length - scriptSchemaExtension.Length));
+                parser._keywordModuleName = Path.GetFileName(fileName.AsSpan(0, fileName.Length - scriptSchemaExtension.Length)).ToString();
                 parseDscResource = true;
             }
 
@@ -2751,28 +2746,42 @@ namespace System.Management.Automation.Language
 
                 while (true)
                 {
-                    ExpressionAst clauseCondition = GetSingleCommandArgument(CommandArgumentContext.SwitchCondition);
-                    if (clauseCondition == null)
+                    Token token = PeekToken();
+                    bool isDefaultClause = token.Kind == TokenKind.Default;
+                    ExpressionAst clauseCondition = null;
+
+                    if (isDefaultClause)
                     {
-                        // ErrorRecovery: if we don't have anything that looks like a condition, we won't
-                        // find a body (because a body is just a script block, which works as a condition.)
-                        // So don't look for a body, hope we find the '}' next.
-
-                        isError = true;
-                        ReportIncompleteInput(After(endErrorStatement),
-                            nameof(ParserStrings.MissingSwitchConditionExpression),
-                            ParserStrings.MissingSwitchConditionExpression);
-                        // Consume a closing curly, if there is one, to avoid an extra error
-                        if (PeekToken().Kind == TokenKind.RCurly)
+                        // Consume the 'default' token.
+                        SkipToken();
+                        clauseCondition = new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord);
+                    }
+                    else
+                    {
+                        clauseCondition = GetSingleCommandArgument(CommandArgumentContext.SwitchCondition);
+                        if (clauseCondition == null)
                         {
-                            SkipToken();
-                        }
+                            // ErrorRecovery: if we don't have anything that looks like a condition, we won't
+                            // find a body (because a body is just a script block, which works as a condition.)
+                            // So don't look for a body, hope we find the '}' next.
+                            isError = true;
+                            ReportIncompleteInput(After(endErrorStatement),
+                                nameof(ParserStrings.MissingSwitchConditionExpression),
+                                ParserStrings.MissingSwitchConditionExpression);
 
-                        break;
+                            // Consume a closing curly, if there is one, to avoid an extra error
+                            if (PeekToken().Kind == TokenKind.RCurly)
+                            {
+                                SkipToken();
+                            }
+
+                            break;
+                        }
                     }
 
                     errorAsts.Add(clauseCondition);
                     endErrorStatement = clauseCondition.Extent;
+
                     StatementBlockAst clauseBody = StatementBlockRule();
                     if (clauseBody == null)
                     {
@@ -2788,11 +2797,7 @@ namespace System.Management.Automation.Language
                         errorAsts.Add(clauseBody);
                         endErrorStatement = clauseBody.Extent;
 
-                        var clauseConditionString = clauseCondition as StringConstantExpressionAst;
-
-                        if (clauseConditionString != null &&
-                            clauseConditionString.StringConstantType == StringConstantType.BareWord &&
-                            clauseConditionString.Value.Equals("default", StringComparison.OrdinalIgnoreCase))
+                        if (isDefaultClause)
                         {
                             if (@default != null)
                             {
@@ -2814,7 +2819,7 @@ namespace System.Management.Automation.Language
 
                     SkipNewlinesAndSemicolons();
 
-                    Token token = PeekToken();
+                    token = PeekToken();
                     if (token.Kind == TokenKind.RCurly)
                     {
                         rCurly = token;
@@ -4893,7 +4898,7 @@ namespace System.Management.Automation.Language
             {
                 case TokenKind.EndOfInput:
                 case TokenKind.NewLine:
-                // Example: 'using module ,FooBar'
+                // Example: 'using module ,exampleModuleName'
                 // GetCommandArgument will successfully return an argument for a unary array argument
                 // but we don't want to allow that syntax with a using statement.
                 case TokenKind.Comma:
@@ -5715,17 +5720,11 @@ namespace System.Management.Automation.Language
 
             // If this feature is not enabled,
             // just look for pipelines as before.
-            if (!s_pipelineChainsEnabled)
-            {
-                return PipelineRule(allowBackground: true);
-            }
-
             RuntimeHelpers.EnsureSufficientExecutionStack();
 
             // First look for assignment, since PipelineRule once handled that and this supercedes that.
             // We may end up with an expression here as a result,
             // in which case we hang on to it to pass it into the first pipeline rule call.
-
             Token assignToken = null;
             ExpressionAst expr;
 
@@ -5764,7 +5763,6 @@ namespace System.Management.Automation.Language
                 {
                     // ErrorRecovery: we are very likely at EOF because pretty much anything should result in some
                     // pipeline, so just keep parsing.
-
                     IScriptExtent errorExtent = After(assignToken);
                     ReportIncompleteInput(
                         errorExtent,
@@ -5941,7 +5939,7 @@ namespace System.Management.Automation.Language
             // G
             // G  pipeline-tail:
             // G      new-lines:opt   '|'   new-lines:opt   command   pipeline-tail:opt
-
+            //
             var pipelineElements = new List<CommandBaseAst>();
             IScriptExtent startExtent = null;
 
@@ -5952,7 +5950,6 @@ namespace System.Management.Automation.Language
             while (scanning)
             {
                 CommandBaseAst commandAst;
-                Token assignToken = null;
 
                 if (expr == null)
                 {
@@ -5962,21 +5959,6 @@ namespace System.Management.Automation.Language
                     {
                         SetTokenizerMode(TokenizerMode.Expression);
                         expr = ExpressionRule();
-
-                        // When pipeline chains are not enabled, we must process assignment.
-                        // We are looking for <expr> = <statement>, and have seen <expr>.
-                        // Now looking for '='
-                        if (!s_pipelineChainsEnabled && expr != null)
-                        {
-                            // We peek here because we are in expression mode,
-                            // otherwise =0 will get scanned as a single token.
-                            Token token = PeekToken();
-                            if (token.Kind.HasTrait(TokenFlags.AssignmentOperator))
-                            {
-                                SkipToken();
-                                assignToken = token;
-                            }
-                        }
                     }
                     finally
                     {
@@ -5989,41 +5971,10 @@ namespace System.Management.Automation.Language
                     if (pipelineElements.Count > 0)
                     {
                         // ErrorRecovery: this is a semantic error, so just keep parsing.
-
                         ReportError(
                             expr.Extent,
                             nameof(ParserStrings.ExpressionsMustBeFirstInPipeline),
                             ParserStrings.ExpressionsMustBeFirstInPipeline);
-                    }
-
-                    // To process assignment when pipeline chains are not enabled,
-                    // we have seen '<expr> = ' and now expect a statement
-                    if (!s_pipelineChainsEnabled && assignToken != null)
-                    {
-                        SkipNewlines();
-                        StatementAst statement = StatementRule();
-
-                        if (statement == null)
-                        {
-                            // ErrorRecovery:
-                            // We are likely at EOF, since almost anything else should result in a pipeline,
-                            // so just keep parsing
-
-                            IScriptExtent errorExtent = After(assignToken);
-                            ReportIncompleteInput(
-                                errorExtent,
-                                nameof(ParserStrings.ExpectedValueExpression),
-                                ParserStrings.ExpectedValueExpression,
-                                assignToken.Kind.Text());
-                            statement = new ErrorStatementAst(errorExtent);
-                        }
-
-                        return new AssignmentStatementAst(
-                            ExtentOf(expr, statement),
-                            expr,
-                            assignToken.Kind,
-                            statement,
-                            assignToken.Extent);
                     }
 
                     RedirectionAst[] redirections = null;
@@ -6102,31 +6053,11 @@ namespace System.Management.Automation.Language
 
                     case TokenKind.AndAnd:
                     case TokenKind.OrOr:
-                        if (s_pipelineChainsEnabled)
-                        {
-                            scanning = false;
-                            continue;
-                        }
-
-                        // Report that &&/|| are unsupported
-                        SkipToken();
-                        SkipNewlines();
-                        ReportError(
-                            nextToken.Extent,
-                            nameof(ParserStrings.InvalidEndOfLine),
-                            ParserStrings.InvalidEndOfLine,
-                            nextToken.Text);
-
-                        if (PeekToken().Kind == TokenKind.EndOfInput)
-                        {
-                            scanning = false;
-                        }
-
-                        break;
+                        scanning = false;
+                        continue;
 
                     case TokenKind.Ampersand:
-                        // When pipeline chains are not enabled, pipelines always handle backgrounding
-                        if (s_pipelineChainsEnabled && !allowBackground)
+                        if (!allowBackground)
                         {
                             // Handled by invoking rule
                             scanning = false;
@@ -6723,12 +6654,6 @@ namespace System.Management.Automation.Language
             // G
             // G  ternary-expression:
             // G      binary-expression   '?'   new-lines:opt   ternary-expression   new-lines:opt   ':'   new-lines:opt   ternary-expression
-
-            // TODO: remove this if-block when making 'ternary operator' an official feature.
-            if (!ExperimentalFeature.IsEnabled("PSTernaryOperator"))
-            {
-                return BinaryExpressionRule();
-            }
 
             RuntimeHelpers.EnsureSufficientExecutionStack();
             var oldTokenizerMode = _tokenizer.Mode;
@@ -7351,11 +7276,11 @@ namespace System.Management.Automation.Language
                 // To support fluent style programming, allow newlines after the member access operator.
                 SkipNewlines();
 
-                if (token.Kind == TokenKind.Dot || token.Kind == TokenKind.ColonColon)
+                if (token.Kind == TokenKind.Dot || token.Kind == TokenKind.ColonColon || token.Kind == TokenKind.QuestionDot)
                 {
                     expr = MemberAccessRule(expr, token);
                 }
-                else if (token.Kind == TokenKind.LBracket)
+                else if (token.Kind == TokenKind.LBracket || token.Kind == TokenKind.QuestionLBracket)
                 {
                     expr = ElementAccessRule(expr, token);
                 }
@@ -7776,8 +7701,12 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            return new MemberExpressionAst(ExtentOf(targetExpr, member),
-                targetExpr, member, operatorToken.Kind == TokenKind.ColonColon);
+            return new MemberExpressionAst(
+                    ExtentOf(targetExpr, member),
+                    targetExpr,
+                    member,
+                    @static: operatorToken.Kind == TokenKind.ColonColon,
+                    nullConditional: operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private ExpressionAst MemberInvokeRule(ExpressionAst targetExpr, Token lBracket, Token operatorToken, CommandElementAst member)
@@ -7805,7 +7734,13 @@ namespace System.Management.Automation.Language
                 lastExtent = argument.Extent;
             }
 
-            return new InvokeMemberExpressionAst(ExtentOf(targetExpr, lastExtent), targetExpr, member, arguments, operatorToken.Kind == TokenKind.ColonColon);
+            return new InvokeMemberExpressionAst(
+                ExtentOf(targetExpr, lastExtent),
+                targetExpr,
+                member,
+                arguments,
+                operatorToken.Kind == TokenKind.ColonColon,
+                operatorToken.Kind == TokenKind.QuestionDot);
         }
 
         private List<ExpressionAst> InvokeParamParenListRule(Token lParen, out IScriptExtent lastExtent)
@@ -7927,7 +7862,7 @@ namespace System.Management.Automation.Language
                 rBracket = null;
             }
 
-            return new IndexExpressionAst(ExtentOf(primaryExpression, ExtentFromFirstOf(rBracket, indexExpr)), primaryExpression, indexExpr);
+            return new IndexExpressionAst(ExtentOf(primaryExpression, ExtentFromFirstOf(rBracket, indexExpr)), primaryExpression, indexExpr, lBracket.Kind == TokenKind.QuestionLBracket);
         }
 
         #endregion Expressions
@@ -7936,16 +7871,18 @@ namespace System.Management.Automation.Language
 
         private void SaveError(ParseError error)
         {
-            if (ErrorList.Any())
+            if (ErrorList.Count > 0)
             {
-                // Avoiding adding duplicate errors - can happen when the tokenizer resyncs.
-                if (ErrorList.Any(err => err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
-                                          && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
-                                          && err.Extent.EndLineNumber == error.Extent.EndLineNumber
-                                          && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
-                                          && err.Extent.StartLineNumber == error.Extent.StartLineNumber))
+                foreach (ParseError err in ErrorList)
                 {
-                    return;
+                    if (err.ErrorId.Equals(error.ErrorId, StringComparison.Ordinal)
+                        && err.Extent.EndColumnNumber == error.Extent.EndColumnNumber
+                        && err.Extent.EndLineNumber == error.Extent.EndLineNumber
+                        && err.Extent.StartColumnNumber == error.Extent.StartColumnNumber
+                        && err.Extent.StartLineNumber == error.Extent.StartLineNumber)
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -8129,7 +8066,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public override string ToString()
         {
-            return PositionUtilities.VerboseMessage(Extent) + "\n" + Message;
+            return PositionUtilities.VerboseMessage(Extent) + Environment.NewLine + Message;
         }
 
         /// <summary>
@@ -8156,7 +8093,8 @@ namespace System.Management.Automation.Language
     [EventSource(Name = "Microsoft-PowerShell-Parser")]
     internal class ParserEventSource : EventSource
     {
-        internal static ParserEventSource Log = new ParserEventSource();
+        internal static readonly ParserEventSource Log = new ParserEventSource();
+
         internal const int MaxScriptLengthToLog = 50;
 
         public void ParseStart(string FileName, int Length) { WriteEvent(1, FileName, Length); }
@@ -8181,7 +8119,7 @@ namespace System.Management.Automation.Language
 
         internal static string GetFileOrScript(string fileName, string input)
         {
-            return fileName ?? input.Substring(0, Math.Min(256, input.Length)).Trim();
+            return fileName ?? input.AsSpan(0, Math.Min(256, input.Length)).Trim().ToString();
         }
     }
 }

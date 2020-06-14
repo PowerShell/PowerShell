@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -97,12 +97,12 @@ namespace Microsoft.PowerShell
 
             if (descriptions == null)
             {
-                throw PSTraceSource.NewArgumentNullException("descriptions");
+                throw PSTraceSource.NewArgumentNullException(nameof(descriptions));
             }
 
             if (descriptions.Count < 1)
             {
-                throw PSTraceSource.NewArgumentException("descriptions",
+                throw PSTraceSource.NewArgumentException(nameof(descriptions),
                     ConsoleHostUserInterfaceStrings.PromptEmptyDescriptionsErrorTemplate, "descriptions");
             }
 
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell
                     descIndex++;
                     if (desc == null)
                     {
-                        throw PSTraceSource.NewArgumentException("descriptions",
+                        throw PSTraceSource.NewArgumentException(nameof(descriptions),
                             ConsoleHostUserInterfaceStrings.NullErrorTemplate,
                             string.Format(CultureInfo.InvariantCulture, "descriptions[{0}]", descIndex));
                     }
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell
                         // assigned to an array
 
                         // if the field is an array, the element type can be found; else, use Object
-                        Type elementType = typeof(Object);
+                        Type elementType = typeof(object);
                         if (fieldType.IsArray)
                         {
                             elementType = fieldType.GetElementType();

@@ -1,14 +1,14 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Range Operator" -Tags CI {
     Context "Range integer operations" {
         It "Range operator generates arrays of integers" {
             $Range = 5..8
             $Range.count | Should -Be 4
-            $Range[0] | Should -BeOfType [int]
-            $Range[1] | Should -BeOfType [int]
-            $Range[2] | Should -BeOfType [int]
-            $Range[3] | Should -BeOfType [int]
+            $Range[0] | Should -BeOfType int
+            $Range[1] | Should -BeOfType int
+            $Range[2] | Should -BeOfType int
+            $Range[3] | Should -BeOfType int
 
             $Range[0] | Should -Be 5
             $Range[1] | Should -Be 6
@@ -28,7 +28,7 @@ Describe "Range Operator" -Tags CI {
         It "Range operator support single-item sequences" {
             $Range = 0..0
             $Range.count | Should -Be 1
-            $Range[0] | Should -BeOfType [int]
+            $Range[0] | Should -BeOfType int
             $Range[0] | Should -Be 0
         }
 
@@ -92,21 +92,21 @@ Describe "Range Operator" -Tags CI {
         It "Range operator generates an array of [char] from single-character operands" {
             $CharRange = 'A'..'E'
             $CharRange.count | Should -Be 5
-            $CharRange[0] | Should -BeOfType [char]
-            $CharRange[1] | Should -BeOfType [char]
-            $CharRange[2] | Should -BeOfType [char]
-            $CharRange[3] | Should -BeOfType [char]
-            $CharRange[4] | Should -BeOfType [char]
+            $CharRange[0] | Should -BeOfType char
+            $CharRange[1] | Should -BeOfType char
+            $CharRange[2] | Should -BeOfType char
+            $CharRange[3] | Should -BeOfType char
+            $CharRange[4] | Should -BeOfType char
         }
 
         It "Range operator enumerator generates an array of [string] from single-character operands" {
             $CharRange = 'A'..'E' | ForEach-Object { $_ }
             $CharRange.count | Should -Be 5
-            $CharRange[0] | Should -BeOfType [char]
-            $CharRange[1] | Should -BeOfType [char]
-            $CharRange[2] | Should -BeOfType [char]
-            $CharRange[3] | Should -BeOfType [char]
-            $CharRange[4] | Should -BeOfType [char]
+            $CharRange[0] | Should -BeOfType char
+            $CharRange[1] | Should -BeOfType char
+            $CharRange[2] | Should -BeOfType char
+            $CharRange[3] | Should -BeOfType char
+            $CharRange[4] | Should -BeOfType char
         }
 
         It "Range operator works in ascending and descending order" {

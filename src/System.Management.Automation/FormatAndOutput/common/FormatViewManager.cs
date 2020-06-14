@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     unKnowViewFormatStringBuilder.Append(StringUtil.Format(FormatAndOut_format_xxx.NonExistingViewNameError, formatTypeName, so.BaseObject.GetType()));
                 }
 
-                msg = unKnowViewFormatStringBuilder.ToString(); ;
+                msg = unKnowViewFormatStringBuilder.ToString();
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
@@ -476,7 +476,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private static readonly MemberNamePredicate NameIsNotRemotingProperty = IsNotRemotingProperty;
 
-        private static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
+        internal static bool HasNonRemotingProperties(PSObject so) => so.GetFirstPropertyOrDefault(NameIsNotRemotingProperty) != null;
 
         internal static FormatEntryData GenerateOutOfBandData(TerminatingErrorContext errorContext, PSPropertyExpressionFactory expressionFactory,
                     TypeInfoDataBase db, PSObject so, int enumerationLimit, bool useToStringFallback, out List<ErrorRecord> errors)
@@ -516,7 +516,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
 
                 // we must check we have enough properties for a list view
-                if (new PSPropertyExpression("*").ResolveNames(so).Count <= 0)
+                if (new PSPropertyExpression("*").ResolveNames(so).Count == 0)
                 {
                     return null;
                 }

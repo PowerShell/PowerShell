@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -350,7 +350,7 @@ namespace System.Management.Automation
                             {
                                 param = CommandParameterInternal.CreateParameterWithArgument(
                                     /*parameterAst*/null, paramText.Substring(1, colonIndex - 1), paramText,
-                                    /*argumentAst*/null, paramText.Substring(colonIndex + 1).Trim(),
+                                    /*argumentAst*/null, paramText.AsSpan(colonIndex + 1).Trim().ToString(),
                                     false);
                             }
                             else if (argIndex == arguments.Length - 1 || paramText[paramText.Length - 1] != ':')
@@ -878,7 +878,7 @@ namespace System.Management.Automation
         {
             if (pbex == null)
             {
-                throw PSTraceSource.NewArgumentNullException("pbex");
+                throw PSTraceSource.NewArgumentNullException(nameof(pbex));
             }
 
             Diagnostics.Assert(pbex.ErrorRecord != null, "ErrorRecord should not be null in a ParameterBindingException");

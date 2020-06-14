@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -61,6 +61,7 @@ namespace Microsoft.PowerShell.MarkdownRender
 
         // Typical padding is at most a screen's width, any more than that and we won't bother caching.
         private const int IndentCacheMax = 120;
+
         private static readonly string[] IndentCache = new string[IndentCacheMax];
 
         internal static string Padding(int countOfSpaces)

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -434,7 +434,6 @@ namespace System.Management.Automation.Language
         public object VisitConfigurationDefinition(ConfigurationDefinitionAst configurationDefinitionAst) { return AutomationNull.Value; }
 
         public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return AutomationNull.Value; }
-
 
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
