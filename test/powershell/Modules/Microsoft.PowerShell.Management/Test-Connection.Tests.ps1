@@ -273,14 +273,14 @@ Describe "Test-Connection" -tags "CI" {
 
     Context "TraceRoute" {
         It "TraceRoute works" {
+            Wait-Debugger
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $gatewayAddress -TraceRoute -IPv4
 
             $result[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus
             $result[0].Source | Should -BeExactly $hostName
             $result[0].TargetAddress | Should -BeExactly $gatewayAddress
-            $result[0].Target | Should -BeOfType 'System.Net.IPAddress'
-            $result[0].Target.IPAddressToString | Should -BeExactly $gatewayAddress
+            $result[0].Target | Should -BeExactly $gatewayAddress
             $result[0].Hop | Should -Be 1
             $result[0].HopAddress.IPAddressToString | Should -BeExactly $gatewayAddress
             $result[0].Status | Should -BeExactly "Success"
