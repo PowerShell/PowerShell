@@ -121,7 +121,7 @@
   </Target>
 
   <ItemGroup>
-    <!-- We skip this for Microsoft.Management.UI.Internal because we have to use a workaround for WPF project. -->
+    <!-- We skip this for Microsoft.Management.UI.Internal because we have to use a workaround for WPF project. See https://github.com/microsoft/msbuild/issues/4751 -->
     <EmbeddedResource Update = "resources/*.resx" Condition = "'$(MSBuildProjectName)' != 'Microsoft.Management.UI.Internal'">
       <Generator>ResXFileCodeGenerator</Generator>
       <StronglyTypedLanguage>CSharp</StronglyTypedLanguage>
