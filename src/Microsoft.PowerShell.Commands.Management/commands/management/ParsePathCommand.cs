@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
         /// The qualifier is the drive or provider that is qualifying
         /// the MSH path.
         /// </value>
-        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet, Mandatory = false)]
+        [Parameter(ValueFromPipelineByPropertyName = true, ParameterSetName = qualifierSet)]
         public SwitchParameter Qualifier { get; set; }
 
         /// <summary>
@@ -476,4 +476,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
