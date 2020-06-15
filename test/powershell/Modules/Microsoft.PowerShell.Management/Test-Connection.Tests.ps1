@@ -273,7 +273,6 @@ Describe "Test-Connection" -tags "CI" {
 
     Context "TraceRoute" {
         It "TraceRoute works" {
-            Wait-Debugger
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $gatewayAddress -TraceRoute -IPv4
 
