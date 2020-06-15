@@ -12,7 +12,7 @@ function GetGatewayAddress
         ForEach-Object { $_.Address.IPAddressToString }
 }
 
-function GetHostRealAddress([string]$HostName)
+function GetExternalHostAddress([string]$HostName)
 {
     if (-not $HostName)
     {
@@ -36,6 +36,7 @@ Describe "Test-Connection" -tags "CI" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
         $gatewayAddress = GetGatewayAddress
+        $externalHostAddress = GetExternalHostAddress -HostName $hostName
 
         $targetName = "localhost"
         $targetAddress = "127.0.0.1"
@@ -103,9 +104,9 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "Force IPv4 with implicit PingOptions" {
-            $result = Test-Connection $gatewayAddress -Count 1 -IPv4
+            $result = Test-Connection ($externalHostAddress ?? $gatewayAddress) -Count 1 -IPv4
 
-            $result[0].Address | Should -BeExactly $gatewayAddress
+            $result[0].Address | Should -BeExactly ($externalHostAddress ?? $gatewayAddress)
             $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
             if ($IsWindows) {
                 $result[0].Reply.Options.DontFragment | Should -BeFalse
@@ -114,13 +115,13 @@ Describe "Test-Connection" -tags "CI" {
 
         # In VSTS, address is 0.0.0.0
         It "Force IPv4 with explicit PingOptions" {
-            $result1 = Test-Connection $gatewayAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
+            $result1 = Test-Connection ($externalHostAddress ?? $gatewayAddress) -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             # explicitly go to google dns. this test will pass even if the destination is unreachable
             # it's more about breaking out of the loop
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
-            $result1.Address | Should -BeExactly $gatewayAddress
+            $result1.Address | Should -BeExactly ($externalHostAddress ?? $gatewayAddress)
             $result1.Reply.Options.Ttl | Should -BeLessOrEqual 128
 
             if (!$IsWindows) {
@@ -255,10 +256,10 @@ Describe "Test-Connection" -tags "CI" {
         # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
         # instead of returning a PacketTooBig response cleanly.
         It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $gatewayAddress -MtuSize
+            $result = Test-Connection ($externalHostAddress ?? $gatewayAddress) -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $gatewayAddress
+            $result.Destination | Should -BeExactly ($externalHostAddress ?? $gatewayAddress)
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
         }
