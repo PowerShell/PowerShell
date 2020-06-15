@@ -30,7 +30,7 @@ Describe "Split-Path" -Tags "CI" {
     }
 
     It "Should error given positional parameter #2" {
-	{ Split-Path env: $NULL } | Should -Throw
+	    { Split-Path env: $NULL } | Should -Throw
     }
 
     It "Should return the path when the noqualifier switch is used" {
