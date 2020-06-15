@@ -34,7 +34,6 @@ function GetHostRealAddress([string]$HostName)
 
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
-        wait-debugger
         $hostName = [System.Net.Dns]::GetHostName()
         $gatewayAddress = GetGatewayAddress
 
@@ -114,7 +113,6 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         # In VSTS, address is 0.0.0.0
-        # This test is marked as PENDING as .NET Core does not return correct PingOptions from ping request
         It "Force IPv4 with explicit PingOptions" {
             $result1 = Test-Connection $gatewayAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
@@ -260,7 +258,7 @@ Describe "Test-Connection" -tags "CI" {
             $result = Test-Connection $gatewayAddress -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly
+            $result.Destination | Should -BeExactly $gatewayAddress
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
         }
@@ -274,13 +272,12 @@ Describe "Test-Connection" -tags "CI" {
     }
 
     Context "TraceRoute" {
-        # Mark it as pending due to instability in Az DevOps
         It "TraceRoute works" {
             # real address is an ipv4 address, so force IPv4
             $result = Test-Connection $gatewayAddress -TraceRoute -IPv4
 
             $result[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus
-            $result[0].Source | Should -BeExactly $
+            $result[0].Source | Should -BeExactly $hostName
             $result[0].TargetAddress | Should -BeExactly $gatewayAddress
             $result[0].Target | Should -BeOfType 'System.Net.IPAddress'
             $result[0].Target.IPAddressToString | Should -BeExactly $gatewayAddress
