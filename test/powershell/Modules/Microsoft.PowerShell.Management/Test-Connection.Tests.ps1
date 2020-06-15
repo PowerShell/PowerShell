@@ -12,11 +12,28 @@ function GetGatewayAddress
         ForEach-Object { $_.Address.IPAddressToString }
 }
 
+function GetHostRealAddress([string]$HostName)
+{
+    if (-not $HostName)
+    {
+        return
+    }
+
+    return [System.Net.Dns]::GetHostEntry($HostName).AddressList |
+        Where-Object { $_.AddressFamily -eq 'InterNetwork' } |
+        Select-Object -First 1 |
+        ForEach-Object { $_.IPAddressToString }
+}
 
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
+        $realAddress = GetHostRealAddress -HostName $hostName
         $gatewayAddress = GetGatewayAddress
+
+        $hostToPing = $hostName ?? $gatewayAddress
+        $resultAddress = $realAddress ?? $gatewayAddress
+
         $targetName = "localhost"
         $targetAddress = "127.0.0.1"
         $targetAddressIPv6 = "::1"
@@ -83,9 +100,9 @@ Describe "Test-Connection" -tags "CI" {
         }
 
         It "Force IPv4 with implicit PingOptions" {
-            $result = Test-Connection $gatewayAddress -Count 1 -IPv4
+            $result = Test-Connection $hostToPing -Count 1 -IPv4
 
-            $result[0].Address | Should -BeExactly $gatewayAddress
+            $result[0].Address | Should -BeExactly $resultAddress
             $result[0].Reply.Options.Ttl | Should -BeLessOrEqual 128
             if ($IsWindows) {
                 $result[0].Reply.Options.DontFragment | Should -BeFalse
@@ -95,13 +112,13 @@ Describe "Test-Connection" -tags "CI" {
         # In VSTS, address is 0.0.0.0
         # This test is marked as PENDING as .NET Core does not return correct PingOptions from ping request
         It "Force IPv4 with explicit PingOptions" {
-            $result1 = Test-Connection $gatewayAddress -Count 1 -IPv4 -MaxHops 10 -DontFragment
+            $result1 = Test-Connection $hostToPing -Count 1 -IPv4 -MaxHops 10 -DontFragment
 
             # explicitly go to google dns. this test will pass even if the destination is unreachable
             # it's more about breaking out of the loop
             $result2 = Test-Connection 8.8.8.8 -Count 1 -IPv4 -MaxHops 1 -DontFragment
 
-            $result1.Address | Should -BeExactly $gatewayAddress
+            $result1.Address | Should -BeExactly $resultAddress
             $result1.Reply.Options.Ttl | Should -BeLessOrEqual 128
 
             if (!$IsWindows) {
@@ -236,16 +253,16 @@ Describe "Test-Connection" -tags "CI" {
         # We skip the MtuSize detection tests when in containers, as the environments throw raw exceptions
         # instead of returning a PacketTooBig response cleanly.
         It "MTUSizeDetect works" -Pending:($env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $gatewayAddress -MtuSize
+            $result = Test-Connection $hostToPing -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $gatewayAddress
+            $result.Destination | Should -BeExactly $resultAddress
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
         }
 
         It "Quiet works" -Pending:($env:__INCONTAINER -eq 1) {
-            $result = Test-Connection $gatewayAddress -MtuSize -Quiet
+            $result = Test-Connection $hostToPing -MtuSize -Quiet
 
             $result | Should -BeOfType Int32
             $result | Should -BeGreaterThan 0
@@ -254,17 +271,17 @@ Describe "Test-Connection" -tags "CI" {
 
     Context "TraceRoute" {
         # Mark it as pending due to instability in Az DevOps
-        It "TraceRoute works" -Pending:($IsMacOS) {
+        It "TraceRoute works" {
             # real address is an ipv4 address, so force IPv4
-            $result = Test-Connection $gatewayAddress -TraceRoute -IPv4
+            $result = Test-Connection $hostToPing -TraceRoute -IPv4
 
             $result[0] | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+TraceStatus
             $result[0].Source | Should -BeExactly $
-            $result[0].TargetAddress | Should -BeExactly $gatewayAddress
+            $result[0].TargetAddress | Should -BeExactly $resultAddress
             $result[0].Target | Should -BeOfType 'System.Net.IPAddress'
-            $result[0].Target.IPAddressToString | Should -BeExactly $gatewayAddress
+            $result[0].Target.IPAddressToString | Should -BeExactly $resultAddress
             $result[0].Hop | Should -Be 1
-            $result[0].HopAddress.IPAddressToString | Should -BeExactly $gatewayAddress
+            $result[0].HopAddress.IPAddressToString | Should -BeExactly $resultAddress
             $result[0].Status | Should -BeExactly "Success"
             if (!$IsWindows) {
                 $result[0].Reply.Buffer.Count | Should -Match '^0$|^32$'
