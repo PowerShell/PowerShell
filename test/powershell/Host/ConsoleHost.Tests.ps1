@@ -890,7 +890,7 @@ namespace StackTest {
         It "Job Debug: Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
             param ($Path)
             $output = InvokePromptTest -OutputIndex -2 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; `
-                while(`$j.State -ne 'AtBreakpoint' -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 50}; Debug-Job `$j;"""
+                while(`$j.State -ne 'AtBreakpoint' -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 250}; Debug-Job `$j;"""
 
             $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
         }
@@ -898,7 +898,7 @@ namespace StackTest {
         It "(Windows) Job Debug: Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
             param ($Path)
             $output = InvokePromptTest -OutputIndex -2 -CommandLine "-noprofile -nologo -noexit -c ""Set-Location $Path;`$j = Start-Job -ScriptBlock {Wait-Debugger; {}}; `
-                while(`$j.State -ne 'AtBreakpoint' -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 50}; Debug-Job `$j;"""
+                while(`$j.State -ne 'AtBreakpoint' -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 250}; Debug-Job `$j;"""
 
                 $output | Should -Be "[DBG]: [Job2]: PS $Path>> "
         }
@@ -906,15 +906,16 @@ namespace StackTest {
         It "PSTask Debug: Path '<Path>' is displayed correctly" -TestCases $allOsTestCases {
             param ($Path)
             $output = InvokePromptTestPSTask -CommandLine "-noprofile -nologo -c ""Set-Location $Path;`$null = 1 | Foreach-Object -Parallel {Wait-Debugger; {}} -AsJob; `
-                while($null -ne (`$rd=Get-RunspaceDebug | Where-Object Enabled -eq true) -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 50}; `
+                while($null -ne (`$rd=Get-RunspaceDebug | Where-Object Enabled -eq true) -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 250}; `
                 `$rd = Get-RunspaceDebug | Where-Object Enabled -eq true; Debug-Runspace -Id `$rd.RunspaceId"""
 
             $output[1] | Should -Be "[DBG]: [Process:$($output[0])]: [PSTask:1]: PS $Path>> "
         }
+
         It "(Windows) PSTask Debug: Path '<Path>' is displayed correctly" -Skip:(-not $IsWindows) -TestCases $winTestCases {
             param ($Path)
             $output = InvokePromptTestPSTask -CommandLine "-noprofile -nologo -c ""Set-Location $Path;`$null = 1 | Foreach-Object -Parallel {Wait-Debugger; {}} -AsJob; `
-                while($null -ne (`$rd=Get-RunspaceDebug | Where-Object Enabled -eq true) -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 5000}; `
+                while($null -ne (`$rd=Get-RunspaceDebug | Where-Object Enabled -eq true) -and (`$count++ -lt 11)) {Start-Sleep -Milliseconds 250}; `
                 `$rd = Get-RunspaceDebug | Where-Object Enabled -eq true; Debug-Runspace -Id `$rd.RunspaceId"""
 
             $output[1] | Should -Be "[DBG]: [Process:$($output[0])]: [PSTask:1]: PS $Path>> "
