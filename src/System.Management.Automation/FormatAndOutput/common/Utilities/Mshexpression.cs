@@ -363,7 +363,12 @@ namespace Microsoft.PowerShell.Commands
             if (PSObject.Base(target) is Hashtable targetAsHash)
             {
                 wrapped = true;
-                return (PSObject)(LanguagePrimitives.ConvertPSObjectToType(targetAsHash, typeof(PSObject), false, null, true));
+                return (PSObject)(LanguagePrimitives.ConvertPSObjectToType(
+                    targetAsHash,
+                    typeof(PSObject),
+                    recursion: false,
+                    formatProvider: null,
+                    ignoreUnknownMembers: true));
             }
 
             return target;
