@@ -261,7 +261,7 @@ Describe "Test-Connection" -tags "CI" {
             $result = Test-Connection ($externalHostAddress ?? $gatewayAddress) -MtuSize
 
             $result | Should -BeOfType Microsoft.PowerShell.Commands.TestConnectionCommand+PingMtuStatus
-            $result.Destination | Should -BeExactly $gatewayAddress
+            $result.Destination | Should -BeExactly ($externalHostAddress ?? $gatewayAddress)
             $result.Status | Should -BeExactly "Success"
             $result.MtuSize | Should -BeGreaterThan 0
         }
