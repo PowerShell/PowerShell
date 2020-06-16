@@ -33,6 +33,8 @@
   <!-- Explorer context submenu entries. The ampersand denotes the keyboard shortcut. -->
   <?define ExplorerContextSubMenuDialogText = "Open &here"?>
   <?define ExplorerContextSubMenuElevatedDialogText = "Open here as &Administrator"?>
+  <!-- ps1 context submenu entries. -->
+  <?define PowerShellFileContextSubMenuDialogText = "Run with $(var.ProductName) $(env.SimpleProductVersion)"?>
   <Product
     Id="*"
     Name="PowerShell $(var.SimpleProductVersion)-$(sys.BUILDARCH)"
@@ -136,6 +138,7 @@
       <ComponentRef Id="SetPath"/>
       <ComponentRef Id="Telemetry"/>
       <ComponentRef Id="ExplorerContextMenu"/>
+      <ComponentRef Id="PowerShellFileContextMenu"/>
     </Feature>
     <!-- We need to show EULA, and provide option to customize download location -->
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
@@ -246,6 +249,17 @@
               </RegistryKey>
               <RemoveRegistryKey Id="RemoveOldOpenKey" Root="HKCR" Key="Directory\ContextMenus\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)\shell\open" Action="removeOnInstall"/>
             </Component>
+            <Component Id="PowerShellFileContextMenu">
+              <Condition>ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL</Condition>
+              <!-- When right-clicking ps1 file -->
+              <RegistryKey Root="HKCR" Key="Microsoft.PowerShellScript.1\Shell\$(var.ProductName)$(var.SimpleProductVersion)$(sys.BUILDARCH)">
+                <RegistryValue Type="string" Name="MUIVerb" Value="$(var.PowerShellFileContextSubMenuDialogText)"/>
+                <RegistryValue Type="string" Name="Icon" Value="[VersionFolder]pwsh.exe" KeyPath="yes"/>
+                <RegistryKey Key="Command">
+                  <RegistryValue Type="string" Value="[VersionFolder]pwsh.exe -Command &quot;$host.UI.RawUI.WindowTitle = '$(var.ProductName) $(var.SimpleProductVersion) ($(sys.BUILDARCH))'; if((Get-ExecutionPolicy ) -ne 'AllSigned') { Set-ExecutionPolicy -Scope Process Bypass }; &amp; '%1'&quot;"/>
+                </RegistryKey>
+              </RegistryKey>
+            </Component>
           </Directory>
         </Directory>
       </Directory>
@@ -282,6 +296,7 @@
       <Control Id="RegisterManifestCheckBox" Type="CheckBox" X="20" Y="80" Width="290" Height="17" Property="REGISTER_MANIFEST" CheckBoxValue="0" Text="Register Windows Event Logging Manifest"/>
       <Control Id="EnablePSRemotingCheckBox" Type="CheckBox" X="20" Y="100" Width="290" Height="17" Property="ENABLE_PSREMOTING" CheckBoxValue="0" Text="Enable $(var.ProductName) remoting"/>
       <Control Id="ContextMenuOpenPowerShell" Type="CheckBox" X="20" Y="120" Width="290" Height="17" Property="ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.ExplorerContextSubMenuDialogText)' context menus to Explorer"/>
+      <Control Id="ContextMenuRunPowerShell" Type="CheckBox" X="20" Y="140" Width="290" Height="17" Property="ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL" CheckBoxValue="0" Text="Add '$(var.PowerShellFileContextSubMenuDialogText)' context menu for PowerShell files"/>
       <Control Id="LicenseLink" Type="Hyperlink" X="20" Y="190" Width="214" Height="17">
         <Text><![CDATA[<a href="https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt">The application is distributed under the MIT license.</a>]]></Text>
       </Control>
