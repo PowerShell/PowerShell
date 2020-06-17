@@ -3042,6 +3042,11 @@ function New-MSIPackage
 
     # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
+    Write-Log -message "uploading generated files wxs $wixFragmentPath"
+    if ($env:TF_BUILD)
+    {
+        Write-Host "##vso[artifact.upload containerfolder=wix;artifactname=wix]$wixFragmentPath"
+    }
 
     if ($isPreview)
     {
@@ -3066,7 +3071,7 @@ function New-MSIPackage
     # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
     Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension }
 
-    Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
+    #Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
     Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
