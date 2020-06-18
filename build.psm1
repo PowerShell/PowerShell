@@ -3173,7 +3173,7 @@ function New-TestPackage
     else
     {
         $null = New-Item -Path $Destination -ItemType Directory -Force
-        Write-Verbose -message "Creating destination folder: $Destination"
+        Write-Verbose -Message "Creating destination folder: $Destination"
     }
 
     $rootFolder = $env:TEMP
