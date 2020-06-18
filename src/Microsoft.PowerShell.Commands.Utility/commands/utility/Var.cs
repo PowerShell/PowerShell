@@ -693,6 +693,24 @@ namespace Microsoft.PowerShell.Commands
 
         private bool _passThru;
 
+        /// <summary>
+        /// Append to the variable if it exists
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Append
+        {
+            get
+            {
+                return _append;
+            }
+            set
+            {
+                _append = value;
+            }
+        }
+
+        private bool _append;
+
         private bool _nameIsFormalParameter;
         private bool _valueIsFormalParameter;
         #endregion parameters
@@ -710,6 +728,31 @@ namespace Microsoft.PowerShell.Commands
             if (Value != AutomationNull.Value)
             {
                 _valueIsFormalParameter = true;
+            }
+
+            if (_append)
+            {
+                // create the list here and add to it if it has a value
+                // but if they have more than one name, produce an error
+                if (Name.Length != 1)
+                {
+                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "SetVariableAppend", ErrorCategory.InvalidOperation, Name);
+                    er.ErrorDetails = new ErrorDetails("SetVariable");
+                    er.ErrorDetails.RecommendedAction = "Use a single variable rather than a collection";
+                    ThrowTerminatingError(er);
+                }
+                _valueList = new List<object>();
+                var currentValue = Context.SessionState.PSVariable.Get(Name[0]);
+                if (currentValue != null) {
+                    if (currentValue.Value is IList)
+                    {
+                        _valueList.AddRange(currentValue.Value as IList<object>);
+                    }
+                    else
+                    {
+                        _valueList.Add(currentValue.Value);
+                    }
+                }
             }
         }
 
