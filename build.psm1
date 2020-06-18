@@ -1878,7 +1878,7 @@ function Start-PSBootstrap {
                 Write-Log -message "Installing dotnet due to -Force."
             }
             elseif(!$dotNetExists) {
-                Write-Log "dotnet not present.  Installing dotnet."
+                Write-Log -message "dotnet not present.  Installing dotnet."
             }
             else {
                 Write-Log "dotnet version $dotNetVersion does not match required version.  Installing dotnet."
