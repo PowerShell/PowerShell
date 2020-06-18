@@ -3194,12 +3194,12 @@ function New-TestPackage
     $null = Publish-PSTestTools -runtime $Runtime
     $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Copy-Item $powerShellTestRoot -Recurse -Destination $packageRoot -Force
-    Write-Verbose -message "Copied test directory"
+    Write-Verbose -Message "Copied test directory"
 
     # Copy assests folder to package root for wix related tests.
     $assetsPath = Join-Path $PSScriptRoot 'assets'
     Copy-Item $assetsPath -Recurse -Destination $packageRoot -Force
-    Write-Verbose -message "Copied assests directory"
+    Write-Verbose -Message "Copied assests directory"
 
     # Create expected folder structure for resx files in package root.
     $srcRootForResx = New-Item -Path "$packageRoot/src" -Force -ItemType Directory
@@ -3215,7 +3215,7 @@ function New-TestPackage
         $assemblyPart = $assemblyPart.TrimStart([io.path]::DirectorySeparatorChar)
         $resxDestPath = Join-Path $srcRootForResx $assemblyPart
         $null = New-Item -Path $resxDestPath -Force -ItemType Directory
-        Write-Verbose -message "Created resx directory : $resxDestPath"
+        Write-Verbose -Message "Created resx directory : $resxDestPath"
         Copy-Item -Path "$directoryFullName\*" -Recurse $resxDestPath -Force
     }
 
