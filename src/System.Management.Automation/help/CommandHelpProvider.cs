@@ -427,7 +427,7 @@ namespace System.Management.Automation
             int countHelpInfosFound = 0;
             string target = helpRequest.Target;
             // this is for avoiding duplicate result from help output.
-            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var allHelpNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             CommandSearcher searcher = GetCommandSearcherForExactMatch(target, _context);
 
@@ -453,7 +453,7 @@ namespace System.Management.Automation
                         throw new PSInvalidOperationException(HelpErrors.CircularDependencyInHelpForwarding);
                     }
 
-                    if (set.Contains(helpName))
+                    if (allHelpNames.Contains(helpName))
                         continue;
 
                     if (!Match(helpInfo, helpRequest, current))
@@ -462,7 +462,7 @@ namespace System.Management.Automation
                     }
 
                     countHelpInfosFound++;
-                    set.Add(helpName);
+                    allHelpNames.Add(helpName);
                     yield return helpInfo;
 
                     if ((countHelpInfosFound >= helpRequest.MaxResults) && (helpRequest.MaxResults > 0))

@@ -141,7 +141,7 @@ namespace System.Management.Automation
             {
                 string target = helpRequest.Target;
                 string pattern = target;
-                var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+                var allAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                 if (!WildcardPattern.ContainsWildcardCharacters(target))
                 {
@@ -169,12 +169,12 @@ namespace System.Management.Automation
                                 continue;
                             }
 
-                            if (set.Contains(name))
+                            if (allAliases.Contains(name))
                             {
                                 continue;
                             }
 
-                            set.Add(name);
+                            allAliases.Add(name);
 
                             yield return helpInfo;
                         }
@@ -216,12 +216,12 @@ namespace System.Management.Automation
                                 continue;
                             }
 
-                            if (set.Contains(name))
+                            if (allAliases.Contains(name))
                             {
                                 continue;
                             }
 
-                            set.Add(name);
+                            allAliases.Add(name);
 
                             yield return helpInfo;
                         }
@@ -243,12 +243,12 @@ namespace System.Management.Automation
 
                         HelpInfo helpInfo = AliasHelpInfo.GetHelpInfo(alias);
 
-                        if (set.Contains(name))
+                        if (allAliases.Contains(name))
                         {
                             continue;
                         }
 
-                        set.Add(name);
+                        allAliases.Add(name);
 
                         yield return helpInfo;
                     }
