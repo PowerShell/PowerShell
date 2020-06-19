@@ -38,7 +38,7 @@ namespace System.Management.Automation.Subsystem
         /// Default implementation.
         /// Prediction plugin doesn't need to implement any required functions.
         /// </summary>
-        IReadOnlyDictionary<string, string> ISubsystem.FunctionsToDefine => null;
+        ReadOnlyDictionary<string, string> ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
         /// Default implementation.

@@ -64,9 +64,9 @@ namespace System.Management.Automation.Subsystem
     /// <summary>
     /// Class used to represent the metadata and state of a subsystem.
     /// </summary>
-    public sealed class SubsystemInfo
+    public abstract class SubsystemInfo
     {
-        #region "Metadata of a Subsystem"
+        #region "Metadata of a Subsystem (public)"
 
         /// <summary>
         /// The kind of a concrete subsystem.
@@ -108,16 +108,12 @@ namespace System.Management.Automation.Subsystem
 
         #endregion
 
-        #region "State of a Subsystem"
-
-        private readonly object _syncObj;
-        private ReadOnlyCollection<ISubsystem> _registeredImpls;
-        private ReadOnlyCollection<ImplementationInfo> _cachedImplInfos;
+        #region "State of a Subsystem (public)"
 
         /// <summary>
         /// Indicate whether there is any implementation registered to the subsystem.
         /// </summary>
-        public bool IsRegistered => _registeredImpls.Count > 0;
+        public bool IsRegistered => _cachedImplInfos.Count > 0;
 
         /// <summary>
         /// Get the information about the registered implementations.
@@ -126,161 +122,74 @@ namespace System.Management.Automation.Subsystem
 
         #endregion
 
-        private SubsystemInfo()
+        #region "private/internal instance members"
+
+        private protected readonly object _syncObj;
+        private protected ReadOnlyCollection<ImplementationInfo> _cachedImplInfos;
+
+        private protected SubsystemInfo(SubsystemKind kind, Type subsystemType)
         {
             _syncObj = new object();
-            _registeredImpls = Utils.EmptyReadOnlyCollection<ISubsystem>();
             _cachedImplInfos = Utils.EmptyReadOnlyCollection<ImplementationInfo>();
+
+            Kind = kind;
+            SubsystemType = subsystemType;
+            AllowUnregistration = false;
+            AllowMultipleRegistration = false;
+            RequiredCmdlets = Utils.EmptyReadOnlyCollection<string>();
+            RequiredFunctions = Utils.EmptyReadOnlyCollection<string>();
         }
 
-        #region "Static factory overloads"
+        private protected abstract void AddImplementation(ISubsystem impl);
+        private protected abstract ISubsystem RemoveImplementation(Guid id);
 
-        internal static SubsystemInfo Create<TSubsystem>(SubsystemKind kind)
-            where TSubsystem : class, ISubsystem
+        internal void RegisterImplementation(ISubsystem impl)
         {
-            var empty = Utils.EmptyReadOnlyCollection<string>();
-            return Create<TSubsystem>(kind, allowUnregistration: false, allowMultipleRegistration: false, empty, empty);
+            AddImplementation(impl);
+            // trigger event if a handler is registered.
         }
 
-        internal static SubsystemInfo Create<TSubsystem>(
-            SubsystemKind kind,
-            bool allowUnregistration,
-            bool allowMultipleRegistration) where TSubsystem : class, ISubsystem
+        internal ISubsystem UnregisterImplementation(Guid id)
         {
-            var empty = Utils.EmptyReadOnlyCollection<string>();
-            return Create<TSubsystem>(kind, allowUnregistration, allowMultipleRegistration, empty, empty);
-        }
-
-        internal static SubsystemInfo Create<TSubsystem>(
-            SubsystemKind kind,
-            bool allowUnregistration,
-            bool allowMultipleRegistration,
-            ReadOnlyCollection<string> requiredCmdlets,
-            ReadOnlyCollection<string> requiredFunctions) where TSubsystem : class, ISubsystem
-        {
-            return new SubsystemInfo() {
-                SubsystemType = typeof(TSubsystem),
-                Kind = kind,
-                AllowUnregistration = allowUnregistration,
-                RequiredCmdlets = requiredCmdlets,
-                RequiredFunctions = requiredFunctions,
-            };
+            ISubsystem ret = RemoveImplementation(id);
+            // trigger event if a handler is registered.
+            return ret;
         }
 
         #endregion
 
-        #region "Manage implementations"
+        #region "Static factory overloads"
 
-        internal void AddImplementation(ISubsystem impl)
+        internal static SubsystemInfo Create<TConcreteSubsystem>(SubsystemKind kind)
+            where TConcreteSubsystem : class, ISubsystem
         {
-            if (!SubsystemType.IsAssignableFrom(impl.GetType()))
-            {
-                throw new ArgumentException("An implementation of the subsystem '{0}' must derive from or implement the type '{1}'.");
-            }
-
-            lock (_syncObj)
-            {
-                if (_registeredImpls.Count == 0)
-                {
-                    _registeredImpls = new ReadOnlyCollection<ISubsystem>(new[] { impl });
-                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(new[] { new ImplementationInfo(impl) });
-                    return;
-                }
-
-                if (!AllowMultipleRegistration)
-                {
-                    throw new InvalidOperationException("The subsystem '{0}' does not allow more than one implementation registration.");
-                }
-
-                bool targetExists = false;
-                foreach (var item in _registeredImpls)
-                {
-                    if (item.Id == impl.Id)
-                    {
-                        targetExists = true;
-                        break;
-                    }
-                }
-
-                if (targetExists)
-                {
-                    throw new InvalidOperationException("The implementation with ID was already registered.");
-                }
-
-                var list = new List<ISubsystem>(_registeredImpls.Count + 1);
-                list.AddRange(_registeredImpls);
-                list.Add(impl);
-
-                _registeredImpls = new ReadOnlyCollection<ISubsystem>(list);
-                _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(s => new ImplementationInfo(s)));
-            }
+            return new SubsystemInfoImpl<TConcreteSubsystem>(kind);
         }
 
-        internal ISubsystem RemoveImplementation(Guid id)
+        internal static SubsystemInfo Create<TConcreteSubsystem>(
+            SubsystemKind kind,
+            bool allowUnregistration,
+            bool allowMultipleRegistration) where TConcreteSubsystem : class, ISubsystem
         {
-            if (!AllowUnregistration)
-            {
-                throw new InvalidOperationException("The subsystem '{0}' does not allow unregistration of an implementation.");
-            }
-
-            lock (_syncObj)
-            {
-                if (_registeredImpls.Count == 0)
-                {
-                    throw new InvalidOperationException("No implementation was registered to the subsystem '{0}'.");
-                }
-
-                int index = -1;
-                for (int i = 0; i < _registeredImpls.Count; i++)
-                {
-                    if (_registeredImpls[i].Id == id)
-                    {
-                        index = i;
-                        break;
-                    }
-                }
-
-                if (index == -1)
-                {
-                    throw new InvalidOperationException($"Cannot find a registered implementation with the ID '$id'");
-                }
-
-                ISubsystem target = _registeredImpls[index];
-                if (_registeredImpls.Count == 1)
-                {
-                    _registeredImpls = Utils.EmptyReadOnlyCollection<ISubsystem>();
-                    _cachedImplInfos = Utils.EmptyReadOnlyCollection<ImplementationInfo>();
-                }
-                else
-                {
-                    var list = new List<ISubsystem>(_registeredImpls.Count - 1);
-                    for (int i = 0; i < _registeredImpls.Count; i++)
-                    {
-                        if (index == i)
-                        {
-                            continue;
-                        }
-
-                        list.Add(_registeredImpls[i]);
-                    }
-
-                    _registeredImpls = new ReadOnlyCollection<ISubsystem>(list);
-                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(s => new ImplementationInfo(s)));
-                }
-
-                return target;
-            }
+            return new SubsystemInfoImpl<TConcreteSubsystem>(kind) {
+                AllowUnregistration = allowUnregistration,
+                AllowMultipleRegistration = allowMultipleRegistration,
+            };
         }
 
-        internal ISubsystem GetImplementation()
+        internal static SubsystemInfo Create<TConcreteSubsystem>(
+            SubsystemKind kind,
+            bool allowUnregistration,
+            bool allowMultipleRegistration,
+            ReadOnlyCollection<string> requiredCmdlets,
+            ReadOnlyCollection<string> requiredFunctions) where TConcreteSubsystem : class, ISubsystem
         {
-            var localRef = _registeredImpls;
-            return localRef.Count > 0 ? localRef[localRef.Count - 1] : null;
-        }
-
-        internal ReadOnlyCollection<ISubsystem> GetAllImplementations()
-        {
-            return _registeredImpls;
+            return new SubsystemInfoImpl<TConcreteSubsystem>(kind) {
+                AllowUnregistration = allowUnregistration,
+                AllowMultipleRegistration = allowMultipleRegistration,
+                RequiredCmdlets = requiredCmdlets,
+                RequiredFunctions = requiredFunctions,
+            };
         }
 
         #endregion
@@ -324,6 +233,127 @@ namespace System.Management.Automation.Subsystem
         #endregion
     }
 
+    internal sealed class SubsystemInfoImpl<TConcreteSubsystem> : SubsystemInfo
+        where TConcreteSubsystem : class, ISubsystem
+    {
+        private ReadOnlyCollection<TConcreteSubsystem> _registeredImpls;
+
+        internal SubsystemInfoImpl(SubsystemKind kind)
+            : base(kind, typeof(TConcreteSubsystem))
+        {
+            _registeredImpls = Utils.EmptyReadOnlyCollection<TConcreteSubsystem>();
+        }
+
+        private protected override void AddImplementation(ISubsystem rawImpl)
+        {
+            lock (_syncObj)
+            {
+                var impl = (TConcreteSubsystem)rawImpl;
+
+                if (_registeredImpls.Count == 0)
+                {
+                    _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(new[] { impl });
+                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(new[] { new ImplementationInfo(impl) });
+                    return;
+                }
+
+                if (!AllowMultipleRegistration)
+                {
+                    throw new InvalidOperationException("The subsystem '{0}' does not allow more than one implementation registration.");
+                }
+
+                bool targetExists = false;
+                foreach (var item in _registeredImpls)
+                {
+                    if (item.Id == impl.Id)
+                    {
+                        targetExists = true;
+                        break;
+                    }
+                }
+
+                if (targetExists)
+                {
+                    throw new InvalidOperationException("The implementation with ID was already registered.");
+                }
+
+                var list = new List<TConcreteSubsystem>(_registeredImpls.Count + 1);
+                list.AddRange(_registeredImpls);
+                list.Add(impl);
+
+                _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(list);
+                _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(s => new ImplementationInfo(s)));
+            }
+        }
+
+        private protected override ISubsystem RemoveImplementation(Guid id)
+        {
+            if (!AllowUnregistration)
+            {
+                throw new InvalidOperationException("The subsystem '{0}' does not allow unregistration of an implementation.");
+            }
+
+            lock (_syncObj)
+            {
+                if (_registeredImpls.Count == 0)
+                {
+                    throw new InvalidOperationException("No implementation was registered to the subsystem '{0}'.");
+                }
+
+                int index = -1;
+                for (int i = 0; i < _registeredImpls.Count; i++)
+                {
+                    if (_registeredImpls[i].Id == id)
+                    {
+                        index = i;
+                        break;
+                    }
+                }
+
+                if (index == -1)
+                {
+                    throw new InvalidOperationException($"Cannot find a registered implementation with the ID '$id'");
+                }
+
+                ISubsystem target = _registeredImpls[index];
+                if (_registeredImpls.Count == 1)
+                {
+                    _registeredImpls = Utils.EmptyReadOnlyCollection<TConcreteSubsystem>();
+                    _cachedImplInfos = Utils.EmptyReadOnlyCollection<ImplementationInfo>();
+                }
+                else
+                {
+                    var list = new List<TConcreteSubsystem>(_registeredImpls.Count - 1);
+                    for (int i = 0; i < _registeredImpls.Count; i++)
+                    {
+                        if (index == i)
+                        {
+                            continue;
+                        }
+
+                        list.Add(_registeredImpls[i]);
+                    }
+
+                    _registeredImpls = new ReadOnlyCollection<TConcreteSubsystem>(list);
+                    _cachedImplInfos = new ReadOnlyCollection<ImplementationInfo>(list.ConvertAll(s => new ImplementationInfo(s)));
+                }
+
+                return target;
+            }
+        }
+
+        internal TConcreteSubsystem GetImplementation()
+        {
+            var localRef = _registeredImpls;
+            return localRef.Count > 0 ? localRef[localRef.Count - 1] : null;
+        }
+
+        internal ReadOnlyCollection<TConcreteSubsystem> GetAllImplementations()
+        {
+            return _registeredImpls;
+        }
+    }
+
     /// <summary>
     /// Class used to manage subsystems.
     /// </summary>
@@ -336,10 +366,7 @@ namespace System.Management.Automation.Subsystem
         static SubsystemManager()
         {
             var subsystems = new SubsystemInfo[] {
-                SubsystemInfo.Create<IPrediction>(
-                    SubsystemKind.Prediction,
-                    allowUnregistration: true,
-                    allowMultipleRegistration: true),
+                SubsystemInfo.Create<IPrediction>(SubsystemKind.Prediction, allowUnregistration: true, allowMultipleRegistration: true),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);
@@ -375,27 +402,27 @@ namespace System.Management.Automation.Subsystem
         {
             if (s_subSystemTypeMap.TryGetValue(typeof(TConcreteSubsystem), out SubsystemInfo subsystemInfo))
             {
-                return (TConcreteSubsystem) subsystemInfo.GetImplementation();
+                var subsystemInfoImpl = (SubsystemInfoImpl<TConcreteSubsystem>) subsystemInfo;
+                return subsystemInfoImpl.GetImplementation();
             }
 
-            // Return null when the requested subsystem is not registered.
-            return null;
+            throw new ArgumentException("The specified subsystem type '{0}' is unknown.");
         }
 
         /// <summary>
         /// Get all the proxy objects registered for a specific subsystem.
         /// Return an empty collection when the given subsystem is not registered.
         /// </summary>
-        internal static IEnumerable<TConcreteSubsystem> GetSubsystems<TConcreteSubsystem>()
+        internal static ReadOnlyCollection<TConcreteSubsystem> GetSubsystems<TConcreteSubsystem>()
             where TConcreteSubsystem : class, ISubsystem
         {
             if (s_subSystemTypeMap.TryGetValue(typeof(TConcreteSubsystem), out SubsystemInfo subsystemInfo))
             {
-                return subsystemInfo.GetImplementation();
+                var subsystemInfoImpl = (SubsystemInfoImpl<TConcreteSubsystem>) subsystemInfo;
+                return subsystemInfoImpl.GetAllImplementations();
             }
 
-            // Return null when the requested subsystem is not registered.
-            return null;
+            throw new ArgumentException("The specified subsystem type '{0}' is unknown.");
         }
 
         #endregion
@@ -428,15 +455,6 @@ namespace System.Management.Automation.Subsystem
         }
 
         /// <summary>
-        /// Get the information about a subsystem by the subsystem type.
-        /// </summary>
-        public static SubsystemInfo GetSubsystemInfo<TConcreteSubsystem>()
-            where TConcreteSubsystem : class, ISubsystem
-        {
-            return GetSubsystemInfo(typeof(TConcreteSubsystem));
-        }
-
-        /// <summary>
         /// Get the information about a subsystem by the subsystem kind.
         /// </summary>
         public static SubsystemInfo GetSubsystemInfo(SubsystemKind kind)
@@ -464,8 +482,24 @@ namespace System.Management.Automation.Subsystem
             where TConcreteSubsystem : class, ISubsystem
             where TImplementation : class, TConcreteSubsystem
         {
-            var subsystemInfo = GetSubsystemInfo<TConcreteSubsystem>();
+            RegisterSubsystem(GetSubsystemInfo(typeof(TConcreteSubsystem)), proxy);
+        }
 
+        /// <summary>
+        /// Subsystem registration.
+        /// </summary>
+        public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
+        {
+            if (kind != proxy.Kind)
+            {
+                throw new ArgumentException("Invalid subsystem implementation.", nameof(proxy));
+            }
+
+            RegisterSubsystem(GetSubsystemInfo(kind), proxy);
+        }
+
+        private static void RegisterSubsystem(SubsystemInfo subsystemInfo, ISubsystem proxy)
+        {
             if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
             {
                 // Process 'proxy.CmdletImplementationAssembly' and 'proxy.FunctionsToDefine'
@@ -482,61 +516,7 @@ namespace System.Management.Automation.Subsystem
                 // all '*-Job' cmdlets should be available in the 'Microsoft.PowerShell.Core' namespace by default.
             }
 
-            // The proxy object needs to be properly preserved so it can be returned by 'GetSubsystem' and 'GetRequiredSubsystem'.
-        }
-
-        /// <summary>
-        /// Subsystem registration.
-        /// </summary>
-        public static bool TryRegisterSubsystem<TConcreteSubsystem, TImplementation>(TImplementation proxy)
-            where TConcreteSubsystem : class, ISubsystem
-            where TImplementation : class, TConcreteSubsystem
-        {
-            try
-            {
-                RegisterSubsystem<TConcreteSubsystem, TImplementation>(proxy);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
-        /// <summary>
-        /// Subsystem registration.
-        /// </summary>
-        public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
-        {
-            if (kind != proxy.Kind)
-            {
-                throw new ArgumentException("Invalid subsystem implementation.", nameof(proxy));
-            }
-
-            var subsystemInfo = GetSubsystemInfo(kind);
-
-            if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
-            {
-
-            }
-
-            // Save the proxy object properly.
-        }
-
-        /// <summary>
-        /// Subsystem registration.
-        /// </summary>
-        public static bool TryRegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
-        {
-            try
-            {
-                RegisterSubsystem(kind, proxy);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            subsystemInfo.RegisterImplementation(proxy);
         }
 
         #endregion
@@ -547,85 +527,32 @@ namespace System.Management.Automation.Subsystem
         /// Subsystem unregistration.
         /// Throw 'InvalidOperationException' when called for subsystems that cannot be unregistered.
         /// </summary>
-        public static void UnregisterSubsystem<TConcreteSubsystem>()
+        public static void UnregisterSubsystem<TConcreteSubsystem>(Guid id)
             where TConcreteSubsystem : class, ISubsystem
         {
-            var subsystemInfo = GetSubsystemInfo<TConcreteSubsystem>();
-
-            if (!subsystemInfo.AllowUnregistration)
-            {
-                throw new InvalidOperationException(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        "The subsystem '{0}' cannot be unregistered",
-                        subsystemInfo.Kind.ToString()));
-            }
-
-            if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
-            {
-                throw new NotSupportedException("NotSupported yet: unregister subsystem that introduced new cmdlets/functions.");
-            }
-
-            // unregistration goes here
-        }
-
-        /// <summary>
-        /// Subsystem unregistration.
-        /// Return false when called for subsystems that cannot be unregistered.
-        /// </summary>
-        public static bool TryUnregisterSubsystem<TConcreteSubsystem>()
-            where TConcreteSubsystem : class, ISubsystem
-        {
-            try
-            {
-                UnregisterSubsystem<TConcreteSubsystem>();
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            UnregisterSubsystem(GetSubsystemInfo(typeof(TConcreteSubsystem)), id);
         }
 
         /// <summary>
         /// Subsystem unregistration.
         /// Throw 'InvalidOperationException' when called for subsystems that cannot be unregistered.
         /// </summary>
-        public static void UnregisterSubsystem(SubsystemKind kind)
+        public static void UnregisterSubsystem(SubsystemKind kind, Guid id)
         {
-            var subsystemInfo = GetSubsystemInfo(kind);
+            UnregisterSubsystem(GetSubsystemInfo(kind), id);
+        }
 
-            if (!subsystemInfo.AllowUnregistration)
-            {
-                throw new InvalidOperationException(
-                    string.Format(
-                        CultureInfo.CurrentCulture,
-                        "The subsystem '{0}' cannot be unregistered",
-                        subsystemInfo.Kind.ToString()));
-            }
-
+        private static void UnregisterSubsystem(SubsystemInfo subsystemInfo, Guid id)
+        {
             if (subsystemInfo.RequiredCmdlets.Any() || subsystemInfo.RequiredFunctions.Any())
             {
                 throw new NotSupportedException("NotSupported yet: unregister subsystem that introduced new cmdlets/functions.");
             }
 
-            // Implementation goes here ...
-        }
-
-        /// <summary>
-        /// Subsystem unregistration.
-        /// Return false when called for subsystems that cannot be unregistered.
-        /// </summary>
-        public static bool TryUnregisterSubsystem(SubsystemKind kind)
-        {
-            try
+            ISubsystem impl = subsystemInfo.UnregisterImplementation(id);
+            if (impl is IDisposable disposable)
             {
-                UnregisterSubsystem(kind);
-                return true;
-            }
-            catch
-            {
-                return false;
+                disposable.Dispose();
             }
         }
 
