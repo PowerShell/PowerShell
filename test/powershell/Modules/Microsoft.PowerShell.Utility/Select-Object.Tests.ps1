@@ -17,7 +17,11 @@ Describe "Select-Object" -Tags "CI" {
     It "Should treat input as a single object with the inputObject parameter" {
         $result = $(Select-Object -InputObject $dirObject -Last $TestLength).Length
         $expected = $dirObject.Length
-        { $dirObject | Select-Object } | Should -Not -Throw
+        $result | Should -Be $expected
+    }
+
+    It "Should be able to use the alias" {
+        { $dirObject | select } | Should -Not -Throw
     }
 
     It "Should have same result when using alias" {
@@ -128,6 +132,11 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
         $e = { "bar" | Select-Object -Prop {} -ErrorAction Stop } |
             Should -Throw -ErrorId "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand" -PassThru
         $e.CategoryInfo | Should -Match "PSArgumentException"
+    }
+
+    It "Select-Object with Property First Last Overlap should work" {
+        $results = $employees | Select-Object -Property "YearsInMS", "L*" -First 2 -Last 3
+        $results.Count | Should -Be 4
     }
 
     It "Select-Object with string property should work" {
@@ -340,8 +349,6 @@ Describe "Select-Object with Property = '*'" -Tags "CI" {
         $obj.psobject.TypeNames.Count | Should -Be 3
         $obj.psobject.TypeNames[0] | Should -BeLike "Selected*"
         $obj.psobject.TypeNames[1] | Should -Not -BeLike "Selected*"
-        $p = Get-Process -Id $pid | Select-Object -Property Process* -ExcludeProperty ProcessorAffinity -ExpandProperty Modules
-        $p[0].psobject.Properties.Item("ProcessorAffinity") | Should -BeNullOrEmpty
         $obj.psobject.TypeNames[2] | Should -Not -BeLike "Selected*"
     }
 }
