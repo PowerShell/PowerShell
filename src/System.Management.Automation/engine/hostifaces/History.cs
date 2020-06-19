@@ -327,9 +327,11 @@ namespace Microsoft.PowerShell.Commands
 
                         for (long i = baseId; i >= firstId; --i)
                         {
-                            if (firstId <= 1) break;
+                            if (firstId <= 1)
+                                break;
                             // if entry is null , continue the loop with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null) continue;
+                            if (_buffer[GetIndexFromId(i)] == null)
+                                continue;
                             if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,decrement
@@ -360,9 +362,11 @@ namespace Microsoft.PowerShell.Commands
 
                         for (long i = baseId; i <= firstId; i++)
                         {
-                            if (firstId >= _countEntriesAdded) break;
+                            if (firstId >= _countEntriesAdded)
+                                break;
                             // if entry is null , continue the loop with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null) continue;
+                            if (_buffer[GetIndexFromId(i)] == null)
+                                continue;
                             if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,increment first id
@@ -403,16 +407,19 @@ namespace Microsoft.PowerShell.Commands
 
                         for (long i = count - 1; i >= 0;)
                         {
-                            if (index > _countEntriesAdded) break;
+                            if (index > _countEntriesAdded)
+                                break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
                                 (_buffer[GetIndexFromId(index)].Cleared))
                             {
-                                index++; continue;
+                                index++;
+                                continue;
                             }
                             else
                             {
                                 entriesList.Add(_buffer[GetIndexFromId(index)].Clone());
-                                i--; index++;
+                                i--;
+                                index++;
                             }
                         }
                     }
@@ -432,7 +439,8 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
 
-                            if (index < 1) break;
+                            if (index < 1)
+                                break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
                                 (_buffer[GetIndexFromId(index)].Cleared))
                             { index--; continue; }
@@ -440,7 +448,8 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 // clone the entry from the history buffer
                                 entriesList.Add(_buffer[GetIndexFromId(index)].Clone());
-                                i--; index--;
+                                i--;
+                                index--;
                             }
                         }
                     }
@@ -497,10 +506,12 @@ namespace Microsoft.PowerShell.Commands
 
                         for (long i = 0; i <= count - 1;)
                         {
-                            if (id > _countEntriesAdded) break;
+                            if (id > _countEntriesAdded)
+                                break;
                             if (_buffer[GetIndexFromId(id)].Cleared == false && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
                             {
-                                cmdlist.Add(_buffer[GetIndexFromId(id)].Clone()); i++;
+                                cmdlist.Add(_buffer[GetIndexFromId(id)].Clone());
+                                i++;
                             }
 
                             id++;
@@ -521,10 +532,12 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
 
-                            if (id < 1) break;
+                            if (id < 1)
+                                break;
                             if (_buffer[GetIndexFromId(id)].Cleared == false && wildcardpattern.IsMatch(_buffer[GetIndexFromId(id)].CommandLine.Trim()))
                             {
-                                cmdlist.Add(_buffer[GetIndexFromId(id)].Clone()); i++;
+                                cmdlist.Add(_buffer[GetIndexFromId(id)].Clone());
+                                i++;
                             }
 
                             id--;
@@ -978,8 +991,9 @@ namespace Microsoft.PowerShell.Commands
         /// Invoke cmd can execute only one history entry. If multiple
         /// ids are provided, we throw error.
         /// </summary>
-        private bool _multipleIdProvided;
+        // private bool _multipleIdProvided;
         private string _id;
+        private string[] _allIds;
         /// <summary>
         /// Accepts a string value indicating a previously executed command to
         /// re-execute.
@@ -991,22 +1005,16 @@ namespace Microsoft.PowerShell.Commands
         /// that is to be re-executed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
-        public string Id
+        public string[] Id
         {
             get
             {
-                return _id;
+                return _allIds;
             }
 
             set
             {
-                if (_id != null)
-                {
-                    // Id has been set already.
-                    _multipleIdProvided = true;
-                }
-
-                _id = value;
+                _allIds = value;
             }
         }
 
@@ -1017,137 +1025,126 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            // Invoke-history can execute only one command. If multiple
-            // ids were provided, throw exception
-            if (_multipleIdProvided)
-            {
-                Exception ex =
-                    new ArgumentException
-                    (
-                        StringUtil.Format(HistoryStrings.InvokeHistoryMultipleCommandsError)
-                    );
-
-                ThrowTerminatingError
-                (
-                    new ErrorRecord
-                    (
-                        ex,
-                        "InvokeHistoryMultipleCommandsError",
-                        ErrorCategory.InvalidArgument,
-                        null
-                    )
-                );
-            }
-
             History history = ((LocalRunspace)Context.CurrentRunspace).History;
             Dbg.Assert(history != null, "History should be non null");
 
-            // Get the history entry to invoke
-            HistoryInfo entry = GetHistoryEntryToInvoke(history);
-
-            // Check if there is a loop in invoke-history
-            LocalPipeline pipeline = (LocalPipeline)((LocalRunspace)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
-
-            if (pipeline.PresentInInvokeHistoryEntryList(entry) == false)
+            foreach (var currId in _allIds)
             {
-                pipeline.AddToInvokeHistoryEntryList(entry);
-            }
-            else
-            {
-                Exception ex =
-                    new InvalidOperationException
+                _id = currId;
+
+                // Get the history entry to invoke
+                HistoryInfo entry = GetHistoryEntryToInvoke(history);
+
+                // Check if there is a loop in invoke-history
+                LocalPipeline pipeline = (LocalPipeline)((LocalRunspace)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
+
+                if (pipeline.PresentInInvokeHistoryEntryList(entry) == false)
+                {
+                    pipeline.AddToInvokeHistoryEntryList(entry);
+                }
+                else
+                {
+                    Exception ex =
+                        new InvalidOperationException
+                        (
+                            StringUtil.Format(HistoryStrings.InvokeHistoryLoopDetected)
+                        );
+
+                    ThrowTerminatingError
                     (
-                        StringUtil.Format(HistoryStrings.InvokeHistoryLoopDetected)
+                        new ErrorRecord
+                        (
+                            ex,
+                            "InvokeHistoryLoopDetected",
+                            ErrorCategory.InvalidOperation,
+                            null
+                        )
                     );
+                }
 
-                ThrowTerminatingError
-                (
-                    new ErrorRecord
-                    (
-                        ex,
-                        "InvokeHistoryLoopDetected",
-                        ErrorCategory.InvalidOperation,
-                        null
-                    )
-                );
-            }
+                // Replace Invoke-History with string which is getting invoked
+                ReplaceHistoryString(entry);
 
-            // Replace Invoke-History with string which is getting invoked
-            ReplaceHistoryString(entry);
+                // Now invoke the command
+                string commandToInvoke = entry.CommandLine;
 
-            // Now invoke the command
-            string commandToInvoke = entry.CommandLine;
-
-            if (ShouldProcess(commandToInvoke) == false)
-            {
-                return;
-            }
-
-            try
-            {
-                // Echo command
-                Host.UI.WriteLine(commandToInvoke);
-            }
-            catch (HostException)
-            {
-                // when the host is not interactive, HostException is thrown
-                // do nothing
-            }
-
-            // Items invoked as History should act as though they were submitted by the user - so should still come from
-            // the runspace itself. For this reason, it is insufficient to just use the InvokeScript method on the Cmdlet class.
-            using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
-            {
-                ps.AddScript(commandToInvoke);
-
-                EventHandler<DataAddedEventArgs> debugAdded = delegate (object sender, DataAddedEventArgs e) { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
-                EventHandler<DataAddedEventArgs> errorAdded = delegate (object sender, DataAddedEventArgs e) { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
-                EventHandler<DataAddedEventArgs> informationAdded = delegate (object sender, DataAddedEventArgs e) { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
-                EventHandler<DataAddedEventArgs> progressAdded = delegate (object sender, DataAddedEventArgs e) { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
-                EventHandler<DataAddedEventArgs> verboseAdded = delegate (object sender, DataAddedEventArgs e) { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
-                EventHandler<DataAddedEventArgs> warningAdded = delegate (object sender, DataAddedEventArgs e) { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
-
-                ps.Streams.Debug.DataAdded += debugAdded;
-                ps.Streams.Error.DataAdded += errorAdded;
-                ps.Streams.Information.DataAdded += informationAdded;
-                ps.Streams.Progress.DataAdded += progressAdded;
-                ps.Streams.Verbose.DataAdded += verboseAdded;
-                ps.Streams.Warning.DataAdded += warningAdded;
-
-                LocalRunspace localRunspace = ps.Runspace as LocalRunspace;
+                if (ShouldProcess(commandToInvoke) == false)
+                {
+                    return;
+                }
 
                 try
                 {
-                    // Indicate to the system that we are in nested prompt mode, since we are emulating running the command at the prompt.
-                    // This ensures that the command being run as nested runs in the correct language mode, because CreatePipelineProcessor()
-                    // always forces CommandOrigin to Internal for nested running commands, and Command.CreateCommandProcessor() forces Internal
-                    // commands to always run in FullLanguage mode unless in a nested prompt.
-                    if (localRunspace != null)
-                    {
-                        localRunspace.InInternalNestedPrompt = ps.IsNested;
-                    }
-
-                    Collection<PSObject> results = ps.Invoke();
-                    if (results.Count > 0)
-                    {
-                        WriteObject(results, true);
-                    }
-
-                    pipeline.RemoveFromInvokeHistoryEntryList(entry);
+                    // Echo command
+                    Host.UI.WriteLine(commandToInvoke);
                 }
-                finally
+                catch (HostException)
                 {
-                    if (localRunspace != null)
-                    {
-                        localRunspace.InInternalNestedPrompt = false;
-                    }
+                    // when the host is not interactive, HostException is thrown
+                    // do nothing
+                }
 
-                    ps.Streams.Debug.DataAdded -= debugAdded;
-                    ps.Streams.Error.DataAdded -= errorAdded;
-                    ps.Streams.Information.DataAdded -= informationAdded;
-                    ps.Streams.Progress.DataAdded -= progressAdded;
-                    ps.Streams.Verbose.DataAdded -= verboseAdded;
-                    ps.Streams.Warning.DataAdded -= warningAdded;
+                // Items invoked as History should act as though they were submitted by the user - so should still come from
+                // the runspace itself. For this reason, it is insufficient to just use the InvokeScript method on the Cmdlet class.
+                using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace))
+                {
+                    ps.AddScript(commandToInvoke);
+
+                    EventHandler<DataAddedEventArgs> debugAdded = delegate (object sender, DataAddedEventArgs e)
+                    { DebugRecord record = (DebugRecord)((PSDataCollection<DebugRecord>)sender)[e.Index]; WriteDebug(record.Message); };
+                    EventHandler<DataAddedEventArgs> errorAdded = delegate (object sender, DataAddedEventArgs e)
+                    { ErrorRecord record = (ErrorRecord)((PSDataCollection<ErrorRecord>)sender)[e.Index]; WriteError(record); };
+                    EventHandler<DataAddedEventArgs> informationAdded = delegate (object sender, DataAddedEventArgs e)
+                    { InformationRecord record = (InformationRecord)((PSDataCollection<InformationRecord>)sender)[e.Index]; WriteInformation(record); };
+                    EventHandler<DataAddedEventArgs> progressAdded = delegate (object sender, DataAddedEventArgs e)
+                    { ProgressRecord record = (ProgressRecord)((PSDataCollection<ProgressRecord>)sender)[e.Index]; WriteProgress(record); };
+                    EventHandler<DataAddedEventArgs> verboseAdded = delegate (object sender, DataAddedEventArgs e)
+                    { VerboseRecord record = (VerboseRecord)((PSDataCollection<VerboseRecord>)sender)[e.Index]; WriteVerbose(record.Message); };
+                    EventHandler<DataAddedEventArgs> warningAdded = delegate (object sender, DataAddedEventArgs e)
+                    { WarningRecord record = (WarningRecord)((PSDataCollection<WarningRecord>)sender)[e.Index]; WriteWarning(record.Message); };
+
+                    ps.Streams.Debug.DataAdded += debugAdded;
+                    ps.Streams.Error.DataAdded += errorAdded;
+                    ps.Streams.Information.DataAdded += informationAdded;
+                    ps.Streams.Progress.DataAdded += progressAdded;
+                    ps.Streams.Verbose.DataAdded += verboseAdded;
+                    ps.Streams.Warning.DataAdded += warningAdded;
+
+                    LocalRunspace localRunspace = ps.Runspace as LocalRunspace;
+
+                    try
+                    {
+                        // Indicate to the system that we are in nested prompt mode, since we are emulating running the command at the prompt.
+                        // This ensures that the command being run as nested runs in the correct language mode, because CreatePipelineProcessor()
+                        // always forces CommandOrigin to Internal for nested running commands, and Command.CreateCommandProcessor() forces Internal
+                        // commands to always run in FullLanguage mode unless in a nested prompt.
+                        if (localRunspace != null)
+                        {
+                            localRunspace.InInternalNestedPrompt = ps.IsNested;
+                        }
+
+                        Collection<PSObject> results = ps.Invoke();
+                        if (results.Count > 0)
+                        {
+                            WriteObject(results, true);
+                        }
+
+                        pipeline.RemoveFromInvokeHistoryEntryList(entry);
+                    }
+                    finally
+                    {
+                        if (localRunspace != null)
+                        {
+                            localRunspace.InInternalNestedPrompt = false;
+                        }
+
+                        ps.Streams.Debug.DataAdded -= debugAdded;
+                        ps.Streams.Error.DataAdded -= errorAdded;
+                        ps.Streams.Information.DataAdded -= informationAdded;
+                        ps.Streams.Progress.DataAdded -= progressAdded;
+                        ps.Streams.Verbose.DataAdded -= verboseAdded;
+                        ps.Streams.Warning.DataAdded -= warningAdded;
+                    }
                 }
             }
         }
