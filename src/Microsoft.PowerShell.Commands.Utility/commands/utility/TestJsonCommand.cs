@@ -103,6 +103,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         resolvedpath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(JsonFile);
+                        // _json = JsonFile.FromFileAsync(resolvedpath).Result;
                         _json = System.IO.File.ReadAllText(resolvedpath);
                     }
                     catch (AggregateException ae)
@@ -111,14 +112,14 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (Exception e) when
-            (
+            catch (Exception e) when (
                 // Handle exceptions related to file access to provide more specific error message
                 // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
                 e is IOException ||
                 e is UnauthorizedAccessException ||
                 e is NotSupportedException ||
-                e is SecurityException)
+                e is SecurityException
+            )
             {
                 Exception exception = new Exception(
                     string.Format(
@@ -157,14 +158,14 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-            catch (Exception e) when
-            (
+            catch (Exception e) when (
                 // Handle exceptions related to file access to provide more specific error message
                 // https://docs.microsoft.com/en-us/dotnet/standard/io/handling-io-errors
                 e is IOException ||
                 e is UnauthorizedAccessException ||
                 e is NotSupportedException ||
-                e is SecurityException)
+                e is SecurityException
+            )
             {
                 Exception exception = new Exception(
                     string.Format(
