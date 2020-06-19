@@ -1107,7 +1107,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     let cachedClassName = splittedName[IndexClassName]
                     let cachedModuleName = splittedName[IndexModuleName]
                     let cachedResourceName = splittedName[IndexFriendlyName]
-                    where ((string.Equals(cachedResourceName, resourceName, StringComparison.OrdinalIgnoreCase))
+                    where (string.Equals(cachedResourceName, resourceName, StringComparison.OrdinalIgnoreCase)
                     || (string.Equals(cachedClassName, className, StringComparison.OrdinalIgnoreCase)
                         && string.Equals(cachedModuleName, moduleName, StringComparison.OrdinalIgnoreCase)))
                     select cacheEntry).ToList();

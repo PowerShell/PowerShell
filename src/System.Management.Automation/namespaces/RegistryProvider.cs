@@ -3203,8 +3203,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             if (string.IsNullOrEmpty(path) ||
-                (string.Equals(path, "\\", StringComparison.OrdinalIgnoreCase)) ||
-                (string.Equals(path, "/", StringComparison.OrdinalIgnoreCase)))
+                string.Equals(path, "\\", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(path, "/", StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
             }

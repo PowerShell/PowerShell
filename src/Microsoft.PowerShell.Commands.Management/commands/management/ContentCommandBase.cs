@@ -150,13 +150,10 @@ namespace Microsoft.PowerShell.Commands
 
             if (_currentContentItem != null &&
                 ((_currentContentItem.PathInfo == pathInfo) ||
-                 (
                     string.Equals(
                         pathInfo.Path,
                         _currentContentItem.PathInfo.Path,
-                        StringComparison.OrdinalIgnoreCase))
-                    )
-                )
+                        StringComparison.OrdinalIgnoreCase)))
             {
                 result = _currentContentItem.AttachNotes(result);
             }
