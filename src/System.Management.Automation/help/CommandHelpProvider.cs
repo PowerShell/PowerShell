@@ -427,7 +427,7 @@ namespace System.Management.Automation
             int countHelpInfosFound = 0;
             string target = helpRequest.Target;
             // this is for avoiding duplicate result from help output.
-            Hashtable hashtable = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var allHelpNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             CommandSearcher searcher = GetCommandSearcherForExactMatch(target, _context);
 
@@ -453,7 +453,7 @@ namespace System.Management.Automation
                         throw new PSInvalidOperationException(HelpErrors.CircularDependencyInHelpForwarding);
                     }
 
-                    if (hashtable.ContainsKey(helpName))
+                    if (allHelpNames.Contains(helpName))
                         continue;
 
                     if (!Match(helpInfo, helpRequest, current))
@@ -462,7 +462,7 @@ namespace System.Management.Automation
                     }
 
                     countHelpInfosFound++;
-                    hashtable.Add(helpName, null);
+                    allHelpNames.Add(helpName);
                     yield return helpInfo;
 
                     if ((countHelpInfosFound >= helpRequest.MaxResults) && (helpRequest.MaxResults > 0))
@@ -1053,8 +1053,8 @@ namespace System.Management.Automation
 
             int countOfHelpInfoObjectsFound = 0;
             // this is for avoiding duplicate result from help output.
-            Hashtable hashtable = new Hashtable(StringComparer.OrdinalIgnoreCase);
-            Hashtable hiddenCommands = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var hiddenCommands = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string pattern in patternList)
             {
                 CommandSearcher searcher = GetCommandSearcherForSearch(pattern, _context);
@@ -1077,15 +1077,15 @@ namespace System.Management.Automation
                         {
                             // this command is not visible to the user (from CommandOrigin) so
                             // dont show help topic for it.
-                            if (!hiddenCommands.ContainsKey(helpName))
+                            if (!hiddenCommands.Contains(helpName))
                             {
-                                hiddenCommands.Add(helpName, null);
+                                hiddenCommands.Add(helpName);
                             }
 
                             continue;
                         }
 
-                        if (hashtable.ContainsKey(helpName))
+                        if (set.Contains(helpName))
                             continue;
 
                         // filter out the helpInfo object depending on user request
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
                             continue;
                         }
 
-                        hashtable.Add(helpName, null);
+                        set.Add(helpName);
                         countOfHelpInfoObjectsFound++;
                         yield return helpInfo;
 
@@ -1130,10 +1130,10 @@ namespace System.Management.Automation
 
                         if (helpInfo != null && !string.IsNullOrEmpty(helpName))
                         {
-                            if (hashtable.ContainsKey(helpName))
+                            if (set.Contains(helpName))
                                 continue;
 
-                            if (hiddenCommands.ContainsKey(helpName))
+                            if (hiddenCommands.Contains(helpName))
                                 continue;
 
                             // filter out the helpInfo object depending on user request
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation
                                 continue;
                             }
 
-                            hashtable.Add(helpName, null);
+                            set.Add(helpName);
                             countOfHelpInfoObjectsFound++;
                             yield return helpInfo;
 

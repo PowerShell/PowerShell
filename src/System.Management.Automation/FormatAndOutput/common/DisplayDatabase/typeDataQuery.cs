@@ -588,7 +588,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <returns></returns>
         internal static AppliesTo GetAllApplicableTypes(TypeInfoDataBase db, AppliesTo appliesTo)
         {
-            Hashtable allTypes = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            var allTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (TypeOrGroupReference r in appliesTo.referenceList)
             {
@@ -596,8 +596,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 TypeReference tr = r as TypeReference;
                 if (tr != null)
                 {
-                    if (!allTypes.ContainsKey(tr.name))
-                        allTypes.Add(tr.name, null);
+                    if (!allTypes.Contains(tr.name))
+                        allTypes.Add(tr.name);
                 }
                 else
                 {
@@ -616,16 +616,16 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // we found the group, go over it
                     foreach (TypeReference x in tgd.typeReferenceList)
                     {
-                        if (!allTypes.ContainsKey(x.name))
-                            allTypes.Add(x.name, null);
+                        if (!allTypes.Contains(x.name))
+                            allTypes.Add(x.name);
                     }
                 }
             }
 
             AppliesTo retVal = new AppliesTo();
-            foreach (DictionaryEntry x in allTypes)
+            foreach (string x in allTypes)
             {
-                retVal.AddAppliesToType(x.Key as string);
+                retVal.AddAppliesToType(x);
             }
 
             return retVal;
