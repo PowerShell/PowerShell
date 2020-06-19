@@ -14,6 +14,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="System.Security.AccessControl" Version="5.0.0-preview.5.20278.1" />
+    <PackageReference Include="System.Security.AccessControl" Version="5.0.0-preview.6.20305.6" />
   </ItemGroup>
 </Project>
