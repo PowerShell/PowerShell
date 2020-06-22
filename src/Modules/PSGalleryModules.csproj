@@ -4,6 +4,7 @@
 
   <ItemGroup>
     <PackageReference Include="PowerShellGet" Version="2.2.4" />
+    <PackageReference Include="PowerShellGet" Version="3.0.0-beta4" />
     <PackageReference Include="PackageManagement" Version="1.4.7" />
     <PackageReference Include="Microsoft.PowerShell.Archive" Version="1.2.5" />
     <PackageReference Include="PSReadLine" Version="2.0.2" />
