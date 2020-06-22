@@ -31,5 +31,6 @@ assignees: ''
 - [ ] Docker image created
 - [ ] Docker image published
 - [ ] Distribution tested
+- [ ] Update `packages.microsoft.com` deployment
 - [ ] [Lifecycle](https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/reference/docs-conceptual/PowerShell-Support-Lifecycle.md) updated
 - [ ] Documentation Updated
