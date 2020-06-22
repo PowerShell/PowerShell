@@ -2973,12 +2973,12 @@ function New-MSIPackage
         $simpleProductVersion += '-preview'
     }
 
-    $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
-
     $staging = "$PSScriptRoot/staging"
     New-StagingFolder -StagingPath $staging -PackageSourcePath $ProductSourcePath
 
     Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
+
+    $assetsInSourcePath = Join-Path $staging 'assets'
 
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
