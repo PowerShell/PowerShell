@@ -118,8 +118,7 @@ namespace Microsoft.PowerShell.Commands
                 e is IOException ||
                 e is UnauthorizedAccessException ||
                 e is NotSupportedException ||
-                e is SecurityException
-            )
+                e is SecurityException)
             {
                 Exception exception = new Exception(
                     string.Format(
@@ -164,8 +163,7 @@ namespace Microsoft.PowerShell.Commands
                 e is IOException ||
                 e is UnauthorizedAccessException ||
                 e is NotSupportedException ||
-                e is SecurityException
-            )
+                e is SecurityException)
             {
                 Exception exception = new Exception(
                     string.Format(
