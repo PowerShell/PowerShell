@@ -776,7 +776,6 @@ namespace System.Management.Automation
             }
         }
 
-
         /// <summary>
         /// Gets the Method collection, or the members that are actually methods.
         /// </summary>

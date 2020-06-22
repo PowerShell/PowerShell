@@ -130,7 +130,7 @@ namespace System.Management.Automation
             {
                 InputCollection = new PSDataCollection<object>();
                 InputCollection.ReleaseOnEnumeration = true;
-                InputCollection.IdleEvent += new EventHandler<EventArgs>(HandleIdleEvent);
+                InputCollection.IdleEvent += HandleIdleEvent;
             }
 
             RegisterPipelineOutputEventHandlers(_localPowerShellOutput);

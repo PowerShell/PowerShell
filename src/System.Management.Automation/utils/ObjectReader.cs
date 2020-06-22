@@ -48,7 +48,7 @@ namespace System.Management.Automation.Internal
                     InternalDataReady += value;
                     if (firstRegistrant)
                     {
-                        _stream.DataReady += new EventHandler(this.OnDataReady);
+                        _stream.DataReady += this.OnDataReady;
                     }
                 }
             }
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Internal
                     InternalDataReady -= value;
                     if (InternalDataReady == null)
                     {
-                        _stream.DataReady -= new EventHandler(this.OnDataReady);
+                        _stream.DataReady -= this.OnDataReady;
                     }
                 }
             }

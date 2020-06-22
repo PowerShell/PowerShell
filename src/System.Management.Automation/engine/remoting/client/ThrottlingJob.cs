@@ -424,7 +424,7 @@ namespace System.Management.Automation
             childJob.StateChanged += this.childJob_StateChanged;
             if (_cmdletMode)
             {
-                childJob.Results.DataAdded += new EventHandler<DataAddedEventArgs>(childJob_ResultsAdded);
+                childJob.Results.DataAdded += childJob_ResultsAdded;
             }
 
             this.EnqueueReadyToRunChildJob(childJob);

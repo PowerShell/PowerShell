@@ -435,7 +435,6 @@ namespace System.Management.Automation.Language
 
         public object VisitDynamicKeywordStatement(DynamicKeywordStatementAst dynamicKeywordAst) { return AutomationNull.Value; }
 
-
         public object VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
             CheckIsConstant(statementBlockAst, "Caller to verify ast is constant");

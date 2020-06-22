@@ -130,12 +130,11 @@ namespace System.Management.Automation
             RemoteHost = DataStructureHandler.GetHostAssociatedWithPowerShell(hostInfo, runspacePoolDriver.ServerRemoteHost);
 
             // subscribe to various data structure handler events
-            DataStructureHandler.InputEndReceived += new EventHandler(HandleInputEndReceived);
-            DataStructureHandler.InputReceived += new EventHandler<RemoteDataEventArgs<object>>(HandleInputReceived);
-            DataStructureHandler.StopPowerShellReceived += new EventHandler(HandleStopReceived);
-            DataStructureHandler.HostResponseReceived +=
-                new EventHandler<RemoteDataEventArgs<RemoteHostResponse>>(HandleHostResponseReceived);
-            DataStructureHandler.OnSessionConnected += new EventHandler(HandleSessionConnected);
+            DataStructureHandler.InputEndReceived += HandleInputEndReceived;
+            DataStructureHandler.InputReceived += HandleInputReceived;
+            DataStructureHandler.StopPowerShellReceived += HandleStopReceived;
+            DataStructureHandler.HostResponseReceived += HandleHostResponseReceived;
+            DataStructureHandler.OnSessionConnected += HandleSessionConnected;
 
             if (rsToUse == null)
             {

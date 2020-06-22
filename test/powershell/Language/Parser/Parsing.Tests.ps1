@@ -479,3 +479,165 @@ Describe "ParserError type tests" -Tag CI {
         }
     }
 }
+
+Describe "Keywords 'default', 'hidden', 'in', 'static' Token parsing" -Tags CI {
+    BeforeAll {
+        $testCases_basic = @(
+            @{
+                Script = 'switch (1) {default {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Default
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                }
+            }
+            @{
+                Script = 'switch (1) {"default" {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::StringExpandable
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                }
+            }
+            @{
+                Script = 'switch (1) {adefault {0} 1 {1}}'
+                TokensToCheck = @{
+                    5 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Identifier
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                }
+            }
+            @{
+                Script = 'foreach ($i in 1..2) {$i}'
+                TokensToCheck = @{
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::In
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                }
+            }
+            @{
+                Script = 'class test {hidden $a; static aMethod () {return $this.a} }'
+                TokensToCheck = @{
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Hidden
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                    6 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Static
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::Keyword
+                    }
+                }
+            }
+            @{
+                Script = 'echo default hidden in static'
+                TokensToCheck = @{
+                    1 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    2 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    3 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                    4 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Generic
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::None
+                    }
+                }
+            }
+            @{
+                Script = 'default'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Default
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'hidden'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Hidden
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'in'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::In
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+            @{
+                Script = 'static'
+                TokensToCheck = @{
+                    0 = @{
+                        TokenKind = [System.Management.Automation.Language.TokenKind]::Static
+                        TokenFlags_Mask = [System.Management.Automation.Language.TokenFlags]::Keyword -bor [System.Management.Automation.Language.TokenFlags]::CommandName
+                        TokenFlags_Value = [System.Management.Automation.Language.TokenFlags]::CommandName
+                    }
+                }
+            }
+        )
+    }
+
+    AfterAll {
+    }
+
+    It "Keywords 'default', 'hidden', 'in', 'static' in {<Script>} correctly tokenized." -TestCases $testCases_basic {
+        param($Script, $TokensToCheck)
+
+        $tks = $null
+        $ers = $null
+        $result = [System.Management.Automation.Language.Parser]::ParseInput($Script, [ref]$tks, [ref]$ers)
+
+        foreach ($token in $TokensToCheck.Keys ) {
+            if ($TokensToCheck[$Token].ContainsKey('TokenKind')) {
+                $tks[$token].Kind | Should -Be $TokensToCheck[$token].TokenKind -Because 'because TokenKind must be as expected'
+            }
+            if ($TokensToCheck[$Token].ContainsKey('TokenFlags_Value')) {
+                $tks[$token].TokenFlags -band $TokensToCheck[$token].TokenFlags_Mask | Should -Be $TokensToCheck[$token].TokenFlags_Value -Because 'because TokenFlags must be as expected after masking'
+            }
+        }
+    }
+
+    $testKeywordsAsCmds = @(
+        @{ Keyword = 'default' }
+        @{ Keyword = 'hidden' }
+        @{ Keyword = 'in' }         # Note: this overwrites Pester's `In` function.
+        @{ Keyword = 'static' }
+    )
+
+    It "<Keyword> can be used as command name" -TestCases $testKeywordsAsCmds {
+        param($Keyword)
+
+        Invoke-Expression "function $Keyword { '$Keyword' }"
+
+        . $Keyword | Should -BeExactly $Keyword
+    }
+}

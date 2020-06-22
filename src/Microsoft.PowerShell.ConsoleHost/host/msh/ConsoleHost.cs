@@ -579,7 +579,7 @@ namespace Microsoft.PowerShell
 
             RemoteRunspace remoteRunspace = newRunspace as RemoteRunspace;
             Dbg.Assert(remoteRunspace != null, "Expected remoteRunspace != null");
-            remoteRunspace.StateChanged += new EventHandler<RunspaceStateEventArgs>(HandleRemoteRunspaceStateChanged);
+            remoteRunspace.StateChanged += HandleRemoteRunspaceStateChanged;
 
             // Unsubscribe the local session debugger.
             if (_runspaceRef.Runspace.Debugger != null)
@@ -1280,7 +1280,7 @@ namespace Microsoft.PowerShell
                 {
                     // If ShouldEndSession is already true, you can't set it back
 
-                    Dbg.Assert(_shouldEndSession != true || value != false,
+                    Dbg.Assert(_shouldEndSession != true || value,
                         "ShouldEndSession can only be set from false to true");
 
                     _shouldEndSession = value;
@@ -2375,8 +2375,8 @@ namespace Microsoft.PowerShell
                 _parent = parent;
                 _isNested = isNested;
                 _isRunspacePushed = parent.IsRunspacePushed;
-                parent.RunspacePopped += new EventHandler(HandleRunspacePopped);
-                parent.RunspacePushed += new EventHandler(HandleRunspacePushed);
+                parent.RunspacePopped += HandleRunspacePopped;
+                parent.RunspacePushed += HandleRunspacePushed;
                 _exec = new Executor(parent, isNested, false);
                 _promptExec = new Executor(parent, isNested, true);
             }

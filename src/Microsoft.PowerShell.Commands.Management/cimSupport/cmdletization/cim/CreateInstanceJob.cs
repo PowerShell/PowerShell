@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             else
             {
 #if DEBUG
-                Dbg.Assert(_createInstanceOperationGotStarted == true, "GetInstance should be started *after* CreateInstance");
+                Dbg.Assert(_createInstanceOperationGotStarted, "GetInstance should be started *after* CreateInstance");
                 Dbg.Assert(_getInstanceOperationGotStarted == false, "Should not start GetInstance operation twice");
                 Dbg.Assert(_resultFromGetInstance == null, "GetInstance operation shouldn't happen twice");
                 _getInstanceOperationGotStarted = true;

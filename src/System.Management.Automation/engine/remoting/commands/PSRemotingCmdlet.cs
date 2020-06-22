@@ -3328,7 +3328,7 @@ namespace Microsoft.PowerShell.Commands
         {
             this.pipeline = pipeline;
             PipelineRunspace = pipeline.Runspace;
-            this.pipeline.StateChanged += new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
+            this.pipeline.StateChanged += HandlePipelineStateChanged;
         }
 
         /// <summary>
@@ -3436,7 +3436,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Dispose the pipeline object and release data and remoting resources.
                 // Pipeline object remains to provide information on final state and any errors incurred.
-                pipeline.StateChanged -= new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
+                pipeline.StateChanged -= HandlePipelineStateChanged;
                 pipeline.Dispose();
             }
 
@@ -3496,15 +3496,13 @@ namespace Microsoft.PowerShell.Commands
             _invokeAndDisconnect = invokeAndDisconnect;
 
             RemoteRunspace = remoteRunspace;
-            remoteRunspace.StateChanged +=
-                new EventHandler<RunspaceStateEventArgs>(HandleRunspaceStateChanged);
+            remoteRunspace.StateChanged += HandleRunspaceStateChanged;
 
             Dbg.Assert(pipeline != null,
                     "Pipeline cannot be null or empty");
 
             this.pipeline = pipeline;
-            pipeline.StateChanged +=
-                new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
+            pipeline.StateChanged += HandlePipelineStateChanged;
         }
 
         /// <summary>
@@ -3675,7 +3673,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // Dispose the pipeline object and release data and remoting resources.
                 // Pipeline object remains to provide information on final state and any errors incurred.
-                pipeline.StateChanged -= new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
+                pipeline.StateChanged -= HandlePipelineStateChanged;
                 pipeline.Dispose();
             }
 

@@ -738,7 +738,7 @@ namespace System.Management.Automation
         private void Serialize(string filename)
         {
             AnalysisCacheData fromOtherProcess = null;
-            Diagnostics.Assert(_saveCacheToDisk != false, "Serialize should never be called without going through QueueSerialization which has a check");
+            Diagnostics.Assert(_saveCacheToDisk, "Serialize should never be called without going through QueueSerialization which has a check");
 
             try
             {

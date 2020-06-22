@@ -97,7 +97,7 @@ namespace System.Management.Automation.Runspaces
             // to add cmd to CommandCollection again (Initialize does this).. because of this
             // I am handling history here..
             Initialize(runspace, null, false, isNested);
-            if (true == addToHistory)
+            if (addToHistory)
             {
                 // get command text for history..
                 string cmdText = command.GetCommandStringForHistory();
@@ -921,7 +921,7 @@ namespace System.Management.Automation.Runspaces
             {
                 Dbg.Assert(value != null, "ErrorStream cannot be null");
                 _errorStream = value;
-                _errorStream.DataReady += new EventHandler(OnErrorStreamDataReady);
+                _errorStream.DataReady += OnErrorStreamDataReady;
             }
         }
 
@@ -933,7 +933,7 @@ namespace System.Management.Automation.Runspaces
                 // unsubscribe from further event notifications as
                 // this notification is suffice to say there is an
                 // error.
-                _errorStream.DataReady -= new EventHandler(OnErrorStreamDataReady);
+                _errorStream.DataReady -= OnErrorStreamDataReady;
                 SetHadErrors(true);
             }
         }
@@ -1052,7 +1052,7 @@ namespace System.Management.Automation.Runspaces
                         InputStream.Close();
                         OutputStream.Close();
 
-                        _errorStream.DataReady -= new EventHandler(OnErrorStreamDataReady);
+                        _errorStream.DataReady -= OnErrorStreamDataReady;
                         _errorStream.Close();
 
                         _executionEventQueue.Clear();

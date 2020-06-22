@@ -128,7 +128,7 @@ namespace System.Management.Automation
                 foreach (string providerPath in providerPaths)
                 {
                     result = ItemExists(providerInstance, providerPath, context);
-                    if (result == true)
+                    if (result)
                     {
                         break;
                     }
@@ -3889,7 +3889,7 @@ namespace System.Management.Automation
             foreach (string providerPath in providerPaths)
             {
                 result = HasChildItems(providerInstance, providerPath, context);
-                if (result == true)
+                if (result)
                 {
                     break;
                 }

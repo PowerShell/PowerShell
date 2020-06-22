@@ -240,7 +240,7 @@ namespace System.Management.Automation.Internal
             {
                 // We check to see if the command is needs writing (or if there is anything in the buffer)
                 // before we flush it. Flushing the empty buffer causes a measurable performance degradation.
-                if (_commands == null || _commands.Count <= 0 || _eventLogBuffer.Count == 0)
+                if (_commands == null || _commands.Count == 0 || _eventLogBuffer.Count == 0)
                     return;
 
                 MshLog.LogPipelineExecutionDetailEvent(_commands[0].Command.Context,

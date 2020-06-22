@@ -138,7 +138,7 @@ namespace System.Management.Automation.Remoting
                 case CONFIGFILEPATH:
                     {
                         AssertValueNotAssigned(CONFIGFILEPATH, ConfigFilePath);
-                        ConfigFilePath = optionValue.ToString();
+                        ConfigFilePath = optionValue;
                     }
 
                     break;
@@ -763,7 +763,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(registryKey != null, "Caller should validate the registryKey parameter");
 
             object value = registryKey.GetValue(name);
-            if (value == null && mandatory == true)
+            if (value == null && mandatory)
             {
                 s_tracer.TraceError("Mandatory property {0} not specified for registry key {1}",
                         name, registryKey.Name);
@@ -771,7 +771,7 @@ namespace System.Management.Automation.Remoting
             }
 
             string s = value as string;
-            if (string.IsNullOrEmpty(s) && mandatory == true)
+            if (string.IsNullOrEmpty(s) && mandatory)
             {
                 s_tracer.TraceError("Value is null or empty for mandatory property {0} in {1}",
                         name, registryKey.Name);
@@ -2392,7 +2392,7 @@ namespace System.Management.Automation.Remoting
             // Process User Drive
             if (_configHash.ContainsKey(ConfigFileConstants.MountUserDrive))
             {
-                if (Convert.ToBoolean(_configHash[ConfigFileConstants.MountUserDrive], CultureInfo.InvariantCulture) == true)
+                if (Convert.ToBoolean(_configHash[ConfigFileConstants.MountUserDrive], CultureInfo.InvariantCulture))
                 {
                     iss.UserDriveEnabled = true;
                     iss.UserDriveUserName = (senderInfo != null) ? senderInfo.UserInfo.Identity.Name : null;

@@ -858,7 +858,7 @@ namespace Microsoft.PowerShell
 #if DEBUG
                 // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
                 // attach to an already running process with that debugger.
-                else if (MatchSwitch(switchKey, "wait", "w"))
+                else if (MatchSwitch(switchKey, "wait", "wa"))
                 {
                     // This does not need to be localized: its chk only
 
@@ -879,7 +879,6 @@ namespace Microsoft.PowerShell
                 {
                     // Just toss this option, it was processed earlier...
                 }
-
                 else if (MatchSwitch(switchKey, "modules", "mod"))
                 {
                     if (ConsoleHost.DefaultInitialSessionState == null)

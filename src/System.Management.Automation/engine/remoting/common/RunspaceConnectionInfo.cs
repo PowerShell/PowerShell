@@ -2454,7 +2454,7 @@ namespace System.Management.Automation.Runspaces
 
             if ((ex != null) ||
                 (sshProcess == null) ||
-                (sshProcess.HasExited == true))
+                (sshProcess.HasExited))
             {
                 throw new InvalidOperationException(
                     StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty),
@@ -2552,8 +2552,8 @@ namespace System.Management.Automation.Runspaces
             {
                 // Create process start command line with filename and argument list.
                 var cmdLine = string.Format(
-                    CultureInfo.InvariantCulture, 
-                    @"""{0}"" {1}", 
+                    CultureInfo.InvariantCulture,
+                    @"""{0}"" {1}",
                     startInfo.FileName,
                     string.Join(' ', startInfo.ArgumentList));
 

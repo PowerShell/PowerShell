@@ -48,6 +48,8 @@ stages:
 
 - stage: TestWin
   displayName: Test for Windows
+  variables:
+  - group: CLR-CAP
   jobs:
   - job: win_test
     pool:
@@ -147,7 +149,7 @@ stages:
 
     - pwsh: |
         Import-Module .\build.psm1
-        $xUnitTestResultsFile = "$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml"
+        $xUnitTestResultsFile = '$(System.ArtifactsDirectory)\xunit\xUnitTestResults.xml'
         Test-XUnitTestResults -TestResultsFile $xUnitTestResultsFile
       displayName: Verify xUnit Test Results
       condition: succeededOrFailed()
@@ -158,7 +160,7 @@ stages:
 
         if ((Test-Path $capModuleFile) -and (Test-Path $capDataDir)) {
             Import-Module $capModuleFile
-            Stop-TraceCollection -DataDir $capDataDir -RepoRoot $pwd
+            Stop-TraceCollection -DataDir $capDataDir -RepoRoot $pwd -IngressToken '$(CapIngressToken)'
         }
       displayName: 'Upload CLR Trace'
       condition: always()

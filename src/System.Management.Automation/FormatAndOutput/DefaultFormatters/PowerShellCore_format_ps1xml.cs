@@ -766,14 +766,14 @@ namespace System.Management.Automation.Runspaces
                             $maxDepth = 10
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
-                            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                            if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                 $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                     [System.Management.Automation.VTUtility+VT]::Reset
                                 )
                             }
 
                             function Get-VT100Color([ConsoleColor] $color) {
-                                if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                if (!$Host.UI.SupportsVirtualTerminal -or !([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                     return ''
                                 }
 
@@ -1013,14 +1013,14 @@ namespace System.Management.Automation.Runspaces
                                     function Get-ConciseViewPositionMessage {
 
                                         $resetColor = ''
-                                        if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                        if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                             $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                                 [System.Management.Automation.VTUtility+VT]::Reset
                                             )
                                         }
 
                                         function Get-VT100Color([ConsoleColor] $color) {
-                                            if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                            if (!$Host.UI.SupportsVirtualTerminal -or !([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                                 return ''
                                             }
 

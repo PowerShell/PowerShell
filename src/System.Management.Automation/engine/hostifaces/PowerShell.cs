@@ -3759,7 +3759,7 @@ namespace System.Management.Automation
 
             if ((psAsyncResult == null) ||
                 (psAsyncResult.OwnerId != InstanceId) ||
-                (psAsyncResult.IsAssociatedWithAsyncInvoke != false))
+                (psAsyncResult.IsAssociatedWithAsyncInvoke))
             {
                 throw PSTraceSource.NewArgumentException(nameof(asyncResult),
                     PowerShellStrings.AsyncResultNotOwned, "IAsyncResult", "BeginStop");
@@ -3940,7 +3940,7 @@ namespace System.Management.Automation
                             (
                                 Runspace.DefaultRunspace.ExecutionContext,
                                 false,
-                                IsNested == true ? CommandOrigin.Internal : CommandOrigin.Runspace
+                                IsNested ? CommandOrigin.Internal : CommandOrigin.Runspace
                             );
 
                     commandProcessorBase.RedirectShellErrorOutputPipe = RedirectShellErrorOutputPipe;

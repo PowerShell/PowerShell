@@ -1876,7 +1876,7 @@ $result
             {
                 if (logicalDrive.DriveType.Equals(DriveType.Fixed))
                 {
-                    if (drive.ToString().Equals(logicalDrive.Name.ToString(), System.StringComparison.OrdinalIgnoreCase))
+                    if (drive.Equals(logicalDrive.Name, System.StringComparison.OrdinalIgnoreCase))
                         return true;
                 }
             }

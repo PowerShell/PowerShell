@@ -141,7 +141,7 @@ namespace System.Management.Automation
             {
                 string target = helpRequest.Target;
                 string pattern = target;
-                Hashtable hashtable = new Hashtable(StringComparer.OrdinalIgnoreCase);
+                var allAliases = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
                 if (!WildcardPattern.ContainsWildcardCharacters(target))
                 {
@@ -169,12 +169,12 @@ namespace System.Management.Automation
                                 continue;
                             }
 
-                            if (hashtable.ContainsKey(name))
+                            if (allAliases.Contains(name))
                             {
                                 continue;
                             }
 
-                            hashtable.Add(name, null);
+                            allAliases.Add(name);
 
                             yield return helpInfo;
                         }
@@ -216,12 +216,12 @@ namespace System.Management.Automation
                                 continue;
                             }
 
-                            if (hashtable.ContainsKey(name))
+                            if (allAliases.Contains(name))
                             {
                                 continue;
                             }
 
-                            hashtable.Add(name, null);
+                            allAliases.Add(name);
 
                             yield return helpInfo;
                         }
@@ -243,12 +243,12 @@ namespace System.Management.Automation
 
                         HelpInfo helpInfo = AliasHelpInfo.GetHelpInfo(alias);
 
-                        if (hashtable.ContainsKey(name))
+                        if (allAliases.Contains(name))
                         {
                             continue;
                         }
 
-                        hashtable.Add(name, null);
+                        allAliases.Add(name);
 
                         yield return helpInfo;
                     }

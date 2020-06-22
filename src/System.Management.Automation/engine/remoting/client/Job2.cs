@@ -720,7 +720,7 @@ namespace System.Management.Automation
                 // Store job's state and subscribe to State Changed event. Locking here will
                 // ensure that the jobstateinfo we get is the state before any state changed events are handled by ContainerParentJob.
                 childJobStateInfo = childJob.JobStateInfo;
-                childJob.StateChanged += new EventHandler<JobStateEventArgs>(HandleChildJobStateChanged);
+                childJob.StateChanged += HandleChildJobStateChanged;
             }
 
             ChildJobs.Add(childJob);

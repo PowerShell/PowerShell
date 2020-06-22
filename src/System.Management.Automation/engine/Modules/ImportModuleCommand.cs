@@ -1920,7 +1920,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
             }
-            
+
             return match;
         }
 
@@ -1957,7 +1957,7 @@ namespace Microsoft.PowerShell.Commands
 
             // moduleName can be just a module name and it also can be a full path to psd1 from which we need to extract the module name
             string coreModuleToLoad = ModuleIntrinsics.GetModuleName(moduleSpec == null ? moduleName : moduleSpec.Name);
-            
+
             var isModuleToLoadEngineModule = InitialSessionState.IsEngineModule(coreModuleToLoad);
             string[] noClobberModuleList = PowerShellConfig.Instance.GetWindowsPowerShellCompatibilityNoClobberModuleList();
             if (isModuleToLoadEngineModule || ((noClobberModuleList != null) && noClobberModuleList.Contains(coreModuleToLoad, StringComparer.OrdinalIgnoreCase)))

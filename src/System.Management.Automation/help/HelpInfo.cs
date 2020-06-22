@@ -203,7 +203,7 @@ namespace System.Management.Automation
 
             if (this.FullHelp.Properties["Name"] == null)
             {
-                this.FullHelp.Properties.Add(new PSNoteProperty("Name", this.Name.ToString()));
+                this.FullHelp.Properties.Add(new PSNoteProperty("Name", this.Name));
             }
 
             if (this.FullHelp.Properties["Category"] == null)
@@ -213,7 +213,7 @@ namespace System.Management.Automation
 
             if (this.FullHelp.Properties["Synopsis"] == null)
             {
-                this.FullHelp.Properties.Add(new PSNoteProperty("Synopsis", this.Synopsis.ToString()));
+                this.FullHelp.Properties.Add(new PSNoteProperty("Synopsis", this.Synopsis));
             }
 
             if (this.FullHelp.Properties["Component"] == null)

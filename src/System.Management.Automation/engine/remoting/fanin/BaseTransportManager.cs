@@ -818,7 +818,7 @@ namespace System.Management.Automation.Remoting.Client
                     {
                         // If queue is empty or if queue servicing is suspended
                         // then break out of loop.
-                        if (_callbackNotificationQueue.Count <= 0 || _suspendQueueServicing)
+                        if (_callbackNotificationQueue.Count == 0 || _suspendQueueServicing)
                         {
                             break;
                         }

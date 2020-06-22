@@ -91,7 +91,7 @@ namespace System.Management.Automation.Remoting
             _transportManager.DisconnectCompleted += HandleDisconnectComplete;
             _transportManager.ReconnectCompleted += HandleReconnectComplete;
 
-            _transportManager.RobustConnectionNotification += new EventHandler<ConnectionStatusEventArgs>(HandleRobustConnectionNotification);
+            _transportManager.RobustConnectionNotification += HandleRobustConnectionNotification;
 
             WSManConnectionInfo wsmanConnectionInfo = _connectionInfo as WSManConnectionInfo;
             if (wsmanConnectionInfo != null)

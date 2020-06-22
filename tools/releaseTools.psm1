@@ -37,6 +37,7 @@ $Script:powershell_team = @(
     "Travis Plunk"
     "dependabot-preview[bot]"
     "Joey Aiello"
+    "Tyler James Leonhardt"
 )
 
 # They are very active contributors, so we keep their email-login mappings here to save a few queries to Github.
@@ -361,7 +362,7 @@ function PrintChangeLog($clSection, $sectionTitle, [switch] $Compress) {
         if ($Compress) {
             $items = $clSection.ChangeLogMessage -join "`n"
             $thankYou = "We thank the following contributors!`n`n"
-            $thankYou += ($clSection.ThankYouMessage | Where-Object { if($_) { return $true} return $false}) -join ", "
+            $thankYou += ($clSection.ThankYouMessage | Select-Object -Unique | Where-Object { if($_) { return $true} return $false}) -join ", "
 
             "<details>`n"
             "<summary>`n"

@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (object element in enumerable)
                     {
-                        if (printSeparator == true && Separator != null)
+                        if (printSeparator && Separator != null)
                         {
                             result.Append(Separator.ToString());
                         }

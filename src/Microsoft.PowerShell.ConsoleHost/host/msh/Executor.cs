@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell
         {
             internal PipelineFinishedWaitHandle(Pipeline p)
             {
-                p.StateChanged += new EventHandler<PipelineStateEventArgs>(PipelineStateChangedHandler);
+                p.StateChanged += PipelineStateChangedHandler;
             }
 
             internal void Wait()
@@ -205,8 +205,8 @@ namespace Microsoft.PowerShell
                     tempPipeline.Commands.Add(outDefault);
                 }
 
-                tempPipeline.Output.DataReady += new EventHandler(OutputObjectStreamHandler);
-                tempPipeline.Error.DataReady += new EventHandler(ErrorObjectStreamHandler);
+                tempPipeline.Output.DataReady += OutputObjectStreamHandler;
+                tempPipeline.Error.DataReady += ErrorObjectStreamHandler;
                 PipelineFinishedWaitHandle pipelineWaiter = new PipelineFinishedWaitHandle(tempPipeline);
 
                 // close the input pipeline so the command will do something
@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell
                             // hence the Input pipe.
                             break;
                         }
-                    };
+                    }
                     des.End();
                 }
 

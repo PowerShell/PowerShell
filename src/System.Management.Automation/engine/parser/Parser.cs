@@ -2746,28 +2746,42 @@ namespace System.Management.Automation.Language
 
                 while (true)
                 {
-                    ExpressionAst clauseCondition = GetSingleCommandArgument(CommandArgumentContext.SwitchCondition);
-                    if (clauseCondition == null)
+                    Token token = PeekToken();
+                    bool isDefaultClause = token.Kind == TokenKind.Default;
+                    ExpressionAst clauseCondition = null;
+
+                    if (isDefaultClause)
                     {
-                        // ErrorRecovery: if we don't have anything that looks like a condition, we won't
-                        // find a body (because a body is just a script block, which works as a condition.)
-                        // So don't look for a body, hope we find the '}' next.
-
-                        isError = true;
-                        ReportIncompleteInput(After(endErrorStatement),
-                            nameof(ParserStrings.MissingSwitchConditionExpression),
-                            ParserStrings.MissingSwitchConditionExpression);
-                        // Consume a closing curly, if there is one, to avoid an extra error
-                        if (PeekToken().Kind == TokenKind.RCurly)
+                        // Consume the 'default' token.
+                        SkipToken();
+                        clauseCondition = new StringConstantExpressionAst(token.Extent, token.Text, StringConstantType.BareWord);
+                    }
+                    else
+                    {
+                        clauseCondition = GetSingleCommandArgument(CommandArgumentContext.SwitchCondition);
+                        if (clauseCondition == null)
                         {
-                            SkipToken();
-                        }
+                            // ErrorRecovery: if we don't have anything that looks like a condition, we won't
+                            // find a body (because a body is just a script block, which works as a condition.)
+                            // So don't look for a body, hope we find the '}' next.
+                            isError = true;
+                            ReportIncompleteInput(After(endErrorStatement),
+                                nameof(ParserStrings.MissingSwitchConditionExpression),
+                                ParserStrings.MissingSwitchConditionExpression);
 
-                        break;
+                            // Consume a closing curly, if there is one, to avoid an extra error
+                            if (PeekToken().Kind == TokenKind.RCurly)
+                            {
+                                SkipToken();
+                            }
+
+                            break;
+                        }
                     }
 
                     errorAsts.Add(clauseCondition);
                     endErrorStatement = clauseCondition.Extent;
+
                     StatementBlockAst clauseBody = StatementBlockRule();
                     if (clauseBody == null)
                     {
@@ -2783,11 +2797,7 @@ namespace System.Management.Automation.Language
                         errorAsts.Add(clauseBody);
                         endErrorStatement = clauseBody.Extent;
 
-                        var clauseConditionString = clauseCondition as StringConstantExpressionAst;
-
-                        if (clauseConditionString != null &&
-                            clauseConditionString.StringConstantType == StringConstantType.BareWord &&
-                            clauseConditionString.Value.Equals("default", StringComparison.OrdinalIgnoreCase))
+                        if (isDefaultClause)
                         {
                             if (@default != null)
                             {
@@ -2809,7 +2819,7 @@ namespace System.Management.Automation.Language
 
                     SkipNewlinesAndSemicolons();
 
-                    Token token = PeekToken();
+                    token = PeekToken();
                     if (token.Kind == TokenKind.RCurly)
                     {
                         rCurly = token;

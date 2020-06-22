@@ -740,7 +740,7 @@ namespace System.Management.Automation.PSTasks
             {
                 item.Value.Dispose();
             }
-            
+
             _activeRunspaces.Clear();
         }
 

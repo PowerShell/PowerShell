@@ -61,7 +61,7 @@ namespace Microsoft.Management.UI.Internal
             this.helpBuilder = new HelpParagraphBuilder(documentParagraph, psObj);
             this.helpBuilder.BuildParagraph();
             this.searcher = new ParagraphSearcher();
-            this.helpBuilder.PropertyChanged += new PropertyChangedEventHandler(this.HelpBuilder_PropertyChanged);
+            this.helpBuilder.PropertyChanged += this.HelpBuilder_PropertyChanged;
             this.helpTitle = string.Format(
                 CultureInfo.CurrentCulture,
                 HelpWindowResources.HelpTitleFormat,

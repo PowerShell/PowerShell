@@ -544,7 +544,7 @@ namespace System.Management.Automation.Remoting.Client
             bool shouldRaiseCloseCompleted = false;
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }
@@ -1122,7 +1122,7 @@ namespace System.Management.Automation.Remoting.Client
                         _processInstance.RunspacePool.Dispose();
                     }
 
-                    _serverProcess.Exited += new EventHandler(OnExited);
+                    _serverProcess.Exited += OnExited;
                     _processInstance.Start();
 
                     StartRedirectionReaderThreads(_serverProcess);
@@ -2167,7 +2167,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }

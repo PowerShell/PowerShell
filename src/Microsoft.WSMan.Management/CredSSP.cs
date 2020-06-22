@@ -480,7 +480,6 @@ namespace Microsoft.WSMan.Management
             }
         }
 
-
         #endregion
 
         /// <summary>

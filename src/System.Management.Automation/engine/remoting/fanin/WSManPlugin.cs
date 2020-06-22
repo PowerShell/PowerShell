@@ -328,7 +328,7 @@ namespace System.Management.Automation.Remoting
                 // Create a shell session wrapper to track and service future interactions.
                 mgdShellSession = new WSManPluginShellSession(requestDetails, serverTransportMgr, remoteShellSession, context);
                 AddToActiveShellSessions(mgdShellSession);
-                mgdShellSession.SessionClosed += new EventHandler<EventArgs>(HandleShellSessionClosed);
+                mgdShellSession.SessionClosed += HandleShellSessionClosed;
 
                 if (inboundShellInformation != null)
                 {
