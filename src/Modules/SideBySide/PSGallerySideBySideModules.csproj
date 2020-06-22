@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+
+  <Import Project="..\..\..\PowerShell.Common.props" />
+
+  <ItemGroup>
+    <PackageReference Include="PowerShellGet" Version="3.0.0-beta4" />
+  </ItemGroup>
+
+</Project>
