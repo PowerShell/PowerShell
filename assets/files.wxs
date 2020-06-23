@@ -3107,12 +3107,6 @@
   </Fragment>
   <Fragment>
     <ComponentGroup Id="ApplicationFiles">
-      <ComponentRef Id="cmpECA9F52E6C7B46DFBF72DA3E46BAA935" />
-      <ComponentRef Id="cmpD442235C7FAB4FC08279217AAD418D8F" />
-      <ComponentRef Id="cmpEC09C60D0B3F49E78568FCF93718A249" />
-      <ComponentRef Id="cmpCB2FCEE967F59AE69BAC96EF19772EB2" />
-      <ComponentRef Id="cmpCC43FBF6DDE54BF993571B297033AD70" />
-      <ComponentRef Id="cmp616C61FD507945649F648DC488C9ADCB" />
       <ComponentRef Id="cmpCBE3857586454EB3B634B118E8EBD1D1" />
       <ComponentRef Id="cmp22EA8B65E9784BB197A5CC42FBFF1788" />
       <ComponentRef Id="cmp9F22B503FD4D4F0286514A511718FD7A" />
