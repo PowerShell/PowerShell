@@ -3336,7 +3336,7 @@ function Test-FileWxs
         Write-Verbose "Rebuilding componentRefs" -Verbose
 
         # add all the file components to the patch
-        foreach($component in $components)
+        foreach($component in $componentRefs)
         {
             $componentId = $component.Id
             Write-Verbose "Removing $componentId" -Verbose
