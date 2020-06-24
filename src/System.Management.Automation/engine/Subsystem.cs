@@ -366,7 +366,7 @@ namespace System.Management.Automation.Subsystem
         static SubsystemManager()
         {
             var subsystems = new SubsystemInfo[] {
-                SubsystemInfo.Create<IPrediction>(SubsystemKind.Prediction, allowUnregistration: true, allowMultipleRegistration: true),
+                SubsystemInfo.Create<IPredictor>(SubsystemKind.Prediction, allowUnregistration: true, allowMultipleRegistration: true),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);
