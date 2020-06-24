@@ -980,7 +980,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         // private bool _multipleIdProvided;
         private string _id;
-        private string[] _allIds;
         /// <summary>
         /// Accepts a string value indicating a previously executed command to
         /// re-execute.
@@ -992,18 +991,7 @@ namespace Microsoft.PowerShell.Commands
         /// that is to be re-executed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
-        public string[] Id
-        {
-            get
-            {
-                return _allIds;
-            }
-
-            set
-            {
-                _allIds = value;
-            }
-        }
+        public string[] Id { get; set; }
 
         #endregion
 
@@ -1015,7 +1003,14 @@ namespace Microsoft.PowerShell.Commands
             History history = ((LocalRunspace)Context.CurrentRunspace).History;
             Dbg.Assert(history != null, "History should be non null");
 
-            foreach (var currId in _allIds)
+            // If the user didn't provide an Id, get the ID for the most
+            // recent entry
+            if (Id == null)
+            {
+                Id = new string[1]{history.GetEntries(0, 1, true)[0].Id.ToString()};
+            }
+
+            foreach (var currId in Id)
             {
                 _id = currId;
 
