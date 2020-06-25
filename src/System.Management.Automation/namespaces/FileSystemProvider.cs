@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                             var entries = Directory.GetFileSystemEntries(exactPath, item);
                             if (entries.Length > 0)
                             {
-                                exactPath = entries.First();
+                                exactPath = entries[0];
                             }
                             else
                             {
@@ -1417,10 +1417,10 @@ namespace Microsoft.PowerShell.Commands
                 // Since all root paths are hidden we need to show the directory
                 // anyway
                 bool isRootPath =
-                    string.Compare(
+                    string.Equals(
                         Path.GetPathRoot(path),
                         result.FullName,
-                        StringComparison.OrdinalIgnoreCase) == 0;
+                        StringComparison.OrdinalIgnoreCase);
 
                 // if "Hidden" is specified in the attribute filter dynamic parameters
                 // also return the object
@@ -2140,7 +2140,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Check to see if the target specified is just filename. We dont allow rename to move the file to a different directory.
             // If a path is specified for the newName then we flag that as an error.
-            if (string.Compare(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase) != 0)
+            if (!string.Equals(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase))
             {
                 throw PSTraceSource.NewArgumentException(nameof(newName), FileSystemProviderStrings.RenameError);
             }
@@ -2858,10 +2858,10 @@ namespace Microsoft.PowerShell.Commands
                     string parentPath = GetParentPath(path, root);
 
                     if (!string.IsNullOrEmpty(parentPath) &&
-                        string.Compare(
+                        !string.Equals(
                             parentPath,
                             previousParent,
-                            StringComparison.OrdinalIgnoreCase) != 0)
+                            StringComparison.OrdinalIgnoreCase))
                     {
                         if (!ItemExists(parentPath))
                         {
@@ -6339,7 +6339,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (member != null)
                         {
-                            if (string.Compare(property.Name, "attributes", StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Equals(property.Name, "attributes", StringComparison.OrdinalIgnoreCase))
                             {
                                 FileAttributes attributes;
 

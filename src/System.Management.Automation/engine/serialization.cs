@@ -4019,7 +4019,7 @@ namespace System.Management.Automation
                     }
 
                     string name = ReadNameAttribute();
-                    if (string.Compare(name, SerializationStrings.DictionaryKey, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (!string.Equals(name, SerializationStrings.DictionaryKey, StringComparison.OrdinalIgnoreCase))
                     {
                         throw NewXmlException(Serialization.InvalidDictionaryKeyName, null);
                     }
@@ -4037,7 +4037,7 @@ namespace System.Management.Automation
                     }
 
                     name = ReadNameAttribute();
-                    if (string.Compare(name, SerializationStrings.DictionaryValue, StringComparison.OrdinalIgnoreCase) != 0)
+                    if (!string.Equals(name, SerializationStrings.DictionaryValue, StringComparison.OrdinalIgnoreCase))
                     {
                         throw NewXmlException(Serialization.InvalidDictionaryValueName, null);
                     }

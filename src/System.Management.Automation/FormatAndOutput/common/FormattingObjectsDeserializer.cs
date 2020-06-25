@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Helper Methods
         private static bool IsClass(string x, string y)
         {
-            return string.Compare(x, y, StringComparison.OrdinalIgnoreCase) == 0;
+            return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
         }
 
 #if _UNUSED

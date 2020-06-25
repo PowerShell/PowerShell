@@ -931,7 +931,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             foreach (KeyValuePair<string, DscClassCacheEntry> cimClass in ClassCache)
             {
                 string cachedClassName = cimClass.Key.Split(Utils.Separators.Backslash)[IndexClassName];
-                if (string.Compare(cachedClassName, className, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(cachedClassName, className, StringComparison.OrdinalIgnoreCase))
                 {
                     return cimClass.Value.CimClassInstance;
                 }
@@ -1107,9 +1107,9 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                     let cachedClassName = splittedName[IndexClassName]
                     let cachedModuleName = splittedName[IndexModuleName]
                     let cachedResourceName = splittedName[IndexFriendlyName]
-                    where ((string.Compare(cachedResourceName, resourceName, StringComparison.OrdinalIgnoreCase) == 0)
-                    || (string.Compare(cachedClassName, className, StringComparison.OrdinalIgnoreCase) == 0
-                        && string.Compare(cachedModuleName, moduleName, StringComparison.OrdinalIgnoreCase) == 0))
+                    where (string.Equals(cachedResourceName, resourceName, StringComparison.OrdinalIgnoreCase)
+                    || (string.Equals(cachedClassName, className, StringComparison.OrdinalIgnoreCase)
+                        && string.Equals(cachedModuleName, moduleName, StringComparison.OrdinalIgnoreCase)))
                     select cacheEntry).ToList();
         }
 
@@ -1153,7 +1153,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             {
                 var file = pair.Key;
                 var classList = pair.Value;
-                if (classList != null && classList.FirstOrDefault((CimClass c) => string.Equals(c.CimSystemProperties.ClassName, className, StringComparison.OrdinalIgnoreCase)) != null)
+                if (classList != null && classList.Find((CimClass c) => string.Equals(c.CimSystemProperties.ClassName, className, StringComparison.OrdinalIgnoreCase)) != null)
                 {
                     files.Add(file);
                 }
@@ -1553,11 +1553,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         private static void UpdateKnownRestriction(DynamicKeyword keyword)
         {
             if (
-                string.Compare(keyword.ResourceName, "MSFT_DSCMetaConfigurationV2",
-                    StringComparison.OrdinalIgnoreCase) == 0
+                string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfigurationV2",
+                    StringComparison.OrdinalIgnoreCase)
                 ||
-                string.Compare(keyword.ResourceName, "MSFT_DSCMetaConfiguration",
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                string.Equals(keyword.ResourceName, "MSFT_DSCMetaConfiguration",
+                    StringComparison.OrdinalIgnoreCase))
             {
                 if (keyword.Properties["RefreshFrequencyMins"] != null)
                 {
