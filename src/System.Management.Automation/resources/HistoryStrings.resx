@@ -138,9 +138,6 @@
   <data name="InvokeHistoryLoopDetected" xml:space="preserve">
     <value>The Invoke-History cmdlet is called repeatedly, in a loop.</value>
   </data>
-  <data name="InvokeHistoryMultipleCommandsError" xml:space="preserve">
-    <value>Cannot process multiple history commands. You can only run a single command by using Invoke-History.</value>
-  </data>
   <data name="AddHistoryInvalidInput" xml:space="preserve">
     <value>Cannot add history because the input object has a format that is not valid.</value>
   </data>

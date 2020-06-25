@@ -37,6 +37,10 @@ Describe "History cmdlet test cases" -Tags "CI" {
             $result = $ps.AddScript("Invoke-History 2,4").Invoke()
             $result | Should -Be @(2, 4)
         }
+        It "Invoke-History invokes the last command by default" {
+            $result = $ps.AddScript("Invoke-History").Invoke()
+            $result | Should -Be 4
+        }
         It "Clear-History removes history" {
             $ps.AddCommand("Clear-History").Invoke()
             $ps.commands.clear()

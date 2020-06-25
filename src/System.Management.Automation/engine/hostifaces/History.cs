@@ -974,11 +974,6 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
 
-        /// <summary>
-        /// Invoke cmd can execute only one history entry. If multiple
-        /// ids are provided, we throw error.
-        /// </summary>
-        // private bool _multipleIdProvided;
         private string _id;
         /// <summary>
         /// Accepts a string value indicating a previously executed command to
@@ -1050,7 +1045,7 @@ namespace Microsoft.PowerShell.Commands
                 // Now invoke the command
                 string commandToInvoke = entry.CommandLine;
 
-                if (ShouldProcess(commandToInvoke) == false)
+                if (!ShouldProcess(commandToInvoke))
                 {
                     return;
                 }
