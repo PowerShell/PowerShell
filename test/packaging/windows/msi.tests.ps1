@@ -80,6 +80,30 @@ Describe -Name "Windows MSI" -Fixture {
         }
     }
 
+    Context "Upgrade code" {
+        It "Preview MSI sholud not be installed before test" -Skip:(!(Test-Elevated)) {
+            $result = Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{31ab5147-9a97-4452-8443-d9709f0516e1}'"
+            $result.Value | Should -BeNullOrEmpty -Because 'Query should return nothing if preview x64 is not installed'
+        }
+
+        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 1}
+            } | Should -Not -Throw
+        }
+
+        It "Upgrade code should be correct" -Skip:(!(Test-Elevated)) {
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{31ab5147-9a97-4452-8443-d9709f0516e1}'")
+            $result.Count | Should -Be 1 -Because 'Query should return 1 result if Upgrade code is for x64 preview'
+        }
+
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+            } | Should -Not -Throw
+        }
+    }
+
     Context "Add Path disabled" {
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
@@ -113,30 +137,6 @@ Describe -Name "Windows MSI" -Fixture {
                 Where-Object {$_ -like '*files\powershell*' -and $_ -notin $beforePath}
 
             $psPath | Should -Not -BeNullOrEmpty
-        }
-
-        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
-            } | Should -Not -Throw
-        }
-    }
-    
-    Context "Upgrade code" {
-        It "Preview MSI sholud not be installed before test" -Skip:(!(Test-Elevated)) {
-            $result = Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{31ab5147-9a97-4452-8443-d9709f0516e1}'"
-            $result.Value | Should -BeNullOrEmpty -Because 'Query should return nothing if preview x64 is not installed'
-        }
-
-        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
-            {
-                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 1}
-            } | Should -Not -Throw
-        }
-
-        It "Upgrade code should be correct" -Skip:(!(Test-Elevated)) {
-            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{31ab5147-9a97-4452-8443-d9709f0516e1}'")
-            $result.Count | Should -Be 1 -Because 'Query should return 1 result if Upgrade code is for x64 preview'
         }
 
         It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
