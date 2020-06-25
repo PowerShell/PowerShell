@@ -15,9 +15,9 @@ namespace System.Management.Automation.Subsystem
     public enum SubsystemKind
     {
         /// <summary>
-        /// Predictive suggestion.
+        /// Component that provides predictive suggestions to commandline input.
         /// </summary>
-        Prediction = 1,
+        CommandPredictor = 1,
     }
 
     /// <summary>
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Subsystem
         static SubsystemManager()
         {
             var subsystems = new SubsystemInfo[] {
-                SubsystemInfo.Create<IPredictor>(SubsystemKind.Prediction, allowUnregistration: true, allowMultipleRegistration: true),
+                SubsystemInfo.Create<IPredictor>(SubsystemKind.CommandPredictor, allowUnregistration: true, allowMultipleRegistration: true),
             };
 
             var subSystemTypeMap = new Dictionary<Type, SubsystemInfo>(subsystems.Length);

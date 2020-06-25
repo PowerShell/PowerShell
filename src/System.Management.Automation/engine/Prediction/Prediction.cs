@@ -23,7 +23,17 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Default implementation for `ISubsystem.Kind`.
         /// </summary>
-        SubsystemKind ISubsystem.Kind => SubsystemKind.Prediction;
+        SubsystemKind ISubsystem.Kind => SubsystemKind.CommandPredictor;
+
+        /// <summary>
+        /// Gets whether the predictor supports early processing.
+        /// </summary>
+        bool SupportEarlyProcessing { get; }
+
+        /// <summary>
+        /// Gets whether the predictor accepts feedback about the previous suggestion.
+        /// </summary>
+        bool AcceptFeedback { get; }
 
         /// <summary>
         /// A command line was accepted to execute.
@@ -77,7 +87,7 @@ namespace System.Management.Automation.Subsystem
     /// <summary>
     /// Provides a set of possible predictions for given input.
     /// </summary>
-    public class CommandLinePrediction
+    public static class CommandPrediction
     {
         /// <summary>
         /// Collect the predictive suggestions from registered predictors.
@@ -160,7 +170,12 @@ namespace System.Management.Automation.Subsystem
 
             foreach (IPredictor predictor in predictors)
             {
-                ThreadPool.QueueUserWorkItem(state => ((IPredictor)state).EarlyProcessWithHistory(history), predictor);
+                if (predictor.SupportEarlyProcessing)
+                {
+                    ThreadPool.QueueUserWorkItem(
+                        state => ((IPredictor)state).EarlyProcessWithHistory(history),
+                        predictor);
+                }
             }
         }
 
@@ -169,31 +184,35 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         public static void SuggestionFeedback(HashSet<Guid> predictorIds, Guid acceptedId, string acceptedSuggestion = null)
         {
+            if (acceptedId != Guid.Empty && string.IsNullOrEmpty(acceptedSuggestion))
+            {
+                throw new ArgumentNullException(nameof(acceptedSuggestion));
+            }
+
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
             if (predictors.Count == 0)
             {
                 return;
             }
 
-            if (acceptedId != Guid.Empty && string.IsNullOrEmpty(acceptedSuggestion))
-            {
-                throw new ArgumentNullException(nameof(acceptedSuggestion));
-            }
-
             foreach (IPredictor predictor in predictors)
             {
-                if (!predictorIds.Contains(predictor.Id))
+                if (!predictor.AcceptFeedback || !predictorIds.Contains(predictor.Id))
                 {
                     continue;
                 }
 
                 if (predictor.Id == acceptedId)
                 {
-                    ThreadPool.QueueUserWorkItem(state => ((IPredictor)state).LastSuggestionAccepted(acceptedSuggestion), predictor);
+                    ThreadPool.QueueUserWorkItem(
+                        state => ((IPredictor)state).LastSuggestionAccepted(acceptedSuggestion),
+                        predictor);
                 }
                 else
                 {
-                    ThreadPool.QueueUserWorkItem(state => ((IPredictor)state).LastSuggestionDenied(), predictor);
+                    ThreadPool.QueueUserWorkItem(
+                        state => ((IPredictor)state).LastSuggestionDenied(),
+                        predictor);
                 }
             }
         }
