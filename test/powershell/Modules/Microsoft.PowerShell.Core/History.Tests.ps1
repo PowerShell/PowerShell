@@ -139,7 +139,7 @@ Describe "History cmdlet test cases" -Tags "CI" {
 
     It "Invoke-History throws the right error if history is empty" {
         $ps = [PowerShell]::Create()
-        $result = $ps.AddScript("Invoke-History").Invoke()
+        $null = $ps.AddScript("Invoke-History").Invoke()
         $errorResult = $ps.Streams.Error[0].FullyQualifiedErrorId
         $ps.Dispose()
 
