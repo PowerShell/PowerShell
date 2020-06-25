@@ -1,5 +1,162 @@
 # Current preview release
 
+## [7.1.0-preview.4] - 2020-06-25
+
+### Breaking Changes
+
+- Make the switch parameter `-Qualifier` not positional for `Split-Path` (#12960) (Thanks @yecril71pl!)
+- Resolve the working directory as literal path for `Start-Process` when it's not specified (#11946) (Thanks @NoMoreFood!)
+- Make `-OutFile` parameter in web cmdlets to work like `-LiteralPath` (#11701) (Thanks @iSazonov!)
+
+### Engine Updates and Fixes
+
+- Ensure null-coalescing LHS is evaluated only once (#12667)
+- Fix path handling bug in `PSTask` (#12554) (Thanks @IISResetMe!)
+- Remove extra line before formatting group (#12163) (Thanks @iSazonov!)
+- Make module formatting not generate error with strict mode (#11943)
+- Adding more ETW logs to WSMan plugin (#12798) (Thanks @krishnayalavarthi!)
+- Restrict loading of `amsi.dll` to `system32` folder (#12730)
+
+### General Cmdlet Updates and Fixes
+
+- Fix `NullReferenceException` in `CommandSearcher.GetNextCmdlet` (#12659) (Thanks @powercode!)
+- Prevent `NullReferenceException` in Unix computer cmdlets with test hooks active (#12651) (Thanks @vexx32!)
+- Fix issue in `Select-Object` where `Hashtable` members (e.g. `Keys`) cannot be used with `-Property` or `-ExpandProperty` (#11097) (Thanks @vexx32!)
+- Fix conflicting shorthand switch `-w` for pwsh (#12945)
+- Rename the `CimCmdlet` resource file (#12955) (Thanks @iSazonov!)
+- Remove use of `Test-Path` in `ConciseView` (#12778)
+- Flag `default` switch statement condition clause as keyword (#10487) (Thanks @msftrncs!)
+- Add parameter `SchemaFile` to `Test-Json` cmdlet (#11934) (Thanks @beatcracker!)
+- Bring back Certificate provider parameters (#10622) (Thanks @iSazonov!)
+- Fix `New-Item` to create symbolic link to relative path target (#12797) (Thanks @iSazonov!)
+- Add `CommandLine` property to Process (#12288) (Thanks @iSazonov!)
+- Adds `-MaskInput` parameter to `Read-Host` (#10908) (Thanks @davinci26!)
+- Change `CimCmdlets` to use `AliasAttribute` (#12617) (Thanks @thlac!)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze, @sethvs, @romero126, @kvprasoon, @powercode</p>
+
+</summary>
+
+<ul>
+<li>Use <code>nameof</code> operator (#12716) (Thanks @xtqqczze!)</li>
+<li>Fix comments in Mshexpression.cs (#12711) (Thanks @sethvs!)</li>
+<li>Formatting: remove duplicate semicolons (#12666) (Thanks @xtqqczze!)</li>
+<li>Replace <code>SortedList</code> with <code>Generic.SortedList&lt;TKey,TValue&gt;</code> (#12954) (Thanks @xtqqczze!)</li>
+<li>Use HashSet instead of Hashtable with null values (#12958) (Thanks @xtqqczze!)</li>
+<li>Rename <code>CopyItem.Tests.ps1</code> to <code>Copy-Item.Tests.ps1</code> to match other tests (#10701) (Thanks @romero126!)</li>
+<li>Fix <code>RCS1114: Remove redundant delegate creation</code> (#12917) (Thanks @xtqqczze!)</li>
+<li>Code redundancy fixes (#12916) (Thanks @xtqqczze!)</li>
+<li>Update the PowerShell modules to use the new Help URI (#12686)</li>
+<li>Reorder modifiers according to preferred order (#12864) (Thanks @xtqqczze!)</li>
+<li>Expand numberOfPowershellRefAssemblies list capacity (#12840) (Thanks @xtqqczze!)</li>
+<li>Add readonly modifier to internal static members (#11777) (Thanks @xtqqczze!)</li>
+<li>cleanup: Use coalesce expression (#12829) (Thanks @xtqqczze!)</li>
+<li>Add missing assessibility modifiers (#12820) (Thanks @xtqqczze!)</li>
+<li>Use <code>t_</code> naming convention for ThreadStatic members (#12826) (Thanks @xtqqczze!)</li>
+<li>Formatting: Add empty line between declarations (#12824) (Thanks @xtqqczze!)</li>
+<li>Clarify defaultRefAssemblies list capacity in AddType.cs (#12520) (Thanks @xtqqczze!)</li>
+<li>Fixing &quot;Double &quot;period&quot; (..) in message for System.InvalidOperationException&quot; (#12758) (Thanks @kvprasoon!)</li>
+<li>Rethrow to preserve stack details for better maintainability (#12723) (Thanks @xtqqczze!)</li>
+<li>Delete license.rtf (#12738) (Thanks @xtqqczze!)</li>
+<li>Nullable annotations for CommandSearcher (#12733) (Thanks @powercode!)</li>
+<li>Redundancy: Remove 'partial' modifier from type with a single part (#12725) (Thanks @xtqqczze!)</li>
+<li>Remove phrase 'All rights reserved' from Microsoft copyright statements (#12722) (Thanks @xtqqczze!)</li>
+<li>IDictionary -&gt; IDictionary&lt;string, FunctionInfo&gt; for FunctionTable (#12658) (Thanks @powercode!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Use correct isError parameter with Write-Log (#12989)
+- Disable `NonPrivateReadonlyFieldsMustBeginWithUpperCaseLetter` rule in `StyleCop` (#12855) (Thanks @xtqqczze!)
+- Add @TylerLeonhardt to PowerShell team list to correct changelog generation (#12927)
+- Enable the upload of `ETW` traces to `CLR CAP` in Windows daily build (#12890)
+- Prevent GitHub workflow for daily dotnet build updates from running in forks (#12763) (Thanks @bergmeister!)
+- Add GitHub action for PR creation and `Wix` file generation logic (#12748)
+
+### Tests
+
+- Remove duplicate tests from `Measure-Object.Tests.ps1` (#12683) (Thanks @sethvs!)
+- Fix tests to not write errors to console (#13010)
+- Make sure tabcompletion tests run (#12981)
+- Remove dependency on DNS for `Test-Connection` tests on macOS (#12943)
+- Restore `markdownlint` tests (#12549) (Thanks @xtqqczze!)
+- Wrap tests in pester blocks (#12700) (Thanks @xtqqczze!)
+
+### Build and Packaging Improvements
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@iSazonov, @kvprasoon, @Saancreed, @heaths, @xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Update Distribution_Request.md</li>
+<li>Bump NJsonSchema from 10.1.15 to 10.1.16 (#12685)</li>
+<li>Disable uploading Symbols package (#12687)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.5.20279.10</code> to <code>5.0.100-preview.6.20318.15</code> (#13018)</li>
+<li>Remove component ref when re-generating the wix file (#13019)</li>
+<li>Make sure icons are added to MSI staging folder (#12983)</li>
+<li>Update <code>DotnetRutimeMetadata.json</code> to point to preview 6 (#12972)</li>
+<li>Bump PSReadLine from <code>2.0.1</code> to <code>2.0.2</code> (#12909)</li>
+<li>Bump <code>NJsonSchema</code> from 10.1.18 to 10.1.21 (#12944)</li>
+<li>Check if Azure Blob exists before overwriting (#12921)</li>
+<li>Enable skipped tests (#12894) (Thanks @iSazonov!)</li>
+<li>Fix break in package build by pinning <code>ffi</code> version to <code>1.12</code> (#12889)</li>
+<li>Upgrade <code>APIScan</code> version (#12876)</li>
+<li>Make contributors unique in Release notes (#12878) (Thanks @kvprasoon!)</li>
+<li>Update Linux daily CI to run in a single agent &amp; collect traces (#12866)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.5.20278.13</code> to <code>5.0.100-preview.5.20279.10</code> (#12844) (Thanks @github-actions[bot]!)</li>
+<li>Sign the <code>MSIX</code> files for the store (#12582)</li>
+<li>Update the CI builds (#12830)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.5.20272.6</code> to <code>5.0.100-preview.5.20278.13</code> (#12772) (Thanks @github-actions[bot]!)</li>
+<li>Allow use of build module on unknown Linux distros (#11146) (Thanks @Saancreed!)</li>
+<li>Fix MSI upgrade and shortcut issues (#12792) (Thanks @heaths!)</li>
+<li>Bump NJsonSchema from 10.1.17 to 10.1.18 (#12812)</li>
+<li>Update .NET SDK version from <code>5.0.100-preview.5.20269.29</code> to <code>5.0.100-preview.5.20272.6</code> (#12759) (Thanks @github-actions[bot]!)</li>
+<li>Bump NJsonSchema from 10.1.16 to 10.1.17 (#12761)</li>
+<li>Update to dotnet SDK 5.0.0-preview.5.20268.9 (#12740)</li>
+<li>Remove <code>assets\license.rtf</code> (#12721) (Thanks @xtqqczze!)</li>
+<li>Bump <code>Microsoft.CodeAnalysis.CSharp</code> from <code>3.5.0</code> to <code>3.6.0</code> (#12731)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Update `README` and `metadata` files for next release (#12717)
+- Update `README.md` removing experimental status of `Arm` builds, but `Win-Arm64` is still preview for Stable release. (#12707)
+- Add link to Github compare in changelog (#12713) (Thanks @xtqqczze!)
+- Added missing changelog for v7.1.0-preview.2 (#12665)
+- Update required Visual Studio version in build docs (#12628) (Thanks @xtqqczze!)
+- minor update to Distribution_Request.md (#12705) (Thanks @kilasuit!)
+- Update docs.microsoft.com links (#12653) (Thanks @xtqqczze!)
+- Update change log for `6.2.5` release (#12670)
+- Update `README.md` and `metadata.json` for next release (#12668)
+- Merge 7.0.1 change log (#12669)
+- Remove markdown unused definitions (#12656) (Thanks @xtqqczze!)
+- Add HoloLens to list of PowerShell adopters (#12940) (Thanks @reynoldsbd!)
+- Update `README.md` and `metadata.json` for next releases (#12939)
+- Fix broken link in `README.md` (#12887) (Thanks @xtqqczze!)
+- Minor typo corrections in Distribution Request Issue Templates (#12744) (Thanks @corbob!)
+- Correct 'review-for-comments' in `Governance.md` (#11035) (Thanks @MarvTheRobot!)
+- Fix markdown ordered lists (#12657) (Thanks @xtqqczze!)
+- Fix broken `docs.microsoft.com` link (#12776) (Thanks @xtqqczze!)
+- Replace link to Slack with link to PowerShell Virtual User Group (#12786) (Thanks @xtqqczze!)
+- Update `LICENSE.txt` so that it's recognized as MIT (#12729)
+
 ## [7.1.0-preview.3] - 2020-05-14
 
 ### Breaking Changes
@@ -18,7 +175,7 @@
 
 - Fix incorrect index in format string in ParameterBinderBase (#12630) (Thanks @powercode!)
 - Copy the `CommandInfo` property in `Command.Clone()` (#12301) (Thanks @TylerLeonhardt!)
-- Apply `-IncludeEqual` in `Compare-Object` when `-ExcludeDifferent` is specified (#12317) (Thanks @davidseibel!)
+- Apply `-IncludeEqual` in `Compa-Object` when `-ExcludeDifferent` is specified (#12317) (Thanks @davidseibel!)
 - Change `Get-FileHash` to close file handles before writing output (#12474) (Thanks @HumanEquivalentUnit!)
 - Fix inconsistent exception message in `-replace` operator (#12388) (Thanks @jackdcasey!)
 
@@ -358,6 +515,7 @@
 - Update `SUPPORT.md` (#11101) (Thanks @mklement0!)
 - Update `README.md` (#11100) (Thanks @mklement0!)
 
+[7.1.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.3...v7.1.0-preview.4
 [7.1.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.2...v7.1.0-preview.3
 [7.1.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.1...v7.1.0-preview.2
 [7.1.0-preview.1]: https://github.com/PowerShell/PowerShell/compare/v7.0.0-preview.6...v7.1.0-preview.1

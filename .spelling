@@ -19,6 +19,7 @@ acl
 adamdriscoll
 add-localgroupmember
 add-ons
+AddType.cs
 adelton
 adhoc
 aditya
@@ -47,6 +48,7 @@ andschwa
 anmenaga
 api
 apis
+APIScan
 appimage
 applocker
 appveyor
@@ -56,6 +58,7 @@ arm32
 arm64
 asp.net
 assemblyloadcontext
+assessibility
 authenticodesignature
 azdevops
 AzFileCopy
@@ -64,6 +67,7 @@ azurerm.profile.netcore.preview
 azurerm.resources.netcore.preview
 backgrounded
 backgrounding
+beatcracker
 bergmeister
 beta.1
 beta.2
@@ -124,6 +128,7 @@ codeowner
 codepage
 commanddiscovery
 commandsearch
+CommandSearcher
 comobject
 composability
 config
@@ -144,6 +149,8 @@ convertto-json
 convertto-securestring
 convertto-xml
 copy-itemproperty
+CopyItem.Tests.ps1
+corbob
 coreclr
 coreconsolehost
 corefx
@@ -172,6 +179,7 @@ dchristian3188
 ddwr
 debughandler
 dee-see
+defaultRefAssemblies
 dependabot
 deps
 deserialization
@@ -196,6 +204,7 @@ disable-runspacedebug
 disable-wsmantrace
 disconnect-pssession
 displaydataquery
+Distribution_Request.md
 distro
 distros
 dll
@@ -204,12 +213,14 @@ dlwyatt
 dockerbasedbuild
 dockerfile
 dockerfiles
+docs.microsoft.com
 doctordns
 don'ts
 dongbo
 dotcover
 dotnet
 dotnetcore
+DotnetRutimeMetadata.json
 dottedscopes
 downlevel
 dropdown
@@ -252,6 +263,7 @@ failurecount
 fbehrens
 felixfbecker
 ffeldhaus
+ffi
 filecatalog
 filename
 filesystem
@@ -268,11 +280,14 @@ formatviewbinding
 Francisco-Gamino
 frontload
 fullclr
+FunctionInfo
 functionprovider
+FunctionTable
 fxdependent
 gabrielsroka
 gamified
 gc.regions.xml
+Generic.SortedList
 get-apachemodule
 get-apachevhost
 get-childitem
@@ -324,6 +339,7 @@ GoogleTest
 GUIs
 gzip
 hackathons
+HashSet
 hashtable
 hashtables
 helloworld.ps1
@@ -344,6 +360,7 @@ hubuk
 hvitved
 i.e.
 idera
+IDictionary
 ifdef'ed
 iisresetme
 ilya
@@ -369,6 +386,7 @@ iot
 isazonov
 iscore
 iscoreclr
+isError
 isnot
 itemtype
 itpro
@@ -404,6 +422,7 @@ kirkmunro
 kittholland
 korygill
 kpis
+krishnayalavarthi
 kvprasoon
 kwiknick
 kwkam
@@ -418,6 +437,7 @@ Leonhardt
 libpsl
 libpsl-native
 libunwind8
+license.rtf
 linux
 locationglobber
 lockdown
@@ -439,6 +459,7 @@ Markdig.Signed
 markekraus
 marktiedemann
 Marusyk
+MarvTheRobot
 mcbobke
 md
 meir017
@@ -481,6 +502,7 @@ move-itemproperty
 ms-psrp
 msbuild
 msftrncs
+mshexpression.cs
 mshsnapinloadunload
 msi
 multiline
@@ -490,6 +512,7 @@ mvps
 mwrock
 myget
 namedpipe
+nameof
 namespace
 nano
 nanoserver
@@ -532,7 +555,9 @@ nuget
 nuget.config
 nuget.exe
 nugetfeed
+Nullable
 numberbytes
+numberOfPowershellRefAssemblies
 nupkg
 oauth
 offthewoll
@@ -602,7 +627,13 @@ preview.2
 preview.3
 preview.4
 preview.5
+preview.5.20279.10
+preview.5.20278.13
+preview.5.20269.29
+preview.5.20268.9
+preview.5.20272.6
 preview.6
+preview.6.20318.15
 preview.7
 preview.4.20258.7
 preview.4.20229.10
@@ -698,6 +729,8 @@ REST
 rest.ps1
 restart-apachehttpserver
 resx
+Rethrow
+reynoldsbd
 richardszalay
 Rin
 rkeithhill
@@ -710,6 +743,7 @@ runspaceinit
 runspaces
 runtime
 runtimes
+Saancreed
 sample-dotnet1
 sample-dotnet2
 sarithsutha
@@ -756,6 +790,7 @@ snapcraft
 snapin
 snover
 sometext
+SortedList
 source.txt
 spongemike2
 src
@@ -787,6 +822,7 @@ symlinks
 syscall
 syslog
 System.IO.Packaging
+System.InvalidOperationException
 system.manage
 system.management.automation
 systemd
@@ -800,6 +836,7 @@ test-pssessionconfigurationfile
 test-scriptfileinfo
 test.ps1
 test.txt.
+Tests.ps1
 test1.txt
 test2.txt
 testcase
@@ -809,14 +846,17 @@ tgz
 theflyingcorpse
 thenewstellw
 thezim
+thlac
 ThomasNieto
 threadjob
+ThreadStatic
 throttlelimit
 throw-testcasesitmockdescribe
 ThrowExceptionForHR
 timcurwick
 timestamp
 timothywlewis
+TKey
 tobias
 tokenizer.cs
 tokenizing
@@ -828,11 +868,13 @@ tracesource
 travisez13
 travisty
 truher
+TValue
 tylerleonhardt
 typecataloggen
 typeconversion
 typegen
 typematch
+t_
 ubuntu
 un-versioned
 unicode
@@ -883,6 +925,7 @@ v6.2.2
 v6.2.3
 v6.2.4
 v7.0.0
+v7.1.0
 validatenotnullorempty
 versioned
 versioning
@@ -929,6 +972,7 @@ xunit
 Xunit.SkippableFact
 yaml
 yashrajbharti
+yecril71pl
 yml
 youtube
 zackjknight
