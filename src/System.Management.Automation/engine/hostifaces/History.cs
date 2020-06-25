@@ -1002,7 +1002,30 @@ namespace Microsoft.PowerShell.Commands
             // recent entry
             if (Id == null)
             {
-                Id = new string[1]{history.GetEntries(0, 1, true)[0].Id.ToString()};
+                try
+                {
+                    Id = new string[1] { history.GetEntries(0, 1, true)[0].Id.ToString() };
+                }
+                catch (System.IndexOutOfRangeException)
+                {
+                    // History is empty, throw a more descriptive error
+                    Exception ex =
+                        new InvalidOperationException
+                        (
+                            StringUtil.Format(HistoryStrings.NoLastHistoryEntryFound)
+                        );
+
+                    ThrowTerminatingError
+                    (
+                        new ErrorRecord
+                        (
+                            ex,
+                            "InvokeHistoryNoLastHistoryEntryFound",
+                            ErrorCategory.InvalidOperation,
+                            null
+                        )
+                    );
+                }
             }
 
             foreach (var currId in Id)

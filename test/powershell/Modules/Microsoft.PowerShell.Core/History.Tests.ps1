@@ -136,4 +136,13 @@ Describe "History cmdlet test cases" -Tags "CI" {
         $h = Get-History -Count 1
         $h.Duration | Should -Be $duration
     }
+
+    It "Invoke-History throws the right error if history is empty" {
+        $ps = [PowerShell]::Create()
+        $result = $ps.AddScript("Invoke-History").Invoke()
+        $errorResult = $ps.Streams.Error[0].FullyQualifiedErrorId
+        $ps.Dispose()
+
+        $errorResult | Should -BeExactly "InvokeHistoryNoLastHistoryEntryFound,Microsoft.PowerShell.Commands.InvokeHistoryCommand"
+    }
 }
