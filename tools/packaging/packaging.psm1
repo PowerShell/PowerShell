@@ -9,6 +9,8 @@ Import-Module "$PSScriptRoot\..\Xml" -ErrorAction Stop -Force
 $DebianDistributions = @("ubuntu.16.04", "ubuntu.18.04", "debian.9", "debian.10", "debian.11")
 $RedhatDistributions = @("rhel.7","centos.8")
 $script:netCoreRuntime = 'net5.0'
+$script:iconFileName = "Powershell_black_64.png"
+$script:iconPath = Join-Path -path $PSScriptRoot -ChildPath "../../assets/$iconFileName" -Resolve
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
@@ -2001,6 +2003,10 @@ function New-ILNugetPackage
             }
 
             New-NuSpec -PackageId $fileBaseName -PackageVersion $PackageVersion -Dependency $deps -FilePath (Join-Path $filePackageFolder.FullName "$fileBaseName.nuspec")
+
+            # Copy icon file to package
+            Copy-Item -Path $iconPath -Destination "$($filePackageFolder.Fullname)/$iconFileName" -Verbose
+
             New-NugetPackage -NuSpecPath $filePackageFolder.FullName -PackageDestinationPath $PackagePath
         }
 
@@ -2134,7 +2140,7 @@ function New-NuSpec {
         throw "New-NuSpec can be only executed on Windows platform."
     }
 
-    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion
+    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion, $iconFileName
     $nuspecObj = [xml] $nuspecTemplate
 
     if ( ($null -ne $Dependency) -and $Dependency.Count -gt 0 ) {
@@ -3689,6 +3695,9 @@ function New-GlobalToolNupkg
     $packageInfo | ForEach-Object {
         $ridFolder = New-Item -Path (Join-Path $_.RootFolder "tools/$script:netCoreRuntime/any") -ItemType Directory
 
+        # Add the icon file to the package
+        Copy-Item -Path $iconPath -Destination "$($_.RootFolder)/$iconFileName" -Verbose
+
         $packageType = $_.Type
 
         switch ($packageType)
@@ -3775,7 +3784,7 @@ function New-GlobalToolNupkg
         }
 
         $packageName = $_.PackageName
-        $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion
+        $nuSpec = $packagingStrings.GlobalToolNuSpec -f $packageName, $PackageVersion, $iconFileName
         $nuSpec | Out-File -FilePath (Join-Path $_.RootFolder "$packageName.nuspec") -Encoding ascii
         $toolSettings | Out-File -FilePath (Join-Path $ridFolder "DotnetToolSettings.xml") -Encoding ascii
 
