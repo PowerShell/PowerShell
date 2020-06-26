@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     continue;
                 }
 
-                parameter.PropertyChanged += new PropertyChangedEventHandler(this.MandatoryParameter_PropertyChanged);
+                parameter.PropertyChanged += this.MandatoryParameter_PropertyChanged;
             }
 
             this.EvaluateAllMandatoryParametersHaveValues();

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -20,6 +20,7 @@ namespace Microsoft.PowerShell.Commands
         internal const string OriginalObjectPropertyName = "OutGridViewOriginalObject";
         private const string ToStringValuePropertyName = "ToStringValue";
         private const string IndexPropertyName = "IndexValue";
+
         private int _index;
 
         /// <summary> Columns definition of the underlying Management List</summary>
@@ -59,17 +60,17 @@ namespace Microsoft.PowerShell.Commands
         {
             if (propertyNames == null)
             {
-                throw new ArgumentNullException("propertyNames");
+                throw new ArgumentNullException(nameof(propertyNames));
             }
 
             if (displayNames == null)
             {
-                throw new ArgumentNullException("displayNames");
+                throw new ArgumentNullException(nameof(displayNames));
             }
 
             if (types == null)
             {
-                throw new ArgumentNullException("types");
+                throw new ArgumentNullException(nameof(types));
             }
 
             try
@@ -178,7 +179,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (livePSObject == null)
             {
-                throw new ArgumentNullException("livePSObject");
+                throw new ArgumentNullException(nameof(livePSObject));
             }
 
             if (_headerInfo == null)
@@ -204,7 +205,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (livePSObject == null)
             {
-                throw new ArgumentNullException("livePSObject");
+                throw new ArgumentNullException(nameof(livePSObject));
             }
 
             if (_headerInfo == null)

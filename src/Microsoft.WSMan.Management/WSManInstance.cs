@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -397,7 +397,8 @@ namespace Microsoft.WSMan.Management
         #endregion parameter
 
         #  region private
-        WSManHelper helper;
+        private WSManHelper helper;
+
         private string GetFilter()
         {
             string name;
@@ -418,7 +419,7 @@ namespace Microsoft.WSMan.Management
             }
 
             filter = filter + "</wsman:SelectorSet>";
-            return (filter.ToString());
+            return (filter);
         }
 
         private void ReturnEnumeration(IWSManEx wsmanObject, IWSManResourceLocator wsmanResourceLocator, IWSManSession wsmanSession)
@@ -528,8 +529,8 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
                 catch (IndexOutOfRangeException)
@@ -908,8 +909,8 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         // in the format http(s)://server[:port/applicationname]
-                        string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                        string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                        string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
                     }
                     catch (IndexOutOfRangeException)
@@ -1202,8 +1203,8 @@ namespace Microsoft.WSMan.Management
                     try
                     {
                         // in the format http(s)://server[:port/applicationname]
-                        string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                        string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                        string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                        string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                         computername = constrsplit1[1].Trim();
                     }
                     catch (IndexOutOfRangeException)
@@ -1474,9 +1475,9 @@ namespace Microsoft.WSMan.Management
         private Hashtable valueset;
 
         private WSManHelper helper;
-        IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
-        IWSManSession m_session = null;
-        string connectionStr = string.Empty;
+        private IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
+        private IWSManSession m_session = null;
+        private string connectionStr = string.Empty;
 
         /// <summary>
         /// BeginProcessing method.
@@ -1491,8 +1492,8 @@ namespace Microsoft.WSMan.Management
                 try
                 {
                     // in the format http(s)://server[:port/applicationname]
-                    string[] constrsplit = connectionuri.OriginalString.Split(new string[] { ":" + port + "/" + applicationname }, StringSplitOptions.None);
-                    string[] constrsplit1 = constrsplit[0].Split(new string[] { "//" }, StringSplitOptions.None);
+                    string[] constrsplit = connectionuri.OriginalString.Split(":" + port + "/" + applicationname, StringSplitOptions.None);
+                    string[] constrsplit1 = constrsplit[0].Split("//", StringSplitOptions.None);
                     computername = constrsplit1[1].Trim();
                 }
                 catch (IndexOutOfRangeException)

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -109,7 +109,7 @@ namespace System.Management.Automation
         }
     }
 
-    class PSTypeNameComparer : IEqualityComparer<PSTypeName>
+    internal class PSTypeNameComparer : IEqualityComparer<PSTypeName>
     {
         public bool Equals(PSTypeName x, PSTypeName y)
         {
@@ -1231,7 +1231,7 @@ namespace System.Management.Automation
                 }
 
                 var memberNameAndTypes = GetMemberNameAndTypeFromProperties(prevType, IsInPropertyArgument);
-                if (!memberNameAndTypes.Any())
+                if (memberNameAndTypes.Count == 0)
                 {
                     continue;
                 }
@@ -1328,7 +1328,7 @@ namespace System.Management.Automation
                             switch (propertyNameOrPattern)
                             {
                                 case string propertyName:
-                                    if (string.Compare(name, propertyName, StringComparison.OrdinalIgnoreCase) == 0)
+                                    if (string.Equals(name, propertyName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         return includeMatchedProperties;
                                     }
@@ -2347,7 +2347,7 @@ namespace System.Management.Automation
         }
     }
 
-    static class TypeInferenceExtension
+    internal static class TypeInferenceExtension
     {
         public static bool EqualsOrdinalIgnoreCase(this string s, string t)
         {

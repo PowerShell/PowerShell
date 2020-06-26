@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Native streams behavior with PowerShell" -Tags 'CI' {
     BeforeAll {
@@ -28,11 +28,11 @@ Describe "Native streams behavior with PowerShell" -Tags 'CI' {
         It 'uses ErrorRecord object to return stderr output' {
             ($out | Measure-Object).Count | Should -BeGreaterThan 1
 
-            $out[0] | Should -BeOfType 'System.Management.Automation.ErrorRecord'
+            $out[0] | Should -BeOfType System.Management.Automation.ErrorRecord
             $out[0].FullyQualifiedErrorId | Should -Be 'NativeCommandError'
 
             $out | Select-Object -Skip 1 | ForEach-Object {
-                $_ | Should -BeOfType 'System.Management.Automation.ErrorRecord'
+                $_ | Should -BeOfType System.Management.Automation.ErrorRecord
                 $_.FullyQualifiedErrorId | Should -Be 'NativeCommandErrorMessage'
             }
         }

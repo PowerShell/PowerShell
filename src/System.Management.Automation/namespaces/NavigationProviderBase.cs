@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Provider
 
                 if (string.IsNullOrEmpty(path))
                 {
-                    throw PSTraceSource.NewArgumentException("path");
+                    throw PSTraceSource.NewArgumentException(nameof(path));
                 }
 
                 if (root == null)
@@ -432,10 +432,10 @@ namespace System.Management.Automation.Provider
                 // Check to see if the path is equal to the root
                 // of the virtual drive
 
-                if (string.Compare(
+                if (string.Equals(
                     path,
                     rootPath,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                    StringComparison.OrdinalIgnoreCase))
                 {
                     parentPath = string.Empty;
                 }
@@ -508,7 +508,7 @@ namespace System.Management.Automation.Provider
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (path.Length == 0)
@@ -706,7 +706,7 @@ namespace System.Management.Automation.Provider
 
                 if (string.IsNullOrEmpty(path))
                 {
-                    throw PSTraceSource.NewArgumentException("path");
+                    throw PSTraceSource.NewArgumentException(nameof(path));
                 }
 
                 // Normalize the path
@@ -873,12 +873,12 @@ namespace System.Management.Automation.Provider
             // normalize it, then we will get a wrong path.
             //
             // Fast return if nothing to normalize.
-            if (path.IndexOf(StringLiterals.AlternatePathSeparator) == -1)
+            if (!path.Contains(StringLiterals.AlternatePathSeparator))
             {
                 return path;
             }
 
-            bool pathHasBackSlash = path.IndexOf(StringLiterals.DefaultPathSeparator) != -1;
+            bool pathHasBackSlash = path.Contains(StringLiterals.DefaultPathSeparator);
             string normalizedPath;
 
             // There is a mix of slashes & the path is rooted & the path exists without normalization.
@@ -1039,7 +1039,7 @@ namespace System.Management.Automation.Provider
                             PSArgumentException e =
                                 (PSArgumentException)
                                 PSTraceSource.NewArgumentException(
-                                    "path",
+                                    nameof(path),
                                     SessionStateStrings.NormalizeRelativePathOutsideBase,
                                     path,
                                     basePath);

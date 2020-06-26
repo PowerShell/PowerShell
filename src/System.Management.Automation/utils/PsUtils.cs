@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -298,11 +298,11 @@ namespace System.Management.Automation
                                      bool allowEnvironmentVariables,
                                      bool skipPathValidation)
         {
-            if (!skipPathValidation && string.IsNullOrEmpty(parameterName)) { throw PSTraceSource.NewArgumentNullException("parameterName"); }
+            if (!skipPathValidation && string.IsNullOrEmpty(parameterName)) { throw PSTraceSource.NewArgumentNullException(nameof(parameterName)); }
 
-            if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException("psDataFilePath"); }
+            if (string.IsNullOrEmpty(psDataFilePath)) { throw PSTraceSource.NewArgumentNullException(nameof(psDataFilePath)); }
 
-            if (context == null) { throw PSTraceSource.NewArgumentNullException("context"); }
+            if (context == null) { throw PSTraceSource.NewArgumentNullException(nameof(context)); }
 
             string resolvedPath;
             if (skipPathValidation)
@@ -404,6 +404,7 @@ namespace System.Management.Automation
         internal static readonly string[] ManifestModuleVersionPropertyName = new[] { "ModuleVersion" };
         internal static readonly string[] ManifestGuidPropertyName = new[] { "GUID" };
         internal static readonly string[] ManifestPrivateDataPropertyName = new[] { "PrivateData" };
+
         internal static readonly string[] FastModuleManifestAnalysisPropertyNames = new[]
         {
             "AliasesToExport",
@@ -486,7 +487,7 @@ namespace System.Management.Automation
             // shell crashes if you pass an empty script block to a native command
             if (input == null)
             {
-                throw PSTraceSource.NewArgumentNullException("input");
+                throw PSTraceSource.NewArgumentNullException(nameof(input));
             }
 
             string base64 = Convert.ToBase64String
@@ -505,7 +506,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(base64))
             {
-                throw PSTraceSource.NewArgumentNullException("base64");
+                throw PSTraceSource.NewArgumentNullException(nameof(base64));
             }
 
             string output = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
@@ -521,7 +522,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(base64))
             {
-                throw PSTraceSource.NewArgumentNullException("base64");
+                throw PSTraceSource.NewArgumentNullException(nameof(base64));
             }
 
             string decoded = new string(Encoding.Unicode.GetChars(Convert.FromBase64String(base64)));
@@ -566,6 +567,7 @@ namespace System.Management.Automation
     {
         // CRC-32C polynomial representations
         private const uint polynomial = 0x1EDC6F41;
+
         private static uint[] table;
 
         static CRC32Hash()

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -39,6 +39,12 @@ namespace Microsoft.PowerShell.Commands
                 _dateSpecified = true;
             }
         }
+
+        /// <summary>
+        /// Gets or sets whether to treat a numeric input as ticks, or unix time.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter FromUnixTime;
 
         private DateTime _date;
         private bool _dateSpecified;
@@ -217,6 +223,11 @@ namespace Microsoft.PowerShell.Commands
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value that converts date to UTC before formatting.
+        /// </summary>
+        [Parameter(ParameterSetName = "net")]
+        public SwitchParameter AsUTC { get; set; }
         #endregion
 
         #region methods
@@ -232,7 +243,14 @@ namespace Microsoft.PowerShell.Commands
             // use passed date object if specified
             if (_dateSpecified)
             {
-                dateToUse = Date;
+                if (FromUnixTime.IsPresent)
+                {
+                    dateToUse = DateTimeOffset.FromUnixTimeSeconds(Date.Ticks).UtcDateTime;
+                }
+                else
+                {
+                    dateToUse = Date;
+                }
             }
 
             // use passed year if specified
@@ -283,6 +301,11 @@ namespace Microsoft.PowerShell.Commands
                 offset = Millisecond - dateToUse.Millisecond;
                 dateToUse = dateToUse.AddMilliseconds(offset);
                 dateToUse = dateToUse.Subtract(TimeSpan.FromTicks(dateToUse.Ticks % 10000));
+            }
+
+            if (AsUTC)
+            {
+                dateToUse = dateToUse.ToUniversalTime();
             }
 
             if (UFormat != null)

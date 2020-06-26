@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
 
                     foreach (object element in enumerable)
                     {
-                        if (printSeparator == true && Separator != null)
+                        if (printSeparator && Separator != null)
                         {
                             result.Append(Separator.ToString());
                         }

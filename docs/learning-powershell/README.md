@@ -24,11 +24,12 @@ At the end of this exercise, you should be able to launch the PowerShell session
   You can launch PowerShell console by pressing Windows key, typing PowerShell, and clicking on Windows PowerShell.
   However if you want to try out the latest PowerShell, follow the [PowerShell on Windows][inst-win].
 
-- Alternatively you can get the PowerShell by [building it](../../README.md#building-powershell)
+- Alternatively you can get the PowerShell by [building it][build-powershell]
 
-[inst-linux]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-6
-[inst-win]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-6
-[inst-macos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos?view=powershell-6
+[build-powershell]:../../README.md#building-the-repository
+[inst-linux]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-linux
+[inst-win]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-windows
+[inst-macos]: https://docs.microsoft.com/powershell/scripting/install/installing-powershell-core-on-macos
 
 ## Getting Started with PowerShell
 
@@ -47,20 +48,17 @@ You can use your favorite editor to write scripts.
 We use Visual Studio Code (VS Code) which works on Windows, Linux, and macOS.
 Click on the following link to create your first PowerShell script.
 
-- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/components/vscode/using-vscode?view=powershell-6)
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/dev-cross-plat/vscode/using-vscode)
 
 ### PowerShell Debugger
 
 Debugging can help you find bugs and fix problems in your PowerShell scripts.
 Click on the link below to learn more about debugging:
 
-- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/components/vscode/using-vscode?view=powershell-6#debugging-with-visual-studio-code)
+- [Using Visual Studio Code (VS Code)](https://docs.microsoft.com/powershell/scripting/dev-cross-plat/vscode/using-vscode#debugging-with-visual-studio-code)
 - [PowerShell Command-line Debugging][cli-debugging]
 
-[use-vscode-editor]:./using-vscode.md#editing-with-vs-code
 [cli-debugging]:./debugging-from-commandline.md
-[get-powershell]:../../README.md#get-powershell
-[build-powershell]:../../README.md#building-the-repository
 
 ### PowerShell Testing
 
@@ -121,10 +119,9 @@ Note that all bash commands should continue working on PowerShell session.
 
 [getstarted-with-powershell]: https://channel9.msdn.com/Series/GetStartedPowerShell3
 [why-learn-powershell]: https://blogs.technet.microsoft.com/heyscriptingguy/2014/10/18/weekend-scripter-why-learn-powershell/
-[Using Windows PowerShell for Administration]: https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration?view=powershell-6
 [ebook-from-Idera]:https://www.idera.com/resourcecentral/whitepapers/powershell-ebook
 [channel9-learn-powershell]: https://channel9.msdn.com/Search?term=powershell#ch9Search
 [idera-learn-powershell]: https://community.idera.com/database-tools/powershell/video_library/
 [quick-reference]: https://www.powershellmagazine.com/2014/04/24/windows-powershell-4-0-and-other-quick-reference-guides/
 [script-guy-how-to]:https://blogs.technet.microsoft.com/tommypatterson/2015/09/04/ed-wilsons-powershell5-videos-now-on-channel9-2/
-[basic-cookbooks]:https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration?view=powershell-6
+[basic-cookbooks]:https://docs.microsoft.com/powershell/scripting/samples/sample-scripts-for-administration

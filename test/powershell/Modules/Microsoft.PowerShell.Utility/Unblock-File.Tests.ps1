@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Unblock-File" -Tags "CI" {
@@ -25,7 +25,7 @@ Describe "Unblock-File" -Tags "CI" {
 
                 function Block-File {
                     param($path)
-                    Set-Content -Path $path -value 'test'
+                    Set-Content -Path $path -Value 'test'
                     xattr -w com.apple.quarantine '0081;5dd5c373;Microsoft Edge;1A9A933D-619A-4036-BAF3-17A7966A1BA8' $path
 
                 }

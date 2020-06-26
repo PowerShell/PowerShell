@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -45,6 +45,10 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.MatchInfo",
                 ViewsOf_Microsoft_PowerShell_Commands_MatchInfo());
+
+            yield return new ExtendedTypeDefinition(
+                "Deserialized.Microsoft.PowerShell.Commands.MatchInfo",
+                ViewsOf_Deserialized_Microsoft_PowerShell_Commands_MatchInfo());
 
             yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.PSVariable",
@@ -382,6 +386,16 @@ namespace System.Management.Automation.Runspaces
                 CustomControl.Create()
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"$_.ToEmphasizedString(((get-location).path))")
+                    .EndEntry()
+                .EndControl());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Deserialized_Microsoft_PowerShell_Commands_MatchInfo()
+        {
+            yield return new FormatViewDefinition("MatchInfo",
+                CustomControl.Create()
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding(@"$_.Line")
                     .EndEntry()
                 .EndControl());
         }
@@ -756,14 +770,14 @@ namespace System.Management.Automation.Runspaces
                             $maxDepth = 10
                             $ellipsis = ""`u{2026}""
                             $resetColor = ''
-                            if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                            if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                 $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                     [System.Management.Automation.VTUtility+VT]::Reset
                                 )
                             }
 
                             function Get-VT100Color([ConsoleColor] $color) {
-                                if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                if (!$Host.UI.SupportsVirtualTerminal -or !([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                     return ''
                                 }
 
@@ -998,18 +1012,19 @@ namespace System.Management.Automation.Runspaces
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                     Set-StrictMode -Off
+                                    $newline = [Environment]::Newline
 
                                     function Get-ConciseViewPositionMessage {
 
                                         $resetColor = ''
-                                        if ($Host.UI.SupportsVirtualTerminal -and !(Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                        if ($Host.UI.SupportsVirtualTerminal -and ([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                             $resetColor = [System.Management.Automation.VTUtility]::GetEscapeSequence(
                                                 [System.Management.Automation.VTUtility+VT]::Reset
                                             )
                                         }
 
                                         function Get-VT100Color([ConsoleColor] $color) {
-                                            if (!$Host.UI.SupportsVirtualTerminal -or (Test-Path env:__SuppressAnsiEscapeSequences)) {
+                                            if (!$Host.UI.SupportsVirtualTerminal -or !([string]::IsNullOrEmpty($env:__SuppressAnsiEscapeSequences))) {
                                                 return ''
                                             }
 
@@ -1053,7 +1068,6 @@ namespace System.Management.Automation.Runspaces
                                         $offsetWhitespace = ''
                                         $message = ''
                                         $prefix = ''
-                                        $newline = [Environment]::Newline
 
                                         if ($myinv -and $myinv.ScriptName -or $myinv.ScriptLineNumber -gt 1 -or $err.CategoryInfo.Category -eq 'ParserError') {
                                             $useTargetObject = $false
@@ -1104,18 +1118,18 @@ namespace System.Management.Automation.Runspaces
                                                 $offsetInLine = 0
                                             }
                                             else {
-                                                $positionMessage = $myinv.PositionMessage.Split('+')
-                                                $line = $positionMessage[1]
-                                                $highlightLine = $positionMessage[$positionMessage.Count - 1]
+                                                $positionMessage = $myinv.PositionMessage.Split($newline)
+                                                $line = $positionMessage[1].Substring(1) # skip the '+' at the start
+                                                $highlightLine = $positionMessage[$positionMessage.Count - 1].Substring(1)
                                                 $offsetLength = $highlightLine.Trim().Length
                                                 $offsetInLine = $highlightLine.IndexOf('~')
                                             }
 
-                                            if (-not $line.EndsWith(""`n"")) {
+                                            if (-not $line.EndsWith($newline)) {
                                                 $line += $newline
                                             }
 
-                                            # don't color the whole line red
+                                            # don't color the whole line
                                             if ($offsetLength -lt $line.Length - 1) {
                                                 $line = $line.Insert($offsetInLine + $offsetLength, $resetColor).Insert($offsetInLine, $accentColor)
                                             }
@@ -1124,16 +1138,15 @@ namespace System.Management.Automation.Runspaces
                                             $offsetWhitespace = ' ' * $offsetInLine
                                             $prefix = ""${accentColor}${headerWhitespace}     ${verticalBar} ${errorColor}""
                                             if ($highlightLine -ne '') {
-                                                $posMsg += ""${newline}${prefix}${highlightLine}${newline}""
+                                                $posMsg += ""${prefix}${highlightLine}${newline}""
                                             }
                                             $message = ""${prefix}""
                                         }
 
                                         if (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
-                                            # we use `n instead of $newline here because that's what is in the message
-                                            if ($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception.Message.Contains(""~`n"")) {
+                                            if ($err.CategoryInfo.Category -eq 'ParserError' -and $err.Exception.Message.Contains(""~$newline"")) {
                                                 # need to parse out the relevant part of the pre-rendered positionmessage
-                                                $message += $err.Exception.Message.split(""~`n"")[1].split(""${newline}${newline}"")[0]
+                                                $message += $err.Exception.Message.split(""~$newline"")[1].split(""${newline}${newline}"")[0]
                                             }
                                             elseif ($err.Exception) {
                                                 $message += $err.Exception.Message
@@ -1156,18 +1169,32 @@ namespace System.Management.Automation.Runspaces
 
                                             # replace newlines in message so it lines up correct
                                             $message = $message.Replace($newline, ' ').Replace(""`t"", ' ')
-                                            if ([Console]::WindowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt [Console]::WindowWidth) {
+
+                                            $windowWidth = 120
+                                            if ($Host.UI.RawUI -ne $null) {
+                                                $windowWidth = $Host.UI.RawUI.WindowSize.Width
+                                            }
+
+                                            if ($windowWidth -gt 0 -and ($message.Length - $prefixVTLength) -gt $windowWidth) {
                                                 $sb = [Text.StringBuilder]::new()
-                                                $substring = Get-TruncatedString -string $message -length ([Console]::WindowWidth + $prefixVTLength)
+                                                $substring = Get-TruncatedString -string $message -length ($windowWidth + $prefixVTLength)
                                                 $null = $sb.Append($substring)
                                                 $remainingMessage = $message.Substring($substring.Length).Trim()
                                                 $null = $sb.Append($newline)
-                                                while (($remainingMessage.Length + $prefixLength) -gt [Console]::WindowWidth) {
+                                                while (($remainingMessage.Length + $prefixLength) -gt $windowWidth) {
                                                     $subMessage = $prefix + $remainingMessage
-                                                    $substring = Get-TruncatedString -string $subMessage -length ([Console]::WindowWidth + $prefixVtLength)
-                                                    $null = $sb.Append($substring)
-                                                    $null = $sb.Append($newline)
-                                                    $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    $substring = Get-TruncatedString -string $subMessage -length ($windowWidth + $prefixVtLength)
+
+                                                    if ($substring.Length - $prefix.Length -gt 0)
+                                                    {
+                                                        $null = $sb.Append($substring)
+                                                        $null = $sb.Append($newline)
+                                                        $remainingMessage = $remainingMessage.Substring($substring.Length - $prefix.Length).Trim()
+                                                    }
+                                                    else
+                                                    {
+                                                        break
+                                                    }
                                                 }
                                                 $null = $sb.Append($prefix + $remainingMessage.Trim())
                                                 $message = $sb.ToString()
@@ -1233,7 +1260,7 @@ namespace System.Management.Automation.Runspaces
 
                                         if ($posmsg -ne '')
                                         {
-                                            $posmsg = ""`n"" + $posmsg
+                                            $posmsg = $newline + $posmsg
                                         }
 
                                         if ($err.PSMessageDetails) {
@@ -1257,24 +1284,24 @@ namespace System.Management.Automation.Runspaces
                                             $indentString = '+ CategoryInfo          : ' + $err.CategoryInfo
                                         }
 
-                                        $posmsg += ""`n"" + $indentString
+                                        $posmsg += $newline + $indentString
 
                                         $indentString = ""+ FullyQualifiedErrorId : "" + $err.FullyQualifiedErrorId
-                                        $posmsg += ""`n"" + $indentString
+                                        $posmsg += $newline + $indentString
 
                                         $originInfo = $err.OriginInfo
 
                                         if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
                                         {
                                             $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
-                                            $posmsg += ""`n"" + $indentString
+                                            $posmsg += $newline + $indentString
                                         }
 
                                         if ($ErrorView -eq 'CategoryView') {
                                             $err.CategoryInfo.GetMessage()
                                         }
                                         elseif (! $err.ErrorDetails -or ! $err.ErrorDetails.Message) {
-                                            $err.Exception.Message + $posmsg + ""`n""
+                                            $err.Exception.Message + $posmsg + $newline
                                         } else {
                                             $err.ErrorDetails.Message + $posmsg
                                         }
@@ -1623,6 +1650,14 @@ namespace System.Management.Automation.Runspaces
                 .EndTable());
         }
 
+        private const string PreReleaseStringScriptBlock = @"
+                            if ($_.PrivateData -and 
+                                $_.PrivateData.ContainsKey('PSData') -and 
+                                $_.PrivateData.PSData.ContainsKey('PreRelease'))
+                            {
+                                    $_.PrivateData.PSData.PreRelease
+                            }";
+
         private static IEnumerable<FormatViewDefinition> ViewsOf_ModuleInfoGrouping(CustomControl[] sharedControls)
         {
             yield return new FormatViewDefinition("Module",
@@ -1637,11 +1672,7 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
-                        .AddScriptBlockColumn(@"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }")
+                        .AddScriptBlockColumn(PreReleaseStringScriptBlock)
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn(@"
                             $result = [System.Collections.ArrayList]::new()
@@ -1674,11 +1705,7 @@ namespace System.Management.Automation.Runspaces
                     .StartRowDefinition()
                         .AddPropertyColumn("ModuleType")
                         .AddPropertyColumn("Version")
-                        .AddScriptBlockColumn(@"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }")
+                        .AddScriptBlockColumn(PreReleaseStringScriptBlock)
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn("$_.ExportedCommands.Keys")
                     .EndRowDefinition()
@@ -1698,11 +1725,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"ModuleType")
                         .AddItemProperty(@"Version")
                         .AddItemScriptBlock(
-                            @"
-                            if ($_.PrivateData -and $_.PrivateData.PSData)
-                            {
-                                    $_.PrivateData.PSData.PreRelease
-                            }",
+                            PreReleaseStringScriptBlock,
                             label: "PreRelease")
                         .AddItemProperty(@"NestedModules")
                         .AddItemScriptBlock(@"$_.ExportedFunctions.Keys", label: "ExportedFunctions")

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -1056,7 +1056,7 @@ namespace Microsoft.WSMan.Management
 
     [ComImport, Guid("EA502723-A23D-11d1-A7D3-0000F87571E3"),
     InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-    interface IGroupPolicyObject
+    internal interface IGroupPolicyObject
     {
         void New(
           [MarshalAs(UnmanagedType.LPWStr)] string pszDomainName,

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
@@ -157,7 +157,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         internal override void ReportExecutionStatusAsRunning()
         {
-            if (true == _isClosed)
+            if (_isClosed)
             {
                 return;
             }
@@ -200,7 +200,7 @@ namespace System.Management.Automation.Remoting
             bool reportAsPending,
             bool reportAsDataBoundary)
         {
-            if (true == _isClosed)
+            if (_isClosed)
             {
                 return;
             }
@@ -399,7 +399,7 @@ namespace System.Management.Automation.Remoting
 
         internal void Initialize()
         {
-            this.PowerShellGuidObserver += new System.EventHandler(OnPowershellGuidReported);
+            this.PowerShellGuidObserver += OnPowershellGuidReported;
             this.MigrateDataReadyEventHandlers(_serverTransportMgr);
         }
 
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
         {
             _cmdId = (System.Guid)src;
             _serverTransportMgr.ReportTransportMgrForCmd(_cmdId, this);
-            this.PowerShellGuidObserver -= new System.EventHandler(this.OnPowershellGuidReported);
+            this.PowerShellGuidObserver -= this.OnPowershellGuidReported;
         }
     }
 }

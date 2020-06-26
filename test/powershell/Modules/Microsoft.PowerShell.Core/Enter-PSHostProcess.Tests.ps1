@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 $powershell = Join-Path -Path $PSHOME -ChildPath "pwsh"
@@ -131,7 +131,22 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 $npInfo = [System.Management.Automation.Runspaces.NamedPipeConnectionInfo]::new($pwshId)
                 $rs = [runspacefactory]::CreateRunspace($npInfo)
-                $rs.Open()
+
+                # Try to open the runspace while tracing.
+                $splat = @{
+                    Name = "RunspaceInit"
+                    Expression = {$Input.Open()}
+                    PSHost = $true
+                    ListenerOption = [System.Diagnostics.TraceOptions]::Callstack
+                    FilePath = "$TestDrive/$([System.IO.Path]::GetRandomFileName()).log"
+                    InputObject = $rs
+                }
+                Trace-Command @splat
+
+                # If opening the runspace fails, then print out the trace with the callstack
+                Wait-UntilTrue { $rs.RunspaceStateInfo.State -eq [System.Management.Automation.Runspaces.RunspaceState]::Opened } |
+                    Should -BeTrue -Because (Get-Content $splat.FilePath -Raw)
+
                 $ps = [powershell]::Create()
                 $ps.Runspace = $rs
                 $ps.AddScript('$PID')
@@ -152,8 +167,14 @@ Describe "Enter-PSHostProcess tests" -Tag Feature {
 
                 $result | Should -Be $pwshId -Because $errorMsg
             } finally {
-                $rs.Dispose()
-                $ps.Dispose()
+                # Clean up disposables
+                if ($rs) {
+                    $rs.Dispose()
+                }
+
+                if ($ps) {
+                    $ps.Dispose()
+                }
             }
         }
     }

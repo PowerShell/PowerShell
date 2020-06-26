@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -133,7 +133,7 @@ namespace Microsoft.Management.UI.Internal
         {
             this.InitializeTemplates();
 
-            this.Controller.FilterExpressionChanged += new EventHandler(this.Controller_FilterExpressionChanged);
+            this.Controller.FilterExpressionChanged += this.Controller_FilterExpressionChanged;
         }
 
         #endregion Ctor

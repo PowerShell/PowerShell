@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -492,7 +492,7 @@ namespace System.Management.Automation
             }
         }
 
-        internal static List<string> ModulesWithJobSourceAdapters = new List<string>
+        internal static readonly List<string> ModulesWithJobSourceAdapters = new List<string>
             {
                 Utils.ScheduledJobModuleName,
             };

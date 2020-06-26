@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -143,7 +143,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.ResourceUriComputerSet:
                     {
                         string target = string.Format(CultureInfo.CurrentUICulture, targetClass, cmdlet.ClassName);
-                        if(cmdlet.ResourceUri != null )
+                        if (cmdlet.ResourceUri != null)
                         {
                             nameSpace = cmdlet.Namespace;
                         }
@@ -210,7 +210,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 case CimBaseCommand.CimInstanceSessionSet:
                     {
                         string target = cmdlet.CimInstance.ToString();
-                        if(cmdlet.ResourceUri != null )
+                        if (cmdlet.ResourceUri != null)
                         {
                             nameSpace = cmdlet.Namespace;
                         }
@@ -280,7 +280,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             InvokeCimMethodCommand cmdlet)
         {
             proxy.OperationTimeout = cmdlet.OperationTimeoutSec;
-            if(cmdlet.ResourceUri != null )
+            if (cmdlet.ResourceUri != null)
             {
                 proxy.ResourceUri = cmdlet.ResourceUri;
             }
@@ -392,7 +392,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     if (declaration == null)
                     {
                         throw new ArgumentException(string.Format(
-                                CultureInfo.CurrentUICulture, Strings.InvalidMethod, methodName, className));
+                                CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethod, methodName, className));
                     }
                 }
                 else if (cimInstance != null)
@@ -407,7 +407,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     if (paramDeclaration == null)
                     {
                         throw new ArgumentException(string.Format(
-                            CultureInfo.CurrentUICulture, Strings.InvalidMethodParameter, parameterName, methodName, className));
+                            CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidMethodParameter, parameterName, methodName, className));
                     }
 
                     parameter = CimMethodParameter.Create(

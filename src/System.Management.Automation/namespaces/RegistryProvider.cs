@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 #if !UNIX
 
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             if (!ItemExists(drive.Root))
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             // Confirm the set item with the user
@@ -413,7 +413,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             // Confirm the clear item with the user
@@ -533,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (IsHiveContainer(path))
@@ -680,7 +680,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (path.Length == 0)
@@ -871,12 +871,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(newName))
             {
-                throw PSTraceSource.NewArgumentException("newName");
+                throw PSTraceSource.NewArgumentException(nameof(newName));
             }
 
             s_tracer.WriteLine("newName = {0}", newName);
@@ -941,7 +941,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             // Confirm the new item with the user
@@ -1100,7 +1100,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             s_tracer.WriteLine("recurse = {0}", recurse);
@@ -1186,7 +1186,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             try
@@ -1240,7 +1240,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             try
@@ -1298,12 +1298,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(destination))
             {
-                throw PSTraceSource.NewArgumentException("destination");
+                throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
             s_tracer.WriteLine("destination = {0}", destination);
@@ -1521,10 +1521,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 // See if the paths are equal
 
-                if (string.Compare(
+                if (string.Equals(
                         sourcePath,
                         destinationPath,
-                        StringComparison.OrdinalIgnoreCase) == 0)
+                        StringComparison.OrdinalIgnoreCase))
                 {
                     result = true;
                     break;
@@ -1539,10 +1539,10 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 }
 
-                if (string.Compare(
+                if (string.Equals(
                         newDestinationPath,
                         destinationPath,
-                        StringComparison.OrdinalIgnoreCase) == 0)
+                        StringComparison.OrdinalIgnoreCase))
                 {
                     // We reached the root so the destination must not be a child
                     // of the source
@@ -1586,7 +1586,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             bool result = false;
@@ -1642,12 +1642,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(destination))
             {
-                throw PSTraceSource.NewArgumentException("destination");
+                throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
             s_tracer.WriteLine("destination = {0}", destination);
@@ -1785,7 +1785,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (!CheckOperationNotAllowedOnHiveContainer(path))
@@ -1853,7 +1853,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (!CheckOperationNotAllowedOnHiveContainer(path))
@@ -1863,7 +1863,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (propertyValue == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyValue");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyValue));
             }
 
             IRegistryWrapper key = GetRegkeyForPathWriteIfError(path, true);
@@ -1978,7 +1978,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (!CheckOperationNotAllowedOnHiveContainer(path))
@@ -2122,7 +2122,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (!CheckOperationNotAllowedOnHiveContainer(path))
@@ -2234,7 +2234,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (!CheckOperationNotAllowedOnHiveContainer(path))
@@ -2337,7 +2337,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (!CheckOperationNotAllowedOnHiveContainer(path))
@@ -2426,12 +2426,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (sourcePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sourcePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(sourcePath));
             }
 
             if (destinationPath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("destinationPath");
+                throw PSTraceSource.NewArgumentNullException(nameof(destinationPath));
             }
 
             if (!CheckOperationNotAllowedOnHiveContainer(sourcePath, destinationPath))
@@ -2526,12 +2526,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (sourcePath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("sourcePath");
+                throw PSTraceSource.NewArgumentNullException(nameof(sourcePath));
             }
 
             if (destinationPath == null)
             {
-                throw PSTraceSource.NewArgumentNullException("destinationPath");
+                throw PSTraceSource.NewArgumentNullException(nameof(destinationPath));
             }
 
             if (!CheckOperationNotAllowedOnHiveContainer(sourcePath, destinationPath))
@@ -2979,7 +2979,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             filteredCollection = new Collection<string>();
@@ -3062,7 +3062,7 @@ namespace Microsoft.PowerShell.Commands
                     if (
                         expandAll ||
                         ((Context.SuppressWildcardExpansion == false) && (valueNameMatcher.IsMatch(valueNameToMatch))) ||
-                       ((Context.SuppressWildcardExpansion == true) && (string.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
+                       ((Context.SuppressWildcardExpansion) && (string.Equals(valueNameToMatch, requestedValueName, StringComparison.OrdinalIgnoreCase))))
                     {
                         if (string.IsNullOrEmpty(valueNameToMatch))
                         {
@@ -3199,12 +3199,12 @@ namespace Microsoft.PowerShell.Commands
             bool result = false;
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(path) ||
-                (string.Compare(path, "\\", StringComparison.OrdinalIgnoreCase) == 0) ||
-                (string.Compare(path, "/", StringComparison.OrdinalIgnoreCase) == 0))
+                string.Equals(path, "\\", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(path, "/", StringComparison.OrdinalIgnoreCase))
             {
                 result = true;
             }
@@ -3273,7 +3273,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (TransactionAvailable())
@@ -3321,7 +3321,7 @@ namespace Microsoft.PowerShell.Commands
             // Check input.
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             try
@@ -3359,7 +3359,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (remainingPath.Length == 0 || rootKey == null)
                 {
-                    throw PSTraceSource.NewArgumentException("path");
+                    throw PSTraceSource.NewArgumentException(nameof(path));
                 }
 
                 // Create new subkey..and close
@@ -3373,7 +3373,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // SubKey is null
                     // Unable to create intermediate keys
-                    throw PSTraceSource.NewArgumentException("path");
+                    throw PSTraceSource.NewArgumentException(nameof(path));
                 }
 
                 result = true;
@@ -3833,7 +3833,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             value = 0;
                         }
-                    }; break;
+                    } break;
 
                 case RegistryValueKind.ExpandString:
                     value = (value != null)
@@ -3870,7 +3870,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             value = 0;
                         }
-                    }; break;
+                    } break;
 
                 case RegistryValueKind.String:
                     value = (value != null)
@@ -3896,7 +3896,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (value == null)
             {
-                throw PSTraceSource.NewArgumentNullException("value");
+                throw PSTraceSource.NewArgumentNullException(nameof(value));
             }
 
             RegistryValueKind result = RegistryValueKind.Unknown;

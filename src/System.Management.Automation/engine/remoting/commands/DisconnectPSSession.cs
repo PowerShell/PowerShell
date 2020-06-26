@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands
             base.BeginProcessing();
 
             _throttleManager.ThrottleLimit = ThrottleLimit;
-            _throttleManager.ThrottleComplete += new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+            _throttleManager.ThrottleComplete += HandleThrottleDisconnectComplete;
         }
 
         /// <summary>
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
                 _operationsComplete.WaitOne();
                 _operationsComplete.Dispose();
 
-                _throttleManager.ThrottleComplete -= new EventHandler<EventArgs>(HandleThrottleDisconnectComplete);
+                _throttleManager.ThrottleComplete -= HandleThrottleDisconnectComplete;
                 _stream.Dispose();
             }
         }

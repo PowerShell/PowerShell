@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_ClassIdInvalid, classId);
 
             ErrorRecord errorRecord = new ErrorRecord(
-                                            PSTraceSource.NewArgumentException("classId"),
+                                            PSTraceSource.NewArgumentException(nameof(classId)),
                                             errorId,
                                             ErrorCategory.InvalidData,
                                             obj);
@@ -154,7 +154,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region Helper Methods
         private static bool IsClass(string x, string y)
         {
-            return string.Compare(x, y, StringComparison.OrdinalIgnoreCase) == 0;
+            return string.Equals(x, y, StringComparison.OrdinalIgnoreCase);
         }
 
 #if _UNUSED
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_RecursiveProperty, property);
 
                 ErrorRecord errorRecord = new ErrorRecord(
-                                PSTraceSource.NewArgumentException("property"),
+                                PSTraceSource.NewArgumentException(nameof(property)),
                                 "FormatObjectDeserializerRecursiveProperty",
                                 ErrorCategory.InvalidData,
                                 so);
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidPropertyType, t.Name, property);
 
                 ErrorRecord errorRecord = new ErrorRecord(
-                                PSTraceSource.NewArgumentException("property"),
+                                PSTraceSource.NewArgumentException(nameof(property)),
                                 "FormatObjectDeserializerInvalidPropertyType",
                                 ErrorCategory.InvalidData,
                                 so);
@@ -392,7 +392,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (so == null)
             {
-                throw PSTraceSource.NewArgumentNullException("so");
+                throw PSTraceSource.NewArgumentNullException(nameof(so));
             }
 
             // look for the property that defines the type of object
@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             Func<FormatInfoData> ctor;
             if (!s_constructors.TryGetValue(clsid, out ctor))
             {
-                CreateInstanceError(PSTraceSource.NewArgumentException("clsid"), clsid, deserializer);
+                CreateInstanceError(PSTraceSource.NewArgumentException(nameof(clsid)), clsid, deserializer);
                 return null;
             }
 
@@ -504,7 +504,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         {
             if (lst == null)
             {
-                throw PSTraceSource.NewArgumentNullException("lst");
+                throw PSTraceSource.NewArgumentNullException(nameof(lst));
             }
 
             object memberRaw = FormatObjectDeserializer.GetProperty(so, property);

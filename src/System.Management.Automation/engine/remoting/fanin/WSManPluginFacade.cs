@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 // ----------------------------------------------------------------------
 //  Contents:  Entry points for managed PowerShell plugin worker used to
@@ -170,6 +170,7 @@ namespace System.Management.Automation.Remoting
 
         // Holds the delegate pointers in a structure that has identical layout to the native structure.
         private WSManPluginEntryDelegatesInternal _unmanagedStruct = new WSManPluginEntryDelegatesInternal();
+
         internal WSManPluginEntryDelegatesInternal UnmanagedStruct
         {
             get { return _unmanagedStruct; }
@@ -418,7 +419,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Immutable container that holds the delegates and their unmanaged pointers.
         /// </summary>
-        internal static WSManPluginEntryDelegates workerPtrs = new WSManPluginEntryDelegates();
+        internal static readonly WSManPluginEntryDelegates workerPtrs = new WSManPluginEntryDelegates();
 
         #region Managed Entry Points
 
@@ -435,27 +436,7 @@ namespace System.Management.Automation.Remoting
             {
                 return WSManPluginConstants.ExitCodeFailure;
             }
-#if !CORECLR
-            // For long-path support, Full .NET requires some AppContext switches;
-            // (for CoreCLR this is Not needed, because CoreCLR supports long paths by default)
-            // internally in .NET they are cached once retrieved and are typically hit very early during an application run;
-            // so per .NET team's recommendation, we are setting them as soon as we enter managed code.
-            // We build against CLR4.5 so we can run on Win7/Win8, but we want to use apis added to CLR 4.6, so we use reflection
-            try
-            {
-                Type appContextType = Type.GetType("System.AppContext"); // type is in mscorlib, so it is sufficient to supply the type name qualified by its namespace
 
-                object[] blockLongPathsSwitch = new object[] { "Switch.System.IO.BlockLongPaths", false };
-                object[] useLegacyPathHandlingSwitch = new object[] { "Switch.System.IO.UseLegacyPathHandling", false };
-
-                appContextType.InvokeMember("SetSwitch", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, null, null, blockLongPathsSwitch, CultureInfo.InvariantCulture);
-                appContextType.InvokeMember("SetSwitch", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, null, null, useLegacyPathHandlingSwitch, CultureInfo.InvariantCulture);
-            }
-            catch (Exception)
-            {
-                // If there are any non-critical exceptions (e.g. we are running on CLR prior to 4.6.2), we won't be able to use long paths
-            }
-#endif
             Marshal.StructureToPtr<WSManPluginEntryDelegates.WSManPluginEntryDelegatesInternal>(workerPtrs.UnmanagedStruct, wkrPtrs, false);
             return WSManPluginConstants.ExitCodeSuccess;
         }

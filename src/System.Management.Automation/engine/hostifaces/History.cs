@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -140,7 +140,6 @@ namespace Microsoft.PowerShell.Commands
         /// Id of the pipeline corresponding to this history entry.
         /// </summary>
         private long _pipelineId;
-
 
         /// <summary>
         /// Returns a clone of this object.
@@ -285,12 +284,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (count < -1)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
             }
 
             if (newest.ToString() == null)
             {
-                throw PSTraceSource.NewArgumentNullException("newest");
+                throw PSTraceSource.NewArgumentNullException(nameof(newest));
             }
 
             if (count == -1 || count > _countEntriesAdded || count > _countEntriesInBuffer)
@@ -331,7 +330,7 @@ namespace Microsoft.PowerShell.Commands
                             if (firstId <= 1) break;
                             // if entry is null , continue the loop with the next entry
                             if (_buffer[GetIndexFromId(i)] == null) continue;
-                            if (_buffer[GetIndexFromId(i)].Cleared == true)
+                            if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,decrement
                                 // first id as long as its is greater than the lowest entry in the buffer.
@@ -344,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // if an entry is null after being cleared by clear-history cmdlet,
                             // continue with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared == true)
+                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared)
                                 continue;
                             entriesList.Add(_buffer[GetIndexFromId(i)].Clone());
                         }
@@ -364,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
                             if (firstId >= _countEntriesAdded) break;
                             // if entry is null , continue the loop with the next entry
                             if (_buffer[GetIndexFromId(i)] == null) continue;
-                            if (_buffer[GetIndexFromId(i)].Cleared == true)
+                            if (_buffer[GetIndexFromId(i)].Cleared)
                             {
                                 // we have to clear count entries before an id, so if an entry is null,increment first id
                                 firstId++;
@@ -376,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // if an entry is null after being cleared by clear-history cmdlet,
                             // continue with the next entry
-                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared == true)
+                            if (_buffer[GetIndexFromId(i)] == null || _buffer[GetIndexFromId(i)].Cleared)
                                 continue;
                             entriesList.Add(_buffer[GetIndexFromId(i)].Clone());
                         }
@@ -406,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (index > _countEntriesAdded) break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
-                                (_buffer[GetIndexFromId(index)].Cleared == true))
+                                (_buffer[GetIndexFromId(index)].Cleared))
                             {
                                 index++; continue;
                             }
@@ -435,7 +434,7 @@ namespace Microsoft.PowerShell.Commands
 
                             if (index < 1) break;
                             if ((index <= 0 || GetIndexFromId(index) >= _buffer.Length) ||
-                                (_buffer[GetIndexFromId(index)].Cleared == true))
+                                (_buffer[GetIndexFromId(index)].Cleared))
                             { index--; continue; }
                             else
                             {
@@ -467,12 +466,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (count < -1)
                 {
-                    throw PSTraceSource.NewArgumentOutOfRangeException("count", count);
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(count), count);
                 }
 
                 if (newest.ToString() == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("newest");
+                    throw PSTraceSource.NewArgumentNullException(nameof(newest));
                 }
 
                 if (count > _countEntriesAdded || count == -1)
@@ -560,7 +559,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (id < 0)
                 {
-                    throw PSTraceSource.NewArgumentOutOfRangeException("id", id);
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(id), id);
                 }
                 // no entries are present to clear
                 if (_countEntriesInBuffer == 0)
@@ -610,7 +609,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (entry == null)
             {
-                throw PSTraceSource.NewArgumentNullException("entry");
+                throw PSTraceSource.NewArgumentNullException(nameof(entry));
             }
 
             _buffer[GetIndexForNewEntry()] = entry;
@@ -638,7 +637,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (id <= 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("id", id);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(id), id);
             }
 
             if (_countEntriesInBuffer == 0)
@@ -1020,7 +1019,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Invoke-history can execute only one command. If multiple
             // ids were provided, throw exception
-            if (_multipleIdProvided == true)
+            if (_multipleIdProvided)
             {
                 Exception ex =
                     new ArgumentException
@@ -1717,7 +1716,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void ProcessRecord()
         {
             // case statement to identify the parameter set
-            switch (ParameterSetName.ToString())
+            switch (ParameterSetName)
             {
                 case "IDParameter":
                     ClearHistoryByID();

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.ComponentModel;
@@ -14,6 +14,7 @@ namespace System.Diagnostics.Eventing
     {
         [SecurityCritical]
         private UnsafeNativeMethods.EtwEnableCallback _etwCallback;  // Trace Callback function
+
         private long _regHandle;                       // Trace Registration Handle
         private byte _level;                            // Tracing Level
         private long _anyKeywordMask;                  // Trace Enable Flags
@@ -24,6 +25,7 @@ namespace System.Diagnostics.Eventing
 
         [ThreadStatic]
         private static WriteEventErrorCode t_returnCode; // thread slot to keep last error
+
         [ThreadStatic]
         private static Guid t_activityId;
 
@@ -48,8 +50,10 @@ namespace System.Diagnostics.Eventing
         {
             [FieldOffset(0)]
             internal ulong DataPointer;
+
             [FieldOffset(8)]
             internal uint Size;
+
             [FieldOffset(12)]
             internal int Reserved;
         }
@@ -435,7 +439,7 @@ namespace System.Diagnostics.Eventing
 
             if (eventMessage == null)
             {
-                throw new ArgumentNullException("eventMessage");
+                throw new ArgumentNullException(nameof(eventMessage));
             }
 
             if (IsEnabled(eventLevel, eventKeywords))
@@ -619,7 +623,7 @@ namespace System.Diagnostics.Eventing
                             //
                             // too many arguments to log
                             //
-                            throw new ArgumentOutOfRangeException("eventPayload",
+                            throw new ArgumentOutOfRangeException(nameof(eventPayload),
                                 string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxArgExceeded, s_etwMaxNumberArguments));
                         }
 
@@ -656,7 +660,7 @@ namespace System.Diagnostics.Eventing
                                 }
                                 else
                                 {
-                                    throw new ArgumentOutOfRangeException("eventPayload",
+                                    throw new ArgumentOutOfRangeException(nameof(eventPayload),
                                         string.Format(CultureInfo.CurrentCulture, DotNetEventingStrings.ArgumentOutOfRange_MaxStringsExceeded, s_etwAPIMaxStringCount));
                                 }
                             }

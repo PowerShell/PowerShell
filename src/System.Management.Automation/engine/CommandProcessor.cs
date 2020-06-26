@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -104,7 +104,7 @@ namespace System.Management.Automation
             Cmdlet cmdlet = command as Cmdlet;
             if (cmdlet == null)
             {
-                throw PSTraceSource.NewArgumentException("command");
+                throw PSTraceSource.NewArgumentException(nameof(command));
             }
 
             ParameterBinderBase parameterBinder;
@@ -667,6 +667,7 @@ namespace System.Management.Automation
         }
 
         private static readonly ConcurrentDictionary<Type, Func<Cmdlet>> s_constructInstanceCache;
+
         private static Cmdlet ConstructInstance(Type type)
         {
             // Call the default constructor if type derives from Cmdlet.

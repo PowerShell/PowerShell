@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.ObjectModel;
@@ -222,8 +222,7 @@ namespace System.Management.Automation.Remoting
                 PowerShell shell = remotePipeline.PowerShell;
                 if (shell.RemotePowerShell != null)
                 {
-                    shell.RemotePowerShell.RCConnectionNotification +=
-                        new EventHandler<PSConnectionRetryStatusEventArgs>(HandleRCConnectionNotification);
+                    shell.RemotePowerShell.RCConnectionNotification += HandleRCConnectionNotification;
                 }
 
                 // Add callback to write robust connection errors from stream.
@@ -314,12 +313,11 @@ namespace System.Management.Automation.Remoting
                     powerShell.AddParameter("Name", new string[] { "Out-Default", "Exit-PSSession" });
                     powerShell.Runspace = _runspaceRef.Value;
 
-                    bool isReleaseCandidateBackcompatibilityMode =
-                        _runspaceRef.Value.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersionWin7RC;
+                    bool isReleaseCandidateBackcompatibilityMode = _runspaceRef.Value.GetRemoteProtocolVersion() == RemotingConstants.ProtocolVersionWin7RC;
                     powerShell.IsGetCommandMetadataSpecialPipeline = !isReleaseCandidateBackcompatibilityMode;
                     int expectedNumberOfResults = isReleaseCandidateBackcompatibilityMode ? 2 : 3;
 
-                    powerShell.RemotePowerShell.HostCallReceived += new EventHandler<RemoteDataEventArgs<RemoteHostCall>>(HandleHostCall);
+                    powerShell.RemotePowerShell.HostCallReceived += HandleHostCall;
 
                     IAsyncResult asyncResult = powerShell.BeginInvoke();
                     PSDataCollection<PSObject> results = new PSDataCollection<PSObject>();

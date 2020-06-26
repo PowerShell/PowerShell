@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
                     _lastObjectAsString = _lastObject.ToString();
                 }
 
-                if (0 == string.Compare(
+                if (string.Equals(
                     inputString,
                     _lastObjectAsString,
                     StringComparison.CurrentCulture))

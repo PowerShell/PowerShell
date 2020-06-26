@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -1493,6 +1493,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private readonly Dictionary<Guid, bool> _eventArgsWritten = new Dictionary<Guid, bool>();
+
         private void WriteJobStateInformation(Job job, JobStateEventArgs args = null)
         {
             // at any point there will be only one thread which will have

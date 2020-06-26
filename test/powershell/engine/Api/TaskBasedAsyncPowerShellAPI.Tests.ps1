@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Task-based PowerShell async APIs' -Tags 'Feature' {
@@ -91,8 +91,8 @@ try {
                 # in a runspace that has not been opened.
                 $err = { $ps.AddScript('1+1').InvokeAsync() } | Should -Throw -ErrorId "InvalidRunspaceStateException" -PassThru
 
-                $err.Exception | Should -BeOfType "System.Management.Automation.MethodInvocationException"
-                $err.Exception.InnerException | Should -BeOfType "System.Management.Automation.Runspaces.InvalidRunspaceStateException"
+                $err.Exception | Should -BeOfType System.Management.Automation.MethodInvocationException
+                $err.Exception.InnerException | Should -BeOfType System.Management.Automation.Runspaces.InvalidRunspaceStateException
                 $err.Exception.InnerException.CurrentState | Should -Be 'BeforeOpen'
                 $err.Exception.InnerException.ExpectedState | Should -Be 'Opened'
             } finally {

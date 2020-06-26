@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -146,7 +146,7 @@ namespace Microsoft.Management.UI.Internal
         {
             Dispatcher.BeginInvoke(
                 DispatcherPriority.Background,
-                (DispatcherOperationCallback)delegate(object arg)
+                (DispatcherOperationCallback)((arg) =>
                 {
                     if (this.IsLoaded)
                     {
@@ -154,7 +154,7 @@ namespace Microsoft.Management.UI.Internal
                     }
 
                     return null;
-                },
+                }),
                 item);
         }
 
@@ -543,8 +543,8 @@ namespace Microsoft.Management.UI.Internal
                 if (header != null)
                 {
                     // header Click
-                    header.Click += new RoutedEventHandler(this.Header_Click);
-                    header.PreviewKeyDown += new KeyEventHandler(this.Header_KeyDown);
+                    header.Click += this.Header_Click;
+                    header.PreviewKeyDown += this.Header_KeyDown;
                 }
 
                 // If it is a GridViewColumnHeader we will not have the same nice sorting and grouping
@@ -695,7 +695,7 @@ namespace Microsoft.Management.UI.Internal
             MenuItem columnPicker = new MenuItem();
             AutomationProperties.SetAutomationId(columnPicker, "ChooseColumns");
             columnPicker.Header = UICultureResources.ColumnPicker;
-            columnPicker.Click += new RoutedEventHandler(this.innerGrid.OnColumnPicker);
+            columnPicker.Click += this.innerGrid.OnColumnPicker;
 
             this.contextMenu.Items.Add(columnPicker);
 

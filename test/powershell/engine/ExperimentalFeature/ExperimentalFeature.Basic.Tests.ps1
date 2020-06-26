@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
@@ -167,8 +167,8 @@ Describe "Experimental Feature Basic Tests - Feature-Disabled" -tags "CI" {
         ## Common parameters + '-Name' and '-ConfigName' (dynamic parameters are triggered)
         $command.Parameters.Count | Should -Be ($CommonParameterCount + 2)
         $command.Parameters["ConfigName"].Attributes.Count | Should -Be 2
-        $command.Parameters["ConfigName"].Attributes[0] | Should -BeOfType [parameter]
-        $command.Parameters["ConfigName"].Attributes[1] | Should -BeOfType [ValidateNotNullOrEmpty]
+        $command.Parameters["ConfigName"].Attributes[0] | Should -BeOfType parameter
+        $command.Parameters["ConfigName"].Attributes[1] | Should -BeOfType ValidateNotNullOrEmpty
 
         $command.Parameters.ContainsKey("ConfigFile") | Should -BeFalse
     }
@@ -365,8 +365,8 @@ Describe "Experimental Feature Basic Tests - Feature-Enabled" -Tag "CI" {
         ## Common parameters + '-Name' and '-ConfigFile' (dynamic parameters are triggered)
         $command.Parameters.Count | Should -Be ($CommonParameterCount + 2)
         $command.Parameters["ConfigFile"].Attributes.Count | Should -Be 2
-        $command.Parameters["ConfigFile"].Attributes[0] | Should -BeOfType [parameter]
-        $command.Parameters["ConfigFile"].Attributes[1] | Should -BeOfType [ValidateNotNullOrEmpty]
+        $command.Parameters["ConfigFile"].Attributes[0] | Should -BeOfType parameter
+        $command.Parameters["ConfigFile"].Attributes[1] | Should -BeOfType ValidateNotNullOrEmpty
 
         $command.Parameters.ContainsKey("ConfigName") | Should -BeFalse
     }

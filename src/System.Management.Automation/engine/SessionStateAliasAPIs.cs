@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -255,12 +255,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(aliasName))
             {
-                throw PSTraceSource.NewArgumentException("aliasName");
+                throw PSTraceSource.NewArgumentException(nameof(aliasName));
             }
 
             if (string.IsNullOrEmpty(value))
             {
-                throw PSTraceSource.NewArgumentException("value");
+                throw PSTraceSource.NewArgumentException(nameof(value));
             }
 
             AliasInfo info = _currentScope.SetAliasValue(aliasName, value, this.ExecutionContext, force, origin);
@@ -332,12 +332,12 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(aliasName))
             {
-                throw PSTraceSource.NewArgumentException("aliasName");
+                throw PSTraceSource.NewArgumentException(nameof(aliasName));
             }
 
             if (string.IsNullOrEmpty(value))
             {
-                throw PSTraceSource.NewArgumentException("value");
+                throw PSTraceSource.NewArgumentException(nameof(value));
             }
 
             AliasInfo info = _currentScope.SetAliasValue(aliasName, value, options, this.ExecutionContext, force, origin);
@@ -405,7 +405,7 @@ namespace System.Management.Automation
         {
             if (alias == null)
             {
-                throw PSTraceSource.NewArgumentNullException("alias");
+                throw PSTraceSource.NewArgumentNullException(nameof(alias));
             }
 
             AliasInfo info = _currentScope.SetAliasItem(alias, force, origin);
@@ -452,7 +452,7 @@ namespace System.Management.Automation
         {
             if (alias == null)
             {
-                throw PSTraceSource.NewArgumentNullException("alias");
+                throw PSTraceSource.NewArgumentNullException(nameof(alias));
             }
 
             // If the "private" scope was specified, make sure the options contain
@@ -526,7 +526,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(aliasName))
             {
-                throw PSTraceSource.NewArgumentException("aliasName");
+                throw PSTraceSource.NewArgumentException(nameof(aliasName));
             }
 
             // Use the scope enumerator to find an existing function

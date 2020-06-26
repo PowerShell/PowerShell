@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -361,7 +361,6 @@ namespace System.Management.Automation
         public SteppablePipeline GetSteppablePipeline()
             => GetSteppablePipelineImpl(commandOrigin: CommandOrigin.Internal, args: null);
 
-
         /// <summary>
         /// Get a steppable pipeline object.
         /// </summary>
@@ -464,7 +463,7 @@ namespace System.Management.Automation
             if (variablesToDefine != null)
             {
                 // Extract the special variables "this", "input" and "_"
-                PSVariable located = variablesToDefine.FirstOrDefault(
+                PSVariable located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "this", StringComparison.OrdinalIgnoreCase));
                 if (located != null)
                 {
@@ -472,7 +471,7 @@ namespace System.Management.Automation
                     variablesToDefine.Remove(located);
                 }
 
-                located = variablesToDefine.FirstOrDefault(
+                located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "_", StringComparison.Ordinal));
                 if (located != null)
                 {
@@ -480,7 +479,7 @@ namespace System.Management.Automation
                     variablesToDefine.Remove(located);
                 }
 
-                located = variablesToDefine.FirstOrDefault(
+                located = variablesToDefine.Find(
                     v => string.Equals(v.Name, "input", StringComparison.OrdinalIgnoreCase));
                 if (located != null)
                 {
@@ -647,16 +646,17 @@ namespace System.Management.Automation
         /// <remarks>
         /// This does normal array reduction in the case of a one-element array.
         /// </remarks>
-        internal static object GetRawResult(List<object> result)
+        internal static object GetRawResult(List<object> result, bool wrapToPSObject)
         {
             switch (result.Count)
             {
                 case 0:
                     return AutomationNull.Value;
                 case 1:
-                    return LanguagePrimitives.AsPSObjectOrNull(result[0]);
+                    return wrapToPSObject ? LanguagePrimitives.AsPSObjectOrNull(result[0]) : result[0];
                 default:
-                    return LanguagePrimitives.AsPSObjectOrNull(result.ToArray());
+                    object resultArray = result.ToArray();
+                    return wrapToPSObject ? LanguagePrimitives.AsPSObjectOrNull(resultArray) : resultArray;
             }
         }
 
@@ -807,7 +807,7 @@ namespace System.Management.Automation
                 outputPipe: outputPipe,
                 invocationInfo: null,
                 args: args);
-            return GetRawResult(rawResult);
+            return GetRawResult(rawResult, wrapToPSObject: false);
         }
 
         #endregion
@@ -934,7 +934,7 @@ namespace System.Management.Automation
                 outputPipe: outputPipe,
                 invocationInfo: null,
                 args: args);
-            return GetRawResult(result);
+            return GetRawResult(result, wrapToPSObject: true);
         }
 
         internal void InvokeWithPipe(

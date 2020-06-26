@@ -1,12 +1,12 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Write-Error Tests" -Tags "CI" {
     It "Should be works with command: write-error myerrortext" {
         $e = Write-Error myerrortext 2>&1
-        $e | Should -BeOfType 'System.Management.Automation.ErrorRecord'
+        $e | Should -BeOfType System.Management.Automation.ErrorRecord
 
         #Exception verification
-        $e.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.WriteErrorException'
+        $e.Exception | Should -BeOfType Microsoft.PowerShell.Commands.WriteErrorException
         $e.Exception.Message | Should -Be 'myerrortext'
         $e.Exception.Data.Count | Should -Be 0
         $e.Exception.InnerException | Should -BeNullOrEmpty
@@ -35,10 +35,10 @@ Describe "Write-Error Tests" -Tags "CI" {
         $exception = New-Object -TypeName System.ArgumentNullException -ArgumentList paramname
         $e = Write-Error -Message myerrortext -Exception $exception -ErrorId myerrorid -Category syntaxerror -TargetObject TargetObject -CategoryActivity myactivity -CategoryReason myreason -CategoryTargetName mytargetname -CategoryTargetType mytargettype -RecommendedAction myrecommendedaction 2>&1
         $e | Should -Not -BeNullOrEmpty
-        $e | Should -BeOfType 'System.Management.Automation.ErrorRecord'
+        $e | Should -BeOfType System.Management.Automation.ErrorRecord
 
         #Exception verification
-        $e.Exception | Should -BeOfType 'System.ArgumentNullException'
+        $e.Exception | Should -BeOfType System.ArgumentNullException
         $e.Exception.ParamName | Should -Be 'paramname'
         $e.Exception.Data.Count | Should -Be 0
         $e.Exception.InnerException | Should -BeNullOrEmpty
@@ -69,7 +69,7 @@ Describe "Write-Error Tests" -Tags "CI" {
     }
 
     It "Should be works with all parameters" {
-        $e = write-error -Activity fooAct -Reason fooReason -TargetName fooTargetName -TargetType fooTargetType -Message fooMessage 2>&1
+        $e = Write-Error -Activity fooAct -Reason fooReason -TargetName fooTargetName -TargetType fooTargetType -Message fooMessage 2>&1
         $e.CategoryInfo.Activity | Should -Be 'fooAct'
         $e.CategoryInfo.Reason | Should -Be 'fooReason'
         $e.CategoryInfo.TargetName | Should -Be 'fooTargetName'
@@ -91,7 +91,7 @@ Describe "Write-Error Tests" -Tags "CI" {
 
     It "Should output the error message to the `$error automatic variable" {
         $theError = "Error: Too many input values."
-        write-error -message $theError -category InvalidArgument -ErrorAction SilentlyContinue
+        Write-Error -Message $theError -Category InvalidArgument -ErrorAction SilentlyContinue
 
         [string]$error[0] | Should -Be $theError
     }

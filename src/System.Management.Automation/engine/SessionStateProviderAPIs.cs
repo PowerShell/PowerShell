@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -254,7 +254,7 @@ namespace System.Management.Automation
         {
             if (providerId == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerId");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
             ProviderInfo provider = GetSingleProvider(providerId);
@@ -278,7 +278,7 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             return provider.CreateInstance();
@@ -347,7 +347,7 @@ namespace System.Management.Automation
         {
             if (providerId == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerId");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
             DriveCmdletProvider driveCmdletProvider =
@@ -382,7 +382,7 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             DriveCmdletProvider driveCmdletProvider =
@@ -417,7 +417,7 @@ namespace System.Management.Automation
         {
             if (providerInstance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInstance");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
             DriveCmdletProvider driveCmdletProvider =
@@ -455,7 +455,7 @@ namespace System.Management.Automation
         {
             if (providerId == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerId");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
             ItemCmdletProvider itemCmdletProvider =
@@ -490,7 +490,7 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             ItemCmdletProvider itemCmdletProvider =
@@ -525,7 +525,7 @@ namespace System.Management.Automation
         {
             if (providerInstance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInstance");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
             ItemCmdletProvider itemCmdletProvider =
@@ -563,7 +563,7 @@ namespace System.Management.Automation
         {
             if (providerId == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerId");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerId));
             }
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -598,7 +598,7 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -633,7 +633,7 @@ namespace System.Management.Automation
         {
             if (providerInstance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInstance");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
             ContainerCmdletProvider containerCmdletProvider =
@@ -668,7 +668,7 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             NavigationCmdletProvider navigationCmdletProvider =
@@ -707,7 +707,7 @@ namespace System.Management.Automation
         {
             if (providerInstance == null)
             {
-                throw PSTraceSource.NewArgumentNullException("providerInstance");
+                throw PSTraceSource.NewArgumentNullException(nameof(providerInstance));
             }
 
             NavigationCmdletProvider navigationCmdletProvider =
@@ -742,7 +742,7 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             // Get the provider from the providers container
@@ -780,7 +780,7 @@ namespace System.Management.Automation
         {
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             PSSnapinQualifiedName providerName = PSSnapinQualifiedName.GetInstance(name);
@@ -987,7 +987,7 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             if (context == null)
@@ -1105,7 +1105,7 @@ namespace System.Management.Automation
         {
             if (provider == null)
             {
-                throw PSTraceSource.NewArgumentNullException("provider");
+                throw PSTraceSource.NewArgumentNullException(nameof(provider));
             }
 
             // Check to see if the provider already exists.
@@ -1269,7 +1269,7 @@ namespace System.Management.Automation
                     // An exception during initialization should remove the provider from
                     // session state.
 
-                    Providers.Remove(provider.Name.ToString());
+                    Providers.Remove(provider.Name);
                     ProvidersCurrentWorkingDrive.Remove(provider);
                     provider = null;
                 }
@@ -1394,12 +1394,12 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("context");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             if (string.IsNullOrEmpty(providerName))
             {
-                throw PSTraceSource.NewArgumentException("providerName");
+                throw PSTraceSource.NewArgumentException(nameof(providerName));
             }
 
             bool errors = false;

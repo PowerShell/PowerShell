@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -37,6 +37,7 @@ namespace System.Management.Automation.Language
     internal class FindAllVariablesVisitor : AstVisitor
     {
         private static readonly HashSet<string> s_hashOfPessimizingCmdlets = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly string[] s_pessimizingCmdlets = new string[]
                                                           {
                                                               "New-Variable",
@@ -102,11 +103,12 @@ namespace System.Management.Automation.Language
                 visitor.VisitParameters(ast.Parameters);
             }
 
-            localsAllocated = visitor._variables.Where(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed).Count();
+            localsAllocated = visitor._variables.Count(details => details.Value.LocalTupleIndex != VariableAnalysis.Unanalyzed);
             return visitor._variables;
         }
 
         private bool _disableOptimizations;
+
         private readonly Dictionary<string, VariableAnalysisDetails> _variables
             = new Dictionary<string, VariableAnalysisDetails>(StringComparer.OrdinalIgnoreCase);
 
@@ -251,6 +253,7 @@ namespace System.Management.Automation.Language
         }
 
         private int _runtimeUsingIndex;
+
         public override AstVisitAction VisitUsingExpression(UsingExpressionAst usingExpressionAst)
         {
             // On the local machine, we may have set the index because of a call to ScriptBlockToPowerShell or Invoke-Command.
@@ -353,6 +356,7 @@ namespace System.Management.Automation.Language
             internal object _visitData;
             internal bool _throws;
             internal bool _returns;
+
             internal bool _unreachable { get; private set; }
 
             // Only Entry block, that can be constructed via NewEntryBlock() is reachable initially.
@@ -1412,7 +1416,7 @@ namespace System.Management.Automation.Language
             if (label != null)
             {
                 label.Accept(this);
-                if (_loopTargets.Any())
+                if (_loopTargets.Count > 0)
                 {
                     var labelStrAst = label as StringConstantExpressionAst;
                     if (labelStrAst != null)
@@ -1596,7 +1600,7 @@ namespace System.Management.Automation.Language
             // break or continue, so add the appropriate edges to our graph.  These edges occur after visiting
             // the command elements because command arguments could create new blocks, and we won't have executed
             // the command yet.
-            if (invokesCommand && _loopTargets.Any())
+            if (invokesCommand && _loopTargets.Count > 0)
             {
                 foreach (var loopTarget in _loopTargets)
                 {

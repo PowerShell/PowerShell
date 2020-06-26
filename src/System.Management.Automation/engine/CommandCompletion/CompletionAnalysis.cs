@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1514,19 +1514,18 @@ namespace System.Management.Automation
                 var analysis = new CompletionAnalysis(_ast, _tokens, _cursorPosition, _options);
                 var subContext = analysis.CreateCompletionContext(completionContext.TypeInferenceContext);
 
-                int subReplaceIndex, subReplaceLength;
-                var subResult = analysis.GetResultHelper(subContext, out subReplaceIndex, out subReplaceLength, true);
+                var subResult = analysis.GetResultHelper(subContext, out int subReplaceIndex, out _, true);
 
                 if (subResult != null && subResult.Count > 0)
                 {
                     result = new List<CompletionResult>();
                     replacementIndex = stringStartIndex + 1 + (cursorIndexInString - subInput.Length);
                     replacementLength = subInput.Length;
-                    string prefix = subInput.Substring(0, subReplaceIndex);
+                    ReadOnlySpan<char> prefix = subInput.AsSpan(0, subReplaceIndex);
 
                     foreach (CompletionResult entry in subResult)
                     {
-                        string completionText = prefix + entry.CompletionText;
+                        string completionText = string.Concat(prefix, entry.CompletionText.AsSpan());
                         if (entry.ResultType == CompletionResultType.Property)
                         {
                             completionText = TokenKind.DollarParen.Text() + completionText + TokenKind.RParen.Text();
@@ -1565,7 +1564,7 @@ namespace System.Management.Automation
                         result = new List<CompletionResult>(CompletionCompleters.CompleteFilename(completionContext));
 
                         // Try command name completion only if the text contains '-'
-                        if (wordToComplete.IndexOf('-') != -1)
+                        if (wordToComplete.Contains('-'))
                         {
                             var commandNameResult = CompletionCompleters.CompleteCommand(completionContext);
                             if (commandNameResult != null && commandNameResult.Count > 0)
@@ -1634,7 +1633,7 @@ namespace System.Management.Automation
 
             IEnumerable<DynamicKeyword> keywords = configureAst.DefinedKeywords.Where(
                 k => // Node is special case, legal in both Resource and Meta configuration
-                    string.Compare(k.Keyword, @"Node", StringComparison.OrdinalIgnoreCase) == 0 ||
+                    string.Equals(k.Keyword, @"Node", StringComparison.OrdinalIgnoreCase) ||
                     (
                         // Check compatibility between Resource and Configuration Type
                         k.IsCompatibleWithConfigurationType(configureAst.ConfigurationType) &&
@@ -1955,7 +1954,7 @@ namespace System.Management.Automation
                 // If the last token was just a '.', we tried to complete members.  That may
                 // have failed because it wasn't really an attempt to complete a member, in
                 // which case we should try to complete as an argument.
-                if (result.Any())
+                if (result.Count > 0)
                 {
                     if (!isWildcard && memberOperator != TokenKind.Unknown)
                     {
@@ -1970,7 +1969,7 @@ namespace System.Management.Automation
             if (lastAst.Parent is HashtableAst)
             {
                 result = CompletionCompleters.CompleteHashtableKey(completionContext, (HashtableAst)lastAst.Parent);
-                if (result != null && result.Any())
+                if (result != null && result.Count > 0)
                 {
                     return result;
                 }
@@ -1993,7 +1992,7 @@ namespace System.Management.Automation
             else if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
             {
                 var command = lastAst.Parent as CommandBaseAst;
-                if (command != null && command.Redirections.Any())
+                if (command != null && command.Redirections.Count > 0)
                 {
                     var fileRedirection = command.Redirections[0] as FileRedirectionAst;
                     if (fileRedirection != null &&

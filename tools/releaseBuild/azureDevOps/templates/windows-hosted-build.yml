@@ -1,0 +1,63 @@
+parameters:
+  BuildConfiguration: release
+  BuildPlatform: any cpu
+  Architecture: x64
+  parentJob: ''
+jobs:
+- job: build_windows_${{ parameters.Architecture }}
+  displayName: Build Windows - ${{ parameters.Architecture }}
+  condition: succeeded()
+  dependsOn: ${{ parameters.parentJob }}
+  pool:
+    vmImage: windows-latest
+  variables:
+    BuildConfiguration: ${{ parameters.BuildConfiguration }}
+    BuildPlatform: ${{ parameters.BuildPlatform }}
+    Architecture: ${{ parameters.Architecture }}
+    DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+
+  steps:
+
+  - checkout: self
+    clean: true
+    persistCredentials: true
+
+  - template: SetVersionVariables.yml
+    parameters:
+      ReleaseTagVar: $(ReleaseTagVar)
+
+  - template: insert-nuget-config-azfeed.yml
+
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=PowerShellRoot]/PowerShell"
+      $null = New-Item -ItemType Directory -Path /Powershell -Force
+      git clone $env:BUILD_REPOSITORY_LOCALPATH /PowerShell
+    displayName: Clone PowerShell Repo to /PowerShell
+
+  - powershell: |
+
+      $runtime = switch ($env:Architecture)
+        {
+          "x64" { "win7-x64" }
+          "x86" { "win7-x86" }
+          "arm" { "win-arm"}
+          "arm64" { "win-arm64" }
+          "fxdependent" { "fxdependent" }
+          "fxdependentWinDesktop" { "fxdependent-win-desktop" }
+        }
+
+      tools/releaseBuild/Images/microsoft_powershell_windowsservercore/PowerShellPackage.ps1 -location '$(PowerShellRoot)' -destination '$(Build.ArtifactStagingDirectory)/Symbols_$(Architecture)' -Runtime $runtime -ReleaseTag '$(ReleaseTagVar)' -Symbols
+    displayName: 'Build Windows Universal - $(Architecture) Symbols zip'
+
+  - powershell: |
+      $packageName = (Get-ChildItem '$(Build.ArtifactStagingDirectory)\Symbols_$(Architecture)').FullName
+      $vstsCommandString = "vso[artifact.upload containerfolder=results;artifactname=results]$packageName"
+      Write-Host ("sending " + $vstsCommandString)
+      Write-Host "##$vstsCommandString"
+    displayName: Upload symbols package
+
+  - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+    displayName: 'Component Detection'
+    inputs:
+      sourceScanPath: '$(Build.SourcesDirectory)'
+      snapshotForceEnabled: true

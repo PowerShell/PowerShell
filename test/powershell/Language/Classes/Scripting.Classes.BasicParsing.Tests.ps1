@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Positive Parse Properties Tests' -Tags "CI" {
@@ -105,7 +105,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         class C12c { [void] f() { [System.Management.Automation.Host.Rectangle]$foo = [System.Management.Automation.Host.Rectangle]::new(0, 0, 0, 0) } }
     }
 
-    context "Positive ParseMethods return type Test" {
+    Context "Positive ParseMethods return type Test" {
         # Method with return type of self
         class C9 { [C9] f() { return [C9]::new() } }
         $c9 = [C9]::new().f()
@@ -710,7 +710,7 @@ visibleX visibleY
 
         # Get-Member should not include hidden members by default
         $member = $instance | Get-Member hiddenZ
-        it "Get-Member should not find hidden member w/o -Force" { $member | Should -BeNullOrEmpty }
+        It "Get-Member should not find hidden member w/o -Force" { $member | Should -BeNullOrEmpty }
 
         # Get-Member should include hidden members with -Force
         $member = $instance | Get-Member hiddenZ -Force
@@ -742,10 +742,10 @@ Describe 'Scoped Types Test' -Tags "CI" {
         {
             class C1 { [string] GetContext() { return "f2 scope" } }
 
-            return (new-object C1).GetContext()
+            return (New-Object C1).GetContext()
         }
 
-        It "New-Object at test scope" { (new-object C1).GetContext() | Should -BeExactly "Test scope" }
+        It "New-Object at test scope" { (New-Object C1).GetContext() | Should -BeExactly "Test scope" }
         It "[C1]::new() at test scope" { [C1]::new().GetContext() | Should -BeExactly "Test scope" }
 
         It "[C1]::new() in nested scope" { (f1) | Should -BeExactly "f1 scope" }
@@ -804,7 +804,7 @@ Describe 'Type building' -Tags "CI" {
 
 Describe 'RuntimeType created for TypeDefinitionAst' -Tags "CI" {
 
-    It 'can make cast to the right RuntimeType in two different contexts' -pending {
+    It 'can make cast to the right RuntimeType in two different contexts' -Pending {
 
         $ssfe = [System.Management.Automation.Runspaces.SessionStateFunctionEntry]::new("foo", @'
 class Base
@@ -887,7 +887,7 @@ class A
 
     [int] GetX([Foo.Bar]$bar)
     {
-        Set-StrictMode -Version latest
+        Set-StrictMode -Version 3.0
         return $bar.x
     }
 }

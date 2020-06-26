@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 <############################################################################################
  # File: Pester.AutomountedDrives.Tests.ps1
@@ -25,7 +25,7 @@ Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feat
         try
         {
             $tmpVhdPath = Join-Path $TestDrive 'TestVHD.vhd'
-            New-VHD -path $tmpVhdPath -SizeBytes 5mb -Dynamic -ErrorAction Stop
+            New-VHD -Path $tmpVhdPath -SizeBytes 5mb -Dynamic -ErrorAction Stop
             Remove-Item $tmpVhdPath
             $VHDToolsNotFound = (Get-Module Hyper-V).PrivateData.ImplicitRemoting -eq $true
             Remove-Module Hyper-V

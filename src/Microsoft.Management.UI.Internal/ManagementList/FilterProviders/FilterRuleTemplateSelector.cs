@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -45,11 +45,7 @@ namespace Microsoft.Management.UI.Internal
                 return base.SelectTemplate(item, container);
             }
 
-            Type type = item as Type;
-            if (type == null)
-            {
-                type = item.GetType();
-            }
+            Type type = item as Type ?? item.GetType();
 
             DataTemplate template;
 

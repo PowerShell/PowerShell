@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -283,6 +283,7 @@ namespace System.Management.Automation
 
         // We delay parsing scripts loaded on startup, so we save the text.
         private string _scriptText;
+
         internal IParameterMetadataProvider Ast { get => _ast ?? DelayParseScriptText(); }
 
         private IParameterMetadataProvider _ast;
@@ -324,6 +325,7 @@ namespace System.Management.Automation
         internal Action<FunctionContext> UnoptimizedEndBlock { get; set; }
 
         internal IScriptExtent[] SequencePoints { get; set; }
+
         private RuntimeDefinedParameterDictionary _runtimeDefinedParameterDictionary;
         private Attribute[] _attributes;
         private bool _usesCmdletBinding;
@@ -331,6 +333,7 @@ namespace System.Management.Automation
         private bool _compiledUnoptimized;
         private bool _hasSuspiciousContent;
         private bool? _isProductCode;
+
         internal bool DebuggerHidden { get; set; }
         internal bool DebuggerStepThrough { get; set; }
         internal Guid Id { get; private set; }
@@ -425,7 +428,7 @@ namespace System.Management.Automation
                 }
 
                 return _usesCmdletBinding
-                    ? (CmdletBindingAttribute)_attributes.FirstOrDefault(attr => attr is CmdletBindingAttribute)
+                    ? (CmdletBindingAttribute)Array.Find(_attributes, attr => attr is CmdletBindingAttribute)
                     : null;
             }
         }
@@ -439,7 +442,7 @@ namespace System.Management.Automation
                     InitializeMetadata();
                 }
 
-                return (ObsoleteAttribute)_attributes.FirstOrDefault(attr => attr is ObsoleteAttribute);
+                return (ObsoleteAttribute)Array.Find(_attributes, attr => attr is ObsoleteAttribute);
             }
         }
 
@@ -555,6 +558,7 @@ namespace System.Management.Automation
 
         private static readonly ConcurrentDictionary<Tuple<string, string>, ScriptBlock> s_cachedScripts =
             new ConcurrentDictionary<Tuple<string, string>, ScriptBlock>();
+
         internal static ScriptBlock TryGetCachedScriptBlock(string fileName, string fileContents)
         {
             if (InternalTestHooks.IgnoreScriptBlockCache)
@@ -579,7 +583,7 @@ namespace System.Management.Automation
             => ast is CommandAst cmdAst && cmdAst.DefiningKeyword != null;
 
         private static bool IsUsingTypes(Ast ast)
-            => ast is UsingStatementAst cmdAst && cmdAst.IsUsingModuleOrAssembly() == true;
+            => ast is UsingStatementAst cmdAst && cmdAst.IsUsingModuleOrAssembly();
 
         internal static void CacheScriptBlock(ScriptBlock scriptBlock, string fileName, string fileContents)
         {
@@ -619,7 +623,7 @@ namespace System.Management.Automation
             s_cachedScripts.Clear();
         }
 
-        internal static ScriptBlock EmptyScriptBlock =
+        internal static readonly ScriptBlock EmptyScriptBlock =
             ScriptBlock.CreateDelayParsedScriptBlock(string.Empty, isProductCode: true);
 
         internal static ScriptBlock Create(Parser parser, string fileName, string fileContents)
@@ -719,7 +723,6 @@ namespace System.Management.Automation
                 args);
         }
 
-
         internal SteppablePipeline GetSteppablePipelineImpl(CommandOrigin commandOrigin, object[] args)
         {
             var pipelineAst = GetSimplePipeline(
@@ -745,7 +748,7 @@ namespace System.Management.Automation
 
             var ast = AstInternal;
             var statements = ast.Body.EndBlock.Statements;
-            if (!statements.Any())
+            if (statements.Count == 0)
             {
                 return errorHandler(AutomationExceptions.CantConvertEmptyPipeline);
             }
@@ -755,7 +758,7 @@ namespace System.Management.Automation
                 return errorHandler(AutomationExceptions.CanOnlyConvertOnePipeline);
             }
 
-            if (ast.Body.EndBlock.Traps != null && ast.Body.EndBlock.Traps.Any())
+            if (ast.Body.EndBlock.Traps != null && ast.Body.EndBlock.Traps.Count > 0)
             {
                 return errorHandler(AutomationExceptions.CantConvertScriptBlockWithTrap);
             }
@@ -901,7 +904,7 @@ namespace System.Management.Automation
                     AstVisitAction.Continue);
             }
 
-            if (parser.ErrorList.Any())
+            if (parser.ErrorList.Count > 0)
             {
                 throw new ParseException(parser.ErrorList.ToArray());
             }
@@ -979,10 +982,10 @@ namespace System.Management.Automation
 
             // Validate at the arguments are consistent. The only public API that gets you here never sets createLocalScope to false...
             Diagnostics.Assert(
-                createLocalScope == true || functionsToDefine == null,
+                createLocalScope || functionsToDefine == null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'functionsToDefine' != null then 'createLocalScope' must be true");
             Diagnostics.Assert(
-                createLocalScope == true || variablesToDefine == null,
+                createLocalScope || variablesToDefine == null,
                 "When calling ScriptBlock.InvokeWithContext(), if 'variablesToDefine' != null then 'createLocalScope' must be true");
 
             if (args == null)
@@ -1717,6 +1720,7 @@ namespace System.Management.Automation
         private static string s_lastSeenCertificate = string.Empty;
         private static bool s_hasProcessedCertificate = false;
         private static CmsMessageRecipient[] s_encryptionRecipients = null;
+
         private static Lazy<ScriptBlockLogging> s_sbLoggingSettingCache = new Lazy<ScriptBlockLogging>(
             () => Utils.GetPolicySetting<ScriptBlockLogging>(Utils.SystemWideThenCurrentUserConfig),
             isThreadSafe: true);
@@ -1774,7 +1778,7 @@ namespace System.Management.Automation
             return null;
         }
 
-        class SuspiciousContentChecker
+        private class SuspiciousContentChecker
         {
             // Based on a (bad) random number generator, but good enough
             // for our simple needs.
@@ -1789,7 +1793,7 @@ namespace System.Management.Automation
             /// code - needed only to generate this switch statement below.)
             /// </summary>
             /// <returns>The string matching the hash, or null.</returns>
-            static string LookupHash(uint h)
+            private static string LookupHash(uint h)
             {
                 switch (h)
                 {
@@ -2154,7 +2158,7 @@ namespace System.Management.Automation
             _scriptText = info.GetValue("ScriptText", typeof(string)) as string;
             if (_scriptText == null)
             {
-                throw PSTraceSource.NewArgumentNullException("info");
+                throw PSTraceSource.NewArgumentNullException(nameof(info));
             }
         }
 

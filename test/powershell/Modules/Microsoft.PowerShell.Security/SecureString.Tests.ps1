@@ -1,20 +1,20 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "SecureString conversion tests" -Tags "CI" {
     BeforeAll {
         $string = "ABCD"
         $secureString = [System.Security.SecureString]::New()
-        $string.ToCharArray() | foreach-object { $securestring.AppendChar($_) }
+        $string.ToCharArray() | ForEach-Object { $securestring.AppendChar($_) }
     }
 
     It "using null arguments to ConvertFrom-SecureString produces an exception" {
-        { ConvertFrom-SecureString -secureString $null -key $null } |
+        { ConvertFrom-SecureString -SecureString $null -Key $null } |
             Should -Throw -ErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
     }
 
     It "using a bad key produces an exception" {
         $badkey = [byte[]]@(1,2)
-        { ConvertFrom-SecureString -securestring $secureString -key $badkey } |
+        { ConvertFrom-SecureString -SecureString $secureString -Key $badkey } |
             Should -Throw -ErrorId "Argument,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
     }
 

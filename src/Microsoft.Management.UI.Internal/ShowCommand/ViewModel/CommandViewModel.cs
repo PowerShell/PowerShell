@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -168,13 +168,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     if (this.selectedParameterSet != null)
                     {
-                        this.selectedParameterSet.PropertyChanged -= new PropertyChangedEventHandler(this.SelectedParameterSet_PropertyChanged);
+                        this.selectedParameterSet.PropertyChanged -= this.SelectedParameterSet_PropertyChanged;
                     }
 
                     this.selectedParameterSet = value;
                     if (this.selectedParameterSet != null)
                     {
-                        this.selectedParameterSet.PropertyChanged += new PropertyChangedEventHandler(this.SelectedParameterSet_PropertyChanged);
+                        this.selectedParameterSet.PropertyChanged += this.SelectedParameterSet_PropertyChanged;
                         this.SelectedParameterSetAllMandatoryParametersHaveValues = this.SelectedParameterSet.AllMandatoryParametersHaveValues;
                     }
                     else
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             get
             {
-               return this.IsImported ? Visibility.Collapsed : Visibility.Visible;
+                return this.IsImported ? Visibility.Collapsed : Visibility.Visible;
             }
         }
 
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 commandName = this.ModuleName + "\\" + commandName;
             }
 
-            if (commandName.IndexOf(' ') != -1)
+            if (commandName.Contains(' '))
             {
                 builder.AppendFormat("& \"{0}\"", commandName);
             }
@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 }
             }
 
-            return string.Compare(source.Name, target.Name, StringComparison.Ordinal);
+            return string.CompareOrdinal(source.Name, target.Name);
         }
 
         /// <summary>

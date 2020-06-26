@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -153,7 +153,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -167,7 +167,7 @@ namespace System.Management.Automation.Language
         {
             if (keywordToAdd == null)
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("keywordToAdd");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(keywordToAdd));
                 throw e;
             }
 
@@ -191,7 +191,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -207,7 +207,7 @@ namespace System.Management.Automation.Language
         {
             if (string.IsNullOrEmpty(name))
             {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
+                PSArgumentNullException e = PSTraceSource.NewArgumentNullException(nameof(name));
                 throw e;
             }
 
@@ -391,7 +391,7 @@ namespace System.Management.Automation.Language
         internal static IEnumerable<DynamicKeyword> GetAllowedKeywords(this DynamicKeyword keyword, IEnumerable<DynamicKeyword> allowedKeywords)
         {
             string keywordName = keyword.Keyword;
-            if (string.Compare(keywordName, @"Node", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Equals(keywordName, @"Node", StringComparison.OrdinalIgnoreCase))
             {
                 List<string> excludeKeywords;
                 if (s_excludeKeywords.TryGetValue(keywordName, out excludeKeywords))
@@ -543,7 +543,7 @@ namespace System.Management.Automation.Language
         Decimal = 0x10,
 
         /// <summary>
-        /// Indicates 'I' suffix for BigInteger (arbitrarily large integer) numerals.
+        /// Indicates 'N' suffix for BigInteger (arbitrarily large integer) numerals.
         /// </summary>
         BigInteger = 0x20
     }
@@ -590,6 +590,7 @@ namespace System.Management.Automation.Language
     {
         private static readonly Dictionary<string, TokenKind> s_keywordTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
+
         private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
@@ -628,7 +629,7 @@ namespace System.Management.Automation.Language
         /*A*/    "configuration",           "public",           "private",          "static",                     /*A*/
         /*B*/    "interface",               "enum",             "namespace",        "module",                     /*B*/
         /*C*/    "type",                    "assembly",         "command",          "hidden",                     /*C*/
-        /*D*/    "base",                                                                                          /*D*/
+        /*D*/    "base",                    "default",                                                            /*D*/
         };
 
         private static readonly TokenKind[] s_keywordTokenKind = new TokenKind[] {
@@ -644,7 +645,7 @@ namespace System.Management.Automation.Language
         /*A*/    TokenKind.Configuration,   TokenKind.Public,   TokenKind.Private,  TokenKind.Static,             /*A*/
         /*B*/    TokenKind.Interface,       TokenKind.Enum,     TokenKind.Namespace,TokenKind.Module,             /*B*/
         /*C*/    TokenKind.Type,            TokenKind.Assembly, TokenKind.Command,  TokenKind.Hidden,             /*C*/
-        /*D*/    TokenKind.Base,                                                                                  /*D*/
+        /*D*/    TokenKind.Base,            TokenKind.Default,                                                    /*D*/
         };
 
         internal static readonly string[] _operatorText = new string[] {
@@ -724,6 +725,7 @@ namespace System.Management.Automation.Language
 
         // TODO: use auto-properties when making 'ternary operator' an official feature.
         private bool _forceEndNumberOnTernaryOpChars;
+
         internal bool ForceEndNumberOnTernaryOpChars
         {
             get { return _forceEndNumberOnTernaryOpChars; }
@@ -885,9 +887,9 @@ namespace System.Management.Automation.Language
 
         internal void SkipNewlines(bool skipSemis)
         {
-            // We normally don't create any tokens in a Skip method, but the
-            // V2 tokenizer api returns newline, semi-colon, and line
-            // continuation tokens so we create them as they are encountered.
+        // We normally don't create any tokens in a Skip method, but the
+        // V2 tokenizer api returns newline, semi-colon, and line
+        // continuation tokens so we create them as they are encountered.
         again:
             char c = GetChar();
             switch (c)
@@ -1460,17 +1462,28 @@ namespace System.Management.Automation.Language
 
             switch (c)
             {
-                case '0': return '\0';
-                case 'a': return '\a';
-                case 'b': return '\b';
-                case 'e': return '\u001b';
-                case 'f': return '\f';
-                case 'n': return '\n';
-                case 'r': return '\r';
-                case 't': return '\t';
-                case 'u': return ScanUnicodeEscape(out surrogateCharacter);
-                case 'v': return '\v';
-                default: return c;
+                case '0':
+                    return '\0';
+                case 'a':
+                    return '\a';
+                case 'b':
+                    return '\b';
+                case 'e':
+                    return '\u001b';
+                case 'f':
+                    return '\f';
+                case 'n':
+                    return '\n';
+                case 'r':
+                    return '\r';
+                case 't':
+                    return '\t';
+                case 'u':
+                    return ScanUnicodeEscape(out surrogateCharacter);
+                case 'v':
+                    return '\v';
+                default:
+                    return c;
             }
         }
 
@@ -3557,8 +3570,9 @@ namespace System.Management.Automation.Language
             {
                 try
                 {
-                    NumberStyles style = NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint |
-                                         NumberStyles.AllowExponent;
+                    NumberStyles style = NumberStyles.AllowLeadingSign
+                        | NumberStyles.AllowDecimalPoint
+                        | NumberStyles.AllowExponent;
 
                     if (real)
                     {
@@ -3685,9 +3699,21 @@ namespace System.Management.Automation.Language
                             }
 
                             // If we're expecting a sign bit, remove the leading 0 added in ScanNumberHelper
-                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned) && ((strNum.Length - 1) & 7) == 0)
+                            if (!suffix.HasFlag(NumberSuffixFlags.Unsigned))
                             {
-                                strNum = strNum.Slice(1);
+                                var expectedLength = suffix switch
+                                {
+                                    NumberSuffixFlags.SignedByte => 2,
+                                    NumberSuffixFlags.Short => 4,
+                                    NumberSuffixFlags.Long => 16,
+                                    // No suffix flag can mean int or long depending on input string length
+                                    _ => strNum.Length < 16 ? 8 : 16
+                                };
+
+                                if (strNum.Length == expectedLength + 1)
+                                {
+                                    strNum = strNum.Slice(1);
+                                }
                             }
 
                             style = NumberStyles.AllowHexSpecifier;
@@ -4216,7 +4242,6 @@ namespace System.Management.Automation.Language
                 SkipChar();
                 return NewToken(TokenKind.LBracket);
             }
-
 
             if (ExperimentalFeature.IsEnabled("PSNullConditionalOperators") && c == '?')
             {
@@ -4988,7 +5013,10 @@ namespace System.Management.Automation.Language
                         _currentIndex = _tokenStart;
                         c = GetChar();
 
-                        if (strNum == null) { return ScanGenericToken(c); }
+                        if (strNum == null)
+                        {
+                            return ScanGenericToken(c);
+                        }
                     }
 
                     return NewToken(TokenKind.Exclaim);

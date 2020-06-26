@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
@@ -9,14 +9,14 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 
 	It "Get-Variable of existing variable Name with include and bogus exclude should work"{
 		Set-Variable newVar testing
-		$var1=get-variable -Name newVar -Include newVar -Exclude bogus
+		$var1=Get-Variable -Name newVar -Include newVar -Exclude bogus
 		$var1.Name | Should -BeExactly "newVar"
 		$var1.Value | Should -BeExactly "testing"
 	}
 
 	It "Get-Variable of existing variable Name with Description and Option should work"{
 		Set-Variable newVar testing -Option ReadOnly -Description "testing description"
-		$var1=get-variable -Name newVar
+		$var1=Get-Variable -Name newVar
 		$var1.Name | Should -BeExactly "newVar"
 		$var1.Value | Should -BeExactly "testing"
 		$var1.Options | Should -BeExactly "ReadOnly"
@@ -27,7 +27,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 		Set-Variable abcaVar testing
 		Set-Variable bcdaVar "another test"
 		Set-Variable aVarfoo wow
-		$var1=get-variable -Name *aVar* -Scope local
+		$var1=Get-Variable -Name *aVar* -Scope local
 		$var1.Count | Should -Be 3
 		$var1[0].Name | Should -BeExactly "abcaVar"
 		$var1[0].Value | Should -BeExactly "testing"

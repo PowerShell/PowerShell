@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Get-Error tests' -Tag CI {
@@ -13,13 +13,13 @@ Describe 'Get-Error tests' -Tag CI {
         $out | Should -BeLikeExactly '*InnerException*'
 
         $err = Get-Error
-        $err | Should -BeOfType [System.Management.Automation.ErrorRecord]
+        $err | Should -BeOfType System.Management.Automation.ErrorRecord
         $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord'
         $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
 
         # need to exercise the formatter to validate that the internal types are removed from the error object
         $null = $err | Out-String
-        $err | Should -BeOfType [System.Management.Automation.ErrorRecord]
+        $err | Should -BeOfType System.Management.Automation.ErrorRecord
         $err.PSObject.TypeNames | Should -Contain 'System.Management.Automation.ErrorRecord'
         $err.PSObject.TypeNames | Should -Not -Contain 'System.Management.Automation.ErrorRecord#PSExtendedError'
     }
@@ -38,7 +38,7 @@ Describe 'Get-Error tests' -Tag CI {
         }
 
         try {
-            get-item (new-guid) -ErrorAction SilentlyContinue
+            Get-Item (New-Guid) -ErrorAction SilentlyContinue
         }
         catch {
         }
@@ -83,13 +83,13 @@ Describe 'Get-Error tests' -Tag CI {
         $out | Should -BeLikeExactly '*myexception*'
 
         $err = Get-Error
-        $err | Should -BeOfType [System.Exception]
+        $err | Should -BeOfType System.Exception
         $err.PSObject.TypeNames | Should -Not -Contain 'System.Exception'
         $err.PSObject.TypeNames | Should -Contain 'System.Exception#PSExtendedError'
 
         # need to exercise the formatter to validate that the internal types are removed from the error object
         $null = $err | Out-String
-        $err | Should -BeOfType [System.Exception]
+        $err | Should -BeOfType System.Exception
         $err.PSObject.TypeNames | Should -Contain 'System.Exception'
         $err.PSObject.TypeNames | Should -Not -Contain 'System.Exception#PSExtendedError'
     }

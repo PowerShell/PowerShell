@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #if !UNIX
@@ -1042,9 +1042,9 @@ namespace Microsoft.PowerShell.Commands
                     // find a matching property name via case-insensitive string comparison
                     Predicate<string> pred = (s) =>
                                                 {
-                                                    return string.Compare(s,
+                                                    return string.Equals(s,
                                                                           name,
-                                                                          StringComparison.OrdinalIgnoreCase) == 0;
+                                                                          StringComparison.OrdinalIgnoreCase);
                                                 };
                     var propertyName = availableProperties.Find(pred);
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Linq;
@@ -96,7 +96,7 @@ namespace System.Management.Automation
                 EngineParser.SetPreviousFirstLastToken(Context);
             }
 
-            if (errors.Any())
+            if (errors.Length > 0)
             {
                 if (errors[0].IncompleteInput)
                 {

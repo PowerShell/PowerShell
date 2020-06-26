@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #region Using directives
@@ -48,7 +48,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.currentOperation = theCurrentOperation;
             if (string.IsNullOrEmpty(theStatusDescription))
             {
-                this.statusDescription = Strings.DefaultStatusDescription;
+                this.statusDescription = CimCmdletStrings.DefaultStatusDescription;
             }
             else
             {

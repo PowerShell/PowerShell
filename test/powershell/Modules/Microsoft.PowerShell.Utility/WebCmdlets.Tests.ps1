@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # This is a Pester test suite which validate the Web cmdlets.
@@ -41,14 +41,15 @@ function ExecuteRequestWithOutFile {
     )
 
     $result = [PSObject]@{Output = $null; Error = $null}
-    $filePath = Join-Path $TestDrive ((Get-Random).ToString() + ".txt")
+    # We use '[outfile1]' in the file name to check that OutFile parameter is literal path
+    $filePath = Join-Path $TestDrive ((Get-Random).ToString() + "[outfile1].txt")
     try {
         if ($cmdletName -eq "Invoke-WebRequest") {
             Invoke-WebRequest -Uri $uri -OutFile $filePath
         } else {
             Invoke-RestMethod -Uri $uri -OutFile $filePath
         }
-        $result.Output = Get-Content $filePath -Raw -ErrorAction SilentlyContinue
+        $result.Output = Get-Content -LiteralPath $filePath -Raw -ErrorAction SilentlyContinue
     } catch {
         $result.Error = $_
     } finally {
@@ -299,7 +300,7 @@ function ExecuteRestMethod {
             throw "No verbose output was found"
         }
     } catch {
-        $result.Error = $_ | select-object * | Out-String
+        $result.Error = $_ | Select-Object * | Out-String
     } finally {
         $VerbosePreference = $verbosePreferenceSave
         if (Test-Path -Path $verboseFile) {
@@ -698,7 +699,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
 
         $result.Error.ErrorDetails.Message | Should -Be $query.body
-        $result.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $result.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
@@ -891,7 +892,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             $command = "Invoke-WebRequest -Uri '$uri' -Headers @{Authorization = 'foo'}"
             $response = ExecuteWebCommand -command $command
 
-            $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+            $response.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
             $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
             $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
         }
@@ -1064,7 +1065,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when newlines are encountered in the element." {
@@ -1078,7 +1079,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest detects charset meta value when the attribute value is unquoted." {
@@ -1092,7 +1093,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value when the ContentType header does not define it." {
@@ -1106,7 +1107,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value newlines are encountered in the element." {
@@ -1120,7 +1121,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest ignores meta charset value when Content-Type header defines it." {
@@ -1135,7 +1136,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" {
@@ -1150,7 +1151,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
@@ -1164,7 +1165,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" {
@@ -1178,7 +1179,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
         }
 
         It "Verifies Invoke-WebRequest defaults to UTF8 on application/json when no charset is present" {
@@ -1193,7 +1194,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
 
             $response.Error | Should -BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should -Be $expectedEncoding.EncodingName
-            $response.Output | Should -BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+            $response.Output | Should -BeOfType Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject
             $response.Output.Content | Should -BeExactly $query.body
         }
     }
@@ -1754,7 +1755,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # Download the entire file to reference in tests
             $referenceFile = Join-Path $TestDrive "reference.txt"
             $resumeUri = Get-WebListenerUrl -Test 'Resume'
-            Invoke-WebRequest -uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
+            Invoke-WebRequest -Uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
             $referenceFileHash = Get-FileHash -Algorithm SHA256 -Path $referenceFile
             $referenceFileSize = Get-Item $referenceFile | Select-Object -ExpandProperty Length
         }
@@ -1769,7 +1770,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
 
         It "Invoke-WebRequest -Resume Downloads the whole file when the file does not exist" {
-            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -Uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1786,7 +1787,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -Uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1824,10 +1825,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             param($bytes, $statuscode)
             # Simulate partial download
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue "Bytes/$bytes"
-            $null = Invoke-WebRequest -uri $uri -OutFile $outFile
+            $null = Invoke-WebRequest -Uri $uri -OutFile $outFile
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $bytes
 
-            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -Uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1841,10 +1842,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Invoke-WebRequest -Resume assumes the file was successfully completed when the local and remote file are the same size." {
             # Download the entire file
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
-            $null = Invoke-WebRequest -uri $uri -OutFile $outFile
+            $null = Invoke-WebRequest -Uri $uri -OutFile $outFile
             $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $response = Invoke-WebRequest -uri $resumeUri -OutFile $outFile -Resume -PassThru
+            $response = Invoke-WebRequest -Uri $resumeUri -OutFile $outFile -Resume -PassThru
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -1900,8 +1901,21 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
         }
     }
 
+    Context "Regex Parsing" {
+
+        It 'correctly parses an image with id, class, and src attributes' {
+            $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
+                dosType = 'img-attribute'
+            }
+
+            $response = Invoke-WebRequest -Uri $dosUri
+            $response.Images | Should -Not -BeNullOrEmpty
+        }
+    }
+
     Context "Denial of service" -Tag 'DOS' {
         It "Image Parsing" {
+            Set-ItResult -Pending -Because "The pathological regex runs fast due to https://github.com/dotnet/runtime/issues/33399.  Fixed in .NET 5 preview.2"
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='img'
                 dosLength='5000'
@@ -1910,7 +1924,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             [TimeSpan] $timeSpan = Measure-Command {
                 $response = Invoke-WebRequest -Uri $dosUri
                 $script:content = $response.content
-                $response.Images | out-null
+                $response.Images | Out-Null
             }
 
             $script:content | Should -Not -BeNullOrEmpty
@@ -1931,6 +1945,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature", "RequireAdminOnWindows" {
             # in some cases we will be running in a Docker container with modest resources
             $pathologicalRatio | Should -BeGreaterThan 5
         }
+
         It "Charset Parsing" {
             $dosUri = Get-WebListenerUrl -Test 'Dos' -query @{
                 dosType='charset'
@@ -2250,7 +2265,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $result = ExecuteWebCommand -command $command
 
         $result.Error.ErrorDetails.Message | Should -Be $query.body
-        $result.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $result.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $result.Error.Exception.Response.StatusCode | Should -Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should -Be $query.responsephrase
         $result.Error.Exception.Message | Should -Match ": 418 \($($query.responsephrase)\)\."
@@ -2451,7 +2466,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         $command = "Invoke-RestMethod -Uri '$uri' -Headers @{Authorization = 'foo'}"
         $response = ExecuteWebCommand -command $command
 
-        $response.Error.Exception | Should -BeOfType 'Microsoft.PowerShell.Commands.HttpResponseException'
+        $response.Error.Exception | Should -BeOfType Microsoft.PowerShell.Commands.HttpResponseException
         $response.Error.Exception.Response.StatusCode | Should -Be $StatusCode
         $response.Error.Exception.Response.Headers.Location | Should -BeNullOrEmpty
     }
@@ -2639,7 +2654,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $certificate = Get-WebListenerClientCertificate
-            $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
+            $result = Invoke-RestMethod -Uri $uri -Certificate $certificate -SkipCertificateCheck
 
             $result.Status | Should -Be 'OK'
             $result.Thumbprint | Should -Be $certificate.Thumbprint
@@ -3264,7 +3279,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             # Download the entire file to reference in tests
             $referenceFile = Join-Path $TestDrive "reference.txt"
             $resumeUri = Get-WebListenerUrl -Test 'Resume'
-            Invoke-RestMethod -uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
+            Invoke-RestMethod -Uri $resumeUri -OutFile $referenceFile -ErrorAction Stop
             $referenceFileHash = Get-FileHash -Algorithm SHA256 -Path $referenceFile
             $referenceFileSize = Get-Item $referenceFile | Select-Object -ExpandProperty Length
         }
@@ -3282,7 +3297,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             # ensure the file does not exist
             Remove-Item -Force -ErrorAction 'SilentlyContinue' -Path $outFile
 
-            Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+            Invoke-RestMethod -Uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -3298,7 +3313,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             1..$largerFileSize | ForEach-Object { [Byte]$_ } | Set-Content -AsByteStream $outFile
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+            $response = Invoke-RestMethod -Uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -3315,7 +3330,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             $largerFileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
-            $response = Invoke-RestMethod -uri $uri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+            $response = Invoke-RestMethod -Uri $uri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -3335,10 +3350,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
             param($bytes)
             # Simulate partial download
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue "Bytes/$bytes"
-            $null = Invoke-RestMethod -uri $uri -OutFile $outFile
+            $null = Invoke-RestMethod -Uri $uri -OutFile $outFile
             Get-Item $outFile | Select-Object -ExpandProperty Length | Should -Be $bytes
 
-            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+            $response = Invoke-RestMethod -Uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash
@@ -3351,10 +3366,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature", "RequireAdminOnWindows" {
         It "Invoke-RestMethod -Resume assumes the file was successfully completed when the local and remote file are the same size." {
             # Download the entire file
             $uri = Get-WebListenerUrl -Test 'Resume' -TestValue 'NoResume'
-            $null = Invoke-RestMethod -uri $uri -OutFile $outFile
+            $null = Invoke-RestMethod -Uri $uri -OutFile $outFile
             $fileSize = Get-Item $outFile | Select-Object -ExpandProperty Length
 
-            $response = Invoke-RestMethod -uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
+            $response = Invoke-RestMethod -Uri $resumeUri -OutFile $outFile -ResponseHeadersVariable 'Headers' -Resume
 
             $outFileHash = Get-FileHash -Algorithm SHA256 -Path $outFile
             $outFileHash.Hash | Should -BeExactly $referenceFileHash.Hash

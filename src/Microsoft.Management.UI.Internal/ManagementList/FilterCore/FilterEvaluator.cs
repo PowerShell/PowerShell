@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -151,7 +151,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             this.filterExpressionProviders.Add(provider);
-            provider.FilterExpressionChanged += new EventHandler(this.FilterProvider_FilterExpressionChanged);
+            provider.FilterExpressionChanged += this.FilterProvider_FilterExpressionChanged;
         }
 
         /// <summary>
@@ -168,7 +168,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             this.filterExpressionProviders.Remove(provider);
-            provider.FilterExpressionChanged -= new EventHandler(this.FilterProvider_FilterExpressionChanged);
+            provider.FilterExpressionChanged -= this.FilterProvider_FilterExpressionChanged;
         }
 
         #region NotifyPropertyChanged

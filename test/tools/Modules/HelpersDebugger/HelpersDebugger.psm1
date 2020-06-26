@@ -1,11 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 # Ensure that terminating errors terminate when importing the module.
 trap {throw $_}
 
 # Strict mode FTW.
-Set-StrictMode -Version Latest
+Set-StrictMode -Version 3.0
 
 # Enable explicit export so that there are no surprises with commands exported from the module.
 Export-ModuleMember

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 /*
@@ -196,8 +196,8 @@ namespace System.Management.Automation.Remoting
                     default:
                         throw new PSRemotingTransportException(PSRemotingErrorId.IPCUnknownNodeType, RemotingErrorIdStrings.IPCUnknownNodeType,
                             reader.NodeType.ToString(),
-                            XmlNodeType.Element.ToString(),
-                            XmlNodeType.EndElement.ToString());
+                            nameof(XmlNodeType.Element),
+                            nameof(XmlNodeType.EndElement));
                 }
             }
         }
@@ -544,7 +544,7 @@ namespace System.Management.Automation.Remoting.Client
             bool shouldRaiseCloseCompleted = false;
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }
@@ -760,7 +760,7 @@ namespace System.Management.Automation.Remoting.Client
             try
             {
                 // Route protocol message based on whether it is a session or command message.
-                if (data.IndexOf(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase) > -1)
+                if (data.Contains(SESSIONDMESSAGETAG, StringComparison.OrdinalIgnoreCase))
                 {
                     // Session message
                     _sessionMessageQueue.Add(data);
@@ -903,7 +903,7 @@ namespace System.Management.Automation.Remoting.Client
         private void OnDataPacketReceived(byte[] rawData, string stream, Guid psGuid)
         {
             string streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_STDOUT;
-            if (stream.Equals(DataPriorityType.PromptResponse.ToString(), StringComparison.OrdinalIgnoreCase))
+            if (stream.Equals(nameof(DataPriorityType.PromptResponse), StringComparison.OrdinalIgnoreCase))
             {
                 streamTemp = System.Management.Automation.Remoting.Client.WSManNativeApi.WSMAN_STREAM_ID_PROMPTRESPONSE;
             }
@@ -1098,7 +1098,6 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     _processCreated = false;
                 }
-                // _processInstance.Start();
             }
 
             PSEtwLog.LogAnalyticInformational(PSEventId.WSManCreateShell, PSOpcode.Connect,
@@ -1123,28 +1122,10 @@ namespace System.Management.Automation.Remoting.Client
                         _processInstance.RunspacePool.Dispose();
                     }
 
-                    stdInWriter = _processInstance.StdInWriter;
-                    // if (stdInWriter == null)
-                    {
-                        _serverProcess.OutputDataReceived += new DataReceivedEventHandler(OnOutputDataReceived);
-                        _serverProcess.ErrorDataReceived += new DataReceivedEventHandler(OnErrorDataReceived);
-                    }
-
-                    _serverProcess.Exited += new EventHandler(OnExited);
-
-                    // serverProcess.Start();
+                    _serverProcess.Exited += OnExited;
                     _processInstance.Start();
 
-                    if (stdInWriter != null)
-                    {
-                        _serverProcess.CancelErrorRead();
-                        _serverProcess.CancelOutputRead();
-                    }
-
-                    // Start asynchronous reading of output/errors
-                    _serverProcess.BeginOutputReadLine();
-                    _serverProcess.BeginErrorReadLine();
-
+                    StartRedirectionReaderThreads(_serverProcess);
                     stdInWriter = new OutOfProcessTextWriter(_serverProcess.StandardInput);
                     _processInstance.StdInWriter = stdInWriter;
                 }
@@ -1170,6 +1151,86 @@ namespace System.Management.Automation.Remoting.Client
 
             // Send one fragment
             SendOneItem();
+        }
+
+        private void StartRedirectionReaderThreads(Process serverProcess)
+        {
+            Thread outputThread = new Thread(ProcessOutputData);
+            outputThread.IsBackground = true;
+            outputThread.Name = "Out-of-Proc Job Output Thread";
+
+            Thread errorThread = new Thread(ProcessErrorData);
+            errorThread.IsBackground = true;
+            errorThread.Name = "Out-of-Proc Job Error Thread";
+
+            outputThread.Start(serverProcess.StandardOutput);
+            errorThread.Start(serverProcess.StandardError);
+        }
+
+        private void ProcessOutputData(object arg)
+        {
+            if (arg is StreamReader reader)
+            {
+                try
+                {
+                    string data = reader.ReadLine();
+                    while (data != null)
+                    {
+                        HandleOutputDataReceived(data);
+                        data = reader.ReadLine();
+                    }
+                }
+                catch (IOException)
+                {
+                    // Treat this as EOF, the same as what 'Process.BeginOutputReadLine()' does.
+                }
+                catch (Exception e)
+                {
+                    _tracer.WriteMessage(
+                        "OutOfProcessClientSessionTransportManager",
+                        "ProcessOutputThread",
+                        Guid.Empty,
+                        "Transport manager output reader thread ended with error: {0}",
+                        e.Message ?? string.Empty);
+                }
+            }
+            else
+            {
+                Dbg.Assert(false, "Invalid argument. Expecting a StreamReader object.");
+            }
+        }
+
+        private void ProcessErrorData(object arg)
+        {
+            if (arg is StreamReader reader)
+            {
+                try
+                {
+                    string data = reader.ReadLine();
+                    while (data != null)
+                    {
+                        HandleErrorDataReceived(data);
+                        data = reader.ReadLine();
+                    }
+                }
+                catch (IOException)
+                {
+                    // Treat this as EOF, the same as what 'Process.BeginErrorReadLine()' does.
+                }
+                catch (Exception e)
+                {
+                    _tracer.WriteMessage(
+                        "OutOfProcessClientSessionTransportManager",
+                        "ProcessErrorThread",
+                        Guid.Empty,
+                        "Transport manager error reader thread ended with error: {0}",
+                        e.Message ?? string.Empty);
+                }
+            }
+            else
+            {
+                Dbg.Assert(false, "Invalid argument. Expecting a StreamReader object.");
+            }
         }
 
         /// <summary>
@@ -1198,20 +1259,6 @@ namespace System.Management.Automation.Remoting.Client
 
         #endregion
 
-        #region Event Handlers
-
-        private void OnOutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            HandleOutputDataReceived(e.Data);
-        }
-
-        private void OnErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            HandleErrorDataReceived(e.Data);
-        }
-
-        #endregion
-
         #region Helper Methods
 
         private void KillServerProcess()
@@ -1230,13 +1277,8 @@ namespace System.Management.Automation.Remoting.Client
 
                     if (_processCreated)
                     {
-                        _serverProcess.CancelOutputRead();
-                        _serverProcess.CancelErrorRead();
                         _serverProcess.Kill();
                     }
-
-                    _serverProcess.OutputDataReceived -= new DataReceivedEventHandler(OnOutputDataReceived);
-                    _serverProcess.ErrorDataReceived -= new DataReceivedEventHandler(OnErrorDataReceived);
                 }
             }
             catch (System.ComponentModel.Win32Exception)
@@ -1267,6 +1309,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         protected RemoteSessionHyperVSocketClient _client;
+
         private const string _threadName = "HyperVSocketTransport Reader Thread";
 
         #endregion
@@ -1402,7 +1445,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1436,7 +1479,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.VMSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.VMSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.VMSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1450,7 +1493,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.VMSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.VMSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.VMSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1485,7 +1528,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1509,7 +1552,7 @@ namespace System.Management.Automation.Remoting.Client
                 throw new PSInvalidOperationException(
                     PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ContainerSessionConnectFailed),
                     null,
-                    PSRemotingErrorId.ContainerSessionConnectFailed.ToString(),
+                    nameof(PSRemotingErrorId.ContainerSessionConnectFailed),
                     ErrorCategory.InvalidOperation,
                     null);
             }
@@ -1534,6 +1577,7 @@ namespace System.Management.Automation.Remoting.Client
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
         private bool _connectionEstablished;
+
         private const string _threadName = "SSHTransport Reader Thread";
 
         #endregion
@@ -1708,7 +1752,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             if ((error.Length == 0) ||
-                error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1)
+                error.Contains("WARNING:", StringComparison.OrdinalIgnoreCase))
             {
                 // Handle as interactive warning message
                 Console.WriteLine(error);
@@ -1833,7 +1877,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -1944,6 +1988,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private NamedPipeConnectionInfo _connectionInfo;
+
         private const string _threadName = "NamedPipeTransport Reader Thread";
 
         #endregion
@@ -1958,7 +2003,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -2011,6 +2056,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Private Data
 
         private ContainerConnectionInfo _connectionInfo;
+
         private const string _threadName = "ContainerNamedPipeTransport Reader Thread";
 
         #endregion
@@ -2025,7 +2071,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             if (connectionInfo == null)
             {
-                throw new PSArgumentNullException("connectionInfo");
+                throw new PSArgumentNullException(nameof(connectionInfo));
             }
 
             _connectionInfo = connectionInfo;
@@ -2121,7 +2167,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             lock (syncObject)
             {
-                if (isClosed == true)
+                if (isClosed)
                 {
                     return;
                 }

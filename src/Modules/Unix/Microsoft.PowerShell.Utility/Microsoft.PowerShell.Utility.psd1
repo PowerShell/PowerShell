@@ -2,7 +2,7 @@
 GUID = "1DA87E53-152B-403E-98DC-74D7B4D63D59"
 Author = "PowerShell"
 CompanyName = "Microsoft Corporation"
-Copyright = "Copyright (c) Microsoft Corporation. All rights reserved."
+Copyright = "Copyright (c) Microsoft Corporation."
 ModuleVersion = "7.0.0.0"
 CompatiblePSEditions = @("Core")
 PowerShellVersion = "3.0"
@@ -30,7 +30,7 @@ CmdletsToExport = @(
 FunctionsToExport = @()
 AliasesToExport = @('fhx')
 NestedModules = @("Microsoft.PowerShell.Commands.Utility.dll")
-HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=2113633'
+HelpInfoURI = 'https://aka.ms/powershell71-help'
 PrivateData = @{
   PSData = @{
     ExperimentalFeatures = @(

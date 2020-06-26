@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell
 
             textReader = input;
             _firstLine = textReader.ReadLine();
-            if (string.Compare(_firstLine, Serialization.XmlCliTag, StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Equals(_firstLine, Serialization.XmlCliTag, StringComparison.OrdinalIgnoreCase))
             {
                 // format should be XML
 

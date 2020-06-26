@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -173,7 +173,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     PSPropertyExpressionResult r = PSObjectHelper.GetDisplayName(PSObjectHelper.AsPSObject(x), expressionFactory);
                     if ((r != null) && (r.Exception == null))
                     {
-                        objName = PSObjectHelper.AsPSObject(r.Result).ToString(); ;
+                        objName = PSObjectHelper.AsPSObject(r.Result).ToString();
                     }
                     else
                     {

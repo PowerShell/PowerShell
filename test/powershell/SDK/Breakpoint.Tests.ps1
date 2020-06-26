@@ -1,11 +1,11 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
 
     BeforeAll {
         # Start a job; this will create a runspace in which we can manage breakpoints
-        $job = Start-Job -ScriptBlock {
+        $job = Start-Job -Scriptblock {
             Set-PSBreakpoint -Command Start-Sleep
             1..240 | ForEach-Object {
                 Start-Sleep -Milliseconds 250
@@ -41,15 +41,15 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
         }
 
         It 'Can set command breakpoints' {
-            $Host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist') | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
+            $Host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist', $null, $null) | Should -BeOfType System.Management.Automation.CommandBreakpoint
         }
 
         It 'Can set variable breakpoints' {
-            $Host.Runspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { continue }) | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
+            $Host.Runspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { continue }, $null) | Should -BeOfType System.Management.Automation.VariableBreakpoint
         }
 
         It 'Can set line breakpoints' {
-            $Host.Runspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { continue }) | Should -BeOfType [System.Management.Automation.LineBreakpoint]
+            $Host.Runspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { continue }) | Should -BeOfType System.Management.Automation.LineBreakpoint
         }
 
         It 'Can get breakpoints' {
@@ -101,15 +101,15 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
         }
 
         It 'Can set command breakpoints' {
-            $jobRunspace.Debugger.SetCommandBreakpoint('Write-Verbose', { break }) | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
+            $jobRunspace.Debugger.SetCommandBreakpoint('Write-Verbose', { break }, $null) | Should -BeOfType System.Management.Automation.CommandBreakpoint
         }
 
         It 'Can set variable breakpoints' {
-            $jobRunspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { break }) | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
+            $jobRunspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { break }, $null) | Should -BeOfType System.Management.Automation.VariableBreakpoint
         }
 
         It 'Can set line breakpoints' {
-            $jobRunspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { break }) | Should -BeOfType [System.Management.Automation.LineBreakpoint]
+            $jobRunspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { break }) | Should -BeOfType System.Management.Automation.LineBreakpoint
         }
 
         It 'Can get breakpoints' {
@@ -183,7 +183,7 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
     Context 'Handling errors while managing breakpoints in a remote runspace via the SDK' {
 
         BeforeAll {
-            $bp = $jobRunspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist')
+            $bp = $jobRunspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist', $null, $null)
             $jobRunspace.Debugger.RemoveBreakpoint($bp) > $null
         }
 
@@ -212,15 +212,15 @@ Describe 'Breakpoint SDK Unit Tests' -Tags 'CI' {
         }
 
         It 'Can set command breakpoints' {
-            $Host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist', $null, $null, $runspace.Id) | Should -BeOfType [System.Management.Automation.CommandBreakpoint]
+            $Host.Runspace.Debugger.SetCommandBreakpoint('Test-ThisCommandDoesNotExist', $null, $null, $runspace.Id) | Should -BeOfType System.Management.Automation.CommandBreakpoint
         }
 
         It 'Can set variable breakpoints' {
-            $Host.Runspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { continue }, $null, $runspace.Id) | Should -BeOfType [System.Management.Automation.VariableBreakpoint]
+            $Host.Runspace.Debugger.SetVariableBreakpoint('DebugPreference', 'ReadWrite', { continue }, $null, $runspace.Id) | Should -BeOfType System.Management.Automation.VariableBreakpoint
         }
 
         It 'Can set line breakpoints' {
-            $Host.Runspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { continue }, $runspace.Id) | Should -BeOfType [System.Management.Automation.LineBreakpoint]
+            $Host.Runspace.Debugger.SetLineBreakpoint($PSCommandPath, 1, 1, { continue }, $runspace.Id) | Should -BeOfType System.Management.Automation.LineBreakpoint
         }
 
         It 'Can get breakpoints' {

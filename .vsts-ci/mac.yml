@@ -25,10 +25,11 @@ pr:
     include:
     - '*'
     exclude:
-    - /tools/releaseBuild/**/*
     - /.vsts-ci/misc-analysis.yml
     - /.github/ISSUE_TEMPLATE/*
     - /.dependabot/config.yml
+    - tools/releaseBuild/*
+    - tools/releaseBuild/azureDevOps/templates/*
 
 variables:
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
@@ -42,51 +43,54 @@ variables:
 resources:
 - repo: self
   clean: true
-jobs:
-- template: templates/ci-build.yml
-  parameters:
-    pool: Hosted macOS
-    jobName: mac_build
-    displayName: macOS Build
 
-- template: templates/nix-test.yml
-  parameters:
-    purpose: UnelevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - mac_build
+stages:
+- stage: BuildMac
+  displayName: Build for macOS
+  jobs:
+  - template: templates/ci-build.yml
+    parameters:
+      pool: macOS-latest
+      jobName: mac_build
+      displayName: macOS Build
 
-- template: templates/nix-test.yml
-  parameters:
-    purpose: ElevatedPesterTests
-    tagSet: CI
-    parentJobs:
-      - mac_build
+- stage: TestMac
+  displayName: Test for macOS
+  jobs:
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: CI
 
-- template: templates/nix-test.yml
-  parameters:
-    purpose: UnelevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - mac_build
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: CI
 
-- template: templates/nix-test.yml
-  parameters:
-    purpose: ElevatedPesterTests
-    tagSet: Others
-    parentJobs:
-      - mac_build
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: UnelevatedPesterTests
+      tagSet: Others
 
-- template: templates/verify-xunit.yml
-  parameters:
-    pool: 'Hosted macOS'
-    parentJobs:
-      - mac_build
+  - template: templates/nix-test.yml
+    parameters:
+      purpose: ElevatedPesterTests
+      tagSet: Others
 
-- job: CodeCovTestPackage
+  - template: templates/verify-xunit.yml
+    parameters:
+      pool: macOS-latest
+
+- stage: CodeCovTestPackage
   displayName: CodeCoverage and Test Packages
-  steps:
-  - powershell: |
-      Import-Module .\tools\ci.psm1
-      New-CodeCoverageAndTestPackage
-    displayName: CodeCoverage and Test Package
+  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
+  jobs:
+  - job: CodeCovTestPackage
+    displayName: CodeCoverage and Test Packages
+    pool:
+      vmImage: macOS-latest
+    steps:
+    - pwsh: |
+        Import-Module .\tools\ci.psm1
+        New-CodeCoverageAndTestPackage
+      displayName: CodeCoverage and Test Package

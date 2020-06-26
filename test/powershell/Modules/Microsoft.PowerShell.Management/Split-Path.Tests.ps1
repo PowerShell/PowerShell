@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Split-Path" -Tags "CI" {
 
@@ -27,6 +27,10 @@ Describe "Split-Path" -Tags "CI" {
     It "Should error when using the qualifier switch and no qualifier in the path" {
         { Split-Path -Qualifier -ErrorAction Stop /Users } | Should -Throw
 	{ Split-Path -Qualifier -ErrorAction Stop abcdef } | Should -Throw
+    }
+
+    It "Should error given positional parameter #2" {
+	    { Split-Path env: $NULL } | Should -Throw  -ErrorId 'PositionalParameterNotFound,Microsoft.PowerShell.Commands.SplitPathCommand'
     }
 
     It "Should return the path when the noqualifier switch is used" {
@@ -61,7 +65,7 @@ Describe "Split-Path" -Tags "CI" {
         $actual.Count                   | Should -Be 2
         $actual[0]                      | Should -BeExactly $testFile1
         $actual[1]                      | Should -BeExactly $testFile2
-        ,$actual                        | Should -BeOfType "System.Array"
+        ,$actual                        | Should -BeOfType System.Array
     }
 
     It "Should be able to tell if a given path is an absolute path" {

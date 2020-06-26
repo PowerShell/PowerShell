@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'ConvertTo-Json' -tags "CI" {
     BeforeAll {
@@ -26,7 +26,7 @@ Describe 'ConvertTo-Json' -tags "CI" {
         $null = $ps.AddScript({
             $obj = [PSCustomObject]@{P1 = ''; P2 = ''; P3 = ''; P4 = ''; P5 = ''; P6 = ''}
             $obj.P1 = $obj.P2 = $obj.P3 = $obj.P4 = $obj.P5 = $obj.P6 = $obj
-            1..100 | Foreach-Object { $obj } | ConvertTo-Json -Depth 10 -Verbose
+            1..100 | ForEach-Object { $obj } | ConvertTo-Json -Depth 10 -Verbose
             # the conversion is expected to take some time, this throw is in case it doesn't
             throw "Should not have thrown exception"
         })

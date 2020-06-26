@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -27,7 +27,7 @@ namespace System.Management.Automation.Internal
         {
             if (stream == null)
             {
-                throw new ArgumentNullException("stream", "stream may not be null");
+                throw new ArgumentNullException(nameof(stream), "stream may not be null");
             }
 
             _stream = stream;
@@ -48,7 +48,7 @@ namespace System.Management.Automation.Internal
                     InternalDataReady += value;
                     if (firstRegistrant)
                     {
-                        _stream.DataReady += new EventHandler(this.OnDataReady);
+                        _stream.DataReady += this.OnDataReady;
                     }
                 }
             }
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Internal
                     InternalDataReady -= value;
                     if (InternalDataReady == null)
                     {
-                        _stream.DataReady -= new EventHandler(this.OnDataReady);
+                        _stream.DataReady -= this.OnDataReady;
                     }
                 }
             }
@@ -573,7 +573,7 @@ namespace System.Management.Automation.Internal
         {
             if (maxRequested < 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("maxRequested", maxRequested);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(maxRequested), maxRequested);
             }
 
             if (maxRequested == 0)
@@ -755,7 +755,7 @@ namespace System.Management.Automation.Internal
         {
             if (maxRequested < 0)
             {
-                throw PSTraceSource.NewArgumentOutOfRangeException("maxRequested", maxRequested);
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(maxRequested), maxRequested);
             }
 
             if (maxRequested == 0)

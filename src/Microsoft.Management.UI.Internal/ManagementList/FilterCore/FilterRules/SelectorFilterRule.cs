@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -45,7 +45,7 @@ namespace Microsoft.Management.UI.Internal
         public SelectorFilterRule()
         {
             this.AvailableRules = new ValidatingSelectorValue<FilterRule>();
-            this.AvailableRules.SelectedValueChanged += new EventHandler<PropertyChangedEventArgs<FilterRule>>(this.AvailableRules_SelectedValueChanged);
+            this.AvailableRules.SelectedValueChanged += this.AvailableRules_SelectedValueChanged;
         }
 
         #endregion Ctor
@@ -86,8 +86,8 @@ namespace Microsoft.Management.UI.Internal
             FilterRuleCustomizationFactory.FactoryInstance.TransferValues(oldValue, newValue);
             FilterRuleCustomizationFactory.FactoryInstance.ClearValues(oldValue);
 
-            newValue.EvaluationResultInvalidated += new EventHandler(this.SelectedValue_EvaluationResultInvalidated);
-            oldValue.EvaluationResultInvalidated -= new EventHandler(this.SelectedValue_EvaluationResultInvalidated);
+            newValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
+            oldValue.EvaluationResultInvalidated -= this.SelectedValue_EvaluationResultInvalidated;
 
             this.NotifyEvaluationResultInvalidated();
         }
@@ -104,8 +104,8 @@ namespace Microsoft.Management.UI.Internal
         [OnDeserialized]
         private void Initialize(StreamingContext context)
         {
-            this.AvailableRules.SelectedValueChanged += new EventHandler<PropertyChangedEventArgs<FilterRule>>(this.AvailableRules_SelectedValueChanged);
-            this.AvailableRules.SelectedValue.EvaluationResultInvalidated += new EventHandler(this.SelectedValue_EvaluationResultInvalidated);
+            this.AvailableRules.SelectedValueChanged += this.AvailableRules_SelectedValueChanged;
+            this.AvailableRules.SelectedValue.EvaluationResultInvalidated += this.SelectedValue_EvaluationResultInvalidated;
         }
 
         private void AvailableRules_SelectedValueChanged(object sender, PropertyChangedEventArgs<FilterRule> e)

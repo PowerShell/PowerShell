@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Import-Module HelpersCommon
@@ -57,6 +57,7 @@ try
 
                 $result.MaxShells | Should -Be 40
                 $result.IdleTimeoutms | Should -Be 3600000
+                $result.UseSharedProcess | Should -Be 'False'
             }
         }
         Describe "Validate Get-PSSessionConfiguration, Enable-PSSessionConfiguration, Disable-PSSessionConfiguration, Unregister-PSSessionConfiguration cmdlets" -Tags @("CI", 'RequireAdminOnWindows') {
@@ -629,7 +630,7 @@ namespace PowershellTestConfigNamespace
             }
 
             $resultContent = invoke-expression ($result)
-            $resultContent | Should -BeOfType "System.Collections.Hashtable"
+            $resultContent | Should -BeOfType System.Collections.Hashtable
 
             # The default created hashtable in the session configuration file would have the
             # following keys which we are validating below.
@@ -656,7 +657,7 @@ namespace PowershellTestConfigNamespace
                     SessionType = 'Default'
                     Author = 'User'
                     CompanyName = 'Microsoft Corporation'
-                    Copyright = 'Copyright (c) Microsoft Corporation. All rights reserved.'
+                    Copyright = 'Copyright (c) Microsoft Corporation.'
                     Description = 'This is a sample session configuration file.'
                     GUID = '73cba863-aa49-4cbf-9917-269ddcf2b1e3'
                     SchemaVersion = '1.0.0.0'

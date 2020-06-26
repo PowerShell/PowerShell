@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Format-Custom" -Tags "CI" {
 
@@ -14,7 +14,7 @@ Describe "Format-Custom" -Tags "CI" {
     Context "Check specific flags on Format-Custom" {
 
         It "Should be able to specify the depth in output" {
-            $getprocesspester =  Get-FormatData | Format-Custom -depth 1
+            $getprocesspester =  Get-FormatData | Format-Custom -Depth 1
             ($getprocesspester).Count | Should -BeGreaterThan 0
         }
 
@@ -397,7 +397,6 @@ Describe "Format-Custom with expression based EntrySelectedBy in a CustomControl
         $ps.Streams.Error.Clear()
         $expectedOutput = @'
 
-
 Entry selected by property
 
 Name
@@ -423,7 +422,6 @@ testing
         $null = $ps.AddScript($script).AddCommand('Out-String')
         $ps.Streams.Error.Clear()
         $expectedOutput = @'
-
 
 Entry selected by ScriptBlock
 

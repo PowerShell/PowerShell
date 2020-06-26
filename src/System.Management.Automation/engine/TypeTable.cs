@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Concurrent;
@@ -1606,7 +1606,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (string.IsNullOrEmpty(item))
             {
-                throw PSTraceSource.NewArgumentException("item");
+                throw PSTraceSource.NewArgumentException(nameof(item));
             }
 
             base.SetItem(index, item);
@@ -1623,7 +1623,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (string.IsNullOrEmpty(item))
             {
-                throw PSTraceSource.NewArgumentException("item");
+                throw PSTraceSource.NewArgumentException(nameof(item));
             }
 
             base.InsertItem(index, item);
@@ -1672,7 +1672,7 @@ namespace System.Management.Automation.Runspaces
                 string str = this[i];
                 if (string.IsNullOrEmpty(str))
                 {
-                    throw PSTraceSource.NewArgumentException("strings");
+                    throw PSTraceSource.NewArgumentException(nameof(strings));
                 }
             }
 
@@ -1681,7 +1681,7 @@ namespace System.Management.Automation.Runspaces
 
         internal static readonly ConsolidatedString Empty = new ConsolidatedString(Array.Empty<string>());
 
-        internal static IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
+        internal static readonly IEqualityComparer<ConsolidatedString> EqualityComparer = new ConsolidatedStringEqualityComparer();
 
         private class ConsolidatedStringEqualityComparer : IEqualityComparer<ConsolidatedString>
         {
@@ -1816,7 +1816,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             int errorCount = info.GetInt32("ErrorCount");
@@ -1843,7 +1843,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (info == null)
             {
-                throw new PSArgumentNullException("info");
+                throw new PSArgumentNullException(nameof(info));
             }
 
             base.GetObjectData(info, context);
@@ -1912,7 +1912,7 @@ namespace System.Management.Automation.Runspaces
         public TypeData(string typeName) : this()
         {
             if (string.IsNullOrWhiteSpace(typeName))
-                throw PSTraceSource.NewArgumentNullException("typeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             this.TypeName = typeName;
         }
 
@@ -1930,7 +1930,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (type == null)
             {
-                throw PSTraceSource.NewArgumentNullException("type");
+                throw PSTraceSource.NewArgumentNullException(nameof(type));
             }
 
             this.TypeName = type.FullName;
@@ -2328,7 +2328,7 @@ namespace System.Management.Automation.Runspaces
                         newTypeData.StringSerializationSource = this.StringSerializationSource;
                         break;
                     default:
-                        Dbg.Assert(false, "Standard members should at most contain six kinds of elements");
+                        Dbg.Fail("Standard members should at most contain six kinds of elements");
                         break;
                 }
             }
@@ -2367,7 +2367,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (string.IsNullOrWhiteSpace(name))
             {
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(name));
             }
 
             Name = name;
@@ -2716,7 +2716,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (referencedProperties == null)
             {
-                throw PSTraceSource.NewArgumentNullException("referencedProperties");
+                throw PSTraceSource.NewArgumentNullException(nameof(referencedProperties));
             }
 
             ReferencedProperties = new Collection<string>(new List<string>(referencedProperties));
@@ -2948,7 +2948,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo member = members[i];
-                if (string.Compare(member.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(member.Name, noteName, StringComparison.OrdinalIgnoreCase))
                 {
                     noteAsMemberInfo = member;
                 }
@@ -2978,7 +2978,7 @@ namespace System.Management.Automation.Runspaces
                     }
                     else
                     {
-                        note.noteValue = string.Compare(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase) != 0;
+                        note.noteValue = !string.Equals(sourceValueAsString, "false", StringComparison.OrdinalIgnoreCase);
                     }
 
                     return true;
@@ -3003,7 +3003,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo member = members[i];
-                if (string.Compare(member.Name, memberName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(member.Name, memberName, StringComparison.OrdinalIgnoreCase))
                 {
                     AddError(errors, typeName, TypesXmlStrings.MemberShouldNotBePresent, member.Name);
                     return false;
@@ -3019,7 +3019,7 @@ namespace System.Management.Automation.Runspaces
             for (int i = 0; i < members.Count; i++)
             {
                 PSMemberInfo m = members[i];
-                if (string.Compare(m.Name, noteName, StringComparison.OrdinalIgnoreCase) == 0)
+                if (string.Equals(m.Name, noteName, StringComparison.OrdinalIgnoreCase))
                 {
                     member = m;
                 }
@@ -3147,7 +3147,7 @@ namespace System.Management.Automation.Runspaces
                             TypesXmlStrings.MemberMustBePresent,
                             PropertySerializationSet,
                             SerializationMethodNode,
-                            SerializationMethod.SpecificProperties.ToString(),
+                            nameof(SerializationMethod.SpecificProperties),
                             InheritPropertySerializationSet,
                             "false");
                         serializationSettingsOk = false;
@@ -3922,7 +3922,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (typeFiles == null)
             {
-                throw PSTraceSource.NewArgumentNullException("typeFiles");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeFiles));
             }
 
             ConcurrentBag<string> errors = new ConcurrentBag<string>();
@@ -4668,7 +4668,7 @@ namespace System.Management.Automation.Runspaces
         public void AddType(TypeData typeData)
         {
             if (typeData == null)
-                throw PSTraceSource.NewArgumentNullException("typeData");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeData));
 
             Dbg.Assert(isShared, "This method should only be called by the developer user. It should not be used internally.");
 
@@ -4695,7 +4695,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (string.IsNullOrEmpty(typeName))
             {
-                throw PSTraceSource.NewArgumentNullException("typeName");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeName));
             }
 
             Dbg.Assert(isShared, "This method should only be called by the developer user. It should not be used internally.");
@@ -4741,12 +4741,12 @@ namespace System.Management.Automation.Runspaces
         {
             if (filePath == null)
             {
-                throw new ArgumentNullException("filePath");
+                throw new ArgumentNullException(nameof(filePath));
             }
 
             if (errors == null)
             {
-                throw new ArgumentNullException("errors");
+                throw new ArgumentNullException(nameof(errors));
             }
 
             if (isShared)
@@ -4818,9 +4818,9 @@ namespace System.Management.Automation.Runspaces
             bool isRemove)
         {
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
             if (errors == null)
-                throw new ArgumentNullException("errors");
+                throw new ArgumentNullException(nameof(errors));
 
             if (isShared)
             {

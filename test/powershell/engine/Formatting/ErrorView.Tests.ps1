@@ -1,10 +1,10 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'Tests for $ErrorView' -Tag CI {
 
     It '$ErrorView is an enum' {
-        $ErrorView | Should -BeOfType [System.Management.Automation.ErrorView]
+        $ErrorView | Should -BeOfType System.Management.Automation.ErrorView
     }
 
     It '$ErrorView should have correct default value' {
@@ -19,6 +19,13 @@ Describe 'Tests for $ErrorView' -Tag CI {
     }
 
     Context 'ConciseView tests' {
+        BeforeEach {
+            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
+        }
+
+        AfterEach {
+            Remove-Item -Path $testScriptPath -Force -ErrorAction SilentlyContinue
+        }
 
         It 'Cmdlet error should be one line of text' {
             Get-Item (New-Guid) -ErrorVariable e -ErrorAction SilentlyContinue
@@ -34,16 +41,15 @@ Describe 'Tests for $ErrorView' -Tag CI {
                 $b = 2
 '@
 
-            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'test.ps1'
             Set-Content -Path $testScriptPath -Value $testScript
-            $e = { & $testScriptPath } | Should -Throw -ErrorId 'UnexpectedToken' -PassThru
-            $e | Out-String | Should -BeLike "*${testScriptPath}:4*"
+            $e = { & $testScriptPath } | Should -Throw -ErrorId 'UnexpectedToken' -PassThru | Out-String
+            $e | Should -BeLike "*${testScriptPath}:4*"
             # validate line number is shown
-            $e | Out-String | Should -BeLike '* 4 *'
+            $e | Should -BeLike '* 4 *'
         }
 
         It "Remote errors show up correctly" {
-            Start-Job -ScriptBlock { get-item (new-guid) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
+            Start-Job -ScriptBlock { Get-Item (New-Guid) } | Wait-Job | Receive-Job -ErrorVariable e -ErrorAction SilentlyContinue
             ($e | Out-String).Trim().Count | Should -Be 1
         }
 
@@ -53,7 +59,7 @@ Describe 'Tests for $ErrorView' -Tag CI {
         }
 
         It "Function shows up correctly" {
-            function test-myerror { [cmdletbinding()] param() write-error 'myError' }
+            function test-myerror { [cmdletbinding()] param() Write-Error 'myError' }
 
             $e = & "$PSHOME/pwsh" -noprofile -command 'function test-myerror { [cmdletbinding()] param() write-error "myError" }; test-myerror -ErrorAction SilentlyContinue; $error[0] | Out-String'
             [string]::Join('', $e).Trim() | Should -BeLike "*test-myerror:*myError*" # wildcard due to VT100
@@ -61,11 +67,49 @@ Describe 'Tests for $ErrorView' -Tag CI {
 
         It "Pester Should shows test file and not pester" {
             $testScript = '1 + 1 | Should -Be 3'
-            $testScriptPath = Join-Path -Path $TestDrive -ChildPath 'mytest.ps1'
+
             Set-Content -Path $testScriptPath -Value $testScript
-            $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru
-            $e | Out-String | Should -BeLike "*$testScriptPath*"
-            $e | Out-String | Should -Not -BeLike '*pester*'
+            $e = { & $testScriptPath } | Should -Throw -ErrorId 'PesterAssertionFailed' -PassThru | Out-String
+            $e | Should -BeLike "*$testScriptPath*"
+            $e | Should -Not -BeLike '*pester*'
+        }
+
+        It "Long lines should be rendered correctly with indentation" {
+            $testscript = @'
+                        $myerrors = [System.Collections.ArrayList]::new()
+                        Copy-Item (New-Guid) (New-Guid) -ErrorVariable +myerrors -ErrorAction SilentlyContinue
+                $error[0]
+'@
+
+            Set-Content -Path $testScriptPath -Value $testScript
+            $e = & $testScriptPath | Out-String
+            $e | Should -BeLike "*${testScriptPath}:2*"
+            # validate line number is shown
+            $e | Should -BeLike '* 2 *'
+        }
+
+        It "Long exception message gets rendered" {
+
+            $msg = "1234567890"
+            while ($msg.Length -le $Host.UI.RawUI.WindowSize.Width)
+            {
+                $msg += $msg
+            }
+
+            $e = { throw "$msg" } | Should -Throw $msg -PassThru | Out-String
+            $e | Should -BeLike "*$msg*"
+        }
+
+        It "Position message does not contain line information" {
+
+            $e = & "$PSHOME/pwsh" -noprofile -command "foreach abc" 2>&1 | Out-String
+            $e | Should -Not -BeNullOrEmpty
+            $e | Should -Not -BeLike "*At line*"
+        }
+
+        It "Error shows if `$PSModuleAutoLoadingPreference is set to 'none'" {
+            $e = & "$PSHOME/pwsh" -noprofile -command '$PSModuleAutoLoadingPreference = ""none""; cmdletThatDoesntExist' 2>&1 | Out-String
+            $e | Should -BeLike "*cmdletThatDoesntExist*"
         }
     }
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -90,6 +90,7 @@ namespace Microsoft.PowerShell.Commands
                                  @"\memory\cache faults/sec",
                                  @"\physicaldisk(_total)\% disk time",
                                  @"\physicaldisk(_total)\current disk queue length"};
+
         private bool _defaultCounters = true;
 
         private List<string> _accumulatedCounters = new List<string>();
@@ -117,6 +118,7 @@ namespace Microsoft.PowerShell.Commands
         // MaxSamples parameter
         //
         private const Int64 KEEP_ON_SAMPLING = -1;
+
         [Parameter(
                 ParameterSetName = "GetCounterSet",
                 ValueFromPipeline = false,
@@ -210,7 +212,6 @@ namespace Microsoft.PowerShell.Commands
         //
         protected override void BeginProcessing()
         {
-
             if (Platform.IsIoT)
             {
                 // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.
@@ -275,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
                         break;
 
                     default:
-                        Debug.Assert(false, string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
+                        Debug.Fail(string.Format(CultureInfo.InvariantCulture, "Invalid parameter set name: {0}", ParameterSetName));
                         break;
                 }
             }
@@ -391,10 +392,7 @@ namespace Microsoft.PowerShell.Commands
                     Dictionary<string, string[]> counterInstanceMapping = new Dictionary<string, string[]>();
                     foreach (string counter in counterSetCounters)
                     {
-                        if (!counterInstanceMapping.ContainsKey(counter))
-                        {
-                            counterInstanceMapping.Add(counter, instanceArray);
-                        }
+                        counterInstanceMapping.TryAdd(counter, instanceArray);
                     }
 
                     PerformanceCounterCategoryType categoryType = PerformanceCounterCategoryType.Unknown;

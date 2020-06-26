@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -453,7 +453,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return string.Compare(ParameterSetName, GenericParameterSet, StringComparison.Ordinal) == 0;
+                return string.Equals(ParameterSetName, GenericParameterSet, StringComparison.Ordinal);
             }
         }
 

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -18,15 +18,18 @@ namespace System.Management.Automation.Language
     internal class SemanticChecks : AstVisitor2, IAstPostVisitHandler
     {
         private readonly Parser _parser;
+
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
         };
+
         private static readonly IsConstantValueVisitor s_isConstantAttributeArgForClassVisitor = new IsConstantValueVisitor
         {
             CheckingAttributeArgument = true,
             CheckingClassAttributeArguments = true
         };
+
         private readonly Stack<MemberAst> _memberScopeStack;
         private readonly Stack<ScriptBlockAst> _scopeStack;
 
@@ -1808,7 +1811,7 @@ namespace System.Management.Automation.Language
             var parser = new Parser();
             var rlc = new RestrictedLanguageChecker(parser, allowedCommands, null, false);
             dataStatementAst.Body.InternalVisit(rlc);
-            if (parser.ErrorList.Any())
+            if (parser.ErrorList.Count > 0)
             {
                 throw new ParseException(parser.ErrorList.ToArray());
             }

@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
@@ -103,6 +103,41 @@ Describe 'ForEach-Object -Parallel Basic Tests' -Tags 'CI' {
     It 'Verifies that the current working directory is preserved' {
         $parallelScriptLocation = 1..1 | ForEach-Object -Parallel { $PWD }
         $parallelScriptLocation.Path | Should -BeExactly $PWD.Path
+    }
+
+    It 'Verifies that the current working directory can have wildcards in its name' {
+        $oldLocation = Get-Location
+
+        $wildcardName = New-Item -Path 'TestDrive:\' -Name '[' -ItemType Directory
+        Set-Location -LiteralPath $wildcardName.FullName
+        try
+        {
+            { 1..1 | ForEach-Object -Parallel { $PWD } } | Should -Not -Throw
+
+            $wildcardPathResult = 1..1 | ForEach-Object -Parallel { $PWD }
+            $wildcardPathResult.Path | Should -BeExactly $PWD.Path
+        }
+        finally
+        {
+            Set-Location -Path $oldLocation
+            if ($drive -is [System.IO.DirectoryInfo]) {
+                $drive | Remove-Item -Force
+            }
+        }
+    }
+
+    It 'Verifies no terminating error if current working drive is not found' {
+        $oldLocation = Get-Location
+        try
+        {
+            New-PSDrive -Name ZZ -PSProvider FileSystem -Root $TestDrive
+            Set-Location -Path 'ZZ:'
+            { 1..1 | ForEach-Object -Parallel { $_ } } | Should -Not -Throw
+        }
+        finally
+        {
+            Set-Location -Path $oldLocation
+        }
     }
 }
 
@@ -209,7 +244,7 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
         $Var2 = "Goodbye"
         $Var3 = 105
         $Var4 = "One","Two","Three"
-        $job = 1..1 | Foreach-Object -AsJob -Parallel {
+        $job = 1..1 | ForEach-Object -AsJob -Parallel {
             Write-Output $using:Var1
             Write-Output $using:Var2
             Write-Output $using:Var3
@@ -314,6 +349,23 @@ Describe 'ForEach-Object -Parallel -AsJob Basic Tests' -Tags 'CI' {
     }
 }
 
+Describe 'ForEach-Object -Parallel runspace pool tests' -Tags 'CI' {
+
+    It "Verifies job allocated runspace count is limited to pool size" {
+
+        $job = 1..4 | ForEach-Object -Parallel { Start-Sleep 1 } -AsJob -ThrottleLimit 2 | Wait-Job
+        $job.AllocatedRunspaceCount | Should -BeExactly 2
+        $job | Remove-Job
+    }
+
+    It "Verifies job with -UseNewRunspace switch allocates one runspace per iteration" {
+
+        $job = 1..10 | ForEach-Object -Parallel { $_ } -AsJob -ThrottleLimit 2 -UseNewRunspace | Wait-Job
+        $job.AllocatedRunspaceCount | Should -BeExactly 10
+        $job | Remove-Job
+    }
+}
+
 Describe 'ForEach-Object -Parallel Functional Tests' -Tags 'Feature' {
 
     It 'Verifies job queuing and throttle limit' {
@@ -362,6 +414,6 @@ Describe 'ForEach-Object -Parallel Functional Tests' -Tags 'Feature' {
         $results.Count | Should -BeExactly 2
         $results[0] | Should -BeExactly 'Output 1'
         $results[1].FullyQualifiedErrorId | Should -BeExactly 'PSTaskException'
-        $results[1].Exception | Should -BeOfType [System.Management.Automation.PipelineStoppedException]
+        $results[1].Exception | Should -BeOfType System.Management.Automation.PipelineStoppedException
     }
 }

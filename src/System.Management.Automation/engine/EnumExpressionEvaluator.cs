@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -131,7 +131,7 @@ namespace System.Management.Automation
                         Text = "NOT";
                         break;
                     default:
-                        Debug.Assert(false, "Invalid token kind passed in.");
+                        Debug.Fail("Invalid token kind passed in.");
                         break;
                 }
             }

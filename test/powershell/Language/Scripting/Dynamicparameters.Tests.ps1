@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     BeforeAll {
@@ -76,6 +76,6 @@ Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     }
 
     It "Parameter is defined in Class" {
-        foo-bar -path class -name "myName" | Should -BeExactly 'myName'
+        foo-bar -path class -Name "myName" | Should -BeExactly 'myName'
     }
 }

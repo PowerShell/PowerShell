@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -763,7 +763,7 @@ namespace System.Management.Automation
         /// Should not throw exceptions
         /// </remarks>
         internal static void UpdateParameters(ManagementBaseObject parameters,
-            SortedList parametersList)
+            SortedList<int, WMIParameterInformation> parametersList)
         {
             // ManagementObject class do not populate parameters when there are none.
             if (parameters == null)
@@ -812,7 +812,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(mData != null, "MethodData should not be null");
 
             // Get Method parameters
-            SortedList parameters = new SortedList();
+            var parameters = new SortedList<int, WMIParameterInformation>();
             UpdateParameters(mData.InParameters, parameters);
 
             // parameters is never null
@@ -832,15 +832,16 @@ namespace System.Management.Automation
             // gather parameter information for this method.
             // input and output parameters reside in 2 different groups..
             // we dont know the order they appear on the arguments line..
-            SortedList parameters = new SortedList();
+            var parameters = new SortedList<int, WMIParameterInformation>();
             UpdateParameters(mData.InParameters, parameters);
 
             StringBuilder inParameterString = new StringBuilder();
 
             if (parameters.Count > 0)
             {
-                foreach (WMIParameterInformation parameter in parameters.Values)
+                for (int i = 0; i < parameters.Values.Count; i++)
                 {
+                    WMIParameterInformation parameter = parameters.Values[i];
                     string typeName = parameter.parameterType.ToString();
 
                     PropertyData pData = mData.InParameters.Properties[parameter.Name];

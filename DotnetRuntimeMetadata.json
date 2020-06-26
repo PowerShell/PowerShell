@@ -1,0 +1,7 @@
+{
+  "sdk": {
+    "channel": "release/5.0.1xx-preview6",
+    "packageVersionPattern": "5.0.0-preview.6",
+    "nextChannel": "net5/preview6"
+  }
+}

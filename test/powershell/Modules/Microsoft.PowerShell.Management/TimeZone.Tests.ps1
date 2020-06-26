@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 <#
@@ -53,8 +53,8 @@ Describe "Get-Timezone test cases" -Tags "CI" {
         $list = Get-TimeZone -ListAvailable
         $list.Count | Should -BeGreaterThan 0
 
-        ,$list | Should -BeOfType "Object[]"
-        $list[0] | Should -BeOfType "TimeZoneInfo"
+        ,$list | Should -BeOfType Object[]
+        $list[0] | Should -BeOfType TimeZoneInfo
     }
 
     ## The local time zone could be set to UTC or GMT*. In this case, the .NET API returns the region ID
@@ -143,7 +143,7 @@ try {
         }
         AfterAll {
             if ($IsWindows) {
-                Set-TimeZone -ID $originalTimeZoneId
+                Set-TimeZone -Id $originalTimeZoneId
             }
         }
 
@@ -172,7 +172,7 @@ try {
         }
         AfterAll {
             if ($IsWindows) {
-                Set-TimeZone -ID $originalTimeZoneId
+                Set-TimeZone -Id $originalTimeZoneId
             }
         }
 

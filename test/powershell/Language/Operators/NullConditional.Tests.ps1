@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Describe 'NullCoalesceOperations' -Tags 'CI' {
@@ -62,7 +62,7 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
         It 'Lhs is DBNull' {
             $x = [System.DBNull]::Value
             $x ??= 200
-            $x | Should -Be 200
+            $x | Should -Be ([System.DBNull]::Value)
         }
 
         It 'Lhs is AutomationNull' {
@@ -74,7 +74,7 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
         It 'Lhs is NullString' {
             $x = [NullString]::Value
             $x ??= 200
-            $x | Should -Be 200
+            $x | Should -Be ([NullString]::Value)
         }
 
         It 'Lhs is empty string' {
@@ -146,7 +146,7 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
 
         It 'Lhs is DBNull' {
             $x = [System.DBNull]::Value
-            $x ?? 200 | Should -Be 200
+            $x ?? 200 | Should -Be ([System.DBNull]::Value)
         }
 
         It 'Lhs is AutomationNull' {
@@ -156,25 +156,33 @@ Describe 'NullCoalesceOperations' -Tags 'CI' {
 
         It 'Lhs is NullString' {
             $x = [NullString]::Value
-            $x ?? 200 | Should -Be 200
+            $x ?? 200 | Should -Be ([NullString]::Value)
         }
 
         It 'Rhs is a get variable expression' {
-            $x = [System.DBNull]::Value
+            $x = $null
             $y = 2
             $x ?? $y | Should -Be 2
         }
 
         It 'Lhs is a constant' {
-            [System.DBNull]::Value ?? 2 | Should -Be 2
-        }
-
-        It 'Both are null constants' {
-            [System.DBNull]::Value ?? [NullString]::Value | Should -Be ([NullString]::Value)
+            [System.DBNull]::Value ?? 2 | Should -Be ([System.DBNull]::Value)
         }
 
         It 'Lhs is $?' {
             {$???$false} | Should -BeTrue
+        }
+
+        It 'Should only evaluate LHS once when it IS null' {
+            $testState = [pscustomobject]@{ Value = 0 }
+            (& { [void]$testState.Value++ }) ?? 'Nothing' | Should -BeExactly 'Nothing'
+            $testState.Value | Should -Be 1
+        }
+
+        It 'Should only evaluate LHS once when it is NOT null' {
+            $testState = [pscustomobject]@{ Value = 0 }
+            (& { 'Test'; [void]$testState.Value++ }) ?? 'Nothing' | Should -BeExactly 'Test'
+            $testState.Value | Should -Be 1
         }
     }
 
@@ -300,7 +308,6 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
             ${array}?.length | Should -Be 3
             ${hash}?.a | Should -Be 1
 
-            (Get-Process -Id $PID)?.Name | Should -BeLike "pwsh*"
             (Get-Item $TestDrive)?.EnumerateFiles()?.Name | Should -BeExactly 'testfile.txt'
 
             [int32]::MaxValue?.ToString() | Should -BeExactly '2147483647'
@@ -364,8 +371,8 @@ Describe 'NullConditionalMemberAccess' -Tag 'CI' {
 
         It 'Use ?. on a dynamic property name' {
             $testContent = @'
-            $propName = 'Name'
-            (Get-Process -Id $PID)?.$propName | Should -BeLike 'pwsh*'
+            $propName = 'SI'
+            (Get-Process -Id $PID)?.$propName | Should -Be (Get-Process -id $PID).SessionId
 
             ${doesNotExist}?.$propName() | Should -BeNullOrEmpty
 '@

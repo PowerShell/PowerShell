@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -49,10 +49,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 this.AllModulesControl.ShowModuleControl.Owner = this;
             }
 
-            this.SizeChanged += new SizeChangedEventHandler(this.ShowAllModulesWindow_SizeChanged);
-            this.LocationChanged += new System.EventHandler(this.ShowAllModulesWindow_LocationChanged);
-            this.StateChanged += new System.EventHandler(this.ShowAllModulesWindow_StateChanged);
-            this.Loaded += new RoutedEventHandler(this.ShowAllModulesWindow_Loaded);
+            this.SizeChanged += this.ShowAllModulesWindow_SizeChanged;
+            this.LocationChanged += this.ShowAllModulesWindow_LocationChanged;
+            this.StateChanged += this.ShowAllModulesWindow_StateChanged;
+            this.Loaded += this.ShowAllModulesWindow_Loaded;
 
             RoutedCommand plusSettings = new RoutedCommand();
             KeyGestureConverter keyGestureConverter = new KeyGestureConverter();

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Management.Automation;
@@ -26,10 +26,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             InitializeComponent();
 
             // See comment in method summary to understand why this event is handled
-            this.CommandList.PreviewMouseMove += new MouseEventHandler(this.CommandList_PreviewMouseMove);
+            this.CommandList.PreviewMouseMove += this.CommandList_PreviewMouseMove;
 
             // See comment in method summary to understand why this event is handled
-            this.CommandList.SelectionChanged += new SelectionChangedEventHandler(this.CommandList_SelectionChanged);
+            this.CommandList.SelectionChanged += this.CommandList_SelectionChanged;
         }
 
         /// <summary>
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public Window Owner
         {
-            get { return this.owner;  }
+            get { return this.owner; }
             set { this.owner = value; }
         }
 

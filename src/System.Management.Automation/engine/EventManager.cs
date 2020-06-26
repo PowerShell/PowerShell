@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 #pragma warning disable 1634, 1691
@@ -641,6 +641,7 @@ namespace System.Management.Automation
         #endregion OnIdleProcessing
 
         private static Dictionary<string, Type> s_generatedEventHandlers = new Dictionary<string, Type>();
+
         private void ProcessNewSubscriber(PSEventSubscriber subscriber, object source, string eventName, string sourceIdentifier, PSObject data, bool supportEvent, bool forwardEvent)
         {
             Delegate handlerDelegate = null;
@@ -666,7 +667,7 @@ namespace System.Management.Automation
                 {
                     string errorMessage = StringUtil.Format(EventingResources.ReservedIdentifier, sourceIdentifier);
 
-                    throw new ArgumentException(errorMessage, "sourceIdentifier");
+                    throw new ArgumentException(errorMessage, nameof(sourceIdentifier));
                 }
 
                 EventInfo eventInfo = null;
@@ -686,7 +687,7 @@ namespace System.Management.Automation
                 if (eventInfo == null)
                 {
                     string errorMessage = StringUtil.Format(EventingResources.CouldNotFindEvent, eventName);
-                    throw new ArgumentException(errorMessage, "eventName");
+                    throw new ArgumentException(errorMessage, nameof(eventName));
                 }
 
                 // Try to set the EnableRaisingEvents property if it defines one
@@ -722,7 +723,7 @@ namespace System.Management.Automation
                 if (invokeMethod.ReturnType != typeof(void))
                 {
                     string errorMessage = EventingResources.NonVoidDelegateNotSupported;
-                    throw new ArgumentException(errorMessage, "eventName");
+                    throw new ArgumentException(errorMessage, nameof(eventName));
                 }
 
                 // Cache generated event handlers (by type and event name) so that they don't bloat our
@@ -818,7 +819,7 @@ namespace System.Management.Automation
         {
             if (subscriber == null)
             {
-                throw new ArgumentNullException("subscriber");
+                throw new ArgumentNullException(nameof(subscriber));
             }
 
             Delegate existingSubscriber = null;
@@ -2349,6 +2350,7 @@ namespace System.Management.Automation
         /// The event generated when a new event is received.
         /// </summary>
         public event PSEventReceivedEventHandler PSEventReceived;
+
         private List<PSEventArgs> _eventCollection = new List<PSEventArgs>();
 
         /// <summary>
@@ -2362,7 +2364,7 @@ namespace System.Management.Automation
         {
             if (eventToAdd == null)
             {
-                throw new ArgumentNullException("eventToAdd");
+                throw new ArgumentNullException(nameof(eventToAdd));
             }
 
             _eventCollection.Add(eventToAdd);
@@ -2479,9 +2481,9 @@ namespace System.Management.Automation
             base(action == null ? null : action.ToString(), name)
         {
             if (eventManager == null)
-                throw new ArgumentNullException("eventManager");
+                throw new ArgumentNullException(nameof(eventManager));
             if (subscriber == null)
-                throw new ArgumentNullException("subscriber");
+                throw new ArgumentNullException(nameof(subscriber));
 
             UsesResultsCollection = true;
             ScriptBlock = action;

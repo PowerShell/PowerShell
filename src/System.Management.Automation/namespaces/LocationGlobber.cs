@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -1719,20 +1719,20 @@ namespace System.Management.Automation
 
             bool result = false;
 
-            if (string.Compare(
+            if (string.Equals(
                     driveName,
                     StringLiterals.Global,
-                    StringComparison.OrdinalIgnoreCase) == 0)
+                    StringComparison.OrdinalIgnoreCase))
             {
                 // It's the global scope.
                 s_tracer.WriteLine("match found: {0}", StringLiterals.Global);
                 result = true;
                 scope = _sessionState.Internal.GlobalScope;
             }
-            else if (string.Compare(
+            else if (string.Equals(
                         driveName,
                         StringLiterals.Local,
-                        StringComparison.OrdinalIgnoreCase) == 0)
+                        StringComparison.OrdinalIgnoreCase))
             {
                 // It's the local scope.
                 s_tracer.WriteLine("match found: {0}", driveName);
@@ -1869,9 +1869,7 @@ namespace System.Management.Automation
                         if (normalizedPath.StartsWith(normalizedRoot, StringComparison.OrdinalIgnoreCase))
                         {
                             isPathForCurrentDrive = true;
-                            path = path.Substring(normalizedRoot.Length);
-                            path = path.TrimStart(StringLiterals.DefaultPathSeparator);
-                            path = StringLiterals.DefaultPathSeparator + path;
+                            path = string.Concat(StringLiterals.DefaultPathSeparatorString, path.AsSpan(normalizedRoot.Length).TrimStart(StringLiterals.DefaultPathSeparator));
                             workingDriveForPath = _sessionState.Drive.Current;
                         }
                     }
@@ -2389,7 +2387,7 @@ namespace System.Management.Automation
             {
                 ArgumentException e =
                     PSTraceSource.NewArgumentException(
-                        "path",
+                        nameof(path),
                         SessionStateStrings.NotProviderQualifiedPath);
                 throw e;
             }
@@ -3087,8 +3085,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        string possibleDriveName = path.Substring(0, index);
-                        if (string.Equals(possibleDriveName, drive.Name, StringComparison.OrdinalIgnoreCase))
+                        if (path.AsSpan(0, index).Equals(drive.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             treatAsRelative = false;
                         }
@@ -4438,17 +4435,17 @@ namespace System.Management.Automation
             const char mshEscapeChar = '`';
             const char regexEscapeChar = '\\';
 
-            char[] workerArray = path.ToCharArray();
+            ReadOnlySpan<char> workerArray = path;
 
             StringBuilder result = new StringBuilder();
 
-            for (int index = 0; index < workerArray.GetLength(0); ++index)
+            for (int index = 0; index < workerArray.Length; ++index)
             {
                 // look for an escape character
 
                 if (workerArray[index] == mshEscapeChar)
                 {
-                    if (index + 1 < workerArray.GetLength(0))
+                    if (index + 1 < workerArray.Length)
                     {
                         if (workerArray[index + 1] == mshEscapeChar)
                         {

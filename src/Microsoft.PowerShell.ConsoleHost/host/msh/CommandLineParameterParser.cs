@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -97,6 +97,17 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
+        /// Null implementation of ReadLineMaskedAsString.
+        /// </summary>
+        /// <returns>
+        /// It throws an exception.
+        /// </returns>
+        public override string ReadLineMaskedAsString()
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
         /// ReadLineAsSecureString.
         /// </summary>
         /// <returns></returns>
@@ -172,7 +183,7 @@ namespace Microsoft.PowerShell
         private const int MaxPipePathLengthLinux = 108;
         private const int MaxPipePathLengthMacOS = 104;
 
-        internal static string[] validParameters = {
+        internal static readonly string[] validParameters = {
             "sta",
             "mta",
             "command",
@@ -847,7 +858,7 @@ namespace Microsoft.PowerShell
 #if DEBUG
                 // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
                 // attach to an already running process with that debugger.
-                else if (MatchSwitch(switchKey, "wait", "w"))
+                else if (MatchSwitch(switchKey, "wait", "wa"))
                 {
                     // This does not need to be localized: its chk only
 
@@ -868,7 +879,6 @@ namespace Microsoft.PowerShell
                 {
                     // Just toss this option, it was processed earlier...
                 }
-
                 else if (MatchSwitch(switchKey, "modules", "mod"))
                 {
                     if (ConsoleHost.DefaultInitialSessionState == null)

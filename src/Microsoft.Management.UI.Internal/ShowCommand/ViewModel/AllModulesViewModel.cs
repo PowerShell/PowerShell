@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -239,10 +239,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
 
                 if (this.selectedModule != null)
                 {
-                    this.selectedModule.SelectedCommandNeedsImportModule -= new EventHandler<ImportModuleEventArgs>(this.SelectedModule_SelectedCommandNeedsImportModule);
-                    this.selectedModule.SelectedCommandNeedsHelp -= new EventHandler<HelpNeededEventArgs>(this.SelectedModule_SelectedCommandNeedsHelp);
-                    this.selectedModule.RunSelectedCommand -= new EventHandler<CommandEventArgs>(this.SelectedModule_RunSelectedCommand);
-                    this.selectedModule.PropertyChanged -= new PropertyChangedEventHandler(this.SelectedModule_PropertyChanged);
+                    this.selectedModule.SelectedCommandNeedsImportModule -= this.SelectedModule_SelectedCommandNeedsImportModule;
+                    this.selectedModule.SelectedCommandNeedsHelp -= this.SelectedModule_SelectedCommandNeedsHelp;
+                    this.selectedModule.RunSelectedCommand -= this.SelectedModule_RunSelectedCommand;
+                    this.selectedModule.PropertyChanged -= this.SelectedModule_PropertyChanged;
                 }
 
                 this.selectedModule = value;
@@ -252,10 +252,10 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 if (this.selectedModule != null)
                 {
                     this.selectedModule.RefreshFilteredCommands(this.CommandNameFilter);
-                    this.selectedModule.SelectedCommandNeedsImportModule += new EventHandler<ImportModuleEventArgs>(this.SelectedModule_SelectedCommandNeedsImportModule);
-                    this.selectedModule.SelectedCommandNeedsHelp += new EventHandler<HelpNeededEventArgs>(this.SelectedModule_SelectedCommandNeedsHelp);
-                    this.selectedModule.RunSelectedCommand += new EventHandler<CommandEventArgs>(this.SelectedModule_RunSelectedCommand);
-                    this.selectedModule.PropertyChanged += new PropertyChangedEventHandler(this.SelectedModule_PropertyChanged);
+                    this.selectedModule.SelectedCommandNeedsImportModule += this.SelectedModule_SelectedCommandNeedsImportModule;
+                    this.selectedModule.SelectedCommandNeedsHelp += this.SelectedModule_SelectedCommandNeedsHelp;
+                    this.selectedModule.RunSelectedCommand += this.SelectedModule_RunSelectedCommand;
+                    this.selectedModule.PropertyChanged += this.SelectedModule_PropertyChanged;
                     this.selectedModule.SelectedCommand = null;
                 }
 

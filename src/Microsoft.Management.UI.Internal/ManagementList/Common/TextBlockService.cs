@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -25,7 +25,7 @@ namespace Microsoft.Management.UI.Internal
                 return;
             }
 
-            if ((bool)e.OldValue == true)
+            if ((bool)e.OldValue)
             {
                 tb.SizeChanged -= OnTextBlockSizeChanged;
             }
@@ -74,7 +74,7 @@ namespace Microsoft.Management.UI.Internal
                 textBlock.FontWeight,
                 textBlock.FontStretch);
 
-            #pragma warning disable 612, 618
+#pragma warning disable 612, 618
             // FormattedText is used to measure the whole width of the text held up by TextBlock container
             FormattedText formattedText = new FormattedText(
                 textBlock.Text,
@@ -83,7 +83,7 @@ namespace Microsoft.Management.UI.Internal
                 typeface,
                 textBlock.FontSize,
                 textBlock.Foreground);
-            #pragma warning restore 612, 618
+#pragma warning restore 612, 618
 
             return formattedText.Width > textBlock.ActualWidth;
         }

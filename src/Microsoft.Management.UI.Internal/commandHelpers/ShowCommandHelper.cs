@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -597,11 +597,7 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>An array of objects out of <paramref name="commandObjects"/>.</returns>
         internal static object[] ObjectArrayFromObjectCollection(object commandObjects)
         {
-            object[] objectArray = commandObjects as object[];
-            if (objectArray == null)
-            {
-                objectArray = ((System.Collections.ArrayList)commandObjects).ToArray();
-            }
+            object[] objectArray = commandObjects as object[] ?? ((System.Collections.ArrayList)commandObjects).ToArray();
 
             return objectArray;
         }
@@ -645,7 +641,7 @@ Function PSGetSerializedShowCommandInfo
             }
 
             ModuleViewModel moduleToSelect = returnValue.Modules.Find(
-                new Predicate<ModuleViewModel>(delegate(ModuleViewModel module)
+                new Predicate<ModuleViewModel>((module) =>
                 {
                     return module.Name.Equals(selectedModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
                 }));
@@ -658,7 +654,7 @@ Function PSGetSerializedShowCommandInfo
             returnValue.SelectedModule = moduleToSelect;
 
             CommandViewModel commandToSelect = moduleToSelect.Commands.Find(
-                new Predicate<CommandViewModel>(delegate(CommandViewModel command)
+                new Predicate<CommandViewModel>((command) =>
                 {
                     return command.ModuleName.Equals(parentModuleNeedingImportModule, StringComparison.OrdinalIgnoreCase) &&
                         command.Name.Equals(commandNeedingImportModule, StringComparison.OrdinalIgnoreCase) ? true : false;
@@ -876,11 +872,8 @@ Function PSGetSerializedShowCommandInfo
         {
             window.Dispatcher.Invoke(
                 new SendOrPostCallback(
-                    delegate(object ignored)
-                    {
-                        window.Activate();
-                    }),
-                    string.Empty);
+                    (_) => window.Activate()),
+                string.Empty);
         }
 
         /// <summary>
@@ -896,7 +889,7 @@ Function PSGetSerializedShowCommandInfo
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ShowAllModulesWindow(PSCmdlet cmdlet, Dictionary<string, ShowCommandModuleInfo> importedModules, IEnumerable<ShowCommandCommandInfo> commands, bool noCommonParameter, double windowWidth, double windowHeight, bool passThrough)
         {
-            this.methodThatReturnsDialog = new DispatcherOperationCallback(delegate(object ignored)
+            this.methodThatReturnsDialog = new DispatcherOperationCallback((object ignored) =>
             {
                 ShowAllModulesWindow allModulesWindow = new ShowAllModulesWindow();
                 this.allModulesViewModel = new AllModulesViewModel(importedModules, commands, noCommonParameter);
@@ -939,7 +932,7 @@ Function PSGetSerializedShowCommandInfo
 
             this.hostWindow.Dispatcher.Invoke(
                 new SendOrPostCallback(
-                    delegate(object ignored)
+                    (_) =>
                     {
                         Window childWindow = (Window)this.methodThatReturnsDialog.Invoke(null);
                         childWindow.Owner = this.hostWindow;
@@ -967,12 +960,12 @@ Function PSGetSerializedShowCommandInfo
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "Called using reflection")]
         private void ShowCommandWindow(PSCmdlet cmdlet, object commandViewModelObj, double windowWidth, double windowHeight, bool passThrough)
         {
-            this.methodThatReturnsDialog = new DispatcherOperationCallback(delegate(object ignored)
+            this.methodThatReturnsDialog = new DispatcherOperationCallback((object ignored) =>
             {
                 this.commandViewModel = (CommandViewModel)commandViewModelObj;
                 ShowCommandWindow showCommandWindow = new ShowCommandWindow();
 
-                this.commandViewModel.HelpNeeded += new EventHandler<HelpNeededEventArgs>(this.CommandNeedsHelp);
+                this.commandViewModel.HelpNeeded += this.CommandNeedsHelp;
                 showCommandWindow.DataContext = this.commandViewModel;
 
                 this.SetupButtonEvents(showCommandWindow.Run, showCommandWindow.Copy, showCommandWindow.Cancel, passThrough);
@@ -1007,7 +1000,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate(object ignored)
+                        delegate (object ignored)
                         {
                             this.allModulesViewModel = ShowCommandHelper.GetNewAllModulesViewModel(
                                 this.allModulesViewModel,
@@ -1034,7 +1027,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate(object ignored)
+                        (_) =>
                         {
                             string message = ShowCommandHelper.GetImportModuleFailedMessage(
                                 this.commandNeedingImportModule,
@@ -1057,7 +1050,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 this.window.Dispatcher.Invoke(
                     new SendOrPostCallback(
-                        delegate(object ignored)
+                        delegate (object ignored)
                         {
                             HelpWindow help = new HelpWindow(getHelpResults[0]);
                             help.Owner = this.window;
@@ -1104,8 +1097,8 @@ Function PSGetSerializedShowCommandInfo
         private void SetupWindow(Window commandWindow)
         {
             this.window = commandWindow;
-            this.window.Closed += new EventHandler(this.Window_Closed);
-            this.window.Loaded += new RoutedEventHandler(this.Window_Loaded);
+            this.window.Closed += this.Window_Closed;
+            this.window.Loaded += this.Window_Loaded;
         }
 
         /// <summary>
@@ -1156,7 +1149,7 @@ Function PSGetSerializedShowCommandInfo
         /// <param name="e">Event arguments.</param>
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.window.Loaded -= new RoutedEventHandler(this.Window_Loaded);
+            this.window.Loaded -= this.Window_Loaded;
             this.windowLoaded.Set();
         }
 
@@ -1175,9 +1168,9 @@ Function PSGetSerializedShowCommandInfo
                 run.Content = ShowCommandResources.ActionButtons_Button_Ok;
             }
 
-            run.Click += new RoutedEventHandler(this.Buttons_RunClick);
-            copy.Click += new RoutedEventHandler(this.Buttons_CopyClick);
-            cancel.Click += new RoutedEventHandler(this.Buttons_CancelClick);
+            run.Click += this.Buttons_RunClick;
+            copy.Click += this.Buttons_CopyClick;
+            cancel.Click += this.Buttons_CancelClick;
         }
 
         /// <summary>
@@ -1185,8 +1178,8 @@ Function PSGetSerializedShowCommandInfo
         /// </summary>
         private void SetupViewModel()
         {
-            this.allModulesViewModel.SelectedCommandInSelectedModuleNeedsHelp += new EventHandler<HelpNeededEventArgs>(this.CommandNeedsHelp);
-            this.allModulesViewModel.SelectedCommandInSelectedModuleNeedsImportModule += new EventHandler<ImportModuleEventArgs>(this.CommandNeedsImportModule);
+            this.allModulesViewModel.SelectedCommandInSelectedModuleNeedsHelp += this.CommandNeedsHelp;
+            this.allModulesViewModel.SelectedCommandInSelectedModuleNeedsImportModule += this.CommandNeedsImportModule;
             this.window.DataContext = this.allModulesViewModel;
         }
 

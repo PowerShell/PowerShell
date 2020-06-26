@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
 
@@ -151,7 +151,7 @@ try
 
         It "Verifies that get-help name for remote proxied commands matches the get-command name" {
             try {
-                $module = Import-PSSession $session -Name Select-Object -prefix My -AllowClobber
+                $module = Import-PSSession $session -Name Select-Object -Prefix My -AllowClobber
                 $gcmOutPut = (Get-Command Select-MyObject ).Name
                 $getHelpOutPut = (Get-Help Select-MyObject).Name
 
@@ -227,7 +227,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command $session { function foo1{1; write-error 2; 3; write-error 4; 5; write-error 6} }
+                Invoke-Command $session { function foo1{1; Write-Error 2; 3; Write-Error 4; 5; Write-Error 6} }
                 $module = Import-PSSession $session -CommandName foo1 -AllowClobber
 
                 $icmErr = $($icmOut = Invoke-Command $session { foo1 }) 2>&1
@@ -259,8 +259,8 @@ try
             }
 
             It "Verifies proxied order = icm order (for mixed error and output results)" {
-                $icmOrder = Invoke-Command $session { foo1 } 2>&1 | out-string
-                $proxiedOrder = foo1 2>&1 | out-string
+                $icmOrder = Invoke-Command $session { foo1 } 2>&1 | Out-String
+                $proxiedOrder = foo1 2>&1 | Out-String
 
                 $icmOrder | Should -Be $proxiedOrder
             }
@@ -390,7 +390,7 @@ try
         Context "Proxy module should create a new session" {
             BeforeAll {
                 if ($skipTest) { return }
-                $module = import-Module $file -PassThru -Force
+                $module = Import-Module $file -PassThru -Force
                 $internalSession = & $module { $script:PSSession }
             }
             AfterAll {
@@ -420,7 +420,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
                 $explicitSessionOption = New-PSSessionOption -Culture fr-FR -UICulture de-DE
-                $module = import-Module $file -PassThru -Force -ArgumentList $null, $explicitSessionOption
+                $module = Import-Module $file -PassThru -Force -ArgumentList $null, $explicitSessionOption
                 $internalSession = & $module { $script:PSSession }
             }
             AfterAll {
@@ -455,7 +455,7 @@ try
                 if ($skipTest) { return }
 
                 $newSession = New-RemoteSession
-                $module = import-Module $file -PassThru -Force -ArgumentList $newSession
+                $module = Import-Module $file -PassThru -Force -ArgumentList $newSession
                 $internalSession = & $module { $script:PSSession }
             }
             AfterAll {
@@ -554,7 +554,7 @@ try
 		        </Members>
 	        </Type>
 	    </Types>
-"@ | set-content $tmpFile
+"@ | Set-Content $tmpFile
 	            $tmpFile
             }
 
@@ -593,7 +593,7 @@ try
 		    </View>
 	        </ViewDefinitions>
 	    </Configuration>
-"@ | set-content $tmpFile
+"@ | Set-Content $tmpFile
                 $tmpFile
             }
 
@@ -613,7 +613,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                $formattingScript = { new-object System.Management.Automation.Host.Size | ForEach-Object { $_.Width = 123; $_.Height = 456; $_ } | Out-String }
+                $formattingScript = { New-Object System.Management.Automation.Host.Size | ForEach-Object { $_.Width = 123; $_.Height = 456; $_ } | Out-String }
                 $originalLocalFormatting = & $formattingScript
 
                 # Original local and remote formatting should be equal (sanity check)
@@ -692,7 +692,7 @@ try
                 Invoke-Command -Session $session -Script { function foo { New-Object MyTest.Root "root" } }
                 Invoke-Command -Session $session -Script { function bar { param([Parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true)]$Son) $Son.Grandson.text } }
 
-                $module = import-pssession $session foo,bar -AllowClobber
+                $module = Import-PSSession $session foo,bar -AllowClobber
             }
 
             AfterAll {
@@ -844,7 +844,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         [cmdletbinding(defaultparametersetname="string")]
                         param(
@@ -886,7 +886,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         param(
                             [string]
@@ -927,7 +927,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         param(
                             [DateTime]
@@ -946,7 +946,7 @@ try
                 # Sanity checks.
                 Invoke-Command $session {Get-Date | foo} | Should -BeExactly "Bound parameter: date"
                 Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo} | Should -BeExactly "Bound parameter: ipaddress"
-                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo -date (get-date)} | Should -BeExactly "Bound parameter: date ipaddress"
+                Invoke-Command $session {[ipaddress]::parse("127.0.0.1") | foo -date (Get-Date)} | Should -BeExactly "Bound parameter: date ipaddress"
                 Invoke-Command $session {Get-Date | foo -ipaddress ([ipaddress]::parse("127.0.0.1"))} | Should -BeExactly "Bound parameter: date ipaddress"
 
                 $module = Import-PSSession $session foo -AllowClobber
@@ -978,7 +978,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         param(
                             [System.TimeSpan]
@@ -1008,15 +1008,15 @@ try
             }
 
             It "Pipeline binding works by property name" {
-                (Get-Process -id $PID | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -Id $PID | foo) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (Get-Process -id $PID | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -Id $PID | foo -Total 5) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
 
             It "Pipeline binding works by property name" {
-                (Get-Process -id $PID | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
+                (Get-Process -Id $PID | foo -Priority normal) | Should -BeExactly "Bound parameter: PriorityClass TotalProcessorTime"
             }
         }
 
@@ -1024,7 +1024,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         param(
                             [string]
@@ -1065,7 +1065,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         param(
                             [object]
@@ -1121,7 +1121,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         param(
                             [string]
@@ -1187,7 +1187,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function foo {
                         param(
                             $firstArg,
@@ -1268,7 +1268,7 @@ try
             BeforeAll {
                 if ($skipTest) { return }
 
-                Invoke-Command -Session $session -ScriptBlock {
+                Invoke-Command -Session $session -Scriptblock {
                     function MyInitializerFunction { param($x = $PID) $x }
                 }
 
@@ -1598,14 +1598,14 @@ try
             }
 
             It "'Completed' progress record should be present" {
-                ($powerShell.Streams.Progress | Select-Object -last 1).RecordType.ToString() | Should -BeExactly "Completed"
+                ($powerShell.Streams.Progress | Select-Object -Last 1).RecordType.ToString() | Should -BeExactly "Completed"
             }
         }
 
         Context "display of property-less objects (not sure if this test belongs here) (Windows 7: #248499)" {
             BeforeAll {
                 if ($skipTest) { return }
-                $x = new-object random
+                $x = New-Object random
 	            $expected = $x.ToString()
             }
 
@@ -1615,7 +1615,7 @@ try
                 ($x | Out-String).Trim() | Should -Be $expected
             }
             It "Display of remote property-less objects" {
-                (Invoke-Command $session { Import-Module Microsoft.PowerShell.Utility; New-Object random } | out-string).Trim() | Should -Be $expected
+                (Invoke-Command $session { Import-Module Microsoft.PowerShell.Utility; New-Object random } | Out-String).Trim() | Should -Be $expected
             }
         }
 
@@ -1642,7 +1642,7 @@ try
         It "Non-terminating error from remote end got duplicated locally" {
             try {
                 Invoke-Command $session { $oldGetCommand = ${function:Get-Command} }
-                Invoke-Command $session { function Get-Command { write-error blah } }
+                Invoke-Command $session { function Get-Command { Write-Error blah } }
                 $module = Import-PSSession -Session $session -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
 
                 $expectedError | Should -Not -BeNullOrEmpty
@@ -1923,7 +1923,7 @@ try
 
             $session = New-RemoteSession -Name Session102
             $remotePid = Invoke-Command $session { $PID }
-            $module = Import-PSSession $session Get-Variable -prefix Remote -AllowClobber
+            $module = Import-PSSession $session Get-Variable -Prefix Remote -AllowClobber
         }
 
         AfterAll {

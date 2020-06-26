@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 Class WebListener
@@ -120,7 +120,7 @@ function Start-WebListener
         }
 
         $initTimeoutSeconds  = 15
-        $appExe              = (get-command WebListener).Path
+        $appExe              = (Get-Command WebListener).Path
         $serverPfx           = 'ServerCert.pfx'
         $serverPfxPassword   = New-RandomHexString
         $clientPfx           = 'ClientCert.pfx'
@@ -134,7 +134,7 @@ function Start-WebListener
         New-ClientCertificate -CertificatePath $Script:ClientPfxPath -Password $Script:ClientPfxPassword
 
         $Job = Start-Job {
-            $path = Split-Path -parent (get-command WebListener).Path -Verbose
+            $path = Split-Path -Parent (Get-Command WebListener).Path -Verbose
             Push-Location $path -Verbose
             'appEXE: {0}' -f $using:appExe
             'serverPfxPath: {0}' -f $using:serverPfxPath

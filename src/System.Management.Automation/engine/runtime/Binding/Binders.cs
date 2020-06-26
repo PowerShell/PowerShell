@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -1178,7 +1178,7 @@ namespace System.Management.Automation.Language
             public bool Equals(PSInvokeDynamicMemberBinderKeyType x, PSInvokeDynamicMemberBinderKeyType y)
             {
                 return x.Item1.Equals(y.Item1) &&
-                       x.Item2 == null ? y.Item2 == null : x.Item2.Equals(y.Item2) &&
+                       ((x.Item2 == null) ? y.Item2 == null : x.Item2.Equals(y.Item2)) &&
                        x.Item3 == y.Item3 &&
                        x.Item4 == y.Item4 &&
                        x.Item5 == y.Item5;
@@ -1306,6 +1306,7 @@ namespace System.Management.Automation.Language
 
         private readonly bool _static;
         private readonly Type _classScope;
+
         private PSGetDynamicMemberBinder(Type classScope, bool @static)
         {
             _static = @static;
@@ -1682,7 +1683,7 @@ namespace System.Management.Automation.Language
                 // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                 // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                 var paramArrayAttrs = parameterInfo[argIndex].GetCustomAttributes(typeof(ParamArrayAttribute), true);
-                if (paramArrayAttrs != null && paramArrayAttrs.Any() && expandParamsOnBest)
+                if (paramArrayAttrs != null && paramArrayAttrs.Length > 0 && expandParamsOnBest)
                 {
                     var elementType = parameterInfo[argIndex].ParameterType.GetElementType();
                     var paramsArray = new List<Expression>();
@@ -1713,7 +1714,7 @@ namespace System.Management.Automation.Language
             }
 
             Expression result = Expression.New(constructorInfo, ctorArgs);
-            if (CallInfo.ArgumentNames.Any())
+            if (CallInfo.ArgumentNames.Count > 0)
             {
                 var tmp = Expression.Parameter(result.Type);
                 var blockExprs = new List<Expression>();
@@ -2035,7 +2036,7 @@ namespace System.Management.Automation.Language
             }
 
             // If there are any fields, the type is mutable.
-            if (type.GetFields(BindingFlags.Public | BindingFlags.Instance).Any())
+            if (type.GetFields(BindingFlags.Public | BindingFlags.Instance).Length > 0)
             {
                 return true;
             }
@@ -3028,9 +3029,7 @@ namespace System.Management.Automation.Language
             if (target.Value == null)
             {
                 return new DynamicMetaObject(
-                    LanguagePrimitives.IsNullLike(arg.Value)
-                        ? ExpressionCache.BoxedTrue
-                        : ExpressionCache.BoxedFalse,
+                    arg.Value == null ? ExpressionCache.BoxedTrue : ExpressionCache.BoxedFalse,
                     target.CombineRestrictions(arg));
             }
 
@@ -3038,9 +3037,7 @@ namespace System.Management.Automation.Language
             if (enumerable == null && arg.Value == null)
             {
                 return new DynamicMetaObject(
-                    LanguagePrimitives.IsNullLike(target.Value)
-                        ? ExpressionCache.BoxedTrue
-                        : ExpressionCache.BoxedFalse,
+                    ExpressionCache.BoxedFalse,
                     target.CombineRestrictions(arg));
             }
 
@@ -3055,19 +3052,14 @@ namespace System.Management.Automation.Language
             if (target.Value == null)
             {
                 return new DynamicMetaObject(
-                    LanguagePrimitives.IsNullLike(arg.Value)
-                        ? ExpressionCache.BoxedFalse
-                        : ExpressionCache.BoxedTrue,
+                    arg.Value == null ? ExpressionCache.BoxedFalse : ExpressionCache.BoxedTrue,
                     target.CombineRestrictions(arg));
             }
 
             var enumerable = PSEnumerableBinder.IsEnumerable(target);
             if (enumerable == null && arg.Value == null)
             {
-                return new DynamicMetaObject(
-                    LanguagePrimitives.IsNullLike(target.Value)
-                        ? ExpressionCache.BoxedFalse
-                        : ExpressionCache.BoxedTrue,
+                return new DynamicMetaObject(ExpressionCache.BoxedTrue,
                     target.CombineRestrictions(arg));
             }
 
@@ -4978,6 +4970,7 @@ namespace System.Management.Automation.Language
         internal int _version;
 
         private bool _hasInstanceMember;
+
         internal bool HasInstanceMember { get { return _hasInstanceMember; } }
 
         internal static void SetHasInstanceMember(string memberName)
@@ -5032,6 +5025,7 @@ namespace System.Management.Automation.Language
         }
 
         private bool _hasTypeTableMember;
+
         internal static void TypeTableMemberAdded(string memberName)
         {
             var binderList = s_binderCacheIgnoringCase.GetOrAdd(memberName, _ => new List<PSGetMemberBinder>());
@@ -5108,7 +5102,7 @@ namespace System.Management.Automation.Language
                             var binderList = s_binderCacheIgnoringCase.GetOrAdd(memberName, _ => new List<PSGetMemberBinder>());
                             lock (binderList)
                             {
-                                if (binderList.Any())
+                                if (binderList.Count > 0)
                                 {
                                     result._hasInstanceMember = binderList[0]._hasInstanceMember;
                                     result._hasTypeTableMember = binderList[0]._hasTypeTableMember;
@@ -5255,7 +5249,7 @@ namespace System.Management.Automation.Language
 
                         if (adapterData.member.DeclaringType.IsGenericTypeDefinition || adapterData.propertyType.IsByRefLike)
                         {
-                            // This is kinda lame - we really should throw an error, but accessing property getter
+                            // We really should throw an error, but accessing property getter
                             // doesn't throw error in PowerShell since V2, even in strict mode.
                             expr = ExpressionCache.NullConstant;
                         }
@@ -7090,7 +7084,7 @@ namespace System.Management.Automation.Language
                 // This inconsistent behavior affects OneCore powershell because we are using the extension method here when compiling
                 // against CoreCLR. So we need to add a null check until this is fixed in CLR.
                 var paramArrayAttrs = parameters[i].GetCustomAttributes(typeof(ParamArrayAttribute), false);
-                if (paramArrayAttrs != null && paramArrayAttrs.Any())
+                if (paramArrayAttrs != null && paramArrayAttrs.Length > 0)
                 {
                     Diagnostics.Assert(i == parameters.Length - 1, "vararg parameter is not the last");
                     var paramElementType = parameterType.GetElementType();
@@ -7210,9 +7204,9 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            if (temps.Any())
+            if (temps.Count > 0)
             {
-                if (call.Type != typeof(void) && copyOutTemps.Any())
+                if (call.Type != typeof(void) && copyOutTemps.Count > 0)
                 {
                     var retValue = Expression.Variable(call.Type);
                     temps.Add(retValue);

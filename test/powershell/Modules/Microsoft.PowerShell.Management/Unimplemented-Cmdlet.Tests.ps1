@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe "Unimplemented Management Cmdlet Tests" -Tags "CI" {
 
@@ -12,7 +12,6 @@ Describe "Unimplemented Management Cmdlet Tests" -Tags "CI" {
         "Set-Service",
         "New-Service",
 
-        "Restart-Computer",
         "Rename-Computer",
 
         "Get-ComputerInfo",

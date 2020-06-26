@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -224,7 +224,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 textBox.AcceptsReturn = true;
                 textBox.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
                 textBox.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-                textBox.Loaded += new RoutedEventHandler(ParameterSetControl.MultiLineTextBox_Loaded);
+                textBox.Loaded += ParameterSetControl.MultiLineTextBox_Loaded;
             }
 
             return textBox;
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         private static void MultiLineTextBox_Loaded(object sender, RoutedEventArgs e)
         {
             TextBox senderTextBox = (TextBox)sender;
-            senderTextBox.Loaded -= new RoutedEventHandler(ParameterSetControl.MultiLineTextBox_Loaded);
+            senderTextBox.Loaded -= ParameterSetControl.MultiLineTextBox_Loaded;
 
             // This will set the height to about 3 lines since the total height of the
             // TextBox is a bit greater than a line's height

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections.Generic;
@@ -181,7 +181,7 @@ namespace System.Management.Automation.Language
     }
 
 #if DEBUG
-    class CheckAllParentsSet : AstVisitor2
+    internal class CheckAllParentsSet : AstVisitor2
     {
         internal CheckAllParentsSet(Ast root)
         {
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Check if <see cref="TypeConstraintAst"/> contains <see cref="TypeBuilder "/> type.
     /// </summary>
-    class CheckTypeBuilder : AstVisitor2
+    internal class CheckTypeBuilder : AstVisitor2
     {
         public override AstVisitAction VisitTypeConstraint(TypeConstraintAst ast)
         {
@@ -374,7 +374,7 @@ namespace System.Management.Automation.Language
 
             var searcher = new AstSearcher(predicate, stopOnFirst: true, searchNestedScriptBlocks: searchNestedScriptBlocks);
             ast.InternalVisit(searcher);
-            return searcher.Results.FirstOrDefault() != null;
+            return searcher.Results.Any();
         }
 
         internal static bool IsUsingDollarInput(Ast ast)

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -83,6 +83,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         private Collection<WildcardPattern> _excludeMatcher = null;
+
         private static System.IO.EnumerationOptions _enumerationOptions = new System.IO.EnumerationOptions
         {
             MatchType = MatchType.Win32,
@@ -166,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
                             var entries = Directory.GetFileSystemEntries(exactPath, item);
                             if (entries.Length > 0)
                             {
-                                exactPath = entries.First();
+                                exactPath = entries[0];
                             }
                             else
                             {
@@ -507,7 +508,7 @@ namespace Microsoft.PowerShell.Commands
             // verify parameters
             if (drive == null)
             {
-                throw PSTraceSource.NewArgumentNullException("drive");
+                throw PSTraceSource.NewArgumentNullException(nameof(drive));
             }
 
             if (string.IsNullOrEmpty(drive.Root))
@@ -598,6 +599,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private static bool _WNetApiAvailable = true;
+
         private void WinMapNetworkDrive(PSDriveInfo drive)
         {
             if (drive != null && !string.IsNullOrEmpty(drive.Root))
@@ -608,6 +611,7 @@ namespace Microsoft.PowerShell.Commands
                 const int RESOURCETYPE_ANY = 0x00000000;
                 const int RESOURCEDISPLAYTYPE_GENERIC = 0x00000000;
                 const int RESOURCEUSAGE_CONNECTABLE = 0x00000001;
+                const int ERROR_NO_NETWORK = 1222;
 
                 // By default the connection is not persisted.
                 int CONNECT_TYPE = CONNECT_NOPERSIST;
@@ -652,7 +656,19 @@ namespace Microsoft.PowerShell.Commands
                     resource.Type = RESOURCETYPE_ANY;
                     resource.Usage = RESOURCEUSAGE_CONNECTABLE;
 
-                    int code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
+                    int code = ERROR_NO_NETWORK;
+
+                    if (_WNetApiAvailable)
+                    {
+                        try
+                        {
+                            code = NativeMethods.WNetAddConnection2(ref resource, passwd, userName, CONNECT_TYPE);
+                        }
+                        catch (System.DllNotFoundException)
+                        {
+                            _WNetApiAvailable = false;
+                        }
+                    }
 
                     if (code != 0)
                     {
@@ -717,6 +733,7 @@ namespace Microsoft.PowerShell.Commands
             if (IsNetworkMappedDrive(drive))
             {
                 const int CONNECT_UPDATE_PROFILE = 0x00000001;
+                const int ERROR_NO_NETWORK = 1222;
 
                 int flags = 0;
                 string driveName;
@@ -734,7 +751,19 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // You need to actually remove the drive.
-                int code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                int code = ERROR_NO_NETWORK;
+
+                if (_WNetApiAvailable)
+                {
+                    try
+                    {
+                        code = NativeMethods.WNetCancelConnection2(driveName, flags, true);
+                    }
+                    catch (System.DllNotFoundException)
+                    {
+                        _WNetApiAvailable = false;
+                    }
+                }
 
                 if (code != 0)
                 {
@@ -787,6 +816,7 @@ namespace Microsoft.PowerShell.Commands
 
         private static string WinGetUNCForNetworkDrive(string driveName)
         {
+            const int ERROR_NO_NETWORK = 1222;
             string uncPath = null;
             if (!string.IsNullOrEmpty(driveName) && driveName.Length == 1)
             {
@@ -803,7 +833,16 @@ namespace Microsoft.PowerShell.Commands
                 driveName += ':';
 
                 // Call the windows API
-                int errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                int errorCode = ERROR_NO_NETWORK;
+
+                try
+                {
+                    errorCode = NativeMethods.WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                }
+                catch (System.DllNotFoundException)
+                {
+                    return null;
+                }
 
                 // error code 234 is returned whenever the required buffer size is greater
                 // than the specified buffer size.
@@ -1222,7 +1261,7 @@ namespace Microsoft.PowerShell.Commands
             if (string.IsNullOrEmpty(path))
             {
                 // The parameter was null, throw an exception
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             try
@@ -1378,10 +1417,10 @@ namespace Microsoft.PowerShell.Commands
                 // Since all root paths are hidden we need to show the directory
                 // anyway
                 bool isRootPath =
-                    string.Compare(
+                    string.Equals(
                         Path.GetPathRoot(path),
                         result.FullName,
-                        StringComparison.OrdinalIgnoreCase) == 0;
+                        StringComparison.OrdinalIgnoreCase);
 
                 // if "Hidden" is specified in the attribute filter dynamic parameters
                 // also return the object
@@ -1408,7 +1447,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -1590,7 +1629,7 @@ namespace Microsoft.PowerShell.Commands
             // Verify parameters
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -2076,14 +2115,14 @@ namespace Microsoft.PowerShell.Commands
             // Check the parameters
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
 
             if (string.IsNullOrEmpty(newName))
             {
-                throw PSTraceSource.NewArgumentException("newName");
+                throw PSTraceSource.NewArgumentException(nameof(newName));
             }
 
             // Clean up "newname" to fix some common usability problems:
@@ -2101,9 +2140,9 @@ namespace Microsoft.PowerShell.Commands
 
             // Check to see if the target specified is just filename. We dont allow rename to move the file to a different directory.
             // If a path is specified for the newName then we flag that as an error.
-            if (string.Compare(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase) != 0)
+            if (!string.Equals(Path.GetFileName(newName), newName, StringComparison.OrdinalIgnoreCase))
             {
-                throw PSTraceSource.NewArgumentException("newName", FileSystemProviderStrings.RenameError);
+                throw PSTraceSource.NewArgumentException(nameof(newName), FileSystemProviderStrings.RenameError);
             }
 
             // Verify that the target doesn't represent a device name
@@ -2217,7 +2256,7 @@ namespace Microsoft.PowerShell.Commands
             // Verify parameters
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(type))
@@ -2313,7 +2352,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (string.IsNullOrEmpty(strTargetPath))
                     {
-                        throw PSTraceSource.NewArgumentNullException("value");
+                        throw PSTraceSource.NewArgumentNullException(nameof(value));
                     }
 
                     bool exists = false;
@@ -2323,12 +2362,24 @@ namespace Microsoft.PowerShell.Commands
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
-
-                        // Pretend the target exists if we're making a symbolic link.
                         if (itemType == ItemType.SymbolicLink)
                         {
                             exists = true;
+
+                            var normalizedTargetPath = strTargetPath;
+                            if (strTargetPath.StartsWith(".\\", StringComparison.OrdinalIgnoreCase) ||
+                                strTargetPath.StartsWith("./", StringComparison.OrdinalIgnoreCase))
+                            {
+                                normalizedTargetPath = Path.Join(SessionState.Internal.CurrentLocation.ProviderPath, strTargetPath.AsSpan().Slice(2));
+                            }
+
+                            GetFileSystemInfo(normalizedTargetPath, out isDirectory);
+
+                            strTargetPath = strTargetPath.Replace(StringLiterals.AlternatePathSeparator, StringLiterals.DefaultPathSeparator);
+                        }
+                        else
+                        {
+                            exists = GetFileSystemInfo(strTargetPath, out isDirectory) != null;
                         }
                     }
                     catch (Exception e)
@@ -2347,7 +2398,7 @@ namespace Microsoft.PowerShell.Commands
                     if (itemType == ItemType.HardLink)
                     {
                         // Hard links can only be to files, not directories.
-                        if (isDirectory == true)
+                        if (isDirectory)
                         {
                             string message = StringUtil.Format(FileSystemProviderStrings.ItemNotFile, strTargetPath);
                             WriteError(new ErrorRecord(new InvalidOperationException(message), "ItemNotFile", ErrorCategory.InvalidOperation, strTargetPath));
@@ -2505,7 +2556,8 @@ namespace Microsoft.PowerShell.Commands
 
                     if (!exists)
                     {
-                        WriteError(new ErrorRecord(new InvalidOperationException(FileSystemProviderStrings.ItemNotFound), "ItemNotFound", ErrorCategory.ObjectNotFound, value));
+                        string message = StringUtil.Format(FileSystemProviderStrings.ItemNotFound, strTargetPath);
+                        WriteError(new ErrorRecord(new ItemNotFoundException(message), "ItemNotFound", ErrorCategory.ObjectNotFound, strTargetPath));
                         return;
                     }
 
@@ -2624,7 +2676,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                throw PSTraceSource.NewArgumentException("type", FileSystemProviderStrings.UnknownType);
+                throw PSTraceSource.NewArgumentException(nameof(type), FileSystemProviderStrings.UnknownType);
             }
         }
 
@@ -2783,7 +2835,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             try
@@ -2806,10 +2858,10 @@ namespace Microsoft.PowerShell.Commands
                     string parentPath = GetParentPath(path, root);
 
                     if (!string.IsNullOrEmpty(parentPath) &&
-                        string.Compare(
+                        !string.Equals(
                             parentPath,
                             previousParent,
-                            StringComparison.OrdinalIgnoreCase) != 0)
+                            StringComparison.OrdinalIgnoreCase))
                     {
                         if (!ItemExists(parentPath))
                         {
@@ -2873,7 +2925,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             try
@@ -3049,13 +3101,18 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
+                    // TODO:
+                    // Different symlinks seem to vary by behavior.
+                    // In particular, OneDrive symlinks won't remove without recurse,
+                    // but the .NET API here does not allow us to distinguish them.
+                    // We may need to revisit using p/Invokes here to get the right behavior
                     directory.Delete();
                 }
                 catch (Exception e)
                 {
-                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName);
-                    Exception exception = new IOException(error, e);
-                    WriteError(new ErrorRecord(exception, "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
+                    string error = StringUtil.Format(FileSystemProviderStrings.CannotRemoveItem, directory.FullName, e.Message);
+                    var exception = new IOException(error, e);
+                    WriteError(new ErrorRecord(exception, errorId: "DeleteSymbolicLinkFailed", ErrorCategory.WriteError, directory));
                 }
 
                 return;
@@ -3341,7 +3398,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             bool result = false;
@@ -3442,7 +3499,7 @@ namespace Microsoft.PowerShell.Commands
             // verify parameters
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -3544,12 +3601,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(destinationPath))
             {
-                throw PSTraceSource.NewArgumentException("destinationPath");
+                throw PSTraceSource.NewArgumentException(nameof(destinationPath));
             }
 
             path = NormalizePath(path);
@@ -4323,14 +4380,14 @@ namespace Microsoft.PowerShell.Commands
                     ps.AddParameter("copyFromNumBytes", fragmentSize);
                     if (force)
                     {
-                        ps.AddParameter("force", true);
+                        ps.AddParameter(nameof(force), true);
                     }
 
 #if !UNIX
                     if (isAlternateDataStream)
                     {
                         ps.AddParameter("isAlternateStream", true);
-                        ps.AddParameter("streamName", streamName);
+                        ps.AddParameter(nameof(streamName), streamName);
                     }
 #endif
 
@@ -4484,7 +4541,7 @@ namespace Microsoft.PowerShell.Commands
             string path = null;
 
             ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
-            ps.AddParameter("remotePath", remotePath);
+            ps.AddParameter(nameof(remotePath), remotePath);
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
             if (op != null)
@@ -4645,7 +4702,7 @@ namespace Microsoft.PowerShell.Commands
                         ps.AddCommand(CopyFileRemoteUtils.PSCopyToSessionHelperName);
                         ps.AddParameter("copyToFilePath", destinationPath);
                         ps.AddParameter("b64Fragment", b64Fragment);
-                        ps.AddParameter("streamName", streamName);
+                        ps.AddParameter(nameof(streamName), streamName);
                     }
 
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
@@ -4799,7 +4856,7 @@ namespace Microsoft.PowerShell.Commands
             ps.AddParameter("createDirectoryPath", destination);
             if (force)
             {
-                ps.AddParameter("force", true);
+                ps.AddParameter(nameof(force), true);
             }
 
             Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
@@ -5006,7 +5063,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path) || !IsValidPath(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (basePath == null)
@@ -5193,7 +5250,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (path == null)
             {
-                throw PSTraceSource.NewArgumentNullException("path");
+                throw PSTraceSource.NewArgumentNullException(nameof(path));
             }
 
             if (path.Length == 0)
@@ -5617,7 +5674,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             // Normalize the path
@@ -5680,7 +5737,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -5714,12 +5771,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (string.IsNullOrEmpty(destination))
             {
-                throw PSTraceSource.NewArgumentException("destination");
+                throw PSTraceSource.NewArgumentException(nameof(destination));
             }
 
             path = NormalizePath(path);
@@ -6078,7 +6135,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -6211,12 +6268,12 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             if (propertyToSet == null)
             {
-                throw PSTraceSource.NewArgumentNullException("propertyToSet");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertyToSet));
             }
 
             path = NormalizePath(path);
@@ -6282,7 +6339,7 @@ namespace Microsoft.PowerShell.Commands
 
                         if (member != null)
                         {
-                            if (string.Compare(property.Name, "attributes", StringComparison.OrdinalIgnoreCase) == 0)
+                            if (string.Equals(property.Name, "attributes", StringComparison.OrdinalIgnoreCase))
                             {
                                 FileAttributes attributes;
 
@@ -6382,7 +6439,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -6390,14 +6447,14 @@ namespace Microsoft.PowerShell.Commands
             if (propertiesToClear == null ||
                 propertiesToClear.Count == 0)
             {
-                throw PSTraceSource.NewArgumentNullException("propertiesToClear");
+                throw PSTraceSource.NewArgumentNullException(nameof(propertiesToClear));
             }
 
             // Only the attributes property can be cleared
             if (propertiesToClear.Count > 1 ||
                 Host.CurrentCulture.CompareInfo.Compare("Attributes", propertiesToClear[0], CompareOptions.IgnoreCase) != 0)
             {
-                throw PSTraceSource.NewArgumentException("propertiesToClear", FileSystemProviderStrings.CannotClearProperty);
+                throw PSTraceSource.NewArgumentException(nameof(propertiesToClear), FileSystemProviderStrings.CannotClearProperty);
             }
 
             try
@@ -6500,7 +6557,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -6674,7 +6731,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -6803,7 +6860,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (string.IsNullOrEmpty(path))
             {
-                throw PSTraceSource.NewArgumentException("path");
+                throw PSTraceSource.NewArgumentException(nameof(path));
             }
 
             path = NormalizePath(path);
@@ -7096,6 +7153,8 @@ namespace Microsoft.PowerShell.Commands
             [DllImport("api-ms-win-core-shlwapi-legacy-l1-1-0.dll", CharSet = CharSet.Unicode)]
             internal static extern int PathGetDriveNumber(string path);
 
+            private static bool _WNetApiAvailable = true;
+
             /// <summary>
             /// The API 'PathIsNetworkPath' is not available in CoreSystem.
             /// This implementation is based on the 'PathIsNetworkPath' API.
@@ -7114,6 +7173,11 @@ namespace Microsoft.PowerShell.Commands
                     return true;
                 }
 
+                if (!_WNetApiAvailable)
+                {
+                    return false;
+                }
+
                 // 0 - 25 corresponding to 'A' - 'Z'
                 int driveId = PathGetDriveNumber(path);
                 if (driveId >= 0 && driveId < 26)
@@ -7122,7 +7186,16 @@ namespace Microsoft.PowerShell.Commands
 
                     int bufferSize = 260; // MAX_PATH from EhStorIoctl.h
                     StringBuilder uncBuffer = new StringBuilder(bufferSize);
-                    int errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                    int errorCode = -1;
+                    try
+                    {
+                        errorCode = WNetGetConnection(driveName, uncBuffer, ref bufferSize);
+                    }
+                    catch (System.DllNotFoundException)
+                    {
+                        _WNetApiAvailable = false;
+                        return false;
+                    }
 
                     // From the 'IsNetDrive' API.
                     // 0: success; 1201: connection closed; 31: device error
@@ -7247,12 +7320,16 @@ namespace Microsoft.PowerShell.Commands
             public int Type;
             public int DisplayType;
             public int Usage;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string LocalName;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string RemoteName;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Comment;
+
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Provider;
         }
@@ -7795,6 +7872,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort PrintNameOffset;
             public ushort PrintNameLength;
             public uint Flags;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] PathBuffer;
         }
@@ -7809,6 +7887,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort SubstituteNameLength;
             public ushort PrintNameOffset;
             public ushort PrintNameLength;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] PathBuffer;
         }
@@ -7820,6 +7899,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort ReparseDataLength;
             public ushort Reserved;
             public uint StringCount;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 0x3FF0)]
             public byte[] StringList;
         }
@@ -7845,6 +7925,7 @@ namespace Microsoft.PowerShell.Commands
             public uint Data1;
             public ushort Data2;
             public ushort Data3;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 8)]
             public char[] Data4;
         }
@@ -7856,6 +7937,7 @@ namespace Microsoft.PowerShell.Commands
             public ushort ReparseDataLength;
             public ushort Reserved;
             public GUID ReparseGuid;
+
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = MAX_REPARSE_SIZE)]
             public char[] DataBuffer;
         }
@@ -8104,7 +8186,7 @@ namespace Microsoft.PowerShell.Commands
             var data = new WIN32_FIND_DATA();
             using (var handle = FindFirstFileEx(fileInfo.FullName, FINDEX_INFO_LEVELS.FindExInfoBasic, ref data, FINDEX_SEARCH_OPS.FindExSearchNameMatch, IntPtr.Zero, 0))
             {
-                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/en-us/windows/win32/fileio/reparse-point-tags
+                // The name surrogate bit 0x20000000 is defined in https://docs.microsoft.com/windows/win32/fileio/reparse-point-tags
                 // Name surrogates (0x20000000) are reparse points that point to other named entities local to the filesystem
                 // (like symlinks and mount points).
                 // In the case of OneDrive, they are not name surrogates and would be safe to recurse into.
@@ -8395,12 +8477,12 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    throw new ArgumentNullException("target");
+                    throw new ArgumentNullException(nameof(target));
                 }
             }
             else
             {
-                throw new ArgumentNullException("path");
+                throw new ArgumentNullException(nameof(path));
             }
         }
 
@@ -8475,7 +8557,7 @@ namespace System.Management.Automation.Internal
         /// <returns>The list of streams (and their size) in the file.</returns>
         internal static List<AlternateStreamData> GetStreams(string path)
         {
-            if (path == null) throw new ArgumentNullException("path");
+            if (path == null) throw new ArgumentNullException(nameof(path));
 
             List<AlternateStreamData> alternateStreams = new List<AlternateStreamData>();
 
@@ -8588,8 +8670,8 @@ namespace System.Management.Automation.Internal
         /// <param name="streamName">The name of the alternate data stream to delete.</param>
         internal static void DeleteFileStream(string path, string streamName)
         {
-            if (path == null) throw new ArgumentNullException("path");
-            if (streamName == null) throw new ArgumentNullException("streamName");
+            if (path == null) throw new ArgumentNullException(nameof(path));
+            if (streamName == null) throw new ArgumentNullException(nameof(streamName));
 
             string adjustedStreamName = streamName.Trim();
             if (adjustedStreamName.IndexOf(':') != 0)
@@ -8619,6 +8701,7 @@ namespace System.Management.Automation.Internal
         internal static class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
+
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }
 
             [DllImport(PinvokeDllNames.CreateFileDllName, CharSet = CharSet.Unicode, SetLastError = true)]
@@ -8690,9 +8773,11 @@ namespace System.Management.Automation.Internal
         #region PSCopyToSessionHelper
 
         internal const string PSCopyToSessionHelperName = @"PSCopyToSessionHelper";
+
         private static string s_driveMaxSizeErrorFormatString = FileSystemProviderStrings.DriveMaxSizeError;
         private static string s_PSCopyToSessionHelperDefinition = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]", s_driveMaxSizeErrorFormatString);
         private static string s_PSCopyToSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyToSessionHelperDefinitionFormat, @"[ValidateUserDrive()]", s_driveMaxSizeErrorFormatString);
+
         private const string PSCopyToSessionHelperDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSCopyFileToRemoteSession"")]
@@ -9156,8 +9241,10 @@ namespace System.Management.Automation.Internal
         #region PSCopyFromSessionHelper
 
         internal const string PSCopyFromSessionHelperName = @"PSCopyFromSessionHelper";
+
         private static string s_PSCopyFromSessionHelperDefinition = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateNotNullOrEmpty()]");
         private static string s_PSCopyFromSessionHelperDefinitionRestricted = StringUtil.Format(PSCopyFromSessionHelperDefinitionFormat, @"[ValidateUserDrive()]");
+
         private const string PSCopyFromSessionHelperDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSCopyFileFromRemoteSession"", Mandatory=$true)]
@@ -9629,7 +9716,7 @@ namespace System.Management.Automation.Internal
         }}
         ";
 
-        internal static string PSCopyFromSessionHelper = functionToken + PSCopyFromSessionHelperName + @"
+        internal static readonly string PSCopyFromSessionHelper = functionToken + PSCopyFromSessionHelperName + @"
         {
         " + s_PSCopyFromSessionHelperDefinition + @"
         }
@@ -9645,8 +9732,10 @@ namespace System.Management.Automation.Internal
         #region PSCopyRemoteUtils
 
         internal const string PSCopyRemoteUtilsName = @"PSCopyRemoteUtils";
-        internal static string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
+
+        internal static readonly string PSCopyRemoteUtilsDefinition = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateNotNullOrEmpty()]", PSValidatePathFunction);
         private static string s_PSCopyRemoteUtilsDefinitionRestricted = StringUtil.Format(PSCopyRemoteUtilsDefinitionFormat, @"[ValidateUserDrive()]", PSValidatePathFunction);
+
         private const string PSCopyRemoteUtilsDefinitionFormat = @"
         param (
             [Parameter(ParameterSetName=""PSRemoteDirectoryExist"", Mandatory=$true)]
@@ -9801,27 +9890,29 @@ namespace System.Management.Automation.Internal
         return $result
         ";
 
-        internal static string PSCopyRemoteUtils = functionToken + PSCopyRemoteUtilsName + @"
+        internal static readonly string PSCopyRemoteUtils = functionToken + PSCopyRemoteUtilsName + @"
         {
         " + PSCopyRemoteUtilsDefinition + @"
         }
         ";
 
-        internal static Hashtable PSCopyRemoteUtilsFunction = new Hashtable() {
+        internal static readonly Hashtable PSCopyRemoteUtilsFunction = new Hashtable() {
             {nameToken, PSCopyRemoteUtilsName},
             {definitionToken, s_PSCopyRemoteUtilsDefinitionRestricted}
         };
 
         #endregion
 
-        internal static string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
+        internal static readonly string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
+
         internal static IEnumerable<Hashtable> GetAllCopyToRemoteScriptFunctions()
         {
             yield return s_PSCopyToSessionHelperFunction;
             yield return PSCopyRemoteUtilsFunction;
         }
 
-        internal static string AllCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
+        internal static readonly string AllCopyFromRemoteScripts = PSCopyFromSessionHelper + PSCopyRemoteUtils;
+
         internal static IEnumerable<Hashtable> GetAllCopyFromRemoteScriptFunctions()
         {
             yield return s_PSCopyFromSessionHelperFunction;

@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.ComponentModel;
@@ -38,7 +38,8 @@ namespace System.Management.Automation.Runspaces
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh");
 #else
             PwshExePath = Path.Combine(Utils.DefaultPowerShellAppBase, "pwsh.exe");
-            WinPwshExePath = Path.Combine(Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID), "powershell.exe");
+            var winPowerShellDir = Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID);
+            WinPwshExePath = string.IsNullOrEmpty(winPowerShellDir) ? null : Path.Combine(winPowerShellDir, "powershell.exe");
 #endif
         }
 
@@ -59,6 +60,11 @@ namespace System.Management.Automation.Runspaces
             startingWindowsPowerShell51 = (powerShellVersion != null) && (powerShellVersion.Major == 5) && (powerShellVersion.Minor == 1);
             if (startingWindowsPowerShell51)
             {
+                if (WinPwshExePath == null)
+                {
+                    throw new PSInvalidOperationException(RemotingErrorIdStrings.WindowsPowerShellNotPresent);
+                }
+
                 exePath = WinPwshExePath;
 
                 if (useWow64)
@@ -93,13 +99,16 @@ namespace System.Management.Automation.Runspaces
                 LoadUserProfile = true,
 #endif
             };
-
+#if !UNIX
             if (startingWindowsPowerShell51)
             {
                 _startInfo.ArgumentList.Add("-Version");
                 _startInfo.ArgumentList.Add("5.1");
-            }
 
+                // if starting Windows PowerShell, need to remove PowerShell specific segments of PSModulePath
+                _startInfo.Environment["PSModulePath"] = ModuleIntrinsics.GetWindowsPowerShellModulePath();
+            }
+#endif
             _startInfo.ArgumentList.Add("-s");
             _startInfo.ArgumentList.Add("-NoLogo");
             _startInfo.ArgumentList.Add("-NoProfile");

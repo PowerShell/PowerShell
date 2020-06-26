@@ -1,8 +1,8 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -Tags "CI" {
     It 'New-Object - Property Parameter Must take IDictionary' {
-        $a = new-object psobject -property ([ordered]@{one=1;two=2})
+        $a = New-Object psobject -Property ([ordered]@{one=1;two=2})
         $a | Should -Not -BeNullOrEmpty
         $a.one | Should -Be 1
     }
@@ -26,7 +26,7 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
 </helpItems>
 '@
 
-        { $script:a = select-xml -content $helpXml -xpath "//command:name" -namespace (
+        { $script:a = Select-Xml -Content $helpXml -XPath "//command:name" -Namespace (
                         [ordered]@{command="http://schemas.microsoft.com/maml/dev/command/2004/10";
                                    maml="http://schemas.microsoft.com/maml/2004/10";
                                    dev="http://schemas.microsoft.com/maml/dev/2004/10"})  } | Should -Not -Throw
@@ -64,7 +64,7 @@ Describe 'Test for cmdlet to support Ordered Attribute on hash literal nodes' -T
 
         $script:a = $null
 
-        {$script:a = Get-ChildItem | select-object -property Name, (
+        {$script:a = Get-ChildItem | Select-Object -Property Name, (
                     [ordered]@{Name="IsDirectory";
                                Expression ={$_.PSIsContainer}})} | Should -Not -Throw
 

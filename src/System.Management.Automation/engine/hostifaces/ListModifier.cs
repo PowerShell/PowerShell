@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         {
             if (hash == null)
             {
-                throw PSTraceSource.NewArgumentNullException("hash");
+                throw PSTraceSource.NewArgumentNullException(nameof(hash));
             }
 
             _itemsToAdd = new Collection<object>();
@@ -106,7 +106,7 @@ namespace System.Management.Automation
 
                     if (!isAdd && !isRemove && !isReplace)
                     {
-                        throw PSTraceSource.NewArgumentException("hash", PSListModifierStrings.ListModifierDisallowedKey, key);
+                        throw PSTraceSource.NewArgumentException(nameof(hash), PSListModifierStrings.ListModifierDisallowedKey, key);
                     }
 
                     Collection<object> collection;
@@ -138,7 +138,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("hash", PSListModifierStrings.ListModifierDisallowedKey, entry.Key);
+                    throw PSTraceSource.NewArgumentException(nameof(hash), PSListModifierStrings.ListModifierDisallowedKey, entry.Key);
                 }
             }
         }
@@ -181,7 +181,7 @@ namespace System.Management.Automation
         {
             if (collectionToUpdate == null)
             {
-                throw PSTraceSource.NewArgumentNullException("collectionToUpdate");
+                throw PSTraceSource.NewArgumentNullException(nameof(collectionToUpdate));
             }
 
             if (_replacementItems.Count > 0)
@@ -214,7 +214,7 @@ namespace System.Management.Automation
         {
             if (collectionToUpdate == null)
             {
-                throw new ArgumentNullException("collectionToUpdate");
+                throw new ArgumentNullException(nameof(collectionToUpdate));
             }
 
             collectionToUpdate = PSObject.Base(collectionToUpdate);

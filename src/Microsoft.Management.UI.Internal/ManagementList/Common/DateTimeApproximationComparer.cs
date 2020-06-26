@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -56,8 +56,7 @@ namespace Microsoft.Management.UI.Internal
 
         private static bool HasTimeComponent(DateTime value)
         {
-            bool hasNoTimeComponent = true
-                && value.Hour == 0
+            bool hasNoTimeComponent = value.Hour == 0
                 && value.Minute == 0
                 && value.Second == 0
                 && value.Millisecond == 0;

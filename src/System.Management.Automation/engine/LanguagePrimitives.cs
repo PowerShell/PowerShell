@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Collections;
@@ -14,6 +14,7 @@ using System.Linq.Expressions;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Numerics;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -412,6 +413,7 @@ namespace System.Management.Automation
         }
 
         private delegate IEnumerable GetEnumerableDelegate(object obj);
+
         private static Dictionary<Type, GetEnumerableDelegate> s_getEnumerableCache = new Dictionary<Type, GetEnumerableDelegate>(32);
 
         private static GetEnumerableDelegate GetOrCalculateEnumerable(Type type)
@@ -593,7 +595,9 @@ namespace System.Management.Automation
         /// <param name="second">Object to compare first to.</param>
         /// <returns>True if first is equal to the second.</returns>
         public static new bool Equals(object first, object second)
-            => Equals(first, second, false, CultureInfo.InvariantCulture);
+        {
+            return Equals(first, second, false, CultureInfo.InvariantCulture);
+        }
 
         /// <summary>
         /// Used to compare two objects for equality converting the second to the type of the first, if required.
@@ -604,7 +608,9 @@ namespace System.Management.Automation
         /// to specify the type of string comparison </param>
         /// <returns>True if first is equal to the second.</returns>
         public static bool Equals(object first, object second, bool ignoreCase)
-            => Equals(first, second, ignoreCase, CultureInfo.InvariantCulture);
+        {
+            return Equals(first, second, ignoreCase, CultureInfo.InvariantCulture);
+        }
 
         /// <summary>
         /// Used to compare two objects for equality converting the second to the type of the first, if required.
@@ -634,7 +640,7 @@ namespace System.Management.Automation
             var culture = formatProvider as CultureInfo;
             if (culture == null)
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -642,28 +648,24 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                return IsNullLike(second);
+                return second == null;
             }
 
             if (second == null)
             {
-                return IsNullLike(first);
+                return false; // first is not null
             }
 
+            string firstString = first as string;
             string secondString;
-            if (first is string firstString)
+            if (firstString != null)
             {
                 secondString = second as string ?? (string)LanguagePrimitives.ConvertTo(second, typeof(string), culture);
-                return culture.CompareInfo.Compare(
-                    firstString,
-                    secondString,
-                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0;
+                return (culture.CompareInfo.Compare(firstString, secondString,
+                                                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None) == 0);
             }
 
-            if (first.Equals(second))
-            {
-                return true;
-            }
+            if (first.Equals(second)) return true;
 
             Type firstType = first.GetType();
             Type secondType = second.GetType();
@@ -707,24 +709,24 @@ namespace System.Management.Automation
         /// Helper method for [Try]Compare to determine object ordering with null.
         /// </summary>
         /// <param name="value">The numeric value to compare to null.</param>
-        /// <param name="numberIsRightHandSide">True if the number to compare is on the right hand side in the comparison.</param>
+        /// <param name="numberIsRightHandSide">True if the number to compare is on the right hand side if the comparison.</param>
         private static int CompareObjectToNull(object value, bool numberIsRightHandSide)
         {
             var i = numberIsRightHandSide ? -1 : 1;
 
             // If it's a positive number, including 0, it's greater than null
             // for everything else it's less than zero...
-            return value switch
+            switch (value)
             {
-                Int16 i16 => Math.Sign(i16) < 0 ? -i : i,
-                Int32 i32 => Math.Sign(i32) < 0 ? -i : i,
-                Int64 i64 => Math.Sign(i64) < 0 ? -i : i,
-                sbyte s => Math.Sign(s) < 0 ? -i : i,
-                float f => Math.Sign(f) < 0 ? -i : i,
-                double d => Math.Sign(d) < 0 ? -i : i,
-                decimal m => Math.Sign(m) < 0 ? -i : i,
-                _ => IsNullLike(value) ? 0 : i
-            };
+                case Int16 i16: return Math.Sign(i16) < 0 ? -i : i;
+                case Int32 i32: return Math.Sign(i32) < 0 ? -i : i;
+                case Int64 i64: return Math.Sign(i64) < 0 ? -i : i;
+                case sbyte sby: return Math.Sign(sby) < 0 ? -i : i;
+                case float f: return Math.Sign(f) < 0 ? -i : i;
+                case double d: return Math.Sign(d) < 0 ? -i : i;
+                case decimal de: return Math.Sign(de) < 0 ? -i : i;
+                default: return i;
+            }
         }
 
         /// <summary>
@@ -740,7 +742,9 @@ namespace System.Management.Automation
         /// to the type of <paramref name="first"/>.
         /// </exception>
         public static int Compare(object first, object second)
-            => LanguagePrimitives.Compare(first, second, false, CultureInfo.InvariantCulture);
+        {
+            return LanguagePrimitives.Compare(first, second, false, CultureInfo.InvariantCulture);
+        }
 
         /// <summary>
         /// Compare first and second, converting second to the
@@ -756,7 +760,9 @@ namespace System.Management.Automation
         /// to the type of <paramref name="first"/>.
         /// </exception>
         public static int Compare(object first, object second, bool ignoreCase)
-            => LanguagePrimitives.Compare(first, second, ignoreCase, CultureInfo.InvariantCulture);
+        {
+            return LanguagePrimitives.Compare(first, second, ignoreCase, CultureInfo.InvariantCulture);
+        }
 
         /// <summary>
         /// Compare first and second, converting second to the
@@ -774,7 +780,10 @@ namespace System.Management.Automation
         /// </exception>
         public static int Compare(object first, object second, bool ignoreCase, IFormatProvider formatProvider)
         {
-            formatProvider ??= CultureInfo.InvariantCulture;
+            if (formatProvider == null)
+            {
+                formatProvider = CultureInfo.InvariantCulture;
+            }
 
             var culture = formatProvider as CultureInfo;
             if (culture == null)
@@ -787,7 +796,7 @@ namespace System.Management.Automation
 
             if (first == null)
             {
-                return CompareObjectToNull(second, true);
+                return second == null ? 0 : CompareObjectToNull(second, true);
             }
 
             if (second == null)
@@ -797,7 +806,7 @@ namespace System.Management.Automation
 
             if (first is string firstString)
             {
-                var secondString = second as string;
+                string secondString = second as string;
                 if (secondString == null)
                 {
                     try
@@ -806,26 +815,19 @@ namespace System.Management.Automation
                     }
                     catch (PSInvalidCastException e)
                     {
-                        throw PSTraceSource.NewArgumentException(
-                            nameof(second),
-                            ExtendedTypeSystem.ComparisonFailure,
-                            first.ToString(),
-                            second.ToString(),
-                            e.Message);
+                        throw PSTraceSource.NewArgumentException(nameof(second), ExtendedTypeSystem.ComparisonFailure,
+                                                                 first.ToString(), second.ToString(), e.Message);
                     }
                 }
 
-                return culture.CompareInfo.Compare(
-                    firstString,
-                    secondString,
-                    ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
+                return culture.CompareInfo.Compare(firstString, secondString,
+                                                   ignoreCase ? CompareOptions.IgnoreCase : CompareOptions.None);
             }
 
             Type firstType = first.GetType();
             Type secondType = second.GetType();
             int firstIndex = LanguagePrimitives.TypeTableIndex(firstType);
             int secondIndex = LanguagePrimitives.TypeTableIndex(secondType);
-
             if ((firstIndex != -1) && (secondIndex != -1))
             {
                 return LanguagePrimitives.NumericCompare(first, second, firstIndex, secondIndex);
@@ -838,12 +840,8 @@ namespace System.Management.Automation
             }
             catch (PSInvalidCastException e)
             {
-                throw PSTraceSource.NewArgumentException(
-                    nameof(second),
-                    ExtendedTypeSystem.ComparisonFailure,
-                    first.ToString(),
-                    second.ToString(),
-                    e.Message);
+                throw PSTraceSource.NewArgumentException(nameof(second), ExtendedTypeSystem.ComparisonFailure,
+                                                         first.ToString(), second.ToString(), e.Message);
             }
 
             if (first is IComparable firstComparable)
@@ -871,7 +869,9 @@ namespace System.Management.Automation
         /// zero if it is greater or zero if they are the same.</param>
         /// <returns>True if the comparison was successful, false otherwise.</returns>
         public static bool TryCompare(object first, object second, out int result)
-            => TryCompare(first, second, ignoreCase: false, CultureInfo.InvariantCulture, out result);
+        {
+            return TryCompare(first, second, ignoreCase: false, CultureInfo.InvariantCulture, out result);
+        }
 
         /// <summary>
         /// Tries to compare first and second, converting second to the type of the first, if necessary.
@@ -883,7 +883,9 @@ namespace System.Management.Automation
         /// <param name="result">Less than zero if first is smaller than second, more than zero if it is greater or zero if they are the same.</param>
         /// <returns>True if the comparison was successful, false otherwise.</returns>
         public static bool TryCompare(object first, object second, bool ignoreCase, out int result)
-            => TryCompare(first, second, ignoreCase, CultureInfo.InvariantCulture, out result);
+        {
+            return TryCompare(first, second, ignoreCase, CultureInfo.InvariantCulture, out result);
+        }
 
         /// <summary>
         /// Tries to compare first and second, converting second to the type of the first, if necessary.
@@ -899,11 +901,14 @@ namespace System.Management.Automation
         public static bool TryCompare(object first, object second, bool ignoreCase, IFormatProvider formatProvider, out int result)
         {
             result = 0;
-            formatProvider ??= CultureInfo.InvariantCulture;
+            if (formatProvider == null)
+            {
+                formatProvider = CultureInfo.InvariantCulture;
+            }
 
             if (!(formatProvider is CultureInfo culture))
             {
-                throw PSTraceSource.NewArgumentException("formatProvider");
+                throw PSTraceSource.NewArgumentException(nameof(formatProvider));
             }
 
             first = PSObject.Base(first);
@@ -984,10 +989,8 @@ namespace System.Management.Automation
         public static bool IsTrue(object obj)
         {
             // null is a valid argument - it converts to false...
-            if (IsNullLike(obj))
-            {
+            if (obj == null || obj == AutomationNull.Value)
                 return false;
-            }
 
             obj = PSObject.Base(obj);
 
@@ -1013,7 +1016,8 @@ namespace System.Management.Automation
             if (objType == typeof(SwitchParameter))
                 return ((SwitchParameter)obj).ToBool();
 
-            if (obj is IList objectArray)
+            IList objectArray = obj as IList;
+            if (objectArray != null)
             {
                 return IsTrue(objectArray);
             }
@@ -1059,19 +1063,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Internal routine that determines if an object meets any of our criteria for true null.
-        /// </summary>
-        /// <param name="obj">The object to test.</param>
-        /// <returns>True if the object is null.</returns>
-        public static bool IsNull(object obj) => obj == null || obj == AutomationNull.Value;
-
-        /// <summary>
         /// Internal routine that determines if an object meets any of our criteria for null.
-        /// This method additionally checks for <see cref="NullString.Value"/> and <see cref="DBNull.Value"/>
         /// </summary>
         /// <param name="obj">The object to test.</param>
         /// <returns>True if the object is null.</returns>
-        public static bool IsNullLike(object obj) => IsNull(obj) || obj == DBNull.Value || obj == NullString.Value;
+        internal static bool IsNull(object obj)
+        {
+            return (obj == null || obj == AutomationNull.Value);
+        }
 
         /// <summary>
         /// Auxiliary for the cases where we want a new PSObject or null.
@@ -1113,7 +1112,7 @@ namespace System.Management.Automation
         /// an exception when converted to decimal.
         /// The order of lines and columns cannot be changed since NumericCompare depends on it.
         /// </summary>
-        internal static Type[][] LargestTypeTable = new Type[][]
+        internal static readonly Type[][] LargestTypeTable = new Type[][]
         {
             //                                       System.Int16            System.Int32            System.Int64            System.UInt16           System.UInt32           System.UInt64           System.SByte            System.Byte             System.Single           System.Double           System.Decimal
             /* System.Int16   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int16),   typeof(System.Int16),   typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
@@ -1424,8 +1423,8 @@ namespace System.Management.Automation
 
         #region type converter
 
-        internal static PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
-        internal static ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
+        internal static readonly PSTraceSource typeConversion = PSTraceSource.GetTracer("TypeConversion", "Traces the type conversion algorithm", false);
+        internal static readonly ConversionData<object> NoConversion = new ConversionData<object>(ConvertNoConversion, ConversionRank.None);
 
         private static TypeConverter GetIntegerSystemConverter(Type type)
         {
@@ -1924,6 +1923,7 @@ namespace System.Management.Automation
             // This static is thread safe based on the lock in GetEnumHashEntry
             // It can be shared by Runspaces in different MiniShells
             private static readonly Dictionary<Type, EnumHashEntry> s_enumTable = new Dictionary<Type, EnumHashEntry>();
+
             private const int maxEnumTableSize = 100;
 
             private static EnumHashEntry GetEnumHashEntry(Type enumType)
@@ -1973,7 +1973,7 @@ namespace System.Management.Automation
 
                     // See if the [Flag] attribute is set on this type...
                     // MemberInfo.GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR.
-                    bool hasFlagsAttribute = enumType.GetCustomAttributes(typeof(FlagsAttribute), false).Any();
+                    bool hasFlagsAttribute = enumType.GetCustomAttributes(typeof(FlagsAttribute), false).Length > 0;
 
                     returnValue = new EnumHashEntry(Enum.GetNames(enumType), values, allValues, hasNegativeValue, hasFlagsAttribute);
                     s_enumTable.Add(enumType, returnValue);
@@ -2212,7 +2212,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            if (string.Compare(sourceValueEntry, name, ignoreCaseOpt) != 0)
+                            if (!string.Equals(sourceValueEntry, name, ignoreCaseOpt))
                                 continue;
                         }
 
@@ -3086,17 +3086,15 @@ namespace System.Management.Automation
             return AutomationNull.Value;
         }
 
-        private static bool ConvertClassToBool(
-            object valueToConvert,
-            Type resultType,
-            bool recursion,
-            PSObject originalValueToConvert,
-            IFormatProvider formatProvider,
-            TypeTable backupTable)
+        private static bool ConvertClassToBool(object valueToConvert,
+                                               Type resultType,
+                                               bool recursion,
+                                               PSObject originalValueToConvert,
+                                               IFormatProvider formatProvider,
+                                               TypeTable backupTable)
         {
             typeConversion.WriteLine("Converting ref to boolean.");
-            // Both NullString and DBNull should be treated the same as true nulls for the purposes of this conversion.
-            return !IsNullLike(valueToConvert);
+            return valueToConvert != null;
         }
 
         private static bool ConvertValueToBool(object valueToConvert,
@@ -3310,6 +3308,11 @@ namespace System.Management.Automation
                 if (valueToConvert is float sgl)
                 {
                     return sgl.ToString(SinglePrecision, numberFormat);
+                }
+
+                if (valueToConvert is BigInteger b)
+                {
+                    return b.ToString(numberFormat);
                 }
 
                 return (string)Convert.ChangeType(valueToConvert, resultType, CultureInfo.InvariantCulture.NumberFormat);
@@ -3655,6 +3658,7 @@ namespace System.Management.Automation
             private readonly int _matchIndex;
             // Size of the cache. It's rare to have more than 10 overloads for a method.
             private const int CacheSize = 10;
+
             private static readonly PSMethodToDelegateConverter[] s_converterCache = new PSMethodToDelegateConverter[CacheSize];
 
             private PSMethodToDelegateConverter(int matchIndex)
@@ -4385,7 +4389,8 @@ namespace System.Management.Automation
             typeof(Int16), typeof(Int32), typeof(Int64),
             typeof(UInt16), typeof(UInt32), typeof(UInt64),
             typeof(sbyte), typeof(byte),
-            typeof(Single), typeof(double), typeof(decimal)
+            typeof(Single), typeof(double), typeof(decimal),
+            typeof(BigInteger)
         };
 
         private static Type[] s_integerTypes = new Type[] {
@@ -4698,7 +4703,7 @@ namespace System.Management.Automation
                     }
 
                     availableProperties.Append("[" + p.Name + " <" + p.TypeNameOfValue + ">]");
-                    if (first == true)
+                    if (first)
                     {
                         first = false;
                     }
@@ -4712,11 +4717,10 @@ namespace System.Management.Automation
         {
             PSObject valueAsPsObj;
             Type originalType;
-
-            if (IsNull(valueToConvert))
+            if (valueToConvert == null || valueToConvert == AutomationNull.Value)
             {
-                originalType = typeof(Null);
                 valueAsPsObj = null;
+                originalType = typeof(Null);
             }
             else
             {
@@ -4787,7 +4791,7 @@ namespace System.Management.Automation
             {
                 if (resultType == null)
                 {
-                    throw PSTraceSource.NewArgumentNullException("resultType");
+                    throw PSTraceSource.NewArgumentNullException(nameof(resultType));
                 }
 
                 bool debase;
@@ -5057,7 +5061,7 @@ namespace System.Management.Automation
 
         private struct SignatureComparator
         {
-            enum TypeMatchingContext
+            private enum TypeMatchingContext
             {
                 ReturnType,
                 ParameterType,
@@ -5246,7 +5250,7 @@ namespace System.Management.Automation
         internal static Tuple<PSConverter<object>, ConversionRank> FigureIEnumerableConstructorConversion(Type fromType, Type toType)
         {
             // Win8: 653180. If toType is an Abstract type then we cannot construct it anyway. So, bailing out fast.
-            if (toType.IsAbstract == true)
+            if (toType.IsAbstract)
             {
                 return null;
             }
@@ -5518,7 +5522,7 @@ namespace System.Management.Automation
 
             // GetCustomAttributes returns IEnumerable<Attribute> in CoreCLR
             var typeConverters = type.GetCustomAttributes(typeof(TypeConverterAttribute), false);
-            if (typeConverters.Any())
+            if (typeConverters.Length > 0)
             {
                 return true;
             }
@@ -5731,6 +5735,7 @@ namespace System.Management.Automation
         }
 
         internal class Null { };
+
         private static IConversionData FigureConversionFromNull(Type toType)
         {
             IConversionData data = GetConversionData(typeof(Null), toType);

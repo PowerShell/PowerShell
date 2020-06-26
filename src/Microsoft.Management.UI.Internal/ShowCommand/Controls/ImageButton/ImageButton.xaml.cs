@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System.Diagnostics.CodeAnalysis;
@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         public ImageButton()
         {
             InitializeComponent();
-            this.Loaded += new System.Windows.RoutedEventHandler(this.ImageButton_Loaded);
+            this.Loaded += this.ImageButton_Loaded;
         }
 
         /// <summary>

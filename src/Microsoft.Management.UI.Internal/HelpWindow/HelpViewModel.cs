@@ -1,4 +1,4 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
+// Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
 using System;
@@ -61,7 +61,7 @@ namespace Microsoft.Management.UI.Internal
             this.helpBuilder = new HelpParagraphBuilder(documentParagraph, psObj);
             this.helpBuilder.BuildParagraph();
             this.searcher = new ParagraphSearcher();
-            this.helpBuilder.PropertyChanged += new PropertyChangedEventHandler(this.HelpBuilder_PropertyChanged);
+            this.helpBuilder.PropertyChanged += this.HelpBuilder_PropertyChanged;
             this.helpTitle = string.Format(
                 CultureInfo.CurrentCulture,
                 HelpWindowResources.HelpTitleFormat,
