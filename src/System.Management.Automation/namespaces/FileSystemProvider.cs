@@ -6110,7 +6110,32 @@ namespace Microsoft.PowerShell.Commands
         private bool IsSameVolume(string source, string destination)
         {
 #if UNIX
-            return Platform.Unix.GetStat(source).DeviceId == Platform.Unix.GetStat(destination).DeviceId;
+            // If the source doesn't exist, let later logic handle that
+            if (!File.Exists(source))
+            {
+                return true;
+            }
+
+            // The source must exist, so take the stat directly
+            int srcDeviceId = Platform.Unix.GetStat(source).DeviceId;
+
+            // The destination may not exist,
+            // so we are forced to crawl up the path searching for the first item that does
+            string extantDestinationParentPath = destination;
+            while (!File.Exists(extantDestinationParentPath))
+            {
+                extantDestinationParentPath = Path.GetDirectoryName(extantDestinationParentPath);
+
+                // If we're handed a nonsense path for which no component exists
+                // prevent an NRE, and instead let a later codepath handle this.
+                // We return true since it's a simpler and less destructive codepath.
+                if (extantDestinationParentPath is null)
+                {
+                    return true;
+                }
+            }
+
+            return Platform.Unix.GetStat(extantDestinationParentPath).DeviceId == srcDeviceId;
 #else
             FileInfo src = new FileInfo(source);
             FileInfo dest = new FileInfo(destination);
