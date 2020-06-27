@@ -137,6 +137,10 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $testDir | Should -Exist
         }
 
+        It "Verify Move-Item throws correct error for non-existent source" {
+            { Move-Item -Path /does/not/exist -Destination $testFile } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
+        }
+
         It "Verify Move-Item as substitute for Rename-Item" {
             $newFile = Move-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
