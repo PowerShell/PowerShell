@@ -248,6 +248,8 @@ Function Add-PathTToSettings {
 
 if (-not $IsWinEnv) {
     $architecture = "x64"
+} elseif ($(Get-ComputerInfo -Property OsArchitecture).OsArchitecture -eq "ARM 64-bit Processor") {
+    $architecture = "arm64"
 } else {
     switch ($env:PROCESSOR_ARCHITECTURE) {
         "AMD64" { $architecture = "x64" }
@@ -350,7 +352,11 @@ try {
 
         if ($IsWinEnv) {
             if ($UseMSI) {
-                $packageName = "PowerShell-${release}-win-${architecture}.msi"
+                if ($architecture -eq "arm64") {
+                    $packageName = "PowerShell-${release}-win-${architecture}.msix"
+                } else {
+                    $packageName = "PowerShell-${release}-win-${architecture}.msi"
+                }
             } else {
                 $packageName = "PowerShell-${release}-win-${architecture}.zip"
             }
@@ -382,7 +388,9 @@ try {
 
         $null = New-Item -ItemType Directory -Path $contentPath -ErrorAction SilentlyContinue
         if ($IsWinEnv) {
-            if ($UseMSI -and $Quiet) {
+            if ($UseMSI -and $architecture -eq "arm64") {
+                Add-AppxPackage -Path $packagePath
+            } elseif ($UseMSI -and $Quiet) {
                 Write-Verbose "Performing quiet install"
                 $ArgumentList=@("/i", $packagePath, "/quiet")
                 if($MSIArguments) {
