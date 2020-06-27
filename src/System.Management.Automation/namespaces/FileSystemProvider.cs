@@ -6109,10 +6109,14 @@ namespace Microsoft.PowerShell.Commands
 
         private bool IsSameVolume(string source, string destination)
         {
+#if UNIX
+            return Platform.Unix.GetStat(source).DeviceId == Platform.Unix.GetStat(destination).DeviceId;
+#else
             FileInfo src = new FileInfo(source);
             FileInfo dest = new FileInfo(destination);
 
             return (src.Directory.Root.Name == dest.Directory.Root.Name);
+#endif
         }
 
         #endregion MoveItem
