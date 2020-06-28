@@ -8889,7 +8889,7 @@ namespace System.Management.Automation.Internal
         }}
 
         # Return a hashtable with the following members:
-        # BytesWritten - the number of bytes written to a file
+        #    BytesWritten - the number of bytes written to a file
         #
         function PSCopyFileToRemoteSession
         {{
@@ -8967,7 +8967,7 @@ namespace System.Management.Automation.Internal
         }}
 
         # Returns a hashtable with the following members:
-        # BytesWritten - number of bytes written to an alternate file stream
+        #    BytesWritten - number of bytes written to an alternate file stream
         #
         function PSCopyFileAlternateStreamToRemoteSession
         {{
@@ -9005,7 +9005,7 @@ namespace System.Management.Automation.Internal
         }}
 
         # Returns a hashtable with the following member:
-        # TargetSupportsAlternateStreams - boolean to keep track of whether the target supports Alternate data streams.
+        #    TargetSupportsAlternateStreams - boolean to keep track of whether the target supports Alternate data streams.
         #
         function PSTargetSupportsAlternateStreams
         {{
@@ -9078,9 +9078,9 @@ namespace System.Management.Automation.Internal
         }}
 
         # Returns a hashtable with the following member:
-        # IsFileInfo - boolean to keep track of whether the given path is a remote file.
-        # IsDirectoryInfo - boolean to keep track of whether the given path is a remote directory.
-        # ParentIsDirectoryInfo - boolean to keep track of whether the given parent path is a remote directory.
+        #    IsFileInfo - boolean to keep track of whether the given path is a remote file.
+        #    IsDirectoryInfo - boolean to keep track of whether the given path is a remote directory.
+        #    ParentIsDirectoryInfo - boolean to keep track of whether the given parent path is a remote directory.
         #
         function PSGetRemotePathInfo
         {{
@@ -9156,12 +9156,12 @@ namespace System.Management.Automation.Internal
         }}
 
         # Return a hash table in the following format:
-        # DirectoryPath is the directory to be created.
-        # PathExists is a bool to to keep track of whether the directory already exist.
+        #      DirectoryPath is the directory to be created.
+        #      PathExists is a bool to to keep track of whether the directory already exist.
         #
         # 1) If DirectoryPath already exists:
-        # a) If -Force is specified, force create the directory. Set DirectoryPath to the created directory path.
-        # b) If not -Force is specified, then set PathExists to $true.
+        #     a) If -Force is specified, force create the directory. Set DirectoryPath to the created directory path.
+        #     b) If not -Force is specified, then set PathExists to $true.
         # 2) If DirectoryPath does not exist, create it. Set DirectoryPath to the created directory path.
         function PSCreateDirectoryOnRemoteSession
         {{
@@ -9508,8 +9508,8 @@ namespace System.Management.Automation.Internal
         }}
 
         # Returns a hashtable with the following members:
-        # SourceSupportsAlternateStreams - boolean to keep track of whether the source supports Alternate data streams.
-        # Streams - the list of alternate streams
+        #    SourceSupportsAlternateStreams - boolean to keep track of whether the source supports Alternate data streams.
+        #    Streams - the list of alternate streams
         #
         function PSSourceSupportsAlternateStreams
         {{
@@ -9579,7 +9579,7 @@ namespace System.Management.Automation.Internal
         }}
 
         # Converts file system path to PSDrive path
-        # Returns converted path or original path if not conversion is needed.
+        #    Returns converted path or original path if not conversion is needed.
         function ConvertToPSDrivePath
         {{
             param (
@@ -9782,7 +9782,7 @@ namespace System.Management.Automation.Internal
         )
 
         # Returns a hashtable with the following member:
-        # Exists - boolean to keep track of whether the given path exists for a remote directory.
+        #    Exists - boolean to keep track of whether the given path exists for a remote directory.
         #
         function PSRemoteDirectoryExist
         {{
@@ -9823,9 +9823,9 @@ namespace System.Management.Automation.Internal
 
         internal const string PSValidatePathDefinition = @"
         # Return hashtable in the following format:
-        # Exists - boolean to keep track if the given path exists
-        # Root - the root for the given path. If wildcards are used, it returns the first drive root.
-        # IsAbsolute - boolean to keep track of whether the given path is absolute
+        #    Exists - boolean to keep track if the given path exists
+        #    Root - the root for the given path. If wildcards are used, it returns the first drive root.
+        #    IsAbsolute - boolean to keep track of whether the given path is absolute
         param (
             [string] $pathToValidate,
             [switch] $sourceIsRemote
