@@ -322,7 +322,7 @@ namespace Microsoft.PowerShell.Commands
             return new CopyItemDynamicParameters();
         }
 
-#region ICmdletProviderSupportsHelp members
+        #region ICmdletProviderSupportsHelp members
 
         /// <summary>
         /// Implementation of ICmdletProviderSupportsHelp interface.
@@ -433,9 +433,9 @@ namespace Microsoft.PowerShell.Commands
             return string.Empty;
         }
 
-#endregion
+        #endregion
 
-#region CmdletProvider members
+        #region CmdletProvider members
 
         /// <summary>
         /// Starts the File System provider. This method sets the Home for the
@@ -489,9 +489,9 @@ namespace Microsoft.PowerShell.Commands
             return providerInfo;
         }
 
-#endregion CmdletProvider members
+        #endregion CmdletProvider members
 
-#region DriveCmdletProvider members
+        #region DriveCmdletProvider members
 
         /// <summary>
         /// Determines if the specified drive can be mounted.
@@ -1164,9 +1164,9 @@ namespace Microsoft.PowerShell.Commands
             return results;
         }
 
-#endregion DriveCmdletProvider methods
+        #endregion DriveCmdletProvider methods
 
-#region ItemCmdletProvider methods
+        #region ItemCmdletProvider methods
 
         /// <summary>
         /// Retrieves the dynamic parameters required for the Get-Item cmdlet.
@@ -1501,11 +1501,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#endregion ItemCmdletProvider members
+        #endregion ItemCmdletProvider members
 
-#region ContainerCmdletProvider members
+        #region ContainerCmdletProvider members
 
-#region GetChildItems
+        #region GetChildItems
         /// <summary>
         /// Gets the child items of a given directory.
         /// </summary>
@@ -1532,9 +1532,9 @@ namespace Microsoft.PowerShell.Commands
         {
             GetPathItems(path, recurse, depth, false, ReturnContainers.ReturnMatchingContainers);
         }
-#endregion GetChildItems
+        #endregion GetChildItems
 
-#region GetChildNames
+        #region GetChildNames
         /// <summary>
         /// Gets the path names for all children of the specified
         /// directory that match the given filter.
@@ -1558,7 +1558,7 @@ namespace Microsoft.PowerShell.Commands
         {
             GetPathItems(path, false, uint.MaxValue, true, returnContainers);
         }
-#endregion GetChildNames
+        #endregion GetChildNames
 
         /// <summary>
         /// Gets a new provider-specific path and filter (if any) that corresponds to the given
@@ -2095,7 +2095,7 @@ namespace Microsoft.PowerShell.Commands
                 : string.Empty;
         }
 
-#region RenameItem
+        #region RenameItem
 
         /// <summary>
         /// Renames a file or directory.
@@ -2226,9 +2226,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#endregion RenameItem
+        #endregion RenameItem
 
-#region NewItem
+        #region NewItem
 
         /// <summary>
         /// Creates a file or directory with the given path.
@@ -2911,9 +2911,9 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-#endregion NewItem
+        #endregion NewItem
 
-#region RemoveItem
+        #region RemoveItem
 
         /// <summary>
         /// Removes the specified file or directory.
@@ -3352,9 +3352,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#endregion RemoveItem
+        #endregion RemoveItem
 
-#region ItemExists
+        #region ItemExists
 
         /// <summary>
         /// Determines if a file or directory exists at the specified path.
@@ -3481,9 +3481,9 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#endregion ItemExists
+        #endregion ItemExists
 
-#region HasChildItems
+        #region HasChildItems
 
         /// <summary>
         /// Determines if the given path is a directory, and has children.
@@ -3577,9 +3577,9 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-#endregion HasChildItems
+        #endregion HasChildItems
 
-#region CopyItem
+        #region CopyItem
 
         /// <summary>
         /// Copies an item at the specified path to the given destination.
@@ -4911,11 +4911,11 @@ namespace Microsoft.PowerShell.Commands
             return pathIsReservedDeviceName;
         }
 
-#endregion CopyItem
+        #endregion CopyItem
 
-#endregion ContainerCmdletProvider members
+        #endregion ContainerCmdletProvider members
 
-#region NavigationCmdletProvider members
+        #region NavigationCmdletProvider members
 
         /// <summary>
         /// Gets the parent of the given path.
@@ -5751,7 +5751,7 @@ namespace Microsoft.PowerShell.Commands
             return Directory.Exists(path);
         }
 
-#region MoveItem
+        #region MoveItem
 
         /// <summary>
         /// Moves an item at the specified path to the given destination.
@@ -6144,11 +6144,11 @@ namespace Microsoft.PowerShell.Commands
         }
 #endif
 
-#endregion MoveItem
+        #endregion MoveItem
 
-#endregion NavigationCmdletProvider members
+        #endregion NavigationCmdletProvider members
 
-#region IPropertyCmdletProvider
+        #region IPropertyCmdletProvider
 
         /// <summary>
         /// Gets a property for the given item.
@@ -6564,9 +6564,9 @@ namespace Microsoft.PowerShell.Commands
             return null;
         }
 
-#endregion IPropertyCmdletProvider
+        #endregion IPropertyCmdletProvider
 
-#region IContentCmdletProvider
+        #region IContentCmdletProvider
 
         /// <summary>
         /// Creates an instance of the FileSystemContentStream class, opens
@@ -7050,7 +7050,7 @@ namespace Microsoft.PowerShell.Commands
             return new FileSystemClearContentDynamicParameters();
         }
 
-#endregion IContentCmdletProvider
+        #endregion IContentCmdletProvider
 
         /// <summary>
         /// -raw is not allowed when -first,-last or -wait is specified
@@ -7363,7 +7363,7 @@ namespace Microsoft.PowerShell.Commands
             public string Provider;
         }
 
-#region InodeTracker
+        #region InodeTracker
         /// <summary>
         /// Tracks visited files/directories by caching their device IDs and inodes.
         /// </summary>
@@ -7407,7 +7407,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#endregion
+        #endregion
     }
 
     internal static class SafeInvokeCommand
@@ -7480,9 +7480,9 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-#endregion
+    #endregion
 
-#region Dynamic Parameters
+    #region Dynamic Parameters
 
     internal sealed class CopyItemDynamicParameters
     {
@@ -7802,9 +7802,9 @@ namespace Microsoft.PowerShell.Commands
 #endif
     }
 
-#endregion
+    #endregion
 
-#region Symbolic Link
+    #region Symbolic Link
 
     /// <summary>
     /// Class to find the symbolic link target.
@@ -8543,13 +8543,13 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-#endregion
+    #endregion
 }
 
 namespace System.Management.Automation.Internal
 {
 #if !UNIX
-#region AlternateDataStreamUtilities
+    #region AlternateDataStreamUtilities
 
     /// <summary>
     /// Represents alternate stream data retrieved from a file.
@@ -8788,10 +8788,10 @@ namespace System.Management.Automation.Internal
         }
     }
 
-#endregion
+    #endregion
 #endif
 
-#region CopyFileFromRemoteUtils
+    #region CopyFileFromRemoteUtils
 
     internal static class CopyFileRemoteUtils
     {
@@ -8799,7 +8799,7 @@ namespace System.Management.Automation.Internal
         private const string nameToken = "Name";
         private const string definitionToken = "Definition";
 
-#region PSCopyToSessionHelper
+        #region PSCopyToSessionHelper
 
         internal const string PSCopyToSessionHelperName = @"PSCopyToSessionHelper";
 
@@ -8863,8 +8863,8 @@ namespace System.Management.Automation.Internal
             [switch] $force
         )
 
-# Checks if path drive specifies max size and if max size is exceeded
-#
+        # Checks if path drive specifies max size and if max size is exceeded
+        #
         function CheckPSDriveSize
         {{
             param (
@@ -8888,9 +8888,9 @@ namespace System.Management.Automation.Internal
             }}
         }}
 
-# Return a hashtable with the following members:
-# BytesWritten - the number of bytes written to a file
-#
+        # Return a hashtable with the following members:
+        # BytesWritten - the number of bytes written to a file
+        #
         function PSCopyFileToRemoteSession
         {{
             param(
@@ -8912,33 +8912,33 @@ namespace System.Management.Automation.Internal
 
                 if ($createFile -or (! $filePathExists))
                 {{
-# If the file already exists, try to delete it.
+                    # If the file already exists, try to delete it.
                     if ($filePathExists)
                     {{
                         Microsoft.PowerShell.Management\Remove-Item -Path $copyToFilePath -Force -ea SilentlyContinue
                     }}
 
-# Create the new file.
+                    # Create the new file.
                     $fileInfo = Microsoft.PowerShell.Management\New-Item -Path $copyToFilePath -Type File -Force
 
                     if ($emptyFile)
                     {{
-# Handle the empty file scenario.
+                        # Handle the empty file scenario.
                         $op['BytesWritten'] = 0
                         return $op
                     }}
                 }}
 
-# Resolve path in case it is a PSDrive
+                # Resolve path in case it is a PSDrive
                 $resolvedPath = Microsoft.PowerShell.Management\Resolve-Path -literal $copyToFilePath
 
-# Decode
+                # Decode
                 $fragment = [System.Convert]::FromBase64String($b64Fragment)
 
-# Check if drive specifies max size and if max size is exceeded
+                # Check if drive specifies max size and if max size is exceeded
                 CheckPSDriveSize $resolvedPath $fragment.Length
 
-# Write fragment
+                # Write fragment
                 $wstream = Microsoft.PowerShell.Utility\New-Object -TypeName IO.FileStream -ArgumentList ($resolvedPath.ProviderPath), ([System.IO.FileMode]::Append)
                 $wstream.Write($fragment, 0, $fragment.Length)
 
@@ -8966,9 +8966,9 @@ namespace System.Management.Automation.Internal
             return $op
         }}
 
-# Returns a hashtable with the following members:
-# BytesWritten - number of bytes written to an alternate file stream
-#
+        # Returns a hashtable with the following members:
+        # BytesWritten - number of bytes written to an alternate file stream
+        #
         function PSCopyFileAlternateStreamToRemoteSession
         {{
             param (
@@ -8983,16 +8983,16 @@ namespace System.Management.Automation.Internal
 
             try
             {{
-# Resolve path in case it is a PSDrive
+                # Resolve path in case it is a PSDrive
                 $resolvedPath = Microsoft.PowerShell.Management\Resolve-Path -literal $copyToFilePath
 
-# Decode
+                # Decode
                 $fragment = [System.Convert]::FromBase64String($b64Fragment)
 
-# Check if drive specifies max size and if max size is exceeded
+                # Check if drive specifies max size and if max size is exceeded
                 CheckPSDriveSize $resolvedPath $fragment.Length
 
-# Write the stream
+                # Write the stream
                 Microsoft.PowerShell.Management\Add-Content -Path ($resolvedPath.ProviderPath) -Value $fragment -Encoding Byte -Stream $streamName -ErrorAction Stop
                 $op['BytesWritten'] = $fragment.Length
             }}
@@ -9004,9 +9004,9 @@ namespace System.Management.Automation.Internal
             return $op
         }}
 
-# Returns a hashtable with the following member:
-# TargetSupportsAlternateStreams - boolean to keep track of whether the target supports Alternate data streams.
-#
+        # Returns a hashtable with the following member:
+        # TargetSupportsAlternateStreams - boolean to keep track of whether the target supports Alternate data streams.
+        #
         function PSTargetSupportsAlternateStreams
         {{
             param (
@@ -9017,7 +9017,7 @@ namespace System.Management.Automation.Internal
                 TargetSupportsAlternateStreams = $false
             }}
 
-# Resolve path in case it is a PSDrive
+            # Resolve path in case it is a PSDrive
             $resolvedPath = Microsoft.PowerShell.Management\Resolve-Path -literal $supportAltStreamPath
 
             $targetDrive = [IO.Path]::GetPathRoot($resolvedPath.ProviderPath)
@@ -9026,13 +9026,13 @@ namespace System.Management.Automation.Internal
                 return $result
             }}
 
-# Check if the target drive is NTFS
+            # Check if the target drive is NTFS
             $driveFormat = 'NTFS'
             foreach ($drive in [System.IO.DriveInfo]::GetDrives())
             {{
                 if (($drive.Name -eq $targetDrive) -and ($drive.DriveFormat -eq $driveFormat))
                 {{
-# Now, check if the target supports Add-Command -Stream. This functionality was introduced in version 3.0.
+                    # Now, check if the target supports Add-Command -Stream. This functionality was introduced in version 3.0.
                     $addContentCmdlet = Microsoft.PowerShell.Core\Get-Command Microsoft.PowerShell.Management\Add-Content -ErrorAction SilentlyContinue
                     if ($addContentCmdlet.Parameters.Keys -contains 'Stream')
                     {{
@@ -9045,8 +9045,8 @@ namespace System.Management.Automation.Internal
             return $result
         }}
 
-# Sets the metadata for the given file.
-#
+        # Sets the metadata for the given file.
+        #
         function PSSetFileMetadata
         {{
             param (
@@ -9058,7 +9058,7 @@ namespace System.Management.Automation.Internal
 
             if ($item)
             {{
-# LastWriteTime
+                # LastWriteTime
                 if ($metaDataToSet['LastWriteTimeUtc'])
                 {{
                     $item.LastWriteTimeUtc = $metaDataToSet['LastWriteTimeUtc']
@@ -9069,7 +9069,7 @@ namespace System.Management.Automation.Internal
                     $item.LastWriteTime = $metaDataToSet['LastWriteTime']
                 }}
 
-# Attributes
+                # Attributes
                 if ($metaDataToSet['Attributes'])
                 {{
                     $item.Attributes = $metaDataToSet['Attributes']
@@ -9077,11 +9077,11 @@ namespace System.Management.Automation.Internal
             }}
         }}
 
-# Returns a hashtable with the following member:
-# IsFileInfo - boolean to keep track of whether the given path is a remote file.
-# IsDirectoryInfo - boolean to keep track of whether the given path is a remote directory.
-# ParentIsDirectoryInfo - boolean to keep track of whether the given parent path is a remote directory.
-#
+        # Returns a hashtable with the following member:
+        # IsFileInfo - boolean to keep track of whether the given path is a remote file.
+        # IsDirectoryInfo - boolean to keep track of whether the given path is a remote directory.
+        # ParentIsDirectoryInfo - boolean to keep track of whether the given parent path is a remote directory.
+        #
         function PSGetRemotePathInfo
         {{
             param (
@@ -9095,7 +9095,7 @@ namespace System.Management.Automation.Internal
                 {{
                     $parentPath = Microsoft.PowerShell.Management\Split-Path $remotePath
                 }}
-# catch everything and ignore the error.
+                # catch everything and ignore the error.
                 catch {{}}
 
                 $result = @{{
@@ -9124,8 +9124,8 @@ namespace System.Management.Automation.Internal
             return $result
         }}
 
-# Returns a hashtable with the following information:
-#  - IsFileInfotrue bool to keep track if the given destination is a FileInfo type.
+        # Returns a hashtable with the following information:
+        #  - IsFileInfotrue bool to keep track if the given destination is a FileInfo type.
         function PSRemoteDestinationPathIsFile
         {{
             param (
@@ -9155,14 +9155,14 @@ namespace System.Management.Automation.Internal
             return $op
         }}
 
-# Return a hash table in the following format:
-# DirectoryPath is the directory to be created.
-# PathExists is a bool to to keep track of whether the directory already exist.
-#
-# 1) If DirectoryPath already exists:
-# a) If -Force is specified, force create the directory. Set DirectoryPath to the created directory path.
-# b) If not -Force is specified, then set PathExists to $true.
-# 2) If DirectoryPath does not exist, create it. Set DirectoryPath to the created directory path.
+        # Return a hash table in the following format:
+        # DirectoryPath is the directory to be created.
+        # PathExists is a bool to to keep track of whether the directory already exist.
+        #
+        # 1) If DirectoryPath already exists:
+        # a) If -Force is specified, force create the directory. Set DirectoryPath to the created directory path.
+        # b) If not -Force is specified, then set PathExists to $true.
+        # 2) If DirectoryPath does not exist, create it. Set DirectoryPath to the created directory path.
         function PSCreateDirectoryOnRemoteSession
         {{
             param (
@@ -9179,7 +9179,7 @@ namespace System.Management.Automation.Internal
             {{
                 if (Microsoft.PowerShell.Management\Test-Path $createDirectoryPath)
                 {{
-# -Force is specified, then force create the directory.
+                    # -Force is specified, then force create the directory.
                     if ($force)
                     {{
                         Microsoft.PowerShell.Management\New-Item $createDirectoryPath -ItemType Directory -Force | Out-Null
@@ -9211,9 +9211,9 @@ namespace System.Management.Automation.Internal
             return $op
         }}
 
-#
-# Call helper function based on bound parameter set
-#
+        #
+        # Call helper function based on bound parameter set
+        #
         $params = $PSCmdlet.MyInvocation.BoundParameters
         switch ($PSCmdlet.ParameterSetName)
         {{
@@ -9265,9 +9265,9 @@ namespace System.Management.Automation.Internal
             {definitionToken, s_PSCopyToSessionHelperDefinitionRestricted}
         };
 
-#endregion
+        #endregion
 
-#region PSCopyFromSessionHelper
+        #region PSCopyFromSessionHelper
 
         internal const string PSCopyFromSessionHelperName = @"PSCopyFromSessionHelper";
 
@@ -9320,10 +9320,10 @@ namespace System.Management.Automation.Internal
             [string] $getPathDir
         )
 
-# A hash table with the following members is returned:
-#   - moreAvailable bool to keep track of whether there is more data available
-#   - b64Fragment to track of the number of bytes.
-#   - ExceptionThrown bool to keep track if an exception was thrown
+        # A hash table with the following members is returned:
+        #   - moreAvailable bool to keep track of whether there is more data available
+        #   - b64Fragment to track of the number of bytes.
+        #   - ExceptionThrown bool to keep track if an exception was thrown
         function PSCopyFileFromRemoteSession
         {{
             param(
@@ -9356,7 +9356,7 @@ namespace System.Management.Automation.Internal
                     moreAvailable = $false
                 }}
 
-# Ensure bytes read is less than Max allowed
+                # Ensure bytes read is less than Max allowed
                 $maxBytes = 10 * 1024 * 1024
                 $numBytes = [Math]::Min($numBytes, $maxBytes)
 
@@ -9373,7 +9373,7 @@ namespace System.Management.Automation.Internal
                         $rstream = [System.IO.File]::OpenRead($filePath)
                     }}
 
-# Create a new array to hold the file content
+                    # Create a new array to hold the file content
                     if ($start -lt $rstream.Length)
                     {{
                         $o = $rstream.Seek($start, 0)
@@ -9420,7 +9420,7 @@ namespace System.Management.Automation.Internal
                 $finalResult.ExceptionThrown = $true
             }}
 
-# Resolve path in case it is a PSDrive
+            # Resolve path in case it is a PSDrive
             $resolvedFilePath = (Microsoft.PowerShell.Management\Resolve-Path -literal $copyFromFilePath).ProviderPath
 
             $unAuthorizedAccessException = $null
@@ -9442,7 +9442,7 @@ namespace System.Management.Automation.Internal
                     $exception = $null
                     try
                     {{
-# Disable the readonly and hidden attributes and try again
+                        # Disable the readonly and hidden attributes and try again
                         $item = Microsoft.PowerShell.Management\Get-Item $resolvedFilePath
 
                         if ($item.Attributes.HasFlag([System.IO.FileAttributes]::Hidden))
@@ -9470,7 +9470,7 @@ namespace System.Management.Automation.Internal
                             ($e.Exception.InnerException -is [System.ArgumentException]) -or
                             ($e.Exception.InnerException -is [System.IO.IOException]))
                         {{
-# Write out the original error since we failed to force the copy
+                            # Write out the original error since we failed to force the copy
                             WriteException $unAuthorizedAccessException
                         }}
                         else
@@ -9507,10 +9507,10 @@ namespace System.Management.Automation.Internal
             return $finalResult
         }}
 
-# Returns a hashtable with the following members:
-# SourceSupportsAlternateStreams - boolean to keep track of whether the source supports Alternate data streams.
-# Streams - the list of alternate streams
-#
+        # Returns a hashtable with the following members:
+        # SourceSupportsAlternateStreams - boolean to keep track of whether the source supports Alternate data streams.
+        # Streams - the list of alternate streams
+        #
         function PSSourceSupportsAlternateStreams
         {{
             param ([string]$supportAltStreamPath)
@@ -9520,7 +9520,7 @@ namespace System.Management.Automation.Internal
                 Streams = @()
             }}
 
-# Check if the source supports 'Get-Content -Stream'. This functionality was introduced in version 3.0.
+            # Check if the source supports 'Get-Content -Stream'. This functionality was introduced in version 3.0.
             $getContentCmdlet = Microsoft.PowerShell.Core\Get-Command Microsoft.PowerShell.Management\Get-Content -ErrorAction SilentlyContinue
             if ($getContentCmdlet.Parameters.Keys -notcontains 'Stream')
             {{
@@ -9529,7 +9529,7 @@ namespace System.Management.Automation.Internal
 
             $result['SourceSupportsAlternateStreams'] = $true
 
-# Check if the file has any alternate data streams.
+            # Check if the file has any alternate data streams.
             $item = Microsoft.PowerShell.Management\Get-Item -Path $supportAltStreamPath -Stream * -ea SilentlyContinue
             if (-not $item)
             {{
@@ -9547,8 +9547,8 @@ namespace System.Management.Automation.Internal
             return $result
         }}
 
-# Returns a hash table with metadata info about the file for the given path.
-#
+        # Returns a hash table with metadata info about the file for the given path.
+        #
         function PSGetFileMetadata
         {{
             param ($getMetaFilePath)
@@ -9563,14 +9563,14 @@ namespace System.Management.Automation.Internal
             {{
                 $metadata = @{{}}
 
-# Attributes
+                # Attributes
                 $attributes = @($item.Attributes.ToString().Split(',').Trim())
                 if ($attributes.Count -gt 0)
                 {{
                     $metadata.Add('Attributes', $attributes)
                 }}
 
-# LastWriteTime
+                # LastWriteTime
                 $metadata.Add('LastWriteTime', $item.LastWriteTime)
                 $metadata.Add('LastWriteTimeUtc', $item.LastWriteTimeUtc)
 
@@ -9578,8 +9578,8 @@ namespace System.Management.Automation.Internal
             }}
         }}
 
-# Converts file system path to PSDrive path
-# Returns converted path or original path if not conversion is needed.
+        # Converts file system path to PSDrive path
+        # Returns converted path or original path if not conversion is needed.
         function ConvertToPSDrivePath
         {{
             param (
@@ -9600,9 +9600,9 @@ namespace System.Management.Automation.Internal
             return $pathToConvert
         }}
 
-## A hashtable is returned in the following format:
-##  Exists - Boolean to keep track if the given path exists.
-##  Items  - The items that Get-Item -Path $path resolves to.
+        ## A hashtable is returned in the following format:
+        ##  Exists - Boolean to keep track if the given path exists.
+        ##  Items  - The items that Get-Item -Path $path resolves to.
         function PSGetPathItems
         {{
             param (
@@ -9649,9 +9649,9 @@ namespace System.Management.Automation.Internal
             return $op
         }}
 
-# Return a hashtable with the following members:
-# Files - Array with file fullnames, and their sizes
-# Directories - Array of child directory fullnames
+        # Return a hashtable with the following members:
+        # Files - Array with file fullnames, and their sizes
+        # Directories - Array of child directory fullnames
         function PSGetPathDirAndFiles
         {{
             param (
@@ -9712,9 +9712,9 @@ namespace System.Management.Automation.Internal
             return $op
         }}
 
-#
-# Call helper function based on bound parameter set
-#
+        #
+        # Call helper function based on bound parameter set
+        #
         $params = $PSCmdlet.MyInvocation.BoundParameters
         switch ($PSCmdlet.ParameterSetName)
         {{
@@ -9756,9 +9756,9 @@ namespace System.Management.Automation.Internal
             {definitionToken, s_PSCopyFromSessionHelperDefinitionRestricted}
         };
 
-#endregion
+        #endregion
 
-#region PSCopyRemoteUtils
+        #region PSCopyRemoteUtils
 
         internal const string PSCopyRemoteUtilsName = @"PSCopyRemoteUtils";
 
@@ -9781,9 +9781,9 @@ namespace System.Management.Automation.Internal
             [switch] $sourceIsRemote
         )
 
-# Returns a hashtable with the following member:
-# Exists - boolean to keep track of whether the given path exists for a remote directory.
-#
+        # Returns a hashtable with the following member:
+        # Exists - boolean to keep track of whether the given path exists for a remote directory.
+        #
         function PSRemoteDirectoryExist
         {{
             param (
@@ -9797,9 +9797,9 @@ namespace System.Management.Automation.Internal
 
         {1}
 
-#
-# Call helper function based on bound parameter set
-#
+        #
+        # Call helper function based on bound parameter set
+        #
         $params = $PSCmdlet.MyInvocation.BoundParameters
         switch ($PSCmdlet.ParameterSetName)
         {{
@@ -9822,10 +9822,10 @@ namespace System.Management.Automation.Internal
         ";
 
         internal const string PSValidatePathDefinition = @"
-# Return hashtable in the following format:
-# Exists - boolean to keep track if the given path exists
-# Root - the root for the given path. If wildcards are used, it returns the first drive root.
-# IsAbsolute - boolean to keep track of whether the given path is absolute
+        # Return hashtable in the following format:
+        # Exists - boolean to keep track if the given path exists
+        # Root - the root for the given path. If wildcards are used, it returns the first drive root.
+        # IsAbsolute - boolean to keep track of whether the given path is absolute
         param (
             [string] $pathToValidate,
             [switch] $sourceIsRemote
@@ -9853,23 +9853,23 @@ namespace System.Management.Automation.Internal
             IsAbsolute = $null
         }
 
-# Validate if the path is absolute
+        # Validate if the path is absolute
         $result['IsAbsolute'] = (Microsoft.PowerShell.Management\Split-Path $pathToValidate -IsAbsolute)
         if (-not $result['IsAbsolute'])
         {
             return $result
         }
 
-# Check if the given path exists.
+        # Check if the given path exists.
         $result['Exists'] = (Microsoft.PowerShell.Management\Test-Path $pathToValidate)
 
-# If $pathToValidate is a remote source, and it does not exist, return.
+        # If $pathToValidate is a remote source, and it does not exist, return.
         if ($sourceIsRemote -and (-not $result['Exists']))
         {
             return $result
         }
 
-# If the path does not exist, check if we can find its root.
+        # If the path does not exist, check if we can find its root.
         if (-not (Microsoft.PowerShell.Management\Test-Path $pathToValidate))
         {
             $possibleRoot = $null
@@ -9878,7 +9878,7 @@ namespace System.Management.Automation.Internal
             {
                 $possibleRoot = [System.IO.Path]::GetPathRoot($pathToValidate)
             }
-# Catch everything and ignore the error.
+            # Catch everything and ignore the error.
             catch {}
 
             if (-not $possibleRoot)
@@ -9886,11 +9886,11 @@ namespace System.Management.Automation.Internal
                 return $result
             }
 
-# Now use this path to find its root.
+            # Now use this path to find its root.
             $pathToValidate = $possibleRoot
         }
 
-# Get the root path using Get-Item
+        # Get the root path using Get-Item
         $item = Microsoft.PowerShell.Management\Get-Item $pathToValidate -ea SilentlyContinue
         if (($null -ne $item) -and ($item[0].PSProvider.Name -eq 'FileSystem'))
         {
@@ -9898,10 +9898,10 @@ namespace System.Management.Automation.Internal
             return $result
         }
 
-# If this fails, try to get them via Get-PSDrive
+        # If this fails, try to get them via Get-PSDrive
         $fileSystemDrives = @(Microsoft.PowerShell.Management\Get-PSDrive -PSProvider FileSystem -ea SilentlyContinue)
 
-# If this fails, try to get them via Get-PSProvider
+        # If this fails, try to get them via Get-PSProvider
         if ($fileSystemDrives.Count -eq 0)
         {
             $fileSystemDrives = @((Microsoft.PowerShell.Management\Get-PSProvider -PSProvider FileSystem -ea SilentlyContinue).Drives)
@@ -9930,7 +9930,7 @@ namespace System.Management.Automation.Internal
             {definitionToken, s_PSCopyRemoteUtilsDefinitionRestricted}
         };
 
-#endregion
+        #endregion
 
         internal static readonly string AllCopyToRemoteScripts = s_PSCopyToSessionHelper + PSCopyRemoteUtils;
 
@@ -9949,5 +9949,5 @@ namespace System.Management.Automation.Internal
         }
     }
 
-#endregion
+    #endregion
 }
