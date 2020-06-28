@@ -9823,9 +9823,9 @@ namespace System.Management.Automation.Internal
 
         internal const string PSValidatePathDefinition = @"
         # Return hashtable in the following format:
-        #    Exists - boolean to keep track if the given path exists
-        #    Root - the root for the given path. If wildcards are used, it returns the first drive root.
-        #    IsAbsolute - boolean to keep track of whether the given path is absolute
+        #   Exists - boolean to keep track if the given path exists
+        #   Root - the root for the given path. If wildcards are used, it returns the first drive root.
+        #   IsAbsolute - boolean to keep track of whether the given path is absolute
         param (
             [string] $pathToValidate,
             [switch] $sourceIsRemote
