@@ -138,7 +138,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Verify Move-Item throws correct error for non-existent source" {
-            { Move-Item -Path /does/not/exist -Destination $testFile } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
+            { Move-Item -Path /does/not/exist -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
 
         It "Verify Move-Item as substitute for Rename-Item" {
