@@ -84,6 +84,7 @@ Describe -Name "Windows MSI" -Fixture {
         BeforeAll {
             $previewUpgladeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
         }
+
         It "Preview MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
             $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
             $result.Count | Should -Be 0 -Because 'Query should return nothing if preview x64 is not installed'
