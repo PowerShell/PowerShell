@@ -2140,7 +2140,7 @@ function New-NuSpec {
         throw "New-NuSpec can be only executed on Windows platform."
     }
 
-    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion, $iconFileName
+    $nuspecTemplate = $packagingStrings.NuspecTemplate -f $PackageId,$PackageVersion,$iconFileName
     $nuspecObj = [xml] $nuspecTemplate
 
     if ( ($null -ne $Dependency) -and $Dependency.Count -gt 0 ) {
