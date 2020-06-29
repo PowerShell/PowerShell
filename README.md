@@ -87,8 +87,8 @@ You can also download the PowerShell binary archives for Windows, macOS and Linu
 [rl-arm64]: https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-linux-arm64.tar.gz
 [rl-snap]: https://snapcraft.io/powershell
 
-[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.4/PowerShell-7.1.0-preview.4-win-x64.msi
-[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.4/PowerShell-7.1.0-preview.4-win-x86.msi
+[pv-windows-64]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.3/PowerShell-7.1.0-preview.3-win-x64.msi
+[pv-windows-86]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.3/PowerShell-7.1.0-preview.3-win-x86.msi
 [pv-ubuntu18]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.4/powershell-preview_7.1.0-preview.4-1.ubuntu.18.04_amd64.deb
 [pv-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.4/powershell-preview_7.1.0-preview.4-1.ubuntu.16.04_amd64.deb
 [pv-debian9]: https://github.com/PowerShell/PowerShell/releases/download/v7.1.0-preview.4/powershell-preview_7.1.0-preview.4-1.debian.9_amd64.deb
