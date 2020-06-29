@@ -384,6 +384,10 @@ Describe "Module with FileList" -Tag "CI" {
         New-ModuleManifest -Path "$testdrive\Modules\FileListLoadTest\FileListLoadTest.psd1" -FileList @("FileListLoadTest.dll")
     }
 
+    AfterAll {
+        $env:PSModulePath = $originalPSModulePath
+    }
+
     It "Assemblies in FileList are not loaded" {
         Import-Module FileListLoadTest
         $asms = [System.AppDomain]::CurrentDomain.GetAssemblies().Location
