@@ -6076,6 +6076,11 @@ namespace Microsoft.PowerShell.Commands
 #if UNIX
             try
             {
+                if (InternalTestHooks.ThrowExdevErrorOnMoveDirectory)
+                {
+                    throw new IOException("Invalid cross-device link", hresult: UNIX_ERRNO_EXDEV);
+                }
+
                 directory.MoveTo(destinationPath);
             }
             catch (IOException e) when (e.HResult == UNIX_ERRNO_EXDEV)
