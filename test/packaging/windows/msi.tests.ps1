@@ -80,6 +80,34 @@ Describe -Name "Windows MSI" -Fixture {
         }
     }
 
+    Context "Upgrade code" {
+        BeforeAll {
+            $previewUpgladeCode = '39243d76-adaf-42b1-94fb-16ecf83237c8'
+        }
+
+        It "Preview MSI should not be installed before test" -Skip:(!(Test-Elevated)) {
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
+            $result.Count | Should -Be 0 -Because 'Query should return nothing if preview x64 is not installed'
+        }
+
+        It "MSI should install without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Install -MsiPath $msiX64Path -Properties @{ADD_PATH = 1}
+            } | Should -Not -Throw
+        }
+
+        It "Upgrade code should be correct" -Skip:(!(Test-Elevated)) {
+            $result = @(Get-CimInstance -Query "SELECT Value FROM Win32_Property WHERE Property='UpgradeCode' and Value = '{$previewUpgladeCode}'")
+            $result.Count | Should -Be 1 -Because 'Query should return 1 result if Upgrade code is for x64 preview'
+        }
+
+        It "MSI should uninstall without error" -Skip:(!(Test-Elevated)) {
+            {
+                Invoke-MsiExec -Uninstall -MsiPath $msiX64Path
+            } | Should -Not -Throw
+        }
+    }
+
     Context "Add Path disabled" {
         It "MSI should install without error" -Skip:(!(Test-Elevated)) {
             {
