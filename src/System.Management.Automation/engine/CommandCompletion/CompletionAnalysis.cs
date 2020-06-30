@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT License.
 
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,6 +95,42 @@ namespace System.Management.Automation
             return cursor.Offset < extent.StartOffset || cursor.Offset > extent.EndOffset;
         }
 
+        internal static (Token TokenAtCursor, Token TokenBeforeCursor, List<Ast> RelatedAsts, int ReplacementIndex) ExtractAstContext(Ast inputAst, Token[] inputTokens, IScriptPosition cursor)
+        {
+            bool adjustLineAndColumn = false;
+            IScriptPosition positionForAstSearch = cursor;
+
+            Token tokenBeforeCursor = null;
+            Token tokenAtCursor = InterstingTokenAtCursorOrDefault(inputTokens, cursor);
+            if (tokenAtCursor == null)
+            {
+                tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(inputTokens, cursor);
+                if (tokenBeforeCursor != null)
+                {
+                    positionForAstSearch = tokenBeforeCursor.Extent.EndScriptPosition;
+                    adjustLineAndColumn = true;
+                }
+            }
+            else
+            {
+                var stringExpandableToken = tokenAtCursor as StringExpandableToken;
+                if (stringExpandableToken?.NestedTokens != null)
+                {
+                    tokenAtCursor = InterstingTokenAtCursorOrDefault(stringExpandableToken.NestedTokens, cursor) ?? stringExpandableToken;
+                }
+            }
+
+            int replacementIndex = adjustLineAndColumn ? cursor.Offset : 0;
+            var relatedAsts = AstSearcher.FindAll(
+                inputAst,
+                ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent),
+                searchNestedScriptBlocks: true).ToList();
+
+            Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
+
+            return (tokenAtCursor, tokenBeforeCursor, relatedAsts, replacementIndex);
+        }
+
         internal CompletionContext CreateCompletionContext(PowerShell powerShell)
         {
             var typeInferenceContext = new TypeInferenceContext(powerShell);
@@ -107,48 +144,24 @@ namespace System.Management.Automation
 
         private CompletionContext InitializeCompletionContext(TypeInferenceContext typeInferenceContext)
         {
-            Token tokenBeforeCursor = null;
-            IScriptPosition positionForAstSearch = _cursorPosition;
-            var adjustLineAndColumn = false;
-            var tokenAtCursor = InterstingTokenAtCursorOrDefault(_tokens, _cursorPosition);
-            if (tokenAtCursor == null)
-            {
-                tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(_tokens, _cursorPosition);
-                if (tokenBeforeCursor != null)
-                {
-                    positionForAstSearch = tokenBeforeCursor.Extent.EndScriptPosition;
-                    adjustLineAndColumn = true;
-                }
-            }
-            else
-            {
-                var stringExpandableToken = tokenAtCursor as StringExpandableToken;
-                if (stringExpandableToken?.NestedTokens != null)
-                {
-                    tokenAtCursor = InterstingTokenAtCursorOrDefault(stringExpandableToken.NestedTokens, _cursorPosition) ?? stringExpandableToken;
-                }
-            }
-
-            var asts = AstSearcher.FindAll(_ast, ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent), searchNestedScriptBlocks: true).ToList();
-
-            Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
+            var astContext = ExtractAstContext(_ast, _tokens, _cursorPosition);
 
             if (typeInferenceContext.CurrentTypeDefinitionAst == null)
             {
-                typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(asts.Last());
+                typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(astContext.RelatedAsts.Last());
             }
 
             ExecutionContext executionContext = typeInferenceContext.ExecutionContext;
 
             return new CompletionContext
             {
-                TokenAtCursor = tokenAtCursor,
-                TokenBeforeCursor = tokenBeforeCursor,
-                CursorPosition = _cursorPosition,
-                RelatedAsts = asts,
                 Options = _options,
+                CursorPosition = _cursorPosition,
+                TokenAtCursor = astContext.TokenAtCursor,
+                TokenBeforeCursor = astContext.TokenBeforeCursor,
+                RelatedAsts = astContext.RelatedAsts,
+                ReplacementIndex = astContext.ReplacementIndex,
                 ExecutionContext = executionContext,
-                ReplacementIndex = adjustLineAndColumn ? _cursorPosition.Offset : 0,
                 TypeInferenceContext = typeInferenceContext,
                 Helper = typeInferenceContext.Helper,
                 CustomArgumentCompleters = executionContext.CustomArgumentCompleters,

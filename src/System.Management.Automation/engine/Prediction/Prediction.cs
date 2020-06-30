@@ -54,12 +54,53 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Get the predictive suggestions.
         /// </summary>
-        List<string> GetSuggestion(string userInput, CancellationToken token);
+        List<string> GetSuggestion(PredictionContext context, CancellationToken cancellationToken);
+    }
+
+    /// <summary>
+    /// Context information about the user input.
+    /// </summary>
+    public class PredictionContext
+    {
+        private PredictionContext() { }
 
         /// <summary>
-        /// Get the predictive suggestions.
+        /// 
         /// </summary>
-        List<string> GetSuggestion(Ast ast, CancellationToken token);
+        public Ast InputAst { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Token[] InputTokens { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IScriptPosition CursorPosition { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public Token TokenAtCursor { get; private set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IReadOnlyList<Ast> RelatedAsts { get; private set; }
+
+        internal static PredictionContext Create(Ast inputAst, Token[] inputTokens)
+        {
+            var cursor = inputAst.Extent.EndScriptPosition;
+            var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);
+            return new PredictionContext() {
+                InputAst = inputAst,
+                InputTokens = inputTokens,
+                CursorPosition = cursor,
+                TokenAtCursor = astContext.TokenAtCursor,
+                RelatedAsts = astContext.RelatedAsts,
+            };
+        }
     }
 
     /// <summary>
@@ -92,20 +133,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Collect the predictive suggestions from registered predictors.
         /// </summary>
-        public static Task<List<PredictionResult>> PredictInput(Ast ast, int millisecondsTimeout = 50)
-        {
-            return PredictInputImpl(ast, userInput: null, millisecondsTimeout);
-        }
-
-        /// <summary>
-        /// Collect the predictive suggestions from registered predictors.
-        /// </summary>
-        public static Task<List<PredictionResult>> PredictInput(string userInput, int millisecondsTimeout)
-        {
-            return PredictInputImpl(ast: null, userInput, millisecondsTimeout);
-        }
-
-        private static async Task<List<PredictionResult>> PredictInputImpl(Ast ast, string userInput, int millisecondsTimeout)
+        public static async Task<List<PredictionResult>> PredictInput(Ast ast, Token[] astTokens, int millisecondsTimeout = 20)
         {
             var predictors = SubsystemManager.GetSubsystems<IPredictor>();
             if (predictors.Count == 0)
@@ -113,27 +141,26 @@ namespace System.Management.Automation.Subsystem
                 return null;
             }
 
+            var context = PredictionContext.Create(ast, astTokens);
             var cancellationSource = new CancellationTokenSource();
-            var token = cancellationSource.Token;
+            var cancellationToken = cancellationSource.Token;
             var tasks = new Task<PredictionResult>[predictors.Count];
 
             for (int i = 0; i < predictors.Count; i++)
             {
                 var predictor = predictors[i];
+
                 tasks[i] = Task.Factory.StartNew(
                     state => {
                         var predictor = (IPredictor) state;
-                        List<string> texts = ast != null
-                            ? predictor.GetSuggestion(ast, token)
-                            : predictor.GetSuggestion(userInput, token);
-
+                        List<string> texts = predictor.GetSuggestion(context, cancellationToken);
                         return texts?.Count > 0 ? new PredictionResult(predictor.Id, texts) : null;
                     }, predictor);
             }
 
             try
             {
-                await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(millisecondsTimeout, token));
+                await Task.WhenAny(Task.WhenAll(tasks), Task.Delay(millisecondsTimeout, cancellationToken));
                 cancellationSource.Cancel();
 
                 var results = new List<PredictionResult>(predictors.Count);
