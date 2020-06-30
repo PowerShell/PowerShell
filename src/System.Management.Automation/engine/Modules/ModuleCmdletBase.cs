@@ -4379,7 +4379,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        string fixedFileName = FixupFileName(moduleBase, s, extension, importingModule);
+                        string fixedFileName = FixupFileName(moduleBase, s, extension, importingModule, skipLoading: true);
                         var dir = Path.GetDirectoryName(fixedFileName);
 
                         if (string.Equals(psHome, dir, StringComparison.OrdinalIgnoreCase) ||
@@ -4537,9 +4537,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// A utility routine to fix up a file name so it's rooted and has an extension.
         /// </summary>
-        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule)
+        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, bool skipLoading = false)
         {
-            return FixupFileName(moduleBase, name, extension, isImportingModule, pathIsResolved: out _);
+            return FixupFileName(moduleBase, name, extension, isImportingModule, pathIsResolved: out _, skipLoading);
         }
 
         /// <summary>
@@ -4554,10 +4554,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="extension">The extension to use in case the given name has no extension.</param>
         /// <param name="isImportingModule">Indicate if we are loading a module.</param>
         /// <param name="pathIsResolved">Indicate if the returned path is fully resolved.</param>
+        /// <param name="skipLoading">Indicate if the resolved module should be loaded.</param>
         /// <returns>
         /// The resolved file path. Or, the combined path of <paramref name="moduleBase"/> and <paramref name="name"/> when the file path cannot be resolved.
         /// </returns>
-        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, out bool pathIsResolved)
+        internal string FixupFileName(string moduleBase, string name, string extension, bool isImportingModule, out bool pathIsResolved, bool skipLoading = false)
         {
             pathIsResolved = false;
             string originalName = name;
@@ -4585,7 +4586,7 @@ namespace Microsoft.PowerShell.Commands
             // Return the path if successfully resolved.
             if (resolvedPath != null)
             {
-                if (isImportingModule && resolvedPath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                if (isImportingModule && resolvedPath.EndsWith(".dll", StringComparison.OrdinalIgnoreCase) && !skipLoading)
                 {
                     // If we are fixing up an assembly file path and we are actually loading the module, then we load the resolved assembly file here.
                     // This is because we process type/format ps1xml files before 'RootModule' and 'NestedModules' entries during the module loading.
