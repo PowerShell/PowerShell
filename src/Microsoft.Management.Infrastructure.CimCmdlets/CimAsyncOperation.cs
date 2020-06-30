@@ -33,7 +33,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.moreActionEvent = new ManualResetEventSlim(false);
             this.actionQueue = new ConcurrentQueue<CimBaseAction>();
-            this._disposed = 0;
             this.operationCount = 0;
         }
 
@@ -53,7 +52,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <param name="actionArgs">Event argument.</param>
         protected void NewCmdletActionHandler(object cimSession, CmdletActionEventArgs actionArgs)
         {
-            DebugHelper.WriteLogEx("Disposed {0}, action type = {1}", 0, this._disposed, actionArgs.Action);
+            DebugHelper.WriteLogEx("Disposed {0}, action type = {1}", 0, this.Disposed, actionArgs.Action);
 
             if (this.Disposed)
             {
@@ -443,11 +442,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return Interlocked.Read(ref this._disposed) == 1;
+                return Interlocked.CompareExchange(ref this._disposed, 0, 0) == 1;
             }
         }
 
-        private long _disposed;
+        private int _disposed;
 
         /// <summary>
         /// <para>
