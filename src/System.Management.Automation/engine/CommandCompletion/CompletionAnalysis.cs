@@ -169,14 +169,32 @@ namespace System.Management.Automation
             };
         }
 
-        private static Token InterstingTokenAtCursorOrDefault(IEnumerable<Token> tokens, IScriptPosition cursorPosition)
+        private static Token InterstingTokenAtCursorOrDefault(IList<Token> tokens, IScriptPosition cursorPosition)
         {
-            return tokens.LastOrDefault(token => IsCursorWithinOrJustAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token));
+            for (int i = tokens.Count - 1; i >= 0; --i)
+            {
+                Token token = tokens[i];
+                if (IsCursorWithinOrJustAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token))
+                {
+                    return token;
+                }
+            }
+
+            return null;
         }
 
-        private static Token InterstingTokenBeforeCursorOrDefault(IEnumerable<Token> tokens, IScriptPosition cursorPosition)
+        private static Token InterstingTokenBeforeCursorOrDefault(IList<Token> tokens, IScriptPosition cursorPosition)
         {
-            return tokens.LastOrDefault(token => IsCursorAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token));
+            for (int i = tokens.Count - 1; i >= 0; --i)
+            {
+                Token token = tokens[i];
+                if (IsCursorAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token))
+                {
+                    return token;
+                }
+            }
+
+            return null;
         }
 
         private static Ast GetLastAstAtCursor(ScriptBlockAst scriptBlockAst, IScriptPosition cursorPosition)

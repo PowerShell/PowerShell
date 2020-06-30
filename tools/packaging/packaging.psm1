@@ -2325,6 +2325,7 @@ function CleanupGeneratedSourceCode
         '[System.Runtime.CompilerServices.IsReadOnlyAttribute]'
         '[System.Runtime.CompilerServices.NullableContextAttribute('
         '[System.Runtime.CompilerServices.NullableAttribute((byte)0)]'
+        '[System.Runtime.CompilerServices.AsyncStateMachineAttribute'
         )
 
     $patternsToReplace = @(
