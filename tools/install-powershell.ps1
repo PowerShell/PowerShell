@@ -425,7 +425,7 @@ try {
     if ($IsWinEnv -and $Daily.IsPresent) {
         if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
             Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
-            $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
+            $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
             $null = New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
             Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
         }
