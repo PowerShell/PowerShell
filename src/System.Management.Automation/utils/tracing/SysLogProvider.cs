@@ -200,7 +200,7 @@ namespace System.Management.Automation.Tracing
         {
             get
             {
-                if (object.ReferenceEquals(_resourceManager, null))
+                if (_resourceManager is null)
                 {
                     _resourceManager = new global::System.Resources.ResourceManager("System.Management.Automation.resources.EventResource", typeof(EventResource).Assembly);
                 }
