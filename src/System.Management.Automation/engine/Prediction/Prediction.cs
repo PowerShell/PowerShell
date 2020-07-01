@@ -65,31 +65,44 @@ namespace System.Management.Automation.Subsystem
         private PredictionContext() { }
 
         /// <summary>
-        /// 
+        /// Gets the abstract syntax tree (AST) generated from parsing the user input.
         /// </summary>
         public Ast InputAst { get; private set; }
 
         /// <summary>
-        /// 
+        /// Gets the tokens generated from parsing the user input.
         /// </summary>
         public Token[] InputTokens { get; private set; }
 
         /// <summary>
-        /// 
+        /// Gets the cursor position, which is assumed always at the end of the input line.
         /// </summary>
         public IScriptPosition CursorPosition { get; private set; }
 
         /// <summary>
-        /// 
+        /// Gets the token at the cursor.
         /// </summary>
         public Token TokenAtCursor { get; private set; }
 
         /// <summary>
-        /// 
+        /// Gets all ASTs that are related to the cursor position,
+        /// which is assumed always at the end of the input line.
         /// </summary>
         public IReadOnlyList<Ast> RelatedAsts { get; private set; }
 
-        internal static PredictionContext Create(Ast inputAst, Token[] inputTokens)
+        /// <summary>
+        /// Creates a context instance from the user input line.
+        /// </summary>
+        public static PredictionContext Create(string input)
+        {
+            Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);
+            return Create(ast, tokens);
+        }
+
+        /// <summary>
+        /// Creates a context instance from the AST and tokens that represent the user input.
+        /// </summary>
+        public static PredictionContext Create(Ast inputAst, Token[] inputTokens)
         {
             var cursor = inputAst.Extent.EndScriptPosition;
             var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);
