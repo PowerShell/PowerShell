@@ -421,8 +421,10 @@ try {
         }
     }
 
+
     # Edit icon to disambiguate daily builds.
-    if ($IsWinEnv -and $Daily.IsPresent) {
+    $icoPath = "$Destination\assets\PowerShell_avatar.ico"
+    if ($IsWinEnv -and $Daily.IsPresent -and (Test-Path -Path $icoPath)) {
         if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
             Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
             $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.0.0/rcedit-x64.exe"
@@ -431,7 +433,7 @@ try {
         }
 
         Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
-        & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_avatar.ico"
+        & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon $icoPath
     }
 
     ## Change the mode of 'pwsh' to 'rwxr-xr-x' to allow execution
