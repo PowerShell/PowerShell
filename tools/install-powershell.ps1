@@ -421,7 +421,6 @@ try {
         }
     }
 
-
     # Edit icon to disambiguate daily builds.
     $icoPath = "$Destination\assets\PowerShell_avatar.ico"
     if ($IsWinEnv -and $Daily.IsPresent -and (Test-Path -Path $icoPath)) {
