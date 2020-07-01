@@ -423,7 +423,8 @@ try {
 
     # Edit icon to disambiguate daily builds.
     if ($IsWinEnv -and $Daily.IsPresent) {
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
+        $rceditPath = "~/.rcedit/rcedit-x64.exe"
+        if (-not (Test-Path $rceditPath)) {
             Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
             $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
             $null = New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
@@ -432,7 +433,9 @@ try {
 
         Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
         try {
-            & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_avatar.ico"
+            $rceditArgs = @("$Destination\pwsh.exe", "--set-icon" "$Destination\assets\Powershell_avatar.ico")
+            Write-Verbose "rcedit args: $rceditArgs"
+            & $rceditPath $rceditArgs
         } catch {
             Write-Warning "rcedit-x64.exe exited with non-zero exit code. The icon may not have been updated."
         }
