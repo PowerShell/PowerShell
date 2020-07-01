@@ -35,6 +35,7 @@ function GetExternalHostAddress([string]$HostName)
 Describe "Test-Connection" -tags "CI" {
     BeforeAll {
         $hostName = [System.Net.Dns]::GetHostName()
+        [System.Net.Dns]::GetHostEntry($hostName)
         $gatewayAddress = GetGatewayAddress
         $publicHostAddress = GetExternalHostAddress -HostName $hostName
 
