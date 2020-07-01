@@ -443,8 +443,8 @@ try {
             }
         }
 
-        Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
         if (-not $skipRunning) {
+            Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
             & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_avatar.ico"
         }
     }
