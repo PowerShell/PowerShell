@@ -423,18 +423,29 @@ try {
 
     # Edit icon to disambiguate daily builds.
     if ($IsWinEnv -and $Daily.IsPresent) {
-        if (-not (Test-Path "~/.rcedit/rcedit-x64.exe")) {
-            Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
-            $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
-            $null = New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
-            Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
+        $skipRunning = $false
+        
+        # Test if a few paths DO NOT exist and handle them accordingly.
+        switch ($false) {
+            (Test-Path "$Destination\pwsh.exe") {
+                throw "$Destination\pwsh.exe not found. Please review the contents of the daily package."
+            }
+            (Test-Path "$Destination\assets\Powershell_avatar.ico") {
+                Write-Warning "ICO file ($Destination\assets\Powershell_avatar.ico) not found. Skipping running rcedit."
+                $skipRunning = $true
+                break
+            }
+            (Test-Path "~/.rcedit/rcedit-x64.exe") {
+                Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
+                $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
+                $null = New-Item -Path "~/.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
+                Invoke-WebRequest -OutFile "~/.rcedit/rcedit-x64.exe" -Uri $rceditUrl
+            }
         }
 
         Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
-        if (Test-Path "$Destination\assets\Powershell_avatar.ico") {
+        if (-not $skipRunning) {
             & "~/.rcedit/rcedit-x64.exe" "$Destination\pwsh.exe" --set-icon "$Destination\assets\Powershell_avatar.ico"
-        } else {
-            Write-Error "ICO file ($Destination\assets\Powershell_avatar.ico) not found. Skipping running rcedit."
         }
     }
 
