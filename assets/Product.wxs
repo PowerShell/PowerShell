@@ -7,6 +7,11 @@
   <?define ProductName = "$(env.ProductName)" ?>
   <?define ProductSimpleVersionWithNameAndOptionalArchitecture = "$(var.ProductName) $(env.SimpleProductVersion) ($(sys.BUILDARCH))"?>
   <!-- UpgradeCode GUID MUST REMAIN SAME THROUGHOUT ALL VERSIONS, otherwise, updates won't occur. -->
+  <?if $(var.IsPreview)=True?>
+    <?define PwshPath = "[VersionFolder]preview"?>
+  <?else?>
+    <?define PwshPath = "[VersionFolder]"?>
+  <?endif?>
   <?if $(sys.BUILDARCH)=x64?>
     <?define ExplorerContextMenuDialogText = "&$(var.ProductName) $(env.SimpleProductVersion)"?>
     <?define UpgradeCodePreview = "39243d76-adaf-42b1-94fb-16ecf83237c8"?>
@@ -191,7 +196,7 @@
             <!-- add ourselves to %PATH% so pwsh.exe can be started from Windows PowerShell or cmd.exe -->
             <Component Id="SetPath">
               <Condition>ADD_PATH=1</Condition>
-              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="[VersionFolder]"/>
+              <Environment Id="PATH" Action="set" Name="PATH" Part="last" Permanent="no" System="yes" Value="$(var.PwshPath)"/>
               <!-- Can't use a shared component GUID here either since the path we add to PATH varies on the actual directory path. Use a key that represents this same path. -->
               <RegistryKey Root="HKLM" Key="Software\Microsoft\PowerShellCore\InstalledVersions\$(var.UpgradeCode)">
                 <RegistryValue Type="string" Name="InstallDir" Value="[VersionFolder]" KeyPath="yes"/>
