@@ -433,7 +433,7 @@ try {
 
         Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
         try {
-            $rceditArgs = @("$Destination\pwsh.exe", "--set-icon" "$Destination\assets\Powershell_avatar.ico")
+            $rceditArgs = @("$Destination\pwsh.exe", "--set-icon", "$Destination\assets\Powershell_avatar.ico")
             Write-Verbose "rcedit args: $rceditArgs"
             & $rceditPath $rceditArgs
         } catch {
