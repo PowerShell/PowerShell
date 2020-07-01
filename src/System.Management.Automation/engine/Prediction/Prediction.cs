@@ -62,33 +62,46 @@ namespace System.Management.Automation.Subsystem
     /// </summary>
     public class PredictionContext
     {
-        private PredictionContext() { }
-
         /// <summary>
         /// Gets the abstract syntax tree (AST) generated from parsing the user input.
         /// </summary>
-        public Ast InputAst { get; private set; }
+        public Ast InputAst { get; }
 
         /// <summary>
         /// Gets the tokens generated from parsing the user input.
         /// </summary>
-        public Token[] InputTokens { get; private set; }
+        public Token[] InputTokens { get; }
 
         /// <summary>
         /// Gets the cursor position, which is assumed always at the end of the input line.
         /// </summary>
-        public IScriptPosition CursorPosition { get; private set; }
+        public IScriptPosition CursorPosition { get; }
 
         /// <summary>
         /// Gets the token at the cursor.
         /// </summary>
-        public Token TokenAtCursor { get; private set; }
+        public Token TokenAtCursor { get; }
 
         /// <summary>
         /// Gets all ASTs that are related to the cursor position,
         /// which is assumed always at the end of the input line.
         /// </summary>
-        public IReadOnlyList<Ast> RelatedAsts { get; private set; }
+        public IReadOnlyList<Ast> RelatedAsts { get; }
+
+        /// <summary>
+        /// Creates a context instance from the AST and tokens that represent the user input.
+        /// </summary>
+        public PredictionContext(Ast inputAst, Token[] inputTokens)
+        {
+            var cursor = inputAst.Extent.EndScriptPosition;
+            var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);
+
+            InputAst = inputAst;
+            InputTokens = inputTokens;
+            CursorPosition = cursor;
+            TokenAtCursor = astContext.TokenAtCursor;
+            RelatedAsts = astContext.RelatedAsts;
+        }
 
         /// <summary>
         /// Creates a context instance from the user input line.
@@ -96,23 +109,7 @@ namespace System.Management.Automation.Subsystem
         public static PredictionContext Create(string input)
         {
             Ast ast = Parser.ParseInput(input, out Token[] tokens, out _);
-            return Create(ast, tokens);
-        }
-
-        /// <summary>
-        /// Creates a context instance from the AST and tokens that represent the user input.
-        /// </summary>
-        public static PredictionContext Create(Ast inputAst, Token[] inputTokens)
-        {
-            var cursor = inputAst.Extent.EndScriptPosition;
-            var astContext = CompletionAnalysis.ExtractAstContext(inputAst, inputTokens, cursor);
-            return new PredictionContext() {
-                InputAst = inputAst,
-                InputTokens = inputTokens,
-                CursorPosition = cursor,
-                TokenAtCursor = astContext.TokenAtCursor,
-                RelatedAsts = astContext.RelatedAsts,
-            };
+            return new PredictionContext(ast, tokens);
         }
     }
 
@@ -154,7 +151,7 @@ namespace System.Management.Automation.Subsystem
                 return null;
             }
 
-            var context = PredictionContext.Create(ast, astTokens);
+            var context = new PredictionContext(ast, astTokens);
             var cancellationSource = new CancellationTokenSource();
             var cancellationToken = cancellationSource.Token;
             var tasks = new Task<PredictionResult>[predictors.Count];
