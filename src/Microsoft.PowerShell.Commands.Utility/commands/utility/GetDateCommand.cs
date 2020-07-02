@@ -237,14 +237,44 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
-        public string UFormat { get; set; }
+        public string UFormat
+        {
+            get
+            {
+                return _uFormat;
+            }
+
+            set
+            {
+                _uFormat = value;
+                _uFormatSpecified = true;
+            }
+        }
+
+        private string _uFormat;
+        private bool _uFormatSpecified;
 
         /// <summary>
-        /// Unix format string.
+        /// .NET format string.
         /// </summary>
         [Parameter]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
-        public string Format { get; set; }
+        public string Format
+        {
+            get
+            {
+                return _format;
+            }
+
+            set
+            {
+                _format = value;
+                _formatSpecified = true;
+            }
+        }
+
+        private string _format;
+        private bool _formatSpecified;
 
         /// <summary>
         /// Gets or sets a value that converts date to UTC before formatting.
