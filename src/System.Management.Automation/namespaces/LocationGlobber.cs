@@ -757,20 +757,31 @@ namespace System.Management.Automation
                 }
 
                 PSDriveInfo drive = null;
-                string providerPath = GetProviderPath(path, context, out provider, out drive);
-
-                if (providerPath == null)
+                provider = null;
+                try
                 {
-                    providerInstance = null;
-                    s_tracer.WriteLine("provider returned a null path so return an empty array");
+                    string providerPath = GetProviderPath(path, context, out provider, out drive);
 
-                    s_pathResolutionTracer.WriteLine("Provider '{0}' returned null", provider);
-                    return new Collection<string>();
+                    if (providerPath == null)
+                    {
+                        providerInstance = null;
+                        s_tracer.WriteLine("provider returned a null path so return an empty array");
+
+                        s_pathResolutionTracer.WriteLine("Provider '{0}' returned null", provider);
+                        return new Collection<string>();
+                    }
+
+                    if (drive != null)
+                    {
+                        context.Drive = drive;
+                    }
                 }
-
-                if (drive != null)
+                catch (DriveNotFoundException)
                 {
-                    context.Drive = drive;
+                    if (!allowNonexistingPaths)
+                    {
+                        throw;
+                    }
                 }
 
                 Collection<string> paths = new Collection<string>();

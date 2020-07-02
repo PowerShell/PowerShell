@@ -277,22 +277,15 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
 
 Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
-        # on macOS, the /tmp directory is a symlink, so we'll resolve it here
         $TestPath = $TestDrive
-        if ($IsMacOS)
-        {
-            $item = Get-Item $TestPath
-            $dirName = $item.BaseName
-            $item = Get-Item $item.PSParentPath -Force
-            if ($item.LinkType -eq "SymbolicLink")
-            {
-                $TestPath = Join-Path $item.Target $dirName
-            }
-        }
 
         Push-Location $TestPath
+
         $null = New-Item -Type Directory someDir
         $null = New-Item -Type File someFile
+
+        $targets = "./$PID.tmp", ".\$PID.tmp"
+        $links = "$PID-Link0.tmp", "$PID-Link1.tmp"
     }
 
     AfterAll {
@@ -319,6 +312,17 @@ Describe "New-Item: symlink with absolute/relative path test" -Tags @('CI', 'Req
         New-Item -Type SymbolicLink someFileLinkRelative -Target ./someFile
         Get-Item someFileLinkRelative | Should -BeOfType System.IO.FileInfo
     }
+
+    It "Can create symlink with relative nonexistent target '<target>'" -TestCases @{ link = $links[0]; target = $targets[0] }, @{ link = $links[1]; target = $targets[1] } {
+        param($link, $target)
+
+        $null = New-Item -Type SymbolicLink $link -Target $target -Force
+
+        # Make sure the relative target path was recorded as such and uses
+        # the platform-appropriate separator.
+        (Get-Item $link).Target | Should -Be ($target -replace '[\\/]', [IO.Path]::DirectorySeparatorChar)
+
+      }
 }
 
 Describe "New-Item with links fails for non elevated user if developer mode not enabled on Windows." -Tags "CI" {

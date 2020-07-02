@@ -3505,36 +3505,47 @@ namespace System.Management.Automation
                             throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewLinkTargetNotSpecified, path);
                         }
 
-                        ProviderInfo targetProvider = null;
-                        CmdletProvider targetProviderInstance = null;
-
-                        var globbedTarget = Globber.GetGlobbedProviderPathsFromMonadPath(
-                            targetPath,
-                            allowNonexistingPath,
-                            context,
-                            out targetProvider,
-                            out targetProviderInstance);
-
-                        if (!string.Equals(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase))
+                        try
                         {
-                            throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
+                            ProviderInfo targetProvider = null;
+                            CmdletProvider targetProviderInstance = null;
+
+                            var globbedTarget = Globber.GetGlobbedProviderPathsFromMonadPath(
+                                targetPath,
+                                allowNonexistingPath,
+                                context,
+                                out targetProvider,
+                                out targetProviderInstance);
+
+                            if (!string.Equals(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase))
+                            {
+                                throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
+                            }
+
+                            if (globbedTarget.Count > 1)
+                            {
+                                throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathResolvedToMultiple, targetPath);
+                            }
+
+                            if (globbedTarget.Count == 0)
+                            {
+                                throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
+                            }
+
+                            // If the original target was a relative path, we want to leave it as relative if it did not require
+                            // globbing to resolve.
+                            if (WildcardPattern.ContainsWildcardCharacters(targetPath))
+                            {
+                                content = globbedTarget[0];
+                            }
                         }
-
-                        if (globbedTarget.Count > 1)
+                        catch
                         {
-                            throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathResolvedToMultiple, targetPath);
-                        }
-
-                        if (globbedTarget.Count == 0)
-                        {
-                            throw PSTraceSource.NewInvalidOperationException(SessionStateStrings.PathNotFound, targetPath);
-                        }
-
-                        // If the original target was a relative path, we want to leave it as relative if it did not require
-                        // globbing to resolve.
-                        if (WildcardPattern.ContainsWildcardCharacters(targetPath))
-                        {
-                            content = globbedTarget[0];
+                            // If Force switch presents we consider the 'content' target path literally otherwise throws.
+                            if (!context.Force)
+                            {
+                                throw;
+                            }
                         }
                     }
 
