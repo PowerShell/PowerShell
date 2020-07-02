@@ -40,14 +40,30 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        private DateTime _date;
+        private bool _dateSpecified;
+
         /// <summary>
         /// Gets or sets whether to treat a numeric input as ticks, or unix time.
         /// </summary>
-        [Parameter]
-        public SwitchParameter FromUnixTime { get; set; }
+        [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSeconds, Mandatory = true)]
+        [Alias("UnixTime")]
+        public long UnixTimeSeconds
+        {
+            get
+            {
+                return _unixTimeSeconds;
+            }
 
-        private DateTime _date;
-        private bool _dateSpecified;
+            set
+            {
+                _unixTimeSeconds = value;
+                _unixTimeSecondsSpecified = true;
+            }
+        }
+
+        private long _unixTimeSeconds;
+        private bool _unixTimeSecondsSpecified;
 
         /// <summary>
         /// Allows the user to override the year.
@@ -243,14 +259,11 @@ namespace Microsoft.PowerShell.Commands
             // use passed date object if specified
             if (_dateSpecified)
             {
-                if (FromUnixTime.IsPresent)
-                {
-                    dateToUse = DateTimeOffset.FromUnixTimeSeconds(Date.Ticks).UtcDateTime;
-                }
-                else
-                {
-                    dateToUse = Date;
-                }
+                dateToUse = Date;
+            }
+            else if (_unixTimeSecondsSpecified)
+            {
+                dateToUse = DateTimeOffset.FromUnixTimeSeconds(UnixTimeSeconds).LocalDateTime;
             }
 
             // use passed year if specified
