@@ -14,9 +14,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implementation for the get-date command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
-    [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
-    [OutputType(typeof(DateTime), ParameterSetName = new string[] { "net" })]
+    [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = ParameterSetNames.Date, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
+    [OutputType(typeof(string))]
+    [OutputType(typeof(DateTime))]
     public sealed class GetDateCommand : Cmdlet
     {
         #region parameters
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Allows user to override the date/time object that will be processed.
         /// </summary>
-        [Parameter(Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = ParameterSetNames.Date, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("LastWriteTime")]
         public DateTime Date
         {
@@ -212,21 +212,21 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unix format string.
         /// </summary>
-        [Parameter(ParameterSetName = "UFormat")]
+        [Parameter]
         [ValidateNotNullOrEmpty]
         public string UFormat { get; set; }
 
         /// <summary>
         /// Unix format string.
         /// </summary>
-        [Parameter(ParameterSetName = "net")]
+        [Parameter]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format { get; set; }
 
         /// <summary>
         /// Gets or sets a value that converts date to UTC before formatting.
         /// </summary>
-        [Parameter(ParameterSetName = "net")]
+        [Parameter]
         public SwitchParameter AsUTC { get; set; }
         #endregion
 
