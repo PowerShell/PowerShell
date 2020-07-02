@@ -442,7 +442,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                return Interlocked.CompareExchange(ref this._disposed, 0, 0) == 1;
+                Interlocked.MemoryBarrier();
+                return this._disposed == 1;
             }
         }
 
