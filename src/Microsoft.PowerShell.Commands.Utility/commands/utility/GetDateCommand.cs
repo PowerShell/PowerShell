@@ -286,6 +286,23 @@ namespace Microsoft.PowerShell.Commands
         #region methods
 
         /// <summary>
+        /// Validate arguments.
+        /// </summary>
+        protected override void BeginProcessing()
+        {
+            if (_formatSpecified && _uFormatSpecified)
+            {
+                ErrorRecord error = new ErrorRecord(
+                    new ValidationMetadataException(GetDateStrings.OnlyOneFormatCanBeSpecified),
+                    "OnlyOneFormatCanBeSpecified",
+                    ErrorCategory.InvalidArgument,
+                    null);
+
+                ThrowTerminatingError(error);
+            }
+        }
+
+        /// <summary>
         /// Get the time.
         /// </summary>
         protected override void ProcessRecord()
