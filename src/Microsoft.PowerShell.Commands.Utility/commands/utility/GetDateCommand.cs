@@ -375,12 +375,12 @@ namespace Microsoft.PowerShell.Commands
                 dateToUse = dateToUse.ToUniversalTime();
             }
 
-            if (UFormat != null)
+            if (_uFormatSpecified)
             {
                 // format according to UFormat string
                 WriteObject(UFormatDateString(dateToUse));
             }
-            else if (Format != null)
+            else if (_formatSpecified)
             {
                 // format according to Format string
 
