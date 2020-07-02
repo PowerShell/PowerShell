@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,7 @@ namespace System.Management.Automation.Subsystem
         /// <summary>
         /// Default implementation. No function is required for a predictor.
         /// </summary>
-        ReadOnlyDictionary<string, string> ISubsystem.FunctionsToDefine => null;
+        Dictionary<string, string> ISubsystem.FunctionsToDefine => null;
 
         /// <summary>
         /// Default implementation for `ISubsystem.Kind`.

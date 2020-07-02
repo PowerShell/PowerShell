@@ -53,7 +53,7 @@ namespace System.Management.Automation.Subsystem
         /// A dictionary that contains the functions to define at the global scope.
         /// Key: function name; Value: function script.
         /// </summary>
-        ReadOnlyDictionary<string, string> FunctionsToDefine { get; }
+        Dictionary<string, string> FunctionsToDefine { get; }
 
         /// <summary>
         /// Subsystem kind.
@@ -146,14 +146,11 @@ namespace System.Management.Automation.Subsystem
         internal void RegisterImplementation(ISubsystem impl)
         {
             AddImplementation(impl);
-            // trigger event if a handler is registered.
         }
 
         internal ISubsystem UnregisterImplementation(Guid id)
         {
-            ISubsystem ret = RemoveImplementation(id);
-            // trigger event if a handler is registered.
-            return ret;
+            return RemoveImplementation(id);
         }
 
         #endregion
@@ -204,28 +201,34 @@ namespace System.Management.Automation.Subsystem
             internal ImplementationInfo(ISubsystem implementation)
             {
                 Id = implementation.Id;
+                Kind = implementation.Kind;
                 Name = implementation.Name;
                 Description = implementation.Description;
                 ImplementationType = implementation.GetType();
             }
 
             /// <summary>
-            /// The unique identifier for a subsystem implementation.
+            /// Gets the unique identifier for a subsystem implementation.
             /// </summary>
             public readonly Guid Id;
 
             /// <summary>
-            /// The name of a subsystem implementation.
+            /// Gets the kind of subsystem.
+            /// </summary>
+            public readonly SubsystemKind Kind;
+
+            /// <summary>
+            /// Gets the name of a subsystem implementation.
             /// </summary>
             public readonly string Name;
 
             /// <summary>
-            /// The description of a subsystem implementation.
+            /// Gets the description of a subsystem implementation.
             /// </summary>
             public readonly string Description;
 
             /// <summary>
-            /// The type of the implementation.
+            /// Gets the implementation type.
             /// </summary>
             public readonly Type ImplementationType;
         }
@@ -482,6 +485,11 @@ namespace System.Management.Automation.Subsystem
             where TConcreteSubsystem : class, ISubsystem
             where TImplementation : class, TConcreteSubsystem
         {
+            if (proxy == null)
+            {
+                throw new ArgumentNullException(nameof(proxy));
+            }
+
             RegisterSubsystem(GetSubsystemInfo(typeof(TConcreteSubsystem)), proxy);
         }
 
@@ -490,6 +498,11 @@ namespace System.Management.Automation.Subsystem
         /// </summary>
         public static void RegisterSubsystem(SubsystemKind kind, ISubsystem proxy)
         {
+            if (proxy == null)
+            {
+                throw new ArgumentNullException(nameof(proxy));
+            }
+
             if (kind != proxy.Kind)
             {
                 throw new ArgumentException("Invalid subsystem implementation.", nameof(proxy));
@@ -557,5 +570,51 @@ namespace System.Management.Automation.Subsystem
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Implementation of 'Get-Subsystem' cmdlet.
+    /// </summary>
+    [Cmdlet(VerbsCommon.Get, "Subsystem", DefaultParameterSetName = AllSet)]
+    [OutputType(typeof(SubsystemInfo))]
+    public sealed class GetSubsystemCommand : PSCmdlet
+    {
+        private const string AllSet = "GetAllSet";
+        private const string TypeSet = "GetByTypeSet";
+        private const string KindSet = "GetByKindSet";
+
+        /// <summary>
+        /// The kind of a concrete subsystem.
+        /// </summary>
+        [Parameter(ParameterSetName = KindSet, ValueFromPipeline = true)]
+        public SubsystemKind Kind { get; set; }
+
+        /// <summary>
+        /// The interface or abstract class type of a concrete subsystem.
+        /// </summary>
+        [Parameter(ParameterSetName = TypeSet, ValueFromPipeline = true)]
+        public Type SubsystemType { get; set; }
+
+        /// <summary>
+        /// ProcessRecord implementation.
+        /// </summary>
+        protected override void ProcessRecord()
+        {
+            switch(ParameterSetName)
+            {
+                case AllSet:
+                    WriteObject(SubsystemManager.GetAllSubsystemInfo());
+                    break;
+                case KindSet:
+                    WriteObject(SubsystemManager.GetSubsystemInfo(Kind));
+                    break;
+                case TypeSet:
+                    WriteObject(SubsystemManager.GetSubsystemInfo(SubsystemType));
+                    break;
+
+                default:
+                    throw new InvalidOperationException("Unreachable code");
+            }
+        }
     }
 }

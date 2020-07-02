@@ -134,6 +134,10 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_System_Management_Automation_PSDriveInfo());
 
             yield return new ExtendedTypeDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo",
+                ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo());
+
+            yield return new ExtendedTypeDefinition(
                 "System.Management.Automation.ShellVariable",
                 ViewsOf_System_Management_Automation_ShellVariable());
 
@@ -726,6 +730,24 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"CurrentLocation")
                     .EndEntry()
                 .EndList());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_Subsystem_SubsystemInfo()
+        {
+            yield return new FormatViewDefinition(
+                "System.Management.Automation.Subsystem.SubsystemInfo",
+                TableControl.Create()
+                    .AddHeader(Alignment.Left, width: 17, label: "Kind")
+                    .AddHeader(Alignment.Left, width: 15, label: "SubsystemType")
+                    .AddHeader(Alignment.Right, width: 12, label: "IsRegistered")
+                    .AddHeader(Alignment.Left, label: "Implementations")
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Kind")
+                        .AddScriptBlockColumn(@"$_.SubsystemType.Name")
+                        .AddPropertyColumn("IsRegistered")
+                        .AddPropertyColumn("Implementations")
+                    .EndRowDefinition()
+                .EndTable());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ShellVariable()
