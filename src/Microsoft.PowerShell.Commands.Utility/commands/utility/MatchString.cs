@@ -1312,7 +1312,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // null check is not needed (because of ValidateNotNullOrEmpty),
                 // but we have to include it to silence OACR
-                _excludeStrings = value ?? throw PSTraceSource.NewArgumentNullException("value");
+                _excludeStrings = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
 
                 _exclude = new WildcardPattern[_excludeStrings.Length];
                 for (int i = 0; i < _excludeStrings.Length; i++)
@@ -1370,7 +1370,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // null check is not needed (because of ValidateNotNullOrEmpty),
                 // but we have to include it to silence OACR
-                _context = value ?? throw PSTraceSource.NewArgumentNullException("value");
+                _context = value ?? throw PSTraceSource.NewArgumentNullException(nameof(value));
 
                 if (_context.Length == 1)
                 {

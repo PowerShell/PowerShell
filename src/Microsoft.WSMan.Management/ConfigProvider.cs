@@ -875,7 +875,7 @@ namespace Microsoft.WSMan.Management
         {
             if (value == null)
             {
-                throw new ArgumentException(helper.GetResourceMsgFromResourcetext("value"));
+                throw new ArgumentException(helper.GetResourceMsgFromResourcetext(nameof(value)));
             }
 
             string ChildName = string.Empty;

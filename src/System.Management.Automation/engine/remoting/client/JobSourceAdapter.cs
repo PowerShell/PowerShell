@@ -188,7 +188,7 @@ namespace System.Management.Automation
             set
             {
                 if (value == null)
-                    throw new PSArgumentNullException("value");
+                    throw new PSArgumentNullException(nameof(value));
                 _name = value;
             }
         }

@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("value", ConsoleHostRawUserInterfaceStrings.InvalidConsoleColorError);
+                    throw PSTraceSource.NewArgumentException(nameof(value), ConsoleHostRawUserInterfaceStrings.InvalidConsoleColorError);
                 }
             }
         }
@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentException("value", ConsoleHostRawUserInterfaceStrings.InvalidConsoleColorError);
+                    throw PSTraceSource.NewArgumentException(nameof(value), ConsoleHostRawUserInterfaceStrings.InvalidConsoleColorError);
                 }
             }
         }
@@ -844,7 +844,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    throw PSTraceSource.NewArgumentNullException("value");
+                    throw PSTraceSource.NewArgumentNullException(nameof(value));
                 }
             }
         }

@@ -121,7 +121,7 @@ namespace System.Management.Automation
             {
                 if (value == ActivityId)
                 {
-                    throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ParentActivityIdCantBeActivityId);
+                    throw PSTraceSource.NewArgumentException(nameof(value), ProgressRecordStrings.ParentActivityIdCantBeActivityId);
                 }
 
                 parentId = value;
@@ -149,7 +149,7 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
+                    throw PSTraceSource.NewArgumentException(nameof(value), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, nameof(value));
                 }
 
                 activity = value;
@@ -173,7 +173,7 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw PSTraceSource.NewArgumentException("value", ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "value");
+                    throw PSTraceSource.NewArgumentException(nameof(value), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, nameof(value));
                 }
 
                 status = value;
@@ -276,7 +276,7 @@ namespace System.Management.Automation
             {
                 if (value != ProgressRecordType.Completed && value != ProgressRecordType.Processing)
                 {
-                    throw PSTraceSource.NewArgumentException("value");
+                    throw PSTraceSource.NewArgumentException(nameof(value));
                 }
 
                 type = value;

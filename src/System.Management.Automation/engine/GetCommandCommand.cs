@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 _parameterNames = value;
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (value == null)
                 {
-                    throw new ArgumentNullException("value");
+                    throw new ArgumentNullException(nameof(value));
                 }
 
                 // if '...CimInstance#Win32_Process' is specified, then exclude '...CimInstance'

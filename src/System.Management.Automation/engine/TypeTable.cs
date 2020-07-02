@@ -2193,7 +2193,7 @@ namespace System.Management.Automation.Runspaces
 
                 if (!(value is NotePropertyData || value is ScriptPropertyData || value is CodePropertyData))
                 {
-                    throw PSTraceSource.NewArgumentException("value");
+                    throw PSTraceSource.NewArgumentException(nameof(value));
                 }
 
                 // Remove existing property
