@@ -35,7 +35,7 @@ namespace System.Management.Automation
                 // Since the provider name contained multiple slashes it is
                 // a bad format.
 
-                throw PSTraceSource.NewArgumentException("name");
+                throw PSTraceSource.NewArgumentException(nameof(splitName));
             }
 
             // Now set the full name

@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (string.IsNullOrEmpty(drive.Root))
             {
-                throw PSTraceSource.NewArgumentException("drive.Root");
+                throw PSTraceSource.NewArgumentException(nameof(drive), "drive.Root is null or empty");
             }
 
             // -Persist switch parameter is supported only for Network paths.
@@ -6646,7 +6646,7 @@ namespace Microsoft.PowerShell.Commands
                     if (usingByteEncoding)
                     {
                         Exception e =
-                            new ArgumentException(FileSystemProviderStrings.DelimiterError, "delimiter");
+                            new ArgumentException(FileSystemProviderStrings.DelimiterError);
                         WriteError(new ErrorRecord(
                             e,
                             "GetContentReaderArgumentError",

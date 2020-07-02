@@ -87,7 +87,7 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw PSTraceSource.NewArgumentException("name");
+                    throw PSTraceSource.NewArgumentException(nameof(value));
                 }
 
                 _name = value;

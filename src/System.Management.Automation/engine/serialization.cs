@@ -64,7 +64,7 @@ namespace System.Management.Automation
         {
             if (depth < 1)
             {
-                throw PSTraceSource.NewArgumentException("writer", Serialization.DepthOfOneRequired);
+                throw PSTraceSource.NewArgumentException(nameof(depth), Serialization.DepthOfOneRequired);
             }
 
             this.depth = depth;
@@ -7526,7 +7526,7 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                throw PSTraceSource.NewArgumentException("pso");
+                throw PSTraceSource.NewArgumentException(nameof(deserializedControl));
             }
 
             result.GroupBy = GetPropertyValue<PSControlGroupBy>(deserializedControl, "GroupBy", RehydrationFlags.MissingPropertyOk);

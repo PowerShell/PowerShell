@@ -133,12 +133,12 @@ namespace System.Management.Automation
 
             if (command.Host == null)
             {
-                throw PSTraceSource.NewArgumentException("command.Host");
+                throw PSTraceSource.NewArgumentException(nameof(command), "command.Host is null");
             }
 
             if (command.Context == null)
             {
-                throw PSTraceSource.NewArgumentException("command.Context");
+                throw PSTraceSource.NewArgumentException(nameof(command), "command.Context is null");
             }
 
             ExecutionContext = command.Context;
@@ -185,12 +185,12 @@ namespace System.Management.Automation
 
             if (command.Host == null)
             {
-                throw PSTraceSource.NewArgumentException("command.Host");
+                throw PSTraceSource.NewArgumentException(nameof(command), "command.Host is null");
             }
 
             if (command.Context == null)
             {
-                throw PSTraceSource.NewArgumentException("command.Context");
+                throw PSTraceSource.NewArgumentException(nameof(command), "command.Context is null");
             }
 
             ExecutionContext = command.Context;
@@ -228,7 +228,7 @@ namespace System.Management.Automation
 
             if (command.Context == null)
             {
-                throw PSTraceSource.NewArgumentException("command.Context");
+                throw PSTraceSource.NewArgumentException(nameof(command), "command.Context is null");
             }
 
             ExecutionContext = command.Context;

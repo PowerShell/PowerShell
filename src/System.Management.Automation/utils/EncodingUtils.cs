@@ -71,7 +71,7 @@ namespace System.Management.Automation
             string msg = StringUtil.Format(PathUtilsStrings.OutFile_WriteToFileEncodingUnknown, encoding, validEncodingValues);
 
             ErrorRecord errorRecord = new ErrorRecord(
-                PSTraceSource.NewArgumentException("Encoding"),
+                PSTraceSource.NewArgumentException(nameof(encoding)),
                 "WriteToFileEncodingUnknown",
                 ErrorCategory.InvalidArgument,
                 null);

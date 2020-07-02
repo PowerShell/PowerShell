@@ -41,7 +41,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetProxyCommand(string.Empty, true);
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetProxyCommand(helpComment, true);
@@ -97,7 +97,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetProxyCommand(helpComment, generateDynamicParameters);
@@ -120,7 +120,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetDecl();
@@ -145,7 +145,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetParamBlock();
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetBeginBlock();
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetProcessBlock();
@@ -217,7 +217,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetDynamicParamBlock();
@@ -241,7 +241,7 @@ namespace System.Management.Automation
         {
             if (commandMetadata == null)
             {
-                throw PSTraceSource.NewArgumentNullException("commandMetaData");
+                throw PSTraceSource.NewArgumentNullException(nameof(commandMetadata));
             }
 
             return commandMetadata.GetEndBlock();

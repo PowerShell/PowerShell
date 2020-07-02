@@ -223,7 +223,7 @@ namespace System.Management.Automation
                         SessionStateStrings.NewDriveProviderFailed,
                         drive.Provider,
                         drive.Root,
-                        PSTraceSource.NewArgumentException("root"));
+                        PSTraceSource.NewArgumentException(nameof(drive)));
 
                 throw e;
             }

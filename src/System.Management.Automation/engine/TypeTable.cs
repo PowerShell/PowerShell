@@ -3930,7 +3930,7 @@ namespace System.Management.Automation.Runspaces
             {
                 if (string.IsNullOrEmpty(typefile) || (!Path.IsPathRooted(typefile)))
                 {
-                    throw PSTraceSource.NewArgumentException("typeFile", TypesXmlStrings.TypeFileNotRooted, typefile);
+                    throw PSTraceSource.NewArgumentException(nameof(typefile), TypesXmlStrings.TypeFileNotRooted, typefile);
                 }
 
                 bool unused;

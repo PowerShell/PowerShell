@@ -402,7 +402,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 string msg = StringUtil.Format(FormatAndOut_format_xxx.FOD_InvalidClassidProperty);
 
                 ErrorRecord errorRecord = new ErrorRecord(
-                                                PSTraceSource.NewArgumentException("classid"),
+                                                PSTraceSource.NewArgumentException(nameof(classId)),
                                                 "FormatObjectDeserializerInvalidClassidProperty",
                                                 ErrorCategory.InvalidData,
                                                 so);

@@ -2189,7 +2189,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             if (moduleInfo.ModuleType == ModuleType.Binary)
             {
 #if CORECLR
-                throw PSTraceSource.NewArgumentException("isConfiguration", ParserStrings.ConfigurationNotSupportedInPowerShellCore);
+                throw PSTraceSource.NewArgumentException(nameof(moduleInfo), ParserStrings.ConfigurationNotSupportedInPowerShellCore);
 #else
                 ResolveEventHandler reh = (sender, args) => CurrentDomain_ReflectionOnlyAssemblyResolve(sender, args, moduleInfo);
 

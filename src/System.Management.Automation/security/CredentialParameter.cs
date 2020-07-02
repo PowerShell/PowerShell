@@ -59,7 +59,7 @@ namespace System.Management.Automation
                     // throw an exception
                     if (userName == null)
                     {
-                        throw new PSArgumentException("userName");
+                        throw new PSArgumentException(nameof(inputData), "userName is null");
                     }
                 }
             }

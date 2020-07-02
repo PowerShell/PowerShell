@@ -613,7 +613,7 @@ namespace Microsoft.PowerShell
                     ExternalScriptInfo si = commandInfo as ExternalScriptInfo;
                     if (si == null)
                     {
-                        reason = PSTraceSource.NewArgumentException("scriptInfo");
+                        reason = PSTraceSource.NewArgumentException(nameof(commandInfo), "commandInfo is not of type ExternalScriptInfo");
                     }
                     else
                     {

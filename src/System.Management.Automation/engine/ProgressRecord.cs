@@ -53,7 +53,7 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(statusDescription))
             {
-                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "statusDescription");
+                throw PSTraceSource.NewArgumentException(nameof(statusDescription), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, nameof(statusDescription));
             }
 
             this.id = activityId;
