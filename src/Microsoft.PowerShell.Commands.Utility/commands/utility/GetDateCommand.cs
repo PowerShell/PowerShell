@@ -43,10 +43,17 @@ namespace Microsoft.PowerShell.Commands
         private DateTime _date;
         private bool _dateSpecified;
 
+        // DateTimeOffset.MinValue.ToUnixTimeSeconds()
+        private const long MinimumUnixTimeSecond = -62135596800;
+
+        // DateTimeOffset.MaxValue.ToUnixTimeSeconds()
+        private const long MaximumUnixTimeSecond = 253402300799;
+
         /// <summary>
         /// Gets or sets whether to treat a numeric input as ticks, or unix time.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSeconds, Mandatory = true)]
+        [ValidateRange(MinimumUnixTimeSecond, MaximumUnixTimeSecond)]
         [Alias("UnixTime")]
         public long UnixTimeSeconds
         {
