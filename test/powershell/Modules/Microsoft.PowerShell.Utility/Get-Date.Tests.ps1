@@ -163,6 +163,10 @@ Describe "Get-Date" -Tags "CI" {
         Get-Date -Date 0030-01-01T01:02:03.0004z -Format FileDateUniversal | Should -Be "00300101Z"
     }
 
+    It "-Format and -UFormat are exclusive" {
+        { Get-Date -Format "y" -UFormat "%y" } | Should -Throw -ErrorId "OnlyOneFormatCanBeSpecified"
+    }
+
     It "Should have colons when ToString method is used" {
         (Get-Date).ToString().Contains(":")                   | Should -BeTrue
         (Get-Date -DisplayHint Time).ToString().Contains(":") | Should -BeTrue
@@ -193,13 +197,15 @@ Describe "Get-Date" -Tags "CI" {
         $timeDifference.Ticks        | Should -BeLessThan 10000
     }
 
-    It "-FromUnixTime works" {
+    It "-UnixTimeSeconds works" {
+        # Test conversion of arbitrary date in Unix time: 2020-01-01T00:00:00.000Z
+        Get-Date -UnixTimeSeconds 1577836800 | Should -Be ([System.DateTimeOffset]::FromUnixTimeSeconds(1577836800).LocalDateTime)
 
-        # Test conversion of arbitrary date in Unix time: 2020-01-01​T00:00:00.000Z
-        Get-Date -Date 1577836800 -FromUnixTime | Should -Be (Get-Date -Date 637134336000000000 -AsUTC)
+        # Test converstion of Unix time start date: 1970-01-01T00:00:00.000Z
+        Get-Date -UnixTimeSeconds 0 | Should -Be ([System.DateTimeOffset]::UnixEpoch.LocalDateTime)
 
-        # Test converstion of Unix time start date: 1970-01-01​T00:00:00.000Z
-        Get-Date -Date 0 -FromUnixTime | Should -Be (Get-Date -Date 621355968000000000 -AsUTC)
+        # Test converstion of negative Unix time
+        Get-Date -UnixTimeSeconds -1 | Should -Be ([System.DateTimeOffset]::FromUnixTimeSeconds(-1).LocalDateTime)
     }
 }
 
