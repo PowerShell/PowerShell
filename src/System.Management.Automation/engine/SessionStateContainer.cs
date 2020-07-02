@@ -3498,10 +3498,9 @@ namespace System.Management.Automation
 
                     if (isSymbolicJunctionOrHardLink)
                     {
-
                         string targetPath;
 
-                        if (null == content || string.IsNullOrEmpty(targetPath = content.ToString()))
+                        if (content == null || string.IsNullOrEmpty(targetPath = content.ToString()))
                         {
                             throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewItemValueNotSpecified, path);
                         }
