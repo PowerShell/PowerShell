@@ -544,6 +544,13 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion
+
+        private static class ParameterSetNames
+        {
+            public const string Date = nameof(Date);
+
+            public const string UnixTimeSeconds = nameof(UnixTimeSeconds);
+        }
     }
 
     #endregion
