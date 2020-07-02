@@ -3498,16 +3498,12 @@ namespace System.Management.Automation
 
                     if (isSymbolicJunctionOrHardLink)
                     {
-                        if (content == null)
+
+                        string targetPath;
+
+                        if (null == content || string.IsNullOrEmpty(targetPath = content.ToString()))
                         {
                             throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewItemValueNotSpecified, path);
-                        }
-
-                        string targetPath = content.ToString();
-
-                        if (string.IsNullOrEmpty(targetPath))
-                        {
-                            throw PSTraceSource.NewArgumentNullException(nameof(targetPath), SessionStateStrings.PathNotFound, targetPath);
                         }
 
                         ProviderInfo targetProvider = null;
