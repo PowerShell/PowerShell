@@ -190,7 +190,7 @@ Describe "New-Item" -Tags "CI" {
         { New-Item -Name:$testfile -Path:$tmpDirectory -ItemType:SymbolicLink } | Should -Throw -ErrorId 'ArgumentNull,Microsoft.PowerShell.Commands.NewItemCommand'
         $Error | Select-Object -First:1 | Foreach-Object Exception | Foreach-Object ParamName | Should -Be 'content'
         { New-Item -Name:$testfile -Path:$tmpDirectory -ItemType:SymbolicLink -Value:{} } | Should -Throw -ErrorId 'ArgumentNull,Microsoft.PowerShell.Commands.NewItemCommand'
-        $Error | Select-Object -First:2 | Foreach-Object Exception | Foreach-Object ParamName | Should -Be 'content'
+        $Error | Select-Object -First:1 | Foreach-Object Exception | Foreach-Object ParamName | Should -Be 'content'
     }
 }
 
