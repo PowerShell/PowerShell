@@ -3500,14 +3500,14 @@ namespace System.Management.Automation
                     {
                         if (content == null)
                         {
-                            throw PSTraceSource.NewArgumentNullException(SessionStateStrings.NewItemValueNotSpecified, path);
+                            throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewItemValueNotSpecified, path);
                         }
 
                         string targetPath = content.ToString();
 
                         if (string.IsNullOrEmpty(targetPath))
                         {
-                            throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, targetPath);
+                            throw PSTraceSource.NewArgumentNullException(nameof(targetPath), SessionStateStrings.PathNotFound, targetPath);
                         }
 
                         ProviderInfo targetProvider = null;
