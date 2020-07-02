@@ -187,7 +187,7 @@ Describe "New-Item" -Tags "CI" {
     }
 
     It "Should display an error message when a symbolic link target is not specified" {
-        New-Item -Name $testfile -Path $tmpDirectory -ItemType SymbolicLink | Should -Throw -ErrorId 'ArgumentNull,Microsoft.PowerShell.Commands.NewItemCommand'
+        { New-Item -Name $testfile -Path $tmpDirectory -ItemType SymbolicLink } | Should -Throw -ErrorId 'ArgumentNull,Microsoft.PowerShell.Commands.NewItemCommand'
         $ERROR | Select-Object -First 1 | Foreach-Object Exception | Foreach-Object Message | Should -Contain 'value'
     }
 }
