@@ -43,7 +43,7 @@ namespace System.Management.Automation.Host
 
             if (string.IsNullOrEmpty(name))
             {
-                throw PSTraceSource.NewArgumentException(nameof(name), DescriptionsStrings.NullOrEmptyErrorTemplate, "name");
+                throw PSTraceSource.NewArgumentException(nameof(name), DescriptionsStrings.NullOrEmptyErrorTemplate, nameof(name));
             }
 
             this.name = name;
@@ -319,7 +319,7 @@ namespace System.Management.Automation.Host
         {
             if (string.IsNullOrEmpty(nameOfType))
             {
-                throw PSTraceSource.NewArgumentException(nameof(nameOfType), DescriptionsStrings.NullOrEmptyErrorTemplate, "nameOfType");
+                throw PSTraceSource.NewArgumentException(nameof(nameOfType), DescriptionsStrings.NullOrEmptyErrorTemplate, nameof(nameOfType));
             }
 
             parameterTypeName = nameOfType;
@@ -339,7 +339,7 @@ namespace System.Management.Automation.Host
         {
             if (string.IsNullOrEmpty(fullNameOfType))
             {
-                throw PSTraceSource.NewArgumentException(nameof(fullNameOfType), DescriptionsStrings.NullOrEmptyErrorTemplate, "fullNameOfType");
+                throw PSTraceSource.NewArgumentException(nameof(fullNameOfType), DescriptionsStrings.NullOrEmptyErrorTemplate, nameof(fullNameOfType));
             }
 
             parameterTypeFullName = fullNameOfType;
@@ -359,7 +359,7 @@ namespace System.Management.Automation.Host
         {
             if (string.IsNullOrEmpty(fullNameOfAssembly))
             {
-                throw PSTraceSource.NewArgumentException(nameof(fullNameOfAssembly), DescriptionsStrings.NullOrEmptyErrorTemplate, "fullNameOfAssembly");
+                throw PSTraceSource.NewArgumentException(nameof(fullNameOfAssembly), DescriptionsStrings.NullOrEmptyErrorTemplate, nameof(fullNameOfAssembly));
             }
 
             parameterAssemblyFullName = fullNameOfAssembly;

@@ -43,12 +43,12 @@ namespace System.Management.Automation
             {
                 // negative Ids are reserved to indicate "no id" for parent Ids.
 
-                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(activityId), activityId, ProgressRecordStrings.ArgMayNotBeNegative, "activityId");
+                throw PSTraceSource.NewArgumentOutOfRangeException(nameof(activityId), activityId, ProgressRecordStrings.ArgMayNotBeNegative, nameof(activityId));
             }
 
             if (string.IsNullOrEmpty(activity))
             {
-                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, "activity");
+                throw PSTraceSource.NewArgumentException(nameof(activity), ProgressRecordStrings.ArgMayNotBeNullOrEmpty, nameof(activity));
             }
 
             if (string.IsNullOrEmpty(statusDescription))

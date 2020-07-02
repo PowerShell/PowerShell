@@ -778,7 +778,7 @@ namespace System.Management.Automation.Internal.Host
 
             if (descriptions.Count < 1)
             {
-                throw PSTraceSource.NewArgumentException(nameof(descriptions), InternalHostUserInterfaceStrings.PromptEmptyDescriptionsError, "descriptions");
+                throw PSTraceSource.NewArgumentException(nameof(descriptions), InternalHostUserInterfaceStrings.PromptEmptyDescriptionsError, nameof(descriptions));
             }
 
             if (_externalUI == null)

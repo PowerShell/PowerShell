@@ -794,13 +794,13 @@ namespace System.Management.Automation.Host
             if (right < left)
             {
                 // "right" and "left" are not localizable
-                throw PSTraceSource.NewArgumentException(nameof(right), MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "right", "left");
+                throw PSTraceSource.NewArgumentException(nameof(right), MshHostRawUserInterfaceStrings.LessThanErrorTemplate, nameof(right), nameof(left));
             }
 
             if (bottom < top)
             {
                 // "bottom" and "top" are not localizable
-                throw PSTraceSource.NewArgumentException(nameof(bottom), MshHostRawUserInterfaceStrings.LessThanErrorTemplate, "bottom", "top");
+                throw PSTraceSource.NewArgumentException(nameof(bottom), MshHostRawUserInterfaceStrings.LessThanErrorTemplate, nameof(bottom), nameof(top));
             }
 
             this.left = left;
