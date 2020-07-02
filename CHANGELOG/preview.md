@@ -1,6 +1,10 @@
 # Current preview release
 
-## [7.1.0-preview.5] - 2020-06-30
+## [7.1.0-preview.5] - 2020-07-06
+
+### Engine Updates and Fixes
+
+- Ensure assemblies listed in the module manifest `FileList` field are not loaded (#12968)
 
 ### Code Cleanup
 
@@ -19,6 +23,14 @@
 
 </details>
 
+### Tools
+
+- Add missing `.editorconfig` settings present in `dotnet/runtime` (#12871) (Thanks @xtqqczze!)
+
+### Tests
+
+- Add new test for `Format-Custom` to avoid data loss (#11393) (Thanks @iSazonov!)
+
 ### Build and Packaging Improvements
 
 <details>
@@ -28,6 +40,8 @@
 
 </summary>
 <ul>
+<li>Change log for v7.1.0-preview.5 (Internal 11880)</li>
+<li>Fix Path for the Preview MSI (#13070)</li>
 <li>Correct stable and preview upgrade codes for <code>MSI</code> (#13036)</li>
 <li>Changelog for `v7.1.0-preview.4` (Internal 11841)</li>
 <li>Fix NuGet package compliance issues (#13045)</li>
