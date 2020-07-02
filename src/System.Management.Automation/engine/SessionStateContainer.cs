@@ -3502,7 +3502,7 @@ namespace System.Management.Automation
 
                         if (content == null || string.IsNullOrEmpty(targetPath = content.ToString()))
                         {
-                            throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewItemValueNotSpecified, path);
+                            throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewLinkTargetNotSpecified, path);
                         }
 
                         ProviderInfo targetProvider = null;
