@@ -3498,16 +3498,11 @@ namespace System.Management.Automation
 
                     if (isSymbolicJunctionOrHardLink)
                     {
-                        if (content == null)
-                        {
-                            throw PSTraceSource.NewArgumentNullException(SessionStateStrings.NewItemValueNotSpecified, path);
-                        }
+                        string targetPath;
 
-                        string targetPath = content.ToString();
-
-                        if (string.IsNullOrEmpty(targetPath))
+                        if (content is null || string.IsNullOrEmpty(targetPath = content.ToString()))
                         {
-                            throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, targetPath);
+                            throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewLinkTargetNotSpecified, path);
                         }
 
                         ProviderInfo targetProvider = null;
@@ -4951,4 +4946,3 @@ namespace System.Management.Automation
 }
 
 #pragma warning restore 56500
-
