@@ -188,9 +188,9 @@ Describe "New-Item" -Tags "CI" {
 
     It "Should display an error message when a symbolic link target is not specified" {
         { New-Item -Name $testfile -Path $tmpDirectory -ItemType SymbolicLink } | Should -Throw -ErrorId 'ArgumentNull,Microsoft.PowerShell.Commands.NewItemCommand'
-        $Error[0].Exception.ParamName | Should -BeExactly 'Content'
+        $Error[0].Exception.ParamName | Should -BeExactly 'content'
         { New-Item -Name $testfile -Path $tmpDirectory -ItemType:SymbolicLink -Value {} } | Should -Throw -ErrorId 'ArgumentNull,Microsoft.PowerShell.Commands.NewItemCommand'
-         $Error[0].Exception.ParamName | Should -BeExactly 'Content'
+         $Error[0].Exception.ParamName | Should -BeExactly 'content'
     }
 }
 
