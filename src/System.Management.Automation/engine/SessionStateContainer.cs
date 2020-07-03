@@ -3500,7 +3500,7 @@ namespace System.Management.Automation
                     {
                         string targetPath;
 
-                        if (content == null || string.IsNullOrEmpty(targetPath = content.ToString()))
+                        if (content is null || string.IsNullOrEmpty(targetPath = content.ToString()))
                         {
                             throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewLinkTargetNotSpecified, path);
                         }
@@ -4946,4 +4946,3 @@ namespace System.Management.Automation
 }
 
 #pragma warning restore 56500
-
