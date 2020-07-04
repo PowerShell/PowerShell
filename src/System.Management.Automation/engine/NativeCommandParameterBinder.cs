@@ -81,8 +81,7 @@ namespace System.Management.Automation
 
                 if (parameter.ParameterNameSpecified)
                 {
-                    Diagnostics.Assert(!parameter.ParameterText.Contains(' '), "Parameters cannot have whitespace");
-                    PossiblyGlobArg(parameter.ParameterText, StringConstantType.BareWord);
+                    PossiblyGlobArg(parameter.ParameterText);
 
                     if (parameter.SpaceAfterParameter)
                     {
@@ -196,56 +195,27 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!string.IsNullOrEmpty(arg))
-                {
-                    _arguments.Append(separator);
+                _arguments.Append(separator);
 
-                    if (sawVerbatimArgumentMarker)
+                if (sawVerbatimArgumentMarker)
+                {
+                    arg = Environment.ExpandEnvironmentVariables(arg);
+                    _arguments.Append(arg);
+                }
+                else
+                {
+                    // Only try to glob BareWords.
+                    if (stringConstantType == StringConstantType.BareWord)
                     {
-                        arg = Environment.ExpandEnvironmentVariables(arg);
-                        _arguments.Append(arg);
+                        PossiblyGlobArg(arg);
+                    }
+                    else if (stringConstantType == StringConstantType.DoubleQuoted)
+                    {
+                        PasteArguments.AppendArgument(_arguments, ResolvePath(arg, Context), true);                   
                     }
                     else
                     {
-                        // We need to add quotes if the argument has unquoted spaces.  The
-                        // quotes could appear anywhere inside the string, not just at the start,
-                        // e.g.
-                        //    $a = 'a"b c"d'
-                        //    echoargs $a 'a"b c"d' a"b c"d
-                        //
-                        // The above should see 3 identical arguments in argv (the command line will
-                        // actually have quotes in different places, but the Win32 command line=>argv parser
-                        // erases those differences.
-                        //
-                        // We need to check quotes that the win32 argument parser checks which is currently
-                        // just the normal double quotes, no other special quotes.  Also note that mismatched
-                        // quotes are supported
-                        if (NeedQuotes(arg))
-                        {
-                            _arguments.Append('"');
-
-                            if (stringConstantType == StringConstantType.DoubleQuoted)
-                            {
-                                _arguments.Append(ResolvePath(arg, Context));
-                            }
-                            else
-                            {
-                                _arguments.Append(arg);
-                            }
-
-                            // need to escape all trailing backslashes so the native command receives it correctly
-                            // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
-                            for (int i = arg.Length - 1; i >= 0 && arg[i] == '\\'; i--)
-                            {
-                                _arguments.Append('\\');
-                            }
-
-                            _arguments.Append('"');
-                        }
-                        else
-                        {
-                            PossiblyGlobArg(arg, stringConstantType);
-                        }
+                        PasteArguments.AppendArgument(_arguments, arg, false);   
                     }
                 }
             }
@@ -257,100 +227,81 @@ namespace System.Management.Automation
         /// On Unix, do globbing as appropriate, otherwise just append <paramref name="arg"/>.
         /// </summary>
         /// <param name="arg">The argument that possibly needs expansion.</param>
-        /// <param name="stringConstantType">Bare, SingleQuoted, or DoubleQuoted.</param>
-        private void PossiblyGlobArg(string arg, StringConstantType stringConstantType)
+        private void PossiblyGlobArg(string arg)
         {
             var argExpanded = false;
 
 #if UNIX
             // On UNIX systems, we expand arguments containing wildcard expressions against
             // the file system just like bash, etc.
-
-            if (stringConstantType == StringConstantType.BareWord)
+            if (WildcardPattern.ContainsWildcardCharacters(arg))
             {
-                if (WildcardPattern.ContainsWildcardCharacters(arg))
+                // See if the current working directory is a filesystem provider location
+                // We won't do the expansion if it isn't since native commands can only access the file system.
+                var cwdinfo = Context.EngineSessionState.CurrentLocation;
+
+                // If it's a filesystem location then expand the wildcards
+                if (cwdinfo.Provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
                 {
-                    // See if the current working directory is a filesystem provider location
-                    // We won't do the expansion if it isn't since native commands can only access the file system.
-                    var cwdinfo = Context.EngineSessionState.CurrentLocation;
+                    // On UNIX, paths starting with ~ or absolute paths are not normalized
+                    bool normalizePath = arg.Length == 0 || !(arg[0] == '~' || arg[0] == '/');
 
-                    // If it's a filesystem location then expand the wildcards
-                    if (cwdinfo.Provider.Name.Equals(FileSystemProvider.ProviderName, StringComparison.OrdinalIgnoreCase))
+                    // See if there are any matching paths otherwise just add the pattern as the argument
+                    Collection<PSObject> paths = null;
+                    try
                     {
-                        // On UNIX, paths starting with ~ or absolute paths are not normalized
-                        bool normalizePath = arg.Length == 0 || !(arg[0] == '~' || arg[0] == '/');
+                        paths = Context.EngineSessionState.InvokeProvider.ChildItem.Get(arg, false);
+                    }
+                    catch
+                    {
+                        // Fallthrough will append the pattern unchanged.
+                    }
 
-                        // See if there are any matching paths otherwise just add the pattern as the argument
-                        Collection<PSObject> paths = null;
-                        try
+                    // Expand paths, but only from the file system.
+                    if (paths?.Count > 0 && paths.All(p => p.BaseObject is FileSystemInfo))
+                    {
+                        argExpanded = true;
+                        var sep = string.Empty;
+                        foreach (var path in paths)
                         {
-                            paths = Context.EngineSessionState.InvokeProvider.ChildItem.Get(arg, false);
-                        }
-                        catch
-                        {
-                            // Fallthrough will append the pattern unchanged.
-                        }
-
-                        // Expand paths, but only from the file system.
-                        if (paths?.Count > 0 && paths.All(p => p.BaseObject is FileSystemInfo))
-                        {
-                            var sep = string.Empty;
-                            foreach (var path in paths)
+                            _arguments.Append(sep);
+                            sep = " ";
+                            var expandedPath = (path.BaseObject as FileSystemInfo).FullName;
+                            if (normalizePath)
                             {
-                                _arguments.Append(sep);
-                                sep = " ";
-                                var expandedPath = (path.BaseObject as FileSystemInfo).FullName;
-                                if (normalizePath)
-                                {
-                                    expandedPath =
-                                        Context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
-                                }
-                                // If the path contains spaces, then add quotes around it.
-                                if (NeedQuotes(expandedPath))
-                                {
-                                    _arguments.Append("\"");
-                                    _arguments.Append(expandedPath);
-                                    _arguments.Append("\"");
-                                }
-                                else
-                                {
-                                    _arguments.Append(expandedPath);
-                                }
-
-                                argExpanded = true;
+                                expandedPath =
+                                    Context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
                             }
+                            PasteArguments.AppendArgument(_arguments, expandedPath, false);
                         }
+                        
                     }
                 }
-                else
+            }
+            else
+            {
+                // Even if there are no wildcards, we still need to possibly
+                // expand ~ into the filesystem provider home directory path
+                ProviderInfo fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
+                string home = fileSystemProvider.Home;
+                if (string.Equals(arg, "~"))
                 {
-                    // Even if there are no wildcards, we still need to possibly
-                    // expand ~ into the filesystem provider home directory path
-                    ProviderInfo fileSystemProvider = Context.EngineSessionState.GetSingleProvider(FileSystemProvider.ProviderName);
-                    string home = fileSystemProvider.Home;
-                    if (string.Equals(arg, "~"))
-                    {
-                        _arguments.Append(home);
-                        argExpanded = true;
-                    }
-                    else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
-                    {
-                        var replacementString = home + arg.Substring(1);
-                        _arguments.Append(replacementString);
-                        argExpanded = true;
-                    }
+                    _arguments.Append(home);
+                    argExpanded = true;
+                }
+                else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
+                {
+                    var replacementString = home + arg.Substring(1);
+                    PasteArguments.AppendArgument(_arguments, replacementString, false);
+                    argExpanded = true;
                 }
             }
 #endif // UNIX
 
-            if (stringConstantType != StringConstantType.SingleQuoted)
-            {
-                arg = ResolvePath(arg, Context);
-            }
-
             if (!argExpanded)
             {
-                _arguments.Append(arg);
+                arg = ResolvePath(arg, Context);
+                PasteArguments.AppendArgument(_arguments, arg, false);
             }
         }
 
@@ -417,31 +368,6 @@ namespace System.Management.Automation
             }
 
             return path;
-        }
-
-        /// <summary>
-        /// Check to see if the string contains spaces and therefore must be quoted.
-        /// </summary>
-        /// <param name="stringToCheck">The string to check for spaces.</param>
-        internal static bool NeedQuotes(string stringToCheck)
-        {
-            bool needQuotes = false, followingBackslash = false;
-            int quoteCount = 0;
-            for (int i = 0; i < stringToCheck.Length; i++)
-            {
-                if (stringToCheck[i] == '"' && !followingBackslash)
-                {
-                    quoteCount += 1;
-                }
-                else if (char.IsWhiteSpace(stringToCheck[i]) && (quoteCount % 2 == 0))
-                {
-                    needQuotes = true;
-                }
-
-                followingBackslash = stringToCheck[i] == '\\';
-            }
-
-            return needQuotes;
         }
 
         private static string GetEnumerableArgSeparator(ArrayLiteralAst arrayLiteralAst, int index)
