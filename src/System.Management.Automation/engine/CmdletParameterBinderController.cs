@@ -208,10 +208,26 @@ namespace System.Management.Automation
             }
 
             // Add the passed in arguments to the unboundArguments collection
-
+            Collection<CommandParameterInternal> paramsFromSplatting = null;
             foreach (CommandParameterInternal argument in arguments)
             {
-                UnboundArguments.Add(argument);
+                if (argument.ParameterComesFromSplatting)
+                {
+                    paramsFromSplatting ??= new Collection<CommandParameterInternal>();
+                    paramsFromSplatting.Add(argument);
+                }
+                else
+                {
+                    UnboundArguments.Add(argument);
+                }
+            }
+
+            if (paramsFromSplatting != null)
+            {
+                foreach (CommandParameterInternal argument in paramsFromSplatting)
+                {
+                    UnboundArguments.Add(argument);
+                }
             }
 
             CommandMetadata cmdletMetadata = _commandMetadata;
