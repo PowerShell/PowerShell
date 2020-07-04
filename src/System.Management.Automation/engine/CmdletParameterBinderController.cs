@@ -207,29 +207,7 @@ namespace System.Management.Automation
                 psCompiledScriptCmdlet.PrepareForBinding(this.CommandLineParameters);
             }
 
-            // Add the passed in arguments to the unboundArguments collection
-            Collection<CommandParameterInternal> paramsFromSplatting = null;
-            foreach (CommandParameterInternal argument in arguments)
-            {
-                if (argument.ParameterComesFromSplatting)
-                {
-                    paramsFromSplatting ??= new Collection<CommandParameterInternal>();
-                    paramsFromSplatting.Add(argument);
-                }
-                else
-                {
-                    UnboundArguments.Add(argument);
-                }
-            }
-
-            if (paramsFromSplatting != null)
-            {
-                foreach (CommandParameterInternal argument in paramsFromSplatting)
-                {
-                    UnboundArguments.Add(argument);
-                }
-            }
-
+            InitUnboundArguments(arguments);
             CommandMetadata cmdletMetadata = _commandMetadata;
             // Clear the warningSet at the beginning.
             _warningSet.Clear();
@@ -300,6 +278,32 @@ namespace System.Management.Automation
             HandleRemainingArguments();
 
             VerifyArgumentsProcessed(reportedBindingException);
+        }
+
+        private void InitUnboundArguments(Collection<CommandParameterInternal> arguments)
+        {
+            // Add the passed in arguments to the unboundArguments collection
+            Collection<CommandParameterInternal> paramsFromSplatting = null;
+            foreach (CommandParameterInternal argument in arguments)
+            {
+                if (argument.ParameterComesFromSplatting)
+                {
+                    paramsFromSplatting ??= new Collection<CommandParameterInternal>();
+                    paramsFromSplatting.Add(argument);
+                }
+                else
+                {
+                    UnboundArguments.Add(argument);
+                }
+            }
+
+            if (paramsFromSplatting != null)
+            {
+                foreach (CommandParameterInternal argument in paramsFromSplatting)
+                {
+                    UnboundArguments.Add(argument);
+                }
+            }
         }
 
         /// <summary>
@@ -1106,6 +1110,7 @@ namespace System.Management.Automation
         private Collection<CommandParameterInternal> BindParameters(uint parameterSets, Collection<CommandParameterInternal> arguments)
         {
             Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
+            HashSet<string> boundExplicitNamedParams = null;
 
             foreach (CommandParameterInternal argument in arguments)
             {
@@ -1130,10 +1135,29 @@ namespace System.Management.Automation
 
                 if (parameter != null)
                 {
+                    string formalParamName = parameter.Parameter.Name;
+
+                    if (argument.ParameterComesFromSplatting)
+                    {
+                        boundExplicitNamedParams ??= new HashSet<string>(
+                            BoundParameters.Keys,
+                            StringComparer.OrdinalIgnoreCase);
+
+                        if (boundExplicitNamedParams.Contains(formalParamName))
+                        {
+                            // This named parameter from splatting is also explicitly specified by the user,
+                            // which was successfully bound, so we ignore the one from splatting because it
+                            // is superceded by the explicit one. For example:
+                            //   $splat = @{ Path = $path1 }
+                            //   dir @splat -Path $path2
+                            continue;
+                        }
+                    }
+
                     // Now check to make sure it hasn't already been
                     // bound by looking in the boundParameters collection
 
-                    if (BoundParameters.ContainsKey(parameter.Parameter.Name))
+                    if (BoundParameters.ContainsKey(formalParamName))
                     {
                         ParameterBindingException bindingException =
                             new ParameterBindingException(
