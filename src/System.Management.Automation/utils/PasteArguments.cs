@@ -14,10 +14,13 @@ namespace System.Management.Automation.Internal
     /// The same rules are used by CoreFX for cmdline parsing too.
     /// </summary>
     public static class PasteArguments
-    {
+    {        
         /// <summary>
-        /// Append one argument to the cmdline being built. Without space!
+        /// Append one argument to the cmdline being built. You have to add spaces yourself.
         /// </summary>
+        /// <param name="stringBuilder">The cmdline being built.</param>
+        /// <param name="argument">The argument to append.</param>
+        /// <param name="forceQuote">When true, force the argument to be quoted. Normally only empty ones and those with spaces or quotes are quoted. May help avoid globbing.</param>
         public static void AppendArgument(StringBuilder stringBuilder, string argument, bool forceQuote)
         {
             // Parsing rules for non-argv[0] arguments:
@@ -55,7 +58,7 @@ namespace System.Management.Automation.Internal
                         else if (argument[idx] == Quote)
                         {
                             // Backslashes will be followed by a quote. Must double the number of backslashes.
-                            stringBuilder.Append(Backslash, numBackSlash * 2 + 1);
+                            stringBuilder.Append(Backslash, (numBackSlash * 2) + 1);
                             stringBuilder.Append(Quote);
                             idx++;
                         }
@@ -67,7 +70,6 @@ namespace System.Management.Automation.Internal
 
                         continue;
                     }
-
                     if (c == Quote)
                     {
                         // Escape the quote so it appears as a literal. This also guarantees that we won't end up generating a closing quote followed
@@ -76,19 +78,21 @@ namespace System.Management.Automation.Internal
                         stringBuilder.Append(Quote);
                         continue;
                     }
-
                     stringBuilder.Append(c);
                 }
-
                 stringBuilder.Append(Quote);
             }
         }
 
         /// <summary>
-        /// Repastes a set of arguments into a linear string that parses back into the originals under pre- or post-2008 VC parsing rules.
-        /// 
-        /// This does not take into account argv[0] on Windows since we don't seem to need that with startInfo.
+        /// Repastes a set of arguments into a linear cmdline.
         /// </summary>
+        /// <param name="arguments">The arguments to paste in.</param>
+        /// <param name="forceQuote">When true, force all arguments to be quoted.</param>
+        /// <returns>
+        /// A string that parses back into the originals under pre- or post-2008 VC parsing rules.
+        /// </returns>
+        /// <remarks>This does not take into account argv[0] on Windows since we don't seem to need that with startInfo.</remarks>
         public static string Paste(IEnumerable<string> arguments, bool forceQuote)
         {
             var stringBuilder = new StringBuilder();
