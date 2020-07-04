@@ -17,6 +17,10 @@ namespace TestExe
                     case "-echoargs":
                         EchoArgs(args);
                         break;
+                    case "-echocmdline":
+                        // This is blocked by dotnet/runtime#11305: need the raw cmdline on Windows to make sure we can make rogue apps and bats happy
+                        Console.WriteLine(Environment.CommandLine);
+                        break;
                     case "-createchildprocess":
                         CreateChildProcess(args);
                         break;

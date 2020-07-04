@@ -1805,6 +1805,12 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Whether to escpae the argumentList.
+        /// </summary>
+        [Parameter]
+        public bool? EscapeArgs { get; set; }
+
         private SwitchParameter _UseNewEnvironment;
 
         #endregion
@@ -1876,7 +1882,14 @@ namespace Microsoft.PowerShell.Commands
 
             if (ArgumentList != null)
             {
-                startInfo.Arguments = string.Join(' ', ArgumentList);
+                if (EscapeArgs ?? ExperimentalFeature.IsEnabled("PSEscapeForNativeExecutables"))
+                {
+                    startInfo.Arguments = PasteArguments.Paste(ArgumentList, false);
+                }
+                else
+                {
+                    startInfo.Arguments = string.Join(' ', ArgumentList);
+                }
             }
 
             if (WorkingDirectory != null)

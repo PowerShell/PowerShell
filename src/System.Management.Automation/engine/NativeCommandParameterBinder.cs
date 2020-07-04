@@ -196,61 +196,82 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (!string.IsNullOrEmpty(arg))
+                if (!ExperimentalFeature.IsEnabled("PSNativePSPathResolution") &&
+                    arg.Length == 0)
                 {
-                    _arguments.Append(separator);
+                    continue;
+                }
 
-                    if (sawVerbatimArgumentMarker)
+                _arguments.Append(separator);
+
+                if (sawVerbatimArgumentMarker)
+                {
+                    arg = Environment.ExpandEnvironmentVariables(arg);
+                    _arguments.Append(arg);
+                }
+                else if (ExperimentalFeature.IsEnabled("PSEscapeForNativeExecutables"))
+                {
+                    // Only try to glob BareWords.
+                    if (stringConstantType == StringConstantType.BareWord)
                     {
-                        arg = Environment.ExpandEnvironmentVariables(arg);
-                        _arguments.Append(arg);
+                        PossiblyGlobArg(arg, stringConstantType);
+                    }
+                    else if (stringConstantType == StringConstantType.DoubleQuoted)
+                    {
+                        // We want to retain double quotes for good measure.
+                        AppendArgument(ResolvePath(arg, Context), true);
                     }
                     else
                     {
-                        // We need to add quotes if the argument has unquoted spaces.  The
-                        // quotes could appear anywhere inside the string, not just at the start,
-                        // e.g.
-                        //    $a = 'a"b c"d'
-                        //    echoargs $a 'a"b c"d' a"b c"d
-                        //
-                        // The above should see 3 identical arguments in argv (the command line will
-                        // actually have quotes in different places, but the Win32 command line=>argv parser
-                        // erases those differences.
-                        //
-                        // We need to check quotes that the win32 argument parser checks which is currently
-                        // just the normal double quotes, no other special quotes.  Also note that mismatched
-                        // quotes are supported
-                        if (NeedQuotes(arg))
+                        AppendArgument(arg, false);
+                    }
+                }
+                else
+                {
+                    // We need to add quotes if the argument has unquoted spaces.  The
+                    // quotes could appear anywhere inside the string, not just at the start,
+                    // e.g.
+                    //    $a = 'a"b c"d'
+                    //    echoargs $a 'a"b c"d' a"b c"d
+                    //
+                    // The above should see 3 identical arguments in argv (the command line will
+                    // actually have quotes in different places, but the Win32 command line=>argv parser
+                    // erases those differences.
+                    //
+                    // We need to check quotes that the win32 argument parser checks which is currently
+                    // just the normal double quotes, no other special quotes.  Also note that mismatched
+                    // quotes are supported
+                    if (NeedQuotes(arg))
+                    {
+                        _arguments.Append('"');
+
+                        if (stringConstantType == StringConstantType.DoubleQuoted)
                         {
-                            _arguments.Append('"');
-
-                            if (stringConstantType == StringConstantType.DoubleQuoted)
-                            {
-                                _arguments.Append(ResolvePath(arg, Context));
-                            }
-                            else
-                            {
-                                _arguments.Append(arg);
-                            }
-
-                            // need to escape all trailing backslashes so the native command receives it correctly
-                            // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
-                            for (int i = arg.Length - 1; i >= 0 && arg[i] == '\\'; i--)
-                            {
-                                _arguments.Append('\\');
-                            }
-
-                            _arguments.Append('"');
+                            _arguments.Append(ResolvePath(arg, Context));
                         }
                         else
                         {
-                            PossiblyGlobArg(arg, stringConstantType);
+                            _arguments.Append(arg);
                         }
+
+                        // need to escape all trailing backslashes so the native command receives it correctly
+                        // according to http://www.daviddeley.com/autohotkey/parameters/parameters.htm#WINCRULESDOC
+                        for (int i = arg.Length - 1; i >= 0 && arg[i] == '\\'; i--)
+                        {
+                            _arguments.Append('\\');
+                        }
+
+                        _arguments.Append('"');
+                    }
+                    else
+                    {
+                        PossiblyGlobArg(arg, stringConstantType);
                     }
                 }
             }
             while (list != null);
         }
+
 
         /// <summary>
         /// On Windows, just append <paramref name="arg"/>.
@@ -261,11 +282,9 @@ namespace System.Management.Automation
         private void PossiblyGlobArg(string arg, StringConstantType stringConstantType)
         {
             var argExpanded = false;
-
 #if UNIX
             // On UNIX systems, we expand arguments containing wildcard expressions against
             // the file system just like bash, etc.
-
             if (stringConstantType == StringConstantType.BareWord)
             {
                 if (WildcardPattern.ContainsWildcardCharacters(arg))
@@ -294,6 +313,7 @@ namespace System.Management.Automation
                         // Expand paths, but only from the file system.
                         if (paths?.Count > 0 && paths.All(p => p.BaseObject is FileSystemInfo))
                         {
+                            argExpanded = true;
                             var sep = string.Empty;
                             foreach (var path in paths)
                             {
@@ -305,20 +325,9 @@ namespace System.Management.Automation
                                     expandedPath =
                                         Context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
                                 }
-                                // If the path contains spaces, then add quotes around it.
-                                if (NeedQuotes(expandedPath))
-                                {
-                                    _arguments.Append("\"");
-                                    _arguments.Append(expandedPath);
-                                    _arguments.Append("\"");
-                                }
-                                else
-                                {
-                                    _arguments.Append(expandedPath);
-                                }
-
-                                argExpanded = true;
+                                AppendArgument(expandedPath, null);
                             }
+                            
                         }
                     }
                 }
@@ -336,7 +345,7 @@ namespace System.Management.Automation
                     else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
                     {
                         var replacementString = home + arg.Substring(1);
-                        _arguments.Append(replacementString);
+                        AppendArgument(replacementString, false);
                         argExpanded = true;
                     }
                 }
@@ -350,7 +359,7 @@ namespace System.Management.Automation
 
             if (!argExpanded)
             {
-                _arguments.Append(arg);
+                AppendArgument(arg, false);
             }
         }
 
@@ -419,9 +428,13 @@ namespace System.Management.Automation
             return path;
         }
 
+
         /// <summary>
-        /// Check to see if the string contains spaces and therefore must be quoted.
+        /// See if the string contains unquoted spaces and therefore must be quoted.
         /// </summary>
+        /// <remarks>
+        /// Very simple check that breaks down with (2n+1) backslashes. Kept for compatibility.
+        /// </remarks>
         /// <param name="stringToCheck">The string to check for spaces.</param>
         internal static bool NeedQuotes(string stringToCheck)
         {
@@ -467,6 +480,26 @@ namespace System.Management.Automation
             if (arrayText[afterPrev] == ',') return ", ";
             if (arrayText[beforeNext] == ',') return " ,";
             return " , ";
+        }
+
+        /// <summary>
+        /// Append an argument to the internal buffer, without separator.
+        /// </summary>
+        /// <param name="arg">The string to append.</param>
+        /// <param name="doQuote">For legacy mode, whether quotes should be used; for modern escape, whether to force quotes.</param>
+        private void AppendArgument(string arg, bool? doQuote)
+        {
+            if (ExperimentalFeature.IsEnabled("PSEscapeForNativeExecutables"))
+            {
+                // TODO: Accomendate msiexec et al, by splitting into two halves by '=' or ':' and
+                // appending separately.
+                PasteArguments.AppendArgument(_arguments, arg, doQuote ?? false);
+            }
+            else
+            {
+                bool quote = doQuote ?? NeedQuotes(arg);
+                _arguments.Append(quote ? arg : $"\"{arg}\"");
+            }
         }
 
         /// <summary>

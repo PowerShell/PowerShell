@@ -126,6 +126,9 @@ namespace System.Management.Automation
                 new ExperimentalFeature(
                     name: "PSNotApplyErrorActionToStderr",
                     description: "Don't have $ErrorActionPreference affect stderr output"),
+                new ExperimentalFeature(
+                    name: "PSEscapeForNativeExecutables",
+                    description: "Alternative approach for escaping when calling a native executable"),
             };
             EngineExperimentalFeatures = new ReadOnlyCollection<ExperimentalFeature>(engineFeatures);
 

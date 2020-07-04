@@ -8,6 +8,7 @@ Describe "Native Command Arguments" -tags "CI" {
     # This test checks that the proper quoting is occuring by passing arguments
     # to the testexe native command and looking at how it got the arguments.
     It "Should handle quoted spaces correctly" {
+        Set-TestInconclusive -Message "This assumes legacy behavior. Re-enable after experimental switch is added."
         $a = 'a"b c"d'
         $lines = testexe -echoargs $a 'a"b c"d' a"b c"d
         $lines.Count | Should -Be 3
@@ -28,6 +29,7 @@ Describe "Native Command Arguments" -tags "CI" {
     # passing arguments with escaped quotes to the testexe native command and
     # looking at how it got the arguments.
     It "Should handle spaces between escaped quotes" {
+        Set-TestInconclusive -Message "This assumes legacy behavior. Re-enable after experimental switch is added."
         $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
         $lines.Count | Should -Be 2
         $lines[0] | Should -BeExactly 'Arg 0 is <a"b c"d>'
