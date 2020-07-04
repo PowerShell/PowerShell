@@ -130,7 +130,7 @@ namespace System.Management.Automation
         /// Or
         /// The name of the argument matches more than one parameter.
         /// </exception>
-        internal void ReparseUnboundArguments()
+        protected void ReparseUnboundArguments()
         {
             Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
 
@@ -258,6 +258,32 @@ namespace System.Management.Automation
             }
 
             UnboundArguments = result;
+        }
+
+        protected void InitUnboundArguments(Collection<CommandParameterInternal> arguments)
+        {
+            // Add the passed in arguments to the unboundArguments collection
+            Collection<CommandParameterInternal> paramsFromSplatting = null;
+            foreach (CommandParameterInternal argument in arguments)
+            {
+                if (argument.ParameterComesFromSplatting)
+                {
+                    paramsFromSplatting ??= new Collection<CommandParameterInternal>();
+                    paramsFromSplatting.Add(argument);
+                }
+                else
+                {
+                    UnboundArguments.Add(argument);
+                }
+            }
+
+            if (paramsFromSplatting != null)
+            {
+                foreach (CommandParameterInternal argument in paramsFromSplatting)
+                {
+                    UnboundArguments.Add(argument);
+                }
+            }
         }
 
         private static bool IsSwitchAndSetValue(
@@ -509,6 +535,121 @@ namespace System.Management.Automation
             {
                 UnboundParameters.Remove(parameter);
                 BoundParameters.Add(parameter.Parameter.Name, parameter);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// This is used by <see cref="BindNamedParameters"/> to validate and bind a given named parameter.
+        /// </summary>
+        protected virtual void BindNamedParameter(
+            uint parameterSets,
+            CommandParameterInternal argument,
+            MergedCompiledCommandParameter parameter)
+        {
+            BindParameter(parameterSets, argument, parameter, ParameterBindingFlags.ShouldCoerceType);
+        }
+
+        /// <summary>
+        /// Bind the named parameters from the specified argument collection,
+        /// for only the parameters in the specified parameter set.
+        /// </summary>
+        /// <param name="parameterSets">
+        /// The parameter set used to bind the arguments.
+        /// </param>
+        /// <param name="arguments">
+        /// The arguments that should be attempted to bind to the parameters of the specified parameter binder.
+        /// </param>
+        /// <exception cref="ParameterBindingException">
+        /// if multiple parameters are found matching the name.
+        /// or
+        /// if no match could be found.
+        /// or
+        /// If argument transformation fails.
+        /// or
+        /// The argument could not be coerced to the appropriate type for the parameter.
+        /// or
+        /// The parameter argument transformation, prerequisite, or validation failed.
+        /// or
+        /// If the binding to the parameter fails.
+        /// </exception>
+        protected Collection<CommandParameterInternal> BindNamedParameters(uint parameterSets, Collection<CommandParameterInternal> arguments)
+        {
+            Collection<CommandParameterInternal> result = new Collection<CommandParameterInternal>();
+            HashSet<string> boundExplicitNamedParams = null;
+
+            foreach (CommandParameterInternal argument in arguments)
+            {
+                if (!argument.ParameterNameSpecified)
+                {
+                    result.Add(argument);
+                    continue;
+                }
+
+                // We don't want to throw an exception yet because the parameter might be a positional argument,
+                // or in case of a cmdlet or an advanced function, it might match up to a dynamic parameter.
+                MergedCompiledCommandParameter parameter =
+                    BindableParameters.GetMatchingParameter(
+                        name: argument.ParameterName,
+                        throwOnParameterNotFound: false,
+                        tryExactMatching: true,
+                        invocationInfo: new InvocationInfo(this.InvocationInfo.MyCommand, argument.ParameterExtent));
+
+                // If the parameter is not in the specified parameter set, throw a binding exception
+                if (parameter != null)
+                {
+                    string formalParamName = parameter.Parameter.Name;
+
+                    if (argument.ParameterComesFromSplatting)
+                    {
+                        boundExplicitNamedParams ??= new HashSet<string>(
+                            BoundParameters.Keys,
+                            StringComparer.OrdinalIgnoreCase);
+
+                        if (boundExplicitNamedParams.Contains(formalParamName))
+                        {
+                            // This named parameter from splatting is also explicitly specified by the user,
+                            // which was successfully bound, so we ignore the one from splatting because it
+                            // is superceded by the explicit one. For example:
+                            //   $splat = @{ Path = $path1 }
+                            //   dir @splat -Path $path2
+                            continue;
+                        }
+                    }
+
+                    // Now check to make sure it hasn't already been
+                    // bound by looking in the boundParameters collection
+
+                    if (BoundParameters.ContainsKey(formalParamName))
+                    {
+                        ParameterBindingException bindingException =
+                            new ParameterBindingException(
+                                ErrorCategory.InvalidArgument,
+                                this.InvocationInfo,
+                                GetParameterErrorExtent(argument),
+                                argument.ParameterName,
+                                null,
+                                null,
+                                ParameterBinderStrings.ParameterAlreadyBound,
+                                nameof(ParameterBinderStrings.ParameterAlreadyBound));
+
+                        throw bindingException;
+                    }
+
+                    BindNamedParameter(parameterSets, argument, parameter);
+                }
+                else if (argument.ParameterName.Equals(Parser.VERBATIM_PARAMETERNAME, StringComparison.Ordinal))
+                {
+                    // We sometimes send a magic parameter from a remote machine with the values referenced via
+                    // a using expression ($using:x).  We then access these values via PSBoundParameters, so
+                    // "bind" them here.
+                    DefaultParameterBinder.CommandLineParameters.SetImplicitUsingParameters(argument.ArgumentValue);
+                }
+                else
+                {
+                    result.Add(argument);
+                }
             }
 
             return result;
