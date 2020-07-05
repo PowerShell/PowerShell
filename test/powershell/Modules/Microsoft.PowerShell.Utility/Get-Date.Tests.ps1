@@ -98,11 +98,11 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "Passing '<name>' to -uformat produces a descriptive error" -TestCases @(
-        @{ name = "`$null"      ; value = $null }
-        @{ name = "empty string"; value = "" }
+        @{ name = "`$null"      ; value = $null; errorId = "ParameterArgumentValidationErrorNullNotAllowed" }
+        @{ name = "empty string"; value = ""; errorId = "ParameterArgumentValidationErrorEmptyStringNotAllowed" }
     ) {
-        param($value)
-        { Get-Date -Date 1/1/1970 -UFormat $value -ErrorAction Stop } | Should -Throw -ErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetDateCommand"
+        param($value, $errorId)
+        { Get-Date -Date 1/1/1970 -UFormat $value -ErrorAction Stop } | Should -Throw -ErrorId "${errorId},Microsoft.PowerShell.Commands.GetDateCommand"
     }
 
     It "Get-date works with pipeline input" {
