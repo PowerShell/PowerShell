@@ -1808,6 +1808,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Whether to escpae the argumentList.
         /// </summary>
+        [Parameter]
         public bool? EscapeArgs { get; set; }
 
         private SwitchParameter _UseNewEnvironment;
