@@ -825,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (_isLiteralPath)
                         {
-                            pathsToProcess.Add(SessionState.Path.GetUnresolvedProviderPathFromPSPath(p));
+                            pathsToProcess.Add(p);
                         }
                         else
                         {
