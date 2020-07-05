@@ -70,6 +70,7 @@ namespace System.Management.Automation.Internal
 
                         continue;
                     }
+
                     if (c == Quote)
                     {
                         // Escape the quote so it appears as a literal. This also guarantees that we won't end up generating a closing quote followed
@@ -78,8 +79,10 @@ namespace System.Management.Automation.Internal
                         stringBuilder.Append(Quote);
                         continue;
                     }
+
                     stringBuilder.Append(c);
                 }
+
                 stringBuilder.Append(Quote);
             }
         }
@@ -101,7 +104,13 @@ namespace System.Management.Automation.Internal
                 AppendArgument(stringBuilder, argument, forceQuote);
                 stringBuilder.Append(' ');
             }
-            stringBuilder.Length -= 1;
+
+            // Remove the final space
+            if (stringBuilder.Length > 1)
+            {
+                stringBuilder.Length -= 1;
+            }
+
             return stringBuilder.ToString();
         }
 
