@@ -74,15 +74,15 @@ Describe 'PSPath to native commands' {
 
         if ($IsWindows) {
             $cmd = "cmd"
-            $cmdArg1 = "/c"
-            $cmdArg2 = "type"
+            $cmdArgs = "/c","type"
             $dir = "cmd"
-            $dirArg1 = "/c"
-            $dirArg2 = "dir"
+            $dirArgs = "/c","dir"
         }
         else {
             $cmd = "cat"
+            $cmdArgs = @()
             $dir = "ls"
+            $dirArgs = @()
         }
 
         Set-Content -Path testdrive:/test.txt -Value 'Hello'
@@ -103,13 +103,13 @@ Describe 'PSPath to native commands' {
     }
 
     It 'PSPath with ~/path works' {
-        $out = & $cmd $cmdArg1 $cmdArg2 $filePath
+        $out = & $cmd $cmdArgs $filePath
         $LASTEXITCODE | Should -Be 0
         $out | Should -BeExactly 'Home'
     }
 
     It 'PSPath with ~ works' {
-        $out = & $dir $dirArg1 $dirArg2 ~
+        $out = & $dir $dirArgs ~
         $LASTEXITCODE | Should -Be 0
         $out | Should -Not -BeNullOrEmpty
     }
@@ -120,13 +120,13 @@ Describe 'PSPath to native commands' {
     ){
         param($path)
 
-        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
+        $out = & $cmd $cmdArgs "$path"
         $LASTEXITCODE | Should -Be 0
         $out | Should -BeExactly 'Hello'
     }
 
     It 'PSPath passed with single quotes should be treated as literal' {
-        $out = & $cmd $cmdArg1 $cmdArg2 'testdrive:/test.txt'
+        $out = & $cmd $cmdArgs 'testdrive:/test.txt'
         $LASTEXITCODE | Should -Not -Be 0
         $out | Should -BeNullOrEmpty
     }
@@ -137,7 +137,7 @@ Describe 'PSPath to native commands' {
     ){
         param($path)
 
-        $out = & $cmd $cmdArg1 $cmdArg2 "$path"
+        $out = & $cmd $cmdArgs "$path"
         $LASTEXITCODE | Should -Not -Be 0
         $out | Should -BeNullOrEmpty
     }
@@ -148,13 +148,13 @@ Describe 'PSPath to native commands' {
         Set-Content -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder' -AdditionalChildPath 'test.txt') -Value 'hello'
         Set-Location -Path (Join-Path -Path $testdrive -ChildPath 'TestFolder')
         Set-Location -Path $pwd
-        $out = & $cmd $cmdArg1 $cmdArg2 "TestDrive:test.txt"
+        $out = & $cmd $cmdArgs "TestDrive:test.txt"
         $LASTEXITCODE | Should -Be 0
         $out | Should -BeExactly 'Hello'
     }
 
     It 'Complex PSDrive name works' {
-        $out = & $cmd $cmdArg1 $cmdArg2 "${complexDriveName}:/test.txt"
+        $out = & $cmd $cmdArgs "${complexDriveName}:/test.txt"
         $LASTEXITCODE | Should -Be 0
         $out | Should -BeExactly 'Hello'
     }
