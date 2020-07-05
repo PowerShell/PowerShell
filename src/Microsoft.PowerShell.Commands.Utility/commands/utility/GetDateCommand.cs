@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = ParameterSetNames.Date, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=2096615")]
     [OutputType(typeof(string))]
-    [OutputType(typeof(DateTime))]
+    [OutputType(typeof(DateTime), ParameterSetName = new[] { ParameterSetNames.Date, ParameterSetNames.UnixTimeSeconds })]
     public sealed class GetDateCommand : Cmdlet
     {
         #region parameters
