@@ -25,6 +25,7 @@ namespace Microsoft.PowerShell.Commands
         /// Allows user to override the date/time object that will be processed.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetNames.Date, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
+        [Parameter(ParameterSetName = ParameterSetNames.DateUFormat, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [Alias("LastWriteTime")]
         public DateTime Date
         {
@@ -53,6 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets whether to treat a numeric input as ticks, or unix time.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSeconds, Mandatory = true)]
+        [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSecondsUFormat, Mandatory = true)]
         [ValidateRange(MinimumUnixTimeSecond, MaximumUnixTimeSecond)]
         [Alias("UnixTime")]
         public long UnixTimeSeconds
@@ -235,8 +237,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Unix format string.
         /// </summary>
-        [Parameter]
-        [ValidateNotNullOrEmpty]
+        [Parameter(ParameterSetName = ParameterSetNames.DateUFormat, Mandatory = true)]
+        [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSecondsUFormat, Mandatory = true)]
         public string UFormat
         {
             get
@@ -257,7 +259,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// .NET format string.
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = ParameterSetNames.Date)]
+        [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSeconds)]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
         public string Format
         {
@@ -616,7 +619,11 @@ namespace Microsoft.PowerShell.Commands
         {
             public const string Date = nameof(Date);
 
+            public const string DateUFormat = nameof(DateUFormat);
+
             public const string UnixTimeSeconds = nameof(UnixTimeSeconds);
+
+            public const string UnixTimeSecondsUFormat = nameof(UnixTimeSecondsUFormat);
         }
     }
 
