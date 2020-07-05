@@ -163,10 +163,6 @@ Describe "Get-Date" -Tags "CI" {
         Get-Date -Date 0030-01-01T01:02:03.0004z -Format FileDateUniversal | Should -Be "00300101Z"
     }
 
-    It "-Format and -UFormat are exclusive" {
-        { Get-Date -Format "y" -UFormat "%y" } | Should -Throw -ErrorId "OnlyOneFormatCanBeSpecified"
-    }
-
     It "Should have colons when ToString method is used" {
         (Get-Date).ToString().Contains(":")                   | Should -BeTrue
         (Get-Date -DisplayHint Time).ToString().Contains(":") | Should -BeTrue
