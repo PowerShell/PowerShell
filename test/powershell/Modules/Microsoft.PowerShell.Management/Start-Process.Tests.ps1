@@ -19,10 +19,10 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
         New-Item $tempDirectory -ItemType Directory  -Force
         $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
         if ($IsWindows) {
-            $pingParam = "-n 2 localhost"
+            $pingParam = "-n","2","localhost"
         }
         elseif ($IsLinux -Or $IsMacOS) {
-            $pingParam = "-c 2 localhost"
+            $pingParam = "-c","2","localhost"
         }
     }
 
@@ -183,7 +183,6 @@ Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWi
 }
 
 Describe "Start-Process" -Tags "Feature" {
-
     It "UseNewEnvironment parameter should reset environment variables for child process" {
 
         $PWSH = (Get-Process -Id $PID).MainModule.FileName
