@@ -239,22 +239,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetNames.DateUFormat, Mandatory = true)]
         [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSecondsUFormat, Mandatory = true)]
-        public string UFormat
-        {
-            get
-            {
-                return _uFormat;
-            }
-
-            set
-            {
-                _uFormat = value;
-                _uFormatSpecified = true;
-            }
-        }
-
-        private string _uFormat;
-        private bool _uFormatSpecified;
+        public string UFormat { get; set; }
 
         /// <summary>
         /// .NET format string.
@@ -262,22 +247,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = ParameterSetNames.Date)]
         [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSeconds)]
         [ArgumentCompletions("FileDate", "FileDateUniversal", "FileDateTime", "FileDateTimeUniversal")]
-        public string Format
-        {
-            get
-            {
-                return _format;
-            }
-
-            set
-            {
-                _format = value;
-                _formatSpecified = true;
-            }
-        }
-
-        private string _format;
-        private bool _formatSpecified;
+        public string Format { get; set; }
 
         /// <summary>
         /// Gets or sets a value that converts date to UTC before formatting.
@@ -287,23 +257,6 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region methods
-
-        /// <summary>
-        /// Validate arguments.
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            if (_formatSpecified && _uFormatSpecified)
-            {
-                ErrorRecord error = new ErrorRecord(
-                    new ValidationMetadataException(GetDateStrings.OnlyOneFormatCanBeSpecified),
-                    "OnlyOneFormatCanBeSpecified",
-                    ErrorCategory.InvalidArgument,
-                    null);
-
-                ThrowTerminatingError(error);
-            }
-        }
 
         /// <summary>
         /// Get the time.
@@ -378,12 +331,12 @@ namespace Microsoft.PowerShell.Commands
                 dateToUse = dateToUse.ToUniversalTime();
             }
 
-            if (_uFormatSpecified)
+            if (UFormat != null)
             {
                 // format according to UFormat string
                 WriteObject(UFormatDateString(dateToUse));
             }
-            else if (_formatSpecified)
+            else if (Format != null)
             {
                 // format according to Format string
 
