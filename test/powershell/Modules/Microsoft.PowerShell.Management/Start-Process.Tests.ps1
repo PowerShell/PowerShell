@@ -71,7 +71,7 @@ Describe "Start-Process" -Tag "Feature","RequireAdminOnWindows" {
 	    $process.Id          | Should -BeGreaterThan 1
 	    # $process.ProcessName | Should -Be "ping"
     }
-	
+
     It "Should work correctly within an unspecified WorkingDirectory with wildcard-type characters" {
         Push-Location -LiteralPath $tempDirectory
 	    $process = Start-Process ping -ArgumentList $pingParam -PassThru -RedirectStandardOutput "$TESTDRIVE/output" @extraArgs
@@ -194,13 +194,13 @@ Describe "Start-Process" -Tags "Feature" {
         $userName = $env:USERNAME
 
         try {
-            Start-Process $PWSH -ArgumentList '-NoProfile','-Command','Write-Output \"$($env:TestEnvVariable);$($env:USERNAME)\"' -RedirectStandardOutput $outputFile -Wait
+            Start-Process $PWSH -ArgumentList '-NoProfile','-Command','Write-Output "$($env:TestEnvVariable);$($env:USERNAME)"' -RedirectStandardOutput $outputFile -Wait
             Get-Content -LiteralPath $outputFile | Should -BeExactly "1;$userName"
 
             # Check that:
             # 1. Environment variables is resetted (TestEnvVariable is removed)
             # 2. Environment variables comes from current user profile
-            Start-Process $PWSH -ArgumentList '-NoProfile','-Command','Write-Output \"$($env:TestEnvVariable);$($env:USERNAME)\"' -RedirectStandardOutput $outputFile -Wait -UseNewEnvironment
+            Start-Process $PWSH -ArgumentList '-NoProfile','-Command','Write-Output "$($env:TestEnvVariable);$($env:USERNAME)"' -RedirectStandardOutput $outputFile -Wait -UseNewEnvironment
             Get-Content -LiteralPath $outputFile | Should -BeExactly ";$userName"
         } finally {
             $env:TestEnvVariable = $null
