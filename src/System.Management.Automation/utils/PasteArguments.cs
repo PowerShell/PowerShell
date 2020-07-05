@@ -29,7 +29,7 @@ namespace System.Management.Automation.Internal
             //   - 2N+1 backslashes followed by a quote ==> N literal backslashes followed by a literal quote
             //   - Parsing stops at first whitespace outside of quoted region.
             //   - (post 2008 rule): A closing quote followed by another quote ==> literal quote, and parsing remains in quoting mode.
-            if (!forceQuote || (argument.Length != 0 && ContainsNoWhitespaceOrQuotes(argument)))
+            if (!forceQuote && argument.Length != 0 && ContainsNoWhitespaceOrQuotes(argument))
             {
                 // Simple case - no quoting or changes needed.
                 stringBuilder.Append(argument);
