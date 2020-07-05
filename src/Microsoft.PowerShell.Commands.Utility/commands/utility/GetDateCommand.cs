@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.Commands
         public string UFormat { get; set; }
 
         /// <summary>
-        /// .NET format string.
+        /// DotNet format string.
         /// </summary>
         [Parameter(ParameterSetName = ParameterSetNames.Date)]
         [Parameter(ParameterSetName = ParameterSetNames.UnixTimeSeconds)]
