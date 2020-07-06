@@ -6,6 +6,8 @@
 using System.Reflection;
 using System.Management.Automation.Internal;
 
+using Dbg = System.Management.Automation.Diagnostics;
+
 namespace System.Management.Automation
 {
     /// <summary>
@@ -182,13 +184,7 @@ namespace System.Management.Automation
             string description,
             bool traceHeaders)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                // Note, all callers should have already verified the name before calling this
-                // API, so this exception should never be exposed to an end-user.
-
-                throw new ArgumentException(null, nameof(name));
-            }
+            Dbg.Assert(!string.IsNullOrEmpty(name), "Caller should ensure that name is not null or empty");
 
             // Keep the fullName as it was passed, but truncate or pad
             // the category name to 16 characters.  This allows for
