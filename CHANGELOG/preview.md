@@ -1,5 +1,64 @@
 # Current preview release
 
+## [7.1.0-preview.5] - 2020-07-06
+
+### Engine Updates and Fixes
+
+- Ensure assemblies listed in the module manifest `FileList` field are not loaded (#12968)
+
+### Code Cleanup
+
+<details>
+
+<summary>
+
+<p>We thank the following contributors!</p>
+<p>@xtqqczze</p>
+
+</summary>
+
+<ul>
+<li>Code performance fixes (#12956) (Thanks @xtqqczze!)</li>
+</ul>
+
+</details>
+
+### Tools
+
+- Add missing `.editorconfig` settings present in `dotnet/runtime` (#12871) (Thanks @xtqqczze!)
+
+### Tests
+
+- Add new test for `Format-Custom` to avoid data loss (#11393) (Thanks @iSazonov!)
+
+### Build and Packaging Improvements
+
+<details>
+<summary>
+
+<p>Fixed upgrade code in MSI package.</p>
+
+</summary>
+<ul>
+<li>Change log for v7.1.0-preview.5 (Internal 11880)</li>
+<li>Fix Path for the Preview MSI (#13070)</li>
+<li>Correct stable and preview upgrade codes for <code>MSI</code> (#13036)</li>
+<li>Changelog for `v7.1.0-preview.4` (Internal 11841)</li>
+<li>Fix NuGet package compliance issues (#13045)</li>
+<li>Bump <code>xunit.runner.visualstudio</code> from <code>2.4.1</code> to<code> 2.4.2</code> (#12874)</li>
+<li>Bump NJsonSchema from `10.1.21` to `10.1.23` (#13032) (#13022)</li>
+</ul>
+
+</details>
+
+### Documentation and Help Content
+
+- Fix links for MSI packages to point to `7.1.0-preview.3` (#13056)
+- Add update `packages.microsoft.com` step to distribution request template. (#13008)
+- Update `windows-core.md` (#13053) (Thanks @xtqqczze!)
+- Add `@rjmholt` to maintainers list (#13033)
+- Update docs for `v7.1.0-preview.4` release (#13028)
+
 ## [7.1.0-preview.4] - 2020-06-25
 
 ### Breaking Changes
@@ -515,6 +574,7 @@
 - Update `SUPPORT.md` (#11101) (Thanks @mklement0!)
 - Update `README.md` (#11100) (Thanks @mklement0!)
 
+[7.1.0-preview.5]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.4...v7.1.0-preview.5
 [7.1.0-preview.4]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.3...v7.1.0-preview.4
 [7.1.0-preview.3]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.2...v7.1.0-preview.3
 [7.1.0-preview.2]: https://github.com/PowerShell/PowerShell/compare/v7.1.0-preview.1...v7.1.0-preview.2
