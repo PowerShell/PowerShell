@@ -425,7 +425,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private void LoadData(ExtendedTypeDefinition typeDefinition, TypeInfoDataBase db, bool isForHelpOutput)
         {
             if (typeDefinition == null)
-                throw PSTraceSource.NewArgumentNullException("viewDefinition");
+                throw PSTraceSource.NewArgumentNullException(nameof(typeDefinition));
 
             if (db == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(db));

@@ -1218,7 +1218,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="str"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
         /// <exception cref="HostException">
@@ -1226,14 +1226,14 @@ namespace Microsoft.PowerShell
         /// </exception>
 
         public override
-        int LengthInBufferCells(string s, int offset)
+        int LengthInBufferCells(string str, int offset)
         {
-            if (s == null)
+            if (str == null)
             {
-                throw PSTraceSource.NewArgumentNullException("str");
+                throw PSTraceSource.NewArgumentNullException(nameof(str));
             }
 
-            return ConsoleControl.LengthInBufferCells(s, offset, parent.SupportsVirtualTerminal);
+            return ConsoleControl.LengthInBufferCells(str, offset, parent.SupportsVirtualTerminal);
         }
 
         /// <summary>
@@ -1622,7 +1622,7 @@ namespace Microsoft.PowerShell
             // if there are no contents, there is nothing to set the buffer to
             if (contents == null)
             {
-                PSTraceSource.NewArgumentNullException("contents");
+                PSTraceSource.NewArgumentNullException(nameof(contents));
             }
             // if the cursor is on the last line, we need to make more space to print the specified buffer
             if (origin.Y == BufferSize.Height - 1 && origin.X >= BufferSize.Width)
@@ -1695,19 +1695,19 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// See base class.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="str"></param>
         /// <param name="offset"></param>
         /// <returns></returns>
 
         public override
-        int LengthInBufferCells(string s, int offset)
+        int LengthInBufferCells(string str, int offset)
         {
-            if (s == null)
+            if (str == null)
             {
-                throw PSTraceSource.NewArgumentNullException("str");
+                throw PSTraceSource.NewArgumentNullException(nameof(str));
             }
 
-            return ConsoleControl.LengthInBufferCells(s, offset, _parent.SupportsVirtualTerminal);
+            return ConsoleControl.LengthInBufferCells(str, offset, _parent.SupportsVirtualTerminal);
         }
     }
 }

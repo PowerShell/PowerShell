@@ -95,7 +95,7 @@ namespace System.Management.Automation
         {
             if (context == null)
             {
-                throw PSTraceSource.NewArgumentNullException("ExecutionContext");
+                throw PSTraceSource.NewArgumentNullException(nameof(context));
             }
 
             _executionContext = context;

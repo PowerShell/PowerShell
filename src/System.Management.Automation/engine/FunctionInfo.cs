@@ -222,7 +222,7 @@ namespace System.Management.Automation
         {
             if (newFunction == null)
             {
-                throw PSTraceSource.NewArgumentNullException("function");
+                throw PSTraceSource.NewArgumentNullException(nameof(newFunction));
             }
 
             if ((_options & ScopedItemOptions.Constant) != 0)

@@ -207,7 +207,7 @@ namespace System.Management.Automation
 
             if (newCmdletInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
+                throw PSTraceSource.NewArgumentNullException(nameof(newCmdletInfo));
             }
 
             if (isGlobal)

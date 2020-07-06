@@ -291,7 +291,7 @@ namespace System.Management.Automation
         public TableControl(TableControlRow tableControlRow) : this()
         {
             if (tableControlRow == null)
-                throw PSTraceSource.NewArgumentNullException("tableControlRows");
+                throw PSTraceSource.NewArgumentNullException(nameof(tableControlRow));
 
             this.Rows.Add(tableControlRow);
         }
@@ -304,7 +304,7 @@ namespace System.Management.Automation
         public TableControl(TableControlRow tableControlRow, IEnumerable<TableControlColumnHeader> tableControlColumnHeaders) : this()
         {
             if (tableControlRow == null)
-                throw PSTraceSource.NewArgumentNullException("tableControlRows");
+                throw PSTraceSource.NewArgumentNullException(nameof(tableControlRow));
             if (tableControlColumnHeaders == null)
                 throw PSTraceSource.NewArgumentNullException(nameof(tableControlColumnHeaders));
 

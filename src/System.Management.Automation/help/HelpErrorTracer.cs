@@ -124,7 +124,7 @@ namespace System.Management.Automation
         {
             if (helpSystem == null)
             {
-                throw PSTraceSource.NewArgumentNullException("HelpSystem");
+                throw PSTraceSource.NewArgumentNullException(nameof(helpSystem));
             }
 
             HelpSystem = helpSystem;

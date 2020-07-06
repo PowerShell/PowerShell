@@ -71,7 +71,7 @@ namespace System.Management.Automation.Runspaces.Internal
         {
             if (connectionInfo == null)
             {
-                throw PSTraceSource.NewArgumentNullException("WSManConnectionInfo");
+                throw PSTraceSource.NewArgumentNullException(nameof(connectionInfo));
             }
 
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspacePoolConstructor,

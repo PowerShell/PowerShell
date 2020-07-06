@@ -87,12 +87,12 @@ namespace Microsoft.PowerShell.Commands
         {
             if (minValue == null)
             {
-                throw PSTraceSource.NewArgumentNullException("min");
+                throw PSTraceSource.NewArgumentNullException(nameof(minValue));
             }
 
             if (maxValue == null)
             {
-                throw PSTraceSource.NewArgumentNullException("max");
+                throw PSTraceSource.NewArgumentNullException(nameof(maxValue));
             }
 
             ErrorRecord errorRecord = new ErrorRecord(
