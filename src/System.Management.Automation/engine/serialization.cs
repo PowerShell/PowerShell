@@ -6548,7 +6548,7 @@ namespace System.Management.Automation
 
             if (data == null || !data.Contains(keys[0]))
             {
-                result = default(T);
+                result = default;
                 return false;
             }
 
@@ -6568,7 +6568,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    result = default(T);
+                    result = default;
                     return false;
                 }
             }
@@ -6859,14 +6859,14 @@ namespace Microsoft.PowerShell
             PSPropertyInfo property = pso.Properties[propertyName];
             if ((property == null) && (RehydrationFlags.MissingPropertyOk == (flags & RehydrationFlags.MissingPropertyOk)))
             {
-                return default(T);
+                return default;
             }
             else
             {
                 object propertyValue = property.Value;
                 if ((propertyValue == null) && (RehydrationFlags.NullValueOk == (flags & RehydrationFlags.NullValueOk)))
                 {
-                    return default(T);
+                    return default;
                 }
                 else
                 {
@@ -6888,7 +6888,7 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    return default(ListType);
+                    return default;
                 }
             }
             else

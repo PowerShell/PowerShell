@@ -4490,7 +4490,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Checks to see if the module manifest contains the specified key.
         /// If it does and it can be converted to the expected type, then it returns <c>true</c> and sets <paramref name="result"/> to the value.
-        /// If the key is missing it returns <c>true</c> and sets <paramref name="result"/> to <c>default(<typeparam name="T"/>)</c>.
+        /// If the key is missing it returns <c>true</c> and sets <paramref name="result"/> to <c>default</c>.
         /// If the key is invalid then it returns <c>false</c>.
         /// </summary>
         /// <param name="data">The hashtable to look for the key in.</param>
@@ -4509,7 +4509,7 @@ namespace Microsoft.PowerShell.Commands
             object value = data[key];
             if ((value == null) || (value is string && string.IsNullOrEmpty((string)value)))
             {
-                result = default(T);
+                result = default;
                 return true;
             }
 
@@ -4520,7 +4520,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (PSInvalidCastException e)
             {
-                result = default(T);
+                result = default;
                 if (0 != (manifestProcessingFlags & ManifestProcessingFlags.WriteErrors))
                 {
                     string message = StringUtil.Format(Modules.ModuleManifestInvalidValue, key, e.Message, moduleManifestPath);

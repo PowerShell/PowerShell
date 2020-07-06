@@ -1345,7 +1345,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 // it is possible that when there was a wait
                 // the data got written
-                return default(T);
+                return default;
             }
 
             return collection[index];

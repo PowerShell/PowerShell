@@ -1570,7 +1570,7 @@ namespace System.Management.Automation
                 ex is InvalidCastException ||
                 ex is PSInvalidCastException)
             {
-                value = default(T);
+                value = default;
                 return false;
             }
         }

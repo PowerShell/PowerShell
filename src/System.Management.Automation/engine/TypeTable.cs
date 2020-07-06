@@ -89,7 +89,7 @@ namespace System.Management.Automation.Runspaces
 
         private bool? ReadIsHiddenAttribute()
         {
-            bool? isHidden = default(bool?);
+            bool? isHidden = default;
 
             while (_reader.MoveToNextAttribute())
             {
@@ -699,7 +699,7 @@ namespace System.Management.Automation.Runspaces
 
             string name = null;
             Collection<TypeMemberData> members = null;
-            bool? inheritMembers = default(bool?);
+            bool? inheritMembers = default;
 
             bool? isHidden = ReadIsHiddenAttribute();
             _reader.MoveToElement();

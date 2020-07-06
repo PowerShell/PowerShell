@@ -204,7 +204,7 @@ namespace System.Management.Automation
                 }
 
                 // Make the call
-                EXCEPINFO info = default(EXCEPINFO);
+                EXCEPINFO info = default;
                 object result = null;
 
                 try

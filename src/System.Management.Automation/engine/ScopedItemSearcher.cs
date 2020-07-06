@@ -135,7 +135,7 @@ namespace System.Management.Automation
 
         public void Dispose()
         {
-            _current = default(T);
+            _current = default;
             _scopeEnumerable.Dispose();
             _scopeEnumerable = null;
             _isInitialized = false;

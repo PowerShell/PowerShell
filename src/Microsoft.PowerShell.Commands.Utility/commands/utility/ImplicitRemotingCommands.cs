@@ -981,7 +981,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (nullOk)
                 {
-                    return default(T);
+                    return default;
                 }
                 else
                 {

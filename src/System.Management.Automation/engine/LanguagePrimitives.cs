@@ -1196,7 +1196,7 @@ namespace System.Management.Automation
         /// <returns>An object of the specified type, if the conversion was successful.  Returns null otherwise.</returns>
         internal static T FromObjectAs<T>(object castObject)
         {
-            T returnType = default(T);
+            T returnType = default;
 
             // First, see if we can cast the direct type
             PSObject wrapperObject = castObject as PSObject;
@@ -1208,7 +1208,7 @@ namespace System.Management.Automation
                 }
                 catch (InvalidCastException)
                 {
-                    returnType = default(T);
+                    returnType = default;
                 }
             }
             // Then, see if it is an PSObject wrapping the object
@@ -1220,7 +1220,7 @@ namespace System.Management.Automation
                 }
                 catch (InvalidCastException)
                 {
-                    returnType = default(T);
+                    returnType = default;
                 }
             }
 
@@ -1817,7 +1817,7 @@ namespace System.Management.Automation
         /// <returns>False for conversion failure, true for success.</returns>
         public static bool TryConvertTo<T>(object valueToConvert, IFormatProvider formatProvider, out T result)
         {
-            result = default(T);
+            result = default;
 
             if (TryConvertTo(valueToConvert, typeof(T), formatProvider, out object res))
             {
@@ -3126,7 +3126,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Int16)valueToConvert) != default(Int16);
+            return ((Int16)valueToConvert) != default;
         }
 
         private static bool ConvertInt32ToBool(object valueToConvert,
@@ -3136,7 +3136,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Int32)valueToConvert) != default(Int32);
+            return ((Int32)valueToConvert) != default;
         }
 
         private static bool ConvertInt64ToBool(object valueToConvert,
@@ -3146,7 +3146,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Int64)valueToConvert) != default(Int64);
+            return ((Int64)valueToConvert) != default;
         }
 
         private static bool ConvertUInt16ToBool(object valueToConvert,
@@ -3156,7 +3156,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((UInt16)valueToConvert) != default(UInt16);
+            return ((UInt16)valueToConvert) != default;
         }
 
         private static bool ConvertUInt32ToBool(object valueToConvert,
@@ -3166,7 +3166,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((UInt32)valueToConvert) != default(UInt32);
+            return ((UInt32)valueToConvert) != default;
         }
 
         private static bool ConvertUInt64ToBool(object valueToConvert,
@@ -3176,7 +3176,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((UInt64)valueToConvert) != default(UInt64);
+            return ((UInt64)valueToConvert) != default;
         }
 
         private static bool ConvertSByteToBool(object valueToConvert,
@@ -3186,7 +3186,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((sbyte)valueToConvert) != default(sbyte);
+            return ((sbyte)valueToConvert) != default;
         }
 
         private static bool ConvertByteToBool(object valueToConvert,
@@ -3196,7 +3196,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((byte)valueToConvert) != default(byte);
+            return ((byte)valueToConvert) != default;
         }
 
         private static bool ConvertSingleToBool(object valueToConvert,
@@ -3206,7 +3206,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Single)valueToConvert) != default(Single);
+            return ((Single)valueToConvert) != default;
         }
 
         private static bool ConvertDoubleToBool(object valueToConvert,
@@ -3216,7 +3216,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((double)valueToConvert) != default(double);
+            return ((double)valueToConvert) != default;
         }
 
         private static bool ConvertDecimalToBool(object valueToConvert,
@@ -3226,7 +3226,7 @@ namespace System.Management.Automation
                                                IFormatProvider formatProvider,
                                                TypeTable backupTable)
         {
-            return ((Decimal)valueToConvert) != default(Decimal);
+            return ((Decimal)valueToConvert) != default;
         }
 
         private static PSConverter<bool> CreateNumericToBoolConverter(Type fromType)

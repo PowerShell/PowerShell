@@ -625,7 +625,7 @@ namespace System.Management.Automation
             }
         }
 
-        private ExperimentAction _effectiveAction = default(ExperimentAction);
+        private ExperimentAction _effectiveAction = default;
 
         #endregion
 

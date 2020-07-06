@@ -2823,7 +2823,7 @@ namespace Microsoft.PowerShell.Commands
         internal static bool QueryServiceConfig(NakedWin32Handle hService, out NativeMethods.QUERY_SERVICE_CONFIG configStructure)
         {
             IntPtr lpBuffer = IntPtr.Zero;
-            configStructure = default(NativeMethods.QUERY_SERVICE_CONFIG);
+            configStructure = default;
             DWORD bufferSize, bufferSizeNeeded = 0;
             bool status = NativeMethods.QueryServiceConfigW(
                 hSCManager: hService,
@@ -2859,7 +2859,7 @@ namespace Microsoft.PowerShell.Commands
         internal static bool QueryServiceConfig2<T>(NakedWin32Handle hService, DWORD infolevel, out T configStructure)
         {
             IntPtr lpBuffer = IntPtr.Zero;
-            configStructure = default(T);
+            configStructure = default;
             DWORD bufferSize, bufferSizeNeeded = 0;
 
             bool status = NativeMethods.QueryServiceConfig2W(

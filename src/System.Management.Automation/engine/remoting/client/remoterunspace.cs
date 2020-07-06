@@ -2904,7 +2904,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                return default(T);
+                return default;
             }
         }
 

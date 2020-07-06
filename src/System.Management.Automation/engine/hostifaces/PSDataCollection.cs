@@ -1223,7 +1223,7 @@ namespace System.Management.Automation
 
         internal T ReadAndRemoveAt0()
         {
-            T value = default(T);
+            T value = default;
 
             lock (SyncObject)
             {
@@ -1868,7 +1868,7 @@ namespace System.Management.Automation
 
             _collToEnumerate = collection;
             _index = 0;
-            _currentElement = default(W);
+            _currentElement = default;
             _collToEnumerate.IsEnumerated = true;
             _neverBlock = neverBlock;
         }
@@ -1947,7 +1947,7 @@ namespace System.Management.Automation
                         _currentElement = _collToEnumerate[_index];
                         if (_collToEnumerate.ReleaseOnEnumeration)
                         {
-                            _collToEnumerate[_index] = default(W);
+                            _collToEnumerate[_index] = default;
                         }
 
                         _index++;
@@ -1989,7 +1989,7 @@ namespace System.Management.Automation
         /// </summary>
         public void Reset()
         {
-            _currentElement = default(W);
+            _currentElement = default;
             _index = 0;
         }
 

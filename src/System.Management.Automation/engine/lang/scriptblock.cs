@@ -548,7 +548,7 @@ namespace System.Management.Automation
             // just recieves nothing from it's argument.
             if (result.Count == 0)
             {
-                return default(T);
+                return default;
             }
 
             return (T)result[0];

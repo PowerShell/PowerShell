@@ -2621,7 +2621,7 @@ namespace System.Management.Automation
                 // Say one day we want to support generic method in PSMethod-to-Delegate conversion and need to produce
                 // the metadata type, we should use the generic parameter types from the MethodInfo directly to construct
                 // the Func<> metadata type. See the concept shown in the following scripts:
-                //    $class = "public class Zoo { public static T GetName<T>(int index, T input) { return default(T); } }"
+                //    $class = "public class Zoo { public static T GetName<T>(int index, T input) { return default; } }"
                 //    Add-Type -TypeDefinition $class
                 //    $method = [Zoo].GetMethod("GetName")
                 //    $allTypes = $method.GetParameters().ParameterType + $method.ReturnType

@@ -131,7 +131,7 @@ namespace System.Management.Automation.Language
             HashSet<string> names = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             bool checkingAttributeOnClass = false;
-            AttributeTargets attributeTargets = default(AttributeTargets);
+            AttributeTargets attributeTargets = default;
 
             var parent = attributeAst.Parent;
             TypeDefinitionAst typeDefinitionAst = parent as TypeDefinitionAst;

@@ -414,7 +414,7 @@ namespace System.Management.Automation.Interpreter
                 }
             }
 
-            value = default(TValue);
+            value = default;
             return false;
         }
 
@@ -613,7 +613,7 @@ namespace System.Management.Automation.Interpreter
                 return true;
             }
 
-            value = default(TValue);
+            value = default;
             return false;
         }
 

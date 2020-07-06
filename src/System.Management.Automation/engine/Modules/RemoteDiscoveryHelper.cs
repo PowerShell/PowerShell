@@ -426,7 +426,7 @@ namespace System.Management.Automation
 
                         if (gotResults)
                         {
-                            T currentItem = default(T);
+                            T currentItem = default;
                             bool gotCurrentItem = false;
                             try
                             {

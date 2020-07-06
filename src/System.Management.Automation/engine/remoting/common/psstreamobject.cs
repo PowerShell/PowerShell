@@ -448,7 +448,7 @@ namespace System.Management.Automation.Remoting.Internal
         {
             Dbg.Assert(cmdletMethodInvoker != null, "Caller should verify cmdletMethodInvoker != null");
 
-            cmdletMethodInvoker.MethodResult = default(T);
+            cmdletMethodInvoker.MethodResult = default;
             try
             {
                 T tmpMethodResult = cmdletMethodInvoker.Action(cmdlet);

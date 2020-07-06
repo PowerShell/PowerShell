@@ -582,7 +582,7 @@ namespace System.Management.Automation.Configuration
             // Optimization: If the file doesn't exist, there is nothing to remove
             if (File.Exists(fileName))
             {
-                UpdateValueInFile<T>(scope, key, default(T), false);
+                UpdateValueInFile<T>(scope, key, default, false);
             }
         }
     }

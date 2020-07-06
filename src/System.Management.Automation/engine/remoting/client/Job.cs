@@ -906,7 +906,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(invokeCmdletMethodAndReturnResult != null, "Caller should verify invokeCmdletMethodAndReturnResult != null");
 
-            T methodResult = default(T);
+            T methodResult = default;
             Exception closureSafeExceptionThrownOnCmdletThread = null;
             object resultsLock = new object();
             using (var gotResultEvent = new ManualResetEventSlim(false))

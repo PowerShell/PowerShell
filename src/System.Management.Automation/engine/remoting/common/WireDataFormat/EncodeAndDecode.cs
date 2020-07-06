@@ -582,7 +582,7 @@ namespace System.Management.Automation
 
         internal static void AddNoteProperty<T>(PSObject pso, string propertyName, ValueGetterDelegate<T> valueGetter)
         {
-            T value = default(T);
+            T value = default;
             try
             {
                 value = valueGetter();
@@ -1680,7 +1680,7 @@ namespace System.Management.Automation
             {
                 if (propertyValue == null)
                 {
-                    return default(T); // => "return null" for PSObject
+                    return default; // => "return null" for PSObject
                 }
                 else
                 {
@@ -1691,12 +1691,12 @@ namespace System.Management.Automation
             {
                 if (!typeof(T).IsValueType)
                 {
-                    return default(T);
+                    return default;
                 }
 
                 if (typeof(T).IsGenericType && typeof(T).GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
                 {
-                    return default(T);
+                    return default;
                 }
 
                 throw new PSRemotingDataStructureException(

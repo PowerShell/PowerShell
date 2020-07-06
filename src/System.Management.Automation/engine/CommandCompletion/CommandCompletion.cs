@@ -1023,19 +1023,19 @@ namespace System.Management.Automation
             {
                 if (psObject == null)
                 {
-                    return default(T);
+                    return default;
                 }
 
                 PSPropertyInfo property = psObject.Properties[propertyName];
                 if (property == null)
                 {
-                    return default(T);
+                    return default;
                 }
 
                 object propertyValue = property.Value;
                 if (propertyValue == null)
                 {
-                    return default(T);
+                    return default;
                 }
 
                 T returnValue;
@@ -1044,7 +1044,7 @@ namespace System.Management.Automation
                     return returnValue;
                 }
 
-                return default(T);
+                return default;
             }
 
             private static bool PSv2ShouldFullyQualifyPathsPath(PowerShellExecutionHelper helper, string lastWord)
