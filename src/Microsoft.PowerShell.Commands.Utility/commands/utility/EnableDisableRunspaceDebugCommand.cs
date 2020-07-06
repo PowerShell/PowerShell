@@ -59,7 +59,15 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="runspaceId">Runspace local Id.</param>
         public PSRunspaceDebug(bool enabled, bool breakAll, string runspaceName, int runspaceId)
         {
-            if (string.IsNullOrEmpty(runspaceName)) { throw new PSArgumentNullException(nameof(runspaceName)); }
+            if (runspaceName is null)
+            {
+                throw new PSArgumentNullException(nameof(runspaceName));
+            }
+
+            if (runspaceName.Length == 0)
+            {
+                throw new PSArgumentException(nameof(runspaceName));
+            }
 
             this.Enabled = enabled;
             this.BreakAll = breakAll;

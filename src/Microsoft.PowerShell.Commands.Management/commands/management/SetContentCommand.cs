@@ -24,9 +24,14 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         internal override void BeforeOpenStreams(string[] paths)
         {
-            if (paths == null || paths.Length == 0)
+            if (paths == null)
             {
                 throw PSTraceSource.NewArgumentNullException(nameof(paths));
+            }
+
+            if (paths.Length == 0)
+            {
+                throw PSTraceSource.NewArgumentException(nameof(paths));
             }
 
             CmdletProviderContext context = new(GetCurrentContext());
