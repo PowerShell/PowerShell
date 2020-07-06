@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             if (fed.formatEntryInfo == null)
             {
-                PSTraceSource.NewArgumentNullException("fed.formatEntryInfo");
+                PSTraceSource.NewArgumentException(nameof(fed), "fed.formatEntryInfo is null");
             }
 
             WriteStreamType oldWSState = _lo.WriteStream;

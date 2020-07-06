@@ -819,7 +819,7 @@ namespace System.Management.Automation
 
             if (string.IsNullOrEmpty(Value))
                 if (Value == null || ValueType == DisplayEntryValueType.Property)
-                    throw PSTraceSource.NewArgumentNullException(nameof(expression));
+                    throw PSTraceSource.NewArgumentException(nameof(expression));
         }
 
         internal bool SafeForExport()

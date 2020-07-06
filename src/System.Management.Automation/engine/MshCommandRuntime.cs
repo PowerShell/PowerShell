@@ -2767,7 +2767,7 @@ namespace System.Management.Automation
             ActionPreference preference = pair.Value;
             if (errorRecord == null)
             {
-                throw PSTraceSource.NewArgumentNullException("errorRecord");
+                throw PSTraceSource.NewArgumentException(nameof(obj), "errorRecord is null");
             }
 
             // If this error came from a transacted cmdlet,
