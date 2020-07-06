@@ -209,8 +209,19 @@ namespace System.Management.Automation
         /// </remarks>
         private static SecurityZone MapSecurityZone(string filePath)
         {
+            // WSL introduces a new filesystem path to access the Linux filesystem from Windows, like '\\wsl$\ubuntu'.
+            // If the given file path is such a special case, we consider it's in 'MyComputer' zone.
+            if (filePath.StartsWith(@"\\wsl$", StringComparison.OrdinalIgnoreCase))
+            {
+                return SecurityZone.MyComputer;
+            }
+
             SecurityZone reval = ReadFromZoneIdentifierDataStream(filePath);
-            if (reval != SecurityZone.NoZone) { return reval; }
+            if (reval != SecurityZone.NoZone)
+            {
+                return reval;
+            }
+
             // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid.
             // In this case, we try to determine the SecurityZone by analyzing the file path.
             Uri uri = new Uri(filePath);
