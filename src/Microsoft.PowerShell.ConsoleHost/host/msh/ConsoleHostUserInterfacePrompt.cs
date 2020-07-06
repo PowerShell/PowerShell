@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell
                     string fieldPrompt = null;
                     fieldPrompt = desc.Name;
 
-                    bool fieldEchoOnPrompt = true;
+                    const bool fieldEchoOnPrompt = true;
 
                     // FieldDescription.ParameterAssemblyFullName never returns null. But this is
                     // defense in depth.

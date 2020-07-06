@@ -903,7 +903,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string sdkDirectory = s_defaultSdkDirectory;
             string baseDirectory = this.SessionState.Path.CurrentLocation.Path;
-            string additionalReferenceDirectories = null;
+            const string additionalReferenceDirectories = null;
 
             switch (Language)
             {

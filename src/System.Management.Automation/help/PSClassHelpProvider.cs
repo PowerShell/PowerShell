@@ -80,7 +80,7 @@ namespace System.Management.Automation
             else
                 patternList.Add(target);
 
-            bool useWildCards = true;
+            const bool useWildCards = true;
 
             foreach (string pattern in patternList)
             {
@@ -109,7 +109,7 @@ namespace System.Management.Automation
             }
 
             string target = helpRequest.Target;
-            bool useWildCards = false;
+            const bool useWildCards = false;
 
             PSClassSearcher searcher = new PSClassSearcher(target, useWildCards, _context);
 

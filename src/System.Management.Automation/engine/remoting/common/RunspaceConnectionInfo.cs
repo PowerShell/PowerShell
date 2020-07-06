@@ -2053,7 +2053,7 @@ namespace System.Management.Automation.Runspaces
 #if UNIX
             string sshCommand = "ssh";
 #else
-            string sshCommand = "ssh.exe";
+            const string sshCommand = "ssh.exe";
 #endif
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
@@ -2627,7 +2627,7 @@ namespace System.Management.Automation.Runspaces
         private static SafePipeHandle GetNamedPipeHandle(string pipeName)
         {
             // Create pipe flags for asynchronous pipes.
-            uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
+            const uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
 
             // We want an inheritable handle.
             PlatformInvokes.SECURITY_ATTRIBUTES securityAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();

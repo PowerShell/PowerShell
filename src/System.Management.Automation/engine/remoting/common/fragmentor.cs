@@ -205,10 +205,10 @@ namespace System.Management.Automation.Remoting
         /// </returns>
         internal byte[] GetBytes()
         {
-            int objectIdSize = 8; // number of bytes of long
-            int fragmentIdSize = 8; // number of bytes of long
-            int flagsSize = 1; // 1 byte for IsEndOfFrag and IsControl
-            int blobLengthSize = 4; // number of bytes of int
+            const int objectIdSize = 8; // number of bytes of long
+            const int fragmentIdSize = 8; // number of bytes of long
+            const int flagsSize = 1; // 1 byte for IsEndOfFrag and IsControl
+            const int blobLengthSize = 4; // number of bytes of int
 
             int totalLength = objectIdSize + fragmentIdSize + flagsSize + blobLengthSize + BlobLength;
 

@@ -161,7 +161,7 @@ namespace System.Management.Automation.Runspaces
 
         public override int Write(object obj)
         {
-            int numberOfObjectsWritten = 1;
+            const int numberOfObjectsWritten = 1;
             _count += numberOfObjectsWritten;
             return numberOfObjectsWritten;
         }

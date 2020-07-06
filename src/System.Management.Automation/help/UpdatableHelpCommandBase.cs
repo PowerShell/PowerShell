@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Match wildcards
-            WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
+            const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
             IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { moduleNamePattern }, wildcardOptions);
 
             foreach (KeyValuePair<string, string> name in s_metadataCache)

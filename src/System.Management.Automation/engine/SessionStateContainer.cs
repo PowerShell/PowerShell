@@ -4796,7 +4796,7 @@ namespace System.Management.Automation
                 if (languageMode.HasValue &&
                     (languageMode.Value == PSLanguageMode.ConstrainedLanguage || languageMode.Value == PSLanguageMode.NoLanguage))
                 {
-                    var psRemoteUtilsName = CopyFileRemoteUtils.PSCopyRemoteUtilsName;
+                    const string psRemoteUtilsName = CopyFileRemoteUtils.PSCopyRemoteUtilsName;
                     ps.Runspace = session.Runspace;
                     ps.AddCommand("Get-Command").AddArgument(psRemoteUtilsName);
                     var result = ps.Invoke<bool>();
@@ -4826,7 +4826,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    string remoteScript = CopyFileRemoteUtils.PSValidatePathDefinition;
+                    const string remoteScript = CopyFileRemoteUtils.PSValidatePathDefinition;
                     ps.AddScript(remoteScript);
                 }
 

@@ -4110,7 +4110,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // This shouldn't be localized as it will break scripts
 
-            string defaultValueName = "(default)";
+            const string defaultValueName = "(default)";
             return defaultValueName;
         }
 

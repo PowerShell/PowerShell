@@ -1734,7 +1734,7 @@ namespace System.Management.Automation
         {
             bool yesToAll = false;
             bool noToAll = false;
-            bool hasSecurityImpact = false;
+            const bool hasSecurityImpact = false;
             return DoShouldContinue(query, caption, hasSecurityImpact, false, ref yesToAll, ref noToAll);
         }
 

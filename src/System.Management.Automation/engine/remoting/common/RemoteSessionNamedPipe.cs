@@ -1303,7 +1303,7 @@ namespace System.Management.Automation.Remoting
         protected override NamedPipeClientStream DoConnect(int timeout)
         {
             // Create pipe flags.
-            uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
+            const uint pipeFlags = NamedPipeNative.FILE_FLAG_OVERLAPPED;
 
             //
             // WaitNamedPipe API is not supported by Windows Server container now, so we need to repeatedly

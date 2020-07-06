@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Commands
             return;
 #else
             bool notSupported = true;
-            string WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
+            const string WSManKeyPath = "Software\\Microsoft\\Windows\\CurrentVersion\\WSMAN\\";
 
             CheckHostRemotingPrerequisites();
 

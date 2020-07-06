@@ -181,7 +181,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 // we assume that the format context
                 // contains the information
-                FormatShape shape = FormatShape.Table; // default
+                const FormatShape shape = FormatShape.Table; // default
                 FormatOutputContext foc = this.FormatContext;
 
                 if (foc == null || foc.Data.shapeInfo == null)

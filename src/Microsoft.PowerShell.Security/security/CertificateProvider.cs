@@ -636,7 +636,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (s_certPathRegex == null)
                     {
-                        RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled;
+                        const RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled;
                         s_certPathRegex = new Regex(certPathPattern, options);
                     }
                 }
@@ -723,7 +723,7 @@ namespace Microsoft.PowerShell.Commands
                  string.Equals(pathElements[1], "ROOT", StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.UINotAllowed;
-                string errorId = "UINotAllowed";
+                const string errorId = "UINotAllowed";
                 ThrowInvalidOperation(errorId, message);
             }
 
@@ -748,7 +748,7 @@ namespace Microsoft.PowerShell.Commands
                     if (fUserContext)
                     {
                         string message = CertificateProviderStrings.CannotDeleteUserStore;
-                        string errorId = "CannotDeleteUserStore";
+                        const string errorId = "CannotDeleteUserStore";
                         ThrowInvalidOperation(errorId, message);
                     }
 
@@ -758,7 +758,7 @@ namespace Microsoft.PowerShell.Commands
                 else // other container than a store
                 {
                     string message = CertificateProviderStrings.CannotRemoveContainer;
-                    string errorId = "CannotRemoveContainer";
+                    const string errorId = "CannotRemoveContainer";
                     ThrowInvalidOperation(errorId, message);
                 }
             }
@@ -830,7 +830,7 @@ namespace Microsoft.PowerShell.Commands
             if (isContainer)
             {
                 string message = CertificateProviderStrings.CannotMoveContainer;
-                string errorId = "CannotMoveContainer";
+                const string errorId = "CannotMoveContainer";
                 ThrowInvalidOperation(errorId, message);
             }
 
@@ -847,7 +847,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                 {
                     string message = CertificateProviderStrings.InvalidDestStore;
-                    string errorId = "InvalidDestStore";
+                    const string errorId = "InvalidDestStore";
                     ThrowInvalidOperation(errorId, message);
                 }
             }
@@ -859,14 +859,14 @@ namespace Microsoft.PowerShell.Commands
             if (!string.Equals(pathElements[0], destElements[0], StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.CannotMoveCrossContext;
-                string errorId = "CannotMoveCrossContext";
+                const string errorId = "CannotMoveCrossContext";
                 ThrowInvalidOperation(errorId, message);
             }
 
             if (string.Equals(pathElements[1], destElements[1], StringComparison.OrdinalIgnoreCase))
             {
                 string message = CertificateProviderStrings.CannotMoveToSameStore;
-                string errorId = "CannotMoveToSameStore";
+                const string errorId = "CannotMoveToSameStore";
                 ThrowInvalidOperation(errorId, message);
             }
 
@@ -880,7 +880,7 @@ namespace Microsoft.PowerShell.Commands
                      string.Equals(destElements[1], "ROOT", StringComparison.OrdinalIgnoreCase)))
                 {
                     string message = CertificateProviderStrings.UINotAllowed;
-                    string errorId = "UINotAllowed";
+                    const string errorId = "UINotAllowed";
                     ThrowInvalidOperation(errorId, message);
                 }
             }
@@ -964,7 +964,7 @@ namespace Microsoft.PowerShell.Commands
             if (pathElements.Length != 2)
             {
                 string message = CertificateProviderStrings.CannotCreateItem;
-                string errorId = "CannotCreateItem";
+                const string errorId = "CannotCreateItem";
                 ThrowInvalidOperation(errorId, message);
             }
 
@@ -974,11 +974,11 @@ namespace Microsoft.PowerShell.Commands
             if (fUserContext)
             {
                 string message = CertificateProviderStrings.CannotCreateUserStore;
-                string errorId = "CannotCreateUserStore";
+                const string errorId = "CannotCreateUserStore";
                 ThrowInvalidOperation(errorId, message);
             }
 
-            Security.NativeMethods.CertOpenStoreFlags StoreFlags =
+            const Security.NativeMethods.CertOpenStoreFlags StoreFlags =
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_CREATE_NEW_FLAG |
                     Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_MAXIMUM_ALLOWED_FLAG |
                     Security.NativeMethods.CertOpenStoreFlags.CERT_SYSTEM_STORE_LOCAL_MACHINE;
@@ -1418,7 +1418,7 @@ namespace Microsoft.PowerShell.Commands
         {
             path = NormalizePath(path);
             string action = CertificateProviderStrings.Action_Invoke;
-            string certmgr = "certmgr.msc";
+            const string certmgr = "certmgr.msc";
             string certPath = System.IO.Path.Combine(
                 System.Environment.ExpandEnvironmentVariables("%windir%"), "system32");
 
@@ -1778,7 +1778,7 @@ namespace Microsoft.PowerShell.Commands
                     certContext = store.GetNextCert(certContext);
                 }
                 // remove the cert store
-                Security.NativeMethods.CertOpenStoreFlags StoreFlags =
+                const Security.NativeMethods.CertOpenStoreFlags StoreFlags =
                         Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_READONLY_FLAG |
                         Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_OPEN_EXISTING_FLAG |
                         Security.NativeMethods.CertOpenStoreFlags.CERT_STORE_DEFER_CLOSE_UNTIL_LAST_FREE_FLAG |
@@ -1799,7 +1799,7 @@ namespace Microsoft.PowerShell.Commands
                                         CultureInfo.CurrentCulture,
                                         CertificateProviderStrings.RemoveStoreTemplate,
                                         storeName);
-                string errorId = "CannotRemoveSystemStore";
+                const string errorId = "CannotRemoveSystemStore";
                 ThrowInvalidOperation(errorId, message);
             }
         }
@@ -2834,7 +2834,7 @@ namespace Microsoft.PowerShell.Commands
                     OidCollection enhancedKeyUsages = eku.EnhancedKeyUsages;
                     foreach (WildcardPattern ekuPattern in ekuPatterns)
                     {
-                        bool patternPassed = false;
+                        const bool patternPassed = false;
                         foreach (var usage in enhancedKeyUsages)
                         {
                             if (ekuPattern.IsMatch(usage.Value) || ekuPattern.IsMatch(usage.FriendlyName))

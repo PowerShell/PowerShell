@@ -234,7 +234,7 @@ namespace Microsoft.WSMan.Management
             GPO.OpenLocalMachineGPO(1);
             KeyHandle = GPO.GetRegistryKey(2);
             RegistryKey rootKey = Registry.CurrentUser;
-            string GPOpath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects";
+            const string GPOpath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects";
             RegistryKey GPOKey = rootKey.OpenSubKey(GPOpath, true);
             foreach (string keyname in GPOKey.GetSubKeyNames())
             {
@@ -515,7 +515,7 @@ namespace Microsoft.WSMan.Management
                     return;
                 }
 
-                string newxmlcontent = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>";
+                const string newxmlcontent = @"<cfg:Auth xmlns:cfg=""http://schemas.microsoft.com/wbem/wsman/1/config/client/auth""><cfg:CredSSP>true</cfg:CredSSP></cfg:Auth>";
                 try
                 {
                     XmlDocument xmldoc = new XmlDocument();
@@ -633,7 +633,7 @@ namespace Microsoft.WSMan.Management
             GPO.OpenLocalMachineGPO(1);
             KeyHandle = GPO.GetRegistryKey(2);
             RegistryKey rootKey = Registry.CurrentUser;
-            string GPOpath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects";
+            const string GPOpath = @"SOFTWARE\Microsoft\Windows\CurrentVersion\Group Policy Objects";
             RegistryKey GPOKey = rootKey.OpenSubKey(GPOpath, true);
             foreach (string keyname in GPOKey.GetSubKeyNames())
             {
@@ -834,7 +834,7 @@ namespace Microsoft.WSMan.Management
                 }
                 // The application name MUST be "wsman" as wsman got approval from security
                 // folks who suggested to register the SPN with name "wsman".
-                string applicationname = "wsman";
+                const string applicationname = "wsman";
                 string credsspResult = GetDelegateSettings(applicationname);
                 if (string.IsNullOrEmpty(credsspResult))
                 {

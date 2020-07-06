@@ -521,7 +521,7 @@ namespace System.Management.Automation.Remoting
             // In debug builds, allow remote runspaces to wait for debugger attach
             if (Environment.GetEnvironmentVariable("__PSRemoteRunspaceWaitForDebugger", EnvironmentVariableTarget.Machine) != null)
             {
-                bool debuggerAttached = false;
+                const bool debuggerAttached = false;
                 while (!debuggerAttached)
                 {
                     System.Threading.Thread.Sleep(100);

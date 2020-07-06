@@ -92,7 +92,7 @@ namespace System.Management.Automation.Remoting
             Dbg.Assert(parameters != null, "Expected parameters != null");
 
             // Use void call ID so that the call is known to not have a return value.
-            long callId = ServerDispatchTable.VoidCallId;
+            const long callId = ServerDispatchTable.VoidCallId;
             RemoteHostCall remoteHostCall = new RemoteHostCall(callId, methodId, parameters);
 
             // Dispatch the call but don't wait for response since the return value is void.

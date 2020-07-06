@@ -1198,7 +1198,7 @@ namespace System.Management.Automation
             {
                 // If Reason is of not type IContainsErrorRecord, a new ErrorRecord is
                 // created using this errorId
-                string errorId = "RemoteRunspaceStateInfoReason";
+                const string errorId = "RemoteRunspaceStateInfoReason";
                 PSNoteProperty exceptionProperty = GetExceptionProperty(stateInfo.Reason, errorId, ErrorCategory.NotSpecified);
                 dataAsPSObject.Properties.Add(exceptionProperty);
             }
@@ -1517,7 +1517,7 @@ namespace System.Management.Automation
             {
                 // If Reason is of not type IContainsErrorRecord,
                 // a new ErrorRecord is created using this errorId
-                string errorId = "RemotePSInvocationStateInfoReason";
+                const string errorId = "RemotePSInvocationStateInfoReason";
                 PSNoteProperty exceptionProperty =
                     GetExceptionProperty(stateInfo.Reason, errorId,
                         ErrorCategory.NotSpecified);

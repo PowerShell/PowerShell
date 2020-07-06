@@ -586,7 +586,7 @@ namespace System.Management.Automation.Help
 
             if (!string.IsNullOrEmpty(currentCulture))
             {
-                WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
+                const WildcardOptions wildcardOptions = WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant;
                 IEnumerable<WildcardPattern> patternList = SessionStateUtilities.CreateWildcardsFromStrings(new string[1] { currentCulture }, wildcardOptions);
 
                 for (int i = 0; i < updatableHelpItem.Length; i++)
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation.Help
 
                         Debug.Assert(helpItemsNode != null, "helpItemsNode must not be null");
 
-                        string targetNamespace = "http://schemas.microsoft.com/maml/2004/10";
+                        const string targetNamespace = "http://schemas.microsoft.com/maml/2004/10";
 
                         foreach (XmlNode node in helpItemsNode.ChildNodes)
                         {

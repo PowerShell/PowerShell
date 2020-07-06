@@ -346,7 +346,7 @@ namespace Microsoft.PowerShell.Commands
         {
             int idleTimeout = session.Runspace.ConnectionInfo.IdleTimeout;
             int maxIdleTimeout = session.Runspace.ConnectionInfo.MaxIdleTimeout;
-            int minIdleTimeout = BaseTransportManager.MinimumIdleTimeout;
+            const int minIdleTimeout = BaseTransportManager.MinimumIdleTimeout;
 
             if (idleTimeout != BaseTransportManager.UseServerDefaultIdleTimeout &&
                 (idleTimeout > maxIdleTimeout || idleTimeout < minIdleTimeout))

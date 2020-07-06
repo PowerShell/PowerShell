@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             using (this.StackFrame(rowEntryNode, index))
             {
                 bool appliesToNodeFound = false;    // cardinality 0..1
-                bool columnEntriesNodeFound = false;         // cardinality 1
+                const bool columnEntriesNodeFound = false;         // cardinality 1
                 bool multiLineFound = false;    // cardinality 0..1
 
                 TableRowDefinition trd = new TableRowDefinition();

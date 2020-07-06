@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell
         {
             nodesCompressed = 0;
 
-            int age = 0;
+            const int age = 0;
 
             while (true)
             {
