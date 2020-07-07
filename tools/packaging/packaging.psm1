@@ -1646,7 +1646,7 @@ function New-ZipPackage
             {
                 # We use rcedit to change the icon. If we don't have it, download it.
                 $rceditPath = "$PSScriptRoot\.rcedit\rcedit-x64.exe"
-                if (!(Test-Path $rceditPath))
+                if (-not (Test-Path $rceditPath))
                 {
                     Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
                     $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
