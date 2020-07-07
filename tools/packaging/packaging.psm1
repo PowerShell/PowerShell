@@ -1641,6 +1641,24 @@ function New-ZipPackage
             $staging = "$PSScriptRoot/staging"
             New-StagingFolder -StagingPath $staging -PackageSourcePath $PackageSourcePath
 
+            # If we're building a daily build for Windows, we need to change the icon.
+            if ((Test-Path "$staging\pwsh.exe") -and $ProductSemanticVersion -match "daily")
+            {
+                # We use rcedit to change the icon. If we don't have it, download it.
+                $rceditPath = "$PSScriptRoot\.rcedit\rcedit-x64.exe"
+                if (!(Test-Path $rceditPath))
+                {
+                    Write-Verbose "Install RCEdit for modifying exe resources" -Verbose
+                    $rceditUrl = "https://github.com/electron/rcedit/releases/download/v1.1.1/rcedit-x64.exe"
+                    $null = New-Item -Path "$PSScriptRoot\.rcedit" -Type Directory -Force -ErrorAction SilentlyContinue
+                    Invoke-WebRequest -OutFile $rceditPath -Uri $rceditUrl
+                }
+
+                Write-Verbose "Change icon to disambiguate it from a released installation" -Verbose
+                $icoPath = Resolve-Path "$PSScriptRoot\..\..\assets\Powershell_avatar.ico"
+                & $rceditPath "$PSScriptRoot\staging\pwsh.exe" --set-icon $icoPath.Path
+            }
+
             Get-ChildItem $staging -Filter *.pdb -Recurse | Remove-Item -Force
 
             Compress-Archive -Path $staging\* -DestinationPath $zipLocationPath
