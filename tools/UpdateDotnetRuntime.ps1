@@ -159,7 +159,7 @@ function Get-DotnetUpdate {
 
 function Update-DevContainer {
     $dockerFilePath = "$PSScriptRoot/../.devcontainer/Dockerfile"
-    $sdkImageVersion = (Get-Content "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.sdkImageVersion
+    $sdkImageVersion = (Get-Content -Raw "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.sdkImageVersion
 
     $devContainerDocker = (Get-Content $dockerFilePath) -replace 'FROM mcr\.microsoft\.com/dotnet.*', "FROM mcr.microsoft.com/dotnet/nightly/sdk:$sdkImageVersion"
 
