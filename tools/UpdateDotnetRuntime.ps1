@@ -157,6 +157,15 @@ function Get-DotnetUpdate {
     }
 }
 
+function Update-DevContainer {
+    $dockerFilePath = "$PSScriptRoot/../.devcontainer/Dockerfile"
+    $sdkImageVersion = (Get-Content -Raw "$PSScriptRoot/../DotnetRuntimeMetadata.json" | ConvertFrom-Json).sdk.sdkImageVersion
+
+    $devContainerDocker = (Get-Content $dockerFilePath) -replace 'FROM mcr\.microsoft\.com/dotnet.*', "FROM mcr.microsoft.com/dotnet/nightly/sdk:$sdkImageVersion"
+
+    $devContainerDocker | Out-File -FilePath $dockerFilePath -Force
+}
+
 $dotnetUpdate = Get-DotnetUpdate
 
 if ($dotnetUpdate.ShouldUpdate) {
@@ -228,4 +237,6 @@ if ($dotnetUpdate.ShouldUpdate) {
             }
         }
     }
+
+    Update-DevContainer
 }
