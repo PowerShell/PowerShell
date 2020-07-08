@@ -2996,21 +2996,6 @@ function New-MSIPackage
 
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
-    [Environment]::SetEnvironmentVariable("ProductSourcePath", $staging, "Process")
-    # These variables are used by Product.wxs in assets directory
-    [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
-    [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
-    [Environment]::SetEnvironmentVariable("SimpleProductVersion", $simpleProductVersion, "Process")
-    [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
-    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
-    if (!$isPreview)
-    {
-        [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_black.ico', "Process")
-    }
-    else
-    {
-        [Environment]::SetEnvironmentVariable("IconPath", 'assets\Powershell_av_colors.ico', "Process")
-    }
     $fileArchitecture = 'amd64'
     $ProductProgFilesDir = "ProgramFiles64Folder"
     if ($ProductTargetArchitecture -eq "x86")
@@ -3018,17 +3003,11 @@ function New-MSIPackage
         $fileArchitecture = 'x86'
         $ProductProgFilesDir = "ProgramFilesFolder"
     }
-    [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
-    [Environment]::SetEnvironmentVariable("FileArchitecture", $fileArchitecture, "Process")
 
     $wixFragmentPath = Join-Path $env:Temp "Fragment.wxs"
-    $wixObjProductPath = Join-Path $env:Temp "Product.wixobj"
-    $wixObjFragmentPath = Join-Path $env:Temp "files.wixobj"
 
     # cleanup any garbage on the system
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
     $packageName = $productSemanticVersionWithName
     if ($ProductNameSuffix) {
@@ -3062,17 +3041,19 @@ function New-MSIPackage
         Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
     }
 
-    Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  "$ProductWxsPath"  "$FilesWxsPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch $ProductTargetArchitecture -dIsPreview="$isPreview" -v}
-
-    Write-Log "running light..."
-    # suppress ICE61, because we allow same version upgrades
-    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
-    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension }
+    Start-MsiBuild -WxsFile $ProductWxsPath, $FilesWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
+            isPreview=$isPreview
+            ProductSourcePath=$staging
+            ProductName=$ProductName
+            ProductVersion=$ProductVersion
+            SimpleProductVersion=$simpleProductVersion
+            ProductSemanticVersion=$ProductSemanticVersion
+            ProductVersionWithName=$productVersionWithName
+            ProductProgFilesDir=$ProductProgFilesDir
+            FileArchitecture=$fileArchitecture
+        } -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjProductPath -Force
-    Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
 
     if ((Test-Path $msiLocationPath) -and (Test-Path $msiPdbLocationPath))
     {
@@ -3087,6 +3068,61 @@ function New-MSIPackage
     {
         $errorMessage = "Failed to create $msiLocationPath"
         throw $errorMessage
+    }
+}
+
+function Start-MsiBuild {
+    param(
+        [string[]] $WxsFile,
+        [string[]] $Extension = @('WixUIExtension', 'WixUtilExtension'),
+        [string] $ProductTargetArchitecture,
+        [Hashtable] $Argument,
+        [string] $MsiLocationPath,
+        [string] $MsiPdbLocationPath
+    )
+
+    $outDir = Join-Path "$env:Temp" "\\"
+
+    $wixPaths = Get-WixPath
+
+    $extensionArgs = @()
+    foreach($extensionName in $Extension)
+    {
+        $extensionArgs += '-ext'
+        $extensionArgs += $extensionName
+    }
+
+    $buildArguments = @()
+    foreach($key in $Argument.Keys)
+    {
+        $buildArguments+= "-d$key=`"$($Argument.$key)`""
+    }
+
+    $objectPaths = @()
+    foreach($file in $WxsFile)
+    {
+        $fileName = Split-Path -Leaf -Path $file
+        $objectPaths += Join-Path $outDir -ChildPath "${filename}obj"
+    }
+
+    foreach($file in $objectPaths)
+    {
+        Remove-Item -ErrorAction SilentlyContinue $file -Force
+        Remove-Item -ErrorAction SilentlyContinue $file -Force
+    }
+
+    Write-Log "running candle..."
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  $WxsFile -out $outDir $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
+
+    Write-Log "running light..."
+    # suppress ICE61, because we allow same version upgrades
+    # suppress ICE57, this suppresses an error caused by our shortcut not being installed per user
+    Start-NativeExecution -VerboseOutputOnError {& $wixPaths.wixLightExePath -sice:ICE61 -sice:ICE57 -out $msiLocationPath -pdbout $msiPdbLocationPath $objectPaths $extensionArgs }
+
+    foreach($file in $objectPaths)
+    {
+        Remove-Item -ErrorAction SilentlyContinue $file -Force
+        Remove-Item -ErrorAction SilentlyContinue $file -Force
     }
 }
 
