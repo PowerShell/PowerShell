@@ -426,7 +426,6 @@ namespace Microsoft.PowerShell
                         }
                     }
                 }
-
             }
 #if UNIX
             catch (InvalidOperationException)
@@ -1849,7 +1848,6 @@ namespace Microsoft.PowerShell
 #endif
             }
 
-
             Dbg.Assert(
                        (s == null && result == ReadLineResult.endedOnBreak)
                        || (s != null && result != ReadLineResult.endedOnBreak),
@@ -2081,7 +2079,6 @@ namespace Microsoft.PowerShell
                 }
 #endif
             }
-
 
             // Since we did not transcribe any call to ReadLine, transcribe the results here.
 

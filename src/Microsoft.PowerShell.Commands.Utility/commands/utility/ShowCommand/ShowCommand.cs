@@ -452,7 +452,6 @@ namespace Microsoft.PowerShell.Commands
                 _showCommandProxy.ImportModuleDone(_importedModules, _commands);
                 continue;
             }
-
         }
 
         /// <summary>

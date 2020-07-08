@@ -381,7 +381,6 @@ namespace System.Management.Automation.Remoting.Server
                     ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
 #endif
                 }
-
             }
             catch (Exception e)
             {

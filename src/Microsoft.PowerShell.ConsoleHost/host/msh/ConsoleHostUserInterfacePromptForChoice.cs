@@ -141,7 +141,6 @@ namespace Microsoft.PowerShell
                     // their input matched none of the choices, so prompt again
                 }
 
-
                 return result;
             }
         }
@@ -286,7 +285,6 @@ namespace Microsoft.PowerShell
                     }
                     // prompt for multiple choices
                 }
-
 
                 return result;
             }
