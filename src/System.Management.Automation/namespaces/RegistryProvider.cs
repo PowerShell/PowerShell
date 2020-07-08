@@ -1517,7 +1517,7 @@ namespace Microsoft.PowerShell.Commands
 
             bool result = false;
 
-            do
+            while (true)
             {
                 // See if the paths are equal
 
@@ -1550,7 +1550,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 destinationPath = newDestinationPath;
-            } while (true);
+            }
 
             if (result)
             {

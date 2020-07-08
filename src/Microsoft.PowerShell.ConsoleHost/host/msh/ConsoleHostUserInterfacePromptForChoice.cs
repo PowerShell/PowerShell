@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell
                     defaultChoiceKeys.Add(defaultChoice, true);
                 }
 
-                do
+                while (true)
                 {
                     WriteChoicePrompt(hotkeysAndPlainLabels, defaultChoiceKeys, false);
 
@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell
 
                     // their input matched none of the choices, so prompt again
                 }
-                while (true);
+
 
                 return result;
             }
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell
 
                 // used to display ChoiceMessage like Choice[0],Choice[1] etc
                 int choicesSelected = 0;
-                do
+                while (true)
                 {
                     // write the current prompt
                     string choiceMsg = StringUtil.Format(ConsoleHostUserInterfaceStrings.ChoiceMessage, choicesSelected);
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell
                     }
                     // prompt for multiple choices
                 }
-                while (true);
+
 
                 return result;
             }

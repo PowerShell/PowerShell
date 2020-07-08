@@ -42,7 +42,7 @@ namespace System.Management.Automation.Internal
             string result;
             int i = Math.Min(toTruncate.Length, maxWidthInBufferCells);
 
-            do
+            while (true)
             {
                 result = toTruncate.Substring(0, i);
                 int cellCount = rawUI.LengthInBufferCells(result);
@@ -59,7 +59,7 @@ namespace System.Management.Automation.Internal
                     // be characters taking more 2 buffer cells
                     --i;
                 }
-            } while (true);
+            }
 
             return result;
         }

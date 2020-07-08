@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell
 
                 Coordinates originalCursorPos = _rawui.CursorPosition;
 
-                do
+                while (true)
                 {
                     //
                     // read one char at a time so that we don't
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell
                         }
                     }
                 }
-                while (true);
+
             }
 #if UNIX
             catch (InvalidOperationException)
@@ -1149,7 +1149,7 @@ namespace Microsoft.PowerShell
                     w.Flags = WordFlags.IsWhitespace;
                 }
 
-                do
+                while (true)
                 {
                     w.Text = text.Substring(startIndex, i - startIndex);
                     w.CellCount = RawUI.LengthInBufferCells(w.Text);
@@ -1165,7 +1165,7 @@ namespace Microsoft.PowerShell
 
                         --i;
                     }
-                } while (true);
+                }
 
                 Dbg.Assert(RawUI.LengthInBufferCells(w.Text) <= maxWidthInBufferCells, "word should not exceed max");
                 result.Add(w);
@@ -1621,7 +1621,7 @@ namespace Microsoft.PowerShell
             }
 
 #endif
-            do
+            while (true)
             {
 #if UNIX
                     keyInfo = Console.ReadKey(true);
@@ -1848,7 +1848,7 @@ namespace Microsoft.PowerShell
                     Console.CursorLeft = cursorCurrent + 1;
 #endif
             }
-            while (true);
+
 
             Dbg.Assert(
                        (s == null && result == ReadLineResult.endedOnBreak)
@@ -1949,7 +1949,7 @@ namespace Microsoft.PowerShell
             string completionInput = null;
 #endif
 
-            do
+            while (true)
             {
                 if (TryInvokeUserDefinedReadLine(out input))
                 {
@@ -2081,7 +2081,7 @@ namespace Microsoft.PowerShell
                 }
 #endif
             }
-            while (true);
+
 
             // Since we did not transcribe any call to ReadLine, transcribe the results here.
 

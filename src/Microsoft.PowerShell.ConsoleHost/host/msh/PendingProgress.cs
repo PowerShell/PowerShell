@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell
             ProgressNode result = null;
             ArrayList treeToSearch = _topLevelNodes;
 
-            do
+            while (true)
             {
                 result = FindOldestLeafmostNodeHelper(treeToSearch, out listWhereFound, out indexWhereFound);
                 if (result == null || result.Children == null || result.Children.Count == 0)
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell
                 // search the subtree for the oldest child
 
                 treeToSearch = result.Children;
-            } while (true);
+            }
 
             return result;
         }
@@ -838,7 +838,7 @@ namespace Microsoft.PowerShell
 
             int age = 0;
 
-            do
+            while (true)
             {
                 ProgressNode node = FindOldestNodeOfGivenStyle(_topLevelNodes, age, priorStyle);
                 if (node == null)
@@ -854,7 +854,7 @@ namespace Microsoft.PowerShell
                 {
                     return true;
                 }
-            } while (true);
+            }
 
             // If we get all the way to here, then we've compressed all the nodes and we still don't fit.
 

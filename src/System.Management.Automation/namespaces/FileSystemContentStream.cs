@@ -1382,7 +1382,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            do
+            while (true)
             {
                 while (_charCount > 0)
                 {
@@ -1403,7 +1403,7 @@ namespace Microsoft.PowerShell.Commands
                     line.Remove(line.Length - charsToRemove, charsToRemove);
                     return line.ToString();
                 }
-            } while (true);
+            }
         }
 
         /// <summary>
