@@ -442,9 +442,6 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             get
             {
-                // Ensure the read of _disposed doesn't move up before the write in the Dispose method.
-                Interlocked.MemoryBarrier();
-
                 return this._disposed == 1;
             }
         }
