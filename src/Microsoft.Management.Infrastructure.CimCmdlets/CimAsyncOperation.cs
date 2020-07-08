@@ -33,6 +33,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.moreActionEvent = new ManualResetEventSlim(false);
             this.actionQueue = new ConcurrentQueue<CimBaseAction>();
+            this._disposed = 0;
             this.operationCount = 0;
         }
 
