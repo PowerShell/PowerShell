@@ -186,6 +186,13 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Quiet;
 
         /// <summary>
+        /// Gets or sets whether to enable detailed output mode while running a TCP connection test.
+        /// Without this flag, the TCP test will return a boolean result.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter Detailed;
+
+        /// <summary>
         /// Gets or sets the timeout value for an individual ping in seconds.
         /// If a response is not received in this time, no response is assumed.
         /// The default (from Windows) is 5 seconds.
