@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
 
         // Count of pings sent to each trace route hop. Default mimics Windows' defaults.
         // If this value changes, we need to update 'ConsoleTraceRouteReply' resource string.
-        private const int DefaultTraceRoutePingCount = 3;
+        private const uint DefaultTraceRoutePingCount = 3;
 
         // Default size for the send buffer.
         private const int DefaultSendBufferSize = 32;
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
-                for (int i = 1; i <= DefaultTraceRoutePingCount; i++)
+                for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
                     try
                     {
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                         reply,
                         reply.RoundtripTime,
                         buffer.Length,
-                        pingNum: i));
+                        pingNum: (uint)i));
                 }
 
                 // Delay between pings, but not after last ping.
