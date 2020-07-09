@@ -3118,8 +3118,8 @@ function Start-MsiBuild {
 
     $objectPaths = @()
     foreach ($file in $WxsFile) {
-        $fileName = Split-Path -Leaf -Path $file
-        $objectPaths += Join-Path $outDir -ChildPath "${filename}obj"
+        $fileName = [system.io.path]::GetFileNameWithoutExtension($file)
+        $objectPaths += Join-Path $outDir -ChildPath "${filename}.wixobj"
     }
 
     foreach ($file in $objectPaths) {
