@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // In traceroutes we don't use 'Count' parameter.
                 // If we change 'DefaultTraceRoutePingCount' we should change 'ConsoleTraceRouteReply' resource string.
-                for (uint i = 1; i <= DefaultTraceRoutePingCount; i++)
+                for (int i = 1; i <= DefaultTraceRoutePingCount; i++)
                 {
                     try
                     {
@@ -608,7 +608,7 @@ namespace Microsoft.PowerShell.Commands
             int timeout = TimeoutSeconds * 1000;
             int delay = Delay * 1000;
 
-            for (uint i = 1; i <= Count; i++)
+            for (int i = 1; i <= Count; i++)
             {
                 try
                 {
