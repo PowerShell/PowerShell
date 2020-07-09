@@ -97,7 +97,6 @@
 
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>preview</LangVersion>
-    <PublishReadyToRun Condition=" '$(Configuration)' != 'Debug' ">true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
