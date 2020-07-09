@@ -3036,7 +3036,7 @@ function New-MSIPackage
 
     $buildArguments = New-MsiArgsArray -Argment $arguments
 
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath $buildArguments -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var var.ProductSourcePath $buildArguments -v}
 
     # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
@@ -3114,6 +3114,8 @@ function Start-MsiBuild {
     {
         $buildArguments+= "-d$key=`"$($Argument.$key)`""
     }
+
+    $buildArguments | Out-String | Write-Verbose -Verbose
 
     $objectPaths = @()
     foreach($file in $WxsFile)
