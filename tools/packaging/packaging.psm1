@@ -3127,14 +3127,15 @@ function Start-MsiBuild {
         Remove-Item -ErrorAction SilentlyContinue $file -Force
     }
 
+    $resolvedWxsFiles = @()
     foreach ($file in $WxsFile) {
-        if (!(Test-Path -Path $file)) {
-            throw "$file not found"
-        }
+        $resolvedWxsFiles += (Resolve-Path -Path $file).ProviderPath
     }
 
+    Write-Verbose "$resolvedWxsFiles" -Verbose
+
     Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath  $WxsFile -out $outDir $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out $outDir $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
 
     Write-Log "running light..."
     # suppress ICE61, because we allow same version upgrades
