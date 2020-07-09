@@ -373,16 +373,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (!Detailed.IsPresent)
                 {
-                    if (status == SocketError.Success)
-                    {
-                        WriteObject(true);
-                        return;
-                    }
-                    else if (i == Count)
-                    {
-                        WriteObject(false);
-                        return;
-                    }
+                    WriteObject(status == SocketError.Success)
                 }
                 else
                 {
