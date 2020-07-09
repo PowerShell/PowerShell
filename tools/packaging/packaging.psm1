@@ -3023,7 +3023,7 @@ function New-MSIPackage
 
     Write-Log "verifying no new files have been added or removed..."
     $arguments = @{
-        isPreview=$isPreview
+        IsPreview=$isPreview
         ProductSourcePath=$staging
         ProductName=$ProductName
         ProductVersion=$ProductVersion
