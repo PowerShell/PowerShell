@@ -3022,7 +3022,21 @@ function New-MSIPackage
     }
 
     Write-Log "verifying no new files have been added or removed..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v}
+    $arguments = @{
+        isPreview=$isPreview
+        ProductSourcePath=$staging
+        ProductName=$ProductName
+        ProductVersion=$ProductVersion
+        SimpleProductVersion=$simpleProductVersion
+        ProductSemanticVersion=$ProductSemanticVersion
+        ProductVersionWithName=$productVersionWithName
+        ProductProgFilesDir=$ProductProgFilesDir
+        FileArchitecture=$fileArchitecture
+    }
+
+    $buildArguments = New-MsiArgsArray -Argment $arguments
+
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixHeatExePath dir $staging -dr  VersionFolder -cg ApplicationFiles -ag -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath $buildArguments -v}
 
     # We are verifying that the generated $wixFragmentPath and $FilesWxsPath are functionally the same
     Test-FileWxs -FilesWxsPath $FilesWxsPath -HeatFilesWxsPath $wixFragmentPath
@@ -3041,17 +3055,7 @@ function New-MSIPackage
         Remove-Item -ErrorAction SilentlyContinue $wixObjFragmentPath -Force
     }
 
-    Start-MsiBuild -WxsFile $ProductWxsPath, $FilesWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument @{
-            isPreview=$isPreview
-            ProductSourcePath=$staging
-            ProductName=$ProductName
-            ProductVersion=$ProductVersion
-            SimpleProductVersion=$simpleProductVersion
-            ProductSemanticVersion=$ProductSemanticVersion
-            ProductVersionWithName=$productVersionWithName
-            ProductProgFilesDir=$ProductProgFilesDir
-            FileArchitecture=$fileArchitecture
-        } -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
+    Start-MsiBuild -WxsFile $ProductWxsPath, $FilesWxsPath -ProductTargetArchitecture $ProductTargetArchitecture -Argument $arguments -MsiLocationPath $msiLocationPath -MsiPdbLocationPath $msiPdbLocationPath
 
     Remove-Item -ErrorAction SilentlyContinue $wixFragmentPath -Force
 
@@ -3071,6 +3075,19 @@ function New-MSIPackage
     }
 }
 
+function New-MsiArgsArray{
+    param(
+        [Hashtable]$Argument
+    )
+
+    $buildArguments = @()
+    foreach($key in $Argument.Keys)
+    {
+        $buildArguments+= "-d$key=`"$($Argument.$key)`""
+    }
+
+    return $buildArguments
+}
 function Start-MsiBuild {
     param(
         [string[]] $WxsFile,
