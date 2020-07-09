@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.Commands
                     stopwatch.Reset();
                 }
 
-                if (Quiet.IsPresent)
+                if (!Detailed.IsPresent)
                 {
                     if (status == SocketError.Success)
                     {
