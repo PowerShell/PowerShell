@@ -3023,15 +3023,15 @@ function New-MSIPackage
 
     Write-Log "verifying no new files have been added or removed..."
     $arguments = @{
-        IsPreview=$isPreview
-        ProductSourcePath=$staging
-        ProductName=$ProductName
-        ProductVersion=$ProductVersion
-        SimpleProductVersion=$simpleProductVersion
-        ProductSemanticVersion=$ProductSemanticVersion
-        ProductVersionWithName=$productVersionWithName
-        ProductProgFilesDir=$ProductProgFilesDir
-        FileArchitecture=$fileArchitecture
+        IsPreview              = $isPreview
+        ProductSourcePath      = $staging
+        ProductName            = $ProductName
+        ProductVersion         = $ProductVersion
+        SimpleProductVersion   = $simpleProductVersion
+        ProductSemanticVersion = $ProductSemanticVersion
+        ProductVersionWithName = $productVersionWithName
+        ProductProgFilesDir    = $ProductProgFilesDir
+        FileArchitecture       = $fileArchitecture
     }
 
     $buildArguments = New-MsiArgsArray -Argment $arguments
@@ -3075,19 +3075,19 @@ function New-MSIPackage
     }
 }
 
-function New-MsiArgsArray{
+function New-MsiArgsArray {
     param(
         [Hashtable]$Argument
     )
 
     $buildArguments = @()
-    foreach($key in $Argument.Keys)
-    {
-        $buildArguments+= "-d$key=`"$($Argument.$key)`""
+    foreach ($key in $Argument.Keys) {
+        $buildArguments += "-d$key=`"$($Argument.$key)`""
     }
 
     return $buildArguments
 }
+
 function Start-MsiBuild {
     param(
         [string[]] $WxsFile,
@@ -3103,31 +3103,34 @@ function Start-MsiBuild {
     $wixPaths = Get-WixPath
 
     $extensionArgs = @()
-    foreach($extensionName in $Extension)
-    {
+    foreach ($extensionName in $Extension) {
         $extensionArgs += '-ext'
         $extensionArgs += $extensionName
     }
 
     $buildArguments = @()
-    foreach($key in $Argument.Keys)
-    {
-        $buildArguments+= "-d$key=`"$($Argument.$key)`""
+    foreach ($key in $Argument.Keys) {
+        $buildArguments += "-d$key=`"$($Argument.$key)`""
     }
 
-    $buildArguments | Out-String | Write-Verbose -Verbose
+    $argsString = $buildArguments | Out-String
+    Write-Verbose -Verbose -Message "*** begin Args *** `n $argsString `n *** end args ***"
 
     $objectPaths = @()
-    foreach($file in $WxsFile)
-    {
+    foreach ($file in $WxsFile) {
         $fileName = Split-Path -Leaf -Path $file
         $objectPaths += Join-Path $outDir -ChildPath "${filename}obj"
     }
 
-    foreach($file in $objectPaths)
-    {
+    foreach ($file in $objectPaths) {
         Remove-Item -ErrorAction SilentlyContinue $file -Force
         Remove-Item -ErrorAction SilentlyContinue $file -Force
+    }
+
+    foreach ($file in $WxsFile) {
+        if (!(Test-Path -Path $file)) {
+            throw "$file not found"
+        }
     }
 
     Write-Log "running candle..."
