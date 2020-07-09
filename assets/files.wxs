@@ -686,9 +686,6 @@
       <Component Id="cmpA0F24CD99B1551D92627563E93CC69C0">
         <File Id="fil8C9F81981EE0D89E23A0F34229C279F4" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.PowerShell.ConsoleHost.dll" />
       </Component>
-      <Component Id="cmpA121CF3AEBFDFC8F050A701833744EDC">
-        <File Id="filC698A1716F7E5821974226CE8F89D814" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.DiaSymReader.Native.$(var.FileArchitecture).dll" />
-      </Component>
       <Component Id="cmpC65F6EE65E7395F8683053ECF4C5597A">
         <File Id="fil1E7F567FCFFB88F7850FCB18077243D1" KeyPath="yes" Source="$(var.ProductSourcePath)\api-ms-win-core-handle-l1-1-0.dll" />
       </Component>
@@ -3102,11 +3099,14 @@
       <Component Id="cmp7BDE558CCB344A399134DE2C9E2C8D3D">
         <File Id="filF907AD3E73324DEA94AE90E9625AFA73" KeyPath="yes" Source="$(var.ProductSourcePath)\api-ms-win-core-console-l1-2-0.dll" />
       </Component>
-      <Component Id="cmpE1E7639528734B309511FDEF767420DE" Guid="{28cffd06-864a-4bb1-ba28-c1caf051e79d}">
-        <File Id="fil87341D30746143929DA9777EEDAA7CC7" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.32601.dll" />
-      </Component>
-      <Component Id="cmp0BD7D15E0377407FA4C43BFE89F0C12E" Guid="{73b408fe-e910-4106-ae07-c21bc029f1d3}">
+      <Component Id="cmp0BD7D15E0377407FA4C43BFE89F0C12E">
         <File Id="fil6EF5C2AED8674A32B0F3CCEE9CBEED71" KeyPath="yes" Source="$(var.ProductSourcePath)\System.Formats.Asn1.dll" />
+      </Component>
+      <Component Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D">
+        <File Id="fil8FEEEB3B27DF40148EB85CE6AE1A420B" KeyPath="yes" Source="$(var.ProductSourcePath)\Microsoft.DiaSymReader.Native.$(var.FileArchitecture).dll" />
+      </Component>
+      <Component Id="cmp8748A4997DE943ED89DD2BD6857CBD9D">
+        <File Id="filB58564890E2E4613BE329374BD67BB92" KeyPath="yes" Source="$(var.ProductSourcePath)\mscordaccore_$(var.FileArchitecture)_$(var.FileArchitecture)_5.0.20.32601.dll" />
       </Component>
     </DirectoryRef>
   </Fragment>
@@ -3340,7 +3340,6 @@
       <ComponentRef Id="cmp96749B04C9D0B48A5CC24A8429A55B11" />
       <ComponentRef Id="cmp720268936DAFEB403249538726C7A0D9" />
       <ComponentRef Id="cmpA0F24CD99B1551D92627563E93CC69C0" />
-      <ComponentRef Id="cmpA121CF3AEBFDFC8F050A701833744EDC" />
       <ComponentRef Id="cmpC65F6EE65E7395F8683053ECF4C5597A" />
       <ComponentRef Id="cmpBA74BDCF772CB3A06B99296F5AF3F5D1" />
       <ComponentRef Id="cmpEE95B532571A9267B39D72710F1E5E4D" />
@@ -4107,9 +4106,10 @@
       <ComponentRef Id="cmpE9599A00802144DF98F5792E029C8875" />
       <ComponentRef Id="cmp0989343D60B74AF082291F612F0E6FA6" />
       <ComponentRef Id="cmp7BDE558CCB344A399134DE2C9E2C8D3D" />
-      <ComponentRef Id="cmpE1E7639528734B309511FDEF767420DE" />
       <ComponentRef Id="cmp72C41225E0B4457C8CB5F4C5FE6E3187" />
       <ComponentRef Id="cmp0BD7D15E0377407FA4C43BFE89F0C12E" />
+      <ComponentRef Id="cmpC0FFB3F4FB30438082D2DC0F4E4BF12D" />
+      <ComponentRef Id="cmp8748A4997DE943ED89DD2BD6857CBD9D" />
     </ComponentGroup>
   </Fragment>
 </Wix>
