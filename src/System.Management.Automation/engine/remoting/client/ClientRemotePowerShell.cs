@@ -15,7 +15,7 @@ namespace System.Management.Automation.Runspaces.Internal
     /// PowerShell client side proxy base which handles invocation
     /// of powershell on a remote machine.
     /// </summary>
-    internal class ClientRemotePowerShell : IDisposable
+    internal sealed class ClientRemotePowerShell : IDisposable
     {
         #region Tracer
 
@@ -951,7 +951,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// Release all resources.
         /// </summary>
         /// <param name="disposing">If true, release all managed resources.</param>
-        protected virtual void Dispose(bool disposing)
+        private void Dispose(bool disposing)
         {
             if (disposing)
             {
