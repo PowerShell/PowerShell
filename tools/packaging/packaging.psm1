@@ -3135,7 +3135,8 @@ function Start-MsiBuild {
     Write-Verbose "$resolvedWxsFiles" -Verbose
 
     Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out "$outDir\\" $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
+    #Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out "$outDir\\" $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
+    Start-NativeExecution { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out "$outDir\\" $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
 
     Write-Log "running light..."
     # suppress ICE61, because we allow same version upgrades
