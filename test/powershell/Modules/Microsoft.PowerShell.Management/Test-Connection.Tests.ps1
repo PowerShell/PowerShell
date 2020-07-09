@@ -325,16 +325,16 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
         $UnreachableAddress = "10.11.12.13"
     }
 
-    It "Test quiet connection to local host on working port" {
-        Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Quiet | Should -BeTrue
+    It "Test connection to local host on working port" {
+        Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort | Should -BeTrue
     }
 
-    It "Test quiet connection to unreachable host port 80" {
-        Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 -Quiet | Should -BeFalse
+    It "Test connection to unreachable host port 80" {
+        Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1 | Should -BeFalse
     }
 
     It "Test detailed connection to local host on working port" {
-        $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort
+        $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Detailed
 
         $result.Count | Should -Be 1
         $result[0].Id | Should -BeExactly 1
@@ -346,7 +346,7 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
     }
 
     It "Test detailed connection to local host on working port with modified count" {
-        $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Count 2
+        $result = Test-Connection '127.0.0.1' -TcpPort $WebListener.HttpPort -Detailed -Count 2
 
         $result.Count | Should -Be 2
         $result[0].Id | Should -BeExactly 1
@@ -358,7 +358,7 @@ Describe "Connection" -Tag "CI", "RequireAdminOnWindows" {
     }
 
     It "Test detailed connection to unreachable host port 80" {
-        $result = Test-Connection $UnreachableAddress -TcpPort 80 -TimeOut 1
+        $result = Test-Connection $UnreachableAddress -TcpPort 80 -Detailed -TimeOut 1
 
         $result.Count | Should -Be 1
         $result[0].Id | Should -BeExactly 1
