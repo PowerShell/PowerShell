@@ -3098,7 +3098,7 @@ function Start-MsiBuild {
         [string] $MsiPdbLocationPath
     )
 
-    $outDir = Join-Path "$env:Temp" "\\"
+    $outDir = $env:Temp
 
     $wixPaths = Get-WixPath
 
@@ -3135,7 +3135,7 @@ function Start-MsiBuild {
     Write-Verbose "$resolvedWxsFiles" -Verbose
 
     Write-Log "running candle..."
-    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out $outDir $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
+    Start-NativeExecution -VerboseOutputOnError { & $wixPaths.wixCandleExePath $resolvedWxsFiles -out "$outDir\\" $extensionArgs -arch $ProductTargetArchitecture $buildArguments -v}
 
     Write-Log "running light..."
     # suppress ICE61, because we allow same version upgrades
