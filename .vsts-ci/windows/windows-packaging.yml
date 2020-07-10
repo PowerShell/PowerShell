@@ -1,0 +1,79 @@
+name: PR-$(System.PullRequest.PullRequestNumber)-$(Date:yyyyMMdd)$(Rev:.rr)
+trigger:
+  # Batch merge builds together while a merge build is running
+  batch: true
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - /.vsts-ci/templates/windows-packaging.yml
+    - /.vsts-ci/windows-packaging.yml
+    - /global.json
+    - /src/Microsoft.Management.Infrastructure.CimCmdlets/Microsoft.Management.Infrastructure.CimCmdlets.csproj
+    - /src/Microsoft.Management.UI.Internal/Microsoft.PowerShell.GraphicalHost.csproj
+    - /src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj
+    - /src/Microsoft.PowerShell.Commands.Management/Microsoft.PowerShell.Commands.Management.csproj
+    - /src/Microsoft.PowerShell.Commands.Utility/Microsoft.PowerShell.Commands.Utility.csproj
+    - /src/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj
+    - /src/Microsoft.PowerShell.CoreCLR.Eventing/Microsoft.PowerShell.CoreCLR.Eventing.csproj
+    - /src/Microsoft.PowerShell.GlobalTool.Shim/Microsoft.PowerShell.GlobalTool.Shim.csproj
+    - /src/Microsoft.PowerShell.LocalAccounts/Microsoft.PowerShell.LocalAccounts.csproj
+    - /src/Microsoft.PowerShell.MarkdownRender/Microsoft.PowerShell.MarkdownRender.csproj
+    - /src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj
+    - /src/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.csproj
+    - /src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj
+    - /src/Microsoft.WSMan.Runtime/Microsoft.WSMan.Runtime.csproj
+    - /src/Modules/PSGalleryModules.csproj
+    - /src/powershell-win-core/powershell-win-core.csproj
+    - /tools/ci.psm1
+    - /tools/packaging/*
+pr:
+  branches:
+    include:
+    - master
+    - release*
+    - feature*
+  paths:
+    include:
+    - /.vsts-ci/templates/windows-packaging.yml
+    - /.vsts-ci/windows-packaging.yml
+    - /global.json
+    - /src/Microsoft.Management.Infrastructure.CimCmdlets/Microsoft.Management.Infrastructure.CimCmdlets.csproj
+    - /src/Microsoft.Management.UI.Internal/Microsoft.PowerShell.GraphicalHost.csproj
+    - /src/Microsoft.PowerShell.Commands.Diagnostics/Microsoft.PowerShell.Commands.Diagnostics.csproj
+    - /src/Microsoft.PowerShell.Commands.Management/Microsoft.PowerShell.Commands.Management.csproj
+    - /src/Microsoft.PowerShell.Commands.Utility/Microsoft.PowerShell.Commands.Utility.csproj
+    - /src/Microsoft.PowerShell.ConsoleHost/Microsoft.PowerShell.ConsoleHost.csproj
+    - /src/Microsoft.PowerShell.CoreCLR.Eventing/Microsoft.PowerShell.CoreCLR.Eventing.csproj
+    - /src/Microsoft.PowerShell.GlobalTool.Shim/Microsoft.PowerShell.GlobalTool.Shim.csproj
+    - /src/Microsoft.PowerShell.LocalAccounts/Microsoft.PowerShell.LocalAccounts.csproj
+    - /src/Microsoft.PowerShell.MarkdownRender/Microsoft.PowerShell.MarkdownRender.csproj
+    - /src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj
+    - /src/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.csproj
+    - /src/Microsoft.WSMan.Management/Microsoft.WSMan.Management.csproj
+    - /src/Microsoft.WSMan.Runtime/Microsoft.WSMan.Runtime.csproj
+    - /src/Modules/PSGalleryModules.csproj
+    - /src/powershell-win-core/powershell-win-core.csproj
+    - /tools/ci.psm1
+    - /tools/packaging/*
+
+variables:
+  GIT_CONFIG_PARAMETERS: "'core.autocrlf=false'"
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+  # Avoid expensive initialization of dotnet cli, see: https://donovanbrown.com/post/Stop-wasting-time-during-NET-Core-builds
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+  __SuppressAnsiEscapeSequences: 1
+
+resources:
+- repo: self
+  clean: true
+- stage: PackagingWin
+  displayName: Packaging for Windows
+  dependsOn: [] # by specifying an empty array, this stage doesn't depend on the stage before it
+  jobs:
+  # Unlike daily builds, we do not upload nuget package to MyGet so we do not wait on tests to finish.
+  - template: templates/windows-packaging.yml
