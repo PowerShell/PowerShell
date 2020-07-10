@@ -97,6 +97,7 @@
 
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>preview</LangVersion>
+    <PublishReadyToRun>true</PublishReadyToRun>
 
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
