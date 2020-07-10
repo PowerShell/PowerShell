@@ -1946,7 +1946,7 @@ namespace System.Management.Automation
 
         public bool Equals(PSMethodInvocationConstraints other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
             {
                 return false;
             }

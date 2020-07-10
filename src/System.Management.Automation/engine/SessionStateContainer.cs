@@ -3498,16 +3498,11 @@ namespace System.Management.Automation
 
                     if (isSymbolicJunctionOrHardLink)
                     {
-                        if (content == null)
-                        {
-                            throw PSTraceSource.NewArgumentNullException(SessionStateStrings.NewItemValueNotSpecified, path);
-                        }
+                        string targetPath;
 
-                        string targetPath = content.ToString();
-
-                        if (string.IsNullOrEmpty(targetPath))
+                        if (content is null || string.IsNullOrEmpty(targetPath = content.ToString()))
                         {
-                            throw PSTraceSource.NewArgumentNullException(SessionStateStrings.PathNotFound, targetPath);
+                            throw PSTraceSource.NewArgumentNullException(nameof(content), SessionStateStrings.NewLinkTargetNotSpecified, path);
                         }
 
                         ProviderInfo targetProvider = null;
@@ -3520,7 +3515,7 @@ namespace System.Management.Automation
                             out targetProvider,
                             out targetProviderInstance);
 
-                        if (string.Compare(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase) != 0)
+                        if (!string.Equals(targetProvider.Name, "filesystem", StringComparison.OrdinalIgnoreCase))
                         {
                             throw PSTraceSource.NewNotSupportedException(SessionStateStrings.MustBeFileSystemPath);
                         }
@@ -4951,4 +4946,3 @@ namespace System.Management.Automation
 }
 
 #pragma warning restore 56500
-

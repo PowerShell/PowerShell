@@ -82,7 +82,7 @@ namespace System.Management.Automation
             moduleInfo.DeclaredVariableExports = RehydrateHashtableKeys(deserializedModuleInfo, "ExportedVariables");
 
             var compatiblePSEditions = DeserializingTypeConverter.GetPropertyValue<string[]>(deserializedModuleInfo, "CompatiblePSEditions", rehydrationFlags);
-            if (compatiblePSEditions != null && compatiblePSEditions.Any())
+            if (compatiblePSEditions != null && compatiblePSEditions.Length > 0)
             {
                 foreach (var edition in compatiblePSEditions)
                 {
@@ -92,7 +92,7 @@ namespace System.Management.Automation
 
             // PowerShellGet related properties
             var tags = DeserializingTypeConverter.GetPropertyValue<string[]>(deserializedModuleInfo, "Tags", rehydrationFlags);
-            if (tags != null && tags.Any())
+            if (tags != null && tags.Length > 0)
             {
                 foreach (var tag in tags)
                 {

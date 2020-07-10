@@ -854,10 +854,10 @@ namespace System.Management.Automation
 
                     CommandAndName nextCommandAndName = cmdlets[lookAhead];
 
-                    if (string.Compare(
+                    if (string.Equals(
                             commandAndName.CommandName.ShortName,
                             nextCommandAndName.CommandName.ShortName,
-                            StringComparison.OrdinalIgnoreCase) == 0)
+                            StringComparison.OrdinalIgnoreCase))
                     {
                         AddCommandResult(commandAndName, true, completingAtStartOfLine, quote, results);
                         previousMatched = true;
@@ -998,7 +998,7 @@ namespace System.Management.Automation
                 result.AddRange(s1);
                 for (int i = 0, j = 0; i < s2.Count; ++i)
                 {
-                    if (j < s1.Count && string.Compare(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase) == 0)
+                    if (j < s1.Count && string.Equals(s2[i].Path, s1[j].Path, StringComparison.CurrentCultureIgnoreCase))
                     {
                         ++j;
                         continue;

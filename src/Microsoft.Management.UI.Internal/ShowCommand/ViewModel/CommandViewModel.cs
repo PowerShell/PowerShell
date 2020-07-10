@@ -612,7 +612,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 }
             }
 
-            return string.Compare(source.Name, target.Name, StringComparison.Ordinal);
+            return string.CompareOrdinal(source.Name, target.Name);
         }
 
         /// <summary>

@@ -131,10 +131,34 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             "$destDir/$testDir/$testFile" | Should -Exist
         }
 
+        It "Verify Move-Item across devices for directory" {
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowExdevErrorOnMoveDirectory', $true)
+            try
+            {
+                $dir = (New-Item -Path TestDrive:/dir -ItemType Directory -ErrorAction Stop).FullName
+                $file = (New-Item -Path "$dir/file.txt" -Value "HELLO" -ErrorAction Stop).Name
+                $destination = "$TestDrive/destination"
+
+                Move-Item -Path $dir -Destination $destination -ErrorAction Stop
+
+                $dir | Should -Not -Exist
+                $destination | Should -Exist
+                "$destination/$file" | Should -Exist
+            }
+            finally
+            {
+                [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook('ThrowExdevErrorOnMoveDirectory', $false)
+            }
+        }
+
         It "Verify Move-Item will not move to an existing file" {
             { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
             $error[0].Exception | Should -BeOfType System.IO.IOException
             $testDir | Should -Exist
+        }
+
+        It "Verify Move-Item throws correct error for non-existent source" {
+            { Move-Item -Path /does/not/exist -Destination $testFile -ErrorAction Stop } | Should -Throw -ErrorId 'PathNotFound,Microsoft.PowerShell.Commands.MoveItemCommand'
         }
 
         It "Verify Move-Item as substitute for Rename-Item" {

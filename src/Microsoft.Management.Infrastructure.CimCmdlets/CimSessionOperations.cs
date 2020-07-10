@@ -553,7 +553,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             errRecords.Add(
                 new ErrorRecord(
-                    new CimException(string.Format(CultureInfo.CurrentUICulture, Strings.CouldNotFindCimsessionObject, propertyName, propertyValue)),
+                    new CimException(string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.CouldNotFindCimsessionObject, propertyName, propertyValue)),
                     string.Empty,
                     ErrorCategory.ObjectNotFound,
                     null));

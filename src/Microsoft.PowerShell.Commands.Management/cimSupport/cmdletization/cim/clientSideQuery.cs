@@ -223,7 +223,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                     case BehaviorOnNoMatch.Default:
                     default:
                         return this.PropertyValueFilters
-                                   .Where(f => !f.HadMatch).Any(f => f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
+                                   .Any(f => !f.HadMatch && f.BehaviorOnNoMatch == BehaviorOnNoMatch.ReportErrors);
                 }
             }
 

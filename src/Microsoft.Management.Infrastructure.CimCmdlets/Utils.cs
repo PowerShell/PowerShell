@@ -434,7 +434,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             DebugHelper.WriteLogEx("An invalid name: {0}={1}", 0, parameterName, value);
-            throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, Strings.InvalidParameterValue, value, parameterName));
+            throw new ArgumentException(string.Format(CultureInfo.CurrentUICulture, CimCmdletStrings.InvalidParameterValue, value, parameterName));
         }
 
         /// <summary>
@@ -452,7 +452,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 foreach (string propertyName in value)
                 {
                     // * is wild char supported in select properties
-                    if ((propertyName != null) && (string.Compare(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase) == 0))
+                    if ((propertyName != null) && string.Equals(propertyName.Trim(), "*", StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
                     }

@@ -2591,7 +2591,7 @@ namespace System.Management.Automation.Language
             // If Parent of rootForDefiningTypesAndUsings is not null, then we already defined all types, when Visit a parent ScriptBlock
             if (rootForDefiningTypesAndUsings.Parent == null)
             {
-                if (rootForDefiningTypesAndUsings.UsingStatements.Any())
+                if (rootForDefiningTypesAndUsings.UsingStatements.Count > 0)
                 {
                     bool allUsingsAreNamespaces = rootForDefiningTypesAndUsings.UsingStatements.All(us => us.UsingStatementKind == UsingStatementKind.Namespace);
                     GenerateLoadUsings(rootForDefiningTypesAndUsings.UsingStatements, allUsingsAreNamespaces, exprs);

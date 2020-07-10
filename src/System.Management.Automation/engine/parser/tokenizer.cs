@@ -391,7 +391,7 @@ namespace System.Management.Automation.Language
         internal static IEnumerable<DynamicKeyword> GetAllowedKeywords(this DynamicKeyword keyword, IEnumerable<DynamicKeyword> allowedKeywords)
         {
             string keywordName = keyword.Keyword;
-            if (string.Compare(keywordName, @"Node", StringComparison.OrdinalIgnoreCase) == 0)
+            if (string.Equals(keywordName, @"Node", StringComparison.OrdinalIgnoreCase))
             {
                 List<string> excludeKeywords;
                 if (s_excludeKeywords.TryGetValue(keywordName, out excludeKeywords))

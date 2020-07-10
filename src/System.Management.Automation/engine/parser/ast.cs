@@ -223,7 +223,7 @@ namespace System.Management.Automation.Language
             if (elements == null || elements.Count == 0) { return null; }
 
             var result = new T[elements.Count];
-            for (int i = 0; i < result.Count(); i++)
+            for (int i = 0; i < result.Length; i++)
             {
                 result[i] = (T)elements[i].Copy();
             }
@@ -1138,7 +1138,7 @@ namespace System.Management.Automation.Language
                 // It's ok to report an error from a different part of AST in this case.
                 var root = GetRootScriptBlockAst();
                 root.PerformPostParseChecks(parser);
-                if (parser.ErrorList.Any())
+                if (parser.ErrorList.Count > 0)
                 {
                     throw new ParseException(parser.ErrorList.ToArray());
                 }
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            if (EndBlock.Traps != null && EndBlock.Traps.Any())
+            if (EndBlock.Traps != null && EndBlock.Traps.Count > 0)
             {
                 errorId = "CantConvertScriptBlockWithTrap";
                 errorMsg = AutomationExceptions.CantConvertScriptBlockWithTrap;
@@ -1781,7 +1781,7 @@ namespace System.Management.Automation.Language
             SetParents(statements);
 
             var traps = statementBlock.Traps;
-            if (traps != null && traps.Any())
+            if (traps != null && traps.Count > 0)
             {
                 this.Traps = traps;
                 for (int index = 0; index < traps.Count; index++)
@@ -5609,7 +5609,7 @@ namespace System.Management.Automation.Language
             }
 
             CommandExpressionAst expr = PipelineElements[0] as CommandExpressionAst;
-            if (expr != null && !expr.Redirections.Any())
+            if (expr != null && expr.Redirections.Count == 0)
             {
                 return expr.Expression;
             }
@@ -6852,7 +6852,7 @@ namespace System.Management.Automation.Language
         public DynamicKeywordStatementAst(IScriptExtent extent,
             IEnumerable<CommandElementAst> commandElements) : base(extent)
         {
-            if (commandElements == null || commandElements.Count() <= 0)
+            if (commandElements == null || !commandElements.Any())
             {
                 throw PSTraceSource.NewArgumentException(nameof(commandElements));
             }
@@ -8282,7 +8282,7 @@ namespace System.Management.Automation.Language
                     if (function.IsConstructor)
                     {
                         // TODO: add check for default values, once default values for parameters supported
-                        if (!function.Parameters.Any())
+                        if (function.Parameters.Count == 0)
                         {
                             return true;
                         }
@@ -9760,7 +9760,7 @@ namespace System.Management.Automation.Language
         public ArrayLiteralAst(IScriptExtent extent, IList<ExpressionAst> elements)
             : base(extent)
         {
-            if (elements == null || !elements.Any())
+            if (elements == null || elements.Count == 0)
             {
                 throw PSTraceSource.NewArgumentException(nameof(elements));
             }

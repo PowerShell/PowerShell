@@ -1231,7 +1231,7 @@ namespace System.Management.Automation
                 }
 
                 var memberNameAndTypes = GetMemberNameAndTypeFromProperties(prevType, IsInPropertyArgument);
-                if (!memberNameAndTypes.Any())
+                if (memberNameAndTypes.Count == 0)
                 {
                     continue;
                 }
@@ -1328,7 +1328,7 @@ namespace System.Management.Automation
                             switch (propertyNameOrPattern)
                             {
                                 case string propertyName:
-                                    if (string.Compare(name, propertyName, StringComparison.OrdinalIgnoreCase) == 0)
+                                    if (string.Equals(name, propertyName, StringComparison.OrdinalIgnoreCase))
                                     {
                                         return includeMatchedProperties;
                                     }

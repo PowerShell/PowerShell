@@ -440,7 +440,7 @@ namespace System.Management.Automation
                     }
 
                     if (variable is LocalVariable
-                        && (variableToSet.Attributes.Any() || variableToSet.Options != variable.Options))
+                        && (variableToSet.Attributes.Count > 0 || variableToSet.Options != variable.Options))
                     {
                         SessionStateUnauthorizedAccessException e =
                             new SessionStateUnauthorizedAccessException(
@@ -1952,7 +1952,7 @@ namespace System.Management.Automation
             }
             else
             {
-                string itemToRemove = list.FirstOrDefault(item => item.Equals(alias, StringComparison.OrdinalIgnoreCase));
+                string itemToRemove = list.Find(item => item.Equals(alias, StringComparison.OrdinalIgnoreCase));
                 if (itemToRemove != null)
                 {
                     list.Remove(itemToRemove);
